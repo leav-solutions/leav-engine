@@ -1,10 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen} from '@testing-library/react';
+import {InMemoryCache} from '@apollo/client';
+import {MockedProvider} from '@apollo/client/testing';
+import {render, screen, waitForElement} from '@testing-library/react';
+import {getActiveTree, IGetActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {MockStateNavigation} from '../../__mocks__/Navigation/mockState';
 import HeaderColumnNavigationActions from './HeaderColumnNavigationActions';
 
@@ -38,16 +40,36 @@ describe('HeaderColumnNavigationActions', () => {
         {id: 'childId', label: 'childLabel', library: 'childLib'}
     ];
 
+    const mockActiveTree: IGetActiveTree = {
+        activeTree: {
+            id: 'treeId',
+            label: 'treeLabel',
+            libraries: [{id: 'libId'}]
+        }
+    };
+
+    const mockCache = new InMemoryCache();
+
+    mockCache.writeQuery({
+        query: getActiveTree,
+
+        data: {
+            ...mockActiveTree
+        }
+    });
+
     test('should call actions', async () => {
         await act(async () => {
             render(
-                <MockedProviderWithFragments>
+                <MockedProvider cache={mockCache}>
                     <MockStateNavigation stateNavigation={{path}}>
                         <HeaderColumnNavigationActions depth={1} />
                     </MockStateNavigation>
-                </MockedProviderWithFragments>
+                </MockedProvider>
             );
         });
+
+        waitForElement(() => screen.getByText('DefaultActions'));
 
         expect(screen.getByText('DefaultActions')).toBeInTheDocument();
         expect(screen.getByText('DetailActions')).toBeInTheDocument();

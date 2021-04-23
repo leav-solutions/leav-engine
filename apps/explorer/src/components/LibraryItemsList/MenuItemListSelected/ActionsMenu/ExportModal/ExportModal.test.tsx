@@ -4,6 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import ExportModal from './ExportModal';
@@ -38,7 +39,9 @@ describe('ExportModal', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
-                    <ExportModal open onClose={onClose} />
+                    <MockStore>
+                        <ExportModal open onClose={onClose} />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

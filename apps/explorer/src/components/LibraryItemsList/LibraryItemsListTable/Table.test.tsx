@@ -4,10 +4,11 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {itemsInitialState} from 'redux/items';
 import {itemMock} from '__mocks__/common/item';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import Table from './Table';
 
 jest.mock(
@@ -34,18 +35,26 @@ jest.mock(
         }
 );
 
+jest.mock(
+    './Header',
+    () =>
+        function Header() {
+            return <div>Header</div>;
+        }
+);
+
 describe('Table', () => {
     test('check child exist', async () => {
         const itemsMock: IItem[] = [itemMock];
 
-        const stateMock = {items: itemsMock, itemsLoading: false};
+        const stateMock = {items: {...itemsInitialState, items: itemsMock, loading: false}};
 
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateItems stateItems={stateMock}>
+                    <MockStore state={stateMock}>
                         <Table />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

@@ -6,12 +6,10 @@ import {useLazyQuery} from '@apollo/client';
 import {Button, Result, Steps} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import AttributesSelectionList from 'components/AttributesSelectionList';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useStateItem} from '../../../../../Context/StateItemsContext';
 import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
 import {useActiveLibrary} from '../../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useNotifications} from '../../../../../hooks/NotificationsHook/NotificationsHook';
@@ -27,7 +25,8 @@ import {
     ISelectedAttribute,
     NotificationChannel,
     NotificationPriority,
-    NotificationType
+    NotificationType,
+    SharedStateSelectionType
 } from '../../../../../_types/types';
 import ErrorDisplay from '../../../../shared/ErrorDisplay';
 
@@ -54,8 +53,11 @@ const CenteredWrapper = styled.div`
 
 function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
     const {t} = useTranslation();
-    const {stateItems} = useStateItem();
-    const {stateShared} = useStateShared();
+
+    const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
+
+    const filters = useAppSelector(state => state.filters);
+
     const [activeLibrary] = useActiveLibrary();
     const {addNotification} = useNotifications();
 
@@ -84,10 +86,10 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
         setCurrentStep(ExportSteps.PROCESSING);
 
         let queryFilters: RecordFilterInput[];
-        if (stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected) {
-            queryFilters = (stateItems.queryFilters as unknown) as RecordFilterInput[];
+        if (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected) {
+            queryFilters = (filters.queryFilters as unknown) as RecordFilterInput[];
         } else {
-            const selectedIds = stateShared.selection.selected.map(elementSelected => elementSelected.id);
+            const selectedIds = selectionState.selection.selected.map(elementSelected => elementSelected.id);
 
             // Convert selected IDs to a search query with OR between each ID
             queryFilters = selectedIds.length

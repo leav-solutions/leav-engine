@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
@@ -349,4 +350,35 @@ export interface ITableItem {
 }
 export interface ITableItems {
     [x: string]: ITableItem;
+}
+
+export interface ISharedStateSelectionSearch {
+    type: SharedStateSelectionType.search;
+    selected: ISharedSelected[];
+    allSelected?: boolean;
+}
+
+export interface ISharedStateSelectionNavigation {
+    type: SharedStateSelectionType.navigation;
+    selected: ISharedSelected[];
+    parent: TreeElementInput;
+}
+
+export type SharedStateSelection = ISharedStateSelectionSearch | ISharedStateSelectionNavigation;
+
+export enum SharedStateSelectionType {
+    navigation,
+    search
+}
+
+export interface ISharedSelected {
+    id: string;
+    library: string;
+    label: string;
+}
+
+export interface IToggleSelection {
+    selectionType: SharedStateSelectionType;
+    elementSelected: ISharedSelected;
+    parent?: TreeElementInput;
 }

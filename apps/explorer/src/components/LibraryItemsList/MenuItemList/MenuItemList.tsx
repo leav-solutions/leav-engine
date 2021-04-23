@@ -5,15 +5,15 @@ import {PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
 import {Button, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {setDisplaySide} from 'redux/display';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {IconOpenPanel} from '../../../assets/icons/IconOpenPanel';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 import MenuItemActions from '../MenuItemActions';
 import MenuSelection from '../MenuSelection';
 import SelectView from '../SelectView';
@@ -48,30 +48,31 @@ const SubGroupLast = styled(SubGroup)`
 function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
     const [activeLibrary] = useActiveLibrary();
-    const {stateItems, dispatchItems} = useStateItem();
+
+    const {display} = useAppSelector(state => state);
+    const dispatch = useAppDispatch();
 
     const toggleShowFilter = () => {
-        const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.filters;
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
-            sideItems: {
+        const visible = !display.side.visible || display.side.type !== TypeSideItem.filters;
+
+        dispatch(
+            setDisplaySide({
                 visible,
                 type: TypeSideItem.filters
-            }
-        });
+            })
+        );
     };
 
     const handleHide = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
-            sideItems: {
-                visible: !stateItems.sideItems.visible,
-                type: stateItems.sideItems.type || TypeSideItem.filters
-            }
-        });
+        dispatch(
+            setDisplaySide({
+                visible: !display.side.visible,
+                type: display.side.type || TypeSideItem.filters
+            })
+        );
     };
 
-    const panelActive = stateItems.sideItems.visible;
+    const panelActive = display.side.visible;
 
     return (
         <Wrapper>
@@ -89,9 +90,11 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
 
             <SubGroupLast>
                 <div>
-                    <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
-                        {t('items_list.new')}
-                    </PrimaryBtn>
+                    {!display.selectionMode && (
+                        <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
+                            {t('items_list.new')}
+                        </PrimaryBtn>
+                    )}
                 </div>
 
                 <MenuItemActions />

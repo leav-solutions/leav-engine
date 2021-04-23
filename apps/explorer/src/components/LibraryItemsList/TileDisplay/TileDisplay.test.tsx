@@ -3,9 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
+import {itemsInitialState} from 'redux/items';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {IItem} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import TileDisplay from './TileDisplay';
 
 jest.mock(
@@ -44,11 +45,13 @@ describe('TileDisplay', () => {
             }
         ];
 
+        const stateMock = {items: {...itemsInitialState, items: itemsMock}};
+
         const comp = mount(
             <MockedProviderWithFragments>
-                <MockStateItems stateItems={{items: itemsMock}}>
+                <MockStore state={stateMock}>
                     <TileDisplay />
-                </MockStateItems>
+                </MockStore>
             </MockedProviderWithFragments>
         );
 

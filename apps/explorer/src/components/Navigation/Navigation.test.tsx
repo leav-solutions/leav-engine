@@ -4,6 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import Navigation from './Navigation';
@@ -57,7 +58,9 @@ describe('Navigation', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <Navigation />
+                    <MockStore>
+                        <Navigation />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

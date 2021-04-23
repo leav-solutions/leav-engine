@@ -4,6 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {AttributeFormat, AttributeType, ITableItem} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import Cell from './Cell';
@@ -22,7 +23,9 @@ describe('Cell', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <Cell columnName="test" data={(mockData as unknown) as ITableItem} index="0" />
+                    <MockStore>
+                        <Cell columnName="test" data={(mockData as unknown) as ITableItem} index="0" />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

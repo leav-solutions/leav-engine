@@ -4,15 +4,19 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
 import {setFilters, setQueryFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import {isString} from 'lodash';
-import React, {useEffect, useReducer} from 'react';
+import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
+import {setAttributes} from 'redux/attributes';
+import {setDisplaySelectionMode} from 'redux/display';
+import {setFields} from 'redux/fields';
+import {setFiltersQueryFilters} from 'redux/filters';
+import {setItems, setItemsLoading, setItemsSort, setItemsTotalCount} from 'redux/items';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setViewCurrent} from 'redux/view';
 import styled, {CSSObject} from 'styled-components';
 import {attributeExtendedKey, defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
-import {StateItemsContext} from '../../Context/StateItemsContext';
 import {
     getLibraryDetailExtendedQuery,
     IGetLibraryDetailExtendedQuery,
@@ -36,15 +40,11 @@ import {
     IParentAttributeData,
     IView,
     NotificationType,
+    SharedStateSelectionType,
     ViewType
 } from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import {getFiltersFromRequest} from './FiltersPanel/getFiltersFromRequest';
-import reducer, {
-    applySort,
-    LibraryItemListInitialState,
-    LibraryItemListReducerActionTypes
-} from './LibraryItemsListReducer';
 import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
@@ -56,11 +56,25 @@ interface IWrapperProps {
 }
 
 const Wrapper = styled.div<IWrapperProps>`
-    display: ${({showSide}) => (showSide ? 'grid' : 'inherit')};
-    grid-template-columns: ${panelSize} calc(100% - ${panelSize});
-    grid-template-rows: 100%;
+    display: grid;
+
+    ${({showSide}) =>
+        showSide
+            ? ` 
+            grid-template-columns: ${panelSize} calc(100% - ${panelSize});
+            grid-template-rows: 92% auto;
+            grid-template-areas:
+                'side data'
+                'side pagination';`
+            : `
+            grid-template-columns: auto;
+            grid-template-rows: 92% auto;
+            grid-template-areas:
+                'data'
+                'pagination';`}
     height: 100%;
     position: relative;
+    overflow: hidden;
 `;
 
 const MenuWrapper = styled.div`
@@ -73,17 +87,30 @@ const MenuWrapper = styled.div`
     justify-content: space-around;
 `;
 
-function LibraryItemsList(): JSX.Element {
+interface ILibraryItemsList {
+    selectionMode?: boolean;
+    libId?: string;
+}
+
+function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList): JSX.Element {
     const {t} = useTranslation();
-    const {libId} = useParams<{libId: string}>();
+    const {libId: urlLibId} = useParams<{libId: string}>();
 
-    const [stateItems, dispatchItems] = useReducer(reducer, LibraryItemListInitialState);
+    const libId = givenLibId ?? urlLibId;
+
+    const {items, view, filters, attributes, display, fields, selection: selectionState} = useAppSelector(
+        state => state
+    );
+    const dispatch = useAppDispatch();
+
     const {stateFilters, dispatchFilters} = useStateFilters();
-    const {stateShared} = useStateShared();
-
     const [{lang}] = useLang();
-    const {updateBaseNotification} = useNotifications();
+    const {baseNotification, updateBaseNotification} = useNotifications();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
+
+    useEffect(() => {
+        dispatch(setDisplaySelectionMode(!!selectionMode));
+    }, [dispatch, selectionMode]);
 
     const {loading, data, error} = useQuery<IGetLibraryDetailExtendedQuery, IGetLibraryDetailExtendedVariables>(
         getLibraryDetailExtendedQuery,
@@ -104,27 +131,34 @@ function LibraryItemsList(): JSX.Element {
             const currentLibName = localizedLabel(currentLibLabel, lang);
 
             // Active Library
-            updateActiveLibrary({
-                id: currentLibId,
-                name: currentLibName,
-                filter,
-                gql: {
-                    searchableFields,
-                    query,
-                    type
-                }
-            });
+            if (activeLibrary.id !== currentLibId) {
+                updateActiveLibrary({
+                    id: currentLibId,
+                    name: currentLibName,
+                    filter,
+                    gql: {
+                        searchableFields,
+                        query,
+                        type
+                    }
+                });
+            }
 
             // Base Notification
-            updateBaseNotification({
-                content: t('notification.active-lib', {lib: currentLibName}),
-                type: NotificationType.basic
-            });
+            if (
+                !display.selectionMode &&
+                baseNotification.content !== t('notification.active-lib', {lib: currentLibName})
+            ) {
+                updateBaseNotification({
+                    content: t('notification.active-lib', {lib: currentLibName}),
+                    type: NotificationType.basic
+                });
+            }
 
             // Current View
-            let view: IView | undefined;
+            let newView: IView | undefined;
             if (currentLibrary.defaultView) {
-                view = {
+                newView = {
                     id: currentLibrary.defaultView.id,
                     label: localizedLabel(currentLibrary.defaultView.label, lang),
                     description: currentLibrary.defaultView.description,
@@ -139,16 +173,13 @@ function LibraryItemsList(): JSX.Element {
                 };
             } else {
                 // use defaultView and translate label
-                view = {...defaultView, label: t(defaultView.label)};
+                newView = {...defaultView, label: t(defaultView.label)};
             }
 
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_VIEW,
-                view: {current: view}
-            });
+            dispatch(setViewCurrent(newView));
 
             // Attributes
-            const attributes: IAttribute[] = data?.libraries?.list[0]?.attributes.reduce(
+            const attributesFromQuery: IAttribute[] = data?.libraries?.list[0]?.attributes.reduce(
                 (acc: IAttribute[], attribute) => {
                     if (
                         (attribute.format === null ||
@@ -220,32 +251,38 @@ function LibraryItemsList(): JSX.Element {
             );
 
             // force the first sort by id
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_LIB_INFOS,
-                itemsSort: {
-                    ...view.sort,
-                    active: false
-                },
-                attributes
-            });
+            dispatch(setItemsSort({...newView.sort, active: false}));
+            dispatch(setAttributes(attributesFromQuery));
         }
-    }, [dispatchItems, updateActiveLibrary, updateBaseNotification, t, loading, data, libId, activeLibrary, lang]);
+    }, [
+        dispatch,
+        baseNotification,
+        updateBaseNotification,
+        updateActiveLibrary,
+        display.selectionMode,
+        t,
+        loading,
+        data,
+        libId,
+        activeLibrary,
+        lang
+    ]);
 
     useEffect(() => {
-        if (stateItems.view.reload && stateItems.view.current) {
-            if (stateItems.view.current.type === ViewType.list) {
+        if (view.reload && view.current) {
+            if (view.current.type === ViewType.list) {
                 // Get initials Fields
-                const fields = stateItems.view.current.fields?.reduce((acc, fieldKey) => {
+                const newFields = view.current.fields?.reduce((acc, fieldKey) => {
                     let parentAttributeData: IParentAttributeData | undefined;
 
                     const splitKey = fieldKey.split('.');
 
-                    const attribute = getAttributeFromKey(fieldKey, stateItems.attributes);
+                    const attribute = getAttributeFromKey(fieldKey, attributes.attributes);
 
                     // get originAttribute
                     if (splitKey.length === 3 && splitKey[0] !== attributeExtendedKey) {
                         const parentAttributeId = splitKey[1];
-                        const parentAttribute = stateItems.attributes.find(
+                        const parentAttribute = attributes.attributes.find(
                             att => parentAttributeId === att.id && activeLibrary?.id === att.library
                         );
 
@@ -276,74 +313,62 @@ function LibraryItemsList(): JSX.Element {
                     return [...acc, field];
                 }, [] as IField[]);
 
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_FIELDS,
-                    fields: fields ?? []
-                });
+                dispatch(setFields(newFields));
             }
 
             // update Filters
-            if (stateItems.view.current.filters) {
-                dispatchFilters(
-                    setFilters(getFiltersFromRequest(stateItems.view.current.filters, stateItems.attributes))
-                );
-                dispatchFilters(setQueryFilters(stateItems.view.current.filters));
+            if (view.current.filters) {
+                dispatchFilters(setFilters(getFiltersFromRequest(view.current.filters, attributes.attributes)));
+                dispatchFilters(setQueryFilters(view.current.filters));
             } else {
                 // reset filters
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_QUERY_FILTERS,
-                    queryFilters: []
-                });
+                dispatch(setFiltersQueryFilters([]));
             }
 
             // update sort
-            const field = stateItems.view.current.sort?.field ?? defaultSort.field;
-            const order = stateItems.view.current.sort?.order ?? defaultSort.order;
-            dispatchItems(applySort(field, order));
+            const field = view.current.sort?.field ?? defaultSort.field;
+            const order = view.current.sort?.order ?? defaultSort.order;
+            dispatch(
+                setItemsSort({
+                    field,
+                    order,
+                    active: true
+                })
+            );
         }
-    }, [stateItems.view, stateItems.attributes, lang, activeLibrary, dispatchFilters]);
+    }, [view, attributes, lang, activeLibrary, dispatchFilters, dispatch]);
 
     // Get data
     const [
         getRecords,
         {called: calledItem, loading: loadingItem, data: dataItem, error: errorItem, refetch}
     ] = useLazyQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
-        getRecordsFromLibraryQuery(activeLibrary?.gql.query, stateItems.fields),
+        getRecordsFromLibraryQuery(activeLibrary?.gql.query, fields.fields),
         {
             variables: {
-                limit: stateItems.pagination,
-                offset: stateItems.offset,
+                limit: items.pagination,
+                offset: items.offset,
                 filters: stateFilters.queryFilters,
-                sortField: stateItems.itemsSort.field ?? defaultSort.field,
-                sortOrder: stateItems.itemsSort.order ?? defaultSort.order
+                sortField: items.sort?.field ?? defaultSort.field,
+                sortOrder: items.sort?.order ?? defaultSort.order
             }
         }
     );
 
     useEffect(() => {
-        if (!stateItems.searchFullTextActive) {
+        if (!filters.searchFullTextActive) {
             if (!loadingItem && calledItem && dataItem && activeLibrary?.filter) {
                 const libQuery = activeLibrary.gql.query;
 
                 const itemsFromQuery = dataItem ? dataItem[activeLibrary.gql.query || ''].list : [];
 
-                const items: IItem[] = manageItems({items: itemsFromQuery, lang, fields: stateItems.fields});
+                const newItems: IItem[] = manageItems({items: itemsFromQuery, lang, fields: fields.fields});
 
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
-                    items,
-                    totalCount: dataItem[libQuery]?.totalCount
-                });
-
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
-                    itemLoading: false
-                });
+                dispatch(setItemsTotalCount(dataItem[libQuery]?.totalCount));
+                dispatch(setItems(newItems));
+                dispatch(setItemsLoading(false));
             } else {
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
-                    itemLoading: false
-                });
+                dispatch(setItemsLoading(false));
             }
         }
     }, [
@@ -353,49 +378,45 @@ function LibraryItemsList(): JSX.Element {
         lang,
         libId,
         activeLibrary,
-        stateItems.attributes,
-        stateItems.fields,
-        stateItems.searchFullTextActive
+        attributes,
+        fields,
+        filters.searchFullTextActive,
+        dispatch
     ]);
 
     useEffect(() => {
-        if (!stateItems.searchFullTextActive && activeLibrary?.gql.query) {
+        if (!filters.searchFullTextActive && activeLibrary?.gql.query) {
             getRecords();
         }
-    }, [
-        stateItems.offset,
-        stateItems.pagination,
-        stateItems.queryFilters,
-        stateItems.itemsSort,
-        stateItems.searchFullTextActive,
-        stateItems.view.reload,
-        activeLibrary,
-        getRecords
-    ]);
+    }, [items, view.reload, filters, activeLibrary, getRecords]);
 
     if (errorItem || error) {
         return <div>error</div>;
     }
 
-    const menuSelectedActive =
-        !!stateShared.selection.selected.length ||
-        (stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected);
+    // if some elements are selected and the selection type is search, show the selection Menu
+    const menuSelectedActive = display.selectionMode
+        ? !!selectionState.searchSelection.selected.length ||
+          (selectionState.searchSelection.type === SharedStateSelectionType.search &&
+              selectionState.searchSelection.allSelected)
+        : !!selectionState.selection.selected.length ||
+          (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected);
 
     return (
-        <StateItemsContext.Provider value={{stateItems, dispatchItems}}>
+        <>
             <MenuWrapper>
                 <MenuItemList refetch={refetch} />
                 <MenuItemListSelected active={menuSelectedActive} />
             </MenuWrapper>
 
             <Wrapper
-                showSide={stateItems.sideItems.visible}
-                className={stateItems.sideItems.visible ? 'wrapper-open' : 'wrapper-close'}
+                showSide={display.side.visible}
+                className={display.side.visible ? 'wrapper-open' : 'wrapper-close'}
             >
                 <SideItems />
                 <DisplayTypeSelector />
             </Wrapper>
-        </StateItemsContext.Provider>
+        </>
     );
 }
 

@@ -11,17 +11,16 @@ import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeEleme
 import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useNotifications} from 'hooks/NotificationsHook/NotificationsHook';
-import {resetSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setRefetchTreeData} from 'Reducer/NavigationReducerActions';
+import {resetSelection} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '_gqlTypes/MOVE_TREE_ELEMENT';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
-import {INavigationPath, NotificationChannel, NotificationType} from '_types/types';
+import {INavigationPath, NotificationChannel, NotificationType, SharedStateSelectionType} from '_types/types';
 
 interface IMessages {
     countValid: number;
@@ -35,7 +34,10 @@ interface ISelectionActionsProps {
 
 function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element {
     const {t} = useTranslation();
-    const {stateShared, dispatchShared} = useStateShared();
+
+    const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
+    const dispatch = useAppDispatch();
+
     const {dispatchNavigation} = useStateNavigation();
     const [activeTree] = useActiveTree();
 
@@ -77,7 +79,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
     };
 
     const handleAddElements = async () => {
-        if (stateShared.selection.selected.length) {
+        if (selectionState.selection.selected.length) {
             let messages: IMessages = {
                 countValid: 0,
                 errors: {}
@@ -90,7 +92,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                   }
                 : null;
 
-            for (const elementSelected of stateShared.selection.selected) {
+            for (const elementSelected of selectionState.selection.selected) {
                 const treeElement: TreeElementInput = {
                     id: elementSelected.id,
                     library: elementSelected.library
@@ -134,7 +136,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             });
         }
 
-        dispatchShared(resetSharedSelection());
+        dispatch(resetSelection());
         dispatchNavigation(setRefetchTreeData(true));
     };
 
@@ -151,7 +153,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
               }
             : null;
 
-        for (const elementSelected of stateShared.selection.selected) {
+        for (const elementSelected of selectionState.selection.selected) {
             const treeElement: TreeElementInput = {
                 id: elementSelected.id,
                 library: elementSelected.library
@@ -189,18 +191,18 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             displayMessages('navigation.notifications.success-move', 'navigation.notifications.error-move', messages);
         }
 
-        dispatchShared(resetSharedSelection());
+        dispatch(resetSelection());
         dispatchNavigation(setRefetchTreeData(true));
     };
 
     const handleDeleteElements = async () => {
-        if (stateShared.selection.type === SharedStateSelectionType.navigation) {
+        if (selectionState.selection.type === SharedStateSelectionType.navigation) {
             let messages: IMessages = {
                 countValid: 0,
                 errors: {}
             };
 
-            for (const elementSelected of stateShared.selection.selected) {
+            for (const elementSelected of selectionState.selection.selected) {
                 const treeElement: TreeElementInput = {
                     id: elementSelected.id,
                     library: elementSelected.library
@@ -241,19 +243,19 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                 messages
             );
 
-            dispatchShared(resetSharedSelection());
+            dispatch(resetSelection());
             dispatchNavigation(setRefetchTreeData(true));
         }
     };
 
-    const searchIsNavigation = stateShared.selection.type === SharedStateSelectionType.navigation;
+    const searchIsNavigation = selectionState.selection.type === SharedStateSelectionType.navigation;
 
     const columnIsParent =
-        stateShared.selection.type === SharedStateSelectionType.navigation &&
-        stateShared.selection.parent.id === parent.id &&
-        stateShared.selection.parent.library === parent.library;
+        selectionState.selection.type === SharedStateSelectionType.navigation &&
+        selectionState.selection.parent?.id === parent?.id &&
+        selectionState.selection.parent?.library === parent?.library;
 
-    if (stateShared.selection.selected.length) {
+    if (selectionState.selection.selected.length) {
         return (
             <>
                 {!columnIsParent && (

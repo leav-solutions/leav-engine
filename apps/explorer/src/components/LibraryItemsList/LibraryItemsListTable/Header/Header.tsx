@@ -3,15 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CaretDownOutlined, CaretUpOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {cancelItemsSort, setItemsSort} from 'redux/items';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {infosCol} from '../../../../constants/constants';
-import {StateItemsContext} from '../../../../Context/StateItemsContext';
 import themingVar from '../../../../themingVar';
 import {getSortFieldByAttributeType} from '../../../../utils';
 import {AttributeType, OrderSearch} from '../../../../_types/types';
-import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 
 interface IWrapperProps {
     isHover: boolean;
@@ -118,19 +118,19 @@ const Header = ({id, children, name, type}: IHeaderProps) => {
 
     const [isHover, setIsHover] = useState<boolean>(false);
 
-    const {stateItems, dispatchItems} = useContext(StateItemsContext);
+    const {items} = useAppSelector(state => state);
+    const dispatch = useAppDispatch();
 
     const handleSort = (attId: string, order: OrderSearch, attType: AttributeType) => {
         const newSortField = getSortFieldByAttributeType(attId, attType);
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SORT,
-            itemsSort: {
+        dispatch(
+            setItemsSort({
                 field: newSortField,
                 order,
                 active: true
-            }
-        });
+            })
+        );
     };
 
     const handleDesc = (attId: string, attType: AttributeType) => {
@@ -142,9 +142,7 @@ const Header = ({id, children, name, type}: IHeaderProps) => {
     };
 
     const cancelSort = () => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.CANCEL_SORT
-        });
+        dispatch(cancelItemsSort());
     };
 
     return (
@@ -174,8 +172,8 @@ const Header = ({id, children, name, type}: IHeaderProps) => {
                         {children}
                         <WrapperArrow
                             className="wrapper-arrow"
-                            filterDirection={stateItems.itemsSort.order}
-                            filterActive={!!stateItems.itemsSort.active}
+                            filterDirection={items.sort?.order}
+                            filterActive={!!items.sort?.active}
                         >
                             <CaretUpOutlined />
                             <CaretDownOutlined />

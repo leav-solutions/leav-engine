@@ -5,6 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {MockStateNavigation} from '../../__mocks__/Navigation/mockState';
 import {mockTreeRecord} from '../../__mocks__/Navigation/mockTreeElements';
@@ -26,7 +27,9 @@ describe('DetailNavigation', () => {
             comp = mount(
                 <MockStateNavigation stateNavigation={{recordDetail: mockTreeRecord}}>
                     <MockedProviderWithFragments>
-                        <DetailNavigation />
+                        <MockStore>
+                            <DetailNavigation />
+                        </MockStore>
                     </MockedProviderWithFragments>
                 </MockStateNavigation>
             );

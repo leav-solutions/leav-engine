@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
+import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import React from 'react';
 import {useStateNavigation} from '../../Context/StateNavigationContext';
 import DefaultActions from './DefaultActions';
@@ -18,14 +19,19 @@ function HeaderColumnNavigationActions({depth, setItems, isDetail}: IActiveHeade
     const currentPositionInPath = depth;
 
     const {stateNavigation} = useStateNavigation();
+    const [activeTree] = useActiveTree();
 
     const parent = stateNavigation.path[currentPositionInPath - 1];
 
     return (
         <span>
-            <SelectionActions parent={parent} depth={depth} />
-            <DefaultActions setItems={setItems} isDetail={isDetail} />
-            <DetailActions depth={depth} isDetail={isDetail} />
+            {activeTree && (
+                <>
+                    <SelectionActions parent={parent} depth={depth} />
+                    <DefaultActions activeTree={activeTree} parent={parent} setItems={setItems} isDetail={isDetail} />
+                    <DetailActions depth={depth} isDetail={isDetail} />
+                </>
+            )}
         </span>
     );
 }

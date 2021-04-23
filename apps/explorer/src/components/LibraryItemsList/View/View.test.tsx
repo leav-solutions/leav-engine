@@ -4,10 +4,10 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {IGetViewListElement} from '../../../graphQL/queries/views/getViewsListQuery';
 import {OrderSearch, ViewType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import View from './View';
 
 describe('View', () => {
@@ -40,9 +40,9 @@ describe('View', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <MockStateItems>
+                    <MockStore>
                         <View view={mockView} onRename={jest.fn()} />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

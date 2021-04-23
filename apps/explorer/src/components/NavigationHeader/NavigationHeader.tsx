@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button} from 'antd';
-import {resetSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {resetSelection} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {SharedStateSelectionType} from '_types/types';
 
 const Wrapper = styled.div`
     height: 3rem;
@@ -21,13 +21,15 @@ const Wrapper = styled.div`
 
 function NavigationHeader(): JSX.Element {
     const {t} = useTranslation();
-    const {stateShared, dispatchShared} = useStateShared();
 
-    const strSelectionType = t(`search.type.${SharedStateSelectionType[stateShared.selection.type]}`);
-    const nbSharedSelectionElements = stateShared.selection.selected.length || 0;
+    const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
+    const dispatch = useAppDispatch();
+
+    const strSelectionType = t(`search.type.${SharedStateSelectionType[selectionState.selection.type]}`);
+    const nbSharedSelectionElements = selectionState.selection.selected.length || 0;
 
     const _clearSelection = () => {
-        dispatchShared(resetSharedSelection());
+        dispatch(resetSelection());
     };
 
     return (

@@ -4,9 +4,9 @@
 import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import mocksGetViewsListQuery from '../../../__mocks__/mockQuery/mockGetViewListQuery';
-import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import EditView from './EditView';
 
 jest.mock('../../../hooks/LangHook/LangHook', () => ({
@@ -19,9 +19,9 @@ describe('EditView', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments mocks={mocks}>
-                    <MockStateItems>
+                    <MockStore>
                         <EditView visible={true} onClose={jest.fn()} id={'id'} />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
 

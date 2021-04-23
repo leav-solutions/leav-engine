@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Card, Col, Row, Spin} from 'antd';
 import React, {useState} from 'react';
+import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import themingVar from '../../../themingVar';
 import {IItem, IRecordEdition} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
@@ -21,7 +21,8 @@ const LoadingWrapper = styled.div`
 
 const Wrapper = styled(Card)`
     &&& {
-        height: calc(100vh - 11rem);
+        grid-area: data;
+        height: 100%;
         overflow-y: scroll;
         margin-bottom: 0;
         border-radius: 0.25rem 0.25rem 0 0;
@@ -32,6 +33,7 @@ const Wrapper = styled(Card)`
 `;
 
 const Footer = styled.div`
+    grid-area: pagination;
     display: flex;
     justify-content: space-around;
     border: 1px solid ${themingVar['@divider-color']};
@@ -39,7 +41,7 @@ const Footer = styled.div`
 `;
 
 function TileDisplay(): JSX.Element {
-    const {stateItems} = useStateItem();
+    const {items, loading} = useAppSelector(state => state.items);
     const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
         show: false
     });
@@ -57,15 +59,15 @@ function TileDisplay(): JSX.Element {
     };
 
     return (
-        <div>
+        <>
             <Wrapper>
-                {stateItems.itemsLoading ? (
+                {loading ? (
                     <LoadingWrapper>
                         <Spin size="large" />
                     </LoadingWrapper>
                 ) : (
                     <Row gutter={[24, 24]}>
-                        {stateItems.items?.map(item => (
+                        {items?.map(item => (
                             <Col key={item.whoAmI.id} span={4}>
                                 <ItemTileDisplay item={item} showRecordEdition={showRecordEdition} />
                             </Col>
@@ -84,7 +86,7 @@ function TileDisplay(): JSX.Element {
                 closeModal={closeRecordEdition}
                 updateValues={updateItem}
             />
-        </div>
+        </>
     );
 }
 

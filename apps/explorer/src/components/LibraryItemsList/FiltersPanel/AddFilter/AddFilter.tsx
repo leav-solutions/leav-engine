@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
-import {useStateItem} from 'Context/StateItemsContext';
 import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import moment from 'moment';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppSelector} from 'redux/store';
 import {defaultFilterConditionByAttributeFormat, getFieldsKeyFromAttribute} from 'utils';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {AttributeFormat, IFilter, ISelectedAttribute} from '../../../../_types/types';
@@ -34,7 +34,8 @@ const _getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | stri
 function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {stateItems} = useStateItem();
+    const {attributes} = useAppSelector(state => state.attributes);
+
     const {stateFilters, dispatchFilters} = useStateFilters();
 
     const [activeLibrary] = useActiveLibrary();
@@ -44,7 +45,7 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
     const addFilters = () => {
         let filterIndex = stateFilters.filters.length + 1;
         const newFilters: IFilter[] = attributesChecked.map(attributeChecked => {
-            const attribute = stateItems.attributes.find(
+            const attribute = attributes.find(
                 att => att.id === attributeChecked.id && att.library === attributeChecked.library
             );
 

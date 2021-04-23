@@ -6,8 +6,10 @@ import {useLazyQuery} from '@apollo/client';
 import {Input, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {setFiltersSearchFullTextActive} from 'redux/filters';
+import {setItems, setItemsLoading, setItemsOffset, setItemsTotalCount} from 'redux/items';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import {getLibrariesListQuery} from '../../../graphQL/queries/libraries/getLibrariesListQuery';
 import {
     ISearchFullTextQuery,
@@ -17,7 +19,6 @@ import {
 } from '../../../graphQL/queries/searchFullText/searchFullText';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 import {manageItems} from '../manageItems';
 
 interface IDeleteSearchCross {
@@ -30,8 +31,8 @@ const DeleteSearchCross = styled.div<IDeleteSearchCross>`
 `;
 
 function SearchItems(): JSX.Element {
-    const {stateItems, dispatchItems} = useStateItem();
-
+    const {items, fields: fieldsState, filters} = useAppSelector(state => state);
+    const dispatch = useAppDispatch();
     const {t} = useTranslation();
 
     const [search, setSearch] = useState<string>('');
@@ -43,13 +44,13 @@ function SearchItems(): JSX.Element {
 
     const [triggerSearch, {data, called, loading, error}] = useLazyQuery<ISearchFullTextQuery, ISearchFullTextVar>(
         activeLib?.id
-            ? searchFullText(activeLib?.id, activeLib?.gql?.type || '', stateItems.fields)
+            ? searchFullText(activeLib?.id, activeLib?.gql?.type || '', fieldsState.fields)
             : getLibrariesListQuery,
         {
             variables: {
                 search,
-                from: stateItems.offset,
-                size: stateItems.pagination
+                from: items.offset,
+                size: items.pagination
             }
         }
     );
@@ -58,30 +59,23 @@ function SearchItems(): JSX.Element {
     useEffect(() => {
         setSearch('');
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
-            searchFullTextActive: false
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_OFFSET,
-            offset: 0
-        });
-    }, [activeLib, dispatchItems, setSearch]);
+        dispatch(setFiltersSearchFullTextActive(false));
+        dispatch(setItemsOffset(0));
+    }, [activeLib, dispatch, setSearch]);
 
     // reload query when columns, pagination or offset change
     useEffect(() => {
-        if (stateItems.searchFullTextActive) {
+        if (filters.searchFullTextActive) {
             setUpdateSearch(true);
             triggerSearch();
         }
     }, [
         setUpdateSearch,
         triggerSearch,
-        stateItems.fields,
-        stateItems.searchFullTextActive,
-        stateItems.pagination,
-        stateItems.offset
+        fieldsState.fields,
+        filters.searchFullTextActive,
+        items.pagination,
+        items.offset
     ]);
 
     useEffect(() => {
@@ -89,22 +83,16 @@ function SearchItems(): JSX.Element {
             const totalCount = data[activeLib.id]?.totalCount;
             const itemsFromQuery: ISearchFullTextResult[] = data[activeLib.id].list;
 
-            const items = manageItems({items: itemsFromQuery, lang, fields: stateItems.fields});
+            const newItems = manageItems({items: itemsFromQuery, lang, fields: fieldsState.fields});
 
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_ITEMS_AND_TOTAL_COUNT,
-                totalCount,
-                items
-            });
+            dispatch(setItemsTotalCount(totalCount));
+            dispatch(setItems(newItems));
 
             setUpdateSearch(false);
 
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
-                itemLoading: false
-            });
+            dispatch(setItemsLoading(false));
         }
-    }, [called, loading, data, updateSearch, setUpdateSearch, dispatchItems, lang, stateItems.fields, activeLib]);
+    }, [called, loading, data, updateSearch, setUpdateSearch, dispatch, lang, fieldsState.fields, activeLib]);
 
     if (error) {
         console.error(error);
@@ -121,20 +109,9 @@ function SearchItems(): JSX.Element {
         if (newSearch === '') {
             resetSearch();
         } else {
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
-                searchFullTextActive: true
-            });
-
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_OFFSET,
-                offset: 0
-            });
-
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_ITEM_LOADING,
-                itemLoading: true
-            });
+            dispatch(setFiltersSearchFullTextActive(true));
+            dispatch(setItemsOffset(0));
+            dispatch(setItemsLoading(true));
 
             setSearch(newSearch);
             setUpdateSearch(true);
@@ -146,15 +123,8 @@ function SearchItems(): JSX.Element {
     const resetSearch = () => {
         setSearch('');
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SEARCH_FULL_TEXT_ACTIVE,
-            searchFullTextActive: false
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_OFFSET,
-            offset: 0
-        });
+        dispatch(setFiltersSearchFullTextActive(false));
+        dispatch(setItemsOffset(0));
     };
 
     return (

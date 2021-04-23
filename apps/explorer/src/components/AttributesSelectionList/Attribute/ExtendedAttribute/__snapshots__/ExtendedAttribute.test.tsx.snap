@@ -4,12 +4,12 @@ exports[`AttributeExtended Should call ExploreEmbeddedFields 1`] = `
 initialize {
   "0": Node {
     "attribs": Object {
-      "class": "sc-kEjbxe iHJuAS",
+      "class": "sc-kDThTU CuHzB",
     },
     "children": Array [
       Node {
         "attribs": Object {
-          "class": "sc-iqHYGH eiTTYX",
+          "class": "sc-iqsfdx cyjoNq",
         },
         "children": Array [
           Node {
@@ -124,7 +124,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Node {
               "attribs": Object {
-                "class": "sc-dlfnbm iaeTId",
+                "class": "sc-dkPtyc kUAsF",
               },
               "children": Array [
                 Node {
@@ -134,7 +134,7 @@ initialize {
                       "data": "test",
                       "next": Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -164,7 +164,7 @@ initialize {
                     },
                     Node {
                       "attribs": Object {
-                        "class": "sc-hKgILt iVHons",
+                        "class": "sc-hKwCoD eSSsiD",
                       },
                       "children": Array [
                         Node {
@@ -312,7 +312,7 @@ initialize {
           },
           Node {
             "attribs": Object {
-              "class": "sc-dlfnbm iaeTId",
+              "class": "sc-dkPtyc kUAsF",
             },
             "children": Array [
               Node {
@@ -322,7 +322,7 @@ initialize {
                     "data": "test",
                     "next": Node {
                       "attribs": Object {
-                        "class": "sc-hKgILt iVHons",
+                        "class": "sc-hKwCoD eSSsiD",
                       },
                       "children": Array [
                         Node {
@@ -352,7 +352,7 @@ initialize {
                   },
                   Node {
                     "attribs": Object {
-                      "class": "sc-hKgILt iVHons",
+                      "class": "sc-hKwCoD eSSsiD",
                     },
                     "children": Array [
                       Node {
@@ -678,7 +678,7 @@ initialize {
             "parent": [Circular],
             "prev": Node {
               "attribs": Object {
-                "class": "sc-dlfnbm iaeTId",
+                "class": "sc-dkPtyc kUAsF",
               },
               "children": Array [
                 Node {
@@ -688,7 +688,7 @@ initialize {
                       "data": "test",
                       "next": Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -718,7 +718,7 @@ initialize {
                     },
                     Node {
                       "attribs": Object {
-                        "class": "sc-hKgILt iVHons",
+                        "class": "sc-hKwCoD eSSsiD",
                       },
                       "children": Array [
                         Node {
@@ -1140,7 +1140,7 @@ initialize {
         "parent": [Circular],
         "prev": Node {
           "attribs": Object {
-            "class": "sc-iqHYGH eiTTYX",
+            "class": "sc-iqsfdx cyjoNq",
           },
           "children": Array [
             Node {
@@ -1255,7 +1255,7 @@ initialize {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
                 "attribs": Object {
-                  "class": "sc-dlfnbm iaeTId",
+                  "class": "sc-dkPtyc kUAsF",
                 },
                 "children": Array [
                   Node {
@@ -1265,7 +1265,7 @@ initialize {
                         "data": "test",
                         "next": Node {
                           "attribs": Object {
-                            "class": "sc-hKgILt iVHons",
+                            "class": "sc-hKwCoD eSSsiD",
                           },
                           "children": Array [
                             Node {
@@ -1295,7 +1295,7 @@ initialize {
                       },
                       Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -1443,7 +1443,7 @@ initialize {
             },
             Node {
               "attribs": Object {
-                "class": "sc-dlfnbm iaeTId",
+                "class": "sc-dkPtyc kUAsF",
               },
               "children": Array [
                 Node {
@@ -1453,7 +1453,7 @@ initialize {
                       "data": "test",
                       "next": Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -1483,7 +1483,7 @@ initialize {
                     },
                     Node {
                       "attribs": Object {
-                        "class": "sc-hKgILt iVHons",
+                        "class": "sc-hKwCoD eSSsiD",
                       },
                       "children": Array [
                         Node {
@@ -1809,7 +1809,7 @@ initialize {
               "parent": [Circular],
               "prev": Node {
                 "attribs": Object {
-                  "class": "sc-dlfnbm iaeTId",
+                  "class": "sc-dkPtyc kUAsF",
                 },
                 "children": Array [
                   Node {
@@ -1819,7 +1819,7 @@ initialize {
                         "data": "test",
                         "next": Node {
                           "attribs": Object {
-                            "class": "sc-hKgILt iVHons",
+                            "class": "sc-hKwCoD eSSsiD",
                           },
                           "children": Array [
                             Node {
@@ -1849,7 +1849,7 @@ initialize {
                       },
                       Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -2069,7 +2069,7 @@ initialize {
       "children": Array [
         Node {
           "attribs": Object {
-            "class": "sc-fubCfw bTIxzQ",
+            "class": "sc-furvIG coarHY",
           },
           "children": Array [
             Node {
@@ -2176,7 +2176,7 @@ initialize {
           "children": Array [
             Node {
               "attribs": Object {
-                "class": "sc-fubCfw bTIxzQ",
+                "class": "sc-furvIG coarHY",
               },
               "children": Array [
                 Node {
@@ -2286,7 +2286,7 @@ initialize {
     "children": Array [
       Node {
         "attribs": Object {
-          "class": "sc-fubCfw bTIxzQ",
+          "class": "sc-furvIG coarHY",
         },
         "children": Array [
           Node {
@@ -2367,12 +2367,12 @@ initialize {
       "children": Array [
         Node {
           "attribs": Object {
-            "class": "sc-kEjbxe iHJuAS",
+            "class": "sc-kDThTU CuHzB",
           },
           "children": Array [
             Node {
               "attribs": Object {
-                "class": "sc-iqHYGH eiTTYX",
+                "class": "sc-iqsfdx cyjoNq",
               },
               "children": Array [
                 Node {
@@ -2487,7 +2487,7 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": Node {
                     "attribs": Object {
-                      "class": "sc-dlfnbm iaeTId",
+                      "class": "sc-dkPtyc kUAsF",
                     },
                     "children": Array [
                       Node {
@@ -2497,7 +2497,7 @@ initialize {
                             "data": "test",
                             "next": Node {
                               "attribs": Object {
-                                "class": "sc-hKgILt iVHons",
+                                "class": "sc-hKwCoD eSSsiD",
                               },
                               "children": Array [
                                 Node {
@@ -2527,7 +2527,7 @@ initialize {
                           },
                           Node {
                             "attribs": Object {
-                              "class": "sc-hKgILt iVHons",
+                              "class": "sc-hKwCoD eSSsiD",
                             },
                             "children": Array [
                               Node {
@@ -2675,7 +2675,7 @@ initialize {
                 },
                 Node {
                   "attribs": Object {
-                    "class": "sc-dlfnbm iaeTId",
+                    "class": "sc-dkPtyc kUAsF",
                   },
                   "children": Array [
                     Node {
@@ -2685,7 +2685,7 @@ initialize {
                           "data": "test",
                           "next": Node {
                             "attribs": Object {
-                              "class": "sc-hKgILt iVHons",
+                              "class": "sc-hKwCoD eSSsiD",
                             },
                             "children": Array [
                               Node {
@@ -2715,7 +2715,7 @@ initialize {
                         },
                         Node {
                           "attribs": Object {
-                            "class": "sc-hKgILt iVHons",
+                            "class": "sc-hKwCoD eSSsiD",
                           },
                           "children": Array [
                             Node {
@@ -3041,7 +3041,7 @@ initialize {
                   "parent": [Circular],
                   "prev": Node {
                     "attribs": Object {
-                      "class": "sc-dlfnbm iaeTId",
+                      "class": "sc-dkPtyc kUAsF",
                     },
                     "children": Array [
                       Node {
@@ -3051,7 +3051,7 @@ initialize {
                             "data": "test",
                             "next": Node {
                               "attribs": Object {
-                                "class": "sc-hKgILt iVHons",
+                                "class": "sc-hKwCoD eSSsiD",
                               },
                               "children": Array [
                                 Node {
@@ -3081,7 +3081,7 @@ initialize {
                           },
                           Node {
                             "attribs": Object {
-                              "class": "sc-hKgILt iVHons",
+                              "class": "sc-hKwCoD eSSsiD",
                             },
                             "children": Array [
                               Node {
@@ -3503,7 +3503,7 @@ initialize {
               "parent": [Circular],
               "prev": Node {
                 "attribs": Object {
-                  "class": "sc-iqHYGH eiTTYX",
+                  "class": "sc-iqsfdx cyjoNq",
                 },
                 "children": Array [
                   Node {
@@ -3618,7 +3618,7 @@ initialize {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Node {
                       "attribs": Object {
-                        "class": "sc-dlfnbm iaeTId",
+                        "class": "sc-dkPtyc kUAsF",
                       },
                       "children": Array [
                         Node {
@@ -3628,7 +3628,7 @@ initialize {
                               "data": "test",
                               "next": Node {
                                 "attribs": Object {
-                                  "class": "sc-hKgILt iVHons",
+                                  "class": "sc-hKwCoD eSSsiD",
                                 },
                                 "children": Array [
                                   Node {
@@ -3658,7 +3658,7 @@ initialize {
                             },
                             Node {
                               "attribs": Object {
-                                "class": "sc-hKgILt iVHons",
+                                "class": "sc-hKwCoD eSSsiD",
                               },
                               "children": Array [
                                 Node {
@@ -3806,7 +3806,7 @@ initialize {
                   },
                   Node {
                     "attribs": Object {
-                      "class": "sc-dlfnbm iaeTId",
+                      "class": "sc-dkPtyc kUAsF",
                     },
                     "children": Array [
                       Node {
@@ -3816,7 +3816,7 @@ initialize {
                             "data": "test",
                             "next": Node {
                               "attribs": Object {
-                                "class": "sc-hKgILt iVHons",
+                                "class": "sc-hKwCoD eSSsiD",
                               },
                               "children": Array [
                                 Node {
@@ -3846,7 +3846,7 @@ initialize {
                           },
                           Node {
                             "attribs": Object {
-                              "class": "sc-hKgILt iVHons",
+                              "class": "sc-hKwCoD eSSsiD",
                             },
                             "children": Array [
                               Node {
@@ -4172,7 +4172,7 @@ initialize {
                     "parent": [Circular],
                     "prev": Node {
                       "attribs": Object {
-                        "class": "sc-dlfnbm iaeTId",
+                        "class": "sc-dkPtyc kUAsF",
                       },
                       "children": Array [
                         Node {
@@ -4182,7 +4182,7 @@ initialize {
                               "data": "test",
                               "next": Node {
                                 "attribs": Object {
-                                  "class": "sc-hKgILt iVHons",
+                                  "class": "sc-hKwCoD eSSsiD",
                                 },
                                 "children": Array [
                                   Node {
@@ -4212,7 +4212,7 @@ initialize {
                             },
                             Node {
                               "attribs": Object {
-                                "class": "sc-hKgILt iVHons",
+                                "class": "sc-hKwCoD eSSsiD",
                               },
                               "children": Array [
                                 Node {
@@ -4446,12 +4446,12 @@ initialize {
     },
     "prev": Node {
       "attribs": Object {
-        "class": "sc-kEjbxe iHJuAS",
+        "class": "sc-kDThTU CuHzB",
       },
       "children": Array [
         Node {
           "attribs": Object {
-            "class": "sc-iqHYGH eiTTYX",
+            "class": "sc-iqsfdx cyjoNq",
           },
           "children": Array [
             Node {
@@ -4566,7 +4566,7 @@ initialize {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
                 "attribs": Object {
-                  "class": "sc-dlfnbm iaeTId",
+                  "class": "sc-dkPtyc kUAsF",
                 },
                 "children": Array [
                   Node {
@@ -4576,7 +4576,7 @@ initialize {
                         "data": "test",
                         "next": Node {
                           "attribs": Object {
-                            "class": "sc-hKgILt iVHons",
+                            "class": "sc-hKwCoD eSSsiD",
                           },
                           "children": Array [
                             Node {
@@ -4606,7 +4606,7 @@ initialize {
                       },
                       Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -4754,7 +4754,7 @@ initialize {
             },
             Node {
               "attribs": Object {
-                "class": "sc-dlfnbm iaeTId",
+                "class": "sc-dkPtyc kUAsF",
               },
               "children": Array [
                 Node {
@@ -4764,7 +4764,7 @@ initialize {
                       "data": "test",
                       "next": Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -4794,7 +4794,7 @@ initialize {
                     },
                     Node {
                       "attribs": Object {
-                        "class": "sc-hKgILt iVHons",
+                        "class": "sc-hKwCoD eSSsiD",
                       },
                       "children": Array [
                         Node {
@@ -5120,7 +5120,7 @@ initialize {
               "parent": [Circular],
               "prev": Node {
                 "attribs": Object {
-                  "class": "sc-dlfnbm iaeTId",
+                  "class": "sc-dkPtyc kUAsF",
                 },
                 "children": Array [
                   Node {
@@ -5130,7 +5130,7 @@ initialize {
                         "data": "test",
                         "next": Node {
                           "attribs": Object {
-                            "class": "sc-hKgILt iVHons",
+                            "class": "sc-hKwCoD eSSsiD",
                           },
                           "children": Array [
                             Node {
@@ -5160,7 +5160,7 @@ initialize {
                       },
                       Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -5582,7 +5582,7 @@ initialize {
           "parent": [Circular],
           "prev": Node {
             "attribs": Object {
-              "class": "sc-iqHYGH eiTTYX",
+              "class": "sc-iqsfdx cyjoNq",
             },
             "children": Array [
               Node {
@@ -5697,7 +5697,7 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": Node {
                   "attribs": Object {
-                    "class": "sc-dlfnbm iaeTId",
+                    "class": "sc-dkPtyc kUAsF",
                   },
                   "children": Array [
                     Node {
@@ -5707,7 +5707,7 @@ initialize {
                           "data": "test",
                           "next": Node {
                             "attribs": Object {
-                              "class": "sc-hKgILt iVHons",
+                              "class": "sc-hKwCoD eSSsiD",
                             },
                             "children": Array [
                               Node {
@@ -5737,7 +5737,7 @@ initialize {
                         },
                         Node {
                           "attribs": Object {
-                            "class": "sc-hKgILt iVHons",
+                            "class": "sc-hKwCoD eSSsiD",
                           },
                           "children": Array [
                             Node {
@@ -5885,7 +5885,7 @@ initialize {
               },
               Node {
                 "attribs": Object {
-                  "class": "sc-dlfnbm iaeTId",
+                  "class": "sc-dkPtyc kUAsF",
                 },
                 "children": Array [
                   Node {
@@ -5895,7 +5895,7 @@ initialize {
                         "data": "test",
                         "next": Node {
                           "attribs": Object {
-                            "class": "sc-hKgILt iVHons",
+                            "class": "sc-hKwCoD eSSsiD",
                           },
                           "children": Array [
                             Node {
@@ -5925,7 +5925,7 @@ initialize {
                       },
                       Node {
                         "attribs": Object {
-                          "class": "sc-hKgILt iVHons",
+                          "class": "sc-hKwCoD eSSsiD",
                         },
                         "children": Array [
                           Node {
@@ -6251,7 +6251,7 @@ initialize {
                 "parent": [Circular],
                 "prev": Node {
                   "attribs": Object {
-                    "class": "sc-dlfnbm iaeTId",
+                    "class": "sc-dkPtyc kUAsF",
                   },
                   "children": Array [
                     Node {
@@ -6261,7 +6261,7 @@ initialize {
                           "data": "test",
                           "next": Node {
                             "attribs": Object {
-                              "class": "sc-hKgILt iVHons",
+                              "class": "sc-hKwCoD eSSsiD",
                             },
                             "children": Array [
                               Node {
@@ -6291,7 +6291,7 @@ initialize {
                         },
                         Node {
                           "attribs": Object {
-                            "class": "sc-hKgILt iVHons",
+                            "class": "sc-hKwCoD eSSsiD",
                           },
                           "children": Array [
                             Node {

@@ -11,6 +11,13 @@ import EmbeddedField from './EmbeddedField';
 
 jest.mock('../../../reducer/attributesSelectionListStateContext');
 
+jest.mock('react-spring', () => ({
+    useSpring: () => [{transform: ''}, jest.fn()],
+    animated: {
+        div: () => <div></div>
+    }
+}));
+
 describe('ChangeAttribute', () => {
     test('Display selectable attribute', async () => {
         let comp: any;

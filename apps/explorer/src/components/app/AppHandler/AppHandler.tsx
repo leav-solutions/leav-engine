@@ -4,9 +4,6 @@
 import {filterReducerInitialState} from 'hooks/FiltersStateHook/FilterReducerInitialState';
 import {filterStateReducer} from 'hooks/FiltersStateHook/FiltersStateReducer';
 import {FilterStateContext} from 'hooks/FiltersStateHook/FilterStateContext';
-import {sharedReducerInitialState} from 'hooks/SharedStateHook/SharedReducerInitialState';
-import {SharedStateContext} from 'hooks/SharedStateHook/SharedStateContext';
-import {sharedStateReducer} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
@@ -27,7 +24,6 @@ function AppHandler(): JSX.Element {
     const defaultLang = i18n.language ? AvailableLanguage[i18n.language as AvailableLanguage] : AvailableLanguage.en;
 
     const [stateFilters, dispatchFilters] = useReducer(filterStateReducer, filterReducerInitialState);
-    const [stateShared, dispatchShared] = useReducer(sharedStateReducer, sharedReducerInitialState);
 
     const [langInfo, updateLang] = useLang();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
@@ -68,11 +64,9 @@ function AppHandler(): JSX.Element {
     }, [updateUser, user]);
 
     return (
-        <SharedStateContext.Provider value={{stateShared, dispatchShared}}>
-            <FilterStateContext.Provider value={{stateFilters, dispatchFilters}}>
-                <Router />
-            </FilterStateContext.Provider>
-        </SharedStateContext.Provider>
+        <FilterStateContext.Provider value={{stateFilters, dispatchFilters}}>
+            <Router />
+        </FilterStateContext.Provider>
     );
 }
 

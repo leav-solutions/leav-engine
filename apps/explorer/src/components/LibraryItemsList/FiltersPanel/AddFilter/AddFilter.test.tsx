@@ -5,6 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import wait from 'waait';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import AddFilter from './AddFilter';
 
@@ -23,7 +24,9 @@ describe('AttributeList', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <AddFilter showAttr setShowAttr={jest.fn()} />
+                    <MockStore>
+                        <AddFilter showAttr setShowAttr={jest.fn()} />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
 

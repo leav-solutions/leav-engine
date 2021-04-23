@@ -4,6 +4,7 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {mockTreeElement} from '../../__mocks__/Navigation/mockTreeElements';
 import ActiveCellNavigation from './ActiveCellNavigation';
@@ -13,7 +14,9 @@ describe('ActiveCellNavigation', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <ActiveCellNavigation treeElement={mockTreeElement} depth={0} />
+                    <MockStore>
+                        <ActiveCellNavigation treeElement={mockTreeElement} depth={0} />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

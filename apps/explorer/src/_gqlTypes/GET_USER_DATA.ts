@@ -10,7 +10,16 @@
 // GraphQL query operation: GET_USER_DATA
 // ====================================================
 
+export interface GET_USER_DATA_userData {
+    global: boolean;
+    data: any | null;
+}
+
 export interface GET_USER_DATA {
+    userData: GET_USER_DATA_userData;
+}
+
+export interface GET_USER_DATAVariables {
     key: string;
-    global?: boolean;
+    global?: boolean | null;
 }

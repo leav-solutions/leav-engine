@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
+import {useSelector} from 'react-redux';
+import {RootState} from 'redux/store';
 import styled from 'styled-components';
 import {infosCol} from '../../../../constants/constants';
-import {useStateItem} from '../../../../Context/StateItemsContext';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {displayTypeToPreviewSize} from '../../../../utils';
 import {AttributeType, ITableItem, PreviewSize} from '../../../../_types/types';
@@ -24,13 +25,10 @@ interface ICellProps {
 const Cell = ({columnName, data, index}: ICellProps) => {
     const {value, type, id, library, label} = data;
 
-    const {
-        stateItems: {displaySize: displayType}
-    } = useStateItem();
-
+    const {size} = useSelector((state: RootState) => state.display);
     const [{lang}] = useLang();
 
-    const previewSize: PreviewSize = displayTypeToPreviewSize(displayType);
+    const previewSize: PreviewSize = displayTypeToPreviewSize(size);
 
     const selectionData = {
         id,
@@ -56,7 +54,7 @@ const Cell = ({columnName, data, index}: ICellProps) => {
                 return (
                     <CellInfos
                         record={value}
-                        size={previewSize}
+                        previewSize={previewSize}
                         lang={lang}
                         index={index}
                         selectionData={selectionData}

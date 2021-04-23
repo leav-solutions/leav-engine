@@ -4,6 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {
     mockAttributeExtended,
     mockAttributeLink,
@@ -30,7 +31,7 @@ jest.mock(
 );
 
 jest.mock(
-    './TreeLinkAttribute',
+    './TreeLinkAttribute/TreeLinkAttribute',
     () =>
         function TreeLinkAttribute() {
             return <>TreeLinkAttribute</>;
@@ -71,7 +72,14 @@ describe('Attribute', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <Attribute attribute={mockAttributeLink} depth={0} path={mockAttributeLink.id} library="test_lib" />
+                    <MockStore>
+                        <Attribute
+                            attribute={mockAttributeLink}
+                            depth={0}
+                            path={mockAttributeLink.id}
+                            library="test_lib"
+                        />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
@@ -85,7 +93,14 @@ describe('Attribute', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <Attribute attribute={mockAttributeTree} depth={0} path={mockAttributeTree.id} library="test_lib" />
+                    <MockStore>
+                        <Attribute
+                            attribute={mockAttributeTree}
+                            depth={0}
+                            path={mockAttributeTree.id}
+                            library="test_lib"
+                        />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
@@ -99,12 +114,14 @@ describe('Attribute', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <Attribute
-                        attribute={mockAttributeExtended}
-                        depth={0}
-                        path={mockAttributeExtended.id}
-                        library="test_lib"
-                    />
+                    <MockStore>
+                        <Attribute
+                            attribute={mockAttributeExtended}
+                            depth={0}
+                            path={mockAttributeExtended.id}
+                            library="test_lib"
+                        />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
