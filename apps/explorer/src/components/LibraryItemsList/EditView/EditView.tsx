@@ -6,8 +6,9 @@ import {Divider, Form, Input, Modal, Spin} from 'antd';
 import {isEqual} from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setViewCurrent, setViewReload} from 'redux/view';
 import {viewSettingsField} from '../../../constants/constants';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
@@ -24,7 +25,6 @@ import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {localizedLabel} from '../../../utils';
 import {ILabel, IView, ViewType} from '../../../_types/types';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 interface IFormValues {
     [x: string]: string;
@@ -38,10 +38,13 @@ interface IEditViewProps {
 
 function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
     const {t} = useTranslation();
+
+    const {items, filters, fields: fieldsState} = useAppSelector(state => state);
+    const dispatch = useAppDispatch();
+
     const [activeLibrary] = useActiveLibrary();
     const [{lang, availableLangs, defaultLang}] = useLang();
     const [form] = Form.useForm();
-    const {stateItems, dispatchItems} = useStateItem();
     const [confirmLoading, setConfirmLoading] = React.useState(false);
 
     const {data, loading, error} = useQuery<IGetViewListQuery, IGetViewListVariables>(getViewsListQuery, {
@@ -120,21 +123,21 @@ function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
             // Fields
             let viewFields: string[] = [];
             if (currentView.type === ViewType.list) {
-                viewFields = stateItems.fields.map(field => {
+                viewFields = fieldsState.fields.map(field => {
                     const settingsField = field.key;
                     return settingsField;
                 });
             }
 
-            const viewFilters = stateItems.queryFilters.reduce((acc, queryFilter) => {
+            const viewFilters = filters.queryFilters.reduce((acc, queryFilter) => {
                 return [...acc, queryFilter];
             }, [] as IAddViewMutationVariablesFilter[]);
 
             const color = values.color ?? currentView.color ?? themingVar['@primary-color'];
 
             const sort = {
-                field: stateItems.itemsSort.field,
-                order: stateItems.itemsSort.order
+                field: items.sort.field,
+                order: items.sort.order
             };
 
             const newView: IAddViewMutationVariablesView = {
@@ -171,22 +174,14 @@ function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
                 color: newView.color,
                 shared: newView.shared,
                 fields: newView.settings?.find(setting => setting.name === viewSettingsField)?.value ?? [],
-                filters: stateItems.queryFilters,
+                filters: filters.queryFilters,
                 sort
             };
 
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_VIEW,
-                view: {
-                    current: newCurrentView
-                }
-            });
+            dispatch(setViewCurrent(newCurrentView));
 
             // refetch views
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_RELOAD_VIEW,
-                reload: true
-            });
+            dispatch(setViewReload(true));
         }
         setConfirmLoading(false);
         onClose();

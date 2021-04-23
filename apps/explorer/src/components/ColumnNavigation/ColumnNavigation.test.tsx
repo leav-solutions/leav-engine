@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {mockTreeElements} from '../../__mocks__/Navigation/mockTreeElements';
 import ColumnNavigation from './ColumnNavigation';
@@ -19,7 +20,9 @@ describe('ColumnNavigation', () => {
     test('should call CellNavigation', async () => {
         render(
             <MockedProviderWithFragments>
-                <ColumnNavigation treeElements={mockTreeElements} />
+                <MockStore>
+                    <ColumnNavigation treeElements={mockTreeElements} />
+                </MockStore>
             </MockedProviderWithFragments>
         );
 

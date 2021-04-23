@@ -5,6 +5,7 @@ import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {mockFilter} from '__mocks__/common/filter';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import Filter from './Filter';
 
@@ -13,7 +14,9 @@ describe('Filter', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <Filter filter={mockFilter} handleProps={{} as any} />
+                    <MockStore>
+                        <Filter filter={mockFilter} handleProps={{} as any} />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

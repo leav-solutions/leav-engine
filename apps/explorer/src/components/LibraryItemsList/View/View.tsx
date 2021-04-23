@@ -6,10 +6,11 @@ import {useMutation} from '@apollo/client';
 import {Button, Dropdown, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setViewCurrent, setViewReload} from 'redux/view';
 import styled from 'styled-components';
 import {IconChecked} from '../../../assets/icons/IconChecked';
 import {viewSettingsField} from '../../../constants/constants';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import deleteViewMutation, {
     IDeleteViewMutation,
     IDeleteViewMutationVariables
@@ -20,7 +21,6 @@ import themingVar from '../../../themingVar';
 import {limitTextSize, localizedLabel} from '../../../utils';
 import {IQueryFilter, IView} from '../../../_types/types';
 import IconViewType from '../../IconViewType';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 interface IWrapperProps {
     selected: boolean;
@@ -91,7 +91,10 @@ interface IViewProps {
 
 function View({view, onRename}: IViewProps): JSX.Element {
     const {t} = useTranslation();
-    const {stateItems, dispatchItems} = useStateItem();
+
+    const viewState = useAppSelector(state => state.view);
+    const dispatch = useAppDispatch();
+
     const [{lang}] = useLang();
 
     const viewLabel = localizedLabel(view.label, lang);
@@ -122,32 +125,22 @@ function View({view, onRename}: IViewProps): JSX.Element {
             sort: view.sort
         };
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_VIEW,
-            view: {current: currentView}
-        });
-
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_RELOAD_VIEW,
-            reload: true
-        });
+        dispatch(setViewCurrent(currentView));
+        dispatch(setViewReload(true));
     };
 
     const _handleDelete = () => {
         deleteView({variables: {viewId: view.id}});
 
         // set flag to refetch views
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_RELOAD_VIEW,
-            reload: true
-        });
+        dispatch(setViewReload(true));
     };
 
     const _handleRename = () => {
         onRename(view.id);
     };
 
-    const selected = view.id === stateItems.view.current?.id;
+    const selected = view.id === viewState.current?.id;
 
     return (
         <>

@@ -94,7 +94,7 @@ export interface IGetLibraryDetailExtendedVariables {
 }
 
 export const getLibraryDetailExtendedQuery = gql`
-    query GET_LIBRARY_DETAIL($libId: ID) {
+    query GET_LIBRARY_DETAIL_EXTENDED($libId: ID) {
         libraries(filters: {id: $libId}) {
             list {
                 id

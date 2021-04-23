@@ -1,41 +1,26 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import wait from 'waait';
-import {StateItemsContext} from '../../../Context/StateItemsContext';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
 import SearchItems from './SearchItems';
 
 describe('SearchItems', () => {
-    const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
-
-    test('should use dispatchItems when form submit', async () => {
-        let comp: any;
-
+    test('should display text field and submit button', async () => {
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
-                    <StateItemsContext.Provider
-                        value={{
-                            stateItems: {...LibraryItemListInitialState},
-                            dispatchItems
-                        }}
-                    >
+                    <MockStore>
                         <SearchItems />
-                    </StateItemsContext.Provider>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
-
-            await wait();
-
-            comp.update();
         });
 
-        expect(comp.find('Input')).toHaveLength(1);
-        comp.find('Input').simulate('submit');
+        expect(screen.getByRole('textbox')).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: 'search'})).toBeInTheDocument();
     });
 });

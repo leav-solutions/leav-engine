@@ -5,10 +5,9 @@ import {RightOutlined} from '@ant-design/icons';
 import {Badge, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {useLang} from 'hooks/LangHook/LangHook';
-import {setSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {ISharedSelected, SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
+import {setSelection} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {localizedLabel} from 'utils';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
@@ -16,7 +15,13 @@ import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
 import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducerActions';
 import themingVar from '../../themingVar';
-import {INavigationPath, IRecordIdentityWhoAmI, PreviewSize} from '../../_types/types';
+import {
+    INavigationPath,
+    IRecordIdentityWhoAmI,
+    ISharedSelected,
+    PreviewSize,
+    SharedStateSelectionType
+} from '../../_types/types';
 import RecordCard from '../shared/RecordCard';
 
 interface ICellProps {
@@ -75,9 +80,10 @@ interface IActiveCellNavigationProps {
 
 function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps): JSX.Element {
     const {stateNavigation, dispatchNavigation} = useStateNavigation();
-    const {stateShared, dispatchShared} = useStateShared();
-
     const [{lang}] = useLang();
+
+    const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
+    const dispatch = useAppDispatch();
 
     const parentElement = stateNavigation.path[depth - 1];
     const parent: TreeElementInput = {
@@ -109,14 +115,14 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
         e.preventDefault();
         e.stopPropagation();
 
-        const current = stateShared.selection.selected.find(
+        const current = selectionState.selection.selected.find(
             element =>
                 element.id === treeElement.record.whoAmI.id && element.library === treeElement.record.whoAmI.library.id
         );
 
         if (current) {
             // remove from selected
-            const newSelected = stateShared.selection.selected.filter(
+            const newSelected = selectionState.selection.selected.filter(
                 element =>
                     element.id !== treeElement.record.whoAmI.id ||
                     element.library !== treeElement.record.whoAmI.library.id
@@ -128,7 +134,7 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
                 parent
             };
 
-            dispatchShared(setSharedSelection(selection));
+            dispatch(setSelection(selection));
         } else {
             // add to selected
             const label = localizedLabel(treeElement.record.whoAmI.label, lang);
@@ -140,13 +146,13 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
 
             // reset selection if previous selection is not navigation or if the parent change
             let newSelected: ISharedSelected[] = [newElementSelected];
-            if (stateShared.selection.type === SharedStateSelectionType.navigation) {
+            if (selectionState.selection.type === SharedStateSelectionType.navigation) {
                 if (
-                    parent.id === stateShared.selection.parent?.id &&
-                    parent.library === stateShared.selection.parent?.library
+                    parent.id === selectionState.selection.parent?.id &&
+                    parent.library === selectionState.selection.parent?.library
                 ) {
                     // keep selection if parent is the same
-                    newSelected = [...stateShared.selection.selected, newElementSelected];
+                    newSelected = [...selectionState.selection.selected, newElementSelected];
                 }
             }
 
@@ -156,7 +162,7 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
                 parent
             };
 
-            dispatchShared(setSharedSelection(selection));
+            dispatch(setSelection(selection));
         }
     };
 
@@ -170,12 +176,10 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
             pathPart.id === treeElement.record.whoAmI.id && pathPart.library === treeElement.record.whoAmI.library.id
     );
 
-    const isChecked = stateShared.selection.selected.some(
+    const isChecked = selectionState.selection.selected.some(
         element =>
             element.id === treeElement.record.whoAmI.id && element.library === treeElement.record.whoAmI.library.id
     );
-
-    const hasChild = !!treeElement.children?.length;
 
     return (
         <Cell onClick={addPath} isInPath={isInPath}>
@@ -186,7 +190,7 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
                     e.stopPropagation();
                 }}
                 className="checkbox-wrapper"
-                selectionActive={!!stateShared.selection.selected.length}
+                selectionActive={!!selectionState.selection.selected.length}
             >
                 <Checkbox onClick={handleCheckboxOnClick} checked={isChecked} />
             </CheckboxWrapper>

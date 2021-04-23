@@ -4,11 +4,11 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {attributesInitialState} from 'redux/attributes';
 import wait from 'waait';
-import {StateItemsContext} from '../../../../Context/StateItemsContext';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {AttributeFormat, AttributeType, IAttribute} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
-import {LibraryItemListInitialState} from '../../LibraryItemsListReducer';
 import ChooseTableColumns from './ChooseTableColumns';
 
 jest.mock(
@@ -36,19 +36,18 @@ describe('ChooseTableColumns', () => {
             }
         ];
 
+        const stateMock = {
+            attributes: {...attributesInitialState, attributes: attributesMock}
+        };
+
         let comp: any;
 
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <StateItemsContext.Provider
-                        value={{
-                            stateItems: {...LibraryItemListInitialState, attributes: attributesMock},
-                            dispatchItems: jest.fn()
-                        }}
-                    >
+                    <MockStore state={stateMock}>
                         <ChooseTableColumns openChangeColumns setOpenChangeColumns={jest.fn()} />
-                    </StateItemsContext.Provider>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
 

@@ -4,14 +4,13 @@
 import {CheckSquareTwoTone, DeleteOutlined, DownOutlined, LogoutOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import {useLang} from 'hooks/LangHook/LangHook';
-import {resetSharedSelection, setSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {resetSearchSelection, resetSelection, setSearchSelection, setSelection} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {localizedLabel} from 'utils';
-import {useStateItem} from '../../../Context/StateItemsContext';
+import {SharedStateSelectionType} from '_types/types';
 import themingVars from '../../../themingVar';
 import ActionsMenu from './ActionsMenu';
 
@@ -57,25 +56,38 @@ const Wrapper = styled.div<IWrapperProps>`
 function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {stateItems} = useStateItem();
-    const {stateShared, dispatchShared} = useStateShared();
+    const {selectionState, display, items} = useAppSelector(state => ({
+        selectionState: state.selection,
+        display: state.display,
+        items: state.items
+    }));
+    const dispatch = useAppDispatch();
+
     const [{lang}] = useLang();
 
     const [countItemsSelected, setCountItemsSelected] = useState(0);
 
     const disableModeSelection = () => {
-        dispatchShared(resetSharedSelection());
+        if (display.selectionMode) {
+            dispatch(resetSearchSelection());
+        } else {
+            dispatch(resetSelection());
+        }
     };
 
     useEffect(() => {
-        setCountItemsSelected(stateShared.selection.selected.length);
-    }, [stateShared.selection, setCountItemsSelected]);
+        if (display.selectionMode) {
+            setCountItemsSelected(selectionState.searchSelection.selected.length);
+        } else {
+            setCountItemsSelected(selectionState.selection.selected.length);
+        }
+    }, [selectionState.selection, selectionState.searchSelection, display.selectionMode, setCountItemsSelected]);
 
     const selectVisible = () => {
-        let selected = [...stateShared.selection.selected];
+        let selected = [...selectionState.selection.selected];
 
-        if (stateItems.items) {
-            for (const item of stateItems.items) {
+        if (items.items) {
+            for (const item of items.items) {
                 selected = [
                     ...selected,
                     {
@@ -87,38 +99,49 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
             }
         }
 
-        dispatchShared(
-            setSharedSelection({
-                type: SharedStateSelectionType.search,
-                selected,
-                allSelected: false
-            })
-        );
+        if (display.selectionMode) {
+            dispatch(
+                setSearchSelection({
+                    type: SharedStateSelectionType.search,
+                    selected,
+                    allSelected: false
+                })
+            );
+        } else {
+            dispatch(
+                setSelection({
+                    type: SharedStateSelectionType.search,
+                    selected,
+                    allSelected: false
+                })
+            );
+        }
     };
 
     const selectAll = () => {
-        // reset selected elements
-        dispatchShared(
-            setSharedSelection({
-                type: SharedStateSelectionType.search,
-                selected: [],
-                allSelected: true
-            })
-        );
+        if (!display.selectionMode) {
+            dispatch(
+                setSelection({
+                    type: SharedStateSelectionType.search,
+                    selected: [],
+                    allSelected: true
+                })
+            );
+        }
     };
 
     const unselectAll = () => {
-        dispatchShared(
-            setSharedSelection({
-                type: SharedStateSelectionType.search,
-                selected: [],
-                allSelected: false
-            })
-        );
+        if (display.selectionMode) {
+            dispatch(resetSearchSelection());
+        } else {
+            dispatch(resetSelection());
+        }
     };
 
-    const allSelectActive =
-        stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected;
+    const allSelectActive = display.selectionMode
+        ? selectionState.searchSelection.type === SharedStateSelectionType.search &&
+          selectionState.searchSelection.allSelected
+        : selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
 
     return (
         <Wrapper active={active}>
@@ -127,11 +150,13 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     overlay={
                         <Menu>
                             <Menu.Item onClick={selectVisible}>
-                                {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
+                                {t('items-menu-dropdown.select-visible', {nb: items.items?.length})}
                             </Menu.Item>
-                            <Menu.Item onClick={selectAll}>
-                                {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
-                            </Menu.Item>
+                            {!display.selectionMode && (
+                                <Menu.Item onClick={selectAll}>
+                                    {t('items-menu-dropdown.select-all', {nb: items.totalCount})}
+                                </Menu.Item>
+                            )}
                             <Menu.Item onClick={unselectAll}>{t('menu-selection.unselect-all')}</Menu.Item>
                         </Menu>
                     }
@@ -148,11 +173,15 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     </Button>
                 </Dropdown>
 
-                <ActionsMenu />
+                {!display.selectionMode && (
+                    <>
+                        <ActionsMenu />
 
-                <div>
-                    <Button icon={<DeleteOutlined />}>Delete</Button>
-                </div>
+                        <div>
+                            <Button icon={<DeleteOutlined />}>{t('global.delete')}</Button>
+                        </div>
+                    </>
+                )}
 
                 <div>
                     <Button icon={<LogoutOutlined />} onClick={disableModeSelection}>

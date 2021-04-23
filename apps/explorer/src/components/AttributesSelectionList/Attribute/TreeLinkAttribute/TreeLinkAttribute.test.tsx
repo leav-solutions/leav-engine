@@ -9,6 +9,13 @@ import {ILabel} from '../../../../_types/types';
 import {mockAttributeTree} from '../../../../__mocks__/common/attribute';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 
+jest.mock('react-spring', () => ({
+    useSpring: () => [{transform: ''}, jest.fn()],
+    animated: {
+        div: () => <div></div>
+    }
+}));
+
 describe('AttributeLinkedTree', () => {
     test('should contain label', async () => {
         let comp: any;

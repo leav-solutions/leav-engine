@@ -4,9 +4,9 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {IItem} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
-import {MockStateItems} from '../../../../__mocks__/stateItems/mockStateItems';
 import ItemTileDisplay from './ItemTileDisplay';
 jest.mock(
     '../../LibraryItemsListTable/RecordPreview',
@@ -28,9 +28,9 @@ describe('ItemTileDisplay', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateItems>
+                    <MockStore>
                         <ItemTileDisplay item={itemMock} showRecordEdition={jest.fn()} />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

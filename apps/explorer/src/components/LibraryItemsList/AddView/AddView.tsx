@@ -6,9 +6,11 @@ import {Checkbox, Divider, Form, Input, Modal, Select} from 'antd';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useDispatch} from 'react-redux';
+import {useAppSelector} from 'redux/store';
+import {setViewCurrent, setViewReload} from 'redux/view';
 import {localizedLabel} from 'utils';
 import {defaultSort, viewSettingsField} from '../../../constants/constants';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
@@ -18,7 +20,6 @@ import {IActiveLibrary} from '../../../graphQL/queries/cache/activeLibrary/getAc
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {ILabel, ViewType} from '../../../_types/types';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 type IFormValues = {
     [x: string]: string;
@@ -33,7 +34,9 @@ interface IAddViewProps {
 function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {stateItems, dispatchItems} = useStateItem();
+    const {fields} = useAppSelector(state => state);
+    const dispatch = useDispatch();
+
     const {stateFilters} = useStateFilters();
     const [{availableLangs, defaultLang, lang}] = useLang();
 
@@ -61,7 +64,7 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
             // Fields
             let viewFields: string[] = [];
             if (formValues.type === ViewType.list) {
-                viewFields = stateItems.fields.map(field => {
+                viewFields = fields.fields.map(field => {
                     const settingsField = field.key;
                     return settingsField;
                 });
@@ -90,28 +93,21 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
                 // save view in backend
                 const newViewRes = await addView({variables: {view: newView}});
 
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_VIEW,
-                    view: {
-                        ...stateItems.view,
-                        current: {
-                            id: newViewRes.data.saveView.id,
-                            label: localizedLabel(label, lang),
-                            type: formValues.type,
-                            shared: !!formValues.shared,
-                            sort: defaultSort
-                        }
-                    }
-                });
+                dispatch(
+                    setViewCurrent({
+                        id: newViewRes.data.saveView.id,
+                        label: localizedLabel(label, lang),
+                        type: formValues.type,
+                        shared: !!formValues.shared,
+                        sort: defaultSort
+                    })
+                );
             } catch (e) {
                 console.error(e);
             }
 
             // refetch views
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_RELOAD_VIEW,
-                reload: true
-            });
+            dispatch(setViewReload(true));
         }
 
         // reset form fields values

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import TileDisplay from '../TileDisplay';
 import DisplayTypeSelector from './DisplayTypeSelector';
 
@@ -24,7 +25,11 @@ jest.mock(
 
 describe('DisplayTypeSelector', () => {
     test('Should call ItemsTitleDisplay', async () => {
-        const comp = mount(<DisplayTypeSelector />);
+        const comp = mount(
+            <MockStore>
+                <DisplayTypeSelector />
+            </MockStore>
+        );
 
         expect(comp.find(TileDisplay)).toHaveLength(1);
     });

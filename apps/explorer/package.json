@@ -8,6 +8,7 @@
         "@apollo/react-components": "^3.1.5",
         "@apollo/react-hoc": "^3.1.5",
         "@craco/craco": "^5.9.0",
+        "@reduxjs/toolkit": "1.5.1",
         "@types/object-path": "^0.11.0",
         "@types/react-beautiful-dnd": "^13.0.0",
         "@types/react-resizable": "^1.7.2",
@@ -30,6 +31,7 @@
         "react-css-theme-switcher": "^0.1.6",
         "react-dom": "^16.13.1",
         "react-i18next": "^11.8.5",
+        "react-redux": "7.2.3",
         "react-resizable": "^1.10.1",
         "react-router-dom": "^5.2.0",
         "react-scripts": "^3.4.4",
@@ -68,6 +70,7 @@
         "@types/react-dom": "^16.9.10",
         "@types/react-router-dom": "^5.1.7",
         "@types/react-table": "^7.0.28",
+        "@types/redux-mock-store": "1.0.2",
         "@types/styled-components": "^5.1.7",
         "apollo": "^2.32.1",
         "autoprefixer": "^9.8.6",
@@ -81,6 +84,7 @@
         "gulp-postcss": "^8.0.0",
         "jest-styled-components": "^7.0.3",
         "less-plugin-npm-import": "^2.1.0",
+        "redux-mock-store": "1.5.4",
         "styled-components": "^5.1.1",
         "waait": "^1.0.5"
     }

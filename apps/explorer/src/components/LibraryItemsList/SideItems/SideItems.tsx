@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
+import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {panelSize} from '../../../constants/constants';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import {TypeSideItem} from '../../../_types/types';
 import FiltersPanel from '../FiltersPanel';
 import ViewPanel from '../ViewPanel';
@@ -15,31 +15,30 @@ interface IWrapperProps {
 }
 
 const Wrapper = styled.div<IWrapperProps>`
+    grid-area: side;
     display: ${({visible}) => (visible ? 'flex' : 'none')};
     position: relative;
-    height: calc(100vh - 7rem);
+    height: calc(100% - 4rem);
     animation: ${({visible}) => (visible ? 'slide-in 250ms ease' : 'none')};
+    overflow: hidden;
 
     @keyframes slide-in {
         from {
             transform: translateX(-${panelSize});
         }
         to {
-            transform: translateX(0rem);
+            transform: translateX(-5rem);
         }
     }
 `;
 
 function SideItems(): JSX.Element {
-    const {stateItems} = useStateItem();
+    const {visible, type} = useAppSelector(state => state.display.side);
 
     return (
-        <Wrapper
-            visible={stateItems.sideItems.visible}
-            className={stateItems.sideItems.visible ? 'wrapped-filter-open' : 'wrapped-filter-close'}
-        >
-            {stateItems.sideItems.visible && stateItems.sideItems.type === TypeSideItem.filters && <FiltersPanel />}
-            {stateItems.sideItems.visible && stateItems.sideItems.type === TypeSideItem.view && <ViewPanel />}
+        <Wrapper visible={visible} className={visible ? 'wrapped-filter-open' : 'wrapped-filter-close'}>
+            {visible && type === TypeSideItem.filters && <FiltersPanel />}
+            {visible && type === TypeSideItem.view && <ViewPanel />}
         </Wrapper>
     );
 }

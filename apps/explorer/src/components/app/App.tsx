@@ -5,6 +5,8 @@ import {ApolloClient, ApolloLink, ApolloProvider, InMemoryCache} from '@apollo/c
 import {onError} from '@apollo/link-error';
 import {createUploadLink} from 'apollo-upload-client';
 import {default as React} from 'react';
+import {Provider} from 'react-redux';
+import store from 'redux/store';
 import './App.css';
 import ThemeHandler from './ThemeHandler';
 
@@ -79,7 +81,9 @@ function App({token, onTokenInvalid}: IAppProps) {
 
     return (
         <ApolloProvider client={gqlClient}>
-            <ThemeHandler />
+            <Provider store={store}>
+                <ThemeHandler />
+            </Provider>
         </ApolloProvider>
     );
 }

@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {MockStateItems} from '../../../../__mocks__/stateItems/mockStateItems';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import BodyRow from './BodyRow';
 
 jest.mock(
@@ -42,9 +42,9 @@ describe('BodyRow', () => {
 
         await act(async () => {
             comp = mount(
-                <MockStateItems>
+                <MockStore>
                     <BodyRow row={mockRow as any} index={'test'} />
-                </MockStateItems>
+                </MockStore>
             );
         });
 

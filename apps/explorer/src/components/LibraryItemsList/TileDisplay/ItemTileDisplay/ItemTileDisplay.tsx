@@ -4,14 +4,13 @@
 import {CheckOutlined, EditOutlined, EllipsisOutlined, HeartOutlined} from '@ant-design/icons';
 import {Button, Card} from 'antd';
 import {useLang} from 'hooks/LangHook/LangHook';
-import {toggleSharedElementSelected} from 'hooks/SharedStateHook/SharedReducerActions';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {ISharedSelected, SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React, {useEffect, useState} from 'react';
+import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedLabel} from 'utils';
 import themingVar from '../../../../themingVar';
-import {IItem} from '../../../../_types/types';
+import {IItem, ISharedSelected, SharedStateSelectionType} from '../../../../_types/types';
 import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
 
 const ImageWrapper = styled.div`
@@ -114,10 +113,15 @@ interface IItemTileDisplayProps {
 }
 
 function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
-    const {stateShared, dispatchShared} = useStateShared();
+    const {display, selectionState} = useAppSelector(state => ({
+        display: state.display,
+        selectionState: state.selection
+    }));
+    const dispatch = useAppDispatch();
+
     const [{lang}] = useLang();
     const [isSelected, setIsSelect] = useState<boolean>(
-        !!stateShared.selection.selected.some(
+        !!selectionState.selection.selected.some(
             elementSelected =>
                 elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
         )
@@ -132,28 +136,46 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
             label: localizedLabel(item.whoAmI.label, lang)
         };
 
-        dispatchShared(toggleSharedElementSelected(SharedStateSelectionType.search, newSelected));
+        if (display.selectionMode) {
+            dispatch(setSelectionToggleSearchSelectionElement(newSelected));
+        } else {
+            dispatch(
+                setSelectionToggleSelected({
+                    selectionType: SharedStateSelectionType.search,
+                    elementSelected: newSelected
+                })
+            );
+        }
     };
 
     useEffect(() => {
-        setIsSelect(
-            stateShared.selection.selected.some(
-                elementSelected =>
-                    elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
-            )
-        );
-    }, [stateShared.selection.selected, item]);
+        if (display.selectionMode) {
+            setIsSelect(
+                selectionState.searchSelection.selected.some(
+                    elementSelected =>
+                        elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
+                )
+            );
+        } else {
+            setIsSelect(
+                selectionState.selection.selected.some(
+                    elementSelected =>
+                        elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
+                )
+            );
+        }
+    }, [selectionState.selection, selectionState.searchSelection, item, display.selectionMode]);
 
     const selectionActive =
-        (stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected) ||
-        stateShared.selection.selected.length;
+        (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected) ||
+        selectionState.selection.selected.length;
 
     return (
         <Card
             cover={
                 <ImageWrapper>
                     <ActionsWrapper>
-                        {selectionActive ? (
+                        {display.selectionMode || selectionActive ? (
                             <Selection>
                                 <CheckboxWrapper checked={isSelected} onClick={selectedToggle}>
                                     {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}

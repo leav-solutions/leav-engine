@@ -8,9 +8,11 @@ import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibra
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {setDisplaySide} from 'redux/display';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setViewCurrent} from 'redux/view';
 import styled, {CSSObject} from 'styled-components';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
@@ -27,7 +29,6 @@ import themingVar from '../../../themingVar';
 import {limitTextSize, localizedLabel} from '../../../utils';
 import {IView, TypeSideItem, ViewType} from '../../../_types/types';
 import AddView from '../AddView';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 const DropdownButton = styled(Dropdown.Button)`
     .ant-dropdown-trigger {
@@ -67,7 +68,8 @@ interface ISelectViewProps {
 function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {stateItems, dispatchItems} = useStateItem();
+    const {view, display, fields: fieldsState, items, filters} = useAppSelector(state => state);
+    const dispatch = useAppDispatch();
     const {stateFilters} = useStateFilters();
 
     const [modalNewProps, setModalNewProps] = useState<Omit<IModalProps, 'id'>>({
@@ -82,29 +84,28 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
         }
     });
 
-    const currentView = data?.views.list.find(view => view.id === stateItems.view.current?.id);
+    const currentView = data?.views.list.find(dataView => dataView.id === view.current?.id);
 
     const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(addViewMutation);
 
     const _toggleShowView = () => {
-        const visible = !stateItems.sideItems.visible || stateItems.sideItems.type !== TypeSideItem.view;
+        const visible = !display.side.visible || display.side.type !== TypeSideItem.view;
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_SIDE_ITEMS,
-            sideItems: {
+        dispatch(
+            setDisplaySide({
                 visible,
                 type: TypeSideItem.view
-            }
-        });
+            })
+        );
     };
 
     const _saveView = async () => {
-        if (stateItems.view.current && stateItems.view.current.id !== defaultView.id) {
+        if (view.current && view.current.id !== defaultView.id) {
             if (currentView && activeLibrary) {
                 // Fields
                 let viewFields: string[] = [];
                 if (currentView.type === ViewType.list) {
-                    viewFields = stateItems.fields.map(field => {
+                    viewFields = fieldsState.fields.map(field => {
                         const settingsField = field.key;
                         return settingsField;
                     });
@@ -115,8 +116,8 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
                 }, [] as IAddViewMutationVariablesFilter[]);
 
                 const viewSort = {
-                    field: stateItems.itemsSort.field,
-                    order: stateItems.itemsSort.order
+                    field: items.sort.field,
+                    order: items.sort.order
                 };
 
                 const newView: IAddViewMutationVariablesView = {
@@ -153,16 +154,11 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
                     color: newView.color,
                     shared: newView.shared,
                     fields: newView.settings?.find(setting => setting.name === viewSettingsField)?.value ?? [],
-                    filters: stateItems.queryFilters,
+                    filters: filters.queryFilters,
                     sort: viewSort
                 };
 
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_VIEW,
-                    view: {
-                        current: newCurrentView
-                    }
-                });
+                dispatch(setViewCurrent(newCurrentView));
             }
         }
     };
@@ -194,11 +190,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
 
     const menu = (
         <Menu>
-            <Menu.Item
-                icon={<SaveFilled />}
-                onClick={_saveView}
-                disabled={stateItems.view.current?.id === defaultView.id}
-            >
+            <Menu.Item icon={<SaveFilled />} onClick={_saveView} disabled={view.current?.id === defaultView.id}>
                 {t('select-view.save')}
             </Menu.Item>
             <Menu.Divider />
@@ -216,8 +208,8 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
         <>
             <AddView visible={modalNewProps.visible} onClose={_closeModal} activeLibrary={activeLibrary} />
             <DropdownButton overlay={menu} data-testid="dropdown-view-options">
-                <InnerDropdown onClick={_toggleShowView} color={stateItems.view.current?.color}>
-                    {limitTextSize(stateItems.view.current?.label ?? t('select-view.default-view'), 'medium')}
+                <InnerDropdown onClick={_toggleShowView} color={view.current?.color}>
+                    {limitTextSize(view.current?.label ?? t('select-view.default-view'), 'medium')}
                 </InnerDropdown>
             </DropdownButton>
         </>

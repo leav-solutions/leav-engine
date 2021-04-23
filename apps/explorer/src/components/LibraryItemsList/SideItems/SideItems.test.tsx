@@ -4,8 +4,9 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {displayInitialState} from 'redux/display';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {TypeSideItem} from '../../../_types/types';
-import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import SideItems from './SideItems';
 
 jest.mock(
@@ -27,10 +28,14 @@ jest.mock(
 describe('SideItems', () => {
     test('should have Filters', async () => {
         await act(async () => {
+            const mockState = {
+                side: {visible: true, type: TypeSideItem.filters}
+            };
+
             render(
-                <MockStateItems stateItems={{sideItems: {visible: true, type: TypeSideItem.filters}}}>
+                <MockStore state={{display: {...displayInitialState, ...mockState}}}>
                     <SideItems />
-                </MockStateItems>
+                </MockStore>
             );
         });
 
@@ -41,10 +46,14 @@ describe('SideItems', () => {
 
     test('should have ViewPanel', async () => {
         await act(async () => {
+            const mockState = {
+                side: {visible: true, type: TypeSideItem.view}
+            };
+
             render(
-                <MockStateItems stateItems={{sideItems: {visible: true, type: TypeSideItem.view}}}>
+                <MockStore state={{display: {...displayInitialState, ...mockState}}}>
                     <SideItems />
-                </MockStateItems>
+                </MockStore>
             );
         });
 

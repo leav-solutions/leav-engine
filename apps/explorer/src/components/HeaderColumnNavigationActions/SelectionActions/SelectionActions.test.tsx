@@ -4,10 +4,11 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {selectionInitialState} from 'redux/selection';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockSharedNavigationSelection, mockSharedSearchSelection} from '__mocks__/common/selection';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import {mockNavigationPath} from '__mocks__/Navigation/mockTreeElements';
-import {mockSharedNavigationSelection, mockSharedSearchSelection} from '__mocks__/stateFilters/mockSharedSelection';
-import {MockStateShared} from '__mocks__/stateShared/mockStateShared';
 import SelectionActions from './SelectionActions';
 
 describe('SelectionActions', () => {
@@ -15,9 +16,11 @@ describe('SelectionActions', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateShared stateShared={{selection: mockSharedNavigationSelection}}>
+                    <MockStore
+                        state={{selection: {...selectionInitialState, selection: mockSharedNavigationSelection}}}
+                    >
                         <SelectionActions parent={{...mockNavigationPath, id: 'different-parent-id'}} depth={0} />
-                    </MockStateShared>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
@@ -32,9 +35,11 @@ describe('SelectionActions', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateShared stateShared={{selection: mockSharedNavigationSelection}}>
+                    <MockStore
+                        state={{selection: {...selectionInitialState, selection: mockSharedNavigationSelection}}}
+                    >
                         <SelectionActions parent={mockNavigationPath} depth={0} />
-                    </MockStateShared>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
@@ -49,9 +54,9 @@ describe('SelectionActions', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateShared stateShared={{selection: mockSharedSearchSelection}}>
+                    <MockStore state={{selection: {...selectionInitialState, selection: mockSharedSearchSelection}}}>
                         <SelectionActions parent={mockNavigationPath} depth={0} />
-                    </MockStateShared>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

@@ -5,8 +5,9 @@ import {useQuery} from '@apollo/client';
 import {Badge, Input, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setViewReload} from 'redux/view';
 import styled from 'styled-components';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import {
     getViewsListQuery,
     IGetViewListElement,
@@ -18,8 +19,7 @@ import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {localizedLabel} from '../../../utils';
 import EditView from '../EditView';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
-import View from '../View/View';
+import View from '../View';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -68,9 +68,11 @@ const CustomBadge = styled(Badge)`
 function ViewPanel(): JSX.Element {
     const {t} = useTranslation();
 
+    const viewState = useAppSelector(state => state.view);
+    const dispatch = useAppDispatch();
+
     const [search, setSearch] = useState('');
 
-    const {stateItems, dispatchItems} = useStateItem();
     const [activeLibrary] = useActiveLibrary();
     const [{lang}] = useLang();
 
@@ -83,14 +85,11 @@ function ViewPanel(): JSX.Element {
     });
 
     useEffect(() => {
-        if (stateItems.view.reload) {
+        if (viewState.reload) {
             refetch();
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_RELOAD_VIEW,
-                reload: false
-            });
+            dispatch(setViewReload(false));
         }
-    }, [stateItems.view.reload, refetch, dispatchItems]);
+    }, [viewState.reload, refetch, dispatch]);
 
     if (loading) {
         return (

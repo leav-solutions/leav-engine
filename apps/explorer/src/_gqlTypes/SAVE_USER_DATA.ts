@@ -7,15 +7,15 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: SAVE_USER_DATA
+// GraphQL mutation operation: SAVE_USER_DATA
 // ====================================================
 
 export interface SAVE_USER_DATA {
-    saveUserData: any;
+    saveUserData: any | null;
 }
 
 export interface SAVE_USER_DATAVariables {
     key: string;
-    value?: any;
+    value?: any | null;
     global: boolean;
 }

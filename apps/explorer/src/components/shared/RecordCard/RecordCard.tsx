@@ -67,6 +67,7 @@ const RecordCard = ({record, size, style, lang}: IRecordCardProps): JSX.Element 
                     color={record.color}
                     image={getPreviewBySize(record.preview, size)}
                     size={size}
+                    style={style}
                 />
             </PreviewWrapper>
             <CardPart className="ui">

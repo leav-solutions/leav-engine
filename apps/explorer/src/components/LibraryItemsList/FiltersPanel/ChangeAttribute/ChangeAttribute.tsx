@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
-import {useStateItem} from 'Context/StateItemsContext';
 import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppSelector} from 'redux/store';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {
     defaultFilterConditionByAttributeFormat,
@@ -24,12 +24,14 @@ interface IChangeAttributeProps {
 
 function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
-    const {stateItems} = useStateItem();
+
+    const {attributes} = useAppSelector(state => state.attributes);
+
     const {stateFilters, dispatchFilters} = useStateFilters();
 
     const [activeLibrary] = useActiveLibrary();
 
-    const currentAttribute = stateItems.attributes.find(
+    const currentAttribute = attributes.find(
         att => att.id === filter.attribute.id && att.library === filter.attribute.library
     );
     let parentSelectedAttribute: ISelectedAttribute | undefined;
@@ -59,7 +61,7 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
             if (f.index === filter.index) {
                 const attrSelected = attrsSelected[0];
 
-                const attributeFind = stateItems.attributes.find(
+                const attributeFind = attributes.find(
                     att => att.id === attrSelected.id && att.library === attrSelected.library
                 );
 

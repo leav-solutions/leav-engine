@@ -4,8 +4,8 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
-import {MockStateItems} from '__mocks__/stateItems/mockStateItems';
 import MenuSelection from './MenuSelection';
 
 describe('MenuSelection', () => {
@@ -13,9 +13,9 @@ describe('MenuSelection', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateItems>
+                    <MockStore>
                         <MenuSelection />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

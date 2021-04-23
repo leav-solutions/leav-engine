@@ -5,10 +5,11 @@ import {DownOutlined, MenuOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useDispatch, useSelector} from 'react-redux';
+import {setDisplaySize} from 'redux/display';
+import {RootDispatch, RootState} from 'redux/store';
 import styled from 'styled-components';
-import {useStateItem} from '../../../Context/StateItemsContext';
 import {DisplaySize} from '../../../_types/types';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 const ListSmallIcon = styled(MenuOutlined)`
     transform: scale(0.7);
@@ -46,20 +47,19 @@ function DisplayOptions(): JSX.Element {
         }
     ];
 
-    const {stateItems, dispatchItems} = useStateItem();
+    const size = useSelector<RootState>(state => state.display.size);
+    const dispatch = useDispatch<RootDispatch>();
 
     const [currentDisplayOption, setCurrentDisplayOption] = useState(
-        displayOptions.find(displayOption => displayOption.value === stateItems.displaySize)
+        displayOptions.find(displayOption => displayOption.value === size)
     );
 
     const changeDisplay = (value: string) => {
         const newDisplay = value?.toString();
 
-        if (newDisplay) {
-            dispatchItems({
-                type: LibraryItemListReducerActionTypes.SET_DISPLAY_TYPE,
-                displayType: DisplaySize[newDisplay]
-            });
+        // check if `newDisplay` is in DisplaySize
+        if (newDisplay && Object.values(DisplaySize).includes(newDisplay as any)) {
+            dispatch(setDisplaySize(newDisplay as any));
         }
 
         const newCurrentDisplayOption = displayOptions.find(displayOption => displayOption.value === newDisplay);

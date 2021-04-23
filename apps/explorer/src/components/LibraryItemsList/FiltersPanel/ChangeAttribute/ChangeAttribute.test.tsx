@@ -5,6 +5,7 @@ import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {mockFilter} from '__mocks__/common/filter';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import ChangeAttribute from './ChangeAttribute';
 
@@ -19,7 +20,9 @@ describe('ChangeAttribute', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <ChangeAttribute filter={mockFilter} showModal={true} setShowModal={jest.fn()} />
+                    <MockStore>
+                        <ChangeAttribute filter={mockFilter} showModal={true} setShowModal={jest.fn()} />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

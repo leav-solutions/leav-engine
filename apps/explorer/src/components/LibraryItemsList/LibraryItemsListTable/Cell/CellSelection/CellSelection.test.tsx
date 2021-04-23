@@ -4,14 +4,19 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {mockSharedSearchSelection} from '__mocks__/stateFilters/mockSharedSelection';
-import {MockStateShared} from '__mocks__/stateShared/mockStateShared';
+import {selectionInitialState} from 'redux/selection';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockSharedSearchSelection} from '__mocks__/common/selection';
 import CellSelection from './CellSelection';
 
 describe('CellSelection', () => {
     test('should contain hidden-checkbox', async () => {
         await act(async () => {
-            render(<CellSelection index="0" selectionData={{id: 'id', library: 'library', label: 'label'}} />);
+            render(
+                <MockStore>
+                    <CellSelection index="0" selectionData={{id: 'id', library: 'library', label: 'label'}} />
+                </MockStore>
+            );
         });
 
         expect(screen.getByTestId('hidden-checkbox')).toBeInTheDocument();
@@ -20,9 +25,9 @@ describe('CellSelection', () => {
     test('should contain checkbox', async () => {
         await act(async () => {
             render(
-                <MockStateShared stateShared={{selection: mockSharedSearchSelection}}>
+                <MockStore state={{selection: {...selectionInitialState, selection: mockSharedSearchSelection}}}>
                     <CellSelection index="0" selectionData={{id: 'id', library: 'library', label: 'label'}} />
-                </MockStateShared>
+                </MockStore>
             );
         });
 

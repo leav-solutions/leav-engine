@@ -121,7 +121,7 @@ export const ExpandButton = ({active, onToggleAccordion}: IExpandButtonProps) =>
     const [animProps, set] = useSpring(() => ({transform: 'rotateX(0deg)'}));
 
     useEffect(() => {
-        set({transform: `rotateX(${active ? 180 : 0}deg)`});
+        (set as any)?.({transform: `rotateX(${active ? 180 : 0}deg)`});
     }, [set, active]);
 
     return (

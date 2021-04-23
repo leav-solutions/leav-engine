@@ -3,34 +3,31 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Pagination} from 'antd';
 import React from 'react';
-import {useStateItem} from '../../../Context/StateItemsContext';
+import {setItemsOffset, setItemsPagination} from 'redux/items';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {paginationOptions} from '../../../utils';
-import {LibraryItemListReducerActionTypes} from '../LibraryItemsListReducer';
 
 function LibraryItemsListPagination(): JSX.Element {
-    const {stateItems, dispatchItems} = useStateItem();
+    const {items} = useAppSelector(state => state);
+    const dispatch = useAppDispatch();
 
     const setPagination = (current: number, size: number) => {
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_PAGINATION,
-            pagination: size
-        });
+        dispatch(setItemsPagination(size));
+    };
+
+    const setOffset = (page: number, pageSize: number) => {
+        dispatch(setItemsOffset((page - 1) * (pageSize ?? 0)));
     };
 
     return (
         <Pagination
-            defaultCurrent={stateItems.offset / stateItems.pagination + 1}
-            total={stateItems.itemsTotalCount}
-            defaultPageSize={stateItems.pagination}
+            defaultCurrent={items.offset / items.pagination + 1}
+            total={items.totalCount}
+            defaultPageSize={items.pagination}
             onShowSizeChange={setPagination}
             showSizeChanger
             pageSizeOptions={paginationOptions.map(option => option.toString())}
-            onChange={(page, pageSize) =>
-                dispatchItems({
-                    type: LibraryItemListReducerActionTypes.SET_OFFSET,
-                    offset: (page - 1) * (pageSize ?? 0)
-                })
-            }
+            onChange={setOffset}
         />
     );
 }

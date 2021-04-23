@@ -4,6 +4,7 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {PreviewSize} from '../../../../../_types/types';
 import CellInfos from './CellInfos';
 
@@ -27,12 +28,14 @@ describe('CellInfos', () => {
     test('should contain floating menu', async () => {
         await act(async () => {
             render(
-                <CellInfos
-                    record={{} as any}
-                    size={PreviewSize.small}
-                    index="0"
-                    selectionData={{id: 'id', library: 'library', label: 'label'}}
-                />
+                <MockStore>
+                    <CellInfos
+                        record={{} as any}
+                        previewSize={PreviewSize.small}
+                        index="0"
+                        selectionData={{id: 'id', library: 'library', label: 'label'}}
+                    />
+                </MockStore>
             );
         });
 
@@ -41,12 +44,14 @@ describe('CellInfos', () => {
     test('should call CellRecordCard', async () => {
         await act(async () => {
             render(
-                <CellInfos
-                    record={{} as any}
-                    size={PreviewSize.small}
-                    index="0"
-                    selectionData={{id: 'id', library: 'library', label: 'label'}}
-                />
+                <MockStore>
+                    <CellInfos
+                        record={{} as any}
+                        previewSize={PreviewSize.small}
+                        index="0"
+                        selectionData={{id: 'id', library: 'library', label: 'label'}}
+                    />
+                </MockStore>
             );
         });
 
@@ -56,12 +61,14 @@ describe('CellInfos', () => {
     test('should call CellSelection', async () => {
         await act(async () => {
             render(
-                <CellInfos
-                    record={{} as any}
-                    size={PreviewSize.small}
-                    index="0"
-                    selectionData={{id: 'id', library: 'library', label: 'label'}}
-                />
+                <MockStore>
+                    <CellInfos
+                        record={{} as any}
+                        previewSize={PreviewSize.small}
+                        index="0"
+                        selectionData={{id: 'id', library: 'library', label: 'label'}}
+                    />
+                </MockStore>
             );
         });
 

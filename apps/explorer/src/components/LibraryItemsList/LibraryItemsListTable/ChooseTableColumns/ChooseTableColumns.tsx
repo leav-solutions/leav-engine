@@ -4,13 +4,14 @@
 import {Button, Modal} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useStateItem} from '../../../../Context/StateItemsContext';
+import {setAttributes} from 'redux/attributes';
+import {setFields} from 'redux/fields';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {getFieldsKeyFromAttribute, localizedLabel} from '../../../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IField, ISelectedAttribute} from '../../../../_types/types';
 import AttributesSelectionList from '../../../AttributesSelectionList';
-import {LibraryItemListReducerActionTypes} from '../../LibraryItemsListReducer';
 
 interface IChooseTableColumnsProps {
     openChangeColumns: boolean;
@@ -20,14 +21,15 @@ interface IChooseTableColumnsProps {
 function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {stateItems, dispatchItems} = useStateItem();
+    const {fields, attributes} = useAppSelector(state => state);
+    const dispatch = useAppDispatch();
 
     const [activeLibrary] = useActiveLibrary();
     const [{lang}] = useLang();
 
     const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>(
-        stateItems.fields.map(col => {
-            const currentAttribute = stateItems.attributes.find(
+        fields.fields.map(col => {
+            const currentAttribute = attributes.attributes.find(
                 attribute => attribute.id === col.id && attribute.library === col.library
             );
 
@@ -44,8 +46,8 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
 
     useEffect(() => {
         setSelectedAttributes(
-            stateItems.fields.map(col => {
-                const currentAttribute = stateItems.attributes.find(
+            fields.fields.map(col => {
+                const currentAttribute = attributes.attributes.find(
                     attribute => attribute.id === col.id && attribute.library === col.library
                 );
 
@@ -59,13 +61,13 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 };
             })
         );
-    }, [stateItems.attributes, stateItems.fields, setSelectedAttributes]);
+    }, [attributes.attributes, fields.fields, setSelectedAttributes]);
 
     const handleSubmit = () => {
         const noDuplicateNewAttribute: IAttribute[] = selectedAttributes
             .filter(
                 selectedAttribute =>
-                    !stateItems.attributes.some(
+                    !attributes.attributes.some(
                         attribute =>
                             attribute.id === selectedAttribute.id && attribute.library === selectedAttribute.library
                     )
@@ -77,12 +79,9 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 format: a.format ?? undefined
             }));
 
-        const allAttributes = [...stateItems.attributes, ...noDuplicateNewAttribute];
+        const allAttributes = [...attributes.attributes, ...noDuplicateNewAttribute];
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_ATTRIBUTES,
-            attributes: allAttributes
-        });
+        dispatch(setAttributes(allAttributes));
 
         const newFields: IField[] = selectedAttributes.reduce((acc, selectedAttribute) => {
             const attribute = allAttributes.find(
@@ -118,10 +117,7 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
             return [...acc, field];
         }, [] as IField[]);
 
-        dispatchItems({
-            type: LibraryItemListReducerActionTypes.SET_FIELDS,
-            fields: newFields
-        });
+        dispatch(setFields(newFields));
 
         setOpenChangeColumns(false);
     };

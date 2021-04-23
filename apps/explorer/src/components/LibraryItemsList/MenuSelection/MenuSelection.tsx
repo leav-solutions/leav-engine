@@ -3,41 +3,46 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
-import {useStateItem} from 'Context/StateItemsContext';
 import {useLang} from 'hooks/LangHook/LangHook';
-import {setSharedSelection} from 'hooks/SharedStateHook/SharedReducerActions';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {setSearchSelection, setSelection} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {localizedLabel} from 'utils';
+import {SharedStateSelectionType} from '_types/types';
 
 function MenuSelection(): JSX.Element {
     const {t} = useTranslation();
-    const {stateItems} = useStateItem();
-    const {stateShared, dispatchShared} = useStateShared();
+
+    const {items, selectionState, display} = useAppSelector(state => ({
+        items: state.items,
+        selectionState: state.selection,
+        display: state.display
+    }));
+    const dispatch = useAppDispatch();
     const [{lang}] = useLang();
 
-    const offsetDisplay = stateItems.itemsTotalCount > 0 ? stateItems.offset + 1 : 0;
+    const offsetDisplay = items.totalCount > 0 ? items.offset + 1 : 0;
     const nextOffsetDisplay =
-        stateItems.offset + stateItems.pagination > stateItems.itemsTotalCount
-            ? stateItems.itemsTotalCount
-            : stateItems.offset + stateItems.pagination;
+        items.offset + items.pagination > items.totalCount ? items.totalCount : items.offset + items.pagination;
 
     const selectAll = () => {
-        dispatchShared(
-            setSharedSelection({
-                type: SharedStateSelectionType.search,
-                selected: [],
-                allSelected: true
-            })
-        );
+        if (!display.selectionMode) {
+            dispatch(
+                setSelection({
+                    type: SharedStateSelectionType.search,
+                    selected: [],
+                    allSelected: true
+                })
+            );
+        }
     };
-    const selectVisible = () => {
-        let selected = [...stateShared.selection.selected];
 
-        if (stateItems.items) {
-            for (const item of stateItems.items) {
+    const selectVisible = () => {
+        let selected = [...selectionState.selection.selected];
+
+        if (items.items) {
+            for (const item of items.items) {
                 selected = [
                     ...selected,
                     {
@@ -49,13 +54,23 @@ function MenuSelection(): JSX.Element {
             }
         }
 
-        dispatchShared(
-            setSharedSelection({
-                type: SharedStateSelectionType.search,
-                selected,
-                allSelected: false
-            })
-        );
+        if (display.selectionMode) {
+            dispatch(
+                setSearchSelection({
+                    type: SharedStateSelectionType.search,
+                    selected,
+                    allSelected: false
+                })
+            );
+        } else {
+            dispatch(
+                setSelection({
+                    type: SharedStateSelectionType.search,
+                    selected,
+                    allSelected: false
+                })
+            );
+        }
     };
 
     return (
@@ -63,11 +78,13 @@ function MenuSelection(): JSX.Element {
             <Dropdown
                 overlay={
                     <Menu>
-                        <Menu.Item onClick={selectAll}>
-                            {t('items-menu-dropdown.select-all', {nb: stateItems.itemsTotalCount})}
-                        </Menu.Item>
+                        {!display.selectionMode && (
+                            <Menu.Item onClick={selectAll}>
+                                {t('items-menu-dropdown.select-all', {nb: items.totalCount})}
+                            </Menu.Item>
+                        )}
                         <Menu.Item onClick={selectVisible}>
-                            {t('items-menu-dropdown.select-visible', {nb: stateItems.items?.length})}
+                            {t('items-menu-dropdown.select-visible', {nb: items.items?.length})}
                         </Menu.Item>
                     </Menu>
                 }
@@ -76,7 +93,7 @@ function MenuSelection(): JSX.Element {
                     {t('items-list-row.nb-elements', {
                         nb1: offsetDisplay,
                         nb2: nextOffsetDisplay,
-                        nbItems: stateItems.itemsTotalCount
+                        nbItems: items.totalCount
                     })}
                     <DownOutlined style={{paddingLeft: 6}} />
                 </span>

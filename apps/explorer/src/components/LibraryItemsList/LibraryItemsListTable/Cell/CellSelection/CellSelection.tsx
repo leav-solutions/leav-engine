@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Checkbox} from 'antd';
-import {toggleSharedElementSelected} from 'hooks/SharedStateHook/SharedReducerActions';
-import useStateShared from 'hooks/SharedStateHook/SharedReducerHook';
-import {ISharedSelected, SharedStateSelectionType} from 'hooks/SharedStateHook/SharedStateReducer';
 import React from 'react';
+import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {ISharedSelected, SharedStateSelectionType} from '_types/types';
 import themingVar from '../../../../../themingVar';
 
 const Wrapper = styled.div`
@@ -38,22 +38,39 @@ interface ICellSelectionProps {
 }
 
 function CellSelection({index, selectionData}: ICellSelectionProps): JSX.Element {
-    const {stateShared, dispatchShared} = useStateShared();
+    const {selectionState, display} = useAppSelector(state => ({
+        selectionState: state.selection,
+        display: state.display
+    }));
+    const dispatch = useAppDispatch();
 
     const handleChangeSelected = () => {
-        dispatchShared(toggleSharedElementSelected(SharedStateSelectionType.search, selectionData));
+        if (display.selectionMode) {
+            dispatch(setSelectionToggleSearchSelectionElement(selectionData));
+        } else {
+            dispatch(
+                setSelectionToggleSelected({
+                    selectionType: SharedStateSelectionType.search,
+                    elementSelected: selectionData
+                })
+            );
+        }
     };
 
-    if (stateShared.selection.selected.length) {
+    if (selectionState.selection.selected.length || selectionState.searchSelection.selected.length) {
         const allSelected =
-            stateShared.selection.type === SharedStateSelectionType.search && stateShared.selection.allSelected;
+            selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
 
-        const isSelected =
-            allSelected ||
-            stateShared.selection.selected.some(
-                elementSelected =>
-                    elementSelected.id === selectionData.id && elementSelected.library === selectionData.library
-            );
+        const isSelected = display.selectionMode
+            ? selectionState.searchSelection.selected.some(
+                  elementSelected =>
+                      elementSelected.id === selectionData.id && elementSelected.library === selectionData.library
+              )
+            : allSelected ||
+              selectionState.selection.selected.some(
+                  elementSelected =>
+                      elementSelected.id === selectionData.id && elementSelected.library === selectionData.library
+              );
 
         return (
             <Wrapper>

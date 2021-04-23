@@ -62,7 +62,7 @@ function LibrariesList(): JSX.Element {
     }
 
     if (librariesListQuery.error || userDataQuery.error) {
-        return <ErrorDisplay message={librariesListQuery.error.message || userDataQuery.error.message} />;
+        return <ErrorDisplay message={librariesListQuery.error?.message || userDataQuery.error?.message} />;
     }
 
     const libraries = librariesListQuery.data?.libraries?.list ?? [];

@@ -19,12 +19,12 @@ interface IRecordPreviewProps {
 const getPreviewSize = (size?: PreviewSize) => {
     switch (size) {
         case PreviewSize.medium:
-            return '3rem';
-        case PreviewSize.big:
             return '5rem';
+        case PreviewSize.big:
+            return '8rem';
         case PreviewSize.small:
         default:
-            return '2rem';
+            return '3rem';
     }
 };
 

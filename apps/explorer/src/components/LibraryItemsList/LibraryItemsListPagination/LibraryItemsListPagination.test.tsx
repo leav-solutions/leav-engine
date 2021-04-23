@@ -1,20 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Pagination} from 'antd';
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {LibraryItemListInitialState, LibraryItemListReducerAction} from '../LibraryItemsListReducer';
+import {itemsInitialState} from 'redux/items';
+import {RootState} from 'redux/store';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import LibraryItemsListPagination from './LibraryItemsListPagination';
 
 describe('LibraryItemsListPagination', () => {
-    const stateItems = {...LibraryItemListInitialState, pagination: 5, offset: 0, itemsTotalCount: 15};
-
-    const dispatchItems: React.Dispatch<LibraryItemListReducerAction> = jest.fn();
+    const mockState: Partial<RootState> = {items: {...itemsInitialState, pagination: 5, offset: 0, totalCount: 15}};
 
     test('should have pagination', async () => {
-        const comp = mount(<LibraryItemsListPagination />);
+        render(
+            <MockStore state={mockState}>
+                <LibraryItemsListPagination />
+            </MockStore>
+        );
 
-        expect(comp.find(Pagination)).toHaveLength(1);
+        expect(screen.getAllByRole('listitem')).toHaveLength(6); // 3 page, 1 previous, 1 next and 1 size selector
     });
 });

@@ -4,8 +4,9 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {itemsInitialState} from 'redux/items';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {AttributeType, OrderSearch} from '../../../../_types/types';
-import {MockStateItems} from '../../../../__mocks__/stateItems/mockStateItems';
 import Header from './Header';
 
 describe('Header', () => {
@@ -16,11 +17,11 @@ describe('Header', () => {
 
         await act(async () => {
             comp = mount(
-                <MockStateItems>
+                <MockStore>
                     <Header name="name" id="test" type={AttributeType.simple}>
                         {value}
                     </Header>
-                </MockStateItems>
+                </MockStore>
             );
         });
 
@@ -32,21 +33,24 @@ describe('Header', () => {
 
         const value = 'value';
 
+        const stateMock = {
+            items: {
+                ...itemsInitialState,
+                sort: {
+                    field: 'id',
+                    order: OrderSearch.desc,
+                    active: true
+                }
+            }
+        };
+
         await act(async () => {
             comp = mount(
-                <MockStateItems
-                    stateItems={{
-                        itemsSort: {
-                            field: 'id',
-                            order: OrderSearch.desc,
-                            active: true
-                        }
-                    }}
-                >
+                <MockStore state={stateMock}>
                     <Header name="name" id="test" type={AttributeType.simple}>
                         {value}
                     </Header>
-                </MockStateItems>
+                </MockStore>
             );
         });
 
@@ -60,21 +64,24 @@ describe('Header', () => {
 
         const value = 'value';
 
+        const stateMock = {
+            items: {
+                ...itemsInitialState,
+                sort: {
+                    field: 'id',
+                    order: OrderSearch.asc,
+                    active: true
+                }
+            }
+        };
+
         await act(async () => {
             comp = mount(
-                <MockStateItems
-                    stateItems={{
-                        itemsSort: {
-                            field: 'id',
-                            order: OrderSearch.asc,
-                            active: true
-                        }
-                    }}
-                >
+                <MockStore state={stateMock}>
                     <Header name="name" id="test" type={AttributeType.simple}>
                         {value}
                     </Header>
-                </MockStateItems>
+                </MockStore>
             );
         });
 

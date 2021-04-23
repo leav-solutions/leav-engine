@@ -8,8 +8,8 @@ import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useStateItem} from '../../../../Context/StateItemsContext';
 import {allowedTypeOperator, getAttributeFromKey} from '../../../../utils';
 import {AttributeFormat, ConditionFilter, IFilter} from '../../../../_types/types';
 import {getConditionOptions} from '../FiltersOptions';
@@ -39,9 +39,8 @@ interface IFilterConditionProps {
 
 const FilterCondition = ({filter, updateFilterValue}: IFilterConditionProps) => {
     const {t} = useTranslation();
-    const {
-        stateItems: {attributes}
-    } = useStateItem();
+
+    const {attributes} = useAppSelector(state => state.attributes);
 
     const {stateFilters, dispatchFilters} = useStateFilters();
 

@@ -5,8 +5,8 @@ import {render, screen, waitForElement} from '@testing-library/react';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import MenuItemList from './MenuItemList';
 
 jest.mock(
@@ -36,9 +36,9 @@ describe('MenuItemList', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateItems>
+                    <MockStore>
                         <MenuItemList refetch={jest.fn()} />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
 
@@ -54,9 +54,9 @@ describe('MenuItemList', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateItems>
+                    <MockStore>
                         <MenuItemList refetch={jest.fn()} />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
 
@@ -72,9 +72,9 @@ describe('MenuItemList', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <MockStateItems>
+                    <MockStore>
                         <MenuItemList refetch={jest.fn()} />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

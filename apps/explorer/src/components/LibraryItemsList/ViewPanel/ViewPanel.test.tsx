@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import wait from 'waait';
+import {itemsInitialState} from 'redux/items';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
 import {ViewType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import {MockStateItems} from '../../../__mocks__/stateItems/mockStateItems';
 import ViewPanel from './ViewPanel';
 
 jest.mock(
@@ -101,22 +101,18 @@ describe('ViewPanel', () => {
     ];
 
     test('should display n View', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            const mockState = {items: {...itemsInitialState, loading: false}};
+
+            render(
                 <MockedProviderWithFragments mocks={mocks} addTypename={true}>
-                    <MockStateItems stateItems={{itemsLoading: false}}>
+                    <MockStore state={mockState}>
                         <ViewPanel />
-                    </MockStateItems>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
-
-            await wait(2);
-
-            comp.update();
         });
 
-        expect(comp.find('View')).toHaveLength(2);
+        expect(screen.getAllByText('View')).toHaveLength(2);
     });
 });
