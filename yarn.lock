@@ -16628,12 +16628,12 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"husky@npm:5.0.8":
-  version: 5.0.8
-  resolution: "husky@npm:5.0.8"
+"husky@npm:6.0.0":
+  version: 6.0.0
+  resolution: "husky@npm:6.0.0"
   bin:
     husky: lib/bin.js
-  checksum: cc8a7926a4d6e97d19b9713c0fbbc8553c8717800d7dee6b09ef223ff395c5c51ef9091265b259b06e886d157e9f2701d1370b00a5633ac34b3eaaa8234a736c
+  checksum: 61e1f7f53f3c969d361c2a1d4ed8018b9447406ea6cd644a2526d18b76877d135001d8cbd48a1d201fc1614d96995e691ecd2b82a8d8513a6b4a313da1188ccd
   languageName: node
   linkType: hard
 
@@ -20059,7 +20059,7 @@ fsevents@2.1.2:
     eslint-plugin-react: 7.21.5
     eslint-plugin-react-app: 6.2.2
     eslint-plugin-react-hooks: 4.2.0
-    husky: 5.0.8
+    husky: 6.0.0
     license-check-and-add: 3.0.5
     lint-staged: 10.5.3
     prettier: 2.2.1

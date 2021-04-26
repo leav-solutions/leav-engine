@@ -1,47 +1,23 @@
 'use strict';
-const util = require('util');
 const {spawn} = require('child_process');
-const exec = util.promisify(require('child_process').exec);
+const getChangedProjects = require('./helpers/getChangedProjects');
 
-const packagesFolders = ['apps', 'libs'];
-
-// This script will run test on changed projects.
+/**
+ * This script will run test on changed projects.
+ */
 (async () => {
-    const rootPath = `${__dirname}/../`;
-    const isStagedFiles = process.argv[2] === '--staged';
-    const isAllProjects = process.argv[2] === '--all';
+    const mustIncludeStagedFiles = process.argv[2] === '--staged';
+    const mustIncludeAllProjects = process.argv[2] === '--all';
     try {
-        const changedPackages = new Set();
+        const changedPackages = mustIncludeAllProjects
+            ? []
+            : await getChangedProjects({
+                  mustIncludeStagedFiles,
+                  mustIncludeRoot: false,
+                  mustReturnPackageName: true
+              });
 
-        if (!isAllProjects) {
-            // Get changed files
-            let gitCmd = 'git diff --diff-filter=ACMR --name-only';
-            if (isStagedFiles) {
-                gitCmd += ' --staged';
-            }
-
-            const {stdout, stderr} = await exec(gitCmd);
-
-            if (stderr) {
-                throw new Error(stderr);
-            }
-
-            // Extract project name from each changed files
-            for (const filepath of stdout.split('\n')) {
-                if (!filepath || !filepath.match(`^(${packagesFolders.join('|')})`)) {
-                    continue;
-                }
-
-                const [rootFolder, projectFolder] = filepath.split('/');
-
-                const packageJson = require(`${rootPath}/${rootFolder}/${projectFolder}/package.json`);
-                const packageName = packageJson.name;
-
-                changedPackages.add(packageName);
-            }
-        }
-
-        if (!changedPackages.size && !isAllProjects) {
+        if (!changedPackages.length && !mustIncludeAllProjects) {
             process.exit(0);
         }
 
