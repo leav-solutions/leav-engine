@@ -7,8 +7,8 @@ import {act} from 'react-dom/test-utils';
 import {selectionInitialState} from 'redux/selection';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {mockSharedNavigationSelection, mockSharedSearchSelection} from '__mocks__/common/selection';
+import {mockNavigationPath} from '__mocks__/common/treeElements';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
-import {mockNavigationPath} from '__mocks__/Navigation/mockTreeElements';
 import SelectionActions from './SelectionActions';
 
 describe('SelectionActions', () => {

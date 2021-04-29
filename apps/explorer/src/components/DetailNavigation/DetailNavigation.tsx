@@ -4,8 +4,8 @@
 import HeaderColumnNavigation from 'components/HeaderColumnNavigation';
 import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useStateNavigation} from '../../Context/StateNavigationContext';
 import themingVar from '../../themingVar';
 import {getFileUrl} from '../../utils';
 import RecordPreview from '../LibraryItemsList/LibraryItemsListTable/RecordPreview';
@@ -51,27 +51,26 @@ const PreviewWrapper = styled.div`
 `;
 
 const DetailNavigation = (): JSX.Element => {
+    const navigation = useAppSelector(state => state.navigation);
     const {t} = useTranslation();
-
-    const {stateNavigation} = useStateNavigation();
 
     const detailRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setImmediate(() => {
-            if (!stateNavigation.isLoading && detailRef.current && detailRef.current.scrollIntoView) {
+            if (!navigation.isLoading && detailRef.current && detailRef.current.scrollIntoView) {
                 detailRef.current.scrollIntoView({
                     behavior: 'smooth'
                 });
             }
         });
-    }, [detailRef, stateNavigation.recordDetail, stateNavigation.isLoading]);
+    }, [detailRef, navigation.recordDetail, navigation.isLoading]);
 
-    if (!stateNavigation.recordDetail) {
+    if (!navigation.recordDetail) {
         return <></>;
     }
 
-    const recordData = stateNavigation.recordDetail.whoAmI;
+    const recordData = navigation.recordDetail.whoAmI;
 
     const label = recordData.label ? recordData.label : t('navigation.list.info.no-label');
 
@@ -80,7 +79,7 @@ const DetailNavigation = (): JSX.Element => {
     return (
         <Detail ref={detailRef}>
             <div className="header-detail">
-                <HeaderColumnNavigation depth={stateNavigation.path.length} isActive={true} isDetail={true} />
+                <HeaderColumnNavigation depth={navigation.path.length} isActive={true} isDetail={true} />
             </div>
             <PreviewWrapper>
                 <RecordPreview

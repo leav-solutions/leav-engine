@@ -7,7 +7,8 @@ import {render, screen, waitForElement} from '@testing-library/react';
 import {getActiveTree, IGetActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {MockStateNavigation} from '../../__mocks__/Navigation/mockState';
+import {navigationInitialState} from 'redux/navigation';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import HeaderColumnNavigationActions from './HeaderColumnNavigationActions';
 
 jest.mock(
@@ -59,12 +60,13 @@ describe('HeaderColumnNavigationActions', () => {
     });
 
     test('should call actions', async () => {
+        const mockState = {navigation: {...navigationInitialState, path}};
         await act(async () => {
             render(
                 <MockedProvider cache={mockCache}>
-                    <MockStateNavigation stateNavigation={{path}}>
+                    <MockStore state={mockState}>
                         <HeaderColumnNavigationActions depth={1} />
-                    </MockStateNavigation>
+                    </MockStore>
                 </MockedProvider>
             );
         });

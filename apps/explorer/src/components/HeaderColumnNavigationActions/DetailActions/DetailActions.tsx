@@ -6,7 +6,6 @@ import {useMutation} from '@apollo/client';
 import {Dropdown, Menu} from 'antd';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
-import {useStateNavigation} from 'Context/StateNavigationContext';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
@@ -14,7 +13,8 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import {useNotifications} from 'hooks/NotificationsHook/NotificationsHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {resetRecordDetail, setPath, setRefetchTreeData} from 'Reducer/NavigationReducerActions';
+import {resetNavigationRecordDetail, setNavigationPath, setNavigationRefetchTreeData} from 'redux/navigation';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {localizedLabel} from 'utils';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
 import {NotificationChannel, NotificationType} from '_types/types';
@@ -25,9 +25,9 @@ interface IDetailActionsProps {
 }
 
 function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
+    const navigation = useAppSelector(state => state.navigation);
+    const dispatch = useAppDispatch();
     const {t} = useTranslation();
-
-    const {stateNavigation, dispatchNavigation} = useStateNavigation();
 
     const {addNotification} = useNotifications();
     const [{lang}] = useLang();
@@ -39,11 +39,11 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
 
     const handleDeleteCurrentElement = async () => {
         const element = {
-            id: stateNavigation.recordDetail.whoAmI.id,
-            library: stateNavigation.recordDetail.whoAmI.library.id
+            id: navigation.recordDetail.whoAmI.id,
+            library: navigation.recordDetail.whoAmI.library.id
         };
 
-        const label = localizedLabel(stateNavigation.recordDetail.whoAmI.label, lang);
+        const label = localizedLabel(navigation.recordDetail.whoAmI.label, lang);
 
         try {
             await removeFromTree({
@@ -73,12 +73,12 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
             });
         }
 
-        dispatchNavigation(setRefetchTreeData(true));
+        dispatch(setNavigationRefetchTreeData(true));
     };
 
     const closeDetail = () => {
-        dispatchNavigation(resetRecordDetail());
-        dispatchNavigation(setPath(stateNavigation.path.slice(0, -1)));
+        dispatch(resetNavigationRecordDetail());
+        dispatch(setNavigationPath(navigation.path.slice(0, -1)));
     };
 
     if (isDetail) {

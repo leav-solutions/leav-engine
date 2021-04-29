@@ -4,7 +4,7 @@
 import {IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import React from 'react';
-import {useStateNavigation} from '../../Context/StateNavigationContext';
+import {useAppSelector} from 'redux/store';
 import DefaultActions from './DefaultActions';
 import DetailActions from './DetailActions';
 import SelectionActions from './SelectionActions';
@@ -18,10 +18,10 @@ interface IActiveHeaderCellNavigationProps {
 function HeaderColumnNavigationActions({depth, setItems, isDetail}: IActiveHeaderCellNavigationProps): JSX.Element {
     const currentPositionInPath = depth;
 
-    const {stateNavigation} = useStateNavigation();
+    const navigation = useAppSelector(state => state.navigation);
     const [activeTree] = useActiveTree();
 
-    const parent = stateNavigation.path[currentPositionInPath - 1];
+    const parent = navigation.path[currentPositionInPath - 1];
 
     return (
         <span>

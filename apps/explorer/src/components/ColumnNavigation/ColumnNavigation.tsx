@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ActiveCellNavigation from 'components/ActiveCellNavigation';
 import React, {useEffect, useState} from 'react';
+import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../themingVar';
 import CellNavigation from '../CellNavigation';
@@ -31,7 +31,7 @@ interface IColumnNavigationProps {
 }
 
 function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
-    const {stateNavigation} = useStateNavigation();
+    const navigation = useAppSelector(state => state.navigation);
 
     const [items, setItems] = useState([]);
 
@@ -39,7 +39,7 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
         setItems(treeElements);
     }, [setItems, treeElements]);
 
-    const currentColumnActive = !stateNavigation.recordDetail && stateNavigation.path.length === 0;
+    const currentColumnActive = !navigation.recordDetail && navigation.path.length === 0;
 
     return (
         <>
@@ -59,7 +59,7 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
                     )}
                 </ColumnContent>
             </Column>
-            {stateNavigation.path.map(
+            {navigation.path.map(
                 (pathPart, index) =>
                     treeElements.length && (
                         <ColumnFromPath
@@ -67,8 +67,8 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
                             pathPart={pathPart}
                             treeElements={treeElements}
                             depth={index + 1}
-                            showLoading={stateNavigation.isLoading && index === stateNavigation.path.length - 1}
-                            columnActive={!stateNavigation.recordDetail && index === stateNavigation.path.length - 1}
+                            showLoading={navigation.isLoading && index === navigation.path.length - 1}
+                            columnActive={!navigation.recordDetail && index === navigation.path.length - 1}
                         />
                     )
             )}

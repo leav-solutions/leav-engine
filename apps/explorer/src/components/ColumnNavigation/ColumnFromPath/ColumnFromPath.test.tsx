@@ -4,6 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import {INavigationPath} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
@@ -82,13 +83,15 @@ describe('ColumnFromPath', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <ColumnFromPath
-                        treeElements={mockTreeElements}
-                        pathPart={mockPathPart}
-                        depth={0}
-                        showLoading
-                        columnActive={false}
-                    />
+                    <MockStore>
+                        <ColumnFromPath
+                            treeElements={mockTreeElements}
+                            pathPart={mockPathPart}
+                            depth={0}
+                            showLoading
+                            columnActive={false}
+                        />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
@@ -102,13 +105,15 @@ describe('ColumnFromPath', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <ColumnFromPath
-                        treeElements={mockTreeElements}
-                        pathPart={mockPathPart}
-                        depth={0}
-                        showLoading={false}
-                        columnActive={false}
-                    />
+                    <MockStore>
+                        <ColumnFromPath
+                            treeElements={mockTreeElements}
+                            pathPart={mockPathPart}
+                            depth={0}
+                            showLoading={false}
+                            columnActive={false}
+                        />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

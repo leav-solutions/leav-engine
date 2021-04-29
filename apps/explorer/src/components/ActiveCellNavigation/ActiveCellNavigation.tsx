@@ -6,14 +6,13 @@ import {Badge, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
+import {resetNavigationRecordDetail, setNavigationPath, setNavigationRecordDetail} from 'redux/navigation';
 import {setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {localizedLabel} from 'utils';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
-import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
-import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducerActions';
 import themingVar from '../../themingVar';
 import {
     INavigationPath,
@@ -79,13 +78,15 @@ interface IActiveCellNavigationProps {
 }
 
 function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps): JSX.Element {
-    const {stateNavigation, dispatchNavigation} = useStateNavigation();
     const [{lang}] = useLang();
 
-    const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
+    const {selectionState, navigation} = useAppSelector(state => ({
+        selectionState: state.selection,
+        navigation: state.navigation
+    }));
     const dispatch = useAppDispatch();
 
-    const parentElement = stateNavigation.path[depth - 1];
+    const parentElement = navigation.path[depth - 1];
     const parent: TreeElementInput = {
         id: parentElement?.id,
         library: parentElement?.library
@@ -100,14 +101,14 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
             label: recordLabel
         };
 
-        const newPath = [...stateNavigation.path.splice(0, depth), newPathElement];
+        const newPath = [...navigation.path.slice(0, depth), newPathElement];
 
-        dispatchNavigation(setPath(newPath));
+        dispatch(setNavigationPath(newPath));
 
         if (treeElement.children?.length) {
-            dispatchNavigation(resetRecordDetail());
+            dispatch(resetNavigationRecordDetail());
         } else {
-            dispatchNavigation(setRecordDetail(treeElement.record));
+            dispatch(setNavigationRecordDetail(treeElement.record));
         }
     };
 
@@ -171,7 +172,7 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
         label: recordLabel ?? ''
     };
 
-    const isInPath = stateNavigation.path.some(
+    const isInPath = navigation.path.some(
         pathPart =>
             pathPart.id === treeElement.record.whoAmI.id && pathPart.library === treeElement.record.whoAmI.library.id
     );
