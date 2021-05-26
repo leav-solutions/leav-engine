@@ -4,8 +4,9 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockTreeElement} from '../../__mocks__/common/treeElements';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import {mockTreeElement} from '../../__mocks__/Navigation/mockTreeElements';
 import CellNavigation from './CellNavigation';
 
 describe('CellNavigation', () => {
@@ -15,7 +16,9 @@ describe('CellNavigation', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <CellNavigation treeElement={mockTreeElement} depth={0} />
+                    <MockStore>
+                        <CellNavigation treeElement={mockTreeElement} depth={0} />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

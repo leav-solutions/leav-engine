@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import React from 'react';
-import {setPath} from 'Reducer/NavigationReducerActions';
+import {resetNavigationRecordDetail, setNavigationPath} from 'redux/navigation';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
 import themingVar from '../../themingVar';
 import HeaderColumnNavigationActions from '../HeaderColumnNavigationActions';
@@ -36,19 +36,22 @@ interface IHeaderColumnNavigationProps {
 }
 
 function HeaderColumnNavigation({depth, setItems, isDetail, isActive}: IHeaderColumnNavigationProps): JSX.Element {
+    const navigation = useAppSelector(state => state.navigation);
+    const dispatch = useAppDispatch();
     const currentPositionInPath = depth;
 
-    const {stateNavigation, dispatchNavigation} = useStateNavigation();
     const [activeTree] = useActiveTree();
 
-    const parent = stateNavigation.path[currentPositionInPath - 1];
+    const parent = navigation.path[currentPositionInPath - 1];
 
     const resetPath = () => {
-        dispatchNavigation(setPath([]));
+        dispatch(setNavigationPath([]));
+        dispatch(resetNavigationRecordDetail());
     };
 
     const goToPath = () => {
-        dispatchNavigation(setPath(stateNavigation.path.slice(0, currentPositionInPath)));
+        dispatch(setNavigationPath(navigation.path.slice(0, currentPositionInPath)));
+        dispatch(resetNavigationRecordDetail());
     };
 
     const headerClickFn = () => {

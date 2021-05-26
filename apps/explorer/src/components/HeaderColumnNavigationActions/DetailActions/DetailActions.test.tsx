@@ -4,6 +4,7 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import DetailActions from './DetailActions';
 
@@ -12,7 +13,9 @@ describe('DetailActions', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <DetailActions isDetail={true} depth={0} />
+                    <MockStore>
+                        <DetailActions isDetail={true} depth={0} />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
@@ -24,7 +27,9 @@ describe('DetailActions', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <DetailActions isDetail={true} depth={0} />
+                    <MockStore>
+                        <DetailActions isDetail={true} depth={0} />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });

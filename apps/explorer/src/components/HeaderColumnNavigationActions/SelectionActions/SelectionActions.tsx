@@ -4,7 +4,6 @@
 import {ArrowDownOutlined, DeleteOutlined, PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
-import {useStateNavigation} from 'Context/StateNavigationContext';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMutation';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
@@ -13,7 +12,7 @@ import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useNotifications} from 'hooks/NotificationsHook/NotificationsHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {setRefetchTreeData} from 'Reducer/NavigationReducerActions';
+import {setNavigationRefetchTreeData} from 'redux/navigation';
 import {resetSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
@@ -35,10 +34,11 @@ interface ISelectionActionsProps {
 function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
+    const {selectionState} = useAppSelector(state => ({
+        selectionState: state.selection
+    }));
     const dispatch = useAppDispatch();
 
-    const {dispatchNavigation} = useStateNavigation();
     const [activeTree] = useActiveTree();
 
     const {addNotification} = useNotifications();
@@ -137,7 +137,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         }
 
         dispatch(resetSelection());
-        dispatchNavigation(setRefetchTreeData(true));
+        dispatch(setNavigationRefetchTreeData(true));
     };
 
     const handleMoveEnd = async () => {
@@ -192,7 +192,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         }
 
         dispatch(resetSelection());
-        dispatchNavigation(setRefetchTreeData(true));
+        dispatch(setNavigationRefetchTreeData(true));
     };
 
     const handleDeleteElements = async () => {
@@ -244,7 +244,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             );
 
             dispatch(resetSelection());
-            dispatchNavigation(setRefetchTreeData(true));
+            dispatch(setNavigationRefetchTreeData(true));
         }
     };
 

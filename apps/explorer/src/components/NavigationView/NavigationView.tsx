@@ -4,9 +4,9 @@
 import {useQuery} from '@apollo/client';
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {setIsLoading, setRefetchTreeData} from 'Reducer/NavigationReducerActions';
+import {setNavigationIsLoading, setNavigationRefetchTreeData} from 'redux/navigation';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {
     getTreeContentQuery,
     IGetTreeContentQuery,
@@ -30,11 +30,12 @@ interface INavigationParams {
 }
 
 function NavigationView(): JSX.Element {
+    const navigation = useAppSelector(state => state.navigation);
+    const dispatch = useAppDispatch();
     const [tree, setTree] = useState<IRecordAndChildren[]>([]);
-    const {stateNavigation, dispatchNavigation} = useStateNavigation();
     const {treeId} = useParams<INavigationParams>();
 
-    const depth = stateNavigation.path.length + 1; // add 1 to depth to count children
+    const depth = navigation.path.length + 1; // add 1 to depth to count children
 
     const {data: dataTreeContent, loading: loadingTreeContent, error: errorTreeContent, refetch} = useQuery<
         IGetTreeContentQuery,
@@ -46,18 +47,18 @@ function NavigationView(): JSX.Element {
     });
 
     useEffect(() => {
-        if (stateNavigation.refetchTreeData) {
+        if (navigation.refetchTreeData) {
             refetch();
-            dispatchNavigation(setRefetchTreeData(false));
+            dispatch(setNavigationRefetchTreeData(false));
         }
-    }, [stateNavigation.refetchTreeData, refetch, dispatchNavigation]);
+    }, [navigation.refetchTreeData, refetch, dispatch]);
 
     useEffect(() => {
         if (!loadingTreeContent && dataTreeContent) {
             setTree(dataTreeContent.treeContent);
         }
-        dispatchNavigation(setIsLoading(loadingTreeContent));
-    }, [dataTreeContent, loadingTreeContent, dispatchNavigation]);
+        dispatch(setNavigationIsLoading(loadingTreeContent));
+    }, [dataTreeContent, loadingTreeContent, dispatch]);
 
     if (errorTreeContent) {
         return <>error</>;

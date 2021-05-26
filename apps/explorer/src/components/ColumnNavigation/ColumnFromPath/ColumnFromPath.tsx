@@ -4,8 +4,8 @@
 import {Spin} from 'antd';
 import ActiveCellNavigation from 'components/ActiveCellNavigation';
 import React, {createRef, useEffect, useState} from 'react';
+import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useStateNavigation} from '../../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../../themingVar';
 import {INavigationPath} from '../../../_types/types';
@@ -43,12 +43,13 @@ interface IColumnFromPathProps {
 }
 
 const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActive}: IColumnFromPathProps) => {
+    const navigation = useAppSelector(state => state.navigation);
+
     const parent = findPathInTree(pathPart, treeElements);
 
     const [items, setItems] = useState(parent?.children ?? []);
 
     const ref = createRef<HTMLDivElement>();
-    const {stateNavigation} = useStateNavigation();
 
     useEffect(() => {
         setItems(parent?.children);
@@ -60,7 +61,7 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActiv
                 behavior: 'smooth'
             });
         }
-    }, [ref, stateNavigation.recordDetail]);
+    }, [ref, navigation.recordDetail]);
 
     if (showLoading) {
         return (

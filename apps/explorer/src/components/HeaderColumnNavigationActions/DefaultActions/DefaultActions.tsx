@@ -7,7 +7,6 @@ import {Dropdown, Menu} from 'antd';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import SearchModal from 'components/SearchModal';
-import {useStateNavigation} from 'Context/StateNavigationContext';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import {IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
@@ -16,8 +15,8 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import {useNotifications} from 'hooks/NotificationsHook/NotificationsHook';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setRefetchTreeData} from 'Reducer/NavigationReducerActions';
-import {useAppSelector} from 'redux/store';
+import {setNavigationRefetchTreeData} from 'redux/navigation';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {localizedLabel} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables} from '_gqlTypes/GET_TREE_LIBRARIES';
@@ -33,11 +32,11 @@ interface IDefaultActionsProps {
 
 function DefaultActions({activeTree, setItems, isDetail, parent}: IDefaultActionsProps): JSX.Element {
     const {t} = useTranslation();
-    const {selectionStat} = useAppSelector(state => ({selectionStat: state.selection}));
+    const {selectionState: selectionStat} = useAppSelector(state => ({selectionState: state.selection}));
+    const dispatch = useAppDispatch();
 
     const [{lang}] = useLang();
     const {addNotification} = useNotifications();
-    const {dispatchNavigation} = useStateNavigation();
 
     const [modalVisible, setModalVisible] = useState(false);
     const [libId, setLibId] = useState('');
@@ -155,7 +154,7 @@ function DefaultActions({activeTree, setItems, isDetail, parent}: IDefaultAction
                 });
             }
 
-            dispatchNavigation(setRefetchTreeData(true));
+            dispatch(setNavigationRefetchTreeData(true));
         }
     };
 

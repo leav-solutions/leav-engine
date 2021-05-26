@@ -8,6 +8,7 @@ import displayReducer from './display';
 import fieldsReducer from './fields';
 import filtersReducer from './filters';
 import itemsReducer from './items';
+import navigationReducer from './navigation';
 import selectionReducer from './selection';
 import viewReducer from './view';
 
@@ -19,7 +20,8 @@ const store = configureStore({
         attributes: attributesReducer,
         fields: fieldsReducer,
         filters: filtersReducer,
-        selection: selectionReducer
+        selection: selectionReducer,
+        navigation: navigationReducer
     }
 });
 

@@ -4,10 +4,10 @@
 import {RightOutlined} from '@ant-design/icons';
 import {Badge, Tooltip} from 'antd';
 import React from 'react';
+import {resetNavigationRecordDetail, setNavigationPath, setNavigationRecordDetail} from 'redux/navigation';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
-import {useStateNavigation} from '../../Context/StateNavigationContext';
 import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
-import {resetRecordDetail, setPath, setRecordDetail} from '../../Reducer/NavigationReducerActions';
 import themingVar from '../../themingVar';
 import {INavigationPath, IRecordIdentityWhoAmI, PreviewSize} from '../../_types/types';
 import RecordCard from '../shared/RecordCard';
@@ -54,8 +54,8 @@ interface ICellNavigationProps {
 }
 
 function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element {
-    const {stateNavigation, dispatchNavigation} = useStateNavigation();
-
+    const {navigation} = useAppSelector(state => ({navigation: state.navigation}));
+    const dispatch = useAppDispatch();
     const recordLabel = treeElement.record.whoAmI.label;
 
     const addPath = () => {
@@ -65,14 +65,14 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
             label: recordLabel
         };
 
-        const newPath = [...stateNavigation.path.splice(0, depth), newPathElement];
+        const newPath = [...navigation.path.slice(0, depth), newPathElement];
 
-        dispatchNavigation(setPath(newPath));
+        dispatch(setNavigationPath(newPath));
 
         if (treeElement.children?.length) {
-            dispatchNavigation(resetRecordDetail());
+            dispatch(resetNavigationRecordDetail());
         } else {
-            dispatchNavigation(setRecordDetail(treeElement.record));
+            dispatch(setNavigationRecordDetail(treeElement.record));
         }
     };
 
@@ -81,7 +81,7 @@ function CellNavigation({treeElement, depth}: ICellNavigationProps): JSX.Element
         label: recordLabel ?? ''
     };
 
-    const isInPath = stateNavigation.path.some(
+    const isInPath = navigation.path.some(
         pathPart =>
             pathPart.id === treeElement.record.whoAmI.id && pathPart.library === treeElement.record.whoAmI.library.id
     );

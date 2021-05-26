@@ -6,9 +6,10 @@ import {MockedProvider} from '@apollo/client/testing';
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {navigationInitialState} from 'redux/navigation';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {getActiveTree, IGetActiveTree} from '../../graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import {MockStateNavigation} from '../../__mocks__/Navigation/mockState';
 import HeaderColumnNavigation from './HeaderColumnNavigation';
 
 jest.mock(
@@ -26,12 +27,13 @@ describe('HeaderColumnNavigation', () => {
     ];
 
     test('should display parent Label', async () => {
+        const mockState = {navigation: {...navigationInitialState, path}};
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <MockStateNavigation stateNavigation={{path}}>
+                    <MockStore state={mockState}>
                         <HeaderColumnNavigation depth={1} />
-                    </MockStateNavigation>
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
@@ -58,12 +60,14 @@ describe('HeaderColumnNavigation', () => {
             }
         });
 
+        const mockState = {navigation: {...navigationInitialState, path}};
+
         await act(async () => {
             render(
                 <MockedProvider cache={mockCache}>
-                    <MockStateNavigation stateNavigation={{path}}>
+                    <MockStore state={mockState}>
                         <HeaderColumnNavigation depth={0} />
-                    </MockStateNavigation>
+                    </MockStore>
                 </MockedProvider>
             );
         });
@@ -72,11 +76,13 @@ describe('HeaderColumnNavigation', () => {
     });
 
     test('should use HeaderColumnNavigationActions', async () => {
+        const mockState = {navigation: {...navigationInitialState, path}};
+
         render(
             <MockedProviderWithFragments>
-                <MockStateNavigation stateNavigation={{path}}>
+                <MockStore state={mockState}>
                     <HeaderColumnNavigation depth={1} isActive={true} />
-                </MockStateNavigation>
+                </MockStore>
             </MockedProviderWithFragments>
         );
 

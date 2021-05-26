@@ -5,8 +5,8 @@ import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockTreeElement} from '../../__mocks__/common/treeElements';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import {mockTreeElement} from '../../__mocks__/Navigation/mockTreeElements';
 import ActiveCellNavigation from './ActiveCellNavigation';
 
 describe('ActiveCellNavigation', () => {

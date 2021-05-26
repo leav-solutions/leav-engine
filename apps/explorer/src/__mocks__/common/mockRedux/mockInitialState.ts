@@ -6,6 +6,7 @@ import {displayInitialState} from 'redux/display';
 import {fieldsInitialState} from 'redux/fields';
 import {filtersInitialState} from 'redux/filters';
 import {itemsInitialState} from 'redux/items';
+import {navigationInitialState} from 'redux/navigation';
 import {selectionInitialState} from 'redux/selection';
 import {viewInitialState} from 'redux/view';
 
@@ -16,5 +17,6 @@ export const mockInitialState = {
     filters: filtersInitialState,
     items: itemsInitialState,
     view: viewInitialState,
-    selection: selectionInitialState
+    selection: selectionInitialState,
+    navigation: navigationInitialState
 };

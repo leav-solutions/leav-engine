@@ -1,11 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IRecordField} from 'graphQL/queries/trees/getTreeContentQuery';
 import {
     DisplaySize,
     IAttribute,
     IField,
     IItem,
+    INavigationPath,
     IQueryFilter,
     ISharedStateSelectionSearch,
     IView,
@@ -61,4 +63,11 @@ export interface IFiltersState {
 export interface ISelectionState {
     selection: SharedStateSelection;
     searchSelection: ISharedStateSelectionSearch;
+}
+
+export interface INavigationState {
+    path: INavigationPath[];
+    isLoading: boolean;
+    recordDetail?: IRecordField;
+    refetchTreeData: boolean;
 }

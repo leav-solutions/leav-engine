@@ -4,8 +4,8 @@
 import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockTreeElements} from '../../__mocks__/common/treeElements';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import {mockTreeElements} from '../../__mocks__/Navigation/mockTreeElements';
 import ColumnNavigation from './ColumnNavigation';
 
 jest.mock(
