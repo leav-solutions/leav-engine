@@ -8,6 +8,7 @@ const debug = require('gulp-debug');
 const csso = require('gulp-csso');
 const autoprefixer = require('autoprefixer');
 const NpmImportPlugin = require('less-plugin-npm-import');
+const themingVar = require('./src/themingVar');
 
 gulp.task('less', function () {
     const plugins = [autoprefixer()];
@@ -21,6 +22,7 @@ gulp.task('less', function () {
         )
         .pipe(
             gulpless({
+                modifyVars: themingVar,
                 javascriptEnabled: true,
                 plugins: [
                     new NpmImportPlugin({
