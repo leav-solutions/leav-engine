@@ -2,16 +2,22 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
+import {ThemeSwitcherProvider} from 'react-css-theme-switcher';
 import ReactDOM from 'react-dom';
 import AuthHandler from './components/shared/AuthHandler';
 import './i18n';
 import './index.less';
 import * as serviceWorker from './serviceWorker';
 
+const themes = {
+    dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
+    light: `${process.env.PUBLIC_URL}/light-theme.css`
+};
+
 ReactDOM.render(
-    <React.Fragment>
+    <ThemeSwitcherProvider themeMap={themes} defaultTheme="light">
         <AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} storage={window.sessionStorage} />
-    </React.Fragment>,
+    </ThemeSwitcherProvider>,
     document.getElementById('root')
 );
 

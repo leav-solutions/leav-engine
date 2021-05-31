@@ -22,9 +22,6 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
             placement="right"
             closable={false}
             getContainer={false}
-            style={{
-                position: 'absolute'
-            }}
             bodyStyle={{padding: 0}}
         >
             <Menu

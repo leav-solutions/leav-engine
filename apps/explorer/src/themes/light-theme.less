@@ -3,26 +3,13 @@
 @import '~antd/lib/style/themes/default.less';
 
 @default-bg: #FFF;
-
 @primary-color: #0F97E4;
-@border-radius-base: 4px;
-@body-background: none;
-@component-background: none;
-
-@card-background: @default-bg;
-@table-bg: @default-bg;
-@pagination-item-bg: @default-bg;
-@pagination-item-bg-active: @default-bg;
-@pagination-item-link-bg: @default-bg;
-@pagination-item-input-bg: @default-bg;
-
 @btn-primary-color: #fff;
-@btn-primary-bg: transparent linear-gradient(180deg, #2CCEFF 0%, #0A8EE0 100%) 0% 0% no-repeat padding-box;
 
 .ant-btn:hover {
-    border: #0F97E4 1px solid;
+    border: @primary-color 1px solid;
 }
 
 .ant-message-notice-content.ant-message-notice-content {
-    background: #FFF;
+    background: @default-bg;
 }
