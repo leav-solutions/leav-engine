@@ -9,7 +9,6 @@ import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import {
-    mockGetLibraryDetailExtendedElement,
     mockGetLibraryDetailExtendedQuery,
     mockGetLibraryDetailExtendedQueryVar
 } from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
@@ -24,15 +23,6 @@ import {AttributeType} from '../../_types/types';
 
 jest.mock('../../hooks/ActiveLibHook/ActiveLibHook', () => ({
     useActiveLibrary: () => [mockActiveLibrary, jest.fn()]
-}));
-
-jest.mock('../../hooks/NotificationsHook/NotificationsHook', () => ({
-    useNotifications: () => ({
-        baseNotification: {
-            content: `notification.active-lib|${mockGetLibraryDetailExtendedElement.label.fr}`
-        },
-        updateBaseNotification: () => null
-    })
 }));
 
 jest.mock('react-router-dom', () => ({

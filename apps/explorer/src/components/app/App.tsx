@@ -1,14 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloClient, ApolloLink, ApolloProvider, InMemoryCache} from '@apollo/client';
-import {onError} from '@apollo/link-error';
-import {createUploadLink} from 'apollo-upload-client';
-import {default as React} from 'react';
+import React from 'react';
 import {Provider} from 'react-redux';
 import store from 'redux/store';
+import ApolloHandler from './ApolloHandler';
 import './App.css';
-import AppHandler from './AppHandler';
+import ThemeHandler from './ThemeHandler';
 
 interface IAppProps {
     token: string;
@@ -16,75 +14,12 @@ interface IAppProps {
 }
 
 function App({token, onTokenInvalid}: IAppProps) {
-    // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = onError(({graphQLErrors, networkError}) => {
-        if (graphQLErrors) {
-            graphQLErrors.map(({message, locations, path}) =>
-                console.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
-            );
-        }
-
-        if (networkError) {
-            console.error(`[Network error]: ${networkError}`);
-        }
-    });
-
-    const gqlClient = new ApolloClient({
-        link: ApolloLink.from([
-            _handleApolloError,
-            createUploadLink({
-                uri: process.env.REACT_APP_API_URL,
-                headers: {
-                    Authorization: token
-                }
-            })
-        ]),
-        cache: new InMemoryCache({
-            typePolicies: {
-                EmbeddedAttribute: {
-                    keyFields: false
-                },
-                RecordIdentity: {
-                    keyFields: ['id', 'library', ['id']]
-                },
-                Library: {
-                    fields: {
-                        gqlNames: {
-                            merge(existing, incoming) {
-                                return {...existing, ...incoming};
-                            }
-                        }
-                    }
-                },
-                Query: {
-                    fields: {
-                        notificationsStack: {
-                            merge(existing, incoming) {
-                                return [...incoming];
-                            }
-                        },
-                        baseNotification: {
-                            merge(existing, incoming) {
-                                return incoming;
-                            }
-                        },
-                        treeContent: {
-                            merge(existing, incoming) {
-                                return [...incoming];
-                            }
-                        }
-                    }
-                }
-            }
-        })
-    });
-
     return (
-        <ApolloProvider client={gqlClient}>
-            <Provider store={store}>
-                <AppHandler />
-            </Provider>
-        </ApolloProvider>
+        <Provider store={store}>
+            <ApolloHandler token={token} onTokenInvalid={onTokenInvalid}>
+                <ThemeHandler />
+            </ApolloHandler>
+        </Provider>
     );
 }
 

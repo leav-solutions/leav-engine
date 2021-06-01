@@ -13,6 +13,7 @@ import {setDisplaySelectionMode} from 'redux/display';
 import {setFields} from 'redux/fields';
 import {setFiltersQueryFilters} from 'redux/filters';
 import {setItems, setItemsLoading, setItemsSort, setItemsTotalCount} from 'redux/items';
+import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {setViewCurrent} from 'redux/view';
 import styled, {CSSObject} from 'styled-components';
@@ -29,12 +30,12 @@ import {
 } from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
-import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from '../../utils';
 import {
     AttributeFormat,
     AttributeType,
     IAttribute,
+    IBaseNotification,
     IField,
     IItem,
     IParentAttributeData,
@@ -72,7 +73,7 @@ const Wrapper = styled.div<IWrapperProps>`
             grid-template-areas:
                 'data'
                 'pagination';`}
-    height: 100%;
+    height: calc(100% - 4rem);
     position: relative;
     overflow: hidden;
 `;
@@ -98,14 +99,13 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
 
     const libId = givenLibId ?? urlLibId;
 
-    const {items, view, filters, attributes, display, fields, selection: selectionState} = useAppSelector(
+    const {items, view, filters, attributes, display, fields, selection: selectionState, notification} = useAppSelector(
         state => state
     );
     const dispatch = useAppDispatch();
 
     const {stateFilters, dispatchFilters} = useStateFilters();
     const [{lang}] = useLang();
-    const {baseNotification, updateBaseNotification} = useNotifications();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
 
     useEffect(() => {
@@ -147,12 +147,13 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
             // Base Notification
             if (
                 !display.selectionMode &&
-                baseNotification.content !== t('notification.active-lib', {lib: currentLibName})
+                notification.base.content !== t('notification.active-lib', {lib: currentLibName})
             ) {
-                updateBaseNotification({
+                const baseNotification: IBaseNotification = {
                     content: t('notification.active-lib', {lib: currentLibName}),
                     type: NotificationType.basic
-                });
+                };
+                dispatch(setNotificationBase(baseNotification));
             }
 
             // Current View
@@ -256,8 +257,7 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
         }
     }, [
         dispatch,
-        baseNotification,
-        updateBaseNotification,
+        notification.base,
         updateActiveLibrary,
         display.selectionMode,
         t,

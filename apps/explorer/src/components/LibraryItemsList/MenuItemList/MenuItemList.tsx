@@ -6,12 +6,13 @@ import {Button, Tooltip} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
+import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {IconOpenPanel} from '../../../assets/icons/IconOpenPanel';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
-import {TypeSideItem} from '../../../_types/types';
+import {NotificationChannel, NotificationType, TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
 import MenuItemActions from '../MenuItemActions';
@@ -72,6 +73,16 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
         );
     };
 
+    const handleNew = () => {
+        dispatch(
+            addNotification({
+                content: t('items_list.actions.new'),
+                type: NotificationType.warning,
+                channel: NotificationChannel.trigger
+            })
+        );
+    };
+
     const panelActive = display.side.visible;
 
     return (
@@ -91,7 +102,7 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
             <SubGroupLast>
                 <div>
                     {!display.selectionMode && (
-                        <PrimaryBtn icon={<PlusOutlined />} className="primary-btn">
+                        <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={handleNew}>
                             {t('items_list.new')}
                         </PrimaryBtn>
                     )}

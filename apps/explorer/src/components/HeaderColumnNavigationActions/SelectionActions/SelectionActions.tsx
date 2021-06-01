@@ -9,17 +9,23 @@ import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMu
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import {useNotifications} from 'hooks/NotificationsHook/NotificationsHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationRefetchTreeData} from 'redux/navigation';
+import {addNotification} from 'redux/notifications';
 import {resetSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '_gqlTypes/MOVE_TREE_ELEMENT';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
-import {INavigationPath, NotificationChannel, NotificationType, SharedStateSelectionType} from '_types/types';
+import {
+    INavigationPath,
+    INotification,
+    NotificationChannel,
+    NotificationType,
+    SharedStateSelectionType
+} from '_types/types';
 
 interface IMessages {
     countValid: number;
@@ -41,8 +47,6 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
     const [activeTree] = useActiveTree();
 
-    const {addNotification} = useNotifications();
-
     const [removeFromTree] = useMutation<REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables>(removeTreeElementMutation, {
         refetchQueries: [{query: getTreeContentQuery(depth), variables: {treeId: activeTree?.id}}]
     });
@@ -51,20 +55,22 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
     const displayMessages = (tMessageSuccess: string, tMessageFail: string, messages: IMessages) => {
         if (messages.countValid) {
-            addNotification({
+            const notification: INotification = {
                 channel: NotificationChannel.trigger,
                 type: NotificationType.success,
                 content: t(tMessageSuccess, {
                     nb: messages.countValid
                 })
-            });
+            };
+
+            dispatch(addNotification(notification));
         }
 
         delete messages.countValid;
         const errors = Object.keys(messages.errors);
 
         for (const error of errors) {
-            addNotification({
+            const notification: INotification = {
                 channel: NotificationChannel.trigger,
                 type: NotificationType.warning,
                 content: t(tMessageFail, {
@@ -74,7 +80,9 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                     ),
                     errorMessage: error
                 })
-            });
+            };
+
+            dispatch(addNotification(notification));
         }
     };
 
@@ -129,11 +137,13 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
             displayMessages('navigation.notifications.success-add', 'navigation.notifications.error-add', messages);
         } else {
-            addNotification({
+            const notification: INotification = {
                 channel: NotificationChannel.trigger,
                 type: NotificationType.warning,
                 content: t('navigation.notifications.warning-add-no-selection')
-            });
+            };
+
+            dispatch(addNotification(notification));
         }
 
         dispatch(resetSelection());

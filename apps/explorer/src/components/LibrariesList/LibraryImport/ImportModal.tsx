@@ -7,16 +7,23 @@ import {Checkbox, message, Result, Select, Space, Steps, Table, Typography, Uplo
 import Modal from 'antd/lib/modal/Modal';
 import React, {useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
+import {addNotification} from 'redux/notifications';
+import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import * as XLSX from 'xlsx';
 import {getAttributesByLibQuery} from '../../../graphQL/queries/attributes/getAttributesByLib';
 import {importExcel} from '../../../graphQL/queries/import/importExcel';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import {useNotifications} from '../../../hooks/NotificationsHook/NotificationsHook';
 import {localizedLabel} from '../../../utils';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {IMPORT, IMPORTVariables} from '../../../_gqlTypes/IMPORT';
-import {AttributeType, NotificationChannel, NotificationPriority, NotificationType} from '../../../_types/types';
+import {
+    AttributeType,
+    INotification,
+    NotificationChannel,
+    NotificationPriority,
+    NotificationType
+} from '../../../_types/types';
 
 const {Step} = Steps;
 const {Dragger} = Upload;
@@ -75,7 +82,8 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
     const [state, dispatch] = useReducer(importReducer, initialState);
     const {data, mapping, key, file, keyChecked, currentStep, okBtn} = state;
 
-    const {addNotification} = useNotifications();
+    const appDispatch = useAppDispatch();
+
     const [{lang}] = useLang();
 
     // Retrieve attributes list
@@ -96,12 +104,14 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
             dispatch({currentStep: ImportSteps.DONE});
         },
         onError: error => {
-            addNotification({
+            const notification: INotification = {
                 type: NotificationType.error,
                 priority: NotificationPriority.high,
                 channel: NotificationChannel.passive,
                 content: `${t('error.error_occurred')}: ${error.message}`
-            });
+            };
+
+            appDispatch(addNotification(notification));
 
             dispatch({currentStep: ImportSteps.DONE});
         }
