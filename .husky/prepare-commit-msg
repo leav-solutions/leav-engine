@@ -1,9 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-COMMIT_MSG_FILE=$1
-MSG=$(node scripts/generateCommitMsg.js)
-
-hint=$(cat "$COMMIT_MSG_FILE")
-echo -n "$MSG " > "$COMMIT_MSG_FILE"
-echo "$hint" >> "$COMMIT_MSG_FILE"
