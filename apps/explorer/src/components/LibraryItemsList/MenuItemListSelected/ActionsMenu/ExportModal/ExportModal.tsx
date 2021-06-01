@@ -8,11 +8,11 @@ import Modal from 'antd/lib/modal/Modal';
 import AttributesSelectionList from 'components/AttributesSelectionList';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppSelector} from 'redux/store';
+import {addNotification} from 'redux/notifications';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
 import {useActiveLibrary} from '../../../../../hooks/ActiveLibHook/ActiveLibHook';
-import {useNotifications} from '../../../../../hooks/NotificationsHook/NotificationsHook';
 import {getFileUrl} from '../../../../../utils';
 import {EXPORT, EXPORTVariables} from '../../../../../_gqlTypes/EXPORT';
 import {
@@ -22,6 +22,7 @@ import {
     RecordFilterOperator
 } from '../../../../../_gqlTypes/globalTypes';
 import {
+    INotification,
     ISelectedAttribute,
     NotificationChannel,
     NotificationPriority,
@@ -57,9 +58,9 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
     const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
 
     const filters = useAppSelector(state => state.filters);
+    const dispatch = useAppDispatch();
 
     const [activeLibrary] = useActiveLibrary();
-    const {addNotification} = useNotifications();
 
     const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>([]);
     const [currentStep, setCurrentStep] = useState<ExportSteps>(ExportSteps.ATTRIBUTE_SELECTION);
@@ -72,12 +73,15 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
             setFilepath(data.export);
         },
         onError: error => {
-            addNotification({
+            const notification: INotification = {
                 type: NotificationType.error,
                 priority: NotificationPriority.high,
                 channel: NotificationChannel.passive,
                 content: `${t('error.error_occurred')}: ${error.message}`
-            });
+            };
+
+            dispatch(addNotification(notification));
+
             setCurrentStep(ExportSteps.DONE);
         }
     });

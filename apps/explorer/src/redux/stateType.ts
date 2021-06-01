@@ -5,9 +5,11 @@ import {IRecordField} from 'graphQL/queries/trees/getTreeContentQuery';
 import {
     DisplaySize,
     IAttribute,
+    IBaseNotification,
     IField,
     IItem,
     INavigationPath,
+    INotification,
     IQueryFilter,
     ISharedStateSelectionSearch,
     IView,
@@ -70,4 +72,9 @@ export interface INavigationState {
     isLoading: boolean;
     recordDetail?: IRecordField;
     refetchTreeData: boolean;
+}
+
+export interface INotificationsState {
+    base?: IBaseNotification;
+    stack: INotification[];
 }

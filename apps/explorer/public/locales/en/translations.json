@@ -284,7 +284,9 @@
         "key": "Select reference attribute"
     },
     "error": {
-        "error_occurred": "An error occurred"
+        "error_occurred": "An error occurred",
+        "graphql_error_occurred": "An error ocurred: {{error}}",
+        "network_error_occurred": "An network error occurred"
     },
     "language": {
         "fr": "French",

@@ -10,14 +10,14 @@ import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeEleme
 import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from 'hooks/LangHook/LangHook';
-import {useNotifications} from 'hooks/NotificationsHook/NotificationsHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {resetNavigationRecordDetail, setNavigationPath, setNavigationRefetchTreeData} from 'redux/navigation';
+import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {localizedLabel} from 'utils';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
-import {NotificationChannel, NotificationType} from '_types/types';
+import {INotification, NotificationChannel, NotificationType} from '_types/types';
 
 interface IDetailActionsProps {
     isDetail: boolean;
@@ -29,7 +29,6 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
     const dispatch = useAppDispatch();
     const {t} = useTranslation();
 
-    const {addNotification} = useNotifications();
     const [{lang}] = useLang();
     const [activeTree] = useActiveTree();
 
@@ -53,24 +52,27 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
                 }
             });
 
-            addNotification({
+            const notification: INotification = {
                 channel: NotificationChannel.trigger,
                 type: NotificationType.success,
                 content: t('navigation.notifications.success-detach', {
                     elementName: element.id
                 })
-            });
+            };
+            dispatch(addNotification(notification));
 
             closeDetail();
         } catch (e) {
-            addNotification({
+            const notification: INotification = {
                 channel: NotificationChannel.trigger,
                 type: NotificationType.error,
                 content: t('navigation.notifications.error-detach', {
                     elementName: label ?? element.id,
                     errorMessage: e.message
                 })
-            });
+            };
+
+            dispatch(addNotification(notification));
         }
 
         dispatch(setNavigationRefetchTreeData(true));

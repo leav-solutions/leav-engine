@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import wait from 'waait';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
 import {getUserDataQuery} from '../../queries/userData/getUserData';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
@@ -85,40 +85,31 @@ describe('LibrariesList', () => {
     ];
 
     test('should call LibraryCard', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <LibrariesList />
-                </MockedProviderWithFragments>
+            render(
+                <MockStore>
+                    <MockedProviderWithFragments mocks={mocks}>
+                        <LibrariesList />
+                    </MockedProviderWithFragments>
+                </MockStore>
             );
         });
 
-        await act(async () => {
-            await wait(1);
-            comp.update();
-        });
-
-        expect(comp.find('LibraryCard')).toHaveLength(1);
+        expect(await waitForElement(() => screen.getByText('LibraryCard'))).toBeInTheDocument();
     });
 
     test("shouldn't call LibraryDetail", async () => {
-        let comp: any;
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <LibrariesList />
-                </MockedProviderWithFragments>
+            render(
+                <MockStore>
+                    <MockedProviderWithFragments mocks={mocks}>
+                        <LibrariesList />
+                    </MockedProviderWithFragments>
+                </MockStore>
             );
         });
 
-        // wait for the query to respond
-        await act(async () => {
-            await wait(1);
-            comp.update();
-        });
-
-        expect(comp.find('LibraryDetail')).toHaveLength(0);
+        expect(await waitForElement(() => screen.getByText('LibraryCard'))).toBeInTheDocument();
+        expect(screen.queryByRole('LibraryDetail')).not.toBeInTheDocument();
     });
 });

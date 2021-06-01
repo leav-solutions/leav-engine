@@ -6,12 +6,13 @@ import {Divider, PageHeader, Row, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
+import {setNotificationBase} from 'redux/notifications';
+import {useAppDispatch} from 'redux/store';
 import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
-import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {getUserDataQuery} from '../../queries/userData/getUserData';
 import {saveUserData} from '../../queries/userData/saveUserData';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../_gqlTypes/SAVE_USER_DATA';
-import {NotificationType} from '../../_types/types';
+import {IBaseNotification, NotificationType} from '../../_types/types';
 import ErrorDisplay from '../shared/ErrorDisplay';
 import LibraryCard from './LibraryCard';
 import LibraryDetail from './LibraryDetail';
@@ -21,7 +22,8 @@ export const FAVORITE_LIBRARIES_KEY = 'favorites_libraries_ids';
 function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
     const {libId, libQueryName, filterName} = useParams<{libId: string; libQueryName: string; filterName: string}>();
-    const {updateBaseNotification} = useNotifications();
+
+    const dispatch = useAppDispatch();
 
     const [activeLibrary, setActiveLibrary] = useState<string>(libId);
 
@@ -50,8 +52,12 @@ function LibrariesList(): JSX.Element {
     };
 
     useEffect(() => {
-        updateBaseNotification({content: t('notification.base-message'), type: NotificationType.basic});
-    }, [updateBaseNotification, t]);
+        const baseNotification: IBaseNotification = {
+            content: t('notification.base-message'),
+            type: NotificationType.basic
+        };
+        dispatch(setNotificationBase(baseNotification));
+    }, [t, dispatch]);
 
     useEffect(() => {
         setActiveLibrary(libId);

@@ -2,17 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useEffect, useState} from 'react';
-import {GET_NOTIFICATIONS_STACK_notificationsStack} from '_gqlTypes/GET_NOTIFICATIONS_STACK';
+import {setNotificationStack} from 'redux/notifications';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {defaultNotificationsTime} from '../../constants/constants';
-import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {sortNotificationByPriority} from '../../utils';
 import {INotification, NotificationChannel} from '../../_types/types';
 import DisplayNotification from './DisplayNotification';
 
 function HeaderNotification(): JSX.Element {
-    const {notificationsStack, updateNotificationsStack, baseNotification} = useNotifications();
+    const {stack, base} = useAppSelector(state => state.notification);
+    const dispatch = useAppDispatch();
 
-    const [message, setMessage] = useState<INotification>(baseNotification);
+    const [message, setMessage] = useState<INotification>(base);
     const [triggerNotifications, setTriggerNotifications] = useState<INotification[]>([]);
     const [activeTimeouts, setActiveTimeouts] = useState<{notification: any; base: any}>({
         notification: null,
@@ -20,7 +21,7 @@ function HeaderNotification(): JSX.Element {
     });
 
     useEffect(() => {
-        const {passiveNotifications, triggerNotifications: triggerNotifs} = notificationsStack.reduce(
+        const {passiveNotifications, triggerNotifications: triggerNotifs} = stack.reduce(
             (acc, notification) => {
                 switch (notification.channel) {
                     case NotificationChannel.trigger:
@@ -31,15 +32,15 @@ function HeaderNotification(): JSX.Element {
                 }
             },
             {
-                passiveNotifications: [] as GET_NOTIFICATIONS_STACK_notificationsStack[],
-                triggerNotifications: [] as GET_NOTIFICATIONS_STACK_notificationsStack[]
+                passiveNotifications: [] as INotification[],
+                triggerNotifications: [] as INotification[]
             }
         );
 
         if (triggerNotifs.length) {
             setTriggerNotifications(notifications => [...notifications, ...triggerNotifs]);
 
-            updateNotificationsStack(passiveNotifications);
+            dispatch(setNotificationStack(passiveNotifications));
         }
 
         if (passiveNotifications.length) {
@@ -72,7 +73,7 @@ function HeaderNotification(): JSX.Element {
                         // wait 100 to display base notification to avoid
                         // base message to appear between two notification
                         const baseTimeout = setTimeout(() => {
-                            setMessage(baseNotification);
+                            setMessage(base);
                         }, 100);
 
                         // set baseTimeout in state
@@ -96,18 +97,18 @@ function HeaderNotification(): JSX.Element {
                 }));
 
                 // update notification stack with rest notifications
-                updateNotificationsStack(restNotifications);
+                dispatch(setNotificationStack(restNotifications));
             }
         } else if (!activeTimeouts.notification) {
             // if no notification, display base notification
             setMessage(msg => {
-                if (baseNotification.content !== msg.content) {
-                    return baseNotification;
+                if (base.content !== msg.content) {
+                    return base;
                 }
                 return msg;
             });
         }
-    }, [setMessage, notificationsStack, updateNotificationsStack, baseNotification, setActiveTimeouts, activeTimeouts]);
+    }, [setMessage, stack, base, setActiveTimeouts, activeTimeouts, dispatch]);
 
     const cancelNotification = () => {
         clearTimeout(activeTimeouts.notification);

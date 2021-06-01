@@ -9,6 +9,7 @@ import fieldsReducer from './fields';
 import filtersReducer from './filters';
 import itemsReducer from './items';
 import navigationReducer from './navigation';
+import notificationsReducer from './notifications';
 import selectionReducer from './selection';
 import viewReducer from './view';
 
@@ -21,7 +22,8 @@ const store = configureStore({
         fields: fieldsReducer,
         filters: filtersReducer,
         selection: selectionReducer,
-        navigation: navigationReducer
+        navigation: navigationReducer,
+        notification: notificationsReducer
     }
 });
 

@@ -12,16 +12,22 @@ import {IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import {IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {useLang} from 'hooks/LangHook/LangHook';
-import {useNotifications} from 'hooks/NotificationsHook/NotificationsHook';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationRefetchTreeData} from 'redux/navigation';
+import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {localizedLabel} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
-import {INavigationPath, ISharedStateSelectionSearch, NotificationChannel, NotificationType} from '_types/types';
+import {
+    INavigationPath,
+    INotification,
+    ISharedStateSelectionSearch,
+    NotificationChannel,
+    NotificationType
+} from '_types/types';
 
 interface IDefaultActionsProps {
     isDetail: boolean;
@@ -36,7 +42,6 @@ function DefaultActions({activeTree, setItems, isDetail, parent}: IDefaultAction
     const dispatch = useAppDispatch();
 
     const [{lang}] = useLang();
-    const {addNotification} = useNotifications();
 
     const [modalVisible, setModalVisible] = useState(false);
     const [libId, setLibId] = useState('');
@@ -128,13 +133,14 @@ function DefaultActions({activeTree, setItems, isDetail, parent}: IDefaultAction
             }
 
             if (messages.countValid) {
-                addNotification({
+                const notification: INotification = {
                     channel: NotificationChannel.trigger,
                     type: NotificationType.success,
                     content: t('navigation.notifications.success-add', {
                         nb: messages.countValid
                     })
-                });
+                };
+                dispatch(addNotification(notification));
             }
 
             delete messages.countValid;

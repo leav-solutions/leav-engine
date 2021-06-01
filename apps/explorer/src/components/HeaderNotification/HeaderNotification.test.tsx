@@ -1,64 +1,64 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {InMemoryCache} from '@apollo/client';
 import {MockedProvider} from '@apollo/client/testing';
-import {mount} from 'enzyme';
+import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {getNotifications, IGetNotification} from '../../graphQL/queries/cache/notifications/getNotificationsQuery';
+import {notificationsInitialState} from 'redux/notifications';
 import {
     IBaseNotification,
     INotification,
     NotificationChannel,
     NotificationPriority,
     NotificationType
-} from '../../_types/types';
+} from '_types/types';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import HeaderNotification from './HeaderNotification';
 
-jest.setTimeout(4000);
-
 describe('HeaderNotification', () => {
     test('should display base message', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
-                    <HeaderNotification />
+                    <MockStore>
+                        <HeaderNotification />
+                    </MockStore>
                 </MockedProviderWithFragments>
             );
         });
 
-        expect(comp.text()).toContain('notification.base-message');
+        expect(screen.getByTestId('notification-message-wrapper')).toBeInTheDocument();
     });
 
-    test('should display message given', async () => {
+    test('should display passive message given', async () => {
         // Add custom merge notificationsStack and baseNotification to avoid warning from apollo
-        const mockCache = new InMemoryCache({
-            typePolicies: {
-                Query: {
-                    fields: {
-                        notificationsStack: {
-                            merge(_, incoming) {
-                                return [...incoming];
-                            }
-                        },
-                        baseNotification: {
-                            merge(_, incoming) {
-                                return incoming;
-                            }
-                        }
-                    }
-                }
-            }
-        });
 
         const mockBaseNotification: IBaseNotification = {
             content: 'base notification',
             type: NotificationType.basic
         };
+
+        const mockState = {
+            notification: {...notificationsInitialState, base: mockBaseNotification}
+        };
+
+        await act(async () => {
+            render(
+                <MockedProvider>
+                    <MockStore state={mockState}>
+                        <HeaderNotification />
+                    </MockStore>
+                </MockedProvider>
+            );
+        });
+
+        expect(await waitForElement(() => screen.getByText(mockBaseNotification.content))).toBeInTheDocument();
+    });
+
+    test('should display trigger message given', async () => {
+        // Add custom merge notificationsStack and baseNotification to avoid warning from apollo
 
         const mockNotification: INotification = {
             content: 'this is a test',
@@ -68,24 +68,20 @@ describe('HeaderNotification', () => {
             channel: NotificationChannel.passive
         };
 
-        mockCache.writeQuery<IGetNotification>({
-            query: getNotifications,
-            data: {
-                baseNotification: mockBaseNotification,
-                notificationsStack: [mockNotification]
-            }
-        });
-
-        let comp: any;
+        const mockState = {
+            notification: {...notificationsInitialState, stack: [mockNotification]}
+        };
 
         await act(async () => {
-            comp = mount(
-                <MockedProvider cache={mockCache}>
-                    <HeaderNotification />
+            render(
+                <MockedProvider>
+                    <MockStore state={mockState}>
+                        <HeaderNotification />
+                    </MockStore>
                 </MockedProvider>
             );
         });
 
-        expect(comp.text()).toContain(mockNotification.content);
+        expect(await waitForElement(() => screen.getByText(mockNotification.content))).toBeInTheDocument();
     });
 });

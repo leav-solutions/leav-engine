@@ -14,7 +14,7 @@ i18n.use(initReactI18next)
         ns: ['translations'],
         defaultNS: 'translations',
         react: {
-            wait: true
+            useSuspense: true
         }
     });
 

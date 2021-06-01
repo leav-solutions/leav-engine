@@ -6,11 +6,12 @@ import {Divider, PageHeader, Row, Spin} from 'antd';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {default as React, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
+import {setNotificationBase} from 'redux/notifications';
+import {useAppDispatch} from 'redux/store';
 import {getUserDataQuery} from '../../queries/userData/getUserData';
 import {saveUserData} from '../../queries/userData/saveUserData';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../_gqlTypes/SAVE_USER_DATA';
-import {NotificationType} from '../../_types/types';
+import {IBaseNotification, NotificationType} from '../../_types/types';
 import ErrorDisplay from '../shared/ErrorDisplay';
 import TreeItem from '../TreeItem';
 
@@ -19,7 +20,7 @@ export const FAVORITE_TREES_KEY = 'favorites_trees_ids';
 function TreeList(): JSX.Element {
     const {t} = useTranslation();
 
-    const {updateBaseNotification} = useNotifications();
+    const dispatch = useAppDispatch();
 
     const treeListQuery = useQuery(getTreeListQuery);
     const userDataQuery = useQuery(getUserDataQuery, {
@@ -47,8 +48,12 @@ function TreeList(): JSX.Element {
     };
 
     useEffect(() => {
-        updateBaseNotification({content: t('notification.base-message'), type: NotificationType.basic});
-    }, [updateBaseNotification, t]);
+        const baseNotification: IBaseNotification = {
+            content: t('notification.base-message'),
+            type: NotificationType.basic
+        };
+        dispatch(setNotificationBase(baseNotification));
+    }, [t, dispatch]);
 
     if (treeListQuery.loading || userDataQuery.loading) {
         return <Spin />;

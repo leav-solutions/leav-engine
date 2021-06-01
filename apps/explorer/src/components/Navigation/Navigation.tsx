@@ -6,13 +6,14 @@ import NavigationHeader from 'components/NavigationHeader';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
+import {setNotificationBase} from 'redux/notifications';
+import {useAppDispatch} from 'redux/store';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
-import {useNotifications} from '../../hooks/NotificationsHook/NotificationsHook';
 import {localizedLabel} from '../../utils';
 import {GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables} from '../../_gqlTypes/GET_TREE_LIST_QUERY';
-import {NotificationType} from '../../_types/types';
+import {IBaseNotification, NotificationType} from '../../_types/types';
 import NavigationView from '../NavigationView';
 
 interface INavigationParams {
@@ -23,9 +24,10 @@ function Navigation(): JSX.Element {
     const {t} = useTranslation();
     const {treeId} = useParams<INavigationParams>();
 
+    const dispatch = useAppDispatch();
+
     const [{lang}] = useLang();
     const [, updateActiveTree] = useActiveTree();
-    const {updateBaseNotification} = useNotifications();
 
     const {data, loading} = useQuery<GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables>(getTreeListQuery, {
         variables: {treeId}
@@ -42,12 +44,14 @@ function Navigation(): JSX.Element {
                 libraries: currentTree.libraries.map(lib => ({id: lib.library.id}))
             });
 
-            updateBaseNotification({
+            const baseNotification: IBaseNotification = {
                 content: t('notification.active-tree', {tree: treeName}),
                 type: NotificationType.basic
-            });
+            };
+
+            dispatch(setNotificationBase(baseNotification));
         }
-    }, [data, loading, lang, updateActiveTree, t, updateBaseNotification]);
+    }, [data, loading, lang, updateActiveTree, t, dispatch]);
 
     return (
         <>

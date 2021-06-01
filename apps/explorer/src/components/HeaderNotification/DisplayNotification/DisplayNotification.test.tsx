@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {INotification, NotificationType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import DisplayNotification from './DisplayNotification';
@@ -22,25 +23,25 @@ describe('DisplayNotification', () => {
     const mockTriggerNotification: INotification[] = [];
 
     test('should display message content', async () => {
-        let comp: any;
-
         const mockSetTriggerNotification = jest.fn();
 
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <DisplayNotification
-                        message={mockMessage}
-                        activeTimeouts={mockActiveTimeouts}
-                        cancelNotification={jest.fn()}
-                        triggerNotifications={mockTriggerNotification}
-                        setTriggerNotifications={mockSetTriggerNotification}
-                    />
-                </MockedProviderWithFragments>
+            render(
+                <MockStore>
+                    <MockedProviderWithFragments>
+                        <DisplayNotification
+                            message={mockMessage}
+                            activeTimeouts={mockActiveTimeouts}
+                            cancelNotification={jest.fn()}
+                            triggerNotifications={mockTriggerNotification}
+                            setTriggerNotifications={mockSetTriggerNotification}
+                        />
+                    </MockedProviderWithFragments>
+                </MockStore>
             );
         });
 
-        expect(comp.text()).toContain(mockMessage.content);
+        expect(await waitForElement(() => screen.getByText(mockMessage.content))).toBeInTheDocument();
     });
 
     test('should display trigger notification', async () => {
@@ -53,16 +54,18 @@ describe('DisplayNotification', () => {
         const mockSetTriggerNotification = jest.fn();
 
         await act(async () => {
-            mount(
-                <MockedProviderWithFragments>
-                    <DisplayNotification
-                        message={mockMessage}
-                        activeTimeouts={mockActiveTimeouts}
-                        cancelNotification={jest.fn()}
-                        triggerNotifications={mockNotification}
-                        setTriggerNotifications={mockSetTriggerNotification}
-                    />
-                </MockedProviderWithFragments>
+            render(
+                <MockStore>
+                    <MockedProviderWithFragments>
+                        <DisplayNotification
+                            message={mockMessage}
+                            activeTimeouts={mockActiveTimeouts}
+                            cancelNotification={jest.fn()}
+                            triggerNotifications={mockNotification}
+                            setTriggerNotifications={mockSetTriggerNotification}
+                        />
+                    </MockedProviderWithFragments>
+                </MockStore>
             );
         });
 

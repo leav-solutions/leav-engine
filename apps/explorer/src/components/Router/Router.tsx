@@ -33,7 +33,8 @@ const TopBarWrapper = styled.div`
 
 const BodyWrapper = styled.div`
     position: relative; /* relative position for Drawer */
-    height: calc(100% - 7rem);
+    height: 100%;
+    overflow: hidden;
 `;
 
 function Router(): JSX.Element {

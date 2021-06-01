@@ -4,8 +4,8 @@
 import {CloseOutlined} from '@ant-design/icons';
 import {Badge, message as antMessage} from 'antd';
 import React, {useEffect} from 'react';
+import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {useNotifications} from '../../../hooks/NotificationsHook/NotificationsHook';
 import {INotification, NotificationType} from '../../../_types/types';
 
 const Wrapper = styled.div`
@@ -22,6 +22,10 @@ const Wrapper = styled.div`
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
+
+    height: 3.5ch;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 `;
 
 const CustomBadge = styled(Badge)`
@@ -47,7 +51,7 @@ function DisplayNotification({
     triggerNotifications,
     setTriggerNotifications
 }: IDisplayNotificationProps): JSX.Element {
-    const {notificationsStack} = useNotifications();
+    const {stack} = useAppSelector(state => ({stack: state.notification.stack}));
 
     useEffect(() => {
         if (triggerNotifications.length) {
@@ -75,12 +79,12 @@ function DisplayNotification({
 
     return (
         <>
-            <Wrapper>
+            <Wrapper data-testid="notification-message-wrapper">
                 <Message notification={message} />
                 <span>
                     {activeTimeouts.notification && (
                         <div>
-                            <CustomBadge count={notificationsStack.length} />
+                            <CustomBadge count={stack.length} />
                             <CloseOutlined onClick={cancelNotification} />
                         </div>
                     )}

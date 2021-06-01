@@ -84,6 +84,9 @@
         "display_type": "Affichage",
         "header_table": "Éléments de {{libName}}",
         "show-filter-panel": "Montrer les filtres",
+        "actions": {
+            "new": "L'ajout des élements n'est pas encore mis en place"
+        },
         "table": {
             "preview": "Vignette",
             "selected": "Sélectionner",
@@ -285,7 +288,9 @@
         "key": "Sélection de l'attribut référence"
     },
     "error": {
-        "error_occurred": "Une erreur est survenue"
+        "error_occurred": "Une erreur est survenue",
+        "graphql_error_occurred": "Une erreur est survenue: {{error}}",
+        "network_error_occurred": "Une erreur de connexion est survenue"
     },
     "language": {
         "fr": "Français",
