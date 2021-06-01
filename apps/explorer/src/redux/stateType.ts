@@ -41,7 +41,6 @@ export interface IViewState {
 export interface IDisplayState {
     size: DisplaySize;
     side: IDisplaySide;
-    selectionMode?: boolean;
 }
 
 export interface IDisplaySide {

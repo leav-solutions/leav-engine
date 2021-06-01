@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
+import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
+import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setSearchSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -13,6 +14,8 @@ import {SharedStateSelectionType} from '_types/types';
 
 function MenuSelection(): JSX.Element {
     const {t} = useTranslation();
+
+    const selectionMode = useContext(SelectionModeContext);
 
     const {items, selectionState, display} = useAppSelector(state => ({
         items: state.items,
@@ -27,7 +30,7 @@ function MenuSelection(): JSX.Element {
         items.offset + items.pagination > items.totalCount ? items.totalCount : items.offset + items.pagination;
 
     const selectAll = () => {
-        if (!display.selectionMode) {
+        if (!selectionMode) {
             dispatch(
                 setSelection({
                     type: SharedStateSelectionType.search,
@@ -54,7 +57,7 @@ function MenuSelection(): JSX.Element {
             }
         }
 
-        if (display.selectionMode) {
+        if (selectionMode) {
             dispatch(
                 setSearchSelection({
                     type: SharedStateSelectionType.search,
@@ -78,7 +81,7 @@ function MenuSelection(): JSX.Element {
             <Dropdown
                 overlay={
                     <Menu>
-                        {!display.selectionMode && (
+                        {!selectionMode && (
                             <Menu.Item onClick={selectAll}>
                                 {t('items-menu-dropdown.select-all', {nb: items.totalCount})}
                             </Menu.Item>

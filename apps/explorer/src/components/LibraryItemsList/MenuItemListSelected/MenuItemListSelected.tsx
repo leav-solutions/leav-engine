@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckSquareTwoTone, DeleteOutlined, DownOutlined, LogoutOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
+import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {resetSearchSelection, resetSelection, setSearchSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -56,7 +57,8 @@ const Wrapper = styled.div<IWrapperProps>`
 function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {selectionState, display, items} = useAppSelector(state => ({
+    const selectionMode = useContext(SelectionModeContext);
+    const {selectionState, items} = useAppSelector(state => ({
         selectionState: state.selection,
         display: state.display,
         items: state.items
@@ -68,7 +70,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     const [countItemsSelected, setCountItemsSelected] = useState(0);
 
     const disableModeSelection = () => {
-        if (display.selectionMode) {
+        if (selectionMode) {
             dispatch(resetSearchSelection());
         } else {
             dispatch(resetSelection());
@@ -76,12 +78,12 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     };
 
     useEffect(() => {
-        if (display.selectionMode) {
+        if (selectionMode) {
             setCountItemsSelected(selectionState.searchSelection.selected.length);
         } else {
             setCountItemsSelected(selectionState.selection.selected.length);
         }
-    }, [selectionState.selection, selectionState.searchSelection, display.selectionMode, setCountItemsSelected]);
+    }, [selectionState.selection, selectionState.searchSelection, selectionMode, setCountItemsSelected]);
 
     const selectVisible = () => {
         let selected = [...selectionState.selection.selected];
@@ -99,7 +101,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
             }
         }
 
-        if (display.selectionMode) {
+        if (selectionMode) {
             dispatch(
                 setSearchSelection({
                     type: SharedStateSelectionType.search,
@@ -119,7 +121,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     };
 
     const selectAll = () => {
-        if (!display.selectionMode) {
+        if (!selectionMode) {
             dispatch(
                 setSelection({
                     type: SharedStateSelectionType.search,
@@ -131,14 +133,14 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     };
 
     const unselectAll = () => {
-        if (display.selectionMode) {
+        if (selectionMode) {
             dispatch(resetSearchSelection());
         } else {
             dispatch(resetSelection());
         }
     };
 
-    const allSelectActive = display.selectionMode
+    const allSelectActive = selectionMode
         ? selectionState.searchSelection.type === SharedStateSelectionType.search &&
           selectionState.searchSelection.allSelected
         : selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
@@ -152,7 +154,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                             <Menu.Item onClick={selectVisible}>
                                 {t('items-menu-dropdown.select-visible', {nb: items.items?.length})}
                             </Menu.Item>
-                            {!display.selectionMode && (
+                            {!selectionMode && (
                                 <Menu.Item onClick={selectAll}>
                                     {t('items-menu-dropdown.select-all', {nb: items.totalCount})}
                                 </Menu.Item>
@@ -173,7 +175,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     </Button>
                 </Dropdown>
 
-                {!display.selectionMode && (
+                {!selectionMode && (
                     <>
                         <ActionsMenu />
 
