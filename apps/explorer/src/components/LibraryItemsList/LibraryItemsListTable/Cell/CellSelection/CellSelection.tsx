@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Checkbox} from 'antd';
-import React from 'react';
+import {SelectionModeContext} from 'context';
+import React, {useContext} from 'react';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
@@ -43,9 +44,10 @@ function CellSelection({index, selectionData}: ICellSelectionProps): JSX.Element
         display: state.display
     }));
     const dispatch = useAppDispatch();
+    const selectionMode = useContext(SelectionModeContext);
 
     const handleChangeSelected = () => {
-        if (display.selectionMode) {
+        if (selectionMode) {
             dispatch(setSelectionToggleSearchSelectionElement(selectionData));
         } else {
             dispatch(
@@ -61,7 +63,7 @@ function CellSelection({index, selectionData}: ICellSelectionProps): JSX.Element
         const allSelected =
             selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
 
-        const isSelected = display.selectionMode
+        const isSelected = selectionMode
             ? selectionState.searchSelection.selected.some(
                   elementSelected =>
                       elementSelected.id === selectionData.id && elementSelected.library === selectionData.library

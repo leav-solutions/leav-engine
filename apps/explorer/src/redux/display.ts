@@ -22,13 +22,10 @@ const displaySlice = createSlice({
         },
         setDisplaySide: (state, action: PayloadAction<IDisplaySide>) => {
             state.side = action.payload;
-        },
-        setDisplaySelectionMode: (state, action: PayloadAction<boolean>) => {
-            state.selectionMode = action.payload;
         }
     }
 });
 
-export const {setDisplaySize, setDisplaySide, setDisplaySelectionMode} = displaySlice.actions;
+export const {setDisplaySize, setDisplaySide} = displaySlice.actions;
 
 export default displaySlice.reducer;

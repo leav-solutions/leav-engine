@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useQuery} from '@apollo/client';
+import {SelectionModeContext} from 'context';
 import {setFilters, setQueryFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import {isString} from 'lodash';
@@ -9,7 +10,6 @@ import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {setAttributes} from 'redux/attributes';
-import {setDisplaySelectionMode} from 'redux/display';
 import {setFields} from 'redux/fields';
 import {setFiltersQueryFilters} from 'redux/filters';
 import {setItems, setItemsLoading, setItemsSort, setItemsTotalCount} from 'redux/items';
@@ -108,10 +108,6 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
     const [{lang}] = useLang();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
 
-    useEffect(() => {
-        dispatch(setDisplaySelectionMode(!!selectionMode));
-    }, [dispatch, selectionMode]);
-
     const {loading, data, error} = useQuery<IGetLibraryDetailExtendedQuery, IGetLibraryDetailExtendedVariables>(
         getLibraryDetailExtendedQuery,
         {
@@ -145,10 +141,7 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
             }
 
             // Base Notification
-            if (
-                !display.selectionMode &&
-                notification.base.content !== t('notification.active-lib', {lib: currentLibName})
-            ) {
+            if (!selectionMode && notification.base.content !== t('notification.active-lib', {lib: currentLibName})) {
                 const baseNotification: IBaseNotification = {
                     content: t('notification.active-lib', {lib: currentLibName}),
                     type: NotificationType.basic
@@ -255,18 +248,7 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
             dispatch(setItemsSort({...newView.sort, active: false}));
             dispatch(setAttributes(attributesFromQuery));
         }
-    }, [
-        dispatch,
-        notification.base,
-        updateActiveLibrary,
-        display.selectionMode,
-        t,
-        loading,
-        data,
-        libId,
-        activeLibrary,
-        lang
-    ]);
+    }, [dispatch, notification.base, updateActiveLibrary, selectionMode, t, loading, data, libId, activeLibrary, lang]);
 
     useEffect(() => {
         if (view.reload && view.current) {
@@ -395,7 +377,7 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
     }
 
     // if some elements are selected and the selection type is search, show the selection Menu
-    const menuSelectedActive = display.selectionMode
+    const menuSelectedActive = selectionMode
         ? !!selectionState.searchSelection.selected.length ||
           (selectionState.searchSelection.type === SharedStateSelectionType.search &&
               selectionState.searchSelection.allSelected)
@@ -403,7 +385,7 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
           (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected);
 
     return (
-        <>
+        <SelectionModeContext.Provider value={selectionMode}>
             <MenuWrapper>
                 <MenuItemList refetch={refetch} />
                 <MenuItemListSelected active={menuSelectedActive} />
@@ -416,7 +398,7 @@ function LibraryItemsList({selectionMode, libId: givenLibId}: ILibraryItemsList)
                 <SideItems />
                 <DisplayTypeSelector />
             </Wrapper>
-        </>
+        </SelectionModeContext.Provider>
     );
 }
 

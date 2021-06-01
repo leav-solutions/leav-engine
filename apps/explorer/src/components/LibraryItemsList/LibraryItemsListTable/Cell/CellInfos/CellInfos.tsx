@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {HeartOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu, Tooltip} from 'antd';
-import React, {useState} from 'react';
+import {SelectionModeContext} from 'context';
+import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useSelector} from 'react-redux';
-import {RootState} from 'redux/store';
+import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {IconCross} from '../../../../../assets/icons/IconCross';
 import {IconEllipsisHorizontal} from '../../../../../assets/icons/IconEllipsisHorizontal';
@@ -76,7 +76,8 @@ interface ICellInfosProps {
 function CellInfos({record, previewSize, lang, index, selectionData}: ICellInfosProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {display} = useSelector((state: RootState) => ({display: state.display}));
+    const {display} = useAppSelector(state => ({display: state.display}));
+    const selectionMode = useContext(SelectionModeContext);
 
     const [isHover, setIsHover] = useState<boolean>(false);
 
@@ -122,7 +123,7 @@ function CellInfos({record, previewSize, lang, index, selectionData}: ICellInfos
                     <CellRecordCard record={record} size={previewSize} lang={lang} style={getSize(display.size)} />
                 </Info>
                 <FloatingMenu data-testid="floating-menu" className="floating-menu" isHover={isHover}>
-                    {!display.selectionMode ? (
+                    {!selectionMode ? (
                         <>
                             {actions.map(action => (
                                 <Tooltip title={action.tooltip} key={action.tooltip}>

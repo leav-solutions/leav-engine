@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, EditOutlined, EllipsisOutlined, HeartOutlined} from '@ant-design/icons';
 import {Button, Card} from 'antd';
+import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
@@ -113,8 +114,8 @@ interface IItemTileDisplayProps {
 }
 
 function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
-    const {display, selectionState} = useAppSelector(state => ({
-        display: state.display,
+    const selectionMode = useContext(SelectionModeContext);
+    const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection
     }));
     const dispatch = useAppDispatch();
@@ -136,7 +137,7 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
             label: localizedLabel(item.whoAmI.label, lang)
         };
 
-        if (display.selectionMode) {
+        if (selectionMode) {
             dispatch(setSelectionToggleSearchSelectionElement(newSelected));
         } else {
             dispatch(
@@ -149,7 +150,7 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
     };
 
     useEffect(() => {
-        if (display.selectionMode) {
+        if (selectionMode) {
             setIsSelect(
                 selectionState.searchSelection.selected.some(
                     elementSelected =>
@@ -164,7 +165,7 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
                 )
             );
         }
-    }, [selectionState.selection, selectionState.searchSelection, item, display.selectionMode]);
+    }, [selectionState.selection, selectionState.searchSelection, item, selectionMode]);
 
     const selectionActive =
         (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected) ||
@@ -175,7 +176,7 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
             cover={
                 <ImageWrapper>
                     <ActionsWrapper>
-                        {display.selectionMode || selectionActive ? (
+                        {selectionMode || selectionActive ? (
                             <Selection>
                                 <CheckboxWrapper checked={isSelected} onClick={selectedToggle}>
                                     {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}
