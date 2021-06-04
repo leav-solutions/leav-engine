@@ -71,7 +71,8 @@
         "search_all": "Tout",
         "add_filter": "Ajouter un Filtre",
         "last_views": "Derniers vues",
-        "new": "Nouveau"
+        "new": "Nouveau",
+        "not_found": "Bibliothèque inconnue"
     },
     "loading": "Chargement",
     "items_list": {

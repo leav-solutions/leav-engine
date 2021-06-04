@@ -5,8 +5,8 @@ import {AppstoreFilled, CalendarOutlined} from '@ant-design/icons';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {ViewTypes} from '_gqlTypes/globalTypes';
 import {IconViewList} from '../../assets/icons/IconViewList';
-import {ViewType} from '../../_types/types';
 
 const Wrapper = styled.div`
     display: inline-flex;
@@ -18,26 +18,26 @@ const Wrapper = styled.div`
 `;
 
 interface IIconViewTypeProps {
-    type: ViewType;
+    type: ViewTypes;
     showDescription?: boolean;
 }
 
 const IconViewType = ({type, showDescription}: IIconViewTypeProps) => {
     const {t} = useTranslation();
     switch (type) {
-        case ViewType.list:
+        case ViewTypes.list:
             return (
                 <Wrapper>
                     <IconViewList /> <span>{showDescription && t('view.type-list')}</span>
                 </Wrapper>
             );
-        case ViewType.cards:
+        case ViewTypes.cards:
             return (
                 <Wrapper>
                     <AppstoreFilled /> <span>{showDescription && t('view.type-cards')}</span>
                 </Wrapper>
             );
-        case ViewType.timeline:
+        case ViewTypes.timeline:
             return (
                 <Wrapper>
                     <CalendarOutlined /> <span>{showDescription && t('view.type-timeline')}</span>

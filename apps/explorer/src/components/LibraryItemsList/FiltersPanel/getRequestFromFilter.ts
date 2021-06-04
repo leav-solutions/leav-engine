@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {getQueryFilterField} from 'utils';
-import {IFilter, IQueryFilter, OperatorFilter} from '../../../_types/types';
+import {RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
+import {IFilter, IQueryFilter} from '../../../_types/types';
 
 export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
     const queryFilters = filters.reduce((acc, filter, index) => {
@@ -12,12 +13,12 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
         const queryFilter: IQueryFilter = {
             field,
             value: filter.value?.toString(),
-            condition: filter.condition
+            condition: filter.condition as RecordFilterCondition
         };
 
         if (index !== filters.length - 1) {
             const operator: IQueryFilter = {
-                operator: OperatorFilter.and
+                operator: RecordFilterOperator.AND
             };
 
             return [...acc, queryFilter, operator];

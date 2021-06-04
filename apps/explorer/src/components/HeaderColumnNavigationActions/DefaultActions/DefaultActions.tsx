@@ -147,7 +147,7 @@ function DefaultActions({activeTree, setItems, isDetail, parent}: IDefaultAction
             const errors = Object.keys(messages.errors);
 
             for (const error of errors) {
-                addNotification({
+                const notification = {
                     channel: NotificationChannel.trigger,
                     type: NotificationType.warning,
                     content: t('navigation.notifications.error-add', {
@@ -157,7 +157,8 @@ function DefaultActions({activeTree, setItems, isDetail, parent}: IDefaultAction
                         ),
                         errorMessage: error
                     })
-                });
+                };
+                dispatch(addNotification(notification));
             }
 
             dispatch(setNavigationRefetchTreeData(true));
@@ -167,12 +168,14 @@ function DefaultActions({activeTree, setItems, isDetail, parent}: IDefaultAction
     if (!isDetail) {
         return (
             <>
-                <SearchModal
-                    visible={modalVisible}
-                    setVisible={setModalVisible}
-                    submitAction={submitAction}
-                    libId={libId}
-                />
+                {modalVisible && (
+                    <SearchModal
+                        visible={modalVisible}
+                        setVisible={setModalVisible}
+                        submitAction={submitAction}
+                        libId={libId}
+                    />
+                )}
                 {!selectionStat.selection.selected.length && (
                     <>
                         <Dropdown

@@ -4,9 +4,9 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {IGetViewListElement} from '../../../graphQL/queries/views/getViewsListQuery';
-import {OrderSearch, ViewType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import View from './View';
 
@@ -14,7 +14,7 @@ describe('View', () => {
     const mockView: IGetViewListElement = {
         id: '0',
         label: {en: 'My view list 1', fr: 'My view list 1'},
-        type: ViewType.list,
+        type: ViewTypes.list,
         color: '#50F0C4',
         shared: false,
         created_by: {
@@ -30,7 +30,7 @@ describe('View', () => {
         filters: [],
         sort: {
             field: 'id',
-            order: OrderSearch.asc
+            order: SortOrder.asc
         }
     };
 

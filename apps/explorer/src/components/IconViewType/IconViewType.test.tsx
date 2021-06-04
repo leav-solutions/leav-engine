@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {ViewType} from '../../_types/types';
+import {ViewTypes} from '_gqlTypes/globalTypes';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import IconViewType from './IconViewType';
 
@@ -15,7 +15,7 @@ describe('IconViewType', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <IconViewType type={ViewType.list} />
+                    <IconViewType type={ViewTypes.list} />
                 </MockedProviderWithFragments>
             );
         });
@@ -30,7 +30,7 @@ describe('IconViewType', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <IconViewType type={ViewType.list} showDescription={true} />
+                    <IconViewType type={ViewTypes.list} showDescription={true} />
                 </MockedProviderWithFragments>
             );
         });

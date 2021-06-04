@@ -8,6 +8,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {setViewCurrent, setViewReload} from 'redux/view';
+import {ViewTypes} from '_gqlTypes/globalTypes';
 import {viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
     IAddViewMutation,
@@ -24,7 +25,7 @@ import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {localizedLabel} from '../../../utils';
-import {ILabel, IView, ViewType} from '../../../_types/types';
+import {ILabel, IView} from '../../../_types/types';
 
 interface IFormValues {
     [x: string]: string;
@@ -122,7 +123,7 @@ function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
 
             // Fields
             let viewFields: string[] = [];
-            if (currentView.type === ViewType.list) {
+            if (currentView.type === ViewTypes.list) {
                 viewFields = fieldsState.fields.map(field => {
                     const settingsField = field.key;
                     return settingsField;

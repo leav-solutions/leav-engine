@@ -12,6 +12,7 @@ import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {setViewCurrent} from 'redux/view';
 import styled, {CSSObject} from 'styled-components';
+import {ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
     IAddViewMutation,
@@ -27,7 +28,7 @@ import {
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {limitTextSize, localizedLabel} from '../../../utils';
-import {IView, TypeSideItem, ViewType} from '../../../_types/types';
+import {IView, TypeSideItem} from '../../../_types/types';
 import AddView from '../AddView';
 
 const DropdownButton = styled(Dropdown.Button)`
@@ -104,7 +105,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
             if (currentView && activeLibrary) {
                 // Fields
                 let viewFields: string[] = [];
-                if (currentView.type === ViewType.list) {
+                if (currentView.type === ViewTypes.list) {
                     viewFields = fieldsState.fields.map(field => {
                         const settingsField = field.key;
                         return settingsField;

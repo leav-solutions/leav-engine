@@ -27,24 +27,6 @@ export enum AttributeType {
     tree = 'tree'
 }
 
-export enum NotificationChannel {
-    passive = 'passive',
-    trigger = 'trigger'
-}
-
-export enum NotificationPriority {
-    high = 'high',
-    low = 'low',
-    medium = 'medium'
-}
-
-export enum NotificationType {
-    basic = 'basic',
-    error = 'error',
-    success = 'success',
-    warning = 'warning'
-}
-
 export enum RecordFilterCondition {
     BEGIN_WITH = 'BEGIN_WITH',
     CONTAINS = 'CONTAINS',

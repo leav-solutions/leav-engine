@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILabel, IQueryFilter, OrderSearch} from '../../../_types/types';
+import {SortOrder} from '_gqlTypes/globalTypes';
+import {ILabel, IQueryFilter} from '../../../_types/types';
 
 export interface IGetRecordsFromLibraryQueryElement {
     [x: string]: any;
@@ -34,5 +35,5 @@ export interface IGetRecordsFromLibraryQueryVariables {
     offset: number;
     filters: IQueryFilter[];
     sortField?: string;
-    sortOrder: OrderSearch;
+    sortOrder: SortOrder;
 }

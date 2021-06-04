@@ -9,6 +9,7 @@ import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import {
+    mockGetLibraryDetailExtendedElement,
     mockGetLibraryDetailExtendedQuery,
     mockGetLibraryDetailExtendedQueryVar
 } from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
@@ -83,15 +84,6 @@ describe('LibraryItemsList', () => {
             const mocks = [
                 {
                     request: {
-                        query: getLibraryDetailExtendedQuery,
-                        variables: mockGetLibraryDetailExtendedQueryVar
-                    },
-                    result: {
-                        data: mockGetLibraryDetailExtendedQuery
-                    }
-                },
-                {
-                    request: {
                         query: getRecordsFromLibraryQuery(libQueryName, mockStateItem.field),
                         variables: mockGetRecordsFromLibraryQueryVar
                     },
@@ -103,7 +95,7 @@ describe('LibraryItemsList', () => {
             render(
                 <MockedProviderWithFragments mocks={mocks}>
                     <MockStore state={stateMock}>
-                        <LibraryItemsList />
+                        <LibraryItemsList library={mockGetLibraryDetailExtendedElement} />
                     </MockStore>
                 </MockedProviderWithFragments>
             );
@@ -139,7 +131,7 @@ describe('LibraryItemsList', () => {
             render(
                 <MockedProviderWithFragments mocks={mocks}>
                     <MockStore state={stateMock}>
-                        <LibraryItemsList selectionMode={true} />
+                        <LibraryItemsList library={mockGetLibraryDetailExtendedElement} selectionMode={true} />
                     </MockStore>
                 </MockedProviderWithFragments>
             );
