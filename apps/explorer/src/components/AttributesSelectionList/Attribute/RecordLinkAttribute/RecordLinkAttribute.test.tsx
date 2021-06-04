@@ -9,13 +9,6 @@ import {mockAttributeLink} from '../../../../__mocks__/common/attribute';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import RecordLinkAttribute from './RecordLinkAttribute';
 
-jest.mock('react-spring', () => ({
-    useSpring: () => [{transform: ''}, jest.fn()],
-    animated: {
-        div: () => <div></div>
-    }
-}));
-
 describe('AttributeLinkedLibrary', () => {
     test('should contain mockAttribute label', async () => {
         let comp: any;

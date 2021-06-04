@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
+import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import React, {useState} from 'react';
@@ -96,9 +97,9 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
                 <Button key="cancel" onClick={handleCancel}>
                     {t('change-attribute.cancel')}
                 </Button>,
-                <Button key="submit" type="primary" onClick={changeAttribute}>
+                <PrimaryBtn key="submit" onClick={changeAttribute}>
                     {t('change-attribute.submit')}
-                </Button>
+                </PrimaryBtn>
             ]}
         >
             <AttributesSelectionList

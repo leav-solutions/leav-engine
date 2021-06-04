@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
+import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setAttributes} from 'redux/attributes';
@@ -144,9 +145,9 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 <Button key="Cancel" onClick={handleCancel}>
                     {t('table-columns-selection.cancel')}
                 </Button>,
-                <Button key="Submit" onClick={handleSubmit} type="primary">
+                <PrimaryBtn key="Submit" onClick={handleSubmit}>
                     {t('table-columns-selection.submit')}
-                </Button>
+                </PrimaryBtn>
             ]}
         >
             <AttributesSelectionList

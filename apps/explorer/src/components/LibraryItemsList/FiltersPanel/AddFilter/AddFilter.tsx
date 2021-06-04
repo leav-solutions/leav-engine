@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
+import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import moment from 'moment';
@@ -84,9 +85,9 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
                 <Button key="cancel" onClick={handleCancel}>
                     {t('attributes-list.cancel')}
                 </Button>,
-                <Button key="add" type="primary" onClick={addFilters}>
+                <PrimaryBtn key="add" onClick={addFilters}>
                     {t('attributes-list.add')}
-                </Button>
+                </PrimaryBtn>
             ]}
             destroyOnClose
         >

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {AttributeFormat} from '../../../../../_types/types';
@@ -11,19 +11,10 @@ import EmbeddedField from './EmbeddedField';
 
 jest.mock('../../../reducer/attributesSelectionListStateContext');
 
-jest.mock('react-spring', () => ({
-    useSpring: () => [{transform: ''}, jest.fn()],
-    animated: {
-        div: () => <div></div>
-    }
-}));
-
 describe('ChangeAttribute', () => {
     test('Display selectable attribute', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
                     <EmbeddedField
                         attribute={mockAttributeExtended}
@@ -41,15 +32,13 @@ describe('ChangeAttribute', () => {
             );
         });
 
-        expect(comp.find('input[type="checkbox"]')).toHaveLength(1);
-        expect(comp.text()).toContain('field_label');
+        expect(screen.getByRole('checkbox')).toBeInTheDocument();
+        expect(screen.getByText('field_label')).toBeInTheDocument();
     });
 
     test('Display embedded fields', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
                     <EmbeddedField
                         attribute={mockAttributeExtended}
@@ -64,6 +53,12 @@ describe('ChangeAttribute', () => {
                                     format: AttributeFormat.text,
                                     label: {fr: 'subfield_label'},
                                     embedded_fields: []
+                                },
+                                {
+                                    id: 'sub_field_2',
+                                    format: AttributeFormat.text,
+                                    label: {fr: 'subfield_label_2'},
+                                    embedded_fields: []
                                 }
                             ]
                         }}
@@ -74,8 +69,8 @@ describe('ChangeAttribute', () => {
             );
         });
 
-        expect(comp.find('EmbeddedField')).toHaveLength(2);
-        expect(comp.text()).toContain('field_label');
-        expect(comp.text()).toContain('subfield_label');
+        expect(screen.getAllByTestId('embedded-field')).toHaveLength(2);
+        expect(screen.getByText('field_label')).toBeInTheDocument();
+        expect(screen.getByText('subfield_label')).toBeInTheDocument();
     });
 });

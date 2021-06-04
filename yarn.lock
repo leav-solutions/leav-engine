@@ -5,13 +5,6 @@ __metadata:
   version: 4
   cacheKey: 7
 
-"@alloc/types@npm:^1.2.1":
-  version: 1.3.0
-  resolution: "@alloc/types@npm:1.3.0"
-  checksum: ad1d5e2a0eb317093e2abd4261a818b3e442ef5b22bb33a1f3aefb056df61343bd21fe176b65f804dd846192f9fdbbd64bca5e5e9cb4d98ec2839ee45d76c0f2
-  languageName: node
-  linkType: hard
-
 "@ant-design/colors@npm:^6.0.0":
   version: 6.0.0
   resolution: "@ant-design/colors@npm:6.0.0"
@@ -3903,131 +3896,126 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/animated@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/animated@npm:9.0.0"
+"@react-spring/animated@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/animated@npm:9.2.1"
   dependencies:
-    "@react-spring/shared": ^9.0.0
-    "@react-spring/types": ^9.0.0
-    react-layout-effect: ^1.0.1
+    "@react-spring/shared": ~9.2.0
+    "@react-spring/types": ~9.2.0
   peerDependencies:
-    react: ">=16.8"
-  checksum: c5aced15c9fe207274a041835c976f4d86d4f9f85aedb6cd5cdad0519a00fae81a0408debeb34a76674783c0c6289d11b5e379d3a351e4cb113b73b57376fc23
+    react: ^16.8.0  || ^17.0.0
+  checksum: 40ed99d25e03c0ed149fa53da16370dddd01f4e5a799433bd2609e0a8dea551eb093bee97d49a485f3338b43f16fee57c202376264c89bb72827980f32980051
   languageName: node
   linkType: hard
 
-"@react-spring/core@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/core@npm:9.0.0"
+"@react-spring/core@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/core@npm:9.2.1"
   dependencies:
-    "@react-spring/animated": ^9.0.0
-    "@react-spring/shared": ^9.0.0
-    "@react-spring/types": ^9.0.0
-    react-layout-effect: ^1.0.1
+    "@react-spring/animated": ~9.2.0
+    "@react-spring/shared": ~9.2.0
+    "@react-spring/types": ~9.2.0
   peerDependencies:
-    react: ">=16.8"
-  checksum: 2fe223813380f4d9a9c49778b2cda6e9210f7cb2d2f99098e28c111c40ff0bd658e66d4eb48e7459a22e7424ecc5e6523693c9d60f8aeffd598513e9ae5dec22
+    react: ^16.8.0  || ^17.0.0
+  checksum: ff09398538b482f00e712468e3b74134244ac9f94632c6a2597d22cf49d54901852272253567fbc07665edc2a80ee4f1e93b2cf8f727774463dec37b26ccb567
   languageName: node
   linkType: hard
 
-"@react-spring/konva@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/konva@npm:9.0.0"
+"@react-spring/konva@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/konva@npm:9.2.1"
   dependencies:
-    "@react-spring/animated": ^9.0.0
-    "@react-spring/core": ^9.0.0
-    "@react-spring/shared": ^9.0.0
-    "@react-spring/types": ^9.0.0
+    "@react-spring/animated": ~9.2.0
+    "@react-spring/core": ~9.2.0
+    "@react-spring/shared": ~9.2.0
+    "@react-spring/types": ~9.2.0
   peerDependencies:
     konva: ">=2.6"
-    react: ">=16.8"
-    react-konva: ">=16.8"
-  checksum: fc0db4f09b6d66147eb5cce8041f27fe699405aa84efde2c056a20d4f928cc791db48bfb767d9631c06011a486c7443f6290ce65b118deaf18173c292b658fef
+    react: ^16.8.0  || ^17.0.0
+    react-konva: ^16.8.0  || ^17.0.0
+  checksum: bed9879de14b6475d19f6d76229253957a01950ec6c4d0193d5a5cb0b9f941d9a93e1538f579d5b9ddcbc6aed0b4270972990e03820272c876866e7dee823b6d
   languageName: node
   linkType: hard
 
-"@react-spring/native@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/native@npm:9.0.0"
+"@react-spring/native@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/native@npm:9.2.1"
   dependencies:
-    "@react-spring/animated": ^9.0.0
-    "@react-spring/core": ^9.0.0
-    "@react-spring/shared": ^9.0.0
-    "@react-spring/types": ^9.0.0
+    "@react-spring/animated": ~9.2.0
+    "@react-spring/core": ~9.2.0
+    "@react-spring/shared": ~9.2.0
+    "@react-spring/types": ~9.2.0
   peerDependencies:
-    react: ">=16.8"
+    react: ^16.8.0  || ^17.0.0
     react-native: ">=0.58"
-  checksum: eb40b66fe95ccac4cf0b3860fadf79c83824493b2dd1c3442bc40590dbf7cc1f4c0667ee206198ab548be1d62d9087314a0ff8fbb650e020cb03eee4a1af384d
+  checksum: 8fe3422ccc9215af8fc98b5014ed639e1c2a028106c393bcdaf3d85b4d0e4d1c834cf00ce612fad4e79589c5e5dc0cfcb29458c8a239f99c65adf13105797daa
   languageName: node
   linkType: hard
 
-"@react-spring/shared@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/shared@npm:9.0.0"
+"@react-spring/shared@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/shared@npm:9.2.1"
   dependencies:
-    "@react-spring/types": ^9.0.0
-    fluids: ^0.2.2
+    "@react-spring/types": ~9.2.0
     rafz: ^0.1.13
   peerDependencies:
-    react: ">=16.8"
-  checksum: ad93c4b8f49dee85df6dd6a35ac20067a9e96629068356be6561edde2ccdcdc748332f135cbb8066123ca26d41d8f06bebb525267fbf3ded925546c44b084fa3
+    react: ^16.8.0  || ^17.0.0
+  checksum: b1ffa89e872f5afc654e768278dee778bf2b3205f85579cc0259759e8da1a4fa7bb1fc3198c17ebc3aa68daa2035ae6203b58621aae625e3f09cc8c6d14c15c2
   languageName: node
   linkType: hard
 
-"@react-spring/three@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/three@npm:9.0.0"
+"@react-spring/three@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/three@npm:9.2.1"
   dependencies:
-    "@react-spring/animated": ^9.0.0
-    "@react-spring/core": ^9.0.0
-    "@react-spring/shared": ^9.0.0
-    "@react-spring/types": ^9.0.0
+    "@react-spring/animated": ~9.2.0
+    "@react-spring/core": ~9.2.0
+    "@react-spring/shared": ~9.2.0
+    "@react-spring/types": ~9.2.0
   peerDependencies:
     "@react-three/fiber": ">=6.0"
     react: ">=16.11"
     three: ">=0.126"
-  checksum: 9991b830772cc50e0f017ac7fcd8c14128401b253686f87858219a7069d4e24b0dc9cc20ca2b7948a71266055eea2fa80cab6fab8d13555f49fa770de1eba51b
+  checksum: 14cf6861c7e7e4261f2f842fcc5847565c39d508bfe0681ba4dd206ea695e333984ed9bb82a8e50eda4cfd038c05b0949b079a9dc44886bf62403754e669be50
   languageName: node
   linkType: hard
 
-"@react-spring/types@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/types@npm:9.0.0"
-  dependencies:
-    "@alloc/types": ^1.2.1
-  checksum: c8f615633953bd127bddf6f7cab06bb032e7f4e4e4adc09530d34e9d65aff3bb4c98debe10e7a327e8d7b2db3b7d8e4fd4deb2e04b7f2481f6a74ed2c44505e5
+"@react-spring/types@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/types@npm:9.2.1"
+  checksum: 65347fb05b9c86e7cf1bf35b1cd685e57ccce7d78d2a780c4b1e632889a958c97364035b3873cf8a1104aeb365a6baeb7941f67964d1adac2e97ca9b4b76e932
   languageName: node
   linkType: hard
 
-"@react-spring/web@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/web@npm:9.0.0"
+"@react-spring/web@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/web@npm:9.2.1"
   dependencies:
-    "@react-spring/animated": ^9.0.0
-    "@react-spring/core": ^9.0.0
-    "@react-spring/shared": ^9.0.0
-    "@react-spring/types": ^9.0.0
+    "@react-spring/animated": ~9.2.0
+    "@react-spring/core": ~9.2.0
+    "@react-spring/shared": ~9.2.0
+    "@react-spring/types": ~9.2.0
   peerDependencies:
-    react: ">=16.8"
-    react-dom: ">=16.8"
-  checksum: 1d4f7ab6ed28665d0e6fed88461000cbae5ef445d0d1052b6a0851ee7b774cd1f04bcf737ebfe155681fe91bddc848037e407d15ebf7739242f36eccd470f8d8
+    react: ^16.8.0  || ^17.0.0
+    react-dom: ^16.8.0  || ^17.0.0
+  checksum: 70f00130c461109f5560f6d21b13e3e44da53605bc84aba982f39032d6008e713d49a717a8d47c738feffd809e773a179103f9303a960cdc5bbdb693a9d8e7ea
   languageName: node
   linkType: hard
 
-"@react-spring/zdog@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@react-spring/zdog@npm:9.0.0"
+"@react-spring/zdog@npm:~9.2.0":
+  version: 9.2.1
+  resolution: "@react-spring/zdog@npm:9.2.1"
   dependencies:
-    "@react-spring/animated": ^9.0.0
-    "@react-spring/core": ^9.0.0
-    "@react-spring/shared": ^9.0.0
-    "@react-spring/types": ^9.0.0
+    "@react-spring/animated": ~9.2.0
+    "@react-spring/core": ~9.2.0
+    "@react-spring/shared": ~9.2.0
+    "@react-spring/types": ~9.2.0
   peerDependencies:
-    react: ">=16.8"
-    react-dom: ">=16.8"
+    react: ^16.8.0  || ^17.0.0
+    react-dom: ^16.8.0  || ^17.0.0
     react-zdog: ">=1.0"
     zdog: ">=1.0"
-  checksum: 271510d4a7a31da126c8c18bdf55b7772c1dcb99fddfbcaa9f620d5a7ef6ab04dfd2f629e091389a8787bd023a8a10de699443c4a19ab91c37e4286fa3026c01
+  checksum: b651757caf249f20b2f03d99038092efc05f9e6ade1381a8f6556ffd7c6fad03a6635d9c83b47619b84bd1127b8749f596791120cc9ee3b1631276c3b01fca61
   languageName: node
   linkType: hard
 
@@ -14128,7 +14116,7 @@ __metadata:
     react-resizable: ^1.10.1
     react-router-dom: ^5.2.0
     react-scripts: ^3.4.4
-    react-spring: ^9.0.0-rc.3
+    react-spring: 9.2.1
     react-sticky: ^6.0.3
     react-table: ^7.6.3
     react-table-sticky: ^1.1.3
@@ -14791,13 +14779,6 @@ __metadata:
   version: 1.0.3
   resolution: "flatten@npm:1.0.3"
   checksum: 8a382594dc7bb4e4f28739a4abcd9d6f5c74d4be370892c10386a09656722e1a822137dc48c4bff15758e0656f8fee7bb3001133d068431796cf17b1f52a969a
-  languageName: node
-  linkType: hard
-
-"fluids@npm:^0.2.2":
-  version: 0.2.8
-  resolution: "fluids@npm:0.2.8"
-  checksum: 1a75b62d33cb3428c1d89ab6c7f915a520ef9bb8ef89ee615c50224d36c488b397c42f80e855a6d6ab0dff216010b0af083ddf179b4cd1dd6220b47cca885e02
   languageName: node
   linkType: hard
 
@@ -25587,15 +25568,6 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"react-layout-effect@npm:^1.0.1":
-  version: 1.0.5
-  resolution: "react-layout-effect@npm:1.0.5"
-  peerDependencies:
-    react: ">=16.8"
-  checksum: b67917326729f20eaef093f994e4f31e203adacd0c1c95a5e85a27c2956cd908596ebc60bc7575806ff9887d78f095e6dcf8fdcf5f1d735bd73cbd3e67b86b9f
-  languageName: node
-  linkType: hard
-
 "react-lifecycles-compat@npm:^3.0.4":
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
@@ -25909,17 +25881,17 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
-"react-spring@npm:^9.0.0-rc.3":
-  version: 9.0.0
-  resolution: "react-spring@npm:9.0.0"
+"react-spring@npm:9.2.1":
+  version: 9.2.1
+  resolution: "react-spring@npm:9.2.1"
   dependencies:
-    "@react-spring/core": ^9.0.0
-    "@react-spring/konva": ^9.0.0
-    "@react-spring/native": ^9.0.0
-    "@react-spring/three": ^9.0.0
-    "@react-spring/web": ^9.0.0
-    "@react-spring/zdog": ^9.0.0
-  checksum: ac7ecdc0d66b6b0c1a3f30adcafd7f7f6a8d7cec29ab9b50e9fc4d43f767e2d6de83f6aa2ee8ffd433d6de8ded13f7bd6fe6a008e1f44463e57d1339778aee77
+    "@react-spring/core": ~9.2.0
+    "@react-spring/konva": ~9.2.0
+    "@react-spring/native": ~9.2.0
+    "@react-spring/three": ~9.2.0
+    "@react-spring/web": ~9.2.0
+    "@react-spring/zdog": ~9.2.0
+  checksum: e988c97aef77737d58d6a9616ab30bfe827dee16d78fe7eabfe07d245a5d4286be7ae590169a1c28d698d3d1872669eae4b2e3b0dc3e86699d4e6734abd3561e
   languageName: node
   linkType: hard
 
