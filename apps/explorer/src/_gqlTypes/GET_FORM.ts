@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FormElementTypes, AttributeType, AttributeFormat} from './globalTypes';
+import {AttributeFormat, AttributeType, FormElementTypes} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_FORM
@@ -33,6 +33,7 @@ export interface GET_FORM_forms_list_elements_elements_attribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
+    multiple_values: boolean;
 }
 
 export interface GET_FORM_forms_list_elements_elements_settings {

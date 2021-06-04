@@ -30,6 +30,7 @@ describe('Input', () => {
     const onSubmit: FieldSubmitFunc = jest.fn().mockReturnValue({
         status: APICallStatus.SUCCESS,
         value: {
+            id_value: null,
             value: 'new value',
             raw_value: 'new raw value'
         }
@@ -95,7 +96,9 @@ describe('Input', () => {
         render(<StandardField element={mockFormElementInput} recordValues={recordValues} record={mockRecordWhoAmI} />);
 
         const valueDisplayElem = screen.getByRole('textbox');
-        userEvent.click(valueDisplayElem);
+        await act(async () => {
+            userEvent.click(valueDisplayElem);
+        });
 
         expect(screen.getByTestId('value-details')).toBeInTheDocument();
         expect(screen.getByText(mockFormElementInput.attribute.label.fr)).toBeInTheDocument();
@@ -317,14 +320,21 @@ describe('Input', () => {
 
         const inputElem = screen.getByRole('textbox');
 
-        // @ts-ignore Bad type definition for hover method
-        userEvent.click(inputElem);
+        await act(async () => {
+            userEvent.click(inputElem);
+        });
 
         const deleteBtn = screen.getByRole('button', {name: 'delete'});
         expect(deleteBtn).toBeInTheDocument();
 
         await act(async () => {
             userEvent.click(deleteBtn);
+        });
+
+        const confirmDeleteBtn = screen.getByLabelText('delete-confirm-btn');
+
+        await act(async () => {
+            userEvent.click(confirmDeleteBtn);
         });
 
         expect(onDelete).toHaveBeenCalled();

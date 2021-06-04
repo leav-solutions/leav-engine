@@ -7,7 +7,10 @@ import {GET_FORM_forms_list_elements_elements} from '_gqlTypes/GET_FORM';
 import {SAVE_VALUE_saveValue} from '_gqlTypes/SAVE_VALUE';
 import {Override} from '_types/Override';
 import {IRecordIdentityWhoAmI} from '_types/types';
-import {IStandardFieldReducerState} from './uiElements/StandardField/standardFieldReducer/standardFieldReducer';
+import {
+    IStandardFieldReducerState,
+    IStandardFieldValue
+} from './uiElements/StandardField/standardFieldReducer/standardFieldReducer';
 
 export interface IValueToSubmit {
     value: AnyPrimitive | null;
@@ -58,7 +61,7 @@ export interface IDependencyValues {
 
 export interface IStandardInputProps {
     state: IStandardFieldReducerState;
-    value: AnyPrimitive;
+    fieldValue: IStandardFieldValue;
     onFocus: () => void;
     onChange: (value: string) => void;
     onSubmit: (valueToSave: AnyPrimitive) => void;

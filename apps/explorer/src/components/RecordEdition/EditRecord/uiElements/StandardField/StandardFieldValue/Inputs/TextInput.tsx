@@ -5,15 +5,17 @@ import {Input} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import React, {useEffect, useRef} from 'react';
 
-function TextInput({state, value, onFocus, onChange, onSubmit}: IStandardInputProps): JSX.Element {
+function TextInput({state, fieldValue, onFocus, onChange, onSubmit}: IStandardInputProps): JSX.Element {
     const inputRef = useRef<Input>();
+
+    const {isEditing, editingValue, displayValue} = fieldValue;
 
     useEffect(() => {
         // Handle focusing via click on label (not standard focus via click on input)
-        if (state.isEditing) {
+        if (isEditing) {
             inputRef.current.focus();
         }
-    }, [state.isEditing]);
+    }, [isEditing]);
 
     const _handleChange = e => {
         onChange(e.target.value);
@@ -21,16 +23,16 @@ function TextInput({state, value, onFocus, onChange, onSubmit}: IStandardInputPr
 
     const _handleKeyPress = e => {
         if (e.key === 'Enter') {
-            onSubmit(String(value));
+            onSubmit(String(editingValue));
         }
     };
 
-    return state.isEditing ? (
+    return isEditing ? (
         <Input
             key="editing"
             ref={inputRef}
-            className={`field-wrapper ${value ? 'has-value' : ''}`}
-            value={String(value)}
+            className={`field-wrapper ${editingValue ? 'has-value' : ''}`}
+            value={String(editingValue)}
             onFocus={onFocus}
             onChange={_handleChange}
             onKeyPress={_handleKeyPress}
@@ -40,8 +42,8 @@ function TextInput({state, value, onFocus, onChange, onSubmit}: IStandardInputPr
     ) : (
         <Input
             key="display"
-            className={value ? 'has-value' : ''}
-            value={String(value)}
+            className={displayValue ? 'has-value' : ''}
+            value={String(displayValue)}
             onFocus={onFocus}
             disabled={state.isReadOnly}
         />

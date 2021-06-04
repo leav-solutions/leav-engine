@@ -94,5 +94,6 @@ export const mockFormAttribute: GET_FORM_forms_list_elements_elements_attribute 
         fr: 'test',
         en: 'test'
     },
-    system: false
+    system: false,
+    multiple_values: false
 };

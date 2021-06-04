@@ -301,6 +301,8 @@
         "invalid_format": "Invalid format",
         "missing_attribute": "Missing attribute",
         "modified_at": "Modified at",
+        "add_value": "Ajouter une valeur",
+        "delete_value_confirm": "Do you really want to delete this value?",
         "attribute": {
             "id": "Id",
             "type": "Type",

@@ -6,16 +6,19 @@ import {CheckboxChangeEvent} from 'antd/lib/checkbox';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import React from 'react';
 
-function CheckboxInput({state, value, onSubmit}: IStandardInputProps): JSX.Element {
+function CheckboxInput({state, fieldValue, onSubmit}: IStandardInputProps): JSX.Element {
     const _handleCheckboxChange = (e: CheckboxChangeEvent) => {
         onSubmit(String(e.target.checked));
     };
+
+    const {value} = fieldValue;
+
     return (
         <Checkbox
             className="nested-input"
             disabled={state.isReadOnly}
-            checked={!!value}
-            indeterminate={typeof value !== 'boolean'}
+            checked={!!value?.value}
+            indeterminate={typeof value?.value !== 'boolean'}
             onChange={_handleCheckboxChange}
         />
     );

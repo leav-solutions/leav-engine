@@ -13,7 +13,7 @@ export interface ISaveValueHook {
     deleteValue: DeleteValueFunc;
 }
 
-export default function useSaveValueMutation(record: IRecordIdentityWhoAmI, attribute: string): ISaveValueHook {
+export default function useDeleteValueMutation(record: IRecordIdentityWhoAmI, attribute: string): ISaveValueHook {
     const [executeDeleteValue] = useMutation<DELETE_VALUE, DELETE_VALUEVariables>(deleteValueMutation);
     const {t} = useTranslation();
 

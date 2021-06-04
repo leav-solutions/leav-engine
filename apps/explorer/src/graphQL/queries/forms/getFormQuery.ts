@@ -31,6 +31,7 @@ export const getFormQuery = gql`
                             type
                             format
                             system
+                            multiple_values
                         }
                         settings {
                             key

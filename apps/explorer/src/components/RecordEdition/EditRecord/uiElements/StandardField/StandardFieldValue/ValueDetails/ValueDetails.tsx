@@ -7,10 +7,11 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedLabel} from 'utils';
-import {IStandardFieldReducerState} from '../standardFieldReducer/standardFieldReducer';
+import {IStandardFieldReducerState, IStandardFieldValue} from '../../standardFieldReducer/standardFieldReducer';
 
 interface IValueDetailsProps {
     state: IStandardFieldReducerState;
+    fieldValue: IStandardFieldValue;
 }
 
 const CompactDescriptions = styled(Descriptions)`
@@ -19,7 +20,7 @@ const CompactDescriptions = styled(Descriptions)`
     }
 `;
 
-function ValueDetails({state}: IValueDetailsProps): JSX.Element {
+function ValueDetails({state, fieldValue}: IValueDetailsProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
     const {Meta} = Card;
@@ -44,13 +45,13 @@ function ValueDetails({state}: IValueDetailsProps): JSX.Element {
                     {t(`record_edition.attribute.format_${state.attribute.format}`)}
                 </Descriptions.Item>
             )}
-            {state.value?.modified_at && (
+            {fieldValue.value?.modified_at && (
                 <>
                     <Descriptions.Item>
                         <Divider style={{margin: '.5em 0'}} />
                     </Descriptions.Item>
                     <Descriptions.Item label={t('record_edition.modified_at')}>
-                        {state.value.modified_at}
+                        {new Date(fieldValue.value.modified_at * 1000).toLocaleString()}
                     </Descriptions.Item>
                 </>
             )}
