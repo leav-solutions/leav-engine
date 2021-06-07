@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import AttributeLinkedTree from '.';
@@ -9,19 +9,10 @@ import {ILabel} from '../../../../_types/types';
 import {mockAttributeTree} from '../../../../__mocks__/common/attribute';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 
-jest.mock('react-spring', () => ({
-    useSpring: () => [{transform: ''}, jest.fn()],
-    animated: {
-        div: () => <div></div>
-    }
-}));
-
 describe('AttributeLinkedTree', () => {
-    test('should contain label', async () => {
-        let comp: any;
-
+    test('should contain label and attribute id', async () => {
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
                     <AttributeLinkedTree
                         attribute={mockAttributeTree}
@@ -33,6 +24,7 @@ describe('AttributeLinkedTree', () => {
             );
         });
 
-        expect(comp.text()).toContain((mockAttributeTree.label as ILabel).en);
+        // mockAttributeTree.label.en and mockAttributeTree.id have the same name
+        expect(screen.getAllByText((mockAttributeTree.label as ILabel).en)).toHaveLength(2);
     });
 });

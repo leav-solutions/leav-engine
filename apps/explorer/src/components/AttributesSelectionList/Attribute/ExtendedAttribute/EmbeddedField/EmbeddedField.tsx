@@ -101,14 +101,15 @@ const EmbeddedField = ({attribute, field, fieldPath, depth, library}: IEmbeddedF
                         <StyledDeployContent>
                             <List>
                                 {(field.embedded_fields ?? []).map(embeddedField => (
-                                    <EmbeddedField
-                                        key={embeddedField.id}
-                                        attribute={attribute}
-                                        field={embeddedField}
-                                        fieldPath={`${fieldPath}.${embeddedField.id}`}
-                                        depth={depth + 1}
-                                        library={library}
-                                    />
+                                    <span data-testid="embedded-field" key={embeddedField.id}>
+                                        <EmbeddedField
+                                            attribute={attribute}
+                                            field={embeddedField}
+                                            fieldPath={`${fieldPath}.${embeddedField.id}`}
+                                            depth={depth + 1}
+                                            library={library}
+                                        />
+                                    </span>
                                 ))}
                             </List>
                         </StyledDeployContent>
