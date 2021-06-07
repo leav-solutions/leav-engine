@@ -2,18 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
-import {ConditionFilter, ILabel, OperatorFilter, OrderSearch, ViewType} from '../../../_types/types';
+import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
+import {ILabel} from '../../../_types/types';
 
 export interface IGetViewListFilter {
     field: string;
     value: any;
-    condition: ConditionFilter;
-    operator: OperatorFilter;
+    condition: RecordFilterCondition;
+    operator: RecordFilterOperator;
 }
 
 export interface IGetViewListSort {
     field: string;
-    order: OrderSearch;
+    order: SortOrder;
 }
 
 export interface IGetViewListSettings {
@@ -23,7 +24,7 @@ export interface IGetViewListSettings {
 
 export interface IGetViewListElement {
     id: string;
-    type: ViewType;
+    type: ViewTypes;
     shared: boolean;
     created_by: {
         id: string;

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {TreeElementInput} from '_gqlTypes/globalTypes';
+import {RecordFilterCondition, RecordFilterOperator, TreeElementInput, ViewTypes} from '_gqlTypes/globalTypes';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
@@ -100,7 +100,7 @@ export interface IFilter {
     key: string; // attribute key
     value: unknown;
     active: boolean;
-    condition: ConditionFilter;
+    condition: ConditionFilter | RecordFilterCondition;
     attribute: IAttribute; // Put the attribute in the filter to avoid having to fetch him multiple times
 }
 
@@ -147,8 +147,8 @@ export enum ConditionFilter {
 export interface IQueryFilter {
     field?: string;
     value?: string;
-    condition?: ConditionFilter;
-    operator?: OperatorFilter;
+    condition?: RecordFilterCondition;
+    operator?: RecordFilterOperator;
 }
 
 export enum OrderSearch {
@@ -321,7 +321,7 @@ export enum TypeSideItem {
 export interface IView {
     id: string;
     label: string;
-    type: ViewType;
+    type: ViewTypes;
     color?: string;
     shared: boolean;
     description?: string;

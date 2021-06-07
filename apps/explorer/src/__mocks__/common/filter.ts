@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ConditionFilter, IFilter, IQueryFilter, OperatorFilter} from '_types/types';
+import {RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
+import {ConditionFilter, IFilter, IQueryFilter} from '_types/types';
 import {mockAttribute} from './attribute';
 
 export const mockFilter: IFilter = {
@@ -16,6 +17,6 @@ export const mockFilter: IFilter = {
 export const mockQueryFilter: IQueryFilter = {
     field: 'field',
     value: 'value',
-    condition: ConditionFilter.CONTAINS,
-    operator: OperatorFilter.and
+    condition: RecordFilterCondition.CONTAINS,
+    operator: RecordFilterOperator.AND
 };

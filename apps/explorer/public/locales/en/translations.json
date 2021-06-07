@@ -62,7 +62,8 @@
         "search_all": "Search All",
         "add_filter": "Add Filter",
         "last_views": "Last Views",
-        "new": "New"
+        "new": "New",
+        "not_found": "Unknown library"
     },
     "settings": {
         "header": "Settings",

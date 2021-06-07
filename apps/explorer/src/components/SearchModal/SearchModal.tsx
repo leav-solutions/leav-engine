@@ -1,14 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useQuery} from '@apollo/client';
 import Modal from 'antd/lib/modal/Modal';
 import LibraryItemsList from 'components/LibraryItemsList';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import Loading from 'components/shared/Loading';
+import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 import {resetSearchSelection} from 'redux/selection';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {ISharedStateSelectionSearch} from '_types/types';
 
 const WrapperItemsList = styled.div`
@@ -38,7 +43,7 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
         handleModalClose();
     };
 
-    return (
+    const renderModal = (content: JSX.Element): JSX.Element => (
         <Modal
             visible={visible}
             onCancel={handleModalClose}
@@ -52,10 +57,35 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
             okText={t('global.apply')}
             cancelText={t('global.cancel')}
         >
-            <WrapperItemsList>
-                <LibraryItemsList selectionMode={true} libId={libId} />
-            </WrapperItemsList>
+            {content}
         </Modal>
+    );
+
+    const {loading, data, error} = useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
+        getLibraryDetailExtendedQuery,
+        {
+            variables: {
+                libId
+            }
+        }
+    );
+
+    if (loading) {
+        return renderModal(<Loading />);
+    }
+
+    if (error) {
+        return renderModal(<ErrorDisplay message={error.message} />);
+    }
+
+    if (!data.libraries.list.length) {
+        return renderModal(<ErrorDisplay message={t('lib_detail.not_found')} />);
+    }
+
+    return renderModal(
+        <WrapperItemsList>
+            <LibraryItemsList selectionMode={true} library={data.libraries.list[0]} />
+        </WrapperItemsList>
     );
 }
 

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordField} from 'graphQL/queries/trees/getTreeContentQuery';
+import {SortOrder} from '_gqlTypes/globalTypes';
 import {
     DisplaySize,
     IAttribute,
@@ -13,14 +14,13 @@ import {
     IQueryFilter,
     ISharedStateSelectionSearch,
     IView,
-    OrderSearch,
     SharedStateSelection,
     TypeSideItem
 } from '_types/types';
 
 export interface IItemsSort {
     field: string;
-    order: OrderSearch;
+    order: SortOrder;
     active: boolean;
 }
 

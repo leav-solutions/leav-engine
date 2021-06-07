@@ -8,10 +8,11 @@ import {useTranslation} from 'react-i18next';
 import {cancelItemsSort, setItemsSort} from 'redux/items';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {SortOrder} from '_gqlTypes/globalTypes';
 import {infosCol} from '../../../../constants/constants';
 import themingVar from '../../../../themingVar';
 import {getSortFieldByAttributeType} from '../../../../utils';
-import {AttributeType, OrderSearch} from '../../../../_types/types';
+import {AttributeType} from '../../../../_types/types';
 
 interface IWrapperProps {
     isHover: boolean;
@@ -74,7 +75,7 @@ const DropdownContent = styled.div`
 `;
 
 interface IWrapperArrowProps {
-    filterDirection?: OrderSearch;
+    filterDirection?: SortOrder;
     filterActive: boolean;
 }
 
@@ -94,13 +95,12 @@ const WrapperArrow = styled.div<IWrapperArrowProps>`
     }
 
     & > span:first-child {
-        opacity: ${({filterDirection, filterActive}) =>
-            !filterActive || filterDirection === OrderSearch.asc ? 1 : 0.5};
+        opacity: ${({filterDirection, filterActive}) => (!filterActive || filterDirection === SortOrder.asc ? 1 : 0.5)};
     }
 
     & > span:last-child {
         opacity: ${({filterDirection, filterActive}) =>
-            !filterActive || filterDirection === OrderSearch.desc ? 1 : 0.5};
+            !filterActive || filterDirection === SortOrder.desc ? 1 : 0.5};
     }
 `;
 
@@ -121,7 +121,7 @@ const Header = ({id, children, name, type}: IHeaderProps) => {
     const {items} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
 
-    const handleSort = (attId: string, order: OrderSearch, attType: AttributeType) => {
+    const handleSort = (attId: string, order: SortOrder, attType: AttributeType) => {
         const newSortField = getSortFieldByAttributeType(attId, attType);
 
         dispatch(
@@ -134,11 +134,11 @@ const Header = ({id, children, name, type}: IHeaderProps) => {
     };
 
     const handleDesc = (attId: string, attType: AttributeType) => {
-        handleSort(attId, OrderSearch.desc, attType);
+        handleSort(attId, SortOrder.desc, attType);
     };
 
     const handleAsc = (attId: string, attType: AttributeType) => {
-        handleSort(attId, OrderSearch.asc, attType);
+        handleSort(attId, SortOrder.asc, attType);
     };
 
     const cancelSort = () => {

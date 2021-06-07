@@ -169,6 +169,7 @@ export const getLibraryDetailExtendedQuery = gql`
                 }
                 defaultView {
                     id
+                    description
                     label
                     type
                     shared

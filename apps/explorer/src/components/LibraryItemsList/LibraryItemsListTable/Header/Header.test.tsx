@@ -5,6 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {itemsInitialState} from 'redux/items';
+import {SortOrder} from '_gqlTypes/globalTypes';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {AttributeType, OrderSearch} from '../../../../_types/types';
 import Header from './Header';
@@ -38,7 +39,7 @@ describe('Header', () => {
                 ...itemsInitialState,
                 sort: {
                     field: 'id',
-                    order: OrderSearch.desc,
+                    order: SortOrder.desc,
                     active: true
                 }
             }
@@ -69,7 +70,7 @@ describe('Header', () => {
                 ...itemsInitialState,
                 sort: {
                     field: 'id',
-                    order: OrderSearch.asc,
+                    order: SortOrder.asc,
                     active: true
                 }
             }

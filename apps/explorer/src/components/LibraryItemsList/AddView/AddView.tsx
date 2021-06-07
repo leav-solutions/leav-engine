@@ -10,6 +10,7 @@ import {useDispatch} from 'react-redux';
 import {useAppSelector} from 'redux/store';
 import {setViewCurrent, setViewReload} from 'redux/view';
 import {localizedLabel} from 'utils';
+import {ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultSort, viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
     IAddViewMutation,
@@ -23,7 +24,7 @@ import {ILabel, ViewType} from '../../../_types/types';
 
 type IFormValues = {
     [x: string]: string;
-} & {type: ViewType; shared: boolean};
+} & {type: ViewTypes; shared: boolean};
 
 interface IAddViewProps {
     visible: boolean;
@@ -63,7 +64,7 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
 
             // Fields
             let viewFields: string[] = [];
-            if (formValues.type === ViewType.list) {
+            if (formValues.type === ViewTypes.list) {
                 viewFields = fields.fields.map(field => {
                     const settingsField = field.key;
                     return settingsField;
@@ -169,8 +170,8 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
 
                 <Form.Item label={t('view.add-view.view-type')} name="type" data-testid="input-type">
                     <Select>
-                        <Select.Option value={ViewType.list}>{t('view.type-list')}</Select.Option>
-                        <Select.Option value={ViewType.cards}>{t('view.type-cards')}</Select.Option>
+                        <Select.Option value={ViewTypes.list}>{t('view.type-list')}</Select.Option>
+                        <Select.Option value={ViewTypes.cards}>{t('view.type-cards')}</Select.Option>
                     </Select>
                 </Form.Item>
 

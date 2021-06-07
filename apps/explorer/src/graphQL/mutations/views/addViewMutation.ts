@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 import {IGetViewListElement} from 'graphQL/queries/views/getViewsListQuery';
-import {ConditionFilter, ILabel, OperatorFilter, OrderSearch, ViewType} from '../../../_types/types';
+import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
+import {ILabel} from '../../../_types/types';
 
 export interface IAddViewMutation {
     saveView: IGetViewListElement;
@@ -12,8 +13,8 @@ export interface IAddViewMutation {
 export interface IAddViewMutationVariablesFilter {
     field?: string;
     value?: string;
-    condition?: ConditionFilter;
-    operator?: OperatorFilter;
+    condition?: RecordFilterCondition;
+    operator?: RecordFilterOperator;
 }
 
 export interface IAddViewMutationVariablesSetting {
@@ -24,7 +25,7 @@ export interface IAddViewMutationVariablesSetting {
 export interface IAddViewMutationVariablesView {
     id?: string;
     library: string;
-    type: ViewType;
+    type: ViewTypes;
     shared: boolean;
     label: ILabel;
     description?: ILabel;
@@ -32,7 +33,7 @@ export interface IAddViewMutationVariablesView {
     filters: IAddViewMutationVariablesFilter[];
     sort: {
         field: string;
-        order: OrderSearch;
+        order: SortOrder;
     };
     settings: IAddViewMutationVariablesSetting[];
 }

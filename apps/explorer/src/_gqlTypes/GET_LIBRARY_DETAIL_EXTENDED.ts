@@ -159,6 +159,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView_settings
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView {
     id: string;
+    description: any | null;
     label: any;
     type: ViewTypes;
     shared: boolean;
