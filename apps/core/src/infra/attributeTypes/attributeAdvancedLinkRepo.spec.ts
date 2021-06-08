@@ -25,6 +25,8 @@ describe('AttributeAdvancedLinkRepo', () => {
         attribute: 'test_adv_link_attr',
         modified_at: 400999999,
         created_at: 400999999,
+        modified_by: '0',
+        created_by: '0',
         metadata: {my_attribute: 'metadata value'},
         version: {
             my_tree: {
@@ -39,7 +41,9 @@ describe('AttributeAdvancedLinkRepo', () => {
         value: 987654,
         attribute: 'test_adv_link_attr',
         modified_at: 400999999,
-        created_at: 400999999
+        created_at: 400999999,
+        modified_by: '0',
+        created_by: '0'
     };
 
     const mockDbUtils: Mockify<IDbUtils> = {
@@ -99,6 +103,8 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: 'test_adv_link_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'},
                 version: {
                     my_tree: {
@@ -221,6 +227,8 @@ describe('AttributeAdvancedLinkRepo', () => {
                         attribute: 'test_adv_link_attr',
                         modified_at: 99999,
                         created_at: 99999,
+                        modified_by: '0',
+                        created_by: '0',
                         metadata: {my_attribute: 'metadata value'}
                     }
                 }
@@ -268,6 +276,8 @@ describe('AttributeAdvancedLinkRepo', () => {
                 },
                 modified_at: 99999,
                 created_at: 99999,
+                modified_by: '0',
+                created_by: '0',
                 attribute: 'test_adv_link_attr',
                 metadata: {my_attribute: 'metadata value'}
             });
@@ -313,6 +323,8 @@ describe('AttributeAdvancedLinkRepo', () => {
                     attribute: 'test_adv_link_attr',
                     modified_at: 99999,
                     created_at: 99999,
+                    modified_by: '0',
+                    created_by: '0',
                     metadata: {my_attribute: 'metadata value'}
                 }
             },
@@ -333,6 +345,8 @@ describe('AttributeAdvancedLinkRepo', () => {
                     attribute: 'test_adv_link_attr',
                     modified_at: 66666,
                     created_at: 66666,
+                    modified_by: '0',
+                    created_by: '0',
                     metadata: {my_attribute: 'metadata value'}
                 }
             }
@@ -390,6 +404,8 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: 'test_adv_link_attr',
                 modified_at: 99999,
                 created_at: 99999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'}
             });
 
@@ -402,7 +418,9 @@ describe('AttributeAdvancedLinkRepo', () => {
                 },
                 attribute: 'test_adv_link_attr',
                 modified_at: 66666,
-                created_at: 66666
+                created_at: 66666,
+                modified_by: '0',
+                created_by: '0'
             });
         });
 
@@ -425,6 +443,8 @@ describe('AttributeAdvancedLinkRepo', () => {
                         attribute: 'test_adv_link_attr',
                         modified_at: 66666,
                         created_at: 66666,
+                        modified_by: '0',
+                        created_by: '0',
                         version: {
                             my_tree: 'my_lib/1345'
                         }
@@ -521,7 +541,9 @@ describe('AttributeAdvancedLinkRepo', () => {
                 },
                 attribute: 'test_adv_link_attr',
                 modified_at: 99999,
-                created_at: 99999
+                created_at: 99999,
+                modified_by: '0',
+                created_by: '0'
             });
         });
 

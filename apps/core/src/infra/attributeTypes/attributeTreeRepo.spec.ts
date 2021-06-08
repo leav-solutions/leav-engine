@@ -40,6 +40,8 @@ describe('AttributeTreeRepo', () => {
         attribute: 'test_tree_attr',
         modified_at: 400999999,
         created_at: 400999999,
+        modified_by: '0',
+        created_by: '0',
         metadata: {my_attribute: 'metadata value'},
         version: {
             my_tree: 'test_lib/1'
@@ -52,6 +54,8 @@ describe('AttributeTreeRepo', () => {
         attribute: 'test_tree_attr',
         modified_at: 400999999,
         created_at: 400999999,
+        modified_by: '0',
+        created_by: '0',
         metadata: {my_attribute: 'metadata value'},
         version: {
             my_tree: {
@@ -117,6 +121,8 @@ describe('AttributeTreeRepo', () => {
                 attribute: 'test_tree_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'},
                 version: {
                     my_tree: {
@@ -230,6 +236,8 @@ describe('AttributeTreeRepo', () => {
                         attribute: 'test_tree_attr',
                         modified_at: 99999,
                         created_at: 99999,
+                        modified_by: '0',
+                        created_by: '0',
                         metadata: {my_attribute: 'metadata value'}
                     }
                 }
@@ -279,6 +287,8 @@ describe('AttributeTreeRepo', () => {
                     created_at: 88888,
                     modified_at: 88888
                 },
+                modified_by: '0',
+                created_by: '0',
                 modified_at: 99999,
                 created_at: 99999,
                 attribute: 'test_tree_attr',
@@ -331,6 +341,8 @@ describe('AttributeTreeRepo', () => {
                     attribute: 'test_tree_attr',
                     modified_at: 99999,
                     created_at: 99999,
+                    modified_by: '0',
+                    created_by: '0',
                     metadata: {my_attribute: 'metadata value'}
                 }
             },
@@ -351,6 +363,8 @@ describe('AttributeTreeRepo', () => {
                     attribute: 'test_tree_attr',
                     modified_at: 99999,
                     created_at: 99999,
+                    modified_by: '0',
+                    created_by: '0',
                     metadata: {my_attribute: 'metadata value'}
                 }
             }
@@ -409,6 +423,8 @@ describe('AttributeTreeRepo', () => {
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
                 created_at: 99999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'}
             });
 
@@ -424,6 +440,8 @@ describe('AttributeTreeRepo', () => {
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
                 created_at: 99999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'}
             });
         });
@@ -447,6 +465,8 @@ describe('AttributeTreeRepo', () => {
                         attribute: 'test_tree_attr',
                         modified_at: 99999,
                         created_at: 99999,
+                        modified_by: '0',
+                        created_by: '0',
                         version: {
                             my_tree: 'my_lib/1345'
                         }
@@ -540,7 +560,9 @@ describe('AttributeTreeRepo', () => {
                 },
                 attribute: 'test_tree_attr',
                 modified_at: 99999,
-                created_at: 99999
+                created_at: 99999,
+                modified_by: '0',
+                created_by: '0'
             });
         });
 

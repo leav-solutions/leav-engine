@@ -45,7 +45,9 @@ export default function ({
                 _to: value.value,
                 attribute: attribute.id,
                 modified_at: value.modified_at,
-                created_at: value.created_at
+                created_at: value.created_at,
+                created_by: String(ctx.userId),
+                modified_by: String(ctx.userId)
             };
 
             if (value.version) {
@@ -72,7 +74,9 @@ export default function ({
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
                 version: savedEdge.version,
-                metadata: savedEdge.metadata
+                metadata: savedEdge.metadata,
+                modified_by: savedEdge.modified_by,
+                created_by: savedEdge.created_by
             };
 
             if (value.version) {
@@ -89,7 +93,9 @@ export default function ({
                 _from: library + '/' + recordId,
                 _to: value.value,
                 attribute: attribute.id,
-                modified_at: value.modified_at
+                modified_at: value.modified_at,
+                created_by: value.created_by,
+                modified_by: String(ctx.userId)
             };
 
             if (value.version) {
@@ -117,7 +123,9 @@ export default function ({
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
                 version: savedEdge.version,
-                metadata: savedEdge.metadata
+                metadata: savedEdge.metadata,
+                modified_by: savedEdge.modified_by,
+                created_by: savedEdge.created_by
             };
 
             if (value.version) {
@@ -174,7 +182,9 @@ export default function ({
                     attribute: r.edge.attribute,
                     modified_at: r.edge.modified_at,
                     created_at: r.edge.created_at,
-                    metadata: r.edge.metadata
+                    metadata: r.edge.metadata,
+                    created_by: r.edge.created_by,
+                    modified_by: r.edge.modified_by
                 };
             });
         },
@@ -203,7 +213,9 @@ export default function ({
                 attribute: res[0].edge.attribute,
                 modified_at: res[0].edge.modified_at,
                 created_at: res[0].edge.created_at,
-                metadata: res[0].edge.metadata
+                metadata: res[0].edge.metadata,
+                modified_by: res[0].edge.modified_by,
+                created_by: res[0].edge.created_by
             };
         },
         sortQueryPart({attributes, order}: IRecordSort): AqlQuery {

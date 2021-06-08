@@ -186,7 +186,8 @@ export default function ({
         options: IValuesOptions,
         ctx: IQueryInfos
     ): Promise<IValue[]> => {
-        let values;
+        let values: IValue[];
+
         if (typeof record[attribute.id] !== 'undefined') {
             // Format attribute field into simple value
             values = [
@@ -206,6 +207,7 @@ export default function ({
                 ctx
             });
         }
+
         return values;
     };
 

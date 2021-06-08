@@ -61,7 +61,9 @@ export default function ({
                 _to: savedVal._id,
                 attribute: attribute.id,
                 modified_at: value.modified_at,
-                created_at: value.created_at
+                created_at: value.created_at,
+                modified_by: String(ctx.userId),
+                created_by: String(ctx.userId)
             };
 
             if (value.version) {
@@ -87,6 +89,8 @@ export default function ({
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
+                modified_by: savedEdge.modified_by,
+                created_by: savedEdge.created_by,
                 metadata: savedEdge.metadata
             };
 
@@ -123,7 +127,9 @@ export default function ({
                 _to: edgeTo,
                 attribute: attribute.id,
                 modified_at: value.modified_at,
-                created_at: value.created_at
+                created_at: value.created_at,
+                modified_by: String(ctx.userId),
+                created_by: value.created_by
             };
 
             if (value.version) {
@@ -152,6 +158,8 @@ export default function ({
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
+                modified_by: savedEdge.modified_by,
+                created_by: savedEdge.created_by,
                 metadata: savedEdge.metadata
             };
 
@@ -179,7 +187,9 @@ export default function ({
                 id_value: deletedVal._key,
                 attribute: deletedEdge.attribute,
                 modified_at: deletedEdge.modified_at,
-                created_at: deletedEdge.created_at
+                created_at: deletedEdge.created_at,
+                modified_by: deletedEdge.modified_by,
+                created_by: deletedEdge.created_by
             };
         },
         async getValues({library, recordId, attribute, forceGetAllValues = false, options, ctx}): Promise<IValue[]> {
@@ -212,6 +222,8 @@ export default function ({
                 attribute: r.edge.attribute,
                 modified_at: r.edge.modified_at,
                 created_at: r.edge.created_at,
+                modified_by: r.edge.modified_by,
+                created_by: r.edge.created_by,
                 metadata: r.edge.metadata,
                 version: dbUtils.convertValueVersionFromDb(r.edge.version)
             }));
@@ -233,7 +245,9 @@ export default function ({
                 value: values[0].value,
                 attribute: valueLinks[0].attribute,
                 modified_at: valueLinks[0].modified_at,
-                created_at: valueLinks[0].created_at
+                created_at: valueLinks[0].created_at,
+                modified_by: valueLinks[0].modified_by,
+                created_by: valueLinks[0].created_by
             };
         },
         sortQueryPart({attributes, order}: IRecordSort): AqlQuery {

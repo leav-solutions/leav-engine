@@ -3,26 +3,28 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
 import {GraphQLScalarType} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValueVersion} from '_types/value';
-import {AttributeTypes} from '../../_types/attribute';
+import {IRecord} from '_types/record';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IGraphqlApp} from '../graphql/graphqlApp';
-
 export interface ICoreValueApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
-
 interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.record'?: IRecordDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
 }
-
 export default function ({
     'core.domain.value': valueDomain = null,
+    'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.app.graphql': graphqlApp = null,
     'core.utils': utils = null
@@ -30,7 +32,6 @@ export default function ({
     const _convertVersionToGqlFormat = (version: IValueVersion) => {
         const versionsNames = Object.keys(version);
         const formattedVersion = [];
-
         for (const versName of versionsNames) {
             formattedVersion.push({
                 name: versName,
@@ -40,18 +41,39 @@ export default function ({
                 }
             });
         }
-
         return formattedVersion;
     };
-
     const _convertVersionFromGqlFormat = (version: any): IValueVersion => {
         return Array.isArray(version) && version.length
             ? version.reduce((formattedVers, valVers) => {
                   formattedVers[valVers.name] = valVers.value;
-
                   return formattedVers;
               }, {})
             : null;
+    };
+
+    const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
+        const res = await recordDomain.find({
+            params: {
+                library: 'users',
+                filters: [{field: 'id', value: userId}]
+            },
+            ctx
+        });
+
+        return res.list[0] ? res.list[0] : null;
+    };
+
+    const commonValueResolvers = {
+        attribute: (value: IValue, _, ctx: IQueryInfos): Promise<IAttribute> => {
+            return attributeDomain.getAttributeProperties({id: value.attribute, ctx});
+        },
+        created_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> => {
+            return typeof value.created_by === 'undefined' ? null : _getUser(value.created_by, ctx);
+        },
+        modified_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> => {
+            return typeof value.modified_by === 'undefined' ? null : _getUser(value.modified_by, ctx);
+        }
     };
 
     return {
@@ -60,83 +82,80 @@ export default function ({
                 typeDefs: `
                     scalar ValueVersion
                     scalar ValueMetadata
-
                     input ValueVersionInput {
                         name: String!,
                         value: TreeElementInput!
                     }
-
                     interface GenericValue {
                         id_value: ID,
                         modified_at: Int,
                         created_at: Int,
+                        modified_by: User,
+                        created_by: User,
                         version: ValueVersion,
-                        attribute: ID,
+                        attribute: Attribute,
                         metadata: ValueMetadata
                     }
-
                     type Value implements GenericValue {
                         id_value: ID,
                         value: Any,
                         raw_value: Any,
                         modified_at: Int,
                         created_at: Int,
+                        modified_by: User,
+                        created_by: User,
                         version: ValueVersion,
-                        attribute: ID,
+                        attribute: Attribute,
                         metadata: ValueMetadata
                     }
-
                     type saveValueBatchResult {
                         values: [Value!],
                         errors: [ValueBatchError!]
                     }
-
                     type ValueBatchError {
                         type: String!,
                         attribute: String!,
                         input: String,
                         message: String!
                     }
-
                     input ValueMetadataInput {
                         name: String!,
                         value: String
                     }
-
                     type LinkValue implements GenericValue {
                         id_value: ID,
                         value: Record!,
                         modified_at: Int,
                         created_at: Int,
+                        modified_by: User,
+                        created_by: User,
                         version: ValueVersion,
-                        attribute: ID,
+                        attribute: Attribute,
                         metadata: ValueMetadata
                     }
-
                     type TreeValue implements GenericValue {
                         id_value: ID!,
                         modified_at: Int!,
                         created_at: Int!
+                        modified_by: User,
+                        created_by: User,
                         value: TreeNode!,
                         version: ValueVersion,
-                        attribute: ID,
+                        attribute: Attribute,
                         metadata: ValueMetadata
                     }
-
                     input ValueInput {
                         id_value: ID,
                         value: String,
                         metadata: [ValueMetadataInput],
                         version: [ValueVersionInput]
                     }
-
                     input ValueBatchInput {
                         attribute: ID,
                         id_value: ID,
                         value: String,
                         metadata: ValueMetadata
                     }
-
                     extend type Mutation {
                         # Save one value
                         saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value!
@@ -160,7 +179,6 @@ export default function ({
                                 version: _convertVersionFromGqlFormat(value.version),
                                 metadata: utils.nameValArrayToObj(value.metadata)
                             };
-
                             const savedVal = await valueDomain.saveValue({
                                 library,
                                 recordId,
@@ -168,11 +186,9 @@ export default function ({
                                 value: valToSave,
                                 ctx
                             });
-
                             const formattedVersion: any = savedVal.version
                                 ? _convertVersionToGqlFormat(savedVal.version)
                                 : null;
-
                             return {...savedVal, version: formattedVersion};
                         },
                         async saveValueBatch(parent, {library, recordId, version, values, deleteEmpty}, ctx) {
@@ -183,7 +199,6 @@ export default function ({
                                 version: versionToUse,
                                 metadata: utils.nameValArrayToObj(val.metadata)
                             }));
-
                             const savedValues = await valueDomain.saveValueBatch({
                                 library,
                                 recordId,
@@ -191,7 +206,6 @@ export default function ({
                                 ctx,
                                 keepEmpty: deleteEmpty
                             });
-
                             const res = {
                                 ...savedValues,
                                 values: savedValues.values.map(val => ({
@@ -202,7 +216,6 @@ export default function ({
                                             : null
                                 }))
                             };
-
                             return res;
                         },
                         async deleteValue(parent, {library, recordId, attribute, valueId}, ctx): Promise<IValue> {
@@ -228,9 +241,7 @@ export default function ({
                             const attribute = Array.isArray(fieldValue)
                                 ? fieldValue[0].attribute
                                 : fieldValue.attribute;
-
                             const attrProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-
                             switch (attrProps.type) {
                                 case AttributeTypes.SIMPLE:
                                 case AttributeTypes.ADVANCED:
@@ -242,12 +253,13 @@ export default function ({
                                     return 'TreeValue';
                             }
                         }
-                    }
+                    },
+                    Value: commonValueResolvers,
+                    LinkValue: commonValueResolvers,
+                    TreeValue: commonValueResolvers
                 }
             };
-
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
-
             return fullSchema;
         }
     };
