@@ -58,7 +58,9 @@ export default function ({
                 ctx
             });
 
-            return res.slice(0, 1).map(r => ({id_value: null, value: dbUtils.cleanup(r)}));
+            return res
+                .slice(0, 1)
+                .map(r => ({id_value: null, value: dbUtils.cleanup(r), created_by: null, modified_by: null}));
         },
         async getValueById(args): Promise<IValue> {
             return null;

@@ -448,6 +448,7 @@ export default function ({
                 value = (await valueRepo.getValues({library, recordId, attribute: attr, ctx})).pop();
             } else {
                 value = await valueRepo.getValueById({library, recordId, attribute: attr, valueId, ctx});
+
                 if (value === null) {
                     throw new ValidationError({id: Errors.UNKNOWN_VALUE});
                 }

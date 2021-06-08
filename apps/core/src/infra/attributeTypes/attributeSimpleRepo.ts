@@ -36,7 +36,11 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
         });
         const updatedDoc = res.length ? res[0] : {};
 
-        return {value: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null};
+        return {
+            value: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null,
+            created_by: null,
+            modified_by: null
+        };
     }
 
     function _getExtendedFilterPart(attributes: IAttribute[]): GeneratedAqlQuery {
@@ -74,7 +78,9 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
             return [
                 {
                     value: res[0],
-                    attribute: attribute.id
+                    attribute: attribute.id,
+                    modified_by: null,
+                    created_by: null
                 }
             ];
         },

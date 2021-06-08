@@ -22,6 +22,8 @@ export interface IValue {
     raw_value?: any;
     created_at?: number;
     modified_at?: number;
+    created_by?: string;
+    modified_by?: string;
     version?: IValueVersion;
     metadata?: IValueMetadata;
 }

@@ -31,10 +31,12 @@ Object {
     "_to": "core_values/987654",
     "attribute": "test_attr",
     "created_at": 400999999,
+    "created_by": "0",
     "metadata": Object {
       "my_attribute": "metadata value",
     },
     "modified_at": 400999999,
+    "modified_by": "0",
   },
 }
 `;
@@ -54,7 +56,9 @@ Object {
     "_to": "core_values/987654",
     "attribute": "test_attr",
     "created_at": 400999999,
+    "created_by": "0",
     "modified_at": 400999999,
+    "modified_by": "0",
     "version": Object {
       "my_tree": "test_lib/1",
     },
@@ -178,10 +182,12 @@ Object {
     "_to": "core_values/987654",
     "attribute": "test_attr",
     "created_at": undefined,
+    "created_by": undefined,
     "metadata": Object {
       "my_attribute": "metadata value",
     },
     "modified_at": 500999999,
+    "modified_by": "0",
   },
 }
 `;

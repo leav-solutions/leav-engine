@@ -47,6 +47,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'}
             };
 
@@ -56,6 +58,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                created_by: '0',
+                modified_by: '0',
                 metadata: {my_attribute: 'metadata value'}
             };
 
@@ -114,6 +118,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 version: {
                     my_tree: 'test_lib/1'
                 }
@@ -125,6 +131,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 version: {
                     my_tree: {
                         id: '1',
@@ -188,6 +196,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'}
             };
 
@@ -197,6 +207,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'}
             };
 
@@ -253,6 +265,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 version: {
                     my_tree: 'test_lib/1'
                 }
@@ -264,6 +278,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
+                modified_by: '0',
+                created_by: '0',
                 version: {
                     my_tree: {
                         id: '1',
@@ -321,7 +337,9 @@ describe('AttributeStandardRepo', () => {
                 _key: 978654321,
                 attribute: 'test_attr',
                 modified_at: 400999999,
-                created_at: 400999999
+                created_at: 400999999,
+                modified_by: '0',
+                created_by: '0'
             };
 
             const oldValueData = {
@@ -356,7 +374,9 @@ describe('AttributeStandardRepo', () => {
                     id_value: '123456789',
                     value: 'test val',
                     modified_at: 400999999,
-                    created_at: 400999999
+                    created_at: 400999999,
+                    modified_by: '0',
+                    created_by: '0'
                 },
                 ctx
             });
@@ -389,6 +409,8 @@ describe('AttributeStandardRepo', () => {
                     _to: 'core_values/987654',
                     modified_at: 99999,
                     created_at: 99999,
+                    modified_by: '0',
+                    created_by: '0',
                     attribute: 'test_attr'
                 }
             ];
@@ -425,6 +447,8 @@ describe('AttributeStandardRepo', () => {
                 value: 'test val',
                 modified_at: 99999,
                 created_at: 99999,
+                modified_by: '0',
+                created_by: '0',
                 attribute: 'test_attr'
             });
         });
@@ -474,6 +498,8 @@ describe('AttributeStandardRepo', () => {
                     attribute: 'test_attr',
                     modified_at: 99999,
                     created_at: 99999,
+                    modified_by: '0',
+                    created_by: '0',
                     metadata: {my_attribute: 'metadata value'}
                 }
             },
@@ -488,6 +514,8 @@ describe('AttributeStandardRepo', () => {
                     attribute: 'test_attr',
                     modified_at: 99999,
                     created_at: 99999,
+                    modified_by: '0',
+                    created_by: '0',
                     metadata: {my_attribute: 'metadata value'}
                 }
             }
@@ -523,6 +551,8 @@ describe('AttributeStandardRepo', () => {
                 attribute: 'test_attr',
                 modified_at: 99999,
                 created_at: 99999,
+                modified_by: '0',
+                created_by: '0',
                 metadata: {my_attribute: 'metadata value'}
             });
         });
@@ -557,7 +587,9 @@ describe('AttributeStandardRepo', () => {
                 value: 'test val',
                 attribute: 'test_attr',
                 modified_at: 99999,
-                created_at: 99999
+                created_at: 99999,
+                modified_by: '0',
+                created_by: '0'
             });
         });
 
@@ -574,6 +606,8 @@ describe('AttributeStandardRepo', () => {
                         attribute: 'test_attr',
                         modified_at: 99999,
                         created_at: 99999,
+                        modified_by: '0',
+                        created_by: '0',
                         version: {
                             my_tree: 'my_lib/1345'
                         }
