@@ -50,6 +50,9 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
         label: async (attributeData, args) => {
             return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
         },
+        description: async (attributeData, args) => {
+            return coreApp.filterSysTranslationField(attributeData.description, args.lang || []);
+        },
         input_types: (attributeData, _, ctx) => attributeDomain.getInputTypes({attrData: attributeData, ctx}),
         output_types: (attributeData, _, ctx) => attributeDomain.getOutputTypes({attrData: attributeData, ctx}),
         metadata_fields: async (attributeData: IAttribute, _, ctx) =>
@@ -103,6 +106,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
+                        description(lang: [AvailableLanguage!]): SystemTranslation,
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
@@ -119,6 +123,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
+                        description(lang: [AvailableLanguage!]): SystemTranslation,
                         embedded_fields: [EmbeddedAttribute],
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
@@ -136,6 +141,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
+                        description(lang: [AvailableLanguage!]): SystemTranslation,
                         linked_library: Library,
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
@@ -153,6 +159,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
+                        description(lang: [AvailableLanguage!]): SystemTranslation,
                         linked_tree: Tree,
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
@@ -169,6 +176,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         type: AttributeType
                         format: AttributeFormat
                         label: SystemTranslation,
+                        description: SystemTranslation,
                         linked_library: String,
                         linked_tree: String,
                         embedded_fields: [EmbeddedAttributeInput],
@@ -184,6 +192,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         id: ID!,
                         format: AttributeFormat,
                         label: SystemTranslation,
+                        description: SystemTranslation,
                         validation_regex: String,
                         embedded_fields: [EmbeddedAttribute]
                     }
@@ -192,6 +201,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         id: ID!
                         format: AttributeFormat
                         label: SystemTranslation,
+                        description: SystemTranslation,
                         validation_regex: String,
                         embedded_fields: [EmbeddedAttributeInput]
                     }

@@ -37,6 +37,10 @@ const defaultAttributeData: AttributeInfosFormValues = {
         fr: '',
         en: ''
     },
+    description: {
+        fr: '',
+        en: ''
+    },
     type: AttributeType.simple,
     format: AttributeFormat.text,
     linked_tree: null,
@@ -100,6 +104,9 @@ function InfosForm({
         label: yup.object().shape({
             [defaultLang]: yup.string().required()
         }),
+        description: yup.object().shape({
+            [defaultLang]: yup.string()
+        }),
         id: idValidator,
         type: yup.string().required(),
         format: yup.string()
@@ -121,6 +128,18 @@ function InfosForm({
 
             // On new attribute, automatically generate an ID based on label
             if (isNewAttribute && field === 'label' && subfield === defaultLang) {
+                setFieldValue('id', formatIDString(value));
+            }
+        };
+
+        const _handleDescriptionChange = (e, data) => {
+            _handleChange(e, data);
+
+            const {name, value} = data;
+            const [field, subfield] = name.split('.');
+
+            // On new attribute, automatically generate an ID based on label
+            if (isNewAttribute && field === 'description' && subfield === defaultLang) {
                 setFieldValue('id', formatIDString(value));
             }
         };
@@ -164,6 +183,22 @@ function InfosForm({
                                 onChange={_handleLabelChange}
                                 onBlur={handleBlur}
                                 value={values.label?.[lang] ?? ''}
+                            />
+                        </FormFieldWrapper>
+                    ))}
+                </Form.Group>
+                <Form.Group grouped>
+                    <label>{t('attributes.description')}</label>
+                    {availableLangs.map(lang => (
+                        <FormFieldWrapper key={lang} error={_getErrorByField(`description.${lang}`)}>
+                            <Form.Input
+                                label={`${lang}`}
+                                value={values.description?.[lang] ?? ''}
+                                width="4"
+                                name={`description.${lang}`}
+                                disabled={readonly}
+                                onChange={_handleDescriptionChange}
+                                onBlur={handleBlur}
                             />
                         </FormFieldWrapper>
                     ))}

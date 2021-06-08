@@ -31,7 +31,8 @@ describe('Attributes', () => {
                     id: "${testAttrName}",
                     type: simple,
                     format: text,
-                    label: {fr: "Test attr", en: "Test attr en"}
+                    label: {fr: "Test attr", en: "Test attr en"},
+                    description: {fr: "Test attr", en: "Test attr en"},
                 }
             ) {
                 id
@@ -56,7 +57,7 @@ describe('Attributes', () => {
     });
 
     test('Get Attribute by ID', async () => {
-        const res = await makeGraphQlCall('{attributes(filters: {id: "modified_at"}) { list {id} }}');
+        const res = await makeGraphQlCall(`{attributes(filters: {id: "${testAttrName}"}) { list {id} }}`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.attributes.list.length).toBe(1);
@@ -64,12 +65,26 @@ describe('Attributes', () => {
     });
 
     test('Return only request language on label', async () => {
-        const res = await makeGraphQlCall('{attributes(filters: {id: "modified_at"}) { list {id label(lang: [fr])}}}');
+        const res = await makeGraphQlCall(
+            `{attributes(filters: {id: "${testAttrName}"}) { list {id label(lang: [fr])}}}`
+        );
 
         expect(res.status).toBe(200);
         expect(res.data.data.attributes.list.length).toBe(1);
         expect(res.data.data.attributes.list[0].label.fr).toBeTruthy();
         expect(res.data.data.attributes.list[0].label.en).toBeUndefined();
+        expect(res.data.errors).toBeUndefined();
+    });
+
+    test('Return only request language on description', async () => {
+        const res = await makeGraphQlCall(
+            `{attributes(filters: {id: "${testAttrName}"}) { list {id description(lang: [fr]) label(lang: [fr])}}}`
+        );
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.attributes.list.length).toBe(1);
+        expect(res.data.data.attributes.list[0].description.fr).toBeTruthy();
+        expect(res.data.data.attributes.list[0].description.en).toBeUndefined();
         expect(res.data.errors).toBeUndefined();
     });
 

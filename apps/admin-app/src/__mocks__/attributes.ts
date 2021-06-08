@@ -15,6 +15,10 @@ const base: GET_ATTRIBUTES_attributes_list = {
         fr: 'Mon Attribut',
         en: 'My Attribute'
     },
+    description: {
+        fr: 'Mon Attribut',
+        en: 'My Attribute'
+    },
     type: AttributeType.simple,
     format: AttributeFormat.text,
     multiple_values: false,

@@ -75,6 +75,7 @@ export async function gqlSaveAttribute(params: {
     id: string;
     type: AttributeTypes;
     label: string;
+    description?: string;
     format?: AttributeFormats;
     versionsConf?: IAttributeVersionsConf;
     metadataFields?: string[];
@@ -87,6 +88,7 @@ export async function gqlSaveAttribute(params: {
         id,
         type,
         label,
+        description,
         format,
         versionsConf,
         metadataFields,
@@ -117,6 +119,7 @@ export async function gqlSaveAttribute(params: {
                 type: ${type},
                 format: ${format || 'text'},
                 label: {fr: "${label}"},
+                description: {fr: "${description ? `"${description}"` : 'null'}"},
                 linked_library: ${linkedLibrary ? `"${linkedLibrary}"` : 'null'},
                 linked_tree: ${linkedTree ? `"${linkedTree}"` : 'null'},
                 metadata_fields: ${metadataFields ? `[${metadataFields.map(t => `"${t}"`).join(', ')}]` : 'null'},

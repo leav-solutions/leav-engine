@@ -34,6 +34,7 @@ export const saveAttributeQuery = gql`
             metadata_fields {
                 id
                 label
+                description
                 type
                 format
             }

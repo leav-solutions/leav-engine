@@ -61,6 +61,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf | null;
@@ -145,6 +146,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf | null;
@@ -263,6 +265,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf | null;

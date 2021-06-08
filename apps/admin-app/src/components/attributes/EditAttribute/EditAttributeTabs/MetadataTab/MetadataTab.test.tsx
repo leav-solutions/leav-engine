@@ -57,6 +57,7 @@ describe('MetadataTab', () => {
                                         type: AttributeType.simple,
                                         format: AttributeFormat.text,
                                         label: {fr: 'field1'},
+                                        description: {fr: 'field1'},
                                         __typename: 'Attribute'
                                     },
                                     {
@@ -64,6 +65,7 @@ describe('MetadataTab', () => {
                                         type: AttributeType.simple,
                                         format: AttributeFormat.text,
                                         label: {fr: 'field2'},
+                                        description: {fr: 'field1'},
                                         __typename: 'Attribute'
                                     }
                                 ]
@@ -93,6 +95,7 @@ describe('MetadataTab', () => {
                                             type: AttributeType.simple,
                                             format: AttributeFormat.text,
                                             label: {fr: 'field1'},
+                                            description: {fr: 'field1'},
                                             __typename: 'Attribute'
                                         },
                                         {
@@ -100,6 +103,7 @@ describe('MetadataTab', () => {
                                             type: AttributeType.simple,
                                             format: AttributeFormat.text,
                                             label: {fr: 'field2'},
+                                            description: {fr: 'field2'},
                                             __typename: 'Attribute'
                                         }
                                     ]

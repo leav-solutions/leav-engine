@@ -55,6 +55,7 @@ export interface GET_ATTRIBUTES_attributes_list_StandardAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: GET_ATTRIBUTES_attributes_list_StandardAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTES_attributes_list_StandardAttribute_permissions_conf | null;
@@ -108,6 +109,7 @@ export interface GET_ATTRIBUTES_attributes_list_LinkAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: GET_ATTRIBUTES_attributes_list_LinkAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf | null;
@@ -162,6 +164,7 @@ export interface GET_ATTRIBUTES_attributes_list_TreeAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: GET_ATTRIBUTES_attributes_list_TreeAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTES_attributes_list_TreeAttribute_permissions_conf | null;

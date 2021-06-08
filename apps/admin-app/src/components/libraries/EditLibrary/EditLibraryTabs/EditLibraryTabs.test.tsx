@@ -18,7 +18,7 @@ jest.mock('../../../../hooks/useUserData', () => ({
     default: jest.fn(() => ({
         id: 1,
         name: 'Test',
-        permissions: {'app_access_forms': true}
+        permissions: {app_access_forms: true}
     }))
 }));
 
@@ -32,6 +32,7 @@ describe('EditLibraryForm', () => {
             format: AttributeFormat.text,
             system: false,
             label: {fr: 'Test', en: 'Test'},
+            description: {fr: 'Test', en: 'Test'},
             linked_tree: null,
             permissions_conf: null,
             multiple_values: false,
@@ -112,7 +113,7 @@ describe('EditLibraryForm', () => {
         (useUserData as jest.Mock).mockImplementation(() => ({
             id: 1,
             name: 'Test',
-            permissions: {'app_access_forms': false}
+            permissions: {app_access_forms: false}
         }));
 
         const comp = shallow(

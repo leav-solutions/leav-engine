@@ -51,6 +51,7 @@
         "title": "Attributes",
         "new": "New attribut",
         "label": "Label",
+        "description": "Description",
         "ID": "ID",
         "type": "Type",
         "format": "Format",
