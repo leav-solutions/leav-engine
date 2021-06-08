@@ -174,6 +174,9 @@ describe('<MainPanel />', () => {
                     metadata_fields: null,
                     label: {
                         fr: 'labela1'
+                    },
+                    description: {
+                        fr: 'description'
                     }
                 }
             ],

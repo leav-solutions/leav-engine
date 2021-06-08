@@ -52,6 +52,7 @@
         "new": "Nouvel attribut",
         "label": "Libellé",
         "ID": "Identifiant",
+        "description": "Description",
         "type": "Type",
         "format": "Format",
         "isSystem": "Système",

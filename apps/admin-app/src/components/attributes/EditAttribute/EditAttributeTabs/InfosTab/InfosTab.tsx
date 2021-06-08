@@ -73,6 +73,13 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                     fr: dataToSave.label?.fr ?? '',
                     en: dataToSave.label?.en ?? ''
                 },
+                description:
+                    dataToSave.description?.fr === '' && dataToSave.description?.en === ''
+                        ? null
+                        : {
+                              fr: dataToSave.description?.fr ?? '',
+                              en: dataToSave.description?.en ?? ''
+                          },
                 type: dataToSave.type,
                 format: dataToSave.format,
                 linked_tree: dataToSave.linked_tree,

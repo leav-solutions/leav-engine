@@ -10,6 +10,7 @@ export const attributeDetailsFragment = gql`
         format
         system
         label(lang: $lang)
+        description(lang: $lang)
         multiple_values
         metadata_fields {
             id

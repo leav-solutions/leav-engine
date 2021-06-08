@@ -36,6 +36,7 @@ export interface IAttributeVersionsConf {
 export interface IEmbeddedAttribute {
     id: string;
     label?: ISystemTranslation;
+    description?: ISystemTranslation;
     format?: AttributeFormats;
     validation_regex?: string;
     embedded_fields?: IEmbeddedAttribute[];

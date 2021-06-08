@@ -39,7 +39,7 @@ describe('SystemTranslation', () => {
         });
 
         test('Default language must be present', async () => {
-            expect(() => scalar.parseValue({en: 'English label'})).toThrow();
+            expect(() => scalar.parseValue({en: 'English label'})).toThrow(); // FIXME: ??
         });
     });
 

@@ -28,6 +28,10 @@ describe('InfosTab', () => {
                 fr: mockAttrAdv.label?.fr ?? '',
                 en: mockAttrAdv.label?.en ?? ''
             },
+            description: {
+                fr: mockAttrAdv.description?.fr ?? '',
+                en: mockAttrAdv.description?.en ?? ''
+            },
             type: mockAttrAdv.type,
             format: mockAttrAdv.format,
             multiple_values: mockAttrAdv.multiple_values,

@@ -136,6 +136,7 @@ export interface AttributeInput {
     type?: AttributeType | null;
     format?: AttributeFormat | null;
     label?: SystemTranslation | null;
+    description?: SystemTranslation | null;
     linked_library?: string | null;
     linked_tree?: string | null;
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
