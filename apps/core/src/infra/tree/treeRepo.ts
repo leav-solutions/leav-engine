@@ -6,7 +6,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {ITree, ITreeElement, ITreeNode, TreePaths} from '_types/tree';
+import {ITree, ITreeElement, ITreeNode, TreePaths, IGetCoreTreesParams} from '_types/tree';
 import {collectionTypes, IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
@@ -15,7 +15,7 @@ export interface ITreeRepo {
     getDefaultElement({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<ITreeElement>;
     createTree({treeData, ctx}: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
     updateTree({treeData, ctx}: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
-    getTrees({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
+    getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
     deleteTree({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<ITree>;
 
     /**
@@ -155,8 +155,8 @@ export interface ITreeRepo {
 }
 
 export const TREES_COLLECTION_NAME = 'core_trees';
-const EDGE_COLLEC_PREFIX = 'core_edge_tree_';
-const MAX_TREE_DEPTH = 1000;
+export const EDGE_COLLEC_PREFIX = 'core_edge_tree_';
+export const MAX_TREE_DEPTH = 1000;
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -210,7 +210,11 @@ export default function ({
 
             return dbUtils.cleanup(treeRes.pop());
         },
-        async getTrees({params = {}, ctx}): Promise<IList<ITree>> {
+        async getTrees({params = {}, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>> {
+            const _generateLibraryFilter = (filterKey: string, filterVal: string | boolean | string[]) => {
+                return aql`POSITION(ATTRIBUTES(el.libraries), ${filterVal})`;
+            };
+
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
@@ -218,9 +222,15 @@ export default function ({
                 pagination: null,
                 sort: null
             };
+
             const initializedParams = {...defaultParams, ...params};
 
-            return dbUtils.findCoreEntity<ITree>({...initializedParams, collectionName: TREES_COLLECTION_NAME, ctx});
+            return dbUtils.findCoreEntity<ITree>({
+                ...initializedParams,
+                collectionName: TREES_COLLECTION_NAME,
+                customFilterConditions: {library: _generateLibraryFilter},
+                ctx
+            });
         },
         async deleteTree({id, ctx}): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);

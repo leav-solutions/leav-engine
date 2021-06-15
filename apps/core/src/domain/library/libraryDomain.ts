@@ -69,7 +69,13 @@ export default function ({
     translator: translator
 }: IDeps = {}): ILibraryDomain {
     return {
-        async getLibraries({params, ctx}): Promise<IList<ILibrary>> {
+        async getLibraries({
+            params,
+            ctx
+        }: {
+            params?: IGetCoreEntitiesParams;
+            ctx: IQueryInfos;
+        }): Promise<IList<ILibrary>> {
             const initializedParams = {...params};
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
@@ -91,7 +97,7 @@ export default function ({
                 list: libs
             };
         },
-        async getLibraryProperties(id: string, ctx): Promise<ILibrary> {
+        async getLibraryProperties(id: string, ctx: IQueryInfos): Promise<ILibrary> {
             if (!id) {
                 throw new ValidationError({id: Errors.MISSING_LIBRARY_ID});
             }

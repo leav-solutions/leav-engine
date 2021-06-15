@@ -11,6 +11,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValueVersion} from '_types/value';
 import {IRecord} from '_types/record';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AttributeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 export interface ICoreValueApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -56,7 +57,7 @@ export default function ({
         const res = await recordDomain.find({
             params: {
                 library: 'users',
-                filters: [{field: 'id', value: userId}]
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
             },
             ctx
         });

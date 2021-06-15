@@ -64,7 +64,7 @@ export default function ({
                         preview: Preview
                     }
 
-                     type Preview {
+                    type Preview {
                         ${Object.keys(PreviewSizes).map(sizeName => `${sizeName}: String,`)}
                     }
 
@@ -123,20 +123,24 @@ export default function ({
                         NOT_CONTAINS
                         GREATER_THAN
                         LESS_THAN
+                        CLASSIFIED_IN
+                        NOT_CLASSIFIED_IN
                     }
 
                     type RecordFilter {
                         field: String,
                         value: String
                         condition: RecordFilterCondition,
-                        operator: RecordFilterOperator
+                        operator: RecordFilterOperator,
+                        treeId: String
                     }
 
                     input RecordFilterInput {
                         field: String,
                         value: String
                         condition: RecordFilterCondition,
-                        operator: RecordFilterOperator
+                        operator: RecordFilterOperator,
+                        treeId: String
                     }
 
                     type RecordSort {

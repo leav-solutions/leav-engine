@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
+import {TreeCondition, AttributeCondition} from '../../../../_types/record';
 import {
     gqlAddElemToTree,
     gqlCreateRecord,
@@ -52,7 +53,7 @@ describe('Records', () => {
 
     test('Get records filtered by ID', async () => {
         const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "id", value: "${recordId}"}]) { list {id} } }
+            `{ ${testLibNameType}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) { list {id} } }
         `
         );
 
@@ -64,7 +65,7 @@ describe('Records', () => {
 
     test('Get library details on a record', async () => {
         const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "id", value: "${recordId}"}]) {
+            `{ ${testLibNameType}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
                  list {
                      id
                      library { id }
@@ -81,7 +82,7 @@ describe('Records', () => {
     test('Get record identity', async () => {
         const res = await makeGraphQlCall(`
             {
-                ${testLibNameType}(filters: [{field: "id", value: "${recordId}"}]) {
+                ${testLibNameType}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
                     list {
                         id
                         whoAmI { id library { id } label }
@@ -147,6 +148,7 @@ describe('Records', () => {
         const sfTestLibQueryName = 'recordsSortFilterTestLib';
         const sfTestLibLinkId = 'records_sort_filter_test_lib_linked';
         const sfTestLibTreeId = 'records_sort_filter_test_lib_tree';
+        const sfTestLibTreeIdQueryName = 'recordsSortFilterTestLibTree';
         const testTreeId = 'records_sf_test_tree';
         const testSimpleAttrId = 'records_sort_filter_test_attr_simple';
         const testSimpleExtAttrId = 'records_sort_filter_test_attr_simple_extended';
@@ -164,6 +166,9 @@ describe('Records', () => {
         let sfTreeRecord1;
         let sfTreeRecord2;
         let sfTreeRecord3;
+        let sfTreeRecord4;
+        let sfTreeRecord5;
+        let sfTreeRecord6;
 
         beforeAll(async () => {
             // Create libs
@@ -243,6 +248,9 @@ describe('Records', () => {
             sfTreeRecord1 = await gqlCreateRecord(sfTestLibTreeId);
             sfTreeRecord2 = await gqlCreateRecord(sfTestLibTreeId);
             sfTreeRecord3 = await gqlCreateRecord(sfTestLibTreeId);
+            sfTreeRecord4 = await gqlCreateRecord(sfTestLibTreeId);
+            sfTreeRecord5 = await gqlCreateRecord(sfTestLibTreeId);
+            sfTreeRecord6 = await gqlCreateRecord(sfTestLibTreeId);
 
             // Save values on linked records
             await makeGraphQlCall(`mutation {
@@ -286,6 +294,19 @@ describe('Records', () => {
             await gqlAddElemToTree(testTreeId, {id: sfTreeRecord1, library: sfTestLibTreeId});
             await gqlAddElemToTree(testTreeId, {id: sfTreeRecord2, library: sfTestLibTreeId});
             await gqlAddElemToTree(testTreeId, {id: sfTreeRecord3, library: sfTestLibTreeId});
+
+            // Add branch to tree to test classified / not classified filters
+            await gqlAddElemToTree(testTreeId, {id: sfTreeRecord4, library: sfTestLibTreeId});
+            await gqlAddElemToTree(
+                testTreeId,
+                {id: sfTreeRecord5, library: sfTestLibTreeId},
+                {id: sfTreeRecord4, library: sfTestLibTreeId}
+            );
+            await gqlAddElemToTree(
+                testTreeId,
+                {id: sfTreeRecord6, library: sfTestLibTreeId},
+                {id: sfTreeRecord5, library: sfTestLibTreeId}
+            );
         });
 
         describe('On simple attribute', () => {
@@ -312,7 +333,7 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(filters: [{field: "${testSimpleAttrId}", value: "C"}]) { list {id}} }`
+                    `{ ${sfTestLibQueryName}(filters: [{field: "${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]) { list {id}} }`
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -364,7 +385,7 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(filters: [{field: "${testSimpleExtAttrId}.name", value: "C"}]) {
+                    ${sfTestLibQueryName}(filters: [{field: "${testSimpleExtAttrId}.name", condition: ${AttributeCondition.EQUAL}, value: "C"}]) {
                         list {
                             id
                         }
@@ -420,7 +441,7 @@ describe('Records', () => {
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
                     ${sfTestLibQueryName}(
-                        filters: [{field: "${testSimpleLinkAttrId}.${testSimpleAttrId}", value: "C"}]
+                        filters: [{field: "${testSimpleLinkAttrId}.${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
                     ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
@@ -471,7 +492,7 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(filters: [{field: "${testAdvAttrId}", value: "C"}]) { list {id}} }`
+                    `{ ${sfTestLibQueryName}(filters: [{field: "${testAdvAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]) { list {id}} }`
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -524,7 +545,7 @@ describe('Records', () => {
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
                     ${sfTestLibQueryName}(
-                        filters: [{field: "${testAdvLinkAttrId}.${testSimpleAttrId}", value: "C"}]
+                        filters: [{field: "${testAdvLinkAttrId}.${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
                     ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
@@ -577,7 +598,7 @@ describe('Records', () => {
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
                     ${sfTestLibQueryName}(
-                        filters: [{field: "${testTreeAttrId}.${testSimpleAttrId}", value: "C"}]
+                        filters: [{field: "${testTreeAttrId}.${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
                     ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
@@ -602,6 +623,41 @@ describe('Records', () => {
                 expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
                 expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
                 expect(res.data.data[sfTestLibQueryName].list[2].id).toBe(sfRecord1);
+            });
+
+            test('Classified', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${sfTestLibTreeIdQueryName}(
+                        filters: [{
+                            value: "${sfTestLibTreeId}/${sfTreeRecord4}", 
+                            condition: ${TreeCondition.CLASSIFIED_IN}, 
+                            treeId: "${testTreeId}"
+                        }]) { list {id}} }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+
+                expect(res.data.data[sfTestLibTreeIdQueryName].list.length).toBe(2);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord5);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord6);
+            });
+
+            test('Not Classified', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${sfTestLibTreeIdQueryName}(
+                        filters: [{
+                            value: "${sfTestLibTreeId}/${sfTreeRecord4}", 
+                            condition: ${TreeCondition.NOT_CLASSIFIED_IN}, 
+                            treeId: "${testTreeId}"
+                        }]) { list {id}} }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+
+                expect(res.data.data[sfTestLibTreeIdQueryName].list.length).toBe(3);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord1);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord2);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[2].id).toBe(sfTreeRecord3);
             });
         });
     });

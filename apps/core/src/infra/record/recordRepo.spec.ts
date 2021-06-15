@@ -4,7 +4,7 @@
 import {Database} from 'arangojs';
 import {cloneDeep} from 'lodash';
 import {AttributeTypes} from '../../_types/attribute';
-import {IRecordFilterOption, Operator} from '../../_types/record';
+import {AttributeCondition, IRecordFilterOption, Operator} from '../../_types/record';
 import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbUtils} from '../db/dbUtils';
 import recordRepo from './recordRepo';
@@ -453,6 +453,7 @@ describe('RecordRepo', () => {
                         type: null
                     }
                 ],
+                condition: AttributeCondition.EQUAL,
                 value: 'test'
             },
             {operator: Operator.AND},
@@ -463,6 +464,7 @@ describe('RecordRepo', () => {
                         type: null
                     }
                 ],
+                condition: AttributeCondition.EQUAL,
                 value: 'test2'
             }
         ];

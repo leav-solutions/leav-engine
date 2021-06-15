@@ -7,10 +7,9 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {IAttribute, IOAllowedTypes} from '../../_types/attribute';
+import {IAttribute, IOAllowedTypes, IGetCoreAttributesParams} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
@@ -24,7 +23,7 @@ export interface IAttributeDomain {
     /**
      * Get attributes list, filtered or not
      */
-    getAttributes({}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IAttribute>>;
+    getAttributes({params, ctx}: {params?: IGetCoreAttributesParams; ctx: IQueryInfos}): Promise<IList<IAttribute>>;
 
     /**
      * Save attribute.
@@ -89,7 +88,13 @@ export default function ({
 
             return props;
         },
-        async getAttributes({params, ctx}): Promise<IList<IAttribute>> {
+        async getAttributes({
+            params,
+            ctx
+        }: {
+            params?: IGetCoreAttributesParams;
+            ctx: IQueryInfos;
+        }): Promise<IList<IAttribute>> {
             // TODO: possibility to search multiple IDs
             const initializedParams = {...params};
             if (typeof initializedParams.sort === 'undefined') {

@@ -5,15 +5,15 @@ import {aql} from 'arangojs';
 import {IUtils} from 'utils/utils';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {IAttribute} from '../../_types/attribute';
+import {IAttribute, IGetCoreAttributesParams} from '../../_types/attribute';
+import {IGetCoreEntitiesParams} from '../../_types/shared';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {LIB_COLLECTION_NAME, LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
 
 export interface IAttributeRepo {
-    getAttributes({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IAttribute>>;
+    getAttributes({params, ctx}: {params?: IGetCoreAttributesParams; ctx: IQueryInfos}): Promise<IList<IAttribute>>;
     updateAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
     createAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
     deleteAttribute({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): Promise<IAttribute>;
@@ -74,7 +74,13 @@ export default function ({
 
             return attrs.map(dbUtils.cleanup);
         },
-        async getAttributes({params, ctx}): Promise<IList<IAttribute>> {
+        async getAttributes({
+            params,
+            ctx
+        }: {
+            params?: IGetCoreAttributesParams;
+            ctx: IQueryInfos;
+        }): Promise<IList<IAttribute>> {
             const _generateLibrariesFilterConds = (filterKey: string, filterVal: string | boolean | string[]) => {
                 if (typeof filterVal === 'boolean') {
                     return aql``;
@@ -101,6 +107,7 @@ export default function ({
                 pagination: null,
                 sort: null
             };
+
             const initializedParams = {...defaultParams, ...params};
 
             return dbUtils.findCoreEntity<IAttribute>({

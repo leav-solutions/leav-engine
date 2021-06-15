@@ -14,7 +14,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {EventType, IEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
-import {Operator} from '../../_types/record';
+import {AttributeCondition, Operator} from '../../_types/record';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -169,6 +169,7 @@ export default function ({
 
                 filters = fullTextAttributes.map(attr => ({
                     field: attr.id,
+                    condition: AttributeCondition.EQUAL,
                     value: recordId
                 }));
             }
@@ -264,7 +265,13 @@ export default function ({
                 if (data.attributeId === 'active' && data.value.new.value === false) {
                     await elasticsearchService.deleteDocument(data.libraryId, data.recordId);
                 } else if (data.attributeId === 'active' && data.value.new.value === true) {
-                    await _indexRecords({library: data.libraryId, filters: [{field: 'id', value: data.recordId}]}, ctx);
+                    await _indexRecords(
+                        {
+                            library: data.libraryId,
+                            filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
+                        },
+                        ctx
+                    );
                 } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
                     const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
 
@@ -373,7 +380,7 @@ export default function ({
 
             const filters = records
                 ? records.reduce((acc, id) => {
-                      acc.push({field: 'id', value: id});
+                      acc.push({field: 'id', condition: AttributeCondition.EQUAL, value: id});
                       if (records.length > 1) {
                           acc.push({operator: Operator.OR});
                       }

@@ -4,9 +4,9 @@
 import {IQueryInfos} from '../../_types/queryInfos';
 import {Action, IMatch, IValue, IData, IFile} from '../../_types/import';
 import {IAttribute} from '../../_types/attribute';
-import {Operator} from '../../_types/record';
+import {Operator, AttributeCondition} from '../../_types/record';
 import {Errors} from '../../_types/errors';
-import {IRecordDomain, IRecordFiltersLight} from 'domain/record/recordDomain';
+import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
@@ -126,11 +126,11 @@ export default function ({
         }
     };
 
-    const _matchesToFilters = (matches: IMatch[]): IRecordFiltersLight => {
+    const _matchesToFilters = (matches: IMatch[]): IRecordFilterLight[] => {
         const filters = matches.reduce((m, acc) => m.concat(acc, {operator: Operator.AND}), []);
         filters.pop();
 
-        return filters.map((m: IMatch) => ({field: m.attribute, value: m.value}));
+        return filters.map((m: IMatch) => ({field: m.attribute, condition: AttributeCondition.EQUAL, value: m.value}));
     };
 
     const _getMatchRecords = async (library: string, matches: IMatch[], ctx: IQueryInfos): Promise<string[]> => {

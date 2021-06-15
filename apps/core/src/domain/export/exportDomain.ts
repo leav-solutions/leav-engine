@@ -6,7 +6,7 @@ import {IAttribute, AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import {IRecord} from '../../_types/record';
 import validateLibAttributes from '../library/helpers/validateLibAttributes';
-import {IRecordDomain, IRecordFiltersLight} from 'domain/record/recordDomain';
+import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -24,7 +24,7 @@ export const DIR_PATH = '/exports';
 export interface IExportParams {
     library: string;
     attributes: string[];
-    filters?: IRecordFiltersLight;
+    filters?: IRecordFilterLight[];
 }
 
 export interface IExportDomain {

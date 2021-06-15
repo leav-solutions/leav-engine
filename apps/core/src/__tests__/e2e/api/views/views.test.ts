@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {AttributeCondition} from '../../../../_types/record';
 
 describe('Views', () => {
     const testLibName = 'test_views_lib';
@@ -21,7 +22,7 @@ describe('Views', () => {
               description: {fr: "Best view ever!"},
               color: "#FFFFFF",
               filters: [
-                {field: "label", value: "Test", condition: EQUAL}
+                {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
               ],
               sort: {field: "created_at", order: asc}
             }) {
@@ -35,7 +36,7 @@ describe('Views', () => {
                 description: {fr: "Best view ever!"},
                 color: "#FFFFFF",
                 filters: [
-                  {field: "label", value: "Test", condition: EQUAL}
+                  {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
                 ],
                 sort: {field: "created_at", order: asc}
               }) {

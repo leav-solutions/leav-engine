@@ -123,7 +123,6 @@ Object {
     },
     "libraries": Array [
       "test_lib",
-      "test_lib2",
     ],
     "system": false,
   },
@@ -278,7 +277,6 @@ Object {
     },
     "libraries": Array [
       "test_lib",
-      "test_lib2",
     ],
     "system": false,
   },
