@@ -10,7 +10,7 @@ import * as jwt from 'jsonwebtoken';
 import * as winston from 'winston';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
-import {IRecord} from '_types/record';
+import {AttributeCondition, IRecord} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface IAuthApp {
@@ -50,7 +50,7 @@ export default function ({
                             const users = await recordDomain.find({
                                 params: {
                                     library: 'users',
-                                    filters: [{field: 'id', value: ctx.userId}],
+                                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: ctx.userId}],
                                     withCount: false,
                                     retrieveInactive: true
                                 },
@@ -81,7 +81,7 @@ export default function ({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'login', value: login}]
+                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: login}]
                             },
                             ctx
                         });
@@ -153,7 +153,7 @@ export default function ({
             const users = await recordDomain.find({
                 params: {
                     library: 'users',
-                    filters: [{field: 'id', value: tokenPayload.userId}]
+                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: tokenPayload.userId}]
                 },
                 ctx
             });

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IViewDomain} from 'domain/view/viewDomain';
@@ -10,6 +11,7 @@ import {IAttribute} from '_types/attribute';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {ISystemTranslation} from '_types/systemTranslation';
+import {ITree} from '_types/tree';
 import {IValue, IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
@@ -27,6 +29,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.tree'?: ITreeDomain;
     'core.domain.view'?: IViewDomain;
     'core.app.core.attribute'?: ICoreAttributeApp;
     'core.app.graphql'?: IGraphqlApp;
@@ -38,6 +41,7 @@ export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
+    'core.domain.tree': treeDomain = null,
     'core.domain.view': viewDomain = null,
     'core.app.core.attribute': coreAttributeApp = null,
     'core.app.graphql': graphqlApp = null,
@@ -84,6 +88,7 @@ export default function ({
                         permissions_conf: Treepermissions_conf,
                         recordIdentityConf: RecordIdentityConf,
                         gqlNames: LibraryGraphqlNames!,
+                        linkedTrees: [Tree!],
                         defaultView: View,
                     }
 
@@ -181,6 +186,18 @@ export default function ({
                          */
                         label: (libData, args): ISystemTranslation => {
                             return coreApp.filterSysTranslationField(libData.label, args.lang || []);
+                        },
+                        linkedTrees: async (parent, args, ctx, info): Promise<ITree[]> => {
+                            const trees = await treeDomain.getTrees({
+                                params: {
+                                    filters: {
+                                        library: parent.id
+                                    }
+                                },
+                                ctx
+                            });
+
+                            return trees.list;
                         },
                         gqlNames: parent => {
                             const libId = parent.id;

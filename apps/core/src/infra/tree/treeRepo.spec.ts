@@ -11,20 +11,22 @@ describe('TreeRepo', () => {
     const docTreeData = {
         _key: 'test_tree',
         system: false,
-        libraries: ['test_lib', 'test_lib2'],
+        libraries: ['test_lib'],
         label: {fr: 'test', en: 'test'}
     };
 
     const treeData = {
         id: 'test_tree',
         system: false,
-        libraries: ['test_lib', 'test_lib2'],
+        libraries: ['test_lib'],
         label: {fr: 'test', en: 'test'}
     };
+
     const ctx: IQueryInfos = {
         userId: '0',
         queryId: '132456'
     };
+
     describe('createTree', () => {
         test('Should create a tree', async function () {
             const mockDbServ = {
@@ -278,7 +280,7 @@ describe('TreeRepo', () => {
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ}) as any;
             repo.moveElement = global.__mockPromise([]);
 
-            const deletedElement = await repo.deleteElement({
+            await repo.deleteElement({
                 treeId: 'test_tree',
                 element: {id: '13445', library: 'test_lib'},
                 deleteChildren: false,

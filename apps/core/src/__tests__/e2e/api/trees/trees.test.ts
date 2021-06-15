@@ -28,7 +28,7 @@ describe('Trees', () => {
         expect(res.data.errors).toBeUndefined();
 
         // Create another one for tests
-        await gqlSaveTree(testTreeName2, 'Test tree 2', ['users']);
+        await gqlSaveTree(testTreeName2, 'Test tree 2', ['users_groups']);
     });
 
     test('Get Trees list', async () => {
@@ -66,13 +66,31 @@ describe('Trees', () => {
         expect(res.data.errors).toBeUndefined();
     });
 
+    test('Get Tree by library', async () => {
+        const res = await makeGraphQlCall(`{
+            trees(filters: {library: "users_groups"}) {
+                list {
+                    id
+                    libraries {
+                        library { id }
+                    }
+                }
+            }
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.trees.list.length).toBe(2);
+        expect(res.data.data.trees.list[0].libraries[0].library.id).toBe('users_groups');
+        expect(res.data.data.trees.list[1].libraries[0].library.id).toBe('users_groups');
+        expect(res.data.errors).toBeUndefined();
+    });
+
     test('Delete a tree', async () => {
-        const treeToDelete = testTreeName + '2';
-        const res = await makeGraphQlCall(`mutation {deleteTree(id: "${treeToDelete}") { id }}`);
+        const res = await makeGraphQlCall(`mutation {deleteTree(id: "${testTreeName2}") { id }}`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.deleteTree).toBeDefined();
-        expect(res.data.data.deleteTree.id).toBe(treeToDelete);
+        expect(res.data.data.deleteTree.id).toBe(testTreeName2);
         expect(res.data.errors).toBeUndefined();
     });
 

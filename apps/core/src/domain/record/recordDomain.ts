@@ -7,6 +7,7 @@ import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
 import {join} from 'path';
+import {isTypeOperatorNode} from 'typescript';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IValue, IValuesOptions} from '_types/value';
@@ -20,13 +21,14 @@ import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
-    Condition,
     IRecord,
     IRecordFilterOption,
     IRecordIdentity,
     IRecordIdentityConf,
     IRecordSort,
-    Operator
+    Operator,
+    AttributeCondition,
+    TreeCondition
 } from '../../_types/record';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -36,12 +38,13 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
  * Simple list of filters (fieldName: filterValue) to apply to get records.
  */
 
-export type IRecordFiltersLight = Array<{
+export interface IRecordFilterLight {
     field?: string;
     value?: string;
-    condition?: Condition;
+    condition?: AttributeCondition | TreeCondition;
     operator?: Operator;
-}>;
+    treeId?: string;
+}
 
 export interface IRecordSortLight {
     field: string;
@@ -50,7 +53,7 @@ export interface IRecordSortLight {
 
 export interface IFindRecordParams {
     library: string;
-    filters?: IRecordFiltersLight;
+    filters?: IRecordFilterLight[];
     sort?: IRecordSortLight;
     options?: IValuesOptions;
     pagination?: IPaginationParams | ICursorPaginationParams;
@@ -61,16 +64,23 @@ export interface IFindRecordParams {
 
 const allowedTypeOperator = {
     string: [
-        Condition.EQUAL,
-        Condition.NOT_EQUAL,
-        Condition.BEGIN_WITH,
-        Condition.END_WITH,
-        Condition.CONTAINS,
-        Condition.NOT_CONTAINS
+        AttributeCondition.EQUAL,
+        AttributeCondition.NOT_EQUAL,
+        AttributeCondition.BEGIN_WITH,
+        AttributeCondition.END_WITH,
+        AttributeCondition.CONTAINS,
+        AttributeCondition.NOT_CONTAINS,
+        TreeCondition.CLASSIFIED_IN,
+        TreeCondition.NOT_CLASSIFIED_IN
     ],
-    number: [Condition.EQUAL, Condition.NOT_EQUAL, Condition.GREATER_THAN, Condition.LESS_THAN],
-    boolean: [Condition.EQUAL, Condition.NOT_EQUAL],
-    null: [Condition.EQUAL, Condition.NOT_EQUAL]
+    number: [
+        AttributeCondition.EQUAL,
+        AttributeCondition.NOT_EQUAL,
+        AttributeCondition.GREATER_THAN,
+        AttributeCondition.LESS_THAN
+    ],
+    boolean: [AttributeCondition.EQUAL, AttributeCondition.NOT_EQUAL],
+    null: [AttributeCondition.EQUAL, AttributeCondition.NOT_EQUAL]
 };
 
 export interface IRecordDomain {
@@ -251,22 +261,26 @@ export default function ({
         return processedValue;
     };
 
-    const _checkLogicExpr = (filters: IRecordFilterOption[]) => {
+    const _checkLogicExpr = async (filters: IRecordFilterLight[]) => {
         const stack = [];
         const output = [];
 
         // convert to Reverse Polish Notation
         for (const f of filters) {
-            if (typeof f.value !== 'undefined') {
+            await _validationFilter(f);
+
+            if (!_isOperatorFilter(f)) {
                 output.push(f);
             } else if (f.operator !== Operator.CLOSE_BRACKET) {
                 stack.push(f);
             } else {
                 let e: IRecordFilterOption = stack.pop();
+
                 while (e && e.operator !== Operator.OPEN_BRACKET) {
                     output.push(e);
                     e = stack.pop();
                 }
+
                 if (!e) {
                     throw new ValidationError({id: Errors.INVALID_FILTERS_EXPRESSION});
                 }
@@ -277,8 +291,10 @@ export default function ({
 
         // validation filters logical expression (order)
         let stackSize = 0;
+
         for (const e of rpn) {
-            stackSize += typeof e.value !== 'undefined' ? 1 : -1;
+            stackSize += !_isOperatorFilter(e) ? 1 : -1;
+
             if (stackSize <= 0) {
                 throw new ValidationError({id: Errors.INVALID_FILTERS_EXPRESSION});
             }
@@ -345,7 +361,7 @@ export default function ({
             for (const attr of attrs) {
                 const records = await recordRepo.find({
                     libraryId: lib,
-                    filters: [{attributes: [attr], value}],
+                    filters: [{attributes: [attr], condition: AttributeCondition.EQUAL, value}],
                     ctx
                 });
 
@@ -356,6 +372,43 @@ export default function ({
         }
 
         return linkedValuesToDel;
+    };
+
+    const _isAttributeFilter = (filter: IRecordFilterLight): boolean => {
+        return (
+            filter.condition in AttributeCondition &&
+            typeof filter.field !== 'undefined' &&
+            typeof filter.value !== 'undefined'
+        );
+    };
+
+    const _isClassifiedFilter = (filter: IRecordFilterLight): boolean => {
+        return filter.condition in TreeCondition && typeof filter.treeId !== 'undefined';
+    };
+
+    const _isOperatorFilter = (filter: IRecordFilterLight): boolean => filter.operator in Operator;
+
+    const _validationFilter = async (filter: IRecordFilterLight): Promise<void> => {
+        if (typeof filter.condition === 'undefined' && typeof filter.operator === 'undefined') {
+            throw new ValidationError({
+                id: Errors.INVALID_FILTER_FORMAT,
+                message: 'Filter must have a condition or operator'
+            });
+        }
+
+        if (filter.condition in AttributeCondition && !_isAttributeFilter(filter)) {
+            throw new ValidationError({
+                id: Errors.INVALID_FILTER_FORMAT,
+                message: 'Attribute filter must have condition, field and value'
+            });
+        }
+
+        if (filter.condition in TreeCondition && !_isClassifiedFilter(filter)) {
+            throw new ValidationError({
+                id: Errors.INVALID_FILTER_FORMAT,
+                message: 'Classified filter must have condition, value and treeId'
+            });
+        }
     };
 
     return {
@@ -454,10 +507,10 @@ export default function ({
         },
         async find({params, ctx}): Promise<IListWithCursor<IRecord>> {
             const {library, sort, pagination, withCount, retrieveInactive = false, searchQuery} = params;
-            let {filters = []} = params;
+            let {filters = [] as IRecordFilterLight[]} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort;
-            let searchFilters: IRecordFiltersLight = [];
+            let searchFilters: IRecordFilterLight[] = [];
 
             // Add ids filters if searchQuery is defined
             if (typeof searchQuery !== 'undefined') {
@@ -466,8 +519,8 @@ export default function ({
                 if (searchRecords.list.length) {
                     searchFilters = searchRecords.list.flatMap((r, i, arr) =>
                         i < arr.length - 1
-                            ? [{field: 'id', value: r.id}, {operator: Operator.OR}]
-                            : {field: 'id', value: r.id}
+                            ? [{field: 'id', condition: AttributeCondition.EQUAL, value: r.id}, {operator: Operator.OR}]
+                            : {field: 'id', condition: AttributeCondition.EQUAL, value: r.id}
                     );
                 }
 
@@ -488,10 +541,15 @@ export default function ({
 
             filters = filters.concat(searchFilters);
 
+            if (filters.length) {
+                await _checkLogicExpr(filters);
+            }
+
             // Hydrate filters with attribute properties and cast filters values if needed
             for (const f of filters) {
                 let filter: IRecordFilterOption = {};
-                if (!f.operator) {
+
+                if (_isAttributeFilter(f)) {
                     const attributes = await _getAttributesFromField(f.field, ctx);
                     let value: any = f.value;
                     const lastAttr = attributes[attributes.length - 1];
@@ -516,10 +574,6 @@ export default function ({
                 }
 
                 fullFilters.push(filter);
-            }
-
-            if (filters.length) {
-                _checkLogicExpr(fullFilters);
             }
 
             // Check sort fields

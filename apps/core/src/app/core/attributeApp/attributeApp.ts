@@ -9,6 +9,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
+import {AttributeCondition} from '../../../_types/record';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
 import {ActionsListEvents} from '../../../_types/actionsList';
@@ -346,7 +347,9 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                                         const record = await recordDomain.find({
                                             params: {
                                                 library: attributeData.linked_library,
-                                                filters: [{field: 'id', value: recId}]
+                                                filters: [
+                                                    {field: 'id', condition: AttributeCondition.EQUAL, value: recId}
+                                                ]
                                             },
                                             ctx
                                         });
@@ -382,7 +385,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                                         const record = await recordDomain.find({
                                             params: {
                                                 library,
-                                                filters: [{field: 'id', value: id}]
+                                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: id}]
                                             },
                                             ctx
                                         });

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordFiltersLight, IRecordSortLight} from 'domain/record/recordDomain';
+import {IRecordFilterLight, IRecordSortLight} from 'domain/record/recordDomain';
 import {ISystemTranslation} from './systemTranslation';
 
 export enum ViewTypes {
@@ -20,7 +20,7 @@ declare global {
         description?: ISystemTranslation;
         color?: string;
         type: ViewTypes;
-        filters?: IRecordFiltersLight;
+        filters?: IRecordFilterLight[];
         sort?: IRecordSortLight;
         settings: IViewSettings;
     }

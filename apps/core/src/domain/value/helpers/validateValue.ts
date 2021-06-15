@@ -6,6 +6,7 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {difference} from 'lodash';
+import {AttributeCondition} from '../../../_types/record';
 import {AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {ErrorFieldDetail, Errors, IExtendedErrorMsg} from '../../../_types/errors';
 import {IQueryInfos} from '../../../_types/queryInfos';
@@ -45,6 +46,7 @@ const _validateLinkedRecord = async (
         filters: [
             {
                 attributes: [idAttrProps],
+                condition: AttributeCondition.EQUAL,
                 value: value.value
             }
         ],
@@ -75,6 +77,7 @@ const _validateTreeLinkedRecord = async (
         filters: [
             {
                 attributes: [idAttrProps],
+                condition: AttributeCondition.EQUAL,
                 value: recordId
             }
         ],

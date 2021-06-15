@@ -7,6 +7,7 @@ import {IViewRepo} from 'infra/view/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
+import {AttributeCondition} from '../../_types/record';
 import {Errors} from '../../_types/errors';
 
 interface IDeps {
@@ -30,7 +31,13 @@ export default function ({
         async validateRecord(library: string, record: string, ctx: IQueryInfos): Promise<void> {
             const recordsRes = await recordRepo.find({
                 libraryId: library,
-                filters: [{attributes: [{id: 'id', type: AttributeTypes.SIMPLE}], value: String(record)}],
+                filters: [
+                    {
+                        attributes: [{id: 'id', type: AttributeTypes.SIMPLE}],
+                        condition: AttributeCondition.EQUAL,
+                        value: String(record)
+                    }
+                ],
                 retrieveInactive: true,
                 ctx
             });

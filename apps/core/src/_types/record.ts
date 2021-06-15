@@ -23,7 +23,7 @@ export enum Operator {
     CLOSE_BRACKET = 'CLOSE_BRACKET'
 }
 
-export enum Condition {
+export enum AttributeCondition {
     EQUAL = 'EQUAL',
     NOT_EQUAL = 'NOT_EQUAL',
     BEGIN_WITH = 'BEGIN_WITH',
@@ -34,11 +34,17 @@ export enum Condition {
     LESS_THAN = 'LESS_THAN'
 }
 
+export enum TreeCondition {
+    CLASSIFIED_IN = 'CLASSIFIED_IN',
+    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN'
+}
+
 export interface IRecordFilterOption {
     attributes?: IAttribute[];
     value?: string | number | boolean;
-    condition?: Condition;
+    condition?: AttributeCondition | TreeCondition;
     operator?: Operator;
+    treeId?: string;
 }
 
 export interface IRecordSort {

@@ -4,12 +4,12 @@
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {Condition, IRecordSort} from '../../_types/record';
+import {AttributeCondition, IRecordSort} from '../../_types/record';
 import {IValue, IValuesOptions} from '../../_types/value';
 
 export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
-    getQueryPart?(value: string | number | boolean, condition: Condition): GeneratedAqlQuery;
+    getQueryPart?(value: string | number | boolean, condition: AttributeCondition): GeneratedAqlQuery;
 }
 
 /**
@@ -141,16 +141,16 @@ export default function ({
     'core.infra.attributeTypes.attributeTree': attributeTreeRepo = null
 }: IDeps = {}): IAttributeTypesRepo {
     return {
-        getQueryPart(value: string | number | boolean, condition: Condition = Condition.EQUAL): GeneratedAqlQuery {
+        getQueryPart(value: string | number | boolean, condition: AttributeCondition): GeneratedAqlQuery {
             const parts = {
-                [Condition.EQUAL]: aql.join([aql`==`, aql`${value}`]),
-                [Condition.NOT_EQUAL]: aql.join([aql`!=`, aql`${value}`]),
-                [Condition.BEGIN_WITH]: aql.join([aql`LIKE`, aql.literal(`"${value}%"`)]),
-                [Condition.END_WITH]: aql.join([aql`LIKE`, aql.literal(`"%${value}"`)]),
-                [Condition.CONTAINS]: aql.join([aql`LIKE`, aql.literal(`"%${value}%"`)]),
-                [Condition.NOT_CONTAINS]: aql.join([aql`NOT LIKE`, aql.literal(`"%${value}%"`)]),
-                [Condition.GREATER_THAN]: aql.join([aql`>`, aql`${value}`]),
-                [Condition.LESS_THAN]: aql.join([aql`<`, aql`${value}`])
+                [AttributeCondition.EQUAL]: aql.join([aql`==`, aql`${value}`]),
+                [AttributeCondition.NOT_EQUAL]: aql.join([aql`!=`, aql`${value}`]),
+                [AttributeCondition.BEGIN_WITH]: aql.join([aql`LIKE`, aql.literal(`"${value}%"`)]),
+                [AttributeCondition.END_WITH]: aql.join([aql`LIKE`, aql.literal(`"%${value}"`)]),
+                [AttributeCondition.CONTAINS]: aql.join([aql`LIKE`, aql.literal(`"%${value}%"`)]),
+                [AttributeCondition.NOT_CONTAINS]: aql.join([aql`NOT LIKE`, aql.literal(`"%${value}%"`)]),
+                [AttributeCondition.GREATER_THAN]: aql.join([aql`>`, aql`${value}`]),
+                [AttributeCondition.LESS_THAN]: aql.join([aql`<`, aql`${value}`])
             };
 
             return parts[condition];

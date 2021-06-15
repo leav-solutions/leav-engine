@@ -4,7 +4,7 @@
 import {ILibrary} from '_types/library';
 import {IPaginationParams, ISortParams} from '_types/list';
 import {ITreePermissionsConf} from '_types/permissions';
-import {ITree, ITreeLibrarySettings} from '_types/tree';
+import {ITree, ITreeLibrarySettings, ITreeFilterOptions} from '_types/tree';
 
 export interface ITreeLibraryForGraphQL {
     library: ILibrary;
@@ -27,7 +27,7 @@ export type TreeFromGraphQL = Omit<ITree, 'libraries' | 'permissions_conf'> & {
 };
 
 export interface ITreesQueryArgs {
-    filters: ICoreEntityFilterOptions;
+    filters: ITreeFilterOptions;
     pagination: IPaginationParams;
     sort: ISortParams;
 }

@@ -12,11 +12,19 @@ import {
     IPaginationCursors,
     IPaginationParams
 } from '../../_types/list';
-import {IRecord, IRecordFilterOption, IRecordSort, Operator} from '../../_types/record';
+import {
+    IRecord,
+    IRecordFilterOption,
+    IRecordSort,
+    Operator,
+    AttributeCondition,
+    TreeCondition
+} from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
+import {EDGE_COLLEC_PREFIX, TREES_COLLECTION_NAME} from '../tree/treeRepo';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -115,22 +123,51 @@ export default function ({
     const _findRequest = async (libraryId: string, filter?: IRecordFilterOption, index?: number): Promise<AqlQuery> => {
         const queryParts = [];
         const coll = dbService.db.collection(libraryId);
+
         queryParts.push(aql`(FOR r IN ${coll}`);
 
         if (typeof filter !== 'undefined') {
-            const filterQueryPart = attributeTypesRepo
-                .getTypeRepo(filter.attributes[0])
-                .filterQueryPart(
-                    filter.attributes,
-                    attributeTypesRepo.getQueryPart(filter.value, filter.condition),
-                    index
-                );
+            let filterQueryPart: AqlQuery;
+
+            if (_isClassifiedFilter(filter)) {
+                const collec = dbService.db.edgeCollection(EDGE_COLLEC_PREFIX + filter.treeId);
+
+                const records = aql`
+                    FOR v, e, p IN 1..${1000} OUTBOUND ${filter.value || TREES_COLLECTION_NAME + '/' + filter.treeId}
+                    ${collec}
+                    LET path = (FOR pv IN p.vertices RETURN pv._id)
+                    SORT LENGTH(path), e.order ASC
+                    RETURN v._id
+                `;
+
+                filterQueryPart =
+                    filter.condition === TreeCondition.CLASSIFIED_IN
+                        ? aql`FILTER POSITION(${records}, r._id)`
+                        : aql`FILTER !POSITION(${records}, r._id) && r._id != ${filter.value}`;
+            } else {
+                filterQueryPart = attributeTypesRepo
+                    .getTypeRepo(filter.attributes[0])
+                    .filterQueryPart(
+                        filter.attributes,
+                        attributeTypesRepo.getQueryPart(filter.value, filter.condition as AttributeCondition),
+                        index
+                    );
+            }
 
             queryParts.push(filterQueryPart);
         }
 
         queryParts.push(aql`RETURN r)`);
+
         return aql.join(queryParts);
+    };
+
+    const _isAttributeFilter = (filter: IRecordFilterOption) => {
+        return filter.condition in AttributeCondition;
+    };
+
+    const _isClassifiedFilter = (filter: IRecordFilterOption) => {
+        return filter.condition in TreeCondition;
     };
 
     return {
@@ -158,25 +195,26 @@ export default function ({
 
             if (typeof filters !== 'undefined' && filters.length) {
                 const rpn: IRecordFilterOption[] = _toReversePolishNotation(filters);
-
                 const stack = [];
+
                 for (const [i, filter] of rpn.entries()) {
-                    if (filter.attributes) {
-                        isFilteringOnActive = isFilteringOnActive || filter.attributes[0].id === 'active';
+                    if (_isAttributeFilter(filter) || _isClassifiedFilter(filter)) {
+                        isFilteringOnActive =
+                            isFilteringOnActive || (_isAttributeFilter(filter) && filter.attributes[0].id === 'active');
                         stack.push(filter);
                     } else {
                         let [f0, f1] = [stack.pop(), stack.pop()].reverse();
-                        const operator = filter.operator;
 
-                        if (f0.attributes) {
+                        if (_isAttributeFilter(f0) || _isClassifiedFilter(f0)) {
                             f0 = await _findRequest(libraryId, f0, i);
                         }
-                        if (f1.attributes) {
+
+                        if (_isAttributeFilter(f1) || _isClassifiedFilter(f1)) {
                             f1 = await _findRequest(libraryId, f1, i);
                         }
 
                         const res =
-                            operator === Operator.AND
+                            filter.operator === Operator.AND
                                 ? aql`INTERSECTION(${f0}, ${f1})`
                                 : aql`APPEND(${f0}, ${f1}, true)`;
 
@@ -184,7 +222,7 @@ export default function ({
                     }
                 }
 
-                if (stack[0].attributes) {
+                if (_isAttributeFilter(stack[0]) || _isClassifiedFilter(stack[0])) {
                     stack[0] = await _findRequest(libraryId, stack[0], 0);
                 }
 

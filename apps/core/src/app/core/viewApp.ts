@@ -8,7 +8,7 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
-import {Condition, IRecord} from '../../_types/record';
+import {AttributeCondition, IRecord} from '../../_types/record';
 import {ViewTypes} from '../../_types/views';
 
 interface IDeps {
@@ -107,7 +107,9 @@ export default function ({
                             const record = await recordDomain.find({
                                 params: {
                                     library: USERS_LIBRARY,
-                                    filters: [{field: 'id', value: view.created_by, condition: Condition.EQUAL}]
+                                    filters: [
+                                        {field: 'id', value: view.created_by, condition: AttributeCondition.EQUAL}
+                                    ]
                                 },
                                 ctx
                             });

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ITreeNodePermissionsConf} from './permissions';
 import {IRecord} from './record';
-import {IKeyValue} from './shared';
+import {IKeyValue, IGetCoreEntitiesParams} from './shared';
 
 export interface ITreeLibrarySettings {
     allowMultiplePositions: boolean;
@@ -20,6 +20,11 @@ export interface ITree extends ICoreEntity {
 
 export interface ITreeFilterOptions extends ICoreEntityFilterOptions {
     system?: boolean;
+    library?: string;
+}
+
+export interface IGetCoreTreesParams extends IGetCoreEntitiesParams {
+    filters?: ITreeFilterOptions;
 }
 
 export interface ITreeElement {

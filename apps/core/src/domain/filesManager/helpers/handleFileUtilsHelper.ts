@@ -15,7 +15,7 @@ import {
     IPreviewsStatus,
     IPreviewVersion
 } from '../../../_types/filesManager';
-import {IRecord, Operator} from '../../../_types/record';
+import {IRecord, Operator, AttributeCondition} from '../../../_types/record';
 import {IHandleFileSystemDeps} from './handleFileSystem';
 import winston = require('winston');
 
@@ -40,9 +40,9 @@ export const getRecord = async (
             params: {
                 library,
                 filters: [
-                    {field: FilesAttributes.FILE_NAME, value: fileName},
+                    {field: FilesAttributes.FILE_NAME, condition: AttributeCondition.EQUAL, value: fileName},
                     {operator: Operator.AND},
-                    {field: FilesAttributes.FILE_PATH, value: filePath}
+                    {field: FilesAttributes.FILE_PATH, condition: AttributeCondition.EQUAL, value: filePath}
                 ],
                 retrieveInactive
             },
@@ -80,9 +80,9 @@ export const getParentRecord = async (
         params: {
             library,
             filters: [
-                {field: FilesAttributes.FILE_NAME, value: parentName},
+                {field: FilesAttributes.FILE_NAME, condition: AttributeCondition.EQUAL, value: parentName},
                 {operator: Operator.AND},
-                {field: FilesAttributes.FILE_PATH, value: join(...parentPath)}
+                {field: FilesAttributes.FILE_PATH, condition: AttributeCondition.EQUAL, value: join(...parentPath)}
             ]
         },
         ctx

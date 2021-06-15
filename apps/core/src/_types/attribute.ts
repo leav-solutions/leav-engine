@@ -6,6 +6,7 @@ import {ITreePermissionsConf} from './permissions';
 import {IRecord} from './record';
 import {ISystemTranslation} from './systemTranslation';
 import {ITreeElement} from './tree';
+import {IGetCoreEntitiesParams} from './shared';
 
 export interface IAttribute extends ICoreEntity {
     system?: boolean;
@@ -53,6 +54,10 @@ export interface IAttributeFilterOptions extends ICoreEntityFilterOptions {
     linked_tree?: string;
     multiple_values?: boolean;
     libraries?: string[];
+}
+
+export interface IGetCoreAttributesParams extends IGetCoreEntitiesParams {
+    filters?: IAttributeFilterOptions;
 }
 
 export interface IValuesListConf {

@@ -9,14 +9,13 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {omit} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
-import {IRecord} from '../../_types/record';
-import {ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../_types/tree';
+import {IRecord, AttributeCondition} from '../../_types/record';
+import {ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths, IGetCoreTreesParams} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
@@ -34,7 +33,7 @@ export interface ITreeDomain {
     }): Promise<boolean>;
     saveTree(tree: ITree, ctx: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, ctx: IQueryInfos): Promise<ITree>;
-    getTrees({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
+    getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
     getTreeProperties(treeId: string, ctx: IQueryInfos): Promise<ITree>;
 
     /**
@@ -197,7 +196,7 @@ export default function ({
         const record = await recordDomain.find({
             params: {
                 library: treeElement.library,
-                filters: [{field: 'id', value: `${treeElement.id}`}],
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: `${treeElement.id}`}],
                 retrieveInactive: true
             },
             ctx
@@ -271,7 +270,7 @@ export default function ({
 
             return treeRepo.deleteTree({id, ctx});
         },
-        async getTrees({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITree>> {
+        async getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>> {
             const initializedParams = {...params};
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};

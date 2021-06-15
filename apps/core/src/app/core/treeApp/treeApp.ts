@@ -143,7 +143,8 @@ export default function ({
                         id: ID,
                         label: String,
                         system: Boolean,
-                        behavior: TreeBehavior
+                        behavior: TreeBehavior,
+                        library: String
                     }
 
                     type TreesList {
