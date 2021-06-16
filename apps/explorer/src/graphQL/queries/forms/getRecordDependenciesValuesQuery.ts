@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
+import {ConditionFilter} from '_types/types';
 
 export interface IGetRecordDependenciesValue {
     ancestors: Array<{
@@ -36,7 +37,7 @@ export interface IGetRecordDependenciesValuesVariables {
 export function getRecordDependenciesValuesQuery(libraryGqlName: string, attributes: string[]) {
     return gqlUnchecked`
         query ${`RECORD_DEPS_VALUES_${libraryGqlName}`}($id: String!) {
-            record: ${libraryGqlName}(filters: {field: "id", value: $id}) {
+            record: ${libraryGqlName}(filters: {field: "id", condition: ${ConditionFilter.EQUAL}, value: $id}) {
                 totalCount
                 ${
                     attributes.length

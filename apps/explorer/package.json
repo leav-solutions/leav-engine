@@ -30,6 +30,7 @@
         "react-css-theme-switcher": "^0.1.6",
         "react-dom": "^16.13.1",
         "react-i18next": "^11.8.5",
+        "react-markdown": "5.0.3",
         "react-redux": "7.2.3",
         "react-markdown": "5.0.3",
         "react-resizable": "^1.10.1",

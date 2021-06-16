@@ -8,10 +8,11 @@ import {AttributeTypes} from '../../_types/attribute';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 
-describe('AttributeIndexRepo', () => {
+describe('AttributeSimpleLinkRepo', () => {
     const mockAttribute = {
         id: 'test_simple_link_attr',
-        type: AttributeTypes.SIMPLE_LINK
+        type: AttributeTypes.SIMPLE_LINK,
+        linked_library: 'test_linked_lib'
     };
 
     const mockAttrSimpleRepo: IAttributeTypeRepo = {
@@ -32,7 +33,7 @@ describe('AttributeIndexRepo', () => {
     describe('createValue', () => {
         test('Should create a simple link value', async function () {
             const updatedValueData = {
-                value: 123456
+                value: '123456'
             };
 
             const attrSimpleRepo = {
@@ -64,14 +65,20 @@ describe('AttributeIndexRepo', () => {
                 ctx
             });
 
-            expect(createdVal).toMatchObject(updatedValueData);
+            expect(createdVal).toMatchObject({
+                ...updatedValueData,
+                value: {
+                    id: '123456',
+                    library: 'test_linked_lib'
+                }
+            });
         });
     });
 
     describe('deleteValue', () => {
         test('Should delete a value', async () => {
             const deletedValueData = {
-                value: null
+                value: '123456'
             };
 
             const attrSimpleRepo = {
@@ -102,7 +109,13 @@ describe('AttributeIndexRepo', () => {
                 ctx
             });
 
-            expect(deletedVal).toMatchObject(deletedValueData);
+            expect(deletedVal).toMatchObject({
+                ...deletedValueData,
+                value: {
+                    id: '123456',
+                    library: 'test_linked_lib'
+                }
+            });
         });
     });
 

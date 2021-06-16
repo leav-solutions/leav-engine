@@ -35,6 +35,7 @@ export interface IGetViewListElement {
                 id: string;
                 gqlNames: {
                     query: string;
+                    type: string;
                 };
             };
         };
@@ -72,6 +73,7 @@ export const getViewsListQuery = gql`
                             id
                             gqlNames {
                                 query
+                                type
                             }
                         }
                     }

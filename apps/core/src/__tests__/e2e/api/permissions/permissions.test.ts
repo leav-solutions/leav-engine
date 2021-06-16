@@ -74,7 +74,6 @@ describe('Permissions', () => {
                 value: "${permTreeLibName}/${permTreeElemId}"
             }) {
                 id_value
-                value
             }
         }`);
     });

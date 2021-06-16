@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {act, render, screen, waitForElement} from '@testing-library/react';
 import {getFormQuery} from 'graphQL/queries/forms/getFormQuery';
 import React from 'react';
+import {act, render, screen, waitForElement} from '_tests/testUtils';
 import {mockForm} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import EditRecord from './EditRecord';
 
 jest.mock('./EditRecordForm', () => {
@@ -43,11 +42,7 @@ describe('EditRecord', () => {
             }
         ];
 
-        render(
-            <MockedProviderWithFragments mocks={mocks}>
-                <EditRecord record={mockRecordWhoAmI} />
-            </MockedProviderWithFragments>
-        );
+        render(<EditRecord record={mockRecordWhoAmI} />, {apolloMocks: mocks});
 
         await act(async () => {
             expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);

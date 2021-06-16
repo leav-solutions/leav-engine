@@ -23,7 +23,7 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
 }
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -159,7 +159,7 @@ export default function({
                     }
                     extend type Mutation {
                         # Save one value
-                        saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): Value!
+                        saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): GenericValue!
                         # Save values for several attributes at once.
                         # If deleteEmpty is true, empty values will be deleted
                         saveValueBatch(
@@ -174,7 +174,7 @@ export default function({
                 `,
                 resolvers: {
                     Mutation: {
-                        async saveValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
+                        async saveValue(_, {library, recordId, attribute, value}, ctx): Promise<IValue> {
                             const valToSave = {
                                 ...value,
                                 version: _convertVersionFromGqlFormat(value.version),

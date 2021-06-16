@@ -8,13 +8,28 @@ import {useTranslation} from 'react-i18next';
 import {DELETE_VALUE, DELETE_VALUEVariables} from '_gqlTypes/DELETE_VALUE';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import {APICallStatus, DeleteValueFunc} from '../_types';
+import getPropertyCacheFieldName from './helpers/getPropertyCacheFieldName';
 
 export interface ISaveValueHook {
     deleteValue: DeleteValueFunc;
 }
 
 export default function useDeleteValueMutation(record: IRecordIdentityWhoAmI, attribute: string): ISaveValueHook {
-    const [executeDeleteValue] = useMutation<DELETE_VALUE, DELETE_VALUEVariables>(deleteValueMutation);
+    const [executeDeleteValue] = useMutation<DELETE_VALUE, DELETE_VALUEVariables>(deleteValueMutation, {
+        update: (cache, {data: {deleteValue}}) => {
+            const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
+            cache.extract();
+
+            cache.modify({
+                id: cache.identify(recordWithTypename),
+                fields: {
+                    [getPropertyCacheFieldName(attribute)]: cacheValue => {
+                        return cacheValue.filter(val => val.id_value !== deleteValue.id_value);
+                    }
+                }
+            });
+        }
+    });
     const {t} = useTranslation();
 
     return {

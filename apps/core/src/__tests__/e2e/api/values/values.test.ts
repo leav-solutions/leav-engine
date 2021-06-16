@@ -188,7 +188,15 @@ describe('Values', () => {
                 recordId: "${recordId}",
                 attribute: "${attrTreeName}",
                 value: {value: "${treeLibName}/${treeElemId}"}) {
-                    id_value value
+                    id_value
+
+                    ... on TreeValue {
+                        value {
+                            record {
+                                id
+                            }
+                        }
+                    }
                 }
             }`);
 
@@ -196,7 +204,7 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue.id_value).toBeTruthy();
-        expect(res.data.data.saveValue.value).toBe(treeLibName + '/' + treeElemId);
+        expect(res.data.data.saveValue.value.record.id).toBe(treeElemId);
     });
 
     test('Save value simple', async () => {
@@ -208,7 +216,10 @@ describe('Values', () => {
                     value: {value: "TEST VAL"}
                 ) {
                     id_value
-                    value
+
+                    ... on Value {
+                        value
+                    }
                 }
               }`);
 
@@ -225,7 +236,13 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleName}",
-                    value: {value: "AAAATEST VAL"}) { id_value value }
+                    value: {value: "AAAATEST VAL"}) {
+                        id_value
+
+                        ... on Value {
+                            value
+                        }
+                    }
               }`);
 
         expect(res.status).toBe(200);
@@ -245,7 +262,10 @@ describe('Values', () => {
                     }
                 ) {
                     id_value
-                    value
+
+                    ... on Value {
+                        value
+                    }
                 }
             }`;
 
@@ -269,7 +289,10 @@ describe('Values', () => {
                 }
             ) {
                 id_value
-                value
+
+                ... on Value {
+                    value
+                }
             }
         }`;
 
@@ -287,14 +310,22 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleLinkName}",
-                    value: {value: "${recordIdLinked}"}) { id_value value }
+                    value: {value: "${recordIdLinked}"}) {
+                        id_value
+
+                        ... on LinkValue {
+                            value {
+                                id
+                            }
+                        }
+                    }
               }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue.id_value).toBeNull();
-        expect(res.data.data.saveValue.value).toBe(recordIdLinked);
+        expect(res.data.data.saveValue.value.id).toBe(recordIdLinked);
     });
 
     test('Save value advanced', async () => {
@@ -303,7 +334,13 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
-                    value: {value: "TEST VAL ADV"}) { id_value value }
+                    value: {value: "TEST VAL ADV"}) {
+                        id_value
+
+                        ... on Value {
+                            value
+                        }
+                    }
               }`);
 
         expect(res.status).toBe(200);
@@ -321,14 +358,22 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedLinkName}",
-                    value: {value: "${recordIdLinked}"}) { id_value value }
+                    value: {value: "${recordIdLinked}"}) {
+                        id_value
+
+                        ... on LinkValue {
+                            value {
+                                id
+                            }
+                        }
+                    }
               }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue.id_value).toBeTruthy();
-        expect(res.data.data.saveValue.value).toBe(recordIdLinked);
+        expect(res.data.data.saveValue.value.id).toBe(recordIdLinked);
     });
 
     test('Delete value advanced', async () => {
@@ -337,7 +382,7 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
-                    valueId: "${advValueId}") { id_value value }
+                    valueId: "${advValueId}") { id_value }
               }`);
 
         expect(res.status).toBe(200);
@@ -351,7 +396,7 @@ describe('Values', () => {
                 deleteValue(
                     library: "${testLibName}",
                     recordId: "${recordId}",
-                    attribute: "${attrSimpleName}") { id_value value }
+                    attribute: "${attrSimpleName}") { id_value }
               }`);
 
         expect(res.status).toBe(200);
@@ -378,7 +423,10 @@ describe('Values', () => {
             ) {
                 values {
                     id_value
-                    value
+
+                    ... on Value {
+                        value
+                    }
                 }
             }
         }`);

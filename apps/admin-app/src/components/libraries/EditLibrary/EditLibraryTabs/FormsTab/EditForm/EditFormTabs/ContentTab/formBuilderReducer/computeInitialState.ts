@@ -32,13 +32,24 @@ export default function computeInitialState(library: string, form: GET_FORM_form
                 const hydratedField: IFormElement = {
                     ...neededFieldData,
                     uiElement,
-                    settings: field.settings.reduce(
-                        (allSettings, curSettings) => ({
+                    settings: field.settings.reduce((allSettings, curSettings) => {
+                        let value = curSettings.value;
+
+                        if (curSettings.key === 'columns') {
+                            value = value.map(col => {
+                                if (typeof col === 'object' && typeof col.id !== 'undefined') {
+                                    return col.id;
+                                }
+
+                                return col;
+                            });
+                        }
+
+                        return {
                             ...allSettings,
-                            [curSettings.key]: curSettings.value
-                        }),
-                        {}
-                    )
+                            [curSettings.key]: value
+                        };
+                    }, {})
                 };
 
                 if (typeof groupedFields[containerId] === 'undefined') {

@@ -116,6 +116,9 @@ function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
                             }
                         }
                     }
+                },
+                Form: {
+                    keyFields: ['id', 'library', ['id']]
                 }
             }
         })

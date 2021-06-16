@@ -53,5 +53,9 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.DROPDOWN]: {
         ...baseMock,
         type: FieldTypes.DROPDOWN
+    },
+    [FieldTypes.LINK]: {
+        ...baseMock,
+        type: FieldTypes.LINK
     }
 };

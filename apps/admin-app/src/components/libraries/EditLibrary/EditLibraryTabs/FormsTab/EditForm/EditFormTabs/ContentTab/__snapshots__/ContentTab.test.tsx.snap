@@ -32,7 +32,7 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": Node {
                   "attribs": Object {
-                    "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                    "class": "ui icon primary left labeled button sc-VigVT fXwqoN",
                   },
                   "children": Array [
                     Node {
@@ -130,7 +130,7 @@ initialize {
               },
               Node {
                 "attribs": Object {
-                  "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                  "class": "ui icon primary left labeled button sc-VigVT fXwqoN",
                 },
                 "children": Array [
                   Node {
@@ -256,7 +256,7 @@ initialize {
                 "parent": [Circular],
                 "prev": Node {
                   "attribs": Object {
-                    "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                    "class": "ui icon primary left labeled button sc-VigVT fXwqoN",
                   },
                   "children": Array [
                     Node {
@@ -452,7 +452,7 @@ initialize {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": Node {
                     "attribs": Object {
-                      "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                      "class": "ui icon primary left labeled button sc-VigVT fXwqoN",
                     },
                     "children": Array [
                       Node {
@@ -550,7 +550,7 @@ initialize {
                 },
                 Node {
                   "attribs": Object {
-                    "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                    "class": "ui icon primary left labeled button sc-VigVT fXwqoN",
                   },
                   "children": Array [
                     Node {
@@ -676,7 +676,7 @@ initialize {
                   "parent": [Circular],
                   "prev": Node {
                     "attribs": Object {
-                      "class": "ui icon primary left labeled button sc-iwsKbI erEyIS",
+                      "class": "ui icon primary left labeled button sc-VigVT fXwqoN",
                     },
                     "children": Array [
                       Node {

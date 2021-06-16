@@ -4,32 +4,35 @@
 import AttributeSelector from 'components/attributes/AttributeSelector';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {IFormElementSettings, SettingsOnChangeFunc} from '../../../_types';
+import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
+import {ISettingsFieldCommonProps} from '../../../../_types';
 
-interface ISettingsAttributeProps {
-    onChange: SettingsOnChangeFunc;
-    settingsField: IFormElementSettings;
+export interface ISettingsAttributeProps extends ISettingsFieldCommonProps {
+    library: string;
+    multiple?: boolean;
 }
 
-function SettingsAttribute({onChange, settingsField}: ISettingsAttributeProps): JSX.Element {
+function SettingsAttribute({onChange, fieldName, library, multiple = false}: ISettingsAttributeProps): JSX.Element {
     const {t} = useTranslation();
     const {
-        state: {elementInSettings, library}
+        state: {elementInSettings}
     } = useFormBuilderReducer();
 
     const _handleChange = (_, data) => onChange(data.name, data.value);
+    const fieldValue = elementInSettings?.settings?.[fieldName] as string[];
 
     return (
         <AttributeSelector
-            key={settingsField.name}
+            multiple={multiple}
+            key={fieldName}
             placeholder={t('forms.select_attribute')}
-            name={settingsField.name}
+            name={fieldName}
             onChange={_handleChange}
             filters={{
                 libraries: [library]
             }}
-            value={String(elementInSettings?.settings?.attribute)}
+            fluid
+            value={fieldValue}
         />
     );
 }

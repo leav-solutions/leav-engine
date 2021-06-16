@@ -134,23 +134,23 @@ describe('Trees', () => {
         // test element already present in ancestors
         await makeGraphQlCall(`mutation {
             a1: treeAddElement(
-                treeId: "${testTreeName}", 
+                treeId: "${testTreeName}",
                     element: {id: "${recordId5}", library: "users"},
                     order: 1
             ) {id},
             a2: treeAddElement(
-                treeId: "${testTreeName}", 
+                treeId: "${testTreeName}",
                     element: {id: "${recordId6}", library: "users"},
-                    parent: {id: "${recordId5}", library: "users"}, 
+                    parent: {id: "${recordId5}", library: "users"},
                     order: 1
             ) {id},
         }`);
 
         const resErr = await makeGraphQlCall(`mutation {
             a1: treeAddElement(
-                treeId: "${testTreeName}", 
-                    element: {id: "${recordId5}", library: "users"}, 
-                    parent: {id: "${recordId6}", library: "users"}, 
+                treeId: "${testTreeName}",
+                    element: {id: "${recordId5}", library: "users"},
+                    parent: {id: "${recordId6}", library: "users"},
                     order: 2
             ) {id}
         }`);
@@ -318,13 +318,23 @@ describe('Trees', () => {
                     library: "${testLibName}",
                     recordId: "${testRecordId}",
                     attribute: "${attrTreeName}",
-                    value: {value: "users/${recordId1}"}) { id_value value }
+                    value: {value: "users/${recordId1}"}) {
+                        id_value
+
+                        ... on TreeValue {
+                            value {
+                                record {
+                                    id
+                                }
+                            }
+                        }
+                    }
                 }`);
 
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue.id_value).toBeTruthy();
-        expect(res.data.data.saveValue.value).toBe(`users/${recordId1}`);
+        expect(res.data.data.saveValue.value.record.id).toBe(recordId1);
 
         // Get values of this attribute
         const resGetValues = await makeGraphQlCall(`{

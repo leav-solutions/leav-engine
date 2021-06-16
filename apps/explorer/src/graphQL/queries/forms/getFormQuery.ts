@@ -8,6 +8,9 @@ export const getFormQuery = gql`
         forms(filters: {library: $library, id: $formId}) {
             list {
                 id
+                library {
+                    id
+                }
                 dependencyAttributes {
                     id
                     label
@@ -32,6 +35,15 @@ export const getFormQuery = gql`
                             format
                             system
                             multiple_values
+
+                            ... on LinkAttribute {
+                                linked_library {
+                                    id
+                                    gqlNames {
+                                        type
+                                    }
+                                }
+                            }
                         }
                         settings {
                             key

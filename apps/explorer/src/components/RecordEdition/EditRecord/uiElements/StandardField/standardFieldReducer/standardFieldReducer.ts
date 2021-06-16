@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/types';
 import {FormElement} from 'components/RecordEdition/EditRecord/_types';
-import {IRecordProperty, IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {IRecordPropertyAttribute, IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {SAVE_VALUE_saveValue} from '_gqlTypes/SAVE_VALUE';
+import {SAVE_VALUE_saveValue, SAVE_VALUE_saveValue_Value} from '_gqlTypes/SAVE_VALUE';
 import {IRecordIdentityWhoAmI} from '_types/types';
 
 export type IdValue = string | null;
@@ -14,7 +14,7 @@ export const newValueId = '__new__';
 export interface IStandardFieldValue {
     idValue: IdValue;
     index: number;
-    value: IRecordProperty | null;
+    value: IRecordPropertyStandard | null;
     displayValue: AnyPrimitive;
     editingValue: AnyPrimitive;
     originRawValue: AnyPrimitive;
@@ -185,13 +185,13 @@ const standardFieldReducer = (
         case StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT: {
             const newRawValue =
                 state.attribute.format !== AttributeFormat.encrypted
-                    ? action.newValue.raw_value
+                    ? (action.newValue as SAVE_VALUE_saveValue_Value).raw_value
                     : state.values[action.idValue].editingValue;
 
             const newValueData = {
                 idValue: action.newValue.id_value,
-                value: action.newValue,
-                displayValue: action.newValue.value,
+                value: action.newValue as SAVE_VALUE_saveValue_Value,
+                displayValue: (action.newValue as SAVE_VALUE_saveValue_Value).value,
                 editingValue: newRawValue,
                 originRawValue: newRawValue,
                 error: '',

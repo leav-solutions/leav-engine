@@ -195,7 +195,6 @@ export async function gqlAddUserToGroup(groupId: string) {
             value: "users_groups/${groupId}"
         }) {
             id_value
-            value
         }
     }`);
 }

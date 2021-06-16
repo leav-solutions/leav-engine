@@ -25,7 +25,8 @@ describe('View', () => {
                 library: {
                     id: 'test_lib',
                     gqlNames: {
-                        query: 'test_lib'
+                        query: 'test_lib',
+                        type: 'TestLib'
                     }
                 }
             }
