@@ -3,12 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setAttributes} from 'redux/attributes';
-import {setFields} from 'redux/fields';
-import {useAppDispatch, useAppSelector} from 'redux/store';
-import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {getFieldsKeyFromAttribute, localizedLabel} from '../../../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IField, ISelectedAttribute} from '../../../../_types/types';
@@ -21,16 +19,13 @@ interface IChooseTableColumnsProps {
 
 function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const {fields, attributes} = useAppSelector(state => state);
-    const dispatch = useAppDispatch();
-
-    const [activeLibrary] = useActiveLibrary();
     const [{lang}] = useLang();
 
     const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>(
-        fields.fields.map(col => {
-            const currentAttribute = attributes.attributes.find(
+        (searchState?.fields ?? []).map(col => {
+            const currentAttribute = searchState.attributes.find(
                 attribute => attribute.id === col.id && attribute.library === col.library
             );
 
@@ -47,8 +42,8 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
 
     useEffect(() => {
         setSelectedAttributes(
-            fields.fields.map(col => {
-                const currentAttribute = attributes.attributes.find(
+            (searchState?.fields ?? []).map(col => {
+                const currentAttribute = searchState.attributes.find(
                     attribute => attribute.id === col.id && attribute.library === col.library
                 );
 
@@ -62,13 +57,13 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 };
             })
         );
-    }, [attributes.attributes, fields.fields, setSelectedAttributes]);
+    }, [searchState.attributes, searchState.fields, setSelectedAttributes, searchState]);
 
     const handleSubmit = () => {
         const noDuplicateNewAttribute: IAttribute[] = selectedAttributes
             .filter(
                 selectedAttribute =>
-                    !attributes.attributes.some(
+                    !searchState.attributes.some(
                         attribute =>
                             attribute.id === selectedAttribute.id && attribute.library === selectedAttribute.library
                     )
@@ -80,9 +75,9 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 format: a.format ?? undefined
             }));
 
-        const allAttributes = [...attributes.attributes, ...noDuplicateNewAttribute];
+        const allAttributes = [...(searchState?.attributes ?? []), ...noDuplicateNewAttribute];
 
-        dispatch(setAttributes(allAttributes));
+        searchDispatch({type: SearchActionTypes.SET_ATTRIBUTES, attributes: allAttributes});
 
         const newFields: IField[] = selectedAttributes.reduce((acc, selectedAttribute) => {
             const attribute = allAttributes.find(
@@ -116,9 +111,12 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
             };
 
             return [...acc, field];
-        }, [] as IField[]);
+        }, []);
 
-        dispatch(setFields(newFields));
+        searchDispatch({
+            type: SearchActionTypes.SET_FIELDS,
+            fields: newFields
+        });
 
         setOpenChangeColumns(false);
     };
@@ -151,7 +149,7 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
             ]}
         >
             <AttributesSelectionList
-                library={activeLibrary?.id ?? ''}
+                library={searchState.library.id}
                 selectedAttributes={selectedAttributes}
                 onSelectionChange={setSelectedAttributes}
             />

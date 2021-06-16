@@ -1,10 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {filterReducerInitialState} from 'hooks/FiltersStateHook/FilterReducerInitialState';
-import {filterStateReducer} from 'hooks/FiltersStateHook/FiltersStateReducer';
-import {FilterStateContext} from 'hooks/FiltersStateHook/FilterStateContext';
-import React, {useEffect, useReducer} from 'react';
+import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
@@ -22,8 +19,6 @@ function AppHandler(): JSX.Element {
         ? process.env.REACT_APP_AVAILABLE_LANG.split(',').map(l => AvailableLanguage[l as AvailableLanguage])
         : [];
     const defaultLang = i18n.language ? AvailableLanguage[i18n.language as AvailableLanguage] : AvailableLanguage.en;
-
-    const [stateFilters, dispatchFilters] = useReducer(filterStateReducer, filterReducerInitialState);
 
     const [langInfo, updateLang] = useLang();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
@@ -63,11 +58,7 @@ function AppHandler(): JSX.Element {
         }
     }, [updateUser, user]);
 
-    return (
-        <FilterStateContext.Provider value={{stateFilters, dispatchFilters}}>
-            <Router />
-        </FilterStateContext.Provider>
-    );
+    return <Router />;
 }
 
 export default AppHandler;

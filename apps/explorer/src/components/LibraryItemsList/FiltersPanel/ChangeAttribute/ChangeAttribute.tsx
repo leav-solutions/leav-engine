@@ -5,9 +5,9 @@ import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppSelector} from 'redux/store';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {
     defaultFilterConditionByAttributeFormat,
@@ -26,13 +26,12 @@ interface IChangeAttributeProps {
 function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {attributes} = useAppSelector(state => state.attributes);
-
+    const {state: searchState} = useSearchReducer();
     const {stateFilters, dispatchFilters} = useStateFilters();
 
     const [activeLibrary] = useActiveLibrary();
 
-    const currentAttribute = attributes.find(
+    const currentAttribute = searchState.attributes.find(
         att => att.id === filter.attribute.id && att.library === filter.attribute.library
     );
     let parentSelectedAttribute: ISelectedAttribute | undefined;
@@ -62,7 +61,7 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
             if (f.index === filter.index) {
                 const attrSelected = attrsSelected[0];
 
-                const attributeFind = attributes.find(
+                const attributeFind = searchState.attributes.find(
                     att => att.id === attrSelected.id && att.library === attrSelected.library
                 );
 

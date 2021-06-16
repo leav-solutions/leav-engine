@@ -6,6 +6,7 @@ import {useMutation, useQuery} from '@apollo/client';
 import {Dropdown, Menu, Spin} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
@@ -69,7 +70,8 @@ interface ISelectViewProps {
 function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {view, display, fields: fieldsState, items, filters} = useAppSelector(state => state);
+    const {state: searchState} = useSearchReducer();
+    const {view, display, filters} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
     const {stateFilters} = useStateFilters();
 
@@ -106,7 +108,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
                 // Fields
                 let viewFields: string[] = [];
                 if (currentView.type === ViewTypes.list) {
-                    viewFields = fieldsState.fields.map(field => {
+                    viewFields = searchState.fields.map(field => {
                         const settingsField = field.key;
                         return settingsField;
                     });
@@ -117,8 +119,8 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
                 }, [] as IAddViewMutationVariablesFilter[]);
 
                 const viewSort = {
-                    field: items.sort.field,
-                    order: items.sort.order
+                    field: searchState.sort.field,
+                    order: searchState.sort.order
                 };
 
                 const newView: IAddViewMutationVariablesView = {

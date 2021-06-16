@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Card, Col, Row, Spin} from 'antd';
+import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
-import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
 import {IItem, IRecordEdition} from '../../../_types/types';
@@ -41,7 +41,7 @@ const Footer = styled.div`
 `;
 
 function TileDisplay(): JSX.Element {
-    const {items, loading} = useAppSelector(state => state.items);
+    const {state: searchState} = useSearchReducer();
     const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
         show: false
     });
@@ -61,15 +61,15 @@ function TileDisplay(): JSX.Element {
     return (
         <>
             <Wrapper>
-                {loading ? (
+                {searchState.loading ? (
                     <LoadingWrapper>
                         <Spin size="large" />
                     </LoadingWrapper>
                 ) : (
                     <Row gutter={[24, 24]}>
-                        {items?.map(item => (
-                            <Col key={item.whoAmI.id} span={4}>
-                                <ItemTileDisplay item={item} showRecordEdition={showRecordEdition} />
+                        {searchState.records.map(record => (
+                            <Col key={record.whoAmI.id} span={4}>
+                                <ItemTileDisplay item={record} showRecordEdition={showRecordEdition} />
                             </Col>
                         ))}
                     </Row>

@@ -4,10 +4,11 @@
 import {CloseOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {Input, Tooltip} from 'antd';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setFiltersSearchFullTextActive} from 'redux/filters';
-import {setItems, setItemsLoading, setItemsOffset, setItemsTotalCount} from 'redux/items';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {getLibrariesListQuery} from '../../../graphQL/queries/libraries/getLibrariesListQuery';
@@ -31,11 +32,13 @@ const DeleteSearchCross = styled.div<IDeleteSearchCross>`
 `;
 
 function SearchItems(): JSX.Element {
-    const {items, fields: fieldsState, filters} = useAppSelector(state => state);
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
+    const {filters} = useAppSelector(state => state);
+
     const dispatch = useAppDispatch();
     const {t} = useTranslation();
 
-    const [search, setSearch] = useState<string>('');
+    const [fulltextSearch, setFulltextSearch] = useState<string>('');
     const [updateSearch, setUpdateSearch] = useState(false);
 
     const [{lang}] = useLang();
@@ -44,24 +47,24 @@ function SearchItems(): JSX.Element {
 
     const [triggerSearch, {data, called, loading, error}] = useLazyQuery<ISearchFullTextQuery, ISearchFullTextVar>(
         activeLib?.id
-            ? searchFullText(activeLib?.id, activeLib?.gql?.type || '', fieldsState.fields)
+            ? searchFullText(activeLib?.id, activeLib?.gql?.type || '', searchState.fields)
             : getLibrariesListQuery,
         {
             variables: {
-                search,
-                from: items.offset,
-                size: items.pagination
+                search: fulltextSearch,
+                from: searchState.offset,
+                size: searchState.pagination
             }
         }
     );
 
     // when current lib change disabled search
     useEffect(() => {
-        setSearch('');
+        setFulltextSearch('');
 
         dispatch(setFiltersSearchFullTextActive(false));
-        dispatch(setItemsOffset(0));
-    }, [activeLib, dispatch, setSearch]);
+        searchDispatch({type: SearchActionTypes.SET_OFFSET, offset: 0});
+    }, [activeLib, dispatch, setFulltextSearch, searchDispatch]);
 
     // reload query when columns, pagination or offset change
     useEffect(() => {
@@ -72,10 +75,10 @@ function SearchItems(): JSX.Element {
     }, [
         setUpdateSearch,
         triggerSearch,
-        fieldsState.fields,
+        searchState.fields,
         filters.searchFullTextActive,
-        items.pagination,
-        items.offset
+        searchState.pagination,
+        searchState.offset
     ]);
 
     useEffect(() => {
@@ -83,16 +86,26 @@ function SearchItems(): JSX.Element {
             const totalCount = data[activeLib.id]?.totalCount;
             const itemsFromQuery: ISearchFullTextResult[] = data[activeLib.id].list;
 
-            const newItems = manageItems({items: itemsFromQuery, lang, fields: fieldsState.fields});
+            const newRecords = manageItems({items: itemsFromQuery, lang, fields: searchState.fields});
 
-            dispatch(setItemsTotalCount(totalCount));
-            dispatch(setItems(newItems));
+            searchDispatch({type: SearchActionTypes.SET_TOTAL_COUNT, totalCount});
+            searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});
+            searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
 
             setUpdateSearch(false);
-
-            dispatch(setItemsLoading(false));
         }
-    }, [called, loading, data, updateSearch, setUpdateSearch, dispatch, lang, fieldsState.fields, activeLib]);
+    }, [
+        called,
+        loading,
+        data,
+        updateSearch,
+        setUpdateSearch,
+        dispatch,
+        lang,
+        searchState.fields,
+        activeLib,
+        searchDispatch
+    ]);
 
     if (error) {
         console.error(error);
@@ -102,7 +115,7 @@ function SearchItems(): JSX.Element {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newSearch = event.target.value;
 
-        setSearch(newSearch);
+        setFulltextSearch(newSearch);
     };
 
     const handleSearch = (newSearch: string) => {
@@ -110,10 +123,11 @@ function SearchItems(): JSX.Element {
             resetSearch();
         } else {
             dispatch(setFiltersSearchFullTextActive(true));
-            dispatch(setItemsOffset(0));
-            dispatch(setItemsLoading(true));
 
-            setSearch(newSearch);
+            searchDispatch({type: SearchActionTypes.SET_OFFSET, offset: 0});
+            searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
+
+            setFulltextSearch(newSearch);
             setUpdateSearch(true);
 
             triggerSearch();
@@ -121,21 +135,21 @@ function SearchItems(): JSX.Element {
     };
 
     const resetSearch = () => {
-        setSearch('');
+        setFulltextSearch('');
 
         dispatch(setFiltersSearchFullTextActive(false));
-        dispatch(setItemsOffset(0));
+        searchDispatch({type: SearchActionTypes.SET_OFFSET, offset: 0});
     };
 
     return (
         <div>
             <Input.Search
                 placeholder={t('search.placeholder')}
-                value={search}
+                value={fulltextSearch}
                 onChange={handleChange}
                 onSearch={handleSearch}
                 suffix={
-                    <DeleteSearchCross search={search}>
+                    <DeleteSearchCross search={fulltextSearch}>
                         <Tooltip placement="bottom" title={t('search.explain-cancel')}>
                             <CloseOutlined onClick={resetSearch} />
                         </Tooltip>

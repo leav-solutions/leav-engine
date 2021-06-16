@@ -39,7 +39,7 @@ interface ICellSelectionProps {
 }
 
 function CellSelection({index, selectionData}: ICellSelectionProps): JSX.Element {
-    const {selectionState, display} = useAppSelector(state => ({
+    const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
         display: state.display
     }));

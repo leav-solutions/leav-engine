@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
 import {useLang} from 'hooks/LangHook/LangHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import {isEqual} from 'lodash';
 import get from 'lodash/get';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useFlexLayout, useTable} from 'react-table';
 import {useSticky} from 'react-table-sticky';
-import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {localizedLabel} from 'utils';
 import {infosCol} from '../../../constants/constants';
@@ -115,8 +115,7 @@ const Table = () => {
     const {t} = useTranslation();
     const [{lang}] = useLang();
 
-    const {items, fields: fieldsState, attributes: attributesState} = useAppSelector(state => state);
-
+    const {state: searchState} = useSearchReducer();
     const [tableColumns, setTableColumns] = useState<ITableColumn[]>([]);
     const [tableData, setTableData] = useState<ITableItems[]>([]);
     const [scrollHorizontalActive, setScrollHorizontalActive] = useState(false);
@@ -133,8 +132,8 @@ const Table = () => {
         ];
 
         let columnsFromFields: ITableColumn[] = [];
-        if (attributesState.attributes.length && fieldsState.fields.length) {
-            columnsFromFields = fieldsState.fields.map(field => {
+        if (searchState.attributes.length && searchState.fields.length) {
+            columnsFromFields = searchState.fields.map(field => {
                 const validAccessor = field.key.replaceAll('.', '');
 
                 return {
@@ -153,20 +152,20 @@ const Table = () => {
         setTableColumns(currentColumns => {
             return !isEqual(currentColumns, columns) ? columns : currentColumns;
         });
-    }, [fieldsState.fields, attributesState.attributes, t]);
+    }, [searchState.fields, searchState.attributes, t]);
 
     // data
     useEffect(() => {
-        const data = items.items?.reduce((allData, item, index) => {
-            if (index < items.pagination) {
+        const data = searchState.records.reduce((allData, record, index) => {
+            if (index < searchState.pagination) {
                 const tableItem: ITableItems = tableColumns.reduce((acc, column) => {
                     // handle selection and infos column
                     if (!column.type) {
                         if (column.accessor === infosCol) {
-                            const value = item.whoAmI;
-                            const id = item.whoAmI.id;
-                            const library = item.whoAmI.library.id;
-                            const label = localizedLabel(item.whoAmI.label, lang);
+                            const value = record.whoAmI;
+                            const id = record.whoAmI.id;
+                            const library = record.whoAmI.library.id;
+                            const label = localizedLabel(record.whoAmI.label, lang);
 
                             const cellData: ITableItem = {value, type: column.type, id, library, label};
                             acc[column.accessor] = cellData;
@@ -177,18 +176,18 @@ const Table = () => {
 
                     const key = column.key;
 
-                    let value = item.fields[key];
+                    let value = record.fields[key];
                     if (column.embeddedPath && column.embeddedPath.length) {
                         const pathWithoutRoot = column.embeddedPath.split('.').slice(1).join('.');
                         try {
-                            const content = JSON.parse(item.fields[key]);
+                            const content = JSON.parse(record.fields[key]);
                             value = get(content, pathWithoutRoot);
                         } catch (e) {
                             value = 'error';
                         }
                     }
 
-                    const id = item.whoAmI.id;
+                    const id = record.whoAmI.id;
 
                     acc[column.accessor] = {value, type: column.type, id};
 
@@ -203,7 +202,7 @@ const Table = () => {
         if (data) {
             setTableData([...data]);
         }
-    }, [items.items, items.pagination, tableColumns, lang]);
+    }, [searchState.records, searchState.pagination, tableColumns, lang]);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const scrollValue = (e.target as HTMLDivElement).scrollLeft;
@@ -226,7 +225,7 @@ const Table = () => {
 
     const {getTableProps, getTableBodyProps, headerGroups, prepareRow, rows} = tableInstance;
 
-    if (items.loading) {
+    if (searchState.loading) {
         return (
             <>
                 <Spin />
@@ -261,11 +260,7 @@ const Table = () => {
 
                                 return (
                                     <HeaderCell {...headerCellProps}>
-                                        <Header
-                                            id={column.id}
-                                            name={column.render('Header')?.toString() || ''}
-                                            type={AttributeType.simple}
-                                        >
+                                        <Header id={column.id} type={AttributeType.simple}>
                                             {column.render('Header')}
                                         </Header>
                                     </HeaderCell>

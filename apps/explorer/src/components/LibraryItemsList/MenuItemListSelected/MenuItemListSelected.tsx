@@ -5,7 +5,8 @@ import {CheckSquareTwoTone, DeleteOutlined, DownOutlined, LogoutOutlined} from '
 import {Button, Dropdown, Menu} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useContext, useEffect, useState} from 'react';
+import searchReducer, {initialSearchState} from 'hooks/useSearchReducer/searchReducer';
+import React, {useContext, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {resetSearchSelection, resetSelection, setSearchSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -58,12 +59,12 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     const {t} = useTranslation();
 
     const selectionMode = useContext(SelectionModeContext);
-    const {selectionState, items} = useAppSelector(state => ({
+    const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
-        display: state.display,
-        items: state.items
+        display: state.display
     }));
     const dispatch = useAppDispatch();
+    const [searchState] = useReducer(searchReducer, initialSearchState);
 
     const [{lang}] = useLang();
 
@@ -88,14 +89,14 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     const selectVisible = () => {
         let selected = [...selectionState.selection.selected];
 
-        if (items.items) {
-            for (const item of items.items) {
+        if (searchState.records) {
+            for (const record of searchState.records) {
                 selected = [
                     ...selected,
                     {
-                        id: item.whoAmI.id,
-                        library: item.whoAmI.library.id,
-                        label: localizedLabel(item.whoAmI.label, lang)
+                        id: record.whoAmI.id,
+                        library: record.whoAmI.library.id,
+                        label: localizedLabel(record.whoAmI.label, lang)
                     }
                 ];
             }
@@ -152,11 +153,11 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     overlay={
                         <Menu>
                             <Menu.Item onClick={selectVisible}>
-                                {t('items-menu-dropdown.select-visible', {nb: items.items?.length})}
+                                {t('items-menu-dropdown.select-visible', {nb: searchState.records.length})}
                             </Menu.Item>
                             {!selectionMode && (
                                 <Menu.Item onClick={selectAll}>
-                                    {t('items-menu-dropdown.select-all', {nb: items.totalCount})}
+                                    {t('items-menu-dropdown.select-all', {nb: searchState.totalCount})}
                                 </Menu.Item>
                             )}
                             <Menu.Item onClick={unselectAll}>{t('menu-selection.unselect-all')}</Menu.Item>

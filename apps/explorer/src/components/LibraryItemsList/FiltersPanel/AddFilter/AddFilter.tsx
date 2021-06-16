@@ -5,12 +5,11 @@ import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import moment from 'moment';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppSelector} from 'redux/store';
 import {defaultFilterConditionByAttributeFormat, getFieldsKeyFromAttribute} from 'utils';
-import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {AttributeFormat, IFilter, ISelectedAttribute} from '../../../../_types/types';
 import AttributesSelectionList from '../../../AttributesSelectionList';
 
@@ -35,18 +34,15 @@ const _getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | stri
 function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {attributes} = useAppSelector(state => state.attributes);
-
+    const {state: searchState} = useSearchReducer();
     const {stateFilters, dispatchFilters} = useStateFilters();
-
-    const [activeLibrary] = useActiveLibrary();
 
     const [attributesChecked, setAttributesChecked] = useState<ISelectedAttribute[]>([]);
 
     const addFilters = () => {
         let filterIndex = stateFilters.filters.length + 1;
         const newFilters: IFilter[] = attributesChecked.map(attributeChecked => {
-            const attribute = attributes.find(
+            const attribute = searchState.attributes.find(
                 att => att.id === attributeChecked.id && att.library === attributeChecked.library
             );
 
@@ -92,7 +88,7 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
             destroyOnClose
         >
             <AttributesSelectionList
-                library={activeLibrary?.id ?? ''}
+                library={searchState.library.id ?? ''}
                 selectedAttributes={attributesChecked}
                 onSelectionChange={setAttributesChecked}
             />

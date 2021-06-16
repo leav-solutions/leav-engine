@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
 import {Divider, Form, Input, Modal, Spin} from 'antd';
+import useSearchReducer from 'hooks/useSearchReducer';
 import {isEqual} from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -40,7 +41,8 @@ interface IEditViewProps {
 function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {items, filters, fields: fieldsState} = useAppSelector(state => state);
+    const {state: searchState} = useSearchReducer();
+    const {filters} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
 
     const [activeLibrary] = useActiveLibrary();
@@ -124,7 +126,7 @@ function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
             // Fields
             let viewFields: string[] = [];
             if (currentView.type === ViewTypes.list) {
-                viewFields = fieldsState.fields.map(field => {
+                viewFields = searchState.fields.map(field => {
                     const settingsField = field.key;
                     return settingsField;
                 });
@@ -137,8 +139,8 @@ function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
             const color = values.color ?? currentView.color ?? themingVar['@primary-color'];
 
             const sort = {
-                field: items.sort.field,
-                order: items.sort.order
+                field: searchState.sort.field,
+                order: searchState.sort.order
             };
 
             const newView: IAddViewMutationVariablesView = {

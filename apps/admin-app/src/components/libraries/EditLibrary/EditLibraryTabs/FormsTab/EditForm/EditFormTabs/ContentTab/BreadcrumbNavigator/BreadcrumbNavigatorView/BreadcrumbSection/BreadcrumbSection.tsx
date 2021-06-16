@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {relative} from 'path';
 import React, {useState} from 'react';
 import {NodeData} from 'react-sortable-tree';
 import {Breadcrumb, Icon, Popup} from 'semantic-ui-react';
@@ -34,6 +33,10 @@ const TreeElement = styled.div`
 const TreeWrapper = styled.div`
     height: 300px;
     width: 300px;
+`;
+
+const BreadcrumbSectionWrapper = styled(Breadcrumb.Section)`
+    position: relative;
 `;
 
 function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionProps): JSX.Element {
@@ -79,7 +82,7 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
     }
 
     return (
-        <Breadcrumb.Section style={{position: relative}}>
+        <BreadcrumbSectionWrapper>
             <TreeElement>
                 <div className="identity" onClick={_handleClickOnElement}>
                     {content}
@@ -110,7 +113,7 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
                     basic
                 />
             </TreeElement>
-        </Breadcrumb.Section>
+        </BreadcrumbSectionWrapper>
     );
 }
 

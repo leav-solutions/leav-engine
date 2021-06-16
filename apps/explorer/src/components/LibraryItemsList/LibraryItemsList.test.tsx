@@ -1,24 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {itemsInitialState} from 'redux/items';
+import {act, render, screen, waitForElement} from '_tests/testUtils';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
-import {
-    mockGetLibraryDetailExtendedElement,
-    mockGetLibraryDetailExtendedQuery,
-    mockGetLibraryDetailExtendedQueryVar
-} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
+import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {
     mockGetRecordsFromLibraryQuery,
     mockGetRecordsFromLibraryQueryVar
 } from '__mocks__/mockQuery/mockGetRecordsFromLibraryQuery';
 import LibraryItemsList from '.';
-import {getLibraryDetailExtendedQuery} from '../../graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
 import {AttributeType} from '../../_types/types';
 
@@ -30,6 +21,8 @@ jest.mock('react-router-dom', () => ({
     useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test', filterName: 'TestFilter'})),
     useHistory: jest.fn()
 }));
+
+jest.mock('../../hooks/LangHook/LangHook');
 
 jest.mock(
     './SideItems',
@@ -77,9 +70,7 @@ describe('LibraryItemsList', () => {
         ]
     };
 
-    const stateMock = {items: {...itemsInitialState, mockStateItem}};
-
-    test('should call Child', async () => {
+    test.only('should call Child', async () => {
         await act(async () => {
             const mocks = [
                 {
@@ -92,13 +83,7 @@ describe('LibraryItemsList', () => {
                     }
                 }
             ];
-            render(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <MockStore state={stateMock}>
-                        <LibraryItemsList library={mockGetLibraryDetailExtendedElement} />
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
+            render(<LibraryItemsList library={mockGetLibraryDetailExtendedElement} />, {apolloMocks: mocks});
 
             expect(screen.getByText('SideItems')).toBeInTheDocument();
             expect(screen.getByText('MenuItemList')).toBeInTheDocument();
@@ -107,38 +92,28 @@ describe('LibraryItemsList', () => {
     });
 
     test('should call the same child', async () => {
-        await act(async () => {
-            const mocks = [
-                {
-                    request: {
-                        query: getLibraryDetailExtendedQuery,
-                        variables: mockGetLibraryDetailExtendedQueryVar
-                    },
-                    result: {
-                        data: mockGetLibraryDetailExtendedQuery
-                    }
+        const mocks = [
+            {
+                request: {
+                    query: getRecordsFromLibraryQuery(libQueryName, []),
+                    variables: mockGetRecordsFromLibraryQueryVar
                 },
-                {
-                    request: {
-                        query: getRecordsFromLibraryQuery(libQueryName, mockStateItem.field),
-                        variables: mockGetRecordsFromLibraryQueryVar
-                    },
-                    result: {
-                        data: mockGetRecordsFromLibraryQuery(libQueryName, mockStateItem.field)
-                    }
+                result: {
+                    data: mockGetRecordsFromLibraryQuery(libQueryName, mockStateItem.field)
                 }
-            ];
-            render(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <MockStore state={stateMock}>
-                        <LibraryItemsList library={mockGetLibraryDetailExtendedElement} selectionMode={true} />
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
+            }
+        ];
 
-            expect(screen.getByText('SideItems')).toBeInTheDocument();
-            expect(screen.getByText('MenuItemList')).toBeInTheDocument();
-            expect(screen.getByText('DisplayTypeSelector')).toBeInTheDocument();
+        await act(async () => {
+            render(<LibraryItemsList library={mockGetLibraryDetailExtendedElement} selectionMode={true} />, {
+                apolloMocks: mocks
+            });
         });
+
+        await waitForElement(() => screen.getByText('DisplayTypeSelector'));
+
+        expect(screen.getByText('SideItems')).toBeInTheDocument();
+        expect(screen.getByText('MenuItemList')).toBeInTheDocument();
+        expect(screen.getByText('DisplayTypeSelector')).toBeInTheDocument();
     });
 });

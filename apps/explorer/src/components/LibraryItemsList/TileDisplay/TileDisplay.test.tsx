@@ -1,12 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {ISearchState} from 'hooks/useSearchReducer/_types';
 import React from 'react';
-import {itemsInitialState} from 'redux/items';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {IItem} from '../../../_types/types';
-import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
+import {render, screen} from '_tests/testUtils';
+import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import TileDisplay from './TileDisplay';
 
 jest.mock(
@@ -35,27 +33,25 @@ jest.mock(
 
 describe('TileDisplay', () => {
     test('Check render', async () => {
-        const itemsMock: IItem[] = [
-            {
-                fields: {},
-                whoAmI: {
-                    id: 'test'
-                },
-                index: 0
-            }
-        ];
+        const mockState: Partial<ISearchState> = {
+            records: [
+                {
+                    fields: {},
+                    whoAmI: {
+                        id: 'test'
+                    },
+                    index: 0
+                }
+            ]
+        };
 
-        const stateMock = {items: {...itemsInitialState, items: itemsMock}};
-
-        const comp = mount(
-            <MockedProviderWithFragments>
-                <MockStore state={stateMock}>
-                    <TileDisplay />
-                </MockStore>
-            </MockedProviderWithFragments>
+        render(
+            <MockSearchContextProvider state={mockState}>
+                <TileDisplay />
+            </MockSearchContextProvider>
         );
 
-        expect(comp.find('ItemTileDisplay')).toHaveLength(1);
-        expect(comp.find('LibraryItemsListPagination')).toHaveLength(1);
+        expect(screen.getByText('ItemTileDisplay')).toBeInTheDocument();
+        expect(screen.getByText('LibraryItemsListPagination')).toBeInTheDocument();
     });
 });

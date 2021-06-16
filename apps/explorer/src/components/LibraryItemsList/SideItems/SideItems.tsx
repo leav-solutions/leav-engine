@@ -4,7 +4,6 @@
 import React from 'react';
 import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
-import {panelSize} from '../../../constants/constants';
 import {TypeSideItem} from '../../../_types/types';
 import FiltersPanel from '../FiltersPanel';
 import ViewPanel from '../ViewPanel';
@@ -18,18 +17,8 @@ const Wrapper = styled.div<IWrapperProps>`
     grid-area: side;
     display: ${({visible}) => (visible ? 'flex' : 'none')};
     position: relative;
-    height: calc(100% - 4rem);
-    animation: ${({visible}) => (visible ? 'slide-in 250ms ease' : 'none')};
+    height: calc(100vh - 7rem);
     overflow: hidden;
-
-    @keyframes slide-in {
-        from {
-            transform: translateX(-${panelSize});
-        }
-        to {
-            transform: translateX(-5rem);
-        }
-    }
 `;
 
 function SideItems(): JSX.Element {
