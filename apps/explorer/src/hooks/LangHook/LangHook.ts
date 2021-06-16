@@ -5,7 +5,9 @@ import {useQuery} from '@apollo/client';
 import {useCallback, useMemo} from 'react';
 import {getLangAll, IGetLangAll} from '../../graphQL/queries/cache/lang/getLangQuery';
 
-export const useLang = (): [IGetLangAll, (langInfo: Partial<IGetLangAll>) => void] => {
+export type UseLangValue = [IGetLangAll, (langInfo: Partial<IGetLangAll>) => void];
+
+export const useLang = (): UseLangValue => {
     const {data, client} = useQuery<IGetLangAll>(getLangAll);
 
     const lang = useMemo(() => data?.lang || [], [data]);

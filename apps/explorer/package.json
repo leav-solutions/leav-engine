@@ -55,6 +55,7 @@
     "devDependencies": {
         "@apollo/link-error": "^2.0.0-beta.3",
         "@apollo/react-testing": "^3.1.4",
+        "@simbathesailor/use-what-changed": "2.0.0",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.5.0",
         "@testing-library/user-event": "^7.2.1",

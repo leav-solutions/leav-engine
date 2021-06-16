@@ -43,7 +43,7 @@ export const mockGetLibraryDetailExtendedElement: GET_LIBRARY_DETAIL_EXTENDED_li
         }
     ],
     gqlNames: {
-        query: 'files',
+        query: 'test',
         filter: 'FileFilter',
         searchableFields: 'FileSearchableFields',
         type: 'type'

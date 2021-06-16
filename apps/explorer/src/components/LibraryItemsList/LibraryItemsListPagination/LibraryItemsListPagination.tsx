@@ -2,28 +2,30 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Pagination} from 'antd';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
-import {setItemsOffset, setItemsPagination} from 'redux/items';
-import {useAppDispatch, useAppSelector} from 'redux/store';
 import {paginationOptions} from '../../../utils';
 
 function LibraryItemsListPagination(): JSX.Element {
-    const {items} = useAppSelector(state => state);
-    const dispatch = useAppDispatch();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const setPagination = (current: number, size: number) => {
-        dispatch(setItemsPagination(size));
+        searchDispatch({type: SearchActionTypes.SET_PAGINATION, page: size});
     };
 
     const setOffset = (page: number, pageSize: number) => {
-        dispatch(setItemsOffset((page - 1) * (pageSize ?? 0)));
+        searchDispatch({type: SearchActionTypes.SET_OFFSET, offset: (page - 1) * (pageSize ?? 0)});
     };
+
+    const currentPage = searchState.offset / searchState.pagination + 1;
 
     return (
         <Pagination
-            defaultCurrent={items.offset / items.pagination + 1}
-            total={items.totalCount}
-            defaultPageSize={items.pagination}
+            defaultCurrent={currentPage}
+            current={currentPage}
+            total={searchState.totalCount}
+            defaultPageSize={searchState.pagination}
             onShowSizeChange={setPagination}
             showSizeChanger
             pageSizeOptions={paginationOptions.map(option => option.toString())}

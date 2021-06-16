@@ -5,6 +5,7 @@ import {DownOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setSearchSelection, setSelection} from 'redux/selection';
@@ -17,17 +18,19 @@ function MenuSelection(): JSX.Element {
 
     const selectionMode = useContext(SelectionModeContext);
 
-    const {items, selectionState, display} = useAppSelector(state => ({
-        items: state.items,
+    const {state: searchState} = useSearchReducer();
+    const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
         display: state.display
     }));
     const dispatch = useAppDispatch();
     const [{lang}] = useLang();
 
-    const offsetDisplay = items.totalCount > 0 ? items.offset + 1 : 0;
+    const offsetDisplay = searchState.totalCount > 0 ? searchState.offset + 1 : 0;
     const nextOffsetDisplay =
-        items.offset + items.pagination > items.totalCount ? items.totalCount : items.offset + items.pagination;
+        searchState.offset + searchState.pagination > searchState.totalCount
+            ? searchState.totalCount
+            : searchState.offset + searchState.pagination;
 
     const selectAll = () => {
         if (!selectionMode) {
@@ -44,14 +47,14 @@ function MenuSelection(): JSX.Element {
     const selectVisible = () => {
         let selected = [...selectionState.selection.selected];
 
-        if (items.items) {
-            for (const item of items.items) {
+        if (searchState.records) {
+            for (const record of searchState.records) {
                 selected = [
                     ...selected,
                     {
-                        id: item.whoAmI.id,
-                        library: item.whoAmI.library.id,
-                        label: localizedLabel(item.whoAmI.label, lang)
+                        id: record.whoAmI.id,
+                        library: record.whoAmI.library.id,
+                        label: localizedLabel(record.whoAmI.label, lang)
                     }
                 ];
             }
@@ -83,11 +86,11 @@ function MenuSelection(): JSX.Element {
                     <Menu>
                         {!selectionMode && (
                             <Menu.Item onClick={selectAll}>
-                                {t('items-menu-dropdown.select-all', {nb: items.totalCount})}
+                                {t('items-menu-dropdown.select-all', {nb: searchState.totalCount})}
                             </Menu.Item>
                         )}
                         <Menu.Item onClick={selectVisible}>
-                            {t('items-menu-dropdown.select-visible', {nb: items.items?.length})}
+                            {t('items-menu-dropdown.select-visible', {nb: searchState.records.length})}
                         </Menu.Item>
                     </Menu>
                 }
@@ -96,7 +99,7 @@ function MenuSelection(): JSX.Element {
                     {t('items-list-row.nb-elements', {
                         nb1: offsetDisplay,
                         nb2: nextOffsetDisplay,
-                        nbItems: items.totalCount
+                        nbItems: searchState.totalCount
                     })}
                     <DownOutlined style={{paddingLeft: 6}} />
                 </span>

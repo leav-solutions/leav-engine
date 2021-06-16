@@ -1,12 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import wait from 'waait';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
+import {act, render, screen} from '_tests/testUtils';
+import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import AddFilter from './AddFilter';
 
 jest.mock(
@@ -19,21 +16,14 @@ jest.mock(
 
 describe('AttributeList', () => {
     test('should have a List', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <AddFilter showAttr setShowAttr={jest.fn()} />
-                    </MockStore>
-                </MockedProviderWithFragments>
+            render(
+                <MockSearchContextProvider>
+                    <AddFilter showAttr setShowAttr={jest.fn()} />
+                </MockSearchContextProvider>
             );
-
-            await wait();
-            comp.update();
         });
 
-        expect(comp.find('AttributesSelectionList')).toHaveLength(1);
+        expect(screen.getByText('AttributesSelectionList')).toBeInTheDocument();
     });
 });

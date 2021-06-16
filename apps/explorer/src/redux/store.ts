@@ -3,11 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {configureStore} from '@reduxjs/toolkit';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
-import attributesReducer from './attributes';
 import displayReducer from './display';
-import fieldsReducer from './fields';
 import filtersReducer from './filters';
-import itemsReducer from './items';
 import navigationReducer from './navigation';
 import notificationsReducer from './notifications';
 import selectionReducer from './selection';
@@ -15,11 +12,8 @@ import viewReducer from './view';
 
 const store = configureStore({
     reducer: {
-        items: itemsReducer,
         view: viewReducer,
         display: displayReducer,
-        attributes: attributesReducer,
-        fields: fieldsReducer,
         filters: filtersReducer,
         selection: selectionReducer,
         navigation: navigationReducer,

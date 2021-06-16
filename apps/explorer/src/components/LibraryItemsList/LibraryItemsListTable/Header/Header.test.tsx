@@ -1,93 +1,75 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {itemsInitialState} from 'redux/items';
 import {SortOrder} from '_gqlTypes/globalTypes';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {AttributeType, OrderSearch} from '../../../../_types/types';
+import {act, render, screen} from '_tests/testUtils';
+import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
+import {AttributeType} from '../../../../_types/types';
 import Header from './Header';
 
 describe('Header', () => {
     test('should display value', async () => {
-        let comp: any;
-
         const value = 'value';
 
         await act(async () => {
-            comp = mount(
-                <MockStore>
-                    <Header name="name" id="test" type={AttributeType.simple}>
-                        {value}
-                    </Header>
-                </MockStore>
+            render(
+                <Header id="test" type={AttributeType.simple}>
+                    {value}
+                </Header>
             );
         });
 
-        expect(comp.text()).toContain(value);
+        expect(screen.getByText(value)).toBeInTheDocument();
     });
 
     test('should use WrapperArrow with the sort props desc', async () => {
-        let comp: any;
-
         const value = 'value';
 
-        const stateMock = {
-            items: {
-                ...itemsInitialState,
-                sort: {
-                    field: 'id',
-                    order: SortOrder.desc,
-                    active: true
-                }
-            }
-        };
-
         await act(async () => {
-            comp = mount(
-                <MockStore state={stateMock}>
-                    <Header name="name" id="test" type={AttributeType.simple}>
+            render(
+                <MockSearchContextProvider
+                    state={{
+                        sort: {
+                            field: 'id',
+                            order: SortOrder.desc,
+                            active: true
+                        }
+                    }}
+                >
+                    <Header id="test" type={AttributeType.simple}>
                         {value}
                     </Header>
-                </MockStore>
+                </MockSearchContextProvider>
             );
         });
 
-        expect(comp.find('WrapperArrow')).toHaveLength(1);
-        expect(comp.find('WrapperArrow').prop('filterActive')).toBe(true);
-        expect(comp.find('WrapperArrow').prop('filterDirection')).toBe(OrderSearch.desc);
+        expect(screen.getByText(value)).toBeInTheDocument();
+        expect(screen.getByTestId('wrapper-arrow-desc')).toBeInTheDocument();
     });
 
     test('should use WrapperArrow with the sort props asc', async () => {
-        let comp: any;
-
         const value = 'value';
 
-        const stateMock = {
-            items: {
-                ...itemsInitialState,
-                sort: {
-                    field: 'id',
-                    order: SortOrder.asc,
-                    active: true
-                }
-            }
-        };
-
         await act(async () => {
-            comp = mount(
-                <MockStore state={stateMock}>
-                    <Header name="name" id="test" type={AttributeType.simple}>
+            render(
+                <MockSearchContextProvider
+                    state={{
+                        sort: {
+                            field: 'id',
+                            order: SortOrder.asc,
+                            active: true
+                        }
+                    }}
+                >
+                    <Header id="test" type={AttributeType.simple}>
                         {value}
                     </Header>
-                </MockStore>
+                </MockSearchContextProvider>
             );
         });
 
-        expect(comp.find('WrapperArrow')).toHaveLength(1);
-        expect(comp.find('WrapperArrow').prop('filterActive')).toBe(true);
-        expect(comp.find('WrapperArrow').prop('filterDirection')).toBe(OrderSearch.asc);
+        expect(screen.getByText(value)).toBeInTheDocument();
+        expect(screen.getByTestId('wrapper-arrow-asc')).toBeInTheDocument();
     });
 });

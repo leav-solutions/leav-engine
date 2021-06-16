@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CaretDownOutlined, CaretUpOutlined} from '@ant-design/icons';
 import {Dropdown, Menu} from 'antd';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {cancelItemsSort, setItemsSort} from 'redux/items';
-import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {infosCol} from '../../../../constants/constants';
@@ -109,28 +109,26 @@ WrapperArrow.displayName = 'WrapperArrow';
 interface IHeaderProps {
     children: React.ReactNode;
     id: string;
-    name: string;
     type: AttributeType;
 }
 
-const Header = ({id, children, name, type}: IHeaderProps) => {
+const Header = ({id, children, type}: IHeaderProps) => {
     const {t} = useTranslation();
 
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [isHover, setIsHover] = useState<boolean>(false);
-
-    const {items} = useAppSelector(state => state);
-    const dispatch = useAppDispatch();
 
     const handleSort = (attId: string, order: SortOrder, attType: AttributeType) => {
         const newSortField = getSortFieldByAttributeType(attId, attType);
 
-        dispatch(
-            setItemsSort({
+        searchDispatch({
+            type: SearchActionTypes.SET_SORT,
+            sort: {
                 field: newSortField,
                 order,
                 active: true
-            })
-        );
+            }
+        });
     };
 
     const handleDesc = (attId: string, attType: AttributeType) => {
@@ -142,7 +140,9 @@ const Header = ({id, children, name, type}: IHeaderProps) => {
     };
 
     const cancelSort = () => {
-        dispatch(cancelItemsSort());
+        searchDispatch({
+            type: SearchActionTypes.CANCEL_SORT
+        });
     };
 
     return (
@@ -172,8 +172,9 @@ const Header = ({id, children, name, type}: IHeaderProps) => {
                         {children}
                         <WrapperArrow
                             className="wrapper-arrow"
-                            filterDirection={items.sort?.order}
-                            filterActive={!!items.sort?.active}
+                            data-testid={`wrapper-arrow-${searchState.sort.order}`}
+                            filterDirection={searchState.sort?.order}
+                            filterActive={!!searchState.sort?.active}
                         >
                             <CaretUpOutlined />
                             <CaretDownOutlined />

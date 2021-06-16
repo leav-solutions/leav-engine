@@ -5,23 +5,25 @@ import {useLazyQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {SelectionModeContext} from 'context';
 import {setFilters, setQueryFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
-import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
-import {isString} from 'lodash';
-import React, {useEffect} from 'react';
+import {filterReducerInitialState} from 'hooks/FiltersStateHook/FilterReducerInitialState';
+import {filterStateReducer} from 'hooks/FiltersStateHook/FiltersStateReducer';
+import {FilterStateContext} from 'hooks/FiltersStateHook/FilterStateContext';
+import {SearchContext} from 'hooks/useSearchReducer/searchContext';
+import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import {ISearchRecord} from 'hooks/useSearchReducer/_types';
+import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setAttributes} from 'redux/attributes';
-import {setFields} from 'redux/fields';
 import {setFiltersQueryFilters} from 'redux/filters';
-import {setItems, setItemsLoading, setItemsSort, setItemsTotalCount} from 'redux/items';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {setViewCurrent} from 'redux/view';
 import styled, {CSSObject} from 'styled-components';
+import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from 'utils';
 import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {ViewTypes} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, ViewTypes} from '_gqlTypes/globalTypes';
 import {attributeExtendedKey, defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
 import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
@@ -29,17 +31,7 @@ import {
     IGetRecordsFromLibraryQueryVariables
 } from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {useLang} from '../../hooks/LangHook/LangHook';
-import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from '../../utils';
-import {
-    AttributeFormat,
-    AttributeType,
-    IAttribute,
-    IField,
-    IItem,
-    IParentAttributeData,
-    IView,
-    SharedStateSelectionType
-} from '../../_types/types';
+import {IAttribute, IField, IParentAttributeData, IView, SharedStateSelectionType} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import {getFiltersFromRequest} from './FiltersPanel/getFiltersFromRequest';
 import {manageItems} from './manageItems';
@@ -70,7 +62,7 @@ const Wrapper = styled.div<IWrapperProps>`
                 'data'
                 'pagination';`}
 
-    height: calc(100% - 4rem);
+    height: calc(100vh - 7rem);
     position: relative;
     overflow: auto;
 `;
@@ -95,12 +87,11 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
 
     const libId = library.id;
 
-    const {items, view, filters, attributes, display, fields, selection: selectionState} = useAppSelector(
-        state => state
-    );
+    const {view, filters, display, selection: selectionState} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
 
-    const {stateFilters, dispatchFilters} = useStateFilters();
+    const [stateFilters, dispatchFilters] = useReducer(filterStateReducer, filterReducerInitialState);
+    const [searchState, searchDispatch] = useReducer(searchReducer, {...initialSearchState, library});
     const [{lang}] = useLang();
 
     const currentLibId = library.id;
@@ -201,10 +192,8 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
             return acc;
         }, []);
 
-        // force the first sort by id
-        dispatch(setItemsSort({...newView.sort, active: false}));
-        dispatch(setAttributes(attributesFromQuery));
-    }, [currentLibId, dispatch, lang, library.attributes, library.defaultView, t]);
+        searchDispatch({type: SearchActionTypes.SET_ATTRIBUTES, attributes: attributesFromQuery});
+    }, [currentLibId, dispatch, lang, library.attributes, library.defaultView, t, searchDispatch]);
 
     useEffect(() => {
         if (view.reload && view.current) {
@@ -215,12 +204,12 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
 
                     const splitKey = fieldKey.split('.');
 
-                    const attribute = getAttributeFromKey(fieldKey, attributes.attributes);
+                    const attribute = getAttributeFromKey(fieldKey, searchState.attributes);
 
                     // get originAttribute
                     if (splitKey.length === 3 && splitKey[0] !== attributeExtendedKey) {
                         const parentAttributeId = splitKey[1];
-                        const parentAttribute = attributes.attributes.find(
+                        const parentAttribute = searchState.attributes.find(
                             att => parentAttributeId === att.id && library.id === att.library
                         );
 
@@ -236,7 +225,8 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                         return acc;
                     }
 
-                    const label = isString(attribute.label) ? attribute.label : localizedLabel(attribute.label, lang);
+                    const label =
+                        typeof attribute.label === 'string' ? attribute.label : localizedLabel(attribute.label, lang);
 
                     const field: IField = {
                         key: fieldKey,
@@ -249,14 +239,14 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                     };
 
                     return [...acc, field];
-                }, [] as IField[]);
+                }, []);
 
-                dispatch(setFields(newFields));
+                searchDispatch({type: SearchActionTypes.SET_FIELDS, fields: newFields ?? []});
             }
 
             // update Filters
             if (view.current.filters) {
-                dispatchFilters(setFilters(getFiltersFromRequest(view.current.filters, attributes.attributes)));
+                dispatchFilters(setFilters(getFiltersFromRequest(view.current.filters, searchState.attributes)));
                 dispatchFilters(setQueryFilters(view.current.filters));
             } else {
                 // reset filters
@@ -266,57 +256,59 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
             // update sort
             const field = view.current.sort?.field ?? defaultSort.field;
             const order = view.current.sort?.order ?? defaultSort.order;
-            dispatch(
-                setItemsSort({
-                    field,
-                    order,
-                    active: true
-                })
-            );
+            searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
         }
-    }, [view, attributes, lang, dispatchFilters, dispatch, library]);
+    }, [view, searchState.attributes, lang, dispatchFilters, dispatch, library]);
 
     // Get data
     const [
         getRecords,
-        {called: calledItem, loading: loadingItem, data: dataItem, error: errorItem, refetch}
+        {called: calledRecords, loading: loadingRecords, data: dataRecords, error: errorRecords, refetch}
     ] = useLazyQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
-        getRecordsFromLibraryQuery(library.gqlNames.query, fields.fields),
+        getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields),
         {
             variables: {
-                limit: items.pagination,
-                offset: items.offset,
+                limit: searchState.pagination,
+                offset: searchState.offset,
                 filters: stateFilters.queryFilters,
-                sortField: items.sort?.field ?? defaultSort.field,
-                sortOrder: items.sort?.order ?? defaultSort.order
+                sortField: searchState.sort?.field ?? defaultSort.field,
+                sortOrder: searchState.sort?.order ?? defaultSort.order
             }
         }
     );
 
     useEffect(() => {
         if (!filters.searchFullTextActive) {
-            if (!loadingItem && calledItem && dataItem && library.gqlNames.filter) {
+            if (!loadingRecords && calledRecords && dataRecords && library.gqlNames.filter) {
                 const libQuery = library.gqlNames.query;
 
-                const itemsFromQuery = dataItem ? dataItem[library.gqlNames.query || ''].list : [];
+                const itemsFromQuery = dataRecords ? dataRecords[library.gqlNames.query || ''].list : [];
 
-                const newItems: IItem[] = manageItems({items: itemsFromQuery, lang, fields: fields.fields});
+                const newRecords: ISearchRecord[] = manageItems({
+                    items: itemsFromQuery,
+                    lang,
+                    fields: searchState.fields
+                });
 
-                dispatch(setItemsTotalCount(dataItem[libQuery]?.totalCount));
-                dispatch(setItems(newItems));
-                dispatch(setItemsLoading(false));
+                searchDispatch({
+                    type: SearchActionTypes.SET_TOTAL_COUNT,
+                    totalCount: dataRecords[libQuery]?.totalCount
+                });
+                searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});
+                searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
             } else {
-                dispatch(setItemsLoading(false));
+                searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
             }
         }
     }, [
-        loadingItem,
-        dataItem,
-        calledItem,
+        searchDispatch,
+        loadingRecords,
+        dataRecords,
+        calledRecords,
         lang,
         libId,
-        attributes,
-        fields,
+        searchState.attributes,
+        searchState.fields,
         filters.searchFullTextActive,
         dispatch,
         library
@@ -326,10 +318,10 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         if (!filters.searchFullTextActive && library.gqlNames.query) {
             getRecords();
         }
-    }, [items, view.reload, filters, library.gqlNames.query, getRecords]);
+    }, [view.reload, filters, library.gqlNames.query, getRecords]);
 
-    if (errorItem) {
-        return <ErrorDisplay message={errorItem.message} />;
+    if (errorRecords) {
+        return <ErrorDisplay message={errorRecords.message} />;
     }
 
     // if some elements are selected and the selection type is search, show the selection Menu
@@ -341,20 +333,24 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
           (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected);
 
     return (
-        <SelectionModeContext.Provider value={selectionMode}>
-            <MenuWrapper>
-                <MenuItemList refetch={refetch} />
-                <MenuItemListSelected active={menuSelectedActive} />
-            </MenuWrapper>
+        <FilterStateContext.Provider value={{stateFilters, dispatchFilters}}>
+            <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
+                <SelectionModeContext.Provider value={selectionMode}>
+                    <MenuWrapper>
+                        <MenuItemList refetch={refetch} />
+                        <MenuItemListSelected active={menuSelectedActive} />
+                    </MenuWrapper>
 
-            <Wrapper
-                showSide={display.side.visible}
-                className={display.side.visible ? 'wrapper-open' : 'wrapper-close'}
-            >
-                <SideItems />
-                <DisplayTypeSelector />
-            </Wrapper>
-        </SelectionModeContext.Provider>
+                    <Wrapper
+                        showSide={display.side.visible}
+                        className={display.side.visible ? 'wrapper-open' : 'wrapper-close'}
+                    >
+                        <SideItems />
+                        <DisplayTypeSelector />
+                    </Wrapper>
+                </SelectionModeContext.Provider>
+            </SearchContext.Provider>
+        </FilterStateContext.Provider>
     );
 }
 

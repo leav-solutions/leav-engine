@@ -4,10 +4,10 @@
 import {useMutation} from '@apollo/client';
 import {Checkbox, Divider, Form, Input, Modal, Select} from 'antd';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
-import {useAppSelector} from 'redux/store';
 import {setViewCurrent, setViewReload} from 'redux/view';
 import {localizedLabel} from 'utils';
 import {ViewTypes} from '_gqlTypes/globalTypes';
@@ -35,8 +35,8 @@ interface IAddViewProps {
 function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {fields} = useAppSelector(state => state);
     const dispatch = useDispatch();
+    const {state: searchState} = useSearchReducer();
 
     const {stateFilters} = useStateFilters();
     const [{availableLangs, defaultLang, lang}] = useLang();
@@ -65,7 +65,7 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
             // Fields
             let viewFields: string[] = [];
             if (formValues.type === ViewTypes.list) {
-                viewFields = fields.fields.map(field => {
+                viewFields = searchState.fields.map(field => {
                     const settingsField = field.key;
                     return settingsField;
                 });

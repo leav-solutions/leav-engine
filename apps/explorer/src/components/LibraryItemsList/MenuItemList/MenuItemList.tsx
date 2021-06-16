@@ -3,9 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
 import {Button, Tooltip} from 'antd';
-import SearchModal from 'components/SearchModal';
 import {SelectionModeContext} from 'context';
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {addNotification} from 'redux/notifications';
@@ -56,8 +55,6 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {display} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
 
-    const [modalVisible, setModalVisible] = useState(false);
-
     const toggleShowFilter = () => {
         const visible = !display.side.visible || display.side.type !== TypeSideItem.filters;
 
@@ -92,12 +89,6 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
 
     return (
         <Wrapper>
-            <SearchModal
-                visible={modalVisible}
-                setVisible={setModalVisible}
-                submitAction={() => console.log('submit')}
-                libId={'Files'}
-            />
             <SubGroupFirst>
                 <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
 

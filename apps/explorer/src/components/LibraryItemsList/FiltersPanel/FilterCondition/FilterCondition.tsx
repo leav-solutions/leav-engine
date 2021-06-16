@@ -6,9 +6,9 @@ import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/Filte
 import {formatNotUsingCondition} from 'constants/constants';
 import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {allowedTypeOperator, getAttributeFromKey} from '../../../../utils';
 import {AttributeFormat, ConditionFilter, IFilter} from '../../../../_types/types';
@@ -40,11 +40,10 @@ interface IFilterConditionProps {
 const FilterCondition = ({filter, updateFilterValue}: IFilterConditionProps) => {
     const {t} = useTranslation();
 
-    const {attributes} = useAppSelector(state => state.attributes);
-
+    const {state: searchState} = useSearchReducer();
     const {stateFilters, dispatchFilters} = useStateFilters();
 
-    const attribute = getAttributeFromKey(filter.key, attributes);
+    const attribute = getAttributeFromKey(filter.key, searchState.attributes);
 
     if (!attribute) {
         return <div>error</div>;

@@ -1,24 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen} from '@testing-library/react';
 import React from 'react';
+import {render, screen} from '_tests/testUtils';
 import {mockAttribute} from '__mocks__/common/attribute';
 import {mockFilter} from '__mocks__/common/filter';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
+import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import {MockStateFilters} from '__mocks__/stateFilters/mockStateFilters';
 import FilterCondition from './FilterCondition';
 
 describe('FilterCondition', () => {
     test('should contain select for condition', async () => {
-        const stateMock = {attributes: {attributes: [mockAttribute]}};
-
         render(
-            <MockStore state={stateMock}>
+            <MockSearchContextProvider state={{attributes: [mockAttribute]}}>
                 <MockStateFilters stateFilters={{filters: [mockFilter]}}>
                     <FilterCondition filter={mockFilter} updateFilterValue={jest.fn()} />
                 </MockStateFilters>
-            </MockStore>
+            </MockSearchContextProvider>
         );
         const selectElement = screen.getByTestId('filter-condition-select');
 

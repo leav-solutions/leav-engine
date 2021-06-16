@@ -4135,6 +4135,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@simbathesailor/use-what-changed@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@simbathesailor/use-what-changed@npm:2.0.0"
+  peerDependencies:
+    react: ">=16"
+  checksum: 58f443077edb0078892d2cad3c12f681842b252c12bf696099365da88a23ab6776c9f455c603bbd5e73e5eae7f31163593f0a131dafcb46b5014200124cc895a
+  languageName: node
+  linkType: hard
+
 "@sinonjs/commons@npm:^1.7.0":
   version: 1.8.2
   resolution: "@sinonjs/commons@npm:1.8.2"
@@ -14063,6 +14072,7 @@ __metadata:
     "@apollo/react-hoc": ^3.1.5
     "@apollo/react-testing": ^3.1.4
     "@reduxjs/toolkit": 1.5.1
+    "@simbathesailor/use-what-changed": 2.0.0
     "@testing-library/jest-dom": ^4.2.4
     "@testing-library/react": ^9.5.0
     "@testing-library/user-event": ^7.2.1

@@ -33,6 +33,6 @@ export const mockGetRecordsFromLibraryQueryVar: IGetRecordsFromLibraryQueryVaria
     limit: 20,
     offset: 0,
     filters: [],
-    sortField: 'field',
+    sortField: 'id',
     sortOrder: SortOrder.asc
 };
