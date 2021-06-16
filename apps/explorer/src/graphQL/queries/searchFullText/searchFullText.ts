@@ -68,6 +68,9 @@ export const searchFullText = (libId?: string, libType?: string, fields?: IField
                         library {
                             id
                             label
+                            gqlNames {
+                                query
+                            }
                         }
                     }
                 }

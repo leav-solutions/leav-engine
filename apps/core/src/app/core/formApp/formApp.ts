@@ -142,6 +142,7 @@ export default function ({
                         order: Int!,
                         uiElementType: String!,
                         type: FormElementTypes!,
+                        attribute: Attribute,
                         settings: [FormElementSettings!]!
                     }
 
@@ -237,6 +238,41 @@ export default function ({
                                     attributeDomain.getAttributeProperties({id: attr, ctx})
                                 )
                             );
+                        }
+                    },
+                    FormElement: {
+                        attribute: (formElement: IFormElementForGraphQL, _, ctx: IQueryInfos): Promise<IAttribute> => {
+                            const attributeSettings = formElement.settings.filter(
+                                setting => setting.key === 'attribute'
+                            )[0];
+                            const attributeId = attributeSettings?.value;
+
+                            if (!attributeId) {
+                                return null;
+                            }
+
+                            return attributeDomain.getAttributeProperties({id: attributeId, ctx});
+                        },
+                        settings: (formElement: IFormElementForGraphQL, _, ctx: IQueryInfos) => {
+                            // Return attributes ID and label for columns
+                            return formElement.settings.map(async s => {
+                                if (s.key !== 'columns') {
+                                    return s;
+                                }
+
+                                return {
+                                    ...s,
+                                    value: await Promise.all(
+                                        s.value.map(async columnId => {
+                                            const columnAttributeProps = await attributeDomain.getAttributeProperties({
+                                                id: columnId,
+                                                ctx
+                                            });
+                                            return {id: columnAttributeProps.id, label: columnAttributeProps.label};
+                                        })
+                                    )
+                                };
+                            });
                         }
                     }
                 }

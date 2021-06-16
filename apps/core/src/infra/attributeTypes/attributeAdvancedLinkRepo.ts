@@ -2,23 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IValue} from '_types/value';
-import {IRecordSort} from '_types/record';
+import {IUtils} from 'utils/utils';
+import {IRecord, IRecordSort} from '_types/record';
+import {ILinkValue, IValueEdge} from '_types/value';
+import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IAttribute, AttributeFormats} from '../../_types/attribute';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
+    'core.utils'?: IUtils;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.utils': utils = null
 }: IDeps = {}): IAttributeTypeRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
@@ -35,8 +38,22 @@ export default function ({
         }`;
     }
 
+    const _buildLinkValue = (linkedRecord: IRecord, valueEdge: IValueEdge): ILinkValue => {
+        return {
+            id_value: valueEdge._key,
+            value: linkedRecord,
+            attribute: valueEdge.attribute,
+            modified_at: valueEdge.modified_at,
+            modified_by: valueEdge.modified_by,
+            created_at: valueEdge.created_at,
+            created_by: valueEdge.created_by,
+            version: valueEdge.version ? dbUtils.convertValueVersionFromDb(valueEdge.version) : null,
+            metadata: valueEdge.metadata
+        };
+    };
+
     return {
-        async createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async createValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
@@ -68,25 +85,9 @@ export default function ({
 
             const savedEdge = resEdge.length ? resEdge[0] : {};
 
-            const res: IValue = {
-                id_value: savedEdge._key,
-                value: savedEdge._to.split('/')[1],
-                attribute: savedEdge.attribute,
-                modified_at: savedEdge.modified_at,
-                created_at: savedEdge.created_at,
-                version: savedEdge.version,
-                metadata: savedEdge.metadata,
-                modified_by: savedEdge.modified_by,
-                created_by: savedEdge.created_by
-            };
-
-            if (value.version) {
-                res.version = dbUtils.convertValueVersionFromDb(savedEdge.version);
-            }
-
-            return res;
+            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge);
         },
-        async updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async updateValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Update value's metadata on records link
@@ -117,25 +118,9 @@ export default function ({
             });
             const savedEdge = resEdge.length ? resEdge[0] : {};
 
-            const res: IValue = {
-                id_value: savedEdge._key,
-                value: Number(savedEdge._to.split('/')[1]),
-                attribute: savedEdge.attribute,
-                modified_at: savedEdge.modified_at,
-                created_at: savedEdge.created_at,
-                version: savedEdge.version,
-                metadata: savedEdge.metadata,
-                modified_by: savedEdge.modified_by,
-                created_by: savedEdge.created_by
-            };
-
-            if (value.version) {
-                res.version = dbUtils.convertValueVersionFromDb(savedEdge.version);
-            }
-
-            return res;
+            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge);
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async deleteValue({attribute, value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
@@ -145,11 +130,16 @@ export default function ({
 
             const deletedEdge = await edgeCollec.removeByExample(edgeData);
 
-            return {
-                id_value: value.id_value
-            };
+            return _buildLinkValue(utils.decomposeValueEdgeDestination(deletedEdge._to), deletedEdge);
         },
-        async getValues({library, recordId, attribute, forceGetAllValues = false, options, ctx}): Promise<IValue[]> {
+        async getValues({
+            library,
+            recordId,
+            attribute,
+            forceGetAllValues = false,
+            options,
+            ctx
+        }): Promise<ILinkValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             const queryParts = [
@@ -173,18 +163,9 @@ export default function ({
             const query = aql.join(queryParts);
             const res = await dbService.execute({query, ctx});
 
-            return res.map(r => ({
-                id_value: r.edge._key,
-                value: dbUtils.cleanup(r.linkedRecord),
-                attribute: r.edge.attribute,
-                modified_at: r.edge.modified_at,
-                created_at: r.edge.created_at,
-                metadata: r.edge.metadata,
-                created_by: r.edge.created_by,
-                modified_by: r.edge.modified_by
-            }));
+            return res.map(r => _buildLinkValue(dbUtils.cleanup(r.linkedRecord), r.edge));
         },
-        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
+        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             const query = aql`
@@ -203,16 +184,7 @@ export default function ({
                 return null;
             }
 
-            return {
-                id_value: res[0].edge._key,
-                value: dbUtils.cleanup(res[0].linkedRecord),
-                attribute: res[0].edge.attribute,
-                modified_at: res[0].edge.modified_at,
-                created_at: res[0].edge.created_at,
-                metadata: res[0].edge.metadata,
-                modified_by: res[0].edge.modified_by,
-                created_by: res[0].edge.created_by
-            };
+            return _buildLinkValue(dbUtils.cleanup(res[0].edge.linkedRecord), res[0].edge);
         },
         sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);

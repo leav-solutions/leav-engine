@@ -242,6 +242,7 @@
             "content": "Content",
             "withTime": "Time entry",
             "direction": "Direction",
+            "columns": "Linked element attributes to display",
             "select_options": {
                 "VERTICAL": "Vertical",
                 "HORIZONTAL": "Horizontal"

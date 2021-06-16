@@ -1,7 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
+import {mockActionValidateFormat} from './actionsList';
 
 const base: IAttribute = {
     id: 'test_attribute',
@@ -24,7 +26,15 @@ const base: IAttribute = {
 export const mockAttrSimple: IAttribute = {...base, id: 'simple_attribute'};
 export const mockAttrId: IAttribute = {...base, id: 'id', system: true};
 
-export const mockAttrAdv: IAttribute = {...base, id: 'advanced_attribute', type: AttributeTypes.ADVANCED};
+export const mockAttrAdv: IAttribute = {
+    ...base,
+    id: 'advanced_attribute',
+    type: AttributeTypes.ADVANCED,
+    actions_list: {
+        [ActionsListEvents.SAVE_VALUE]: [{...mockActionValidateFormat, params: null}],
+        [ActionsListEvents.GET_VALUE]: []
+    }
+};
 export const mockAttrAdvMultiVal: IAttribute = {...mockAttrAdv, multiple_values: true};
 export const mockAttrAdvVersionable: IAttribute = {
     ...mockAttrAdv,

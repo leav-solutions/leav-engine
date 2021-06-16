@@ -2,8 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import '@testing-library/jest-dom';
-import {render, screen} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
+import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
 import React from 'react';
+import {mockAttrSimple} from '__mocks__/attributes';
+import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import * as useFormBuilderReducer from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import {formElem1, mockInitialState} from '../../formBuilderReducer/_fixtures/fixtures';
 import {formElements} from '../../uiElements';
@@ -22,6 +25,37 @@ const mockState = {
     openSettings: true
 };
 
+const renderWithAttributesMock = (children: JSX.Element) => {
+    const mocks = [
+        {
+            request: {
+                query: getAttributesQuery,
+                variables: {
+                    id: formElem1.settings.attribute
+                }
+            },
+            result: {
+                data: {
+                    attributes: {
+                        __typename: 'AttributesList',
+                        totalCount: 0,
+                        list: [
+                            {
+                                ...mockAttrSimple,
+                                __typename: 'Attribute',
+                                id: formElem1.settings.attribute,
+                                versions_conf: null
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ];
+
+    return render(<MockedProviderWithFragments mocks={mocks}>{children}</MockedProviderWithFragments>);
+};
+
 describe('SettingsEdition', () => {
     test('Text Input', async () => {
         jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
@@ -38,13 +72,15 @@ describe('SettingsEdition', () => {
                             }
                         ]
                     },
-                    settings: {myinput: 'input value'}
+                    settings: {...formElem1.settings, myinput: 'input value'}
                 }
             },
             dispatch: jest.fn()
         });
 
-        render(<SettingsEdition />);
+        renderWithAttributesMock(<SettingsEdition />);
+
+        await waitFor(() => screen.getByRole('textbox'));
 
         expect(screen.getByRole('textbox')).toHaveDisplayValue('input value');
     });
@@ -61,17 +97,21 @@ describe('SettingsEdition', () => {
                             {
                                 name: 'mySelect',
                                 inputType: FormElementSettingsInputTypes.SELECT,
-                                options: ['option1', 'option2']
+                                getInputSettings: () => ({
+                                    options: ['option1', 'option2']
+                                })
                             }
                         ]
                     },
-                    settings: {mySelect: 'option1'}
+                    settings: {...formElem1.settings, mySelect: 'option1'}
                 }
             },
             dispatch: jest.fn()
         });
 
-        render(<SettingsEdition />);
+        renderWithAttributesMock(<SettingsEdition />);
+
+        await waitFor(() => screen.getAllByRole('option'));
 
         expect(screen.getByRole('option', {name: /option1/i})).toBeInTheDocument();
         expect(screen.getByRole('option', {name: /option2/i})).toBeInTheDocument();
@@ -93,13 +133,14 @@ describe('SettingsEdition', () => {
                             }
                         ]
                     },
-                    settings: {myCheckbox: true}
+                    settings: {...formElem1.settings, myCheckbox: true}
                 }
             },
             dispatch: jest.fn()
         });
 
-        render(<SettingsEdition />);
+        renderWithAttributesMock(<SettingsEdition />);
+        await waitFor(() => screen.getByRole('checkbox'));
 
         expect(screen.getByRole('checkbox')).toBeInTheDocument();
         expect(screen.getByRole('checkbox')).toBeChecked();
@@ -120,13 +161,14 @@ describe('SettingsEdition', () => {
                             }
                         ]
                     },
-                    settings: {attribute: 'test_attribute'}
+                    settings: {...formElem1.settings}
                 }
             },
             dispatch: jest.fn()
         });
 
-        render(<SettingsEdition />);
+        renderWithAttributesMock(<SettingsEdition />);
+        await waitFor(() => screen.getByText('AttributeSelector'));
 
         expect(screen.getByText('AttributeSelector')).toBeInTheDocument();
     });
@@ -146,13 +188,14 @@ describe('SettingsEdition', () => {
                             }
                         ]
                     },
-                    settings: {myRTE: '**Content**'}
+                    settings: {...formElem1.settings, myRTE: '**Content**'}
                 }
             },
             dispatch: jest.fn()
         });
 
-        render(<SettingsEdition />);
+        renderWithAttributesMock(<SettingsEdition />);
+        await waitFor(() => screen.getByTestId('rte-editor-wrapper'));
 
         expect(screen.getByTestId('rte-editor-wrapper')).toBeInTheDocument();
     });
@@ -172,13 +215,14 @@ describe('SettingsEdition', () => {
                             }
                         ]
                     },
-                    settings: {myNoDisplaySettings: 'some_value'}
+                    settings: {...formElem1.settings, myNoDisplaySettings: 'some_value'}
                 }
             },
             dispatch: jest.fn()
         });
 
-        render(<SettingsEdition />);
+        renderWithAttributesMock(<SettingsEdition />);
+        await waitFor(() => screen.getByRole('form'));
 
         expect(screen.getByRole('form')).toHaveTextContent('');
     });

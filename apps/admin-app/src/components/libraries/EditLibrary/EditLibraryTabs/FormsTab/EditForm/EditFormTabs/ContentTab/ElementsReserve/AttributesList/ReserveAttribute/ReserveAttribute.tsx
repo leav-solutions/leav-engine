@@ -47,7 +47,7 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
             type: FormElementTypes.field,
             containerId: defaultContainerId,
             uiElement: isLinkAttribute(attribute, false)
-                ? formElements[FieldTypes.TEXT_INPUT]
+                ? formElements[FieldTypes.LINK]
                 : elemByFormat[attribute.format!],
             settings: {
                 attribute: attribute.id,

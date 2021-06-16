@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {HeartOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu, Tooltip} from 'antd';
+import {SizeType} from 'antd/lib/config-provider/SizeContext';
+import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import {SelectionModeContext} from 'context';
 import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -10,7 +12,6 @@ import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {IconCross} from '../../../../../assets/icons/IconCross';
 import {IconEllipsisHorizontal} from '../../../../../assets/icons/IconEllipsisHorizontal';
-import {IconExpand} from '../../../../../assets/icons/IconExpand';
 import themingVar from '../../../../../themingVar';
 import {DisplaySize, IRecordIdentityWhoAmI, ISharedSelected, PreviewSize} from '../../../../../_types/types';
 import CellRecordCard from '../CellRecordCard';
@@ -27,6 +28,12 @@ const Info = styled.div`
 
 interface IFloatingMenuProps {
     isHover: boolean;
+}
+
+interface IAction {
+    tooltip: string;
+    icon?: JSX.Element;
+    button?: JSX.Element;
 }
 
 const FloatingMenu = styled.div<IFloatingMenuProps>`
@@ -81,14 +88,16 @@ function CellInfos({record, previewSize, lang, index, selectionData}: ICellInfos
 
     const [isHover, setIsHover] = useState<boolean>(false);
 
-    const actions = [
+    const btnSize: SizeType = 'small';
+
+    const actions: IAction[] = [
         {
             tooltip: t('items_list.table.actions-tooltips.informations'),
             icon: <InfoCircleOutlined />
         },
         {
             tooltip: t('items_list.table.actions-tooltips.expand'),
-            icon: <IconExpand />
+            button: <EditRecordBtn size={btnSize} record={record} />
         },
         {
             tooltip: t('items_list.table.actions-tooltips.remove'),
@@ -127,7 +136,7 @@ function CellInfos({record, previewSize, lang, index, selectionData}: ICellInfos
                         <>
                             {actions.map(action => (
                                 <Tooltip title={action.tooltip} key={action.tooltip}>
-                                    <Button size="small" icon={action.icon} />
+                                    {action.button ?? <Button size={btnSize} icon={action.icon} />}
                                 </Tooltip>
                             ))}
                             <Tooltip title={t('items_list.table.actions-tooltips.more')}>

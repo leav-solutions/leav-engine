@@ -27,13 +27,20 @@ export enum AttributeType {
     tree = 'tree'
 }
 
+export enum FormElementTypes {
+    field = 'field',
+    layout = 'layout'
+}
+
 export enum RecordFilterCondition {
     BEGIN_WITH = 'BEGIN_WITH',
+    CLASSIFIED_IN = 'CLASSIFIED_IN',
     CONTAINS = 'CONTAINS',
     END_WITH = 'END_WITH',
     EQUAL = 'EQUAL',
     GREATER_THAN = 'GREATER_THAN',
     LESS_THAN = 'LESS_THAN',
+    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN',
     NOT_CONTAINS = 'NOT_CONTAINS',
     NOT_EQUAL = 'NOT_EQUAL'
 }
@@ -61,6 +68,7 @@ export interface RecordFilterInput {
     value?: string | null;
     condition?: RecordFilterCondition | null;
     operator?: RecordFilterOperator | null;
+    treeId?: string | null;
 }
 
 export interface RecordSortInput {
@@ -78,6 +86,18 @@ export interface ValueBatchInput {
     id_value?: string | null;
     value?: string | null;
     metadata?: any | null;
+}
+
+export interface ValueInput {
+    id_value?: string | null;
+    value?: string | null;
+    metadata?: (ValueMetadataInput | null)[] | null;
+    version?: (ValueVersionInput | null)[] | null;
+}
+
+export interface ValueMetadataInput {
+    name: string;
+    value?: string | null;
 }
 
 export interface ValueVersionInput {

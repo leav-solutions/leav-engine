@@ -75,7 +75,6 @@ describe('Records permissions', () => {
                     value: "${permTreeLibName}/${permTreeElemId}"
                 }) {
                     id_value
-                    value
                 },
             v2: saveValue(
                     library: "${testLibId}",
@@ -86,7 +85,6 @@ describe('Records permissions', () => {
                     }
                 ) {
                     id_value
-                    value
                 },
             v3: saveValue(
                     library: "${testLibId}",
@@ -97,7 +95,6 @@ describe('Records permissions', () => {
                     }
                 ) {
                     id_value
-                    value
                 }
         }`);
     });

@@ -1,0 +1,17 @@
+{
+  "name": "@leav/types",
+  "version": "1.0.0",
+  "description": "Shared types to use across projects",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "tsc --build",
+    "tscheck": "tsc --noEmit -p .",
+    "tscheck:watch": "tsc -w --noEmit -p ."
+  },
+  "main": "dist/index",
+  "author": "",
+  "license": "LGPL3",
+  "devDependencies": {
+    "typescript": "4.1"
+  }
+}

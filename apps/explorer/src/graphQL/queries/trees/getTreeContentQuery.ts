@@ -48,6 +48,10 @@ const recordField = `
             library {
                 id
                 label
+                gqlNames {
+                    type
+                    query
+                }
             }
         }
     }

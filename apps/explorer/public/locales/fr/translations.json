@@ -6,7 +6,8 @@
         "done": "Terminé",
         "delete": "Supprimer",
         "apply": "Appliquer",
-        "clear": "Effacer"
+        "clear": "Effacer",
+        "submit": "Valider"
     },
     "login": {
         "header": "Authentification",
@@ -291,10 +292,42 @@
     "error": {
         "error_occurred": "Une erreur est survenue",
         "graphql_error_occurred": "Une erreur est survenue: {{error}}",
-        "network_error_occurred": "Une erreur de connexion est survenue"
+        "network_error_occurred": "Une erreur de connexion est survenue",
+        "PERMISSION_ERROR": "Vous n'êtes pas autorisé à effectuer cette action",
+        "INTERNAL_ERROR": "Une erreur interne est survenue"
     },
     "language": {
         "fr": "Français",
         "en": "Anglais"
+    },
+    "record_edition": {
+        "no_form_error": "Aucun formulaire disponible",
+        "invalid_format": "Format non valide",
+        "missing_attribute": "Attribut manquant",
+        "modified_at": "Modifié le",
+        "add_value": "Ajouter une valeur",
+        "delete_value_confirm": "Êtes-vous sûr de vouloir supprimer cette valeur?",
+        "whoAmI": "Informations",
+        "no_value": "Pas de valeur",
+        "attribute": {
+            "id": "ID",
+            "type": "Type",
+            "format": "Format",
+            "type_simple": "Simple",
+            "type_simple_link": "Lien simple",
+            "type_advanced": "Avancé",
+            "type_advanced_link": "Lien avancé",
+            "type_tree": "Arbre",
+            "format_boolean": "Booléen",
+            "format_date": "Date",
+            "format_encrypted": "Encrypté",
+            "format_extended": "Étendu",
+            "format_numeric": "Numérique",
+            "format_text": "Texte"
+        }
+    },
+    "floating_menu": {
+        "more_actions": "Plus"
     }
+
 }

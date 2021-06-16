@@ -20,6 +20,10 @@ const handleType = (field: IField): string => {
                     library {
                         id
                         label
+                        gqlNames {
+                            query
+                            type
+                        }
                     }
                     preview {
                         small
@@ -39,6 +43,10 @@ const handleType = (field: IField): string => {
                         library {
                             id
                             label
+                            gqlNames {
+                                query
+                                type
+                            }
                         }
                         preview {
                             small
@@ -132,6 +140,10 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
                         library {
                             id
                             label
+                            gqlNames {
+                                query
+                                type
+                            }
                         }
                     }
                 }

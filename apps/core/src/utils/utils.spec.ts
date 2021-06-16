@@ -1,6 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {
+    mockAttrAdv,
+    mockAttrAdvLink,
+    mockAttrSimple,
+    mockAttrSimpleLink,
+    mockAttrTree
+} from '../__tests__/mocks/attribute';
 import utils from './utils';
 
 describe('Utils', () => {
@@ -197,6 +204,65 @@ describe('Utils', () => {
 
             const resNum = utilsModule.dateToTimestamp(new Date('2015-10-21T07:28:00.000Z'));
             expect(resNum).toBe(1445412480);
+        });
+    });
+
+    describe('isStandardAttribute', () => {
+        test('Returns true for simple or advanced', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.isStandardAttribute(mockAttrSimple)).toBe(true);
+            expect(utilsModule.isStandardAttribute(mockAttrAdv)).toBe(true);
+        });
+
+        test('Returns false for other types', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.isStandardAttribute(mockAttrSimpleLink)).toBe(false);
+            expect(utilsModule.isStandardAttribute(mockAttrAdvLink)).toBe(false);
+            expect(utilsModule.isStandardAttribute(mockAttrTree)).toBe(false);
+        });
+    });
+
+    describe('isLinkAttribute', () => {
+        test('Returns true for simple or advanced link', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.isLinkAttribute(mockAttrSimpleLink)).toBe(true);
+            expect(utilsModule.isLinkAttribute(mockAttrAdvLink)).toBe(true);
+        });
+
+        test('Returns false for other types', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.isLinkAttribute(mockAttrSimple)).toBe(false);
+            expect(utilsModule.isLinkAttribute(mockAttrAdv)).toBe(false);
+            expect(utilsModule.isLinkAttribute(mockAttrTree)).toBe(false);
+        });
+    });
+
+    describe('isTreeAttribute', () => {
+        test('Returns true for tree', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.isTreeAttribute(mockAttrTree)).toBe(true);
+        });
+
+        test('Returns false for other types', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.isTreeAttribute(mockAttrSimple)).toBe(false);
+            expect(utilsModule.isTreeAttribute(mockAttrSimpleLink)).toBe(false);
+            expect(utilsModule.isTreeAttribute(mockAttrAdv)).toBe(false);
+            expect(utilsModule.isTreeAttribute(mockAttrAdvLink)).toBe(false);
+        });
+    });
+
+    describe('decomposeValueEdgeDestination', () => {
+        test('Returns library and record of an edge destination', async () => {
+            const utilsModule = utils();
+
+            expect(utilsModule.decomposeValueEdgeDestination('my_lib/12345')).toEqual({library: 'my_lib', id: '12345'});
         });
     });
 });

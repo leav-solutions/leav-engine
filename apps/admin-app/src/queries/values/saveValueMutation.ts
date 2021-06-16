@@ -9,7 +9,9 @@ export const saveValueQuery = gql`
             id_value
             value
             raw_value
-            attribute
+            attribute {
+                id
+            }
         }
     }
 `;

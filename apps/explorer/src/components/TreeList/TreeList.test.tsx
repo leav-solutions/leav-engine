@@ -7,7 +7,7 @@ import {act} from 'react-dom/test-utils';
 import wait from 'waait';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
-import {getUserDataQuery} from '../../queries/userData/getUserData';
+import {getUserDataQuery} from '../../graphQL/queries/userData/getUserData';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import TreeList, {FAVORITE_TREES_KEY} from './TreeList';
 

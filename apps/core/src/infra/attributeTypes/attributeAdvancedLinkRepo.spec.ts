@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database, EdgeCollection} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
@@ -56,6 +57,10 @@ describe('AttributeAdvancedLinkRepo', () => {
         })
     };
 
+    const mockUtils: Mockify<IUtils> = {
+        decomposeValueEdgeDestination: jest.fn().mockReturnValue({library: 'test_linked_lib', id: '987654'})
+    };
+
     const ctx: IQueryInfos = {
         userId: '0',
         queryId: 'AttributeAdvancedLinkRepoTest'
@@ -70,7 +75,8 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.utils': mockUtils as IUtils
             });
 
             const createdVal = await attrRepo.createValue({
@@ -99,7 +105,10 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(createdVal).toMatchObject({
                 id_value: '978654321',
-                value: '987654',
+                value: {
+                    library: 'test_linked_lib',
+                    id: '987654'
+                },
                 attribute: 'test_adv_link_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -125,7 +134,8 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.utils': mockUtils as IUtils
             });
 
             const savedVal = await attrRepo.updateValue({
@@ -154,6 +164,10 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(savedVal).toMatchObject({
                 ...valueData,
+                value: {
+                    library: 'test_linked_lib',
+                    id: '987654'
+                },
                 metadata: {my_attribute: 'metadata value'},
                 version: {
                     my_tree: {
@@ -172,7 +186,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 _rev: '_WSywvyC--_',
                 _from: 'test_lib/12345',
                 _to: 'test_linked_lib/987654',
-                _key: '978654321'
+                _key: '445566'
             };
 
             const mockDbEdgeCollec: Mockify<EdgeCollection> = {
@@ -185,7 +199,10 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const mockDbServ = {db: (mockDb as unknown) as Database};
 
-            const attrRepo = attributeAdvancedLinkRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.utils': mockUtils as IUtils
+            });
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
@@ -203,7 +220,13 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
             expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: '445566'});
 
-            expect(deletedVal).toMatchObject({id_value: '445566'});
+            expect(deletedVal).toMatchObject({
+                id_value: '445566',
+                value: {
+                    library: 'test_linked_lib',
+                    id: '987654'
+                }
+            });
         });
     });
 

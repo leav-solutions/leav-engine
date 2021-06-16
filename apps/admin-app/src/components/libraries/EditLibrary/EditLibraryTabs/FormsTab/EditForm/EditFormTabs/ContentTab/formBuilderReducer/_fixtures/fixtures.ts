@@ -148,6 +148,26 @@ export const formData: GET_FORM_forms_list = {
                 },
                 {
                     ...field2
+                },
+                {
+                    id: '999',
+                    order: 3,
+                    type: FormElementTypes.field,
+                    uiElementType: FieldTypes.LINK,
+                    containerId: defaultContainerId,
+                    settings: [
+                        {
+                            key: 'columns',
+                            value: [
+                                {
+                                    id: 'col1',
+                                    label: {
+                                        fr: 'Ma colonne'
+                                    }
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },

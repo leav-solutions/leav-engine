@@ -6,7 +6,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
-import {getUserDataQuery} from '../../queries/userData/getUserData';
+import {getUserDataQuery} from '../../graphQL/queries/userData/getUserData';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import LibrariesList, {FAVORITE_LIBRARIES_KEY} from './LibrariesList';
 

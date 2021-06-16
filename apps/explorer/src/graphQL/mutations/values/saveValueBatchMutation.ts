@@ -18,7 +18,12 @@ export const saveValueBatchQuery = gql`
                 modified_at
                 created_at
                 version
-                attribute
+                attribute {
+                    id
+                    format
+                    type
+                    system
+                }
             }
             errors {
                 type

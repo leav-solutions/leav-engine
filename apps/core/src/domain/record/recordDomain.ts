@@ -7,10 +7,10 @@ import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import moment from 'moment';
 import {join} from 'path';
-import {isTypeOperatorNode} from 'typescript';
+import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
-import {IValue, IValuesOptions} from '_types/value';
+import {IStandardValue, IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
@@ -21,13 +21,13 @@ import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
+    AttributeCondition,
     IRecord,
     IRecordFilterOption,
     IRecordIdentity,
     IRecordIdentityConf,
     IRecordSort,
     Operator,
-    AttributeCondition,
     TreeCondition
 } from '../../_types/record';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
@@ -139,6 +139,7 @@ interface IDeps {
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.infra.library'?: ILibraryRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.utils'?: IUtils;
 }
 
 export default function ({
@@ -149,7 +150,8 @@ export default function ({
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.record': recordPermissionDomain = null,
     'core.infra.library': libraryRepo = null,
-    'core.domain.eventsManager': eventsManager = null
+    'core.domain.eventsManager': eventsManager = null,
+    'core.utils': utils = null
 }: IDeps = {}): IRecordDomain {
     /**
      * Run actions list on a value
@@ -255,8 +257,11 @@ export default function ({
                 ? await _runActionsList(isLinkAttribute, val, attribute, record, library, ctx)
                 : val;
 
-        processedValue.raw_value = val.value;
         processedValue.attribute = attribute.id;
+
+        if (utils.isStandardAttribute(attribute)) {
+            (processedValue as IStandardValue).raw_value = val.value;
+        }
 
         return processedValue;
     };

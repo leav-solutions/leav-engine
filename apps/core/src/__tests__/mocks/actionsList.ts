@@ -47,6 +47,13 @@ export const mockActionAllOutput = {
     name: 'toAnyType'
 };
 
+export const mockActionValidateFormat = {
+    ...mockActionBase,
+    id: 'validateFormat',
+    name: 'validateFormat',
+    output_types: [ActionsListIOTypes.STRING]
+};
+
 export const mockAvailActions: IActionsListFunction[] = [
     mockActionStringOutput,
     mockActionNumberOutput,

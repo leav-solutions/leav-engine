@@ -242,6 +242,7 @@
             "content": "Contenu",
             "withTime": "Saisie de l'heure",
             "direction": "Direction",
+            "columns": "Attributs de l'élément lié à afficher",
             "select_options": {
                 "VERTICAL": "Verticale",
                 "HORIZONTAL": "Horizontale"

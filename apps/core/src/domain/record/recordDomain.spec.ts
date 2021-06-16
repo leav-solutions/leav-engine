@@ -3,20 +3,20 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
+import {IUtils} from 'utils/utils';
+import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IValue} from '_types/value';
+import {IStandardValue, IValue} from '_types/value';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeTypes, AttributeFormats} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import * as Config from '_types/config';
-import {mockLibrary} from '__tests__/mocks/library';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
@@ -31,6 +31,16 @@ describe('RecordDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'recordDomainTest'
+    };
+
+    const mockUtils: Mockify<IUtils> = {
+        isStandardAttribute: jest.fn().mockReturnValue(true),
+        isLinkAttribute: jest.fn().mockReturnValue(false)
+    };
+
+    const mockUtilsLinkAttribute: Mockify<IUtils> = {
+        isStandardAttribute: jest.fn().mockReturnValue(false),
+        isLinkAttribute: jest.fn().mockReturnValue(true)
     };
 
     describe('createRecord', () => {
@@ -350,7 +360,10 @@ describe('RecordDomain', () => {
                     multiple_values: false
                 })
             };
-            const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
+            const recDomain = recordDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             const value = await recDomain.getRecordFieldValue({
                 library: 'test_lib',
@@ -382,7 +395,8 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValDomain as IValueDomain
+                'core.domain.value': mockValDomain as IValueDomain,
+                'core.utils': mockUtils as IUtils
             });
 
             const value = await recDomain.getRecordFieldValue({
@@ -413,7 +427,8 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.actionsList': mockALDomain as IActionsListDomain
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.utils': mockUtils as IUtils
             });
 
             const value = await recDomain.getRecordFieldValue({
@@ -424,7 +439,7 @@ describe('RecordDomain', () => {
             });
 
             expect((value as IValue).value).toBe('1/3/37 00:42');
-            expect((value as IValue).raw_value).toBe(2119477320);
+            expect((value as IStandardValue).raw_value).toBe(2119477320);
         });
 
         test('Return a link value', async () => {
@@ -436,7 +451,10 @@ describe('RecordDomain', () => {
                     multiple_values: false
                 })
             };
-            const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
+            const recDomain = recordDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.utils': mockUtilsLinkAttribute as IUtils
+            });
 
             const value = await recDomain.getRecordFieldValue({
                 library: 'test_lib',
@@ -457,7 +475,10 @@ describe('RecordDomain', () => {
                     multiple_values: false
                 })
             };
-            const recDomain = recordDomain({'core.domain.attribute': mockAttrDomain as IAttributeDomain});
+            const recDomain = recordDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.utils': mockUtils as IUtils
+            });
 
             const value = await recDomain.getRecordFieldValue({
                 library: 'test_lib',

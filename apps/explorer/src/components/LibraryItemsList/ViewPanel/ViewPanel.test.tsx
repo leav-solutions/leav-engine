@@ -39,7 +39,11 @@ describe('ViewPanel', () => {
                                         id: '1',
                                         label: null,
                                         library: {
-                                            id: 'users'
+                                            id: 'users',
+                                            gqlNames: {
+                                                query: 'users',
+                                                type: 'Users'
+                                            }
                                         }
                                     }
                                 },
@@ -69,7 +73,11 @@ describe('ViewPanel', () => {
                                         id: '1',
                                         label: null,
                                         library: {
-                                            id: 'users'
+                                            id: 'users',
+                                            gqlNames: {
+                                                query: 'users',
+                                                type: 'Users'
+                                            }
                                         }
                                     }
                                 },

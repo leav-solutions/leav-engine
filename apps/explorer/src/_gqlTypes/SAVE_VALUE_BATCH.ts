@@ -6,11 +6,18 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueVersionInput, ValueBatchInput} from './globalTypes';
+import {ValueVersionInput, ValueBatchInput, AttributeFormat, AttributeType} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_VALUE_BATCH
 // ====================================================
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_attribute {
+    id: string;
+    format: AttributeFormat | null;
+    type: AttributeType;
+    system: boolean;
+}
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values {
     id_value: string | null;
@@ -19,7 +26,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values {
     modified_at: number | null;
     created_at: number | null;
     version: any | null;
-    attribute: string | null;
+    attribute: SAVE_VALUE_BATCH_saveValueBatch_values_attribute | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_errors {

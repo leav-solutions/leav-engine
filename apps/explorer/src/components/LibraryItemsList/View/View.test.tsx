@@ -23,7 +23,11 @@ describe('View', () => {
                 id: '1',
                 label: {fr: 'test'},
                 library: {
-                    id: 'test_lib'
+                    id: 'test_lib',
+                    gqlNames: {
+                        query: 'test_lib',
+                        type: 'TestLib'
+                    }
                 }
             }
         },

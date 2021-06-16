@@ -1,17 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
+import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValueVersion} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {Errors} from '../../_types/errors';
 import {
     mockAttrAdv,
@@ -25,12 +26,10 @@ import {
 import {mockTree} from '../../__tests__/mocks/tree';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {ILibraryDomain} from '../library/libraryDomain';
+import {IValidateHelper} from '../helpers/validate';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import {IValidateHelper} from '../helpers/validate';
 import valueDomain from './valueDomain';
-import * as Config from '_types/config';
 
 describe('ValueDomain', () => {
     const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
@@ -68,7 +67,8 @@ describe('ValueDomain', () => {
     const mockAttribute = {
         id: 'test_attr',
         actions_list: {
-            saveValue: [{name: 'validate'}]
+            saveValue: [{name: 'validate'}],
+            getValue: [{name: 'toNumber'}]
         },
         type: AttributeTypes.SIMPLE
     };
@@ -121,7 +121,7 @@ describe('ValueDomain', () => {
             });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
-            expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(1);
+            expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(2);
             expect(savedValue).toMatchObject(savedValueData);
         });
 
@@ -1054,16 +1054,19 @@ describe('ValueDomain', () => {
                     {
                         attribute: 'test_attr',
                         value: 'test',
+                        raw_value: 'test',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr2',
                         value: 'test',
+                        raw_value: 'test',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr3',
                         value: 'test',
+                        raw_value: 'test',
                         id_value: null
                     }
                 ],
@@ -1266,8 +1269,11 @@ describe('ValueDomain', () => {
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: jest.fn(),
-                createValue: jest.fn(),
+                updateValue: global.__mockPromise({value: 'test', id_value: 12345}),
+                createValue: global.__mockPromiseMultiple([
+                    {value: 'test', id_value: 12345},
+                    {value: 'test', id_value: null}
+                ]),
                 deleteValue: jest.fn(),
                 getValueById: global.__mockPromise({
                     id_value: '12345'

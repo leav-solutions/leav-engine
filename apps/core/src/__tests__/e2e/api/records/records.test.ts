@@ -258,17 +258,17 @@ describe('Records', () => {
                     library: "${sfTestLibLinkId}",
                     recordId: "${sfLinkedRecord1}",
                     attribute: "${testSimpleAttrId}",
-                    value: {value: "C"}) { value }
+                    value: {value: "C"}) { id_value }
                 v2: saveValue(
                     library: "${sfTestLibLinkId}",
                     recordId: "${sfLinkedRecord2}",
                     attribute: "${testSimpleAttrId}",
-                    value: {value: "A"}) { value }
+                    value: {value: "A"}) { id_value }
                 v3: saveValue(
                     library: "${sfTestLibLinkId}",
                     recordId: "${sfLinkedRecord3}",
                     attribute: "${testSimpleAttrId}",
-                    value: {value: "B"}) { value }
+                    value: {value: "B"}) { id_value }
             }`);
 
             // Save values on tree records
@@ -277,17 +277,17 @@ describe('Records', () => {
                     library: "${sfTestLibTreeId}",
                     recordId: "${sfTreeRecord1}",
                     attribute: "${testSimpleAttrId}",
-                    value: {value: "C"}) { value }
+                    value: {value: "C"}) { id_value }
                 v2: saveValue(
                     library: "${sfTestLibTreeId}",
                     recordId: "${sfTreeRecord2}",
                     attribute: "${testSimpleAttrId}",
-                    value: {value: "A"}) { value }
+                    value: {value: "A"}) { id_value }
                 v3: saveValue(
                     library: "${sfTestLibTreeId}",
                     recordId: "${sfTreeRecord3}",
                     attribute: "${testSimpleAttrId}",
-                    value: {value: "B"}) { value }
+                    value: {value: "B"}) { id_value }
             }`);
 
             // Add element to tree
@@ -317,17 +317,17 @@ describe('Records', () => {
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord1}",
                         attribute: "${testSimpleAttrId}",
-                        value: {value: "C"}) { value }
+                        value: {value: "C"}) { id_value }
                     v2: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord2}",
                         attribute: "${testSimpleAttrId}",
-                        value: {value: "A"}) { value }
+                        value: {value: "A"}) { id_value }
                     v3: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord3}",
                         attribute: "${testSimpleAttrId}",
-                        value: {value: "B"}) { value }
+                        value: {value: "B"}) { id_value }
                   }`);
             });
 
@@ -369,17 +369,17 @@ describe('Records', () => {
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord1}",
                         attribute: "${testSimpleExtAttrId}",
-                        value: {value: "{\\"name\\": \\"C\\"}"}) { value }
+                        value: {value: "{\\"name\\": \\"C\\"}"}) { id_value }
                     v2: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord2}",
                         attribute: "${testSimpleExtAttrId}",
-                        value: {value: "{\\"name\\": \\"A\\"}"}) { value }
+                        value: {value: "{\\"name\\": \\"A\\"}"}) { id_value }
                     v3: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord3}",
                         attribute: "${testSimpleExtAttrId}",
-                        value: {value: "{\\"name\\": \\"B\\"}"}) { value }
+                        value: {value: "{\\"name\\": \\"B\\"}"}) { id_value }
                   }`);
             });
 
@@ -424,17 +424,17 @@ describe('Records', () => {
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord1}",
                         attribute: "${testSimpleLinkAttrId}",
-                        value: {value: "${sfLinkedRecord1}"}) { value }
+                        value: {value: "${sfLinkedRecord1}"}) { id_value }
                     v2: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord2}",
                         attribute: "${testSimpleLinkAttrId}",
-                        value: {value: "${sfLinkedRecord2}"}) { value }
+                        value: {value: "${sfLinkedRecord2}"}) { id_value }
                     v3: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord3}",
                         attribute: "${testSimpleLinkAttrId}",
-                        value: {value: "${sfLinkedRecord3}"}) { value }
+                        value: {value: "${sfLinkedRecord3}"}) { id_value }
                   }`);
             });
 
@@ -476,17 +476,17 @@ describe('Records', () => {
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord1}",
                         attribute: "${testAdvAttrId}",
-                        value: {value: "C"}) { value }
+                        value: {value: "C"}) { id_value }
                     v2: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord2}",
                         attribute: "${testAdvAttrId}",
-                        value: {value: "A"}) { value }
+                        value: {value: "A"}) { id_value }
                     v3: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord3}",
                         attribute: "${testAdvAttrId}",
-                        value: {value: "B"}) { value }
+                        value: {value: "B"}) { id_value }
                   }`);
             });
 
@@ -528,17 +528,17 @@ describe('Records', () => {
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord1}",
                         attribute: "${testAdvLinkAttrId}",
-                        value: {value: "${sfLinkedRecord1}"}) { value }
+                        value: {value: "${sfLinkedRecord1}"}) { id_value }
                     v2: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord2}",
                         attribute: "${testAdvLinkAttrId}",
-                        value: {value: "${sfLinkedRecord2}"}) { value }
+                        value: {value: "${sfLinkedRecord2}"}) { id_value }
                     v3: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord3}",
                         attribute: "${testAdvLinkAttrId}",
-                        value: {value: "${sfLinkedRecord3}"}) { value }
+                        value: {value: "${sfLinkedRecord3}"}) { id_value }
                   }`);
             });
 
@@ -581,17 +581,17 @@ describe('Records', () => {
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord1}",
                         attribute: "${testTreeAttrId}",
-                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord1}"}) { value }
+                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord1}"}) { id_value }
                     v2: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord2}",
                         attribute: "${testTreeAttrId}",
-                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord2}"}) { value }
+                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord2}"}) { id_value }
                     v3: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord3}",
                         attribute: "${testTreeAttrId}",
-                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord3}"}) { value }
+                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord3}"}) { id_value }
                   }`);
             });
 

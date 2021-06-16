@@ -48,6 +48,7 @@ export const getTreeAttributesQuery = gql`
                         label
                         gqlNames {
                             type
+                            type
                         }
                         attributes {
                             id

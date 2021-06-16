@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AttributeTreeRepo createValue Should create a new advanced link value 1`] = `
+exports[`AttributeTreeRepo createValue Should create a new advanced tree value 1`] = `
 "
                     INSERT @value0
                         IN @@value1
                     RETURN NEW"
 `;
 
-exports[`AttributeTreeRepo createValue Should create a new advanced link value 2`] = `
+exports[`AttributeTreeRepo createValue Should create a new advanced tree value 2`] = `
 Object {
   "@value1": "core_edge_values_links",
   "value0": Object {

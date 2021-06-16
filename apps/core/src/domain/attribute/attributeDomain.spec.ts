@@ -362,7 +362,7 @@ describe('attributeDomain', () => {
             expect(updatedLib).toMatchObject({id: 'test', system: false});
         });
 
-        test('Should read data from DB for fields not specified in save', async function () {
+        test.only('Should read data from DB for fields not specified in save', async function () {
             const attrData = {...mockAttrAdvVersionable};
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {
@@ -384,7 +384,7 @@ describe('attributeDomain', () => {
 
             attrDomain.getAttributes = global.__mockPromise([attrData]);
 
-            const updatedAttr = await attrDomain.saveAttribute({
+            await attrDomain.saveAttribute({
                 attrData: {
                     id: mockAttrAdvVersionable.id,
                     type: AttributeTypes.ADVANCED,
@@ -394,7 +394,7 @@ describe('attributeDomain', () => {
                 ctx
             });
 
-            expect(mockAttrRepo.updateAttribute).toBeCalledWith({
+            expect(mockAttrRepo.updateAttribute.mock.calls[0][0]).toMatchObject({
                 attrData: {
                     _key: '',
                     id: 'advanced_attribute',
@@ -403,18 +403,7 @@ describe('attributeDomain', () => {
                         en: 'My Attribute'
                     },
                     type: 'advanced',
-                    format: 'numeric',
-                    multiple_values: false,
-                    system: false,
-                    linked_library: null,
-                    linked_tree: null,
-                    embedded_fields: null,
-                    actions_list: null,
-                    permissions_conf: null,
-                    versions_conf: null,
-                    values_list: {
-                        enable: false
-                    }
+                    format: 'numeric'
                 },
                 ctx
             });
@@ -778,6 +767,7 @@ describe('attributeDomain', () => {
                 const attrDomain = attributeDomain({
                     'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.actionsList': mockALDomain as IActionsListDomain,
                     'core.utils': mockUtils as IUtils,
                     config: mockConf
                 });

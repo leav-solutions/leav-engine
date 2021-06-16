@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DragObjectWithType} from 'react-dnd';
+import {GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 import {FormElementTypes} from '../../../../../../../../_gqlTypes/globalTypes';
 import {IKeyValue} from '../../../../../../../../_types/shared';
 
@@ -19,7 +20,8 @@ export enum FieldTypes {
     DATE = 'date',
     CHECKBOX = 'checkbox',
     ENCRYPTED = 'encrypted',
-    DROPDOWN = 'dropdown'
+    DROPDOWN = 'dropdown',
+    LINK = 'link'
 }
 
 export enum DraggableElementTypes {
@@ -46,6 +48,7 @@ export interface IFormElement {
 export enum FormElementSettingsInputTypes {
     NONE = 'NONE',
     ATTRIBUTE_SELECTION = 'ATTRIBUTE_SELECTION',
+    ATTRIBUTE_SELECTION_MULTIPLE = 'ATTRIBUTE_SELECTION_MULTIPLE',
     INPUT = 'INPUT',
     CHECKBOX = 'CHECKBOX',
     RTE = 'RTE',
@@ -55,6 +58,7 @@ export enum FormElementSettingsInputTypes {
 export interface IFormElementSettings {
     name: string;
     inputType: FormElementSettingsInputTypes;
+    getInputSettings?: (attributeProps: GET_ATTRIBUTES_attributes_list) => IKeyValue<any>;
     options?: string[];
 }
 
@@ -90,3 +94,10 @@ export interface IFormBuilderDragObject<T extends IUIElement | IFormElement> ext
 }
 
 export type SettingsOnChangeFunc = (name: string, value: string | boolean) => void;
+
+export interface ISettingsFieldCommonProps {
+    onChange: SettingsOnChangeFunc;
+    fieldName: string;
+}
+
+export type SettingsFieldSpecificProps<FieldPropsType> = Omit<FieldPropsType, keyof ISettingsFieldCommonProps>;
