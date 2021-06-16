@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
@@ -74,13 +75,18 @@ describe('AttributeTreeRepo', () => {
             }
         })
     };
+
+    const mockUtils: Mockify<IUtils> = {
+        decomposeValueEdgeDestination: jest.fn().mockReturnValue({library: 'categories', id: '123456'})
+    };
+
     const ctx: IQueryInfos = {
         userId: '0',
         queryId: 'treeRepoTest'
     };
 
     describe('createValue', () => {
-        test('Should create a new advanced link value', async function () {
+        test('Should create a new advanced tree value', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -88,7 +94,8 @@ describe('AttributeTreeRepo', () => {
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.utils': mockUtils as IUtils
             });
 
             const createdVal = await attrRepo.createValue({
@@ -117,7 +124,12 @@ describe('AttributeTreeRepo', () => {
 
             expect(createdVal).toMatchObject({
                 id_value: '978654321',
-                value: 'categories/123456',
+                value: {
+                    record: {
+                        id: '123456',
+                        library: 'categories'
+                    }
+                },
                 attribute: 'test_tree_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -143,7 +155,8 @@ describe('AttributeTreeRepo', () => {
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.utils': mockUtils as IUtils
             });
 
             const savedVal = await attrRepo.updateValue({
@@ -170,7 +183,15 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
-            expect(savedVal).toMatchObject(valueData);
+            expect(savedVal).toMatchObject({
+                ...valueData,
+                value: {
+                    record: {
+                        id: '123456',
+                        library: 'categories'
+                    }
+                }
+            });
         });
     });
 
@@ -181,7 +202,7 @@ describe('AttributeTreeRepo', () => {
                 _rev: '_WSywvyC--_',
                 _from: 'test_lib/12345',
                 _to: 'categories/123456',
-                _key: '978654321'
+                _key: '445566'
             };
 
             const mockDbEdgeCollec = {
@@ -194,7 +215,10 @@ describe('AttributeTreeRepo', () => {
 
             const mockDbServ = {db: (mockDb as unknown) as Database};
 
-            const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.utils': mockUtils as IUtils
+            });
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
@@ -212,7 +236,15 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
             expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: '445566'});
 
-            expect(deletedVal).toMatchObject({id_value: '445566'});
+            expect(deletedVal).toMatchObject({
+                id_value: '445566',
+                value: {
+                    record: {
+                        id: '123456',
+                        library: 'categories'
+                    }
+                }
+            });
         });
     });
 
@@ -269,10 +301,6 @@ describe('AttributeTreeRepo', () => {
                 recordId: '987654',
                 attribute: mockAttribute,
                 valueId: '112233',
-                // value: {
-                //     id_value: '112233',
-                //     value: 'categories/123456'
-                // },
                 ctx
             });
 
@@ -283,9 +311,11 @@ describe('AttributeTreeRepo', () => {
             expect(value).toMatchObject({
                 id_value: '112233',
                 value: {
-                    id: 123456,
-                    created_at: 88888,
-                    modified_at: 88888
+                    record: {
+                        id: 123456,
+                        created_at: 88888,
+                        modified_at: 88888
+                    }
                 },
                 modified_by: '0',
                 created_by: '0',

@@ -6,10 +6,13 @@ import {FormElement} from 'components/RecordEdition/EditRecord/_types';
 import React from 'react';
 import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
-import {mockFormAttribute} from './attribute';
+import {mockAttributeLink, mockFormAttribute} from './attribute';
 
 export const mockForm: GET_FORM_forms_list = {
     id: 'edition_form',
+    library: {
+        id: 'test_lib'
+    },
     dependencyAttributes: [],
     elements: [
         {
@@ -62,6 +65,17 @@ export const mockFormElementDate: FormElement<{}> = {
     uiElement: () => <div>{FormFieldTypes.DATE}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.DATE
+};
+
+export const mockFormElementLink: FormElement<{}> = {
+    ...formElementBase,
+    id: 'link_element',
+    containerId: '__root',
+    settings: {attribute: 'test_attribute'},
+    uiElement: () => <div>{FormFieldTypes.LINK}</div>,
+    type: FormElementTypes.field,
+    uiElementType: FormFieldTypes.LINK,
+    attribute: {...mockAttributeLink, system: false}
 };
 
 export const mockFormElementTextBlock: FormElement<{}> = {

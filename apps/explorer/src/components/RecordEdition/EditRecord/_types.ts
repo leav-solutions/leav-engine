@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, FormFieldTypes, FormUIElementTypes, ICommonFieldsSettings} from '@leav/types';
-import {IRecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {GET_FORM_forms_list_elements_elements} from '_gqlTypes/GET_FORM';
 import {SAVE_VALUE_saveValue} from '_gqlTypes/SAVE_VALUE';
 import {Override} from '_types/Override';
@@ -42,7 +42,7 @@ export interface IFormElementsByContainer {
 export interface IFormElementProps<SettingsType> {
     record: IRecordIdentityWhoAmI;
     element: FormElement<SettingsType>;
-    recordValues: Record<string, IRecordProperty[]>;
+    recordValues: Record<string, RecordProperty[]>;
 }
 
 export type FormElement<SettingsType> = Override<

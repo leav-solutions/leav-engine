@@ -41,7 +41,8 @@ describe('ViewPanel', () => {
                                         library: {
                                             id: 'users',
                                             gqlNames: {
-                                                query: 'users'
+                                                query: 'users',
+                                                type: 'Users'
                                             }
                                         }
                                     }
@@ -74,7 +75,8 @@ describe('ViewPanel', () => {
                                         library: {
                                             id: 'users',
                                             gqlNames: {
-                                                query: 'users'
+                                                query: 'users',
+                                                type: 'Users'
                                             }
                                         }
                                     }

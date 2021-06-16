@@ -2,14 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {FormUIElementTypes, ICommonFieldsSettings} from '@leav/types';
+import {FormUIElementTypes, IFormLinkFieldSettings} from '@leav/types';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {
     getRecordPropertiesQuery,
     IGetRecordProperties,
-    IGetRecordPropertiesVariables
+    IGetRecordPropertiesVariables,
+    IRecordPropertiesField
 } from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
+import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute} from '_gqlTypes/GET_FORM';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import EditRecordSkeleton from '../../EditRecordSkeleton';
@@ -34,17 +36,30 @@ function RootContainer({record}: IRootContainerProps): JSX.Element {
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 
-    const allAttributes: string[] = Object.keys(formElements).reduce(
-        (attributes, containerKey) => [
-            ...attributes,
+    const allFields = Object.keys(formElements).reduce(
+        (fields, containerKey): IRecordPropertiesField[] => [
+            ...fields,
             ...formElements[containerKey]
                 .filter(elem => elem.type === FormElementTypes.field)
-                .map(elem => (elem.settings as ICommonFieldsSettings).attribute)
+                .map(
+                    (elem): IRecordPropertiesField => {
+                        return {
+                            attributeId: elem.attribute.id,
+                            linkedAttributes: Array.isArray((elem.settings as IFormLinkFieldSettings).columns)
+                                ? (elem.settings as IFormLinkFieldSettings).columns.map(c => c.id)
+                                : [],
+                            linkedLibrary:
+                                (elem.attribute as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute)
+                                    .linked_library ?? null
+                        };
+                    }
+                )
         ],
         []
     );
 
-    const recordPropertiesQuery = getRecordPropertiesQuery(record.library.gqlNames.query, allAttributes);
+    const recordPropertiesQuery = getRecordPropertiesQuery(record.library.gqlNames.query, allFields);
+
     const {loading, error, data} = useQuery<IGetRecordProperties, IGetRecordPropertiesVariables>(
         recordPropertiesQuery,
         {variables: {recordId: record.id}}

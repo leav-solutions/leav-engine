@@ -4,8 +4,8 @@
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
 import {IActionsListConfig} from '_types/actionsList';
-import {IAttribute} from '_types/attribute';
 import {LibraryBehavior} from '_types/library';
+import {AttributeTypes, IAttribute} from '../_types/attribute';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 
@@ -53,6 +53,19 @@ export interface IUtils {
     timestampToDate(t: number | string): Date;
 
     dateToTimestamp(d: Date): number;
+
+    isStandardAttribute(attribute: IAttribute): boolean;
+
+    isLinkAttribute(attribute: IAttribute): boolean;
+
+    isTreeAttribute(attribute: IAttribute): boolean;
+
+    /**
+     * Extract library and record ID from the "_to" field
+     *
+     * @param value Edge destination in the form of "<library>/<record_id>"
+     */
+    decomposeValueEdgeDestination(value: string): {library: string; id: string};
 }
 
 export default function (): IUtils {
@@ -127,6 +140,20 @@ export default function (): IUtils {
         },
         dateToTimestamp(d: Date): number {
             return moment(d).unix();
+        },
+        isStandardAttribute(attribute: IAttribute): boolean {
+            return attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.ADVANCED;
+        },
+        isLinkAttribute(attribute: IAttribute): boolean {
+            return attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
+        },
+        isTreeAttribute(attribute: IAttribute): boolean {
+            return attribute.type === AttributeTypes.TREE;
+        },
+        decomposeValueEdgeDestination(value: string): {library: string; id: string} {
+            const [library, id]: [string, string] = value.split('/') as [string, string];
+
+            return {library, id};
         }
     };
 }

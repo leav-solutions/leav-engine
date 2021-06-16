@@ -22,6 +22,7 @@ const handleType = (field: IField): string => {
                         label
                         gqlNames {
                             query
+                            type
                         }
                     }
                     preview {
@@ -44,6 +45,7 @@ const handleType = (field: IField): string => {
                             label
                             gqlNames {
                                 query
+                                type
                             }
                         }
                         preview {
@@ -140,6 +142,7 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
                             label
                             gqlNames {
                                 query
+                                type
                             }
                         }
                     }

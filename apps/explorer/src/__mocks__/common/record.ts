@@ -10,7 +10,8 @@ export const mockRecordWhoAmI: IRecordIdentityWhoAmI = {
         id: 'record_lib',
         label: {fr: 'Test Lib'},
         gqlNames: {
-            query: 'record_libs'
+            query: 'record_libs',
+            type: 'RecordLib'
         }
     },
     preview: {

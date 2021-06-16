@@ -12,13 +12,62 @@ import {ValueInput} from './globalTypes';
 // GraphQL mutation operation: SAVE_VALUE
 // ====================================================
 
-export interface SAVE_VALUE_saveValue {
+export interface SAVE_VALUE_saveValue_TreeValue {
     id_value: string | null;
-    value: any | null;
-    raw_value: any | null;
     modified_at: number | null;
     created_at: number | null;
 }
+
+export interface SAVE_VALUE_saveValue_Value {
+    id_value: string | null;
+    modified_at: number | null;
+    created_at: number | null;
+    value: any | null;
+    raw_value: any | null;
+}
+
+export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_library_gqlNames {
+    query: string;
+    type: string;
+}
+
+export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_library {
+    id: string;
+    label: any | null;
+    gqlNames: SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_library_gqlNames;
+}
+
+export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    big: string | null;
+    pages: string | null;
+}
+
+export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI {
+    id: string;
+    label: string | null;
+    color: string | null;
+    library: SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_library;
+    preview: SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_preview | null;
+}
+
+export interface SAVE_VALUE_saveValue_LinkValue_linkValue {
+    id: string;
+    whoAmI: SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI;
+}
+
+export interface SAVE_VALUE_saveValue_LinkValue {
+    id_value: string | null;
+    modified_at: number | null;
+    created_at: number | null;
+    linkValue: SAVE_VALUE_saveValue_LinkValue_linkValue;
+}
+
+export type SAVE_VALUE_saveValue =
+    | SAVE_VALUE_saveValue_TreeValue
+    | SAVE_VALUE_saveValue_Value
+    | SAVE_VALUE_saveValue_LinkValue;
 
 export interface SAVE_VALUE {
     /**

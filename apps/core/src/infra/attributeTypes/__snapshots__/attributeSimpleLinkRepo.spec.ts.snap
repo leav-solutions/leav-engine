@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AttributeIndexRepo filterQueryPart Should return simple link filter 1`] = `
+exports[`AttributeSimpleLinkRepo filterQueryPart Should return simple link filter 1`] = `
 Object {
   "_source": [Function],
   "bindVars": Object {
@@ -17,12 +17,12 @@ Object {
 }
 `;
 
-exports[`AttributeIndexRepo getValues Should return values for simple link attribute 1`] = `
+exports[`AttributeSimpleLinkRepo getValues Should return values for simple link attribute 1`] = `
 Object {
   "_source": [Function],
   "bindVars": Object {
     "@value0": "test_lib",
-    "@value2": undefined,
+    "@value2": "test_linked_lib",
     "value1": "123456",
     "value3": "test_simple_link_attr",
   },
@@ -36,9 +36,9 @@ Object {
 }
 `;
 
-exports[`AttributeIndexRepo getValues Should return values for simple link attribute 2`] = `undefined`;
+exports[`AttributeSimpleLinkRepo getValues Should return values for simple link attribute 2`] = `undefined`;
 
-exports[`AttributeIndexRepo sortQueryPart Should return simple link sort 1`] = `
+exports[`AttributeSimpleLinkRepo sortQueryPart Should return simple link sort 1`] = `
 Object {
   "_source": [Function],
   "bindVars": Object {

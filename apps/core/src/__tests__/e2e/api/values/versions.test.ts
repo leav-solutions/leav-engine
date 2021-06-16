@@ -88,8 +88,12 @@ describe('Versions', () => {
                     }
                 ) {
                     id_value
-                    value
                     version
+
+                    ... on Value {
+                        value
+                    }
+
                 }
               }`);
 

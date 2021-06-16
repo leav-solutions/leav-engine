@@ -49,6 +49,7 @@ const recordField = `
                 id
                 label
                 gqlNames {
+                    type
                     query
                 }
             }

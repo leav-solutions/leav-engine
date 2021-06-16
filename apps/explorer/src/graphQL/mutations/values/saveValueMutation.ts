@@ -7,10 +7,38 @@ export const saveValueMutation = gql`
     mutation SAVE_VALUE($library: ID!, $recordId: ID!, $attribute: ID!, $value: ValueInput!) {
         saveValue(library: $library, recordId: $recordId, attribute: $attribute, value: $value) {
             id_value
-            value
-            raw_value
             modified_at
             created_at
+
+            ... on Value {
+                value
+                raw_value
+            }
+
+            ... on LinkValue {
+                linkValue: value {
+                    id
+                    whoAmI {
+                        id
+                        label
+                        color
+                        library {
+                            id
+                            label
+                            gqlNames {
+                                query
+                                type
+                            }
+                        }
+                        preview {
+                            small
+                            medium
+                            big
+                            pages
+                        }
+                    }
+                }
+            }
         }
     }
 `;

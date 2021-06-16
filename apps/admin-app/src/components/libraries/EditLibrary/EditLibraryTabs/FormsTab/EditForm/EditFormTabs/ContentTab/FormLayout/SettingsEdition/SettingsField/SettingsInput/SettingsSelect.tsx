@@ -4,21 +4,20 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {DropdownItemProps, Select} from 'semantic-ui-react';
-import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {IFormElementSettings, SettingsOnChangeFunc, TabsDirection} from '../../../_types';
+import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
+import {ISettingsFieldCommonProps, TabsDirection} from '../../../../_types';
 
-interface ISettingsSelectProps {
-    onChange: SettingsOnChangeFunc;
-    settingsField: IFormElementSettings;
+export interface ISettingsFieldSelectProps extends ISettingsFieldCommonProps {
+    options: string[];
 }
 
-function SettingsSelect({onChange, settingsField}: ISettingsSelectProps): JSX.Element {
+function SettingsSelect({onChange, fieldName, options}: ISettingsFieldSelectProps): JSX.Element {
     const {t} = useTranslation();
     const {
         state: {elementInSettings}
     } = useFormBuilderReducer();
 
-    const options: DropdownItemProps[] = settingsField.options.map(optionValue => ({
+    const dropdownOptions: DropdownItemProps[] = options.map(optionValue => ({
         key: optionValue,
         value: optionValue,
         text: t(`forms.settings.select_options.${optionValue}`)
@@ -28,9 +27,9 @@ function SettingsSelect({onChange, settingsField}: ISettingsSelectProps): JSX.El
 
     return (
         <Select
-            options={options}
-            name={settingsField.name}
-            value={String(elementInSettings?.settings?.[settingsField.name] || TabsDirection.HORIZONTAL)}
+            options={dropdownOptions}
+            name={fieldName}
+            value={String(elementInSettings?.settings?.[fieldName] || TabsDirection.HORIZONTAL)}
             onChange={_handleChange}
         />
     );

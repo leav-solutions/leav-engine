@@ -70,7 +70,7 @@ describe('LibraryItemsList', () => {
         ]
     };
 
-    test.only('should call Child', async () => {
+    test('should call Child', async () => {
         await act(async () => {
             const mocks = [
                 {

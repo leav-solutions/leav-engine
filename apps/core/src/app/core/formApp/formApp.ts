@@ -252,6 +252,27 @@ export default function ({
                             }
 
                             return attributeDomain.getAttributeProperties({id: attributeId, ctx});
+                        },
+                        settings: (formElement: IFormElementForGraphQL, _, ctx: IQueryInfos) => {
+                            // Return attributes ID and label for columns
+                            return formElement.settings.map(async s => {
+                                if (s.key !== 'columns') {
+                                    return s;
+                                }
+
+                                return {
+                                    ...s,
+                                    value: await Promise.all(
+                                        s.value.map(async columnId => {
+                                            const columnAttributeProps = await attributeDomain.getAttributeProperties({
+                                                id: columnId,
+                                                ctx
+                                            });
+                                            return {id: columnAttributeProps.id, label: columnAttributeProps.label};
+                                        })
+                                    )
+                                };
+                            });
                         }
                     }
                 }

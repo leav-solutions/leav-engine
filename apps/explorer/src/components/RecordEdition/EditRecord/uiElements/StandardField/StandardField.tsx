@@ -4,6 +4,7 @@
 import {PlusOutlined} from '@ant-design/icons';
 import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/types';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React, {useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -35,7 +36,7 @@ const AddValueWrapper = styled.div`
 function StandardField({element, recordValues, record}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
 
-    const fieldValues = recordValues[element.settings.attribute];
+    const fieldValues = recordValues[element.settings.attribute] as IRecordPropertyStandard[];
     const isMultipleValues = element.attribute.multiple_values;
     const {attribute} = element;
 

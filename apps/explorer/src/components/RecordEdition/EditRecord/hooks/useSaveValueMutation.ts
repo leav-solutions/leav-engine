@@ -8,13 +8,28 @@ import {useTranslation} from 'react-i18next';
 import {SAVE_VALUE, SAVE_VALUEVariables} from '_gqlTypes/SAVE_VALUE';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import {APICallStatus, FieldSubmitFunc} from '../_types';
+import getPropertyCacheFieldName from './helpers/getPropertyCacheFieldName';
 
 export interface ISaveValueHook {
     saveValue: FieldSubmitFunc;
 }
 
 export default function useSaveValueMutation(record: IRecordIdentityWhoAmI, attribute: string): ISaveValueHook {
-    const [executeSaveValue] = useMutation<SAVE_VALUE, SAVE_VALUEVariables>(saveValueMutation);
+    const [executeSaveValue] = useMutation<SAVE_VALUE, SAVE_VALUEVariables>(saveValueMutation, {
+        update: (cache, {data: {saveValue}}) => {
+            const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
+            cache.extract();
+
+            cache.modify({
+                id: cache.identify(recordWithTypename),
+                fields: {
+                    [getPropertyCacheFieldName(attribute)]: cacheValue => {
+                        return [...cacheValue, saveValue];
+                    }
+                }
+            });
+        }
+    });
     const {t} = useTranslation();
 
     return {

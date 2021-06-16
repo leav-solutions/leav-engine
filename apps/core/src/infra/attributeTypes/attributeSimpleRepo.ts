@@ -5,7 +5,7 @@ import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecordSort} from '_types/record';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {IValue} from '../../_types/value';
+import {IStandardValue, IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
@@ -15,7 +15,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
 }
 
-export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IAttributeTypeRepo {
+export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IAttributeTypeRepo {
     async function _saveValue(
         library: string,
         recordId: string,
@@ -58,16 +58,16 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
     }
 
     return {
-        async createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async createValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             return _saveValue(library, recordId, attribute, value, ctx);
         },
-        async updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async updateValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             return _saveValue(library, recordId, attribute, value, ctx);
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             return _saveValue(library, recordId, attribute, {...value, value: null}, ctx);
         },
-        async getValues({library, recordId, attribute, ctx}): Promise<IValue[]> {
+        async getValues({library, recordId, attribute, ctx}): Promise<IStandardValue[]> {
             const query = aql`
                 FOR r IN ${dbService.db.collection(library)}
                     FILTER r._key == ${String(recordId)}
@@ -84,7 +84,7 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
                 }
             ];
         },
-        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
+        async getValueById(): Promise<IStandardValue> {
             return null;
         },
         filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery {

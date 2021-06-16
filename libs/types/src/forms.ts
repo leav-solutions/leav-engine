@@ -15,7 +15,8 @@ export enum FormFieldTypes {
     DATE = 'date',
     CHECKBOX = 'checkbox',
     ENCRYPTED = 'encrypted',
-    DROPDOWN = 'dropdown'
+    DROPDOWN = 'dropdown',
+    LINK = 'link'
 }
 
 export enum TabsDirection {
@@ -48,4 +49,11 @@ export interface IFormTextBlockSettings {
 
 export interface IFormDateFieldSettings extends ICommonFieldsSettings {
     withTime: boolean;
+}
+
+export interface IFormLinkFieldSettings extends ICommonFieldsSettings {
+    columns: Array<{
+        id: string;
+        label: Record<string, string>;
+    }>;
 }

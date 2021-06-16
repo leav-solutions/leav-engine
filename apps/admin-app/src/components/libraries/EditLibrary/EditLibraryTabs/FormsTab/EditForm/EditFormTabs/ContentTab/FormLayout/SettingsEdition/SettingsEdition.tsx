@@ -7,12 +7,7 @@ import {Button, Form, Icon, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {FormBuilderActionTypes} from '../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
-import {FormElementSettingsInputTypes, SettingsOnChangeFunc} from '../../_types';
-import SettingsAttribute from './SettingsInput/SettingsAttribute';
-import SettingsCheckbox from './SettingsInput/SettingsCheckbox';
-import SettingsRTE from './SettingsInput/SettingsRTE';
-import SettingsSelect from './SettingsInput/SettingsSelect';
-import SettingsTextInput from './SettingsInput/SettingsTextInput';
+import SettingsField from './SettingsField';
 
 const SettingsWrapper = styled.div`
     padding: 1.5em;
@@ -21,22 +16,13 @@ const SettingsWrapper = styled.div`
 
 function SettingsEdition(): JSX.Element {
     const {
-        state: {elementInSettings, openSettings},
+        state: {elementInSettings, openSettings, library},
         dispatch
     } = useFormBuilderReducer();
 
     const {t} = useTranslation();
 
     const _closeSettings = useCallback(() => dispatch({type: FormBuilderActionTypes.CLOSE_SETTINGS}), [dispatch]);
-
-    const _handleChange: SettingsOnChangeFunc = (name, value) => {
-        dispatch({
-            type: FormBuilderActionTypes.SAVE_SETTINGS,
-            settings: {
-                [name]: value
-            }
-        });
-    };
 
     return (
         <Modal
@@ -56,40 +42,9 @@ function SettingsEdition(): JSX.Element {
                 {elementInSettings && (
                     <SettingsWrapper>
                         <Form name="settings-edition">
-                            {(elementInSettings.uiElement?.settings || []).map(settingsField => {
-                                if (settingsField.inputType === FormElementSettingsInputTypes.NONE) {
-                                    return null;
-                                }
-
-                                let comp: JSX.Element;
-                                const compProps = {
-                                    onChange: _handleChange,
-                                    settingsField
-                                };
-                                switch (settingsField.inputType) {
-                                    case FormElementSettingsInputTypes.ATTRIBUTE_SELECTION:
-                                        comp = <SettingsAttribute {...compProps} />;
-                                        break;
-                                    case FormElementSettingsInputTypes.CHECKBOX:
-                                        comp = <SettingsCheckbox {...compProps} />;
-                                        break;
-                                    case FormElementSettingsInputTypes.RTE:
-                                        comp = <SettingsRTE {...compProps} />;
-                                        break;
-                                    case FormElementSettingsInputTypes.SELECT:
-                                        comp = <SettingsSelect {...compProps} />;
-                                        break;
-                                    default:
-                                        comp = <SettingsTextInput {...compProps} />;
-                                }
-
-                                return (
-                                    <Form.Field key={settingsField.name}>
-                                        <label>{t(`forms.settings.${settingsField.name}`)}</label>
-                                        {comp}
-                                    </Form.Field>
-                                );
-                            })}
+                            {(elementInSettings.uiElement?.settings || []).map(settingsField => (
+                                <SettingsField key={settingsField.name} settingsField={settingsField} />
+                            ))}
                         </Form>
                     </SettingsWrapper>
                 )}

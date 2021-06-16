@@ -3,15 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {Checkbox} from 'semantic-ui-react';
-import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {IFormElementSettings, SettingsOnChangeFunc} from '../../../_types';
+import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
+import {ISettingsFieldCommonProps} from '../../../../_types';
 
-interface ISettingsCheckboxProps {
-    onChange: SettingsOnChangeFunc;
-    settingsField: IFormElementSettings;
-}
-
-function SettingsCheckbox({onChange, settingsField}: ISettingsCheckboxProps): JSX.Element {
+function SettingsCheckbox({onChange, fieldName}: ISettingsFieldCommonProps): JSX.Element {
     const {
         state: {elementInSettings}
     } = useFormBuilderReducer();
@@ -21,9 +16,9 @@ function SettingsCheckbox({onChange, settingsField}: ISettingsCheckboxProps): JS
     return (
         <Checkbox
             toggle
-            name={settingsField.name}
+            name={fieldName}
             onChange={_handleChange}
-            checked={!!elementInSettings?.settings?.[settingsField.name]}
+            checked={!!elementInSettings?.settings?.[fieldName]}
         />
     );
 }

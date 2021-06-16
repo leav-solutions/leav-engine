@@ -6,6 +6,7 @@ import {IFormElementProps} from '../_types';
 import Container from './Container';
 import FormDivider from './FormDivider';
 import FormTabs from './FormTabs';
+import LinkField from './LinkField';
 import StandardField from './StandardField';
 import TextBlock from './TextBlock';
 
@@ -17,6 +18,7 @@ export const formComponents: {
     [FormFieldTypes.DATE]: StandardField,
     [FormFieldTypes.CHECKBOX]: StandardField,
     [FormFieldTypes.ENCRYPTED]: StandardField,
+    [FormFieldTypes.LINK]: LinkField,
     [FormUIElementTypes.TABS]: FormTabs,
     [FormUIElementTypes.TEXT_BLOCK]: TextBlock,
     [FormUIElementTypes.DIVIDER]: FormDivider

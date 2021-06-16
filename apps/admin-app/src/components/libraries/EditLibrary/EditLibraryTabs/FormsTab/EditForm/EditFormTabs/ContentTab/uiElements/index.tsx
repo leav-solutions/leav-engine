@@ -2,11 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
+import {GET_ATTRIBUTES_attributes_list, GET_ATTRIBUTES_attributes_list_LinkAttribute} from '_gqlTypes/GET_ATTRIBUTES';
+import {ISettingsAttributeProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsAttribute';
+import {ISettingsFieldSelectProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsSelect';
 import {
     FieldTypes,
     FormElementSettingsInputTypes,
     IFormElementSettings,
     IUIElement,
+    SettingsFieldSpecificProps,
     TabsDirection,
     UIElementTypes
 } from '../_types';
@@ -15,6 +19,7 @@ import DateField from './fields/DateField';
 import DropdownField from './fields/DropdownField';
 import EncryptedField from './fields/EncryptedField';
 import InputField from './fields/InputField';
+import LinkField from './fields/LinkField';
 import Container from './layout/Container';
 import Tabs from './layout/Tabs';
 import TextBlock from './layout/TextBlock';
@@ -62,12 +67,16 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
             {
                 name: 'direction',
                 inputType: FormElementSettingsInputTypes.SELECT,
-                options: [TabsDirection.HORIZONTAL, TabsDirection.VERTICAL]
+                getInputSettings: (): SettingsFieldSpecificProps<ISettingsFieldSelectProps> => ({
+                    options: [TabsDirection.HORIZONTAL, TabsDirection.VERTICAL]
+                })
             }
         ],
         canDrop: () => false
     }
 };
+
+type toto = SettingsFieldSpecificProps<ISettingsFieldSelectProps>;
 
 export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.TEXT_INPUT]: {
@@ -98,6 +107,24 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
         type: FieldTypes.DROPDOWN,
         component: <DropdownField settings={{}} />,
         settings: [...commonFieldSettings],
+        canDrop: () => false
+    },
+    [FieldTypes.LINK]: {
+        type: FieldTypes.LINK,
+        component: <LinkField settings={{}} />,
+        settings: [
+            ...commonFieldSettings,
+            {
+                name: 'columns',
+                inputType: FormElementSettingsInputTypes.ATTRIBUTE_SELECTION_MULTIPLE,
+                getInputSettings: (
+                    attributeProps: GET_ATTRIBUTES_attributes_list
+                ): SettingsFieldSpecificProps<ISettingsAttributeProps> => ({
+                    multiple: true,
+                    library: (attributeProps as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library.id
+                })
+            }
+        ],
         canDrop: () => false
     }
 };

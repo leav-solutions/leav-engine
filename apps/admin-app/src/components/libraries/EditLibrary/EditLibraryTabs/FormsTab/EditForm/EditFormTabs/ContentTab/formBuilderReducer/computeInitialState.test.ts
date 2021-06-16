@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormElementTypes} from '../../../../../../../../../_gqlTypes/globalTypes';
-import {layoutElements} from '../uiElements';
-import {UIElementTypes} from '../_types';
+import {formElements, layoutElements} from '../uiElements';
+import {FieldTypes, UIElementTypes} from '../_types';
 import computeInitialState from './computeInitialState';
 import {defaultContainerId, defaultDepAttribute, defaultDepValue} from './formBuilderReducer';
 import {formData, formElem1, formElem2, formElem3} from './_fixtures/fixtures';
@@ -58,6 +58,14 @@ describe('computeInitialState', () => {
                                 containerId: defaultContainerId,
                                 settings: {},
                                 uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER]
+                            },
+                            {
+                                id: '999',
+                                order: 3,
+                                type: FormElementTypes.field,
+                                containerId: defaultContainerId,
+                                settings: {columns: ['col1']},
+                                uiElement: formElements[FieldTypes.LINK]
                             }
                         ]
                     }
@@ -113,6 +121,15 @@ describe('computeInitialState', () => {
                         containerId: defaultContainerId,
                         settings: {},
                         uiElement: layoutElements[UIElementTypes.FIELDS_CONTAINER],
+                        herited: false
+                    },
+                    {
+                        id: '999',
+                        order: 3,
+                        type: FormElementTypes.field,
+                        containerId: defaultContainerId,
+                        settings: {columns: ['col1']},
+                        uiElement: formElements[FieldTypes.LINK],
                         herited: false
                     }
                 ]

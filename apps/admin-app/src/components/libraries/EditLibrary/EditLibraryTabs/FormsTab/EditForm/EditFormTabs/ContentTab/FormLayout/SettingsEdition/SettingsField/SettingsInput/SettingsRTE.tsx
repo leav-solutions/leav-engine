@@ -5,13 +5,8 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import RichTextEditor from 'react-rte';
 import styled from 'styled-components';
-import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {IFormElementSettings, SettingsOnChangeFunc} from '../../../_types';
-
-interface ISettingsRTEProps {
-    onChange: SettingsOnChangeFunc;
-    settingsField: IFormElementSettings;
-}
+import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
+import {ISettingsFieldCommonProps} from '../../../../_types';
 
 const EditorWrapper = styled.div`
     .rte-editor-toolbar select {
@@ -20,21 +15,18 @@ const EditorWrapper = styled.div`
     }
 `;
 
-function SettingsRTE({settingsField, onChange}: ISettingsRTEProps): JSX.Element {
+function SettingsRTE({fieldName, onChange}: ISettingsFieldCommonProps): JSX.Element {
     const {t} = useTranslation();
     const {
         state: {elementInSettings}
     } = useFormBuilderReducer();
 
     const [editorState, setEditorState] = useState(
-        RichTextEditor.createValueFromString(
-            String(elementInSettings?.settings?.[settingsField.name] ?? ''),
-            'markdown'
-        )
+        RichTextEditor.createValueFromString(String(elementInSettings?.settings?.[fieldName] ?? ''), 'markdown')
     );
 
     const _handleBlur = () => {
-        onChange(settingsField.name, editorState.toString('markdown'));
+        onChange(fieldName, editorState.toString('markdown'));
     };
 
     return (

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IAttribute, AttributeFormats} from '../../_types/attribute';
-import {IValue} from '../../_types/value';
+import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IRecordSort} from '../../_types/record';
+import {ILinkValue, IStandardValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
@@ -33,17 +33,28 @@ export default function ({
             }, [])[0];
     }
 
+    const _buildLinkValue = (savedValue: IStandardValue, attribute: IAttribute): ILinkValue => ({
+        ...savedValue,
+        value: {id: savedValue.value, library: attribute.linked_library}
+    });
+
     return {
-        async createValue(args): Promise<IValue> {
-            return attributeSimpleRepo.createValue(args);
+        async createValue(args): Promise<ILinkValue> {
+            const savedVal = await attributeSimpleRepo.createValue(args);
+
+            return _buildLinkValue(savedVal, args.attribute);
         },
-        async updateValue(args): Promise<IValue> {
-            return attributeSimpleRepo.updateValue(args);
+        async updateValue(args): Promise<ILinkValue> {
+            const savedVal = await attributeSimpleRepo.updateValue(args);
+
+            return _buildLinkValue(savedVal, args.attribute);
         },
-        async deleteValue(args): Promise<IValue> {
-            return attributeSimpleRepo.deleteValue(args);
+        async deleteValue(args): Promise<ILinkValue> {
+            const deletedValue = await attributeSimpleRepo.deleteValue(args);
+
+            return _buildLinkValue(deletedValue, args.attribute);
         },
-        async getValues({library, recordId, attribute, ctx}): Promise<IValue[]> {
+        async getValues({library, recordId, attribute, ctx}): Promise<ILinkValue[]> {
             const libCollec = dbService.db.collection(library);
             const linkedLibCollec = dbService.db.collection(attribute.linked_library);
 
@@ -62,7 +73,7 @@ export default function ({
                 .slice(0, 1)
                 .map(r => ({id_value: null, value: dbUtils.cleanup(r), created_by: null, modified_by: null}));
         },
-        async getValueById(args): Promise<IValue> {
+        async getValueById(): Promise<ILinkValue> {
             return null;
         },
         sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
