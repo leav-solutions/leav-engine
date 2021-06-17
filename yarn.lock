@@ -14083,6 +14083,7 @@ __metadata:
     "@apollo/react-testing": ^3.1.4
     "@leav/types": "workspace:libs/types"
     "@reduxjs/toolkit": 1.5.1
+    "@simbathesailor/use-what-changed": 2.0.0
     "@testing-library/jest-dom": ^4.2.4
     "@testing-library/react": ^9.5.0
     "@testing-library/user-event": 13.0.4
