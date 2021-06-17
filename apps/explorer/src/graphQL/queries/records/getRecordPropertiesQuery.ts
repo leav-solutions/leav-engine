@@ -57,7 +57,7 @@ export interface IRecordPropertiesField {
 const _getFieldLinkedLibraryPart = (field: IRecordPropertiesField): string =>
     field.linkedLibrary
         ? `... on ${field.linkedLibrary.gqlNames.type} {
-            ${field.linkedAttributes ? field.linkedAttributes.join(' ') : ''}
+            ${field.linkedAttributes.length ? field.linkedAttributes.join(' ') : 'id'}
         }`
         : '';
 

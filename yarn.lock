@@ -4143,15 +4143,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@simbathesailor/use-what-changed@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@simbathesailor/use-what-changed@npm:2.0.0"
-  peerDependencies:
-    react: ">=16"
-  checksum: 58f443077edb0078892d2cad3c12f681842b252c12bf696099365da88a23ab6776c9f455c603bbd5e73e5eae7f31163593f0a131dafcb46b5014200124cc895a
-  languageName: node
-  linkType: hard
-
 "@sinonjs/commons@npm:^1.7.0":
   version: 1.8.2
   resolution: "@sinonjs/commons@npm:1.8.2"
