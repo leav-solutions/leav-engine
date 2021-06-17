@@ -37,7 +37,7 @@ export function getRecordDataQuery(
         ${detailsExtendedFragment}
 
         query ${`RECORD_DATA_${library.id}`}($id: String!, $version: [ValueVersionInput], $lang: [AvailableLanguage!]) {
-            record: ${library.gqlNames.query}(filters: {field: "id", value: $id}, version: $version) {
+            record: ${library.gqlNames.query}(filters: {field: "id", condition: EQUAL, value: $id}, version: $version) {
                 list {
                     ...RecordIdentity
                     ${attributes.map(_getAttributeValueQuery)}

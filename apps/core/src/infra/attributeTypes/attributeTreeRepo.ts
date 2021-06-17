@@ -26,9 +26,11 @@ export default function ({
     const _buildTreeValue = (linkedRecord: IRecord, valueEdge: IValueEdge): ITreeValue => {
         return {
             id_value: valueEdge._key,
-            value: {
-                record: linkedRecord
-            },
+            value: linkedRecord
+                ? {
+                      record: linkedRecord
+                  }
+                : null,
             attribute: valueEdge.attribute,
             modified_at: valueEdge.modified_at,
             modified_by: valueEdge.modified_by,
@@ -129,9 +131,15 @@ export default function ({
                 _key: value.id_value
             };
 
-            const deletedEdge = await edgeCollec.removeByExample(edgeData);
+            const resEdge = await dbService.execute({
+                query: aql`
+                    REMOVE ${edgeData} IN ${edgeCollec}
+                    RETURN OLD`,
+                ctx
+            });
+            const deletedEdge = resEdge.length ? resEdge[0] : {};
 
-            return _buildTreeValue(utils.decomposeValueEdgeDestination(value.value), deletedEdge);
+            return _buildTreeValue(utils.decomposeValueEdgeDestination(deletedEdge._to), deletedEdge);
         },
         async getValues({
             library,

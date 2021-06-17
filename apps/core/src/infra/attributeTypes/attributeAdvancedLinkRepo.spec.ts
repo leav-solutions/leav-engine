@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, Database, EdgeCollection} from 'arangojs';
+import {aql, Database} from 'arangojs';
+import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
@@ -189,15 +190,10 @@ describe('AttributeAdvancedLinkRepo', () => {
                 _key: '445566'
             };
 
-            const mockDbEdgeCollec: Mockify<EdgeCollection> = {
-                removeByExample: global.__mockPromise(deletedEdgeData)
+            const mockDbServ: Mockify<IDbService> = {
+                db: new Database(),
+                execute: global.__mockPromise([deletedEdgeData])
             };
-
-            const mockDb: Mockify<Database> = {
-                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
-            };
-
-            const mockDbServ = {db: (mockDb as unknown) as Database};
 
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
@@ -217,14 +213,17 @@ describe('AttributeAdvancedLinkRepo', () => {
                 ctx
             });
 
-            expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: '445566'});
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(deletedVal).toMatchObject({
                 id_value: '445566',
                 value: {
-                    library: 'test_linked_lib',
-                    id: '987654'
+                    id: '987654',
+                    library: 'test_linked_lib'
                 }
             });
         });
