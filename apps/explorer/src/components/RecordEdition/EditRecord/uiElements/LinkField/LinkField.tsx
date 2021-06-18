@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileAddOutlined, FileOutlined} from '@ant-design/icons';
 import {ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/types';
-import {Switch, Table} from 'antd';
+import {Button, Popover, Switch, Table} from 'antd';
 import SearchModal from 'components/SearchModal';
+import ErrorMessage from 'components/shared/ErrorMessage';
 import {IRecordPropertyLink} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useState} from 'react';
@@ -15,6 +16,7 @@ import {localizedLabel} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute} from '_gqlTypes/GET_FORM';
 import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch} from '_types/types';
 import useDeleteValueMutation from '../../hooks/useDeleteValueMutation';
+import useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
 import useSaveValueMutation from '../../hooks/useSaveValueMutation';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import RecordIdentityCell from './RecordIdentityCell';
@@ -46,6 +48,10 @@ const FieldLabel = styled.div`
     z-index: 1;
 `;
 
+const FooterWrapper = styled.div`
+    text-align: right;
+`;
+
 interface IRowData {
     key: string;
     whoAmI: IRecordIdentityWhoAmI;
@@ -62,7 +68,9 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
     const attribute = element.attribute as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute;
 
     const {saveValue} = useSaveValueMutation(record, attribute.id);
+    const {saveValues} = useSaveValueBatchMutation(record, attribute.id);
     const {deleteValue} = useDeleteValueMutation(record, attribute.id);
+    const [errorMessage, setErrorMessage] = useState<string | string[]>();
 
     const fieldValues = (recordValues[element.settings.attribute] as IRecordPropertyLink[]) ?? [];
 
@@ -79,11 +87,31 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
     };
 
     const _handleSearchModalSubmit = async ({selected}: ISharedStateSelectionSearch) => {
-        const selectedRecord = selected[0];
-        const submitRes = await saveValue({value: selectedRecord.id, idValue: null});
-
-        if (submitRes.status === APICallStatus.SUCCESS) {
+        if (!selected.length) {
             return;
+        }
+
+        const selectedRecordToSave = attribute.multiple_values ? selected : [selected[0]];
+        const valuesToSave = selectedRecordToSave.map(selectedRecord => ({
+            idValue: null,
+            value: selectedRecord.id
+        }));
+
+        const res = await saveValues(valuesToSave);
+
+        if (res.status === APICallStatus.ERROR) {
+            setErrorMessage(res.error);
+        }
+
+        if (res?.errors?.length) {
+            const selectedRecordsById = selected.reduce((acc, cur) => ({...acc, [cur.id]: cur}), {});
+
+            const errorsMessage = res.errors.map(err => {
+                const linkedRecordLabel = selectedRecordsById[err.input].label || selectedRecordsById[err.input].id;
+
+                return `${linkedRecordLabel}: ${err.message}`;
+            });
+            setErrorMessage(errorsMessage);
         }
     };
 
@@ -121,12 +149,12 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
     }));
 
     const isReadOnly = element.attribute?.system;
-    const canAddValue = !isReadOnly;
+    const canAddValue = !isReadOnly && (attribute.multiple_values || !fieldValues.length);
 
     const NoRecords = canAddValue ? (
         <NoRecordWrapper canAdd={canAddValue} onClick={_handleAddValue}>
             <FileAddOutlined />
-            <span>{t('record_edition.add_value')}</span>
+            <span data-testid="no-value-add-link">{t('record_edition.add_value')}</span>
         </NoRecordWrapper>
     ) : (
         <NoRecordWrapper canAdd={canAddValue}>
@@ -134,6 +162,20 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
             <span>{t('record_edition.no_value')}</span>
         </NoRecordWrapper>
     );
+
+    const tableFooter = () => {
+        return canAddValue ? (
+            <FooterWrapper>
+                <Button icon={<FileAddOutlined />} onClick={_handleAddValue}>
+                    {t('record_edition.add_value')}
+                </Button>
+            </FooterWrapper>
+        ) : null;
+    };
+
+    const _handleCloseError = () => {
+        setErrorMessage('');
+    };
 
     return (
         <>
@@ -148,8 +190,17 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
                         emptyText: NoRecords
                     }}
                     data-testid="linked-field-values"
+                    footer={tableFooter}
+                    scroll={{y: 280}}
                 />
             </TableWrapper>
+            {errorMessage && (
+                <Popover
+                    placement="bottomLeft"
+                    visible={!!errorMessage}
+                    content={<ErrorMessage error={errorMessage} onClose={_handleCloseError} />}
+                ></Popover>
+            )}
             {canAddValue && (
                 <SearchModal
                     libId={attribute.linked_library.id}

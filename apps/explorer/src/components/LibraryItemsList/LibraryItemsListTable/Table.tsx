@@ -11,7 +11,6 @@ import {useTranslation} from 'react-i18next';
 import {useFlexLayout, useTable} from 'react-table';
 import {useSticky} from 'react-table-sticky';
 import styled from 'styled-components';
-import {localizedLabel} from 'utils';
 import {infosCol} from '../../../constants/constants';
 import themingVar from '../../../themingVar';
 import {AttributeFormat, AttributeType, ITableItem, ITableItems} from '../../../_types/types';
@@ -165,7 +164,7 @@ const Table = () => {
                             const value = record.whoAmI;
                             const id = record.whoAmI.id;
                             const library = record.whoAmI.library.id;
-                            const label = localizedLabel(record.whoAmI.label, lang);
+                            const label = record.whoAmI.label;
 
                             const cellData: ITableItem = {value, type: column.type, id, library, label};
                             acc[column.accessor] = cellData;
