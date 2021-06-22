@@ -3,7 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloClient, ApolloLink, ApolloProvider, InMemoryCache} from '@apollo/client';
 import {onError} from '@apollo/link-error';
+import {Spin} from 'antd';
 import {createUploadLink} from 'apollo-upload-client';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addNotification} from 'redux/notifications';
@@ -19,6 +22,16 @@ interface IApolloHandlerProps {
 function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
+    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(process.env.REACT_APP_API_URL, token);
+
+    if (loading) {
+        return <Spin />;
+    }
+
+    if (error) {
+        return <ErrorDisplay message={error} />;
+    }
+
     // This function will catch the errors from the exchange between Apollo Client and the server.
     const _handleApolloError = onError(({graphQLErrors, networkError}) => {
         if (graphQLErrors) {
@@ -120,7 +133,8 @@ function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
                 Form: {
                     keyFields: ['id', 'library', ['id']]
                 }
-            }
+            },
+            possibleTypes
         })
     });
 
