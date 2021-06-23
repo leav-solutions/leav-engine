@@ -2,16 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Card, Descriptions, Divider} from 'antd';
+import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedLabel} from 'utils';
-import {IStandardFieldReducerState, IStandardFieldValue} from '../../standardFieldReducer/standardFieldReducer';
+import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
 
 interface IValueDetailsProps {
-    state: IStandardFieldReducerState;
-    fieldValue: IStandardFieldValue;
+    attribute: GET_FORM_forms_list_elements_elements_attribute;
+    value: RecordProperty;
 }
 
 const CompactDescriptions = styled(Descriptions)`
@@ -20,7 +21,7 @@ const CompactDescriptions = styled(Descriptions)`
     }
 `;
 
-function ValueDetails({state, fieldValue}: IValueDetailsProps): JSX.Element {
+function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
     const {Meta} = Card;
@@ -36,22 +37,23 @@ function ValueDetails({state, fieldValue}: IValueDetailsProps): JSX.Element {
             contentStyle={fontStyle}
             style={{paddingBottom: 0}}
         >
-            <Descriptions.Item label={t('record_edition.attribute.id')}>{state.attribute.id}</Descriptions.Item>
+            <Descriptions.Item label={t('record_edition.attribute.id')}>{attribute.id}</Descriptions.Item>
             <Descriptions.Item label={t('record_edition.attribute.type')}>
-                {t(`record_edition.attribute.type_${state.attribute.type}`)}
+                {t(`record_edition.attribute.type_${attribute.type}`)}
             </Descriptions.Item>
-            {state.attribute.format && (
+            {attribute.format && (
                 <Descriptions.Item label={t('record_edition.attribute.format')}>
-                    {t(`record_edition.attribute.format_${state.attribute.format}`)}
+                    {t(`record_edition.attribute.format_${attribute.format}`)}
                 </Descriptions.Item>
             )}
-            {fieldValue.value?.modified_at && (
+            {value?.modified_at && (
                 <>
                     <Descriptions.Item>
                         <Divider style={{margin: '.5em 0'}} />
                     </Descriptions.Item>
                     <Descriptions.Item label={t('record_edition.modified_at')}>
-                        {new Date(fieldValue.value.modified_at * 1000).toLocaleString()}
+                        {new Date(value.modified_at * 1000).toLocaleString()}
+                        {value?.modified_by ? ` ${t('record_edition.by')} ${value.modified_by.whoAmI.label}` : ''}
                     </Descriptions.Item>
                 </>
             )}
@@ -59,7 +61,7 @@ function ValueDetails({state, fieldValue}: IValueDetailsProps): JSX.Element {
     );
 
     return (
-        <Card title={localizedLabel(state.attribute.label, lang)} size="small" data-testid="value-details">
+        <Card title={localizedLabel(attribute.label, lang)} size="small" data-testid="value-details">
             <Meta description={attributeDetails}></Meta>
         </Card>
     );

@@ -29,31 +29,29 @@ const CellWrapper = styled.div`
 
 function LinkField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     return (
-        <>
-            <Table celled striped>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan="3">{settings.label}</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    <Table.Row>
-                        <Table.Cell width="4">
-                            <CellWrapper>
-                                <PreviewSkeleton />
-                                <TextSkeleton />
-                            </CellWrapper>
-                        </Table.Cell>
-                        <Table.Cell width="6">
+        <Table celled striped>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell colSpan="3">{settings.label}</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                <Table.Row>
+                    <Table.Cell width="4">
+                        <CellWrapper>
+                            <PreviewSkeleton />
                             <TextSkeleton />
-                        </Table.Cell>
-                        <Table.Cell width="6">
-                            <TextSkeleton />
-                        </Table.Cell>
-                    </Table.Row>
-                </Table.Body>
-            </Table>
-        </>
+                        </CellWrapper>
+                    </Table.Cell>
+                    <Table.Cell width="6">
+                        <TextSkeleton />
+                    </Table.Cell>
+                    <Table.Cell width="6">
+                        <TextSkeleton />
+                    </Table.Cell>
+                </Table.Row>
+            </Table.Body>
+        </Table>
     );
 }
 

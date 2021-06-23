@@ -28,7 +28,7 @@ function EditRecordModal({open, record, onClose}: IEditRecordModalProps): JSX.El
             closable
             width="90vw"
             centered
-            bodyStyle={{height: 'calc(100vh - 10rem)'}}
+            bodyStyle={{height: 'calc(100vh - 10rem)', overflowY: 'auto'}}
             footer={[
                 <Button aria-label={t('global.close')} key="close" onClick={onClose}>
                     {t('global.close')}

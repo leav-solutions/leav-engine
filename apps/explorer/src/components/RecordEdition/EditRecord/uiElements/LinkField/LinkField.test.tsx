@@ -8,6 +8,7 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockAttributeLink} from '__mocks__/common/attribute';
 import {mockFormElementLink} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockModifier} from '__mocks__/common/value';
 import {FormElement} from '../../_types';
 import LinkField from './LinkField';
 
@@ -16,6 +17,12 @@ jest.mock('hooks/LangHook/LangHook');
 jest.mock('components/SearchModal', () => {
     return function SearchModal() {
         return <div>SearchModal</div>;
+    };
+});
+
+jest.mock('../../shared/ValueDetails', () => {
+    return function ValueDetails() {
+        return <div>ValueDetails</div>;
     };
 });
 
@@ -34,6 +41,8 @@ describe('LinkField', () => {
         },
         created_at: 123456789,
         modified_at: 123456789,
+        created_by: mockModifier,
+        modified_by: mockModifier,
         id_value: null
     };
 
@@ -110,11 +119,10 @@ describe('LinkField', () => {
         });
 
         expect(screen.getAllByRole('table').length).toBeGreaterThanOrEqual(1);
-        expect(screen.getByTestId('no-value-add-link')).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /add/, hidden: true})).toBeInTheDocument();
     });
 
-    test('If no value and cannot, display a message', async () => {
+    test('If no value and cannot add, display a message', async () => {
         await act(async () => {
             render(
                 <LinkField
@@ -136,7 +144,7 @@ describe('LinkField', () => {
         const recordIdentityCell = screen.getByTestId('whoami-cell');
         userEvent.hover(recordIdentityCell, null);
 
-        expect(screen.queryByRole('button', {name: 'delete', hidden: true})).toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /delete/, hidden: true})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: 'edit-record', hidden: true})).toBeInTheDocument();
     });
 
@@ -183,5 +191,18 @@ describe('LinkField', () => {
         });
 
         expect(screen.queryByRole('button', {name: /add/, hidden: true})).not.toBeInTheDocument();
+    });
+
+    test('Can display value details', async () => {
+        await act(async () => {
+            render(<LinkField element={mockFormElementLink} record={mockRecordWhoAmI} recordValues={recordValues} />);
+        });
+
+        const valueDetailsButton = screen.getByRole('button', {name: /info/, hidden: true});
+        expect(valueDetailsButton).toBeInTheDocument();
+
+        userEvent.click(valueDetailsButton);
+
+        expect(screen.getByText('ValueDetails')).toBeInTheDocument();
     });
 });

@@ -4,6 +4,7 @@
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {mockFormElementInput} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockModifier} from '__mocks__/common/value';
 import standardFieldValueReducer from '.';
 import {IStandardFieldReducerState, newValueId, StandardFieldReducerActionsTypes} from './standardFieldReducer';
 
@@ -32,7 +33,9 @@ describe('standardFieldReducer', () => {
             value: 'my value',
             raw_value: 'my raw value',
             modified_at: null,
-            created_at: null
+            created_at: null,
+            created_by: null,
+            modified_by: null
         },
         error: ''
     };
@@ -129,11 +132,13 @@ describe('standardFieldReducer', () => {
                     value: 'updated value',
                     raw_value: 'updated raw value',
                     modified_at: null,
-                    created_at: null
+                    created_at: null,
+                    created_by: mockModifier,
+                    modified_by: mockModifier
                 }
             }
         );
-        expect(newState.values[idValue]).toEqual({
+        expect(newState.values[idValue]).toMatchObject({
             ...mockValue,
             value: {
                 id_value: null,
@@ -168,12 +173,14 @@ describe('standardFieldReducer', () => {
                     value: 'updated value',
                     raw_value: 'updated raw value',
                     modified_at: 1234567890,
-                    created_at: 1234567890
+                    created_at: 1234567890,
+                    created_by: mockModifier,
+                    modified_by: mockModifier
                 }
             }
         );
         expect(newState.values[newValueId]).toBeUndefined();
-        expect(newState.values['789654']).toEqual({
+        expect(newState.values['789654']).toMatchObject({
             ...mockValue,
             idValue: '789654',
             value: {

@@ -62,7 +62,7 @@ export default function (url: string, token: string): IUseGraphqlPossibleTypes {
             setIsLoading(false);
             setError(String(err));
         }
-    }, [token]);
+    }, [url, token]);
 
     useEffect(() => {
         _fetchPossibleTypes();

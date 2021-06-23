@@ -11,6 +11,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {AttributeFormat} from '_types/types';
+import ValueDetails from '../../../shared/ValueDetails';
 import {
     IdValue,
     IStandardFieldReducerState,
@@ -24,7 +25,6 @@ import DateInput from './Inputs/DateInput';
 import EncryptedInput from './Inputs/EncryptedInput';
 import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
-import ValueDetails from './ValueDetails';
 
 interface IStandardFieldValueProps {
     value: IStandardFieldValue;
@@ -281,7 +281,7 @@ function StandardFieldValue({
                         )}
                         {fieldValue.isEditing && (
                             <ValueDetailsWrapper>
-                                <ValueDetails state={state} fieldValue={fieldValue} />
+                                <ValueDetails value={fieldValue.value} attribute={attribute} />
                             </ValueDetailsWrapper>
                         )}
                     </Form.Item>

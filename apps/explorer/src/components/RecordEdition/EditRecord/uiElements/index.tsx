@@ -9,6 +9,7 @@ import FormTabs from './FormTabs';
 import LinkField from './LinkField';
 import StandardField from './StandardField';
 import TextBlock from './TextBlock';
+import TreeField from './TreeField';
 
 export const formComponents: {
     [type in FormUIElementTypes & FormFieldTypes]: (props: IFormElementProps<any>) => JSX.Element;
@@ -19,6 +20,7 @@ export const formComponents: {
     [FormFieldTypes.CHECKBOX]: StandardField,
     [FormFieldTypes.ENCRYPTED]: StandardField,
     [FormFieldTypes.LINK]: LinkField,
+    [FormFieldTypes.TREE]: TreeField,
     [FormUIElementTypes.TABS]: FormTabs,
     [FormUIElementTypes.TEXT_BLOCK]: TextBlock,
     [FormUIElementTypes.DIVIDER]: FormDivider

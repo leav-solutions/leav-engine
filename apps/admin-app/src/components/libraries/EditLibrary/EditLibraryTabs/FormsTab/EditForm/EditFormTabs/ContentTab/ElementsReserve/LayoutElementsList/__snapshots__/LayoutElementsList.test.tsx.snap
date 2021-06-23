@@ -4,7 +4,7 @@ exports[`LayoutElementsList Snapshot test 1`] = `
 initialize {
   "0": Node {
     "attribs": Object {
-      "class": "sc-VigVT jyiBuI",
+      "class": "sc-cSHVUG jOASuS",
     },
     "children": Array [
       Node {
@@ -19,7 +19,7 @@ initialize {
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": Node {
       "attribs": Object {
-        "class": "sc-VigVT jyiBuI",
+        "class": "sc-cSHVUG jOASuS",
       },
       "children": Array [
         Node {
@@ -34,7 +34,7 @@ initialize {
       "namespace": "http://www.w3.org/1999/xhtml",
       "next": Node {
         "attribs": Object {
-          "class": "sc-VigVT jyiBuI",
+          "class": "sc-cSHVUG jOASuS",
         },
         "children": Array [
           Node {
@@ -49,7 +49,7 @@ initialize {
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -92,7 +92,7 @@ initialize {
             [Circular],
             Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -138,7 +138,7 @@ initialize {
           [Circular],
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -153,7 +153,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -189,7 +189,7 @@ initialize {
           },
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -206,7 +206,7 @@ initialize {
             "parent": [Circular],
             "prev": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -259,7 +259,7 @@ initialize {
         [Circular],
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -274,7 +274,7 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -289,7 +289,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -335,7 +335,7 @@ initialize {
         },
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -350,7 +350,7 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -377,7 +377,7 @@ initialize {
           "parent": [Circular],
           "prev": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -411,7 +411,7 @@ initialize {
         },
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -428,7 +428,7 @@ initialize {
           "parent": [Circular],
           "prev": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -445,7 +445,7 @@ initialize {
             "parent": [Circular],
             "prev": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -503,7 +503,7 @@ initialize {
   },
   "1": Node {
     "attribs": Object {
-      "class": "sc-VigVT jyiBuI",
+      "class": "sc-cSHVUG jOASuS",
     },
     "children": Array [
       Node {
@@ -518,7 +518,7 @@ initialize {
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": Node {
       "attribs": Object {
-        "class": "sc-VigVT jyiBuI",
+        "class": "sc-cSHVUG jOASuS",
       },
       "children": Array [
         Node {
@@ -533,7 +533,7 @@ initialize {
       "namespace": "http://www.w3.org/1999/xhtml",
       "next": Node {
         "attribs": Object {
-          "class": "sc-VigVT jyiBuI",
+          "class": "sc-cSHVUG jOASuS",
         },
         "children": Array [
           Node {
@@ -551,7 +551,7 @@ initialize {
           "children": Array [
             Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -598,7 +598,7 @@ initialize {
         "children": Array [
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -626,7 +626,7 @@ initialize {
           [Circular],
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -670,7 +670,7 @@ initialize {
       "children": Array [
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -697,7 +697,7 @@ initialize {
         [Circular],
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -712,7 +712,7 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -748,7 +748,7 @@ initialize {
         },
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -765,7 +765,7 @@ initialize {
           "parent": [Circular],
           "prev": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -806,7 +806,7 @@ initialize {
     },
     "prev": Node {
       "attribs": Object {
-        "class": "sc-VigVT jyiBuI",
+        "class": "sc-cSHVUG jOASuS",
       },
       "children": Array [
         Node {
@@ -826,7 +826,7 @@ initialize {
           [Circular],
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -841,7 +841,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -877,7 +877,7 @@ initialize {
           },
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -894,7 +894,7 @@ initialize {
             "parent": [Circular],
             "prev": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -952,7 +952,7 @@ initialize {
   },
   "2": Node {
     "attribs": Object {
-      "class": "sc-VigVT jyiBuI",
+      "class": "sc-cSHVUG jOASuS",
     },
     "children": Array [
       Node {
@@ -967,7 +967,7 @@ initialize {
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": Node {
       "attribs": Object {
-        "class": "sc-VigVT jyiBuI",
+        "class": "sc-cSHVUG jOASuS",
       },
       "children": Array [
         Node {
@@ -985,7 +985,7 @@ initialize {
         "children": Array [
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1000,7 +1000,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -1036,7 +1036,7 @@ initialize {
           },
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1053,7 +1053,7 @@ initialize {
             "parent": [Circular],
             "prev": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -1107,7 +1107,7 @@ initialize {
       "children": Array [
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -1122,7 +1122,7 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1158,7 +1158,7 @@ initialize {
         },
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -1175,7 +1175,7 @@ initialize {
           "parent": [Circular],
           "prev": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1210,7 +1210,7 @@ initialize {
         [Circular],
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -1243,7 +1243,7 @@ initialize {
     },
     "prev": Node {
       "attribs": Object {
-        "class": "sc-VigVT jyiBuI",
+        "class": "sc-cSHVUG jOASuS",
       },
       "children": Array [
         Node {
@@ -1261,7 +1261,7 @@ initialize {
         "children": Array [
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1289,7 +1289,7 @@ initialize {
           [Circular],
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1322,7 +1322,7 @@ initialize {
       },
       "prev": Node {
         "attribs": Object {
-          "class": "sc-VigVT jyiBuI",
+          "class": "sc-cSHVUG jOASuS",
         },
         "children": Array [
           Node {
@@ -1343,7 +1343,7 @@ initialize {
             [Circular],
             Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -1401,7 +1401,7 @@ initialize {
   },
   "3": Node {
     "attribs": Object {
-      "class": "sc-VigVT jyiBuI",
+      "class": "sc-cSHVUG jOASuS",
     },
     "children": Array [
       Node {
@@ -1419,7 +1419,7 @@ initialize {
       "children": Array [
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -1434,7 +1434,7 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1449,7 +1449,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -1495,7 +1495,7 @@ initialize {
         },
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -1510,7 +1510,7 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1537,7 +1537,7 @@ initialize {
           "parent": [Circular],
           "prev": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1571,7 +1571,7 @@ initialize {
         },
         Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {
@@ -1588,7 +1588,7 @@ initialize {
           "parent": [Circular],
           "prev": Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1605,7 +1605,7 @@ initialize {
             "parent": [Circular],
             "prev": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -1655,7 +1655,7 @@ initialize {
     },
     "prev": Node {
       "attribs": Object {
-        "class": "sc-VigVT jyiBuI",
+        "class": "sc-cSHVUG jOASuS",
       },
       "children": Array [
         Node {
@@ -1673,7 +1673,7 @@ initialize {
         "children": Array [
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1688,7 +1688,7 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -1724,7 +1724,7 @@ initialize {
           },
           Node {
             "attribs": Object {
-              "class": "sc-VigVT jyiBuI",
+              "class": "sc-cSHVUG jOASuS",
             },
             "children": Array [
               Node {
@@ -1741,7 +1741,7 @@ initialize {
             "parent": [Circular],
             "prev": Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -1784,7 +1784,7 @@ initialize {
       },
       "prev": Node {
         "attribs": Object {
-          "class": "sc-VigVT jyiBuI",
+          "class": "sc-cSHVUG jOASuS",
         },
         "children": Array [
           Node {
@@ -1802,7 +1802,7 @@ initialize {
           "children": Array [
             Node {
               "attribs": Object {
-                "class": "sc-VigVT jyiBuI",
+                "class": "sc-cSHVUG jOASuS",
               },
               "children": Array [
                 Node {
@@ -1838,7 +1838,7 @@ initialize {
         },
         "prev": Node {
           "attribs": Object {
-            "class": "sc-VigVT jyiBuI",
+            "class": "sc-cSHVUG jOASuS",
           },
           "children": Array [
             Node {

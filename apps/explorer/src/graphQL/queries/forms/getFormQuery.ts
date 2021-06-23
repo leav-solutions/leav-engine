@@ -44,6 +44,13 @@ export const getFormQuery = gql`
                                     }
                                 }
                             }
+
+                            ... on TreeAttribute {
+                                linked_tree {
+                                    id
+                                    label
+                                }
+                            }
                         }
                         settings {
                             key

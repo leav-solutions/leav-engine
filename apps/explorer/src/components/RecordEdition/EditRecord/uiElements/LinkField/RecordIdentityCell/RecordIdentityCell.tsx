@@ -1,20 +1,24 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DeleteOutlined} from '@ant-design/icons';
-import {Button, Popconfirm} from 'antd';
+import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
+import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
+import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
 import {IRecordIdentityWhoAmI, PreviewSize} from '_types/types';
 
 interface IRecordIdentityCellProps {
     record: IRecordIdentityWhoAmI;
     onDelete: (record: IRecordIdentityWhoAmI) => void;
+    value: RecordProperty;
+    attribute: GET_FORM_forms_list_elements_elements_attribute;
 }
 
 const CellWrapper = styled.div`
@@ -25,7 +29,7 @@ const CellWrapper = styled.div`
     }
 `;
 
-function RecordIdentityCell({record, onDelete}: IRecordIdentityCellProps): JSX.Element {
+function RecordIdentityCell({record, onDelete, value, attribute}: IRecordIdentityCellProps): JSX.Element {
     const {t} = useTranslation();
     const _handleDelete = () => onDelete(record);
 
@@ -35,19 +39,12 @@ function RecordIdentityCell({record, onDelete}: IRecordIdentityCellProps): JSX.E
             button: <EditRecordBtn record={record} size="small" />
         },
         {
+            title: t('record_edition.value_details'),
+            button: <ValueDetailsBtn value={value} attribute={attribute} />
+        },
+        {
             title: t('global.delete'),
-            button: (
-                <Popconfirm
-                    placement="leftTop"
-                    title={t('record_edition.delete_value_confirm')}
-                    onConfirm={_handleDelete}
-                    okText={t('global.submit')}
-                    okButtonProps={{'aria-label': 'delete-confirm-btn'}}
-                    cancelText={t('global.cancel')}
-                >
-                    <Button size="small" icon={<DeleteOutlined />} style={{background: '#FFF'}} danger />
-                </Popconfirm>
-            )
+            button: <DeleteValueBtn onDelete={_handleDelete} />
         }
     ];
 

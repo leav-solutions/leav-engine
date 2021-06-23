@@ -9,6 +9,7 @@ import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {mockFormAttribute} from '__mocks__/common/attribute';
 import {mockFormElementInput} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockModifier} from '__mocks__/common/value';
 import * as useDeleteValueMutation from '../../hooks/useDeleteValueMutation';
 import * as useSaveValueMutation from '../../hooks/useSaveValueMutation';
 import {APICallStatus, DeleteValueFunc, FieldSubmitFunc} from '../../_types';
@@ -17,6 +18,12 @@ import StandardField from './StandardField';
 jest.mock('../../hooks/useSaveValueMutation');
 jest.mock('../../hooks/useDeleteValueMutation');
 jest.mock('hooks/LangHook/LangHook');
+
+jest.mock('../../shared/ValueDetails', () => {
+    return function ValueDetails() {
+        return <div>ValueDetails</div>;
+    };
+});
 
 describe('Input', () => {
     jest.spyOn(useSaveValueMutation, 'default').mockImplementation(() => ({
@@ -55,6 +62,8 @@ describe('Input', () => {
                 raw_value: 'my_raw_value',
                 created_at: 123456789,
                 modified_at: 123456789,
+                created_by: mockModifier,
+                modified_by: mockModifier,
                 id_value: null,
                 attribute: mockAttribute
             }
@@ -100,9 +109,7 @@ describe('Input', () => {
             userEvent.click(valueDisplayElem);
         });
 
-        expect(screen.getByTestId('value-details')).toBeInTheDocument();
-        expect(screen.getByText(mockFormElementInput.attribute.label.fr)).toBeInTheDocument();
-        expect(screen.getByText(mockAttribute.id)).toBeInTheDocument();
+        expect(screen.getByText('ValueDetails')).toBeInTheDocument();
     });
 
     test('Cancel input', async () => {
@@ -151,6 +158,8 @@ describe('Input', () => {
                     raw_value: 'my_raw_value',
                     created_at: 123456789,
                     modified_at: 123456789,
+                    created_by: mockModifier,
+                    modified_by: mockModifier,
                     id_value: null
                 }
             ]
@@ -177,6 +186,8 @@ describe('Input', () => {
                     raw_value: '1616174663',
                     created_at: 123456789,
                     modified_at: 123456789,
+                    created_by: mockModifier,
+                    modified_by: mockModifier,
                     id_value: null
                 }
             ]
@@ -209,6 +220,8 @@ describe('Input', () => {
                     raw_value: 'true',
                     created_at: 123456789,
                     modified_at: 123456789,
+                    created_by: mockModifier,
+                    modified_by: mockModifier,
                     id_value: null
                 }
             ]
@@ -238,6 +251,8 @@ describe('Input', () => {
                     raw_value: 'my_hashed_pwd',
                     created_at: 123456789,
                     modified_at: 123456789,
+                    created_by: mockModifier,
+                    modified_by: mockModifier,
                     id_value: null
                 }
             ]
@@ -273,7 +288,9 @@ describe('Input', () => {
                     raw_value: '123456',
                     id_value: null,
                     created_at: 123456789,
-                    modified_at: 123456789
+                    modified_at: 123456789,
+                    created_by: mockModifier,
+                    modified_by: mockModifier
                 }
             ]
         };

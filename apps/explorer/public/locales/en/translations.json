@@ -310,5 +310,36 @@
     "language": {
         "fr": "French",
         "en": "English"
+    },
+    "record_edition": {
+        "no_form_error": "No form available",
+        "invalid_format": "Invalid format",
+        "missing_attribute": "Missing attribute",
+        "modified_at": "Modified at",
+        "add_value": "Ajouter une valeur",
+        "delete_value_confirm": "Do you really want to delete this value?",
+        "whoAmI": "Informations",
+        "no_value": "No value",
+        "value_details": "Details",
+        "by": "by",
+        "attribute": {
+            "id": "Id",
+            "type": "Type",
+            "format": "Format",
+            "type_simple": "Simple",
+            "type_simple_link": "Simple link",
+            "type_advanced": "Advanced",
+            "type_advanced_link": "Advanced link",
+            "type_tree": "Tree",
+            "format_boolean": "Boolean",
+            "format_date": "Date",
+            "format_encrypted": "Encrypted",
+            "format_extended": "Extended",
+            "format_numeric": "Numeric",
+            "format_text": "Text"
+        }
+    },
+    "floating_menu": {
+        "more_actions": "More"
     }
 }
