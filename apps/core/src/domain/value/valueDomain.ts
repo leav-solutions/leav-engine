@@ -69,7 +69,7 @@ export interface IValueDomain {
     }): Promise<IValue>;
 
     /**
-     * Save multiple values independantly (possibly different attributes or versions).
+     * Save multiple values independently (possibly different attributes or versions).
      * If one of the value must not be saved (invalid value or user doesn't have permissions), no value is saved at all
      *
      * keepEmpty If false, empty values will be deleted (or not saved)

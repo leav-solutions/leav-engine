@@ -110,7 +110,7 @@ export default function ({
                         metadata: ValueMetadata
                     }
                     type saveValueBatchResult {
-                        values: [Value!],
+                        values: [GenericValue!],
                         errors: [ValueBatchError!]
                     }
                     type ValueBatchError {
@@ -169,7 +169,7 @@ export default function ({
                             values: [ValueBatchInput],
                             deleteEmpty: Boolean
                         ): saveValueBatchResult!
-                        deleteValue(library: ID!, recordId: ID!, attribute: ID!, valueId: ID): Value!
+                        deleteValue(library: ID!, recordId: ID!, attribute: ID!, valueId: ID): GenericValue!
                     }
                 `,
                 resolvers: {
@@ -200,6 +200,7 @@ export default function ({
                                 version: versionToUse,
                                 metadata: utils.nameValArrayToObj(val.metadata)
                             }));
+
                             const savedValues = await valueDomain.saveValueBatch({
                                 library,
                                 recordId,
@@ -207,6 +208,7 @@ export default function ({
                                 ctx,
                                 keepEmpty: deleteEmpty
                             });
+
                             const res = {
                                 ...savedValues,
                                 values: savedValues.values.map(val => ({
@@ -217,6 +219,7 @@ export default function ({
                                             : null
                                 }))
                             };
+
                             return res;
                         },
                         async deleteValue(parent, {library, recordId, attribute, valueId}, ctx): Promise<IValue> {

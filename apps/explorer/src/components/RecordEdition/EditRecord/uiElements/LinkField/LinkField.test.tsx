@@ -5,8 +5,10 @@ import userEvent from '@testing-library/user-event';
 import {IRecordPropertyLink} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
+import {mockAttributeLink} from '__mocks__/common/attribute';
 import {mockFormElementLink} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {FormElement} from '../../_types';
 import LinkField from './LinkField';
 
 jest.mock('hooks/LangHook/LangHook');
@@ -107,8 +109,23 @@ describe('LinkField', () => {
             );
         });
 
-        expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(screen.getByText('record_edition.add_value')).toBeInTheDocument();
+        expect(screen.getAllByRole('table').length).toBeGreaterThanOrEqual(1);
+        expect(screen.getByTestId('no-value-add-link')).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /add/, hidden: true})).toBeInTheDocument();
+    });
+
+    test('If no value and cannot, display a message', async () => {
+        await act(async () => {
+            render(
+                <LinkField
+                    element={{...mockFormElementLink, attribute: {...mockAttributeLink, system: true}}}
+                    record={mockRecordWhoAmI}
+                    recordValues={{test_attribute: []}}
+                />
+            );
+        });
+
+        expect(screen.getByText('record_edition.no_value')).toBeInTheDocument();
     });
 
     test('Can edit and delete linked record', async () => {
@@ -121,5 +138,50 @@ describe('LinkField', () => {
 
         expect(screen.queryByRole('button', {name: 'delete', hidden: true})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: 'edit-record', hidden: true})).toBeInTheDocument();
+    });
+
+    test('If multiple values, display add value button', async () => {
+        const mockFormElementLinkMultivalue: FormElement<{}> = {
+            ...mockFormElementLink,
+            attribute: {
+                ...mockAttributeLink,
+                system: false,
+                multiple_values: true
+            }
+        };
+        await act(async () => {
+            render(
+                <LinkField
+                    element={mockFormElementLinkMultivalue}
+                    record={mockRecordWhoAmI}
+                    recordValues={recordValues}
+                />
+            );
+        });
+
+        expect(screen.getByRole('button', {name: /add/, hidden: true})).toBeInTheDocument();
+    });
+
+    test("If not multiple values, don't display add value button", async () => {
+        const mockFormElementLinkNoMultivalue: FormElement<{}> = {
+            ...mockFormElementLink,
+            attribute: {
+                ...mockAttributeLink,
+                system: false,
+                multiple_values: false
+            }
+        };
+
+        await act(async () => {
+            render(
+                <LinkField
+                    element={mockFormElementLinkNoMultivalue}
+                    record={mockRecordWhoAmI}
+                    recordValues={recordValues}
+                />
+            );
+        });
+
+        expect(screen.queryByRole('button', {name: /add/, hidden: true})).not.toBeInTheDocument();
     });
 });

@@ -120,7 +120,7 @@ export default function ({
 
             return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge);
         },
-        async deleteValue({attribute, value, ctx}): Promise<ILinkValue> {
+        async deleteValue({value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
@@ -128,7 +128,13 @@ export default function ({
                 _key: value.id_value
             };
 
-            const deletedEdge = await edgeCollec.removeByExample(edgeData);
+            const resEdge = await dbService.execute({
+                query: aql`
+                    REMOVE ${edgeData} IN ${edgeCollec}
+                    RETURN OLD`,
+                ctx
+            });
+            const deletedEdge = resEdge.length ? resEdge[0] : {};
 
             return _buildLinkValue(utils.decomposeValueEdgeDestination(deletedEdge._to), deletedEdge);
         },

@@ -28,6 +28,21 @@ Object {
 }
 `;
 
+exports[`AttributeAdvancedLinkRepo deleteValue Should delete a value 1`] = `
+"
+                    REMOVE @value0 IN @@value1
+                    RETURN OLD"
+`;
+
+exports[`AttributeAdvancedLinkRepo deleteValue Should delete a value 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": Object {
+    "_key": "445566",
+  },
+}
+`;
+
 exports[`AttributeAdvancedLinkRepo filterQueryPart Should return advanced link filter 1`] = `
 Object {
   "_source": [Function],

@@ -18,8 +18,6 @@ export default function useSaveValueMutation(record: IRecordIdentityWhoAmI, attr
     const [executeSaveValue] = useMutation<SAVE_VALUE, SAVE_VALUEVariables>(saveValueMutation, {
         update: (cache, {data: {saveValue}}) => {
             const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
-            cache.extract();
-
             cache.modify({
                 id: cache.identify(recordWithTypename),
                 fields: {

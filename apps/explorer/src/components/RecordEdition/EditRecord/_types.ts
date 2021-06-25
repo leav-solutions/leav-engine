@@ -5,6 +5,10 @@ import {AnyPrimitive, FormFieldTypes, FormUIElementTypes, ICommonFieldsSettings}
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {GET_FORM_forms_list_elements_elements} from '_gqlTypes/GET_FORM';
 import {SAVE_VALUE_saveValue} from '_gqlTypes/SAVE_VALUE';
+import {
+    SAVE_VALUE_BATCH_saveValueBatch_errors,
+    SAVE_VALUE_BATCH_saveValueBatch_values
+} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {Override} from '_types/Override';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import {
@@ -27,6 +31,14 @@ export interface ISubmitResult {
     status: APICallStatus;
     value?: SAVE_VALUE_saveValue;
     error?: string;
+}
+
+export type FieldSubmitMultipleFunc = (values: IValueToSubmit[]) => Promise<ISubmitMultipleResult>;
+export interface ISubmitMultipleResult {
+    status: APICallStatus;
+    error?: string;
+    values?: SAVE_VALUE_BATCH_saveValueBatch_values[];
+    errors?: SAVE_VALUE_BATCH_saveValueBatch_errors[];
 }
 
 export type DeleteValueFunc = (valueId?: string) => Promise<IDeleteValueResult>;

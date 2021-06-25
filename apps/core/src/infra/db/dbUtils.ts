@@ -181,7 +181,7 @@ export default function ({
          * @return any   Cleaned up object
          */
         cleanup(obj: any): any {
-            if (obj === null) {
+            if (obj === null || typeof obj === 'undefined') {
                 return null;
             }
 

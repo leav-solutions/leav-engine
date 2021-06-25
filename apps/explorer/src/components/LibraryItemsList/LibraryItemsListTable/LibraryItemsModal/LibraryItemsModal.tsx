@@ -6,7 +6,7 @@ import {Button, Form, Input, Modal} from 'antd';
 import {FormInstance} from 'antd/lib/form';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import React, {useRef} from 'react';
-import {saveValueBatchQuery} from '../../../../graphQL/mutations/values/saveValueBatchMutation';
+import {saveValueBatchMutation} from '../../../../graphQL/mutations/values/saveValueBatchMutation';
 import {IItem} from '../../../../_types/types';
 import FormPreviewsModal from './FormPreviewsModal';
 
@@ -20,7 +20,7 @@ interface ILibraryItemsModalProps {
 function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibraryItemsModalProps): JSX.Element {
     const formRef = useRef<FormInstance>(null);
 
-    const [saveValueBatch] = useMutation(saveValueBatchQuery);
+    const [saveValueBatch] = useMutation(saveValueBatchMutation);
 
     const handleSubmit = () => {
         saveValueBatch({

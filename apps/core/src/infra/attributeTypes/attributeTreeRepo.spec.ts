@@ -213,7 +213,10 @@ describe('AttributeTreeRepo', () => {
                 edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: (mockDb as unknown) as Database};
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([deletedEdgeData])
+            };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
@@ -233,16 +236,16 @@ describe('AttributeTreeRepo', () => {
                 ctx
             });
 
-            expect(mockDbEdgeCollec.removeByExample.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.removeByExample).toBeCalledWith({_key: '445566'});
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(deletedVal).toMatchObject({
                 id_value: '445566',
                 value: {
-                    record: {
-                        id: '123456',
-                        library: 'categories'
-                    }
+                    record: {library: 'categories', id: '123456'}
                 }
             });
         });
