@@ -197,69 +197,72 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     }, [currentLibId, dispatch, lang, library.attributes, library.defaultView, t, searchDispatch]);
 
     useEffect(() => {
-        if (view.reload && view.current) {
-            if (view.current.type === ViewTypes.list) {
-                // Get initials Fields
-                const newFields = view.current.fields?.reduce((acc, fieldKey) => {
-                    let parentAttributeData: IParentAttributeData | undefined;
-
-                    const splitKey = fieldKey.split('.');
-
-                    const attribute = getAttributeFromKey(fieldKey, searchState.attributes);
-
-                    // get originAttribute
-                    if (splitKey.length === 3 && splitKey[0] !== attributeExtendedKey) {
-                        const parentAttributeId = splitKey[1];
-                        const parentAttribute = searchState.attributes.find(
-                            att => parentAttributeId === att.id && library.id === att.library
-                        );
-
-                        if (parentAttribute) {
-                            parentAttributeData = {
-                                id: parentAttribute.id,
-                                type: parentAttribute.type
-                            };
-                        }
-                    }
-
-                    if (!attribute) {
-                        return acc;
-                    }
-
-                    const label =
-                        typeof attribute.label === 'string' ? attribute.label : localizedLabel(attribute.label, lang);
-
-                    const field: IField = {
-                        key: fieldKey,
-                        id: attribute.id,
-                        library: attribute.library,
-                        label,
-                        format: attribute.format,
-                        type: attribute.type,
-                        parentAttributeData
-                    };
-
-                    return [...acc, field];
-                }, []);
-
-                searchDispatch({type: SearchActionTypes.SET_FIELDS, fields: newFields ?? []});
-            }
-
-            // update Filters
-            if (view.current.filters) {
-                dispatchFilters(setFilters(getFiltersFromRequest(view.current.filters, searchState.attributes)));
-                dispatchFilters(setQueryFilters(view.current.filters));
-            } else {
-                // reset filters
-                dispatch(setFiltersQueryFilters([]));
-            }
-
-            // update sort
-            const field = view.current.sort?.field ?? defaultSort.field;
-            const order = view.current.sort?.order ?? defaultSort.order;
-            searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
+        if (!view.current) {
+            return;
         }
-    }, [view, searchState.attributes, lang, dispatchFilters, dispatch, library]);
+
+        if (view.current.type === ViewTypes.list) {
+            // Get initials Fields
+            const newFields = view.current.fields?.reduce((acc, fieldKey) => {
+                let parentAttributeData: IParentAttributeData | undefined;
+
+                const splitKey = fieldKey.split('.');
+
+                const attribute = getAttributeFromKey(fieldKey, searchState.attributes);
+
+                // get originAttribute
+                if (splitKey.length === 3 && splitKey[0] !== attributeExtendedKey) {
+                    const parentAttributeId = splitKey[1];
+                    const parentAttribute = searchState.attributes.find(
+                        att => parentAttributeId === att.id && library.id === att.library
+                    );
+
+                    if (parentAttribute) {
+                        parentAttributeData = {
+                            id: parentAttribute.id,
+                            type: parentAttribute.type
+                        };
+                    }
+                }
+
+                if (!attribute) {
+                    return acc;
+                }
+
+                const label =
+                    typeof attribute.label === 'string' ? attribute.label : localizedLabel(attribute.label, lang);
+
+                const field: IField = {
+                    key: fieldKey,
+                    id: attribute.id,
+                    library: attribute.library,
+                    label,
+                    format: attribute.format,
+                    type: attribute.type,
+                    parentAttributeData
+                };
+
+                return [...acc, field];
+            }, []);
+
+            searchDispatch({type: SearchActionTypes.SET_FIELDS, fields: newFields ?? []});
+        }
+
+        // update Filters
+        if (view.current.filters) {
+            dispatchFilters(setFilters(getFiltersFromRequest(view.current.filters, searchState.attributes)));
+            dispatchFilters(setQueryFilters(view.current.filters));
+        } else {
+            // reset filters
+            dispatch(setFiltersQueryFilters([]));
+        }
+
+        // update sort
+        const field = view.current.sort?.field ?? defaultSort.field;
+        const order = view.current.sort?.order ?? defaultSort.order;
+        searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
+        // }
+    }, [view.current, searchState.attributes, lang, dispatchFilters, dispatch, library]);
 
     // Get data
     const [
