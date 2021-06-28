@@ -10,5 +10,6 @@ describe('parseJSONAction', () => {
     const ctx = {attribute: attrText};
     test('parseJSON', async () => {
         expect(action('{"test":"aaa","toto":{"tata":true}}', {}, ctx)).toMatchObject({test: 'aaa', toto: {tata: true}});
+        expect(action(null, {}, ctx)).toBe(null);
     });
 });

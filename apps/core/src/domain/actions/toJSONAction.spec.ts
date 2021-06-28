@@ -10,5 +10,6 @@ describe('toJSONAction', () => {
     const ctx = {attribute: attrText};
     test('toJSON', async () => {
         expect(action({test: 'aaa', toto: {tata: true}}, {}, ctx)).toBe('{"test":"aaa","toto":{"tata":true}}');
+        expect(action(null, {}, ctx)).toBe(null);
     });
 });

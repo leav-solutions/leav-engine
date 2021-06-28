@@ -16,6 +16,10 @@ export default function (): IActionsListFunction {
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
+            if (value === null) {
+                return null;
+            }
+
             return JSON.stringify(value);
         }
     };
