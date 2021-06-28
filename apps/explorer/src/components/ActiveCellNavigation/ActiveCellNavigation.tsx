@@ -30,8 +30,9 @@ interface ICellProps {
 
 const Cell = styled.div<ICellProps>`
     display: grid;
-    place-items: center;
-    grid-template-columns: 2rem auto auto 2rem;
+    place-items: flex-start;
+    align-items: center;
+    grid-template-columns: 1rem auto auto 1rem;
     padding: 1rem;
     background: ${props => {
         if (props.isInPath) {
