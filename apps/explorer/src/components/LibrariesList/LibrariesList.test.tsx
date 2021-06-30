@@ -24,14 +24,6 @@ jest.mock(
         }
 );
 
-jest.mock(
-    './LibraryDetail',
-    () =>
-        function LibraryDetail() {
-            return <div>LibraryDetail</div>;
-        }
-);
-
 describe('LibrariesList', () => {
     const mocks = [
         {
@@ -96,20 +88,5 @@ describe('LibrariesList', () => {
         });
 
         expect(await waitForElement(() => screen.getByText('LibraryCard'))).toBeInTheDocument();
-    });
-
-    test("shouldn't call LibraryDetail", async () => {
-        await act(async () => {
-            render(
-                <MockStore>
-                    <MockedProviderWithFragments mocks={mocks}>
-                        <LibrariesList />
-                    </MockedProviderWithFragments>
-                </MockStore>
-            );
-        });
-
-        expect(await waitForElement(() => screen.getByText('LibraryCard'))).toBeInTheDocument();
-        expect(screen.queryByRole('LibraryDetail')).not.toBeInTheDocument();
     });
 });

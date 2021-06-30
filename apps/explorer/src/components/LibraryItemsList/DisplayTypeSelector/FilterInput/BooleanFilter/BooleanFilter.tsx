@@ -7,15 +7,15 @@ import {IFilter} from '../../../../../_types/types';
 
 interface IBooleanFilterProps {
     filter: IFilter;
-    updateFilterValue: (newValue: any) => void;
+    updateFilterValue: (newFilterValue: IFilter['value']) => void;
 }
 
 function BooleanFilter({filter, updateFilterValue}: IBooleanFilterProps): JSX.Element {
     const _handleChange = (value: boolean) => {
-        updateFilterValue(value);
+        updateFilterValue({...filter.value, value});
     };
 
-    return <Switch data-test-id="filter-input-boolean" checked={!!filter.value} onChange={_handleChange} />;
+    return <Switch data-test-id="filter-input-boolean" checked={!!filter.value.value} onChange={_handleChange} />;
 }
 
 export default BooleanFilter;

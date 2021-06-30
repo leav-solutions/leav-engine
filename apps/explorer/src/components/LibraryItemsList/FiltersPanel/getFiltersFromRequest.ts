@@ -10,13 +10,15 @@ export const getFiltersFromRequest = (queryFilters: IQueryFilter[], attributes: 
     for (const queryFilter of queryFilters) {
         if (queryFilter.value) {
             const attribute = getAttributeFromKey(queryFilter.field, attributes);
+
             const filter = {
                 index: result.length,
                 key: queryFilter.field,
-                value: queryFilter.value,
+                value: {value: queryFilter.value},
                 active: true,
                 condition: queryFilter.condition,
-                attribute
+                attribute,
+                treeId: queryFilter.treeId
             };
 
             result = [...result, filter];

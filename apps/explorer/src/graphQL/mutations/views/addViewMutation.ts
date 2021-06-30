@@ -15,6 +15,7 @@ export interface IAddViewMutationVariablesFilter {
     value?: string;
     condition?: RecordFilterCondition;
     operator?: RecordFilterOperator;
+    treeId?: string;
 }
 
 export interface IAddViewMutationVariablesSetting {

@@ -101,16 +101,12 @@ export interface IFilterSeparatorCommon {
 
 export interface IFilter {
     index: number; // use to sort the filters
-    key: string; // attribute key
-    value: unknown;
+    key: string; // attribute / tree key
+    value: {value: boolean | string | number | null; label?: string};
     active: boolean;
-    condition: ConditionFilter | RecordFilterCondition;
-    attribute: IAttribute; // Put the attribute in the filter to avoid having to fetch him multiple times
-}
-
-export enum FilterOperator {
-    AND = 'AND',
-    OR = 'OR'
+    condition: RecordFilterCondition;
+    attribute?: IAttribute; // Put the attribute in the filter to avoid having to fetch him multiple times
+    tree?: ITree;
 }
 
 export enum AttributeFormat {
@@ -131,13 +127,18 @@ export enum AttributeType {
 }
 
 export enum OperatorFilter {
-    and = 'AND',
-    or = 'OR',
-    openParent = 'OPEN_BRACKET',
-    closeParent = 'CLOSE_BRACKET'
+    AND = 'AND',
+    OR = 'OR',
+    OPEN_BRACKET = 'OPEN_BRACKET',
+    CLOSE_BRACKET = 'CLOSE_BRACKET'
 }
 
-export enum ConditionFilter {
+export enum TreeConditionFilter {
+    CLASSIFIED_IN = 'CLASSIFIED_IN',
+    NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN'
+}
+
+export enum AttributeConditionFilter {
     CONTAINS = 'CONTAINS',
     NOT_CONTAINS = 'NOT_CONTAINS',
     EQUAL = 'EQUAL',
@@ -153,11 +154,12 @@ export interface IQueryFilter {
     value?: string;
     condition?: RecordFilterCondition;
     operator?: RecordFilterOperator;
+    treeId?: string;
 }
 
 export enum OrderSearch {
-    desc = 'desc',
-    asc = 'asc'
+    DESC = 'DESC',
+    ASC = 'ASC'
 }
 
 export enum DisplaySize {

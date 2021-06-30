@@ -5,7 +5,8 @@ import gql from 'graphql-tag';
 import {
     AttributeFormat,
     AttributeType,
-    ConditionFilter,
+    AttributeConditionFilter,
+    TreeConditionFilter,
     ILabel,
     OperatorFilter,
     OrderSearch,
@@ -15,7 +16,7 @@ import {
 export interface ILibraryDetailExtendedFilter {
     field?: string;
     value?: string;
-    condition?: ConditionFilter;
+    condition?: AttributeConditionFilter | TreeConditionFilter;
     operator?: OperatorFilter;
 }
 

@@ -18,7 +18,6 @@ import {defaultView, viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
-    IAddViewMutationVariablesFilter,
     IAddViewMutationVariablesView
 } from '../../../graphQL/mutations/views/addViewMutation';
 import {
@@ -29,7 +28,7 @@ import {
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar';
 import {limitTextSize, localizedLabel} from '../../../utils';
-import {IView, TypeSideItem} from '../../../_types/types';
+import {IView, TypeSideItem, IQueryFilter} from '../../../_types/types';
 import AddView from '../AddView';
 
 const DropdownButton = styled(Dropdown.Button)`
@@ -116,7 +115,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
 
                 const viewFilters = stateFilters.queryFilters.reduce((acc, queryFilter) => {
                     return [...acc, queryFilter];
-                }, [] as IAddViewMutationVariablesFilter[]);
+                }, [] as IQueryFilter[]);
 
                 const viewSort = {
                     field: searchState.sort.field,

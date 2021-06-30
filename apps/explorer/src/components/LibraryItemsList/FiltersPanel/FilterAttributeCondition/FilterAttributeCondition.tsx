@@ -11,8 +11,8 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {allowedTypeOperator, getAttributeFromKey} from '../../../../utils';
-import {AttributeFormat, ConditionFilter, IFilter} from '../../../../_types/types';
-import {getConditionOptions} from '../FiltersOptions';
+import {AttributeFormat, AttributeConditionFilter, IFilter} from '../../../../_types/types';
+import {getAttributeConditionOptions} from '../FiltersOptions';
 
 const Wrapper = styled.span`
     padding: 3px 8px;
@@ -32,12 +32,12 @@ const BooleanWrapper = styled.span`
     place-items: center;
 `;
 
-interface IFilterConditionProps {
+interface IFilterAttributeConditionProps {
     filter: IFilter;
     updateFilterValue: (newValue: any) => void;
 }
 
-const FilterCondition = ({filter, updateFilterValue}: IFilterConditionProps) => {
+const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeConditionProps) => {
     const {t} = useTranslation();
 
     const {state: searchState} = useSearchReducer();
@@ -49,7 +49,7 @@ const FilterCondition = ({filter, updateFilterValue}: IFilterConditionProps) => 
         return <div>error</div>;
     }
 
-    const conditionOptions = getConditionOptions(t);
+    const conditionOptions = getAttributeConditionOptions(t);
     const conditionOptionsByType = conditionOptions.filter(
         conditionOption => attribute.format && allowedTypeOperator[attribute.format]?.includes(conditionOption.value)
     );
@@ -59,11 +59,12 @@ const FilterCondition = ({filter, updateFilterValue}: IFilterConditionProps) => 
             if (f.index === filter.index) {
                 return {
                     ...filter,
-                    condition: ConditionFilter[e]
+                    condition: AttributeConditionFilter[e]
                 };
             }
             return f;
         });
+
         dispatchFilters(setFilters(newFilters));
     };
 
@@ -101,4 +102,4 @@ const FilterCondition = ({filter, updateFilterValue}: IFilterConditionProps) => 
     }
 };
 
-export default FilterCondition;
+export default FilterAttributeCondition;

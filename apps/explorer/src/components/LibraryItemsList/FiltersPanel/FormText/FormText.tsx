@@ -39,7 +39,7 @@ const FormText = ({filter, updateFilterValue}: IFormTextProps) => {
             <TextAreaWrapper>
                 <Input.TextArea
                     disabled={!filter.active}
-                    value={String(filter.value)}
+                    value={String(filter.value.value)}
                     onChange={e => handleChange(e)}
                     onResize={handleResize}
                     rows={1}

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MoreOutlined} from '@ant-design/icons';
-import {Dropdown, Menu} from 'antd';
+import {Dropdown, Menu, Button} from 'antd';
 import {formatNotUsingCondition} from 'constants/constants';
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -13,12 +13,15 @@ import useStateFilters from '../../../../hooks/FiltersStateHook/FiltersStateHook
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
 import {localizedLabel} from '../../../../utils';
-import {AttributeFormat, IFilter} from '../../../../_types/types';
+import {AttributeFormat, IFilter, TreeConditionFilter, AttributeConditionFilter} from '../../../../_types/types';
 import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
 import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
 import TextFilter from '../../DisplayTypeSelector/FilterInput/TextFilter';
 import ChangeAttribute from '../ChangeAttribute';
-import FilterCondition from '../FilterCondition';
+import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModal/SelectTreeNodeModal';
+import ChangeTree from '../ChangeTree';
+import FilterAttributeCondition from '../FilterAttributeCondition';
+import FilterTreeCondition from '../FilterTreeCondition';
 
 interface IWrapperProps {
     active: boolean;
@@ -99,7 +102,7 @@ const HeadInfos = styled.div`
     }
 `;
 
-const AttributeLabel = styled.span`
+const FilterLabel = styled.span`
     padding: 8px;
 `;
 
@@ -119,29 +122,47 @@ interface IFilterProps {
     handleProps: DraggableProvidedDragHandleProps;
 }
 
+interface ISwitchFormType {
+    filter: IFilter;
+    updateFilterValue: (newFilterValue: IFilter['value']) => void;
+}
+
 function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
     const {stateFilters, dispatchFilters} = useStateFilters();
     const [showChangeAttribute, setShowChangeAttribute] = useState(false);
+    const [showChangeTree, setShowChangeTree] = useState(false);
+    const [showSelectTreeNodeModal, setShowSelectTreeNodeModal] = useState(false);
 
     const handleDelete = () => {
         dispatchFilters(setFilters(stateFilters.filters.filter(f => f.index !== filter.index)));
     };
 
-    const updateFilterValue = (newFilterValue: unknown) => {
-        const newFilters = stateFilters.filters.map(f => {
+    const updateFilterValue = (newFilterValue: IFilter['value']) => {
+        const newFilters: IFilter[] = stateFilters.filters.map(f => {
             if (f.index === filter.index) {
-                return {...filter, value: newFilterValue};
+                return {...f, value: newFilterValue};
             }
+
             return f;
         });
 
         dispatchFilters(setFilters(newFilters));
     };
 
+    const _getValueFromNode = (node: ITreeNode): IFilter['value'] => {
+        return typeof node === 'undefined' || node.key === filter.tree.id
+            ? {value: null}
+            : {value: node.key, label: node.title};
+    };
+
     const handleShowChangeAttribute = () => {
         setShowChangeAttribute(true);
+    };
+
+    const handleShowChangeTree = () => {
+        setShowChangeTree(true);
     };
 
     const toggleActiveStatus = () => {
@@ -149,6 +170,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             if (f.index === filter.index) {
                 return {...f, active: !f.active};
             }
+
             return f;
         });
 
@@ -159,23 +181,81 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         <Menu>
             <Menu.Item onClick={handleDelete}>{t('global.delete')}</Menu.Item>
             <Menu.Item onClick={toggleActiveStatus}>
-                {filter.active ? t('filters.make-active') : t('filters.make-inactive')}
+                {filter.active ? t('filters.deactivate') : t('filters.activate')}
             </Menu.Item>
         </Menu>
     );
 
+    const InputByFormat = useCallback(
+        (props: ISwitchFormType) => {
+            const showStandardCondition =
+                props.filter.condition in AttributeConditionFilter &&
+                !formatNotUsingCondition.find(format => format === props.filter.attribute.format);
+
+            const showTreeCondition = props.filter.condition in TreeConditionFilter;
+
+            if (showStandardCondition) {
+                switch (props.filter.attribute.format) {
+                    case AttributeFormat.date:
+                        return <DateFilter {...props} />;
+                    case AttributeFormat.numeric:
+                        return <NumericFilter {...props} />;
+                    case AttributeFormat.text:
+                    default:
+                        return <TextFilter {...props} />;
+                }
+            } else if (showTreeCondition) {
+                return (
+                    <Button onClick={() => setShowSelectTreeNodeModal(true)}>
+                        {props.filter.value.label || t('global.select')}
+                    </Button>
+                );
+            }
+
+            return <></>;
+        },
+        [t]
+    );
+
     return (
         <>
-            <ChangeAttribute filter={filter} showModal={showChangeAttribute} setShowModal={setShowChangeAttribute} />
+            {!!filter.attribute && (
+                <ChangeAttribute
+                    filter={filter}
+                    showModal={showChangeAttribute}
+                    setShowModal={setShowChangeAttribute}
+                />
+            )}
+
+            {!!filter.tree && (
+                <ChangeTree filter={filter} showModal={showChangeTree} setShowModal={setShowChangeTree} />
+            )}
+
+            {showSelectTreeNodeModal && (
+                <SelectTreeNodeModal
+                    selectedNodeKey={(filter.value.value as string) || filter.tree.id}
+                    tree={{id: filter.tree.id, label: filter.tree.label}}
+                    onSubmit={node => updateFilterValue(_getValueFromNode(node))}
+                    onClose={() => setShowSelectTreeNodeModal(false)}
+                    visible={showSelectTreeNodeModal}
+                />
+            )}
+
             <Wrapper data-testid="filter" active={filter.active}>
                 <Handle className="filter-handle" {...handleProps} />
                 <Content>
                     <Head>
                         <HeadInfos>
-                            <AttributeLabel onClick={handleShowChangeAttribute}>
-                                {localizedLabel(filter.attribute.label, lang)}
-                            </AttributeLabel>
-                            <FilterCondition filter={filter} updateFilterValue={updateFilterValue} />
+                            <FilterLabel
+                                onClick={!!filter.attribute ? handleShowChangeAttribute : handleShowChangeTree}
+                            >
+                                {localizedLabel(filter.attribute?.label || filter.tree.label, lang)}
+                            </FilterLabel>
+                            {!!filter.attribute ? (
+                                <FilterAttributeCondition filter={filter} updateFilterValue={updateFilterValue} />
+                            ) : (
+                                <FilterTreeCondition filter={filter} />
+                            )}
                         </HeadInfos>
                         <Dropdown overlay={filterOptions} placement="bottomRight">
                             <HeadOptions>
@@ -189,28 +269,5 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         </>
     );
 }
-
-interface ISwitchFormType {
-    filter: IFilter;
-    updateFilterValue: (newValue: any) => void;
-}
-
-const InputByFormat = (props: ISwitchFormType) => {
-    const showStandardCondition = !formatNotUsingCondition.find(format => format === props.filter.attribute.format);
-
-    if (showStandardCondition) {
-        switch (props.filter.attribute.format) {
-            case AttributeFormat.date:
-                return <DateFilter {...props} />;
-            case AttributeFormat.numeric:
-                return <NumericFilter {...props} />;
-            case AttributeFormat.text:
-            default:
-                return <TextFilter {...props} />;
-        }
-    }
-
-    return <></>;
-};
 
 export default Filter;

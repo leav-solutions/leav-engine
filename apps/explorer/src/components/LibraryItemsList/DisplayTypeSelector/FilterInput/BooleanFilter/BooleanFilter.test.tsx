@@ -30,7 +30,9 @@ describe('BooleanFilter', () => {
     });
 
     test('Should show switch, unchecked', async () => {
-        const comp = shallow(<BooleanFilter filter={{...mockFilter, value: false}} updateFilterValue={jest.fn()} />);
+        const comp = shallow(
+            <BooleanFilter filter={{...mockFilter, value: {value: false}}} updateFilterValue={jest.fn()} />
+        );
 
         expect(comp.find('Switch').prop('checked')).toBe(false);
     });

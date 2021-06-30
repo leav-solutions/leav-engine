@@ -15,13 +15,12 @@ import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../_gqlTypes/SAVE_USER
 import {IBaseNotification, NotificationType} from '../../_types/types';
 import ErrorDisplay from '../shared/ErrorDisplay';
 import LibraryCard from './LibraryCard';
-import LibraryDetail from './LibraryDetail';
 
 export const FAVORITE_LIBRARIES_KEY = 'favorites_libraries_ids';
 
 function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
-    const {libId, libQueryName, filterName} = useParams<{libId: string; libQueryName: string; filterName: string}>();
+    const {libId} = useParams<{libId: string; libQueryName: string; filterName: string}>();
 
     const dispatch = useAppDispatch();
 
@@ -103,12 +102,6 @@ function LibrariesList(): JSX.Element {
                         />
                     ))}
             </Row>
-            {libId && libQueryName && (
-                <>
-                    <Divider />
-                    <LibraryDetail libId={libId} libQueryName={libQueryName} filterName={filterName} />
-                </>
-            )}
         </div>
     );
 }

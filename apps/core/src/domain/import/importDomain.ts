@@ -127,7 +127,7 @@ export default function ({
     };
 
     const _matchesToFilters = (matches: IMatch[]): IRecordFilterLight[] => {
-        const filters = matches.reduce((m, acc) => m.concat(acc, {operator: Operator.AND}), []);
+        const filters = matches.reduce((acc, m) => acc.concat(m, {operator: Operator.AND}), []);
         filters.pop();
 
         return filters.map((m: IMatch) => ({field: m.attribute, condition: AttributeCondition.EQUAL, value: m.value}));

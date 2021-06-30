@@ -67,7 +67,7 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
 
     const attribute = element.attribute as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute;
 
-    const {saveValue} = useSaveValueMutation(record, attribute.id);
+    useSaveValueMutation(record, attribute.id);
     const {saveValues} = useSaveValueBatchMutation(record, attribute.id);
     const {deleteValue} = useDeleteValueMutation(record, attribute.id);
     const [errorMessage, setErrorMessage] = useState<string | string[]>();

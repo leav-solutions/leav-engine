@@ -7,17 +7,17 @@ import {IFilter} from '../../../../../_types/types';
 
 interface INumericFilterProps {
     filter: IFilter;
-    updateFilterValue: (newValue: any, valueSize?: number | 'auto') => void;
+    updateFilterValue: (newFilterValue: IFilter['value']) => void;
 }
 
 const NumericFilter = ({filter, updateFilterValue}: INumericFilterProps) => {
     const _handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = Number(event.target.value ?? 0);
-        updateFilterValue(newValue);
+        updateFilterValue({...filter.value, value: newValue});
     };
 
     return (
-        <Input type="number" disabled={!filter.active} value={Number(filter.value)} onChange={e => _handleChange(e)} />
+        <Input type="number" disabled={!filter.active} value={Number(filter.value.value)} onChange={_handleChange} />
     );
 };
 

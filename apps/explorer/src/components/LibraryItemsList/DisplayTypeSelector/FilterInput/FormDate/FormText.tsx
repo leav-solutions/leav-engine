@@ -16,13 +16,14 @@ const CustomForm = styled(Form)`
 
 interface IFormTextProps {
     filter: IFilter;
-    updateFilterValue: (newValue: any, valueSize?: number | 'auto') => void;
+    updateFilterValue: (newFilterValue: IFilter['value']) => void;
 }
 
 const FormText = ({filter, updateFilterValue}: IFormTextProps) => {
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newValue = (event.target.value ?? '').toString();
-        updateFilterValue(newValue);
+
+        updateFilterValue({...filter.value, value: newValue});
     };
 
     return (
@@ -30,8 +31,8 @@ const FormText = ({filter, updateFilterValue}: IFormTextProps) => {
             <TextAreaWrapper>
                 <Input.TextArea
                     disabled={!filter.active}
-                    value={String(filter.value)}
-                    onChange={e => handleChange(e)}
+                    value={String(filter.value.value)}
+                    onChange={handleChange}
                     rows={1}
                 />
             </TextAreaWrapper>

@@ -1,7 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ArrowsAltOutlined, ArrowUpOutlined, HeartOutlined, HeartFilled, InfoCircleOutlined, ToolOutlined} from '@ant-design/icons';
+import {
+    ArrowsAltOutlined,
+    ArrowUpOutlined,
+    HeartOutlined,
+    HeartFilled,
+    InfoCircleOutlined,
+    ToolOutlined
+} from '@ant-design/icons';
 import {Card, Col} from 'antd';
 import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
@@ -44,7 +51,11 @@ function LibraryCard({lib, active, isFavorite = false, onUpdateFavorite}: ILibra
                 hoverable
                 actions={[
                     <ArrowsAltOutlined onClick={goLib} />,
-                    isFavorite ? <HeartFilled onClick={_handleFavoriteClick}/> : <HeartOutlined onClick={_handleFavoriteClick}/>,
+                    isFavorite ? (
+                        <HeartFilled onClick={_handleFavoriteClick} />
+                    ) : (
+                        <HeartOutlined onClick={_handleFavoriteClick} />
+                    ),
                     <ToolOutlined />,
                     <ArrowUpOutlined onClick={() => setImportModal(true)} />,
                     <InfoCircleOutlined onClick={handleChangeLibSelected} />
