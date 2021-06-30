@@ -16,7 +16,6 @@ var FormFieldTypes;
     FormFieldTypes["ENCRYPTED"] = "encrypted";
     FormFieldTypes["DROPDOWN"] = "dropdown";
     FormFieldTypes["LINK"] = "link";
-    FormFieldTypes["TREE"] = "tree";
 })(FormFieldTypes = exports.FormFieldTypes || (exports.FormFieldTypes = {}));
 var TabsDirection;
 (function (TabsDirection) {
