@@ -7,7 +7,7 @@ import {IViewState} from './stateType';
 
 export const viewInitialState: IViewState = {
     current: null,
-    reload: false
+    reload: true
 };
 
 const viewSlice = createSlice({

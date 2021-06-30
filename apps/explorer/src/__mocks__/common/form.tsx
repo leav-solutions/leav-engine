@@ -1,14 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    FormFieldTypes,
-    FormUIElementTypes,
-    ICommonFieldsSettings,
-    IFormDividerSettings,
-    IFormTabsSettings,
-    TabsDirection
-} from '@leav/types';
+import {FormFieldTypes, FormUIElementTypes, IFormDividerSettings, IFormTabsSettings, TabsDirection} from '@leav/utils';
 import {FormElement} from 'components/RecordEdition/EditRecord/_types';
 import React from 'react';
 import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';

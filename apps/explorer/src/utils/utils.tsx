@@ -7,10 +7,10 @@ import {isString, pick} from 'lodash';
 import {attributeExtendedKey, infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
+    AttributeConditionFilter,
     AttributeFormat,
     AttributeType,
     AvailableLanguage,
-    AttributeConditionFilter,
     DisplaySize,
     ExtendFormat,
     IAttribute,
@@ -217,12 +217,15 @@ interface ICustomAttribute extends IAttribute {
 }
 
 export const getFieldsKeyFromAttribute = (attribute: ISelectedAttribute | ICustomAttribute) => {
-    if (attribute.parentAttributeData) {
-        return `${attribute.library}.${attribute.parentAttributeData.id}.${attribute.id}`;
-    } else if (attribute?.embeddedFieldData && attribute.path) {
-        return `${attributeExtendedKey}.${attribute.library}.${attribute.path}`;
+    if (attribute?.format === AttributeFormat.extended && attribute.path) {
+        return `${attribute.path}`;
+    } else if (attribute.parentAttributeData) {
+        return attribute.parentAttributeData.type === AttributeType.tree
+            ? `${attribute.parentAttributeData.id}.${attribute.library}.${attribute.id}`
+            : `${attribute.parentAttributeData.id}.${attribute.id}`;
     }
-    return `${attribute.library}.${attribute.id}`;
+
+    return `${attribute.id}`;
 };
 
 export const reorder = (list: any[], startIndex: number, endIndex: number) => {
@@ -252,7 +255,6 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 1;
             }
-            return 0;
         case NotificationPriority.medium:
             switch (b.priority) {
                 case NotificationPriority.low:
@@ -262,7 +264,6 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 1;
             }
-            return 0;
         case NotificationPriority.high:
             switch (b.priority) {
                 case NotificationPriority.low:
@@ -272,9 +273,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.high:
                     return 0;
             }
-            return 0;
     }
-    return 0;
 };
 
 type TextSizeLimit = 'small' | 'medium' | 'big' | number;
@@ -322,36 +321,33 @@ export const attributeToSelectedAttribute = (
  */
 export const gqlUnchecked = gql;
 
-export const getAttributeFromKey = (key: string, attributes: IAttribute[]): IAttribute | undefined => {
+export const getAttributeFromKey = (key: string, library: string, attributes: IAttribute[]): IAttribute | undefined => {
     const splitKey = key.split('.');
 
-    const attribute = attributes.find(att => {
-        // splitKey only contain the  attributeId
-        if (splitKey.length === 1) {
-            return att.id === key;
-        } else if (splitKey.length === 2) {
-            // splitKey contain libraryId and attributeId
-            const libraryId = splitKey[0];
-            const attributeId = splitKey[1];
+    // Get root attribute by first key part
+    const rootAttribute = attributes.find(attr => attr.library === library && attr.id === splitKey[0]);
 
-            return att.library === libraryId && att.id === attributeId;
-        } else {
-            // extended attribute
-            if (splitKey[0] === attributeExtendedKey) {
-                const libraryId = splitKey[1];
-                const attributeId = splitKey[2];
+    if (!rootAttribute) {
+        return;
+    }
 
-                return att.library === libraryId && att.id === attributeId;
-            }
-            // linked attribute
-            const libraryId = splitKey[0];
-            const attributeId = splitKey[2];
+    if (rootAttribute.type === AttributeType.simple || rootAttribute.type === AttributeType.advanced) {
+        return rootAttribute;
+    }
 
-            return att.library === libraryId && att.id === attributeId;
-        }
-    });
+    if (rootAttribute.type === AttributeType.simple_link || rootAttribute.type === AttributeType.advanced_link) {
+        const linkedAttribute = attributes.find(
+            attr => attr.library === rootAttribute?.linkedLibrary?.id && attr.id === splitKey[0]
+        );
 
-    return attribute;
+        return linkedAttribute;
+    }
+
+    if (rootAttribute.type === AttributeType.tree) {
+        const linkedAttribute = attributes.find(attr => attr.library === splitKey[1] && attr.id === splitKey[2]);
+
+        return linkedAttribute;
+    }
 };
 
 export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): AttributeConditionFilter => {

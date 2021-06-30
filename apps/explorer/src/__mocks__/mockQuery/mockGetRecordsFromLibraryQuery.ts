@@ -8,7 +8,6 @@ import {
 } from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {IField} from '_types/types';
-import {mockLabel} from '__mocks__/common/label';
 import {mockLibrary} from '__mocks__/common/library';
 import {mockPreview} from '__mocks__/common/preview';
 
@@ -16,7 +15,7 @@ export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryE
     id: 'id',
     whoAmI: {
         id: 'id',
-        label: mockLabel('label'),
+        label: 'label',
         preview: mockPreview,
         library: mockLibrary
     }

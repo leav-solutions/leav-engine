@@ -15,7 +15,7 @@ import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setFiltersQueryFilters} from 'redux/filters';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {setViewCurrent} from 'redux/view';
+import {setViewCurrent, setViewReload} from 'redux/view';
 import styled, {CSSObject} from 'styled-components';
 import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from 'utils';
 import {
@@ -24,7 +24,7 @@ import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {AttributeFormat, AttributeType, ViewTypes} from '_gqlTypes/globalTypes';
-import {attributeExtendedKey, defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
+import {defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
 import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
@@ -118,6 +118,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         }
 
         dispatch(setViewCurrent(newView));
+        dispatch(setViewReload(true));
 
         // Attributes
         const attributesFromQuery: IAttribute[] = library.attributes.reduce((acc: IAttribute[], attribute) => {
@@ -158,6 +159,10 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                             label: linkedAttribute.label,
                             isLink: checkTypeIsLink(linkedAttribute.type),
                             isMultiple: linkedAttribute.multiple_values,
+                            linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                                .linked_library,
+                            linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
+                                .linked_tree,
                             library: linkedLibraryId
                         })
                     );
@@ -197,22 +202,23 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     }, [currentLibId, dispatch, lang, library.attributes, library.defaultView, t, searchDispatch]);
 
     useEffect(() => {
-        if (!view.current) {
+        if (!view.current || !view.reload) {
             return;
         }
 
         if (view.current.type === ViewTypes.list) {
-            // Get initials Fields
+            // Load initials fields from view fields
             const newFields = view.current.fields?.reduce((acc, fieldKey) => {
                 let parentAttributeData: IParentAttributeData | undefined;
 
                 const splitKey = fieldKey.split('.');
 
-                const attribute = getAttributeFromKey(fieldKey, searchState.attributes);
+                const attribute = getAttributeFromKey(fieldKey, library.id, searchState.attributes);
+                let recordLibrary = null;
 
-                // get originAttribute
-                if (splitKey.length === 3 && splitKey[0] !== attributeExtendedKey) {
-                    const parentAttributeId = splitKey[1];
+                // For attributes through tree attribute, key is [parent attribute].[record library].[attribute]
+                if (splitKey.length === 3) {
+                    const parentAttributeId = splitKey[0];
                     const parentAttribute = searchState.attributes.find(
                         att => parentAttributeId === att.id && library.id === att.library
                     );
@@ -222,6 +228,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                             id: parentAttribute.id,
                             type: parentAttribute.type
                         };
+                        recordLibrary = splitKey[1];
                     }
                 }
 
@@ -239,7 +246,8 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                     label,
                     format: attribute.format,
                     type: attribute.type,
-                    parentAttributeData
+                    parentAttributeData,
+                    recordLibrary
                 };
 
                 return [...acc, field];
@@ -250,7 +258,9 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
 
         // update Filters
         if (view.current.filters) {
-            dispatchFilters(setFilters(getFiltersFromRequest(view.current.filters, searchState.attributes)));
+            dispatchFilters(
+                setFilters(getFiltersFromRequest(view.current.filters, searchState.library.id, searchState.attributes))
+            );
             dispatchFilters(setQueryFilters(view.current.filters));
         } else {
             // reset filters
@@ -260,9 +270,10 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         // update sort
         const field = view.current.sort?.field ?? defaultSort.field;
         const order = view.current.sort?.order ?? defaultSort.order;
+
+        dispatch(setViewReload(false));
         searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
-        // }
-    }, [view.current, searchState.attributes, lang, dispatchFilters, dispatch, library]);
+    }, [view, searchState.attributes, searchState.library.id, lang, dispatchFilters, dispatch, library]);
 
     // Get data
     const [
@@ -290,7 +301,6 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
 
                 const newRecords: ISearchRecord[] = manageItems({
                     items: itemsFromQuery,
-                    lang,
                     fields: searchState.fields
                 });
 

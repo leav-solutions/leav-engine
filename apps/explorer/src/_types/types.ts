@@ -211,6 +211,7 @@ export interface IFieldTypeLink extends IFieldBase {
 export interface IFieldTypeTree extends IFieldBase {
     type: AttributeType.tree;
     parentAttributeData?: IParentAttributeData;
+    recordLibrary?: string;
     treeData?: ITreeData;
 }
 

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FormFieldTypes, FormUIElementTypes} from '@leav/types';
+import {FormFieldTypes, FormUIElementTypes} from '@leav/utils';
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {

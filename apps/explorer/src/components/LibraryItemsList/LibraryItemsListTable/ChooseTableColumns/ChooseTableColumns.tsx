@@ -23,22 +23,7 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
 
     const [{lang}] = useLang();
 
-    const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>(
-        (searchState?.fields ?? []).map(col => {
-            const currentAttribute = searchState.attributes.find(
-                attribute => attribute.id === col.id && attribute.library === col.library
-            );
-
-            return {
-                id: col.id,
-                path: col.id,
-                library: col.library,
-                label: currentAttribute?.label ?? null,
-                type: col.type,
-                multiple_values: !!col.multipleValues
-            };
-        })
-    );
+    const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>();
 
     useEffect(() => {
         setSelectedAttributes(
@@ -48,11 +33,9 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 );
 
                 return {
-                    id: col.id,
-                    path: col.id,
-                    library: col.library,
+                    ...col,
+                    path: col.key,
                     label: currentAttribute?.label ?? null,
-                    type: col.type,
                     multiple_values: !!col.multipleValues
                 };
             })
@@ -107,7 +90,11 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
                 format: attribute.format,
                 parentAttributeData: selectedAttribute?.parentAttributeData,
                 treeData: selectedAttribute.treeData,
-                embeddedData
+                embeddedData,
+                recordLibrary:
+                    selectedAttribute?.parentAttributeData?.type === AttributeType.tree
+                        ? selectedAttribute.path.split('.')[1]
+                        : null
             };
 
             return [...acc, field];

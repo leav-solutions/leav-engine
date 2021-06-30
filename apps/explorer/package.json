@@ -7,7 +7,7 @@
         "@apollo/client": "^3.3.7",
         "@apollo/react-components": "^3.1.5",
         "@apollo/react-hoc": "^3.1.5",
-        "@leav/types": "workspace:libs/types",
+        "@leav/utils": "workspace:libs/utils",
         "@reduxjs/toolkit": "1.5.1",
         "@types/object-path": "^0.11.0",
         "@types/react-beautiful-dnd": "^13.0.0",

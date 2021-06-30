@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
-import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/types';
+import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React, {useReducer} from 'react';

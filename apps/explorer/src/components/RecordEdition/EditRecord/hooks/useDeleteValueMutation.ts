@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloError, useMutation} from '@apollo/client';
-import {ErrorTypes} from '@leav/types';
+import {ErrorTypes} from '@leav/utils';
 import {deleteValueMutation} from 'graphQL/mutations/values/deleteValueMutation';
 import {useTranslation} from 'react-i18next';
 import {DELETE_VALUE, DELETE_VALUEVariables} from '_gqlTypes/DELETE_VALUE';

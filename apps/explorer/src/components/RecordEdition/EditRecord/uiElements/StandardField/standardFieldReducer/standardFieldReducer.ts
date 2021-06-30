@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/types';
+import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
 import {FormElement} from 'components/RecordEdition/EditRecord/_types';
 import {IRecordPropertyAttribute, IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {AttributeFormat} from '_gqlTypes/globalTypes';

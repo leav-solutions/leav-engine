@@ -9,7 +9,7 @@ export interface ISearchFullTextResult {
     [x: string]: any;
     whoAmI: {
         id: string;
-        label: ILabel;
+        label: string;
         color?: string;
         preview?: {
             small: string;
