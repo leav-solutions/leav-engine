@@ -91,9 +91,9 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 
             const query: AqlQuery =
-                attributes[0].format !== AttributeFormats.EXTENDED
-                    ? aql`FILTER r.${attributes[0].id} ${queryPart}`
-                    : aql`FILTER ${_getExtendedFilterPart(attributes)} ${queryPart}`;
+                attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
+                    ? aql`FILTER ${_getExtendedFilterPart(attributes)} ${queryPart}`
+                    : aql`FILTER r.${attributes[0].id} ${queryPart}`;
 
             return query;
         },
@@ -101,9 +101,9 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 
             const query: AqlQuery =
-                attributes[0].format !== AttributeFormats.EXTENDED
-                    ? aql`SORT r.${attributes[0].id} ${order}`
-                    : aql`SORT ${_getExtendedFilterPart(attributes)} ${order}`;
+                attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
+                    ? aql`SORT ${_getExtendedFilterPart(attributes)} ${order}`
+                    : aql`SORT r.${attributes[0].id} ${order}`;
 
             return query;
         },

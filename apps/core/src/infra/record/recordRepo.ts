@@ -13,11 +13,11 @@ import {
     IPaginationParams
 } from '../../_types/list';
 import {
+    AttributeCondition,
     IRecord,
     IRecordFilterOption,
     IRecordSort,
     Operator,
-    AttributeCondition,
     TreeCondition
 } from '../../_types/record';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
