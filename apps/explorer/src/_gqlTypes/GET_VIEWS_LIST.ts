@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewTypes} from './globalTypes';
+import {ViewTypes, RecordFilterCondition, RecordFilterOperator, SortOrder} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_VIEWS_LIST

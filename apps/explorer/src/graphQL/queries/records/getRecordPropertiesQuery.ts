@@ -4,7 +4,7 @@
 import {gqlUnchecked} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/GET_FORM';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {ConditionFilter, ILabel, IRecordIdentityWhoAmI} from '_types/types';
+import {AttributeConditionFilter, ILabel, IRecordIdentityWhoAmI} from '_types/types';
 
 export interface IRecordPropertyAttribute {
     id: string;
@@ -106,7 +106,9 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
 export const getRecordPropertiesQuery = (libraryGqlType: string, fields: IRecordPropertiesField[]) => {
     return gqlUnchecked`
         query RECORD_PROPERTIES_${libraryGqlType}($recordId: String) {
-            ${libraryGqlType}(filters: [{field: "id", condition: ${ConditionFilter.EQUAL}, value: $recordId}]) {
+            ${libraryGqlType}(filters: [{field: "id", condition: ${
+        AttributeConditionFilter.EQUAL
+    }, value: $recordId}]) {
                 list {
                     id
                     ${fields.length ? fields.map(field => _getFieldQueryPart(field)).join('\n') : 'id'}

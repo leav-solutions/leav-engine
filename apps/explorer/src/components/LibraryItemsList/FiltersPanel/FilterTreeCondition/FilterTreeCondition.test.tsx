@@ -7,14 +7,14 @@ import {mockAttribute} from '__mocks__/common/attribute';
 import {mockFilter} from '__mocks__/common/filter';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import {MockStateFilters} from '__mocks__/stateFilters/mockStateFilters';
-import FilterCondition from './FilterCondition';
+import FilterTreeCondition from './FilterTreeCondition';
 
-describe('FilterCondition', () => {
+describe('FilterTreeCondition', () => {
     test('should contain select for condition', async () => {
         render(
             <MockSearchContextProvider state={{attributes: [mockAttribute]}}>
                 <MockStateFilters stateFilters={{filters: [mockFilter]}}>
-                    <FilterCondition filter={mockFilter} updateFilterValue={jest.fn()} />
+                    <FilterTreeCondition filter={mockFilter} />
                 </MockStateFilters>
             </MockSearchContextProvider>
         );

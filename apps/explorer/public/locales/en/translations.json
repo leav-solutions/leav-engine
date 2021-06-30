@@ -6,7 +6,7 @@
         "done": "Done",
         "delete": "Delete",
         "apply": "Apply",
-        "submit": "Submit"
+        "select": "Select"
     },
     "login": {
         "header": "Authentification",
@@ -137,6 +137,8 @@
         "filters": "Filters",
         "contains": "Contains",
         "not-contains": "Don't Contain",
+        "classified-in": "Classified in",
+        "not-classified-in": "Not classified in",
         "equal": "Is Equal",
         "not-equal": "Isn't Equal",
         "begin-with": "Begin With",
@@ -147,20 +149,24 @@
         "less-than": "Existing Value",
         "exist": "Existing Value",
         "search-in": "Search In...",
+        "select": "Select",
         "where": "Where",
         "label": "Label",
         "value": "Value",
         "apply": "Apply",
         "and": "And",
         "or": "Or",
-        "modal-header": "Attributs",
+        "attributes": "Attributes",
+        "trees": "Trees",
         "filters-options": "Filters Options",
         "add-filters": "Add filters",
         "remove-filters": "Remove filters",
         "add-separator": "Add request",
         "search-active": "Can't apply filters while the search is active",
         "no-filters": "No filter to apply",
-        "submit": "Apply filters"
+        "submit": "Apply filters",
+        "deactivate": "Deactivate",
+        "activate": "Activate"
     },
     "filter-item": {
         "no-operator": "If"
@@ -171,6 +177,14 @@
         "search": "Search...",
         "items-selected": {
             "library": "Library"
+        }
+    },
+    "trees-list": {
+        "add": "Add filters",
+        "cancel": "Cancel",
+        "search": "Search...",
+        "items-selected": {
+            "tree": "Tree"
         }
     },
     "menu-selection": {
@@ -185,6 +199,9 @@
         "header": "Columns available",
         "cancel": "Cancel",
         "submit": "Update Columns"
+    },
+    "tree-node-selection": {
+        "title": "Select Tree Node"
     },
     "change-attribute": {
         "submit": "Change",
@@ -288,41 +305,10 @@
     "error": {
         "error_occurred": "An error occurred",
         "graphql_error_occurred": "An error ocurred: {{error}}",
-        "network_error_occurred": "An network error occurred",
-        "PERMISSION_ERROR": "You are not allowed to perform this action",
-        "INTERNAL_ERROR": "An internal error occured"
+        "network_error_occurred": "An network error occurred"
     },
     "language": {
         "fr": "French",
         "en": "English"
-    },
-    "record_edition": {
-        "no_form_error": "No form available",
-        "invalid_format": "Invalid format",
-        "missing_attribute": "Missing attribute",
-        "modified_at": "Modified at",
-        "add_value": "Ajouter une valeur",
-        "delete_value_confirm": "Do you really want to delete this value?",
-        "whoAmI": "Informations",
-        "no_value": "No value",
-        "attribute": {
-            "id": "Id",
-            "type": "Type",
-            "format": "Format",
-            "type_simple": "Simple",
-            "type_simple_link": "Simple link",
-            "type_advanced": "Advanced",
-            "type_advanced_link": "Advanced link",
-            "type_tree": "Tree",
-            "format_boolean": "Boolean",
-            "format_date": "Date",
-            "format_encrypted": "Encrypted",
-            "format_extended": "Extended",
-            "format_numeric": "Numeric",
-            "format_text": "Text"
-        }
-    },
-    "floating_menu": {
-        "more_actions": "More"
     }
 }

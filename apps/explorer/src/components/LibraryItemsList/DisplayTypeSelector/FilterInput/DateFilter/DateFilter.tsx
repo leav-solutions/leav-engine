@@ -9,7 +9,7 @@ import {IFilter} from '../../../../../_types/types';
 
 interface IDateFilterProps {
     filter: IFilter;
-    updateFilterValue: (newValue: any) => void;
+    updateFilterValue: (newFilterValue: IFilter['value']) => void;
 }
 
 const DateFilter = ({filter, updateFilterValue}: IDateFilterProps) => {
@@ -22,10 +22,10 @@ const DateFilter = ({filter, updateFilterValue}: IDateFilterProps) => {
         // Force time to 00:00:00
         value.utcOffset(0).startOf('day');
 
-        updateFilterValue(value.unix());
+        updateFilterValue({...filter.value, value: value.unix()});
     };
 
-    const momentValue = filter.value ? moment(Number(filter.value) * 1000) : null;
+    const momentValue = filter.value.value ? moment(Number(filter.value.value) * 1000) : null;
 
     return (
         <DatePicker

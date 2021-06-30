@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeFormat, AttributeType, FormElementTypes} from './globalTypes';
+import {FormElementTypes, AttributeType, AttributeFormat} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_FORM

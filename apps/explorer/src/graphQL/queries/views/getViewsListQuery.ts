@@ -6,10 +6,11 @@ import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewTypes} from 
 import {ILabel} from '../../../_types/types';
 
 export interface IGetViewListFilter {
-    field: string;
+    field?: string;
     value: any;
     condition: RecordFilterCondition;
     operator: RecordFilterOperator;
+    treeId?: string;
 }
 
 export interface IGetViewListSort {

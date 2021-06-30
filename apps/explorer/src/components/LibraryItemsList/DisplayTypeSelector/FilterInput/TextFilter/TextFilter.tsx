@@ -16,25 +16,20 @@ const Text = styled(Input.TextArea)`
 
 interface ITextFilterProps {
     filter: IFilter;
-    updateFilterValue: (newValue: any, valueSize?: number | 'auto') => void;
+    updateFilterValue: (newFilterValue: IFilter['value']) => void;
 }
 
 const TextFilter = ({filter, updateFilterValue}: ITextFilterProps) => {
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newValue = (event.target.value ?? '').toString();
-        updateFilterValue(newValue);
+
+        updateFilterValue({...filter.value, value: newValue});
     };
 
-    const value = filter.value ? String(filter.value) : null;
+    const value = filter.value.value ? String(filter.value.value) : null;
 
     return (
-        <Text
-            disabled={!filter.active}
-            value={value}
-            onChange={e => handleChange(e)}
-            rows={1}
-            data-testid="filter-textarea"
-        />
+        <Text disabled={!filter.active} rows={1} value={value} onChange={handleChange} data-testid="filter-textarea" />
     );
 };
 

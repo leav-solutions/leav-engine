@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
 
-export const getLibraryDetailQuery = (libId: string) => gqlUnchecked`
+export const getLibraryDetailQuery = gqlUnchecked`
     query GET_LIBRARY_DETAIL($libId: ID) {
         libraries(filters: {id: $libId}) {
             list {
@@ -16,11 +16,11 @@ export const getLibraryDetailQuery = (libId: string) => gqlUnchecked`
                     format
                     label
                 }
+                linkedTrees {
+                    id
+                    label
+                }
             }
-        }
-
-        ${libId} {
-            totalCount
         }
     }
 `;

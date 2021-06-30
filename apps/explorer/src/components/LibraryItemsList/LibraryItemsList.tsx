@@ -99,6 +99,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     // Current View
     useEffect(() => {
         let newView: IView | undefined;
+
         if (library.defaultView) {
             newView = {
                 id: library.defaultView.id,

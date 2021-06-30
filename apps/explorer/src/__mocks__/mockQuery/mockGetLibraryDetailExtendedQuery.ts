@@ -56,6 +56,7 @@ export const mockGetLibraryDetailExtendedQuery: GET_LIBRARY_DETAIL_EXTENDED = {
         list: [mockGetLibraryDetailExtendedElement]
     }
 };
+
 export const mockGetLibraryDetailExtendedQueryVar: GET_LIBRARY_DETAIL_EXTENDEDVariables = {
     libId: 'test'
 };

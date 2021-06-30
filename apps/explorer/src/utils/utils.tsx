@@ -10,7 +10,7 @@ import {
     AttributeFormat,
     AttributeType,
     AvailableLanguage,
-    ConditionFilter,
+    AttributeConditionFilter,
     DisplaySize,
     ExtendFormat,
     IAttribute,
@@ -144,25 +144,25 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
 
 export const allowedTypeOperator = {
     [AttributeFormat.text]: [
-        ConditionFilter.CONTAINS,
-        ConditionFilter.NOT_CONTAINS,
-        ConditionFilter.EQUAL,
-        ConditionFilter.NOT_EQUAL,
-        ConditionFilter.BEGIN_WITH,
-        ConditionFilter.END_WITH
+        AttributeConditionFilter.CONTAINS,
+        AttributeConditionFilter.NOT_CONTAINS,
+        AttributeConditionFilter.EQUAL,
+        AttributeConditionFilter.NOT_EQUAL,
+        AttributeConditionFilter.BEGIN_WITH,
+        AttributeConditionFilter.END_WITH
     ],
     [AttributeFormat.numeric]: [
-        ConditionFilter.EQUAL,
-        ConditionFilter.NOT_EQUAL,
-        ConditionFilter.GREATER_THAN,
-        ConditionFilter.LESS_THAN
+        AttributeConditionFilter.EQUAL,
+        AttributeConditionFilter.NOT_EQUAL,
+        AttributeConditionFilter.GREATER_THAN,
+        AttributeConditionFilter.LESS_THAN
     ],
-    [AttributeFormat.boolean]: [ConditionFilter.EQUAL, ConditionFilter.NOT_EQUAL],
+    [AttributeFormat.boolean]: [AttributeConditionFilter.EQUAL, AttributeConditionFilter.NOT_EQUAL],
     [AttributeFormat.date]: [
-        ConditionFilter.EQUAL,
-        ConditionFilter.NOT_EQUAL,
-        ConditionFilter.GREATER_THAN,
-        ConditionFilter.LESS_THAN
+        AttributeConditionFilter.EQUAL,
+        AttributeConditionFilter.NOT_EQUAL,
+        AttributeConditionFilter.GREATER_THAN,
+        AttributeConditionFilter.LESS_THAN
     ]
 };
 
@@ -354,20 +354,20 @@ export const getAttributeFromKey = (key: string, attributes: IAttribute[]): IAtt
     return attribute;
 };
 
-export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): ConditionFilter => {
+export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): AttributeConditionFilter => {
     switch (format) {
         case AttributeFormat.text:
-            return ConditionFilter.CONTAINS;
+            return AttributeConditionFilter.CONTAINS;
         case AttributeFormat.boolean:
         case AttributeFormat.date:
         case AttributeFormat.numeric:
         default:
             // default is equal because it is actually accept for all AttributeFormat
-            return ConditionFilter.EQUAL;
+            return AttributeConditionFilter.EQUAL;
     }
 };
 
-export const defaultFilterValueByAttributeFormat = (format: AttributeFormat): unknown => {
+export const defaultFilterValueByAttributeFormat = (format: AttributeFormat): string | boolean | number => {
     switch (format) {
         case AttributeFormat.text:
             return '';

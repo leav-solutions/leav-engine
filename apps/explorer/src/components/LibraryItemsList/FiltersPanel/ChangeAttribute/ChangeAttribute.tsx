@@ -8,6 +8,7 @@ import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {RecordFilterCondition} from '_gqlTypes/globalTypes';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {
     defaultFilterConditionByAttributeFormat,
@@ -34,6 +35,7 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
     const currentAttribute = searchState.attributes.find(
         att => att.id === filter.attribute.id && att.library === filter.attribute.library
     );
+
     let parentSelectedAttribute: ISelectedAttribute | undefined;
 
     if (currentAttribute) {
@@ -57,7 +59,7 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
     };
 
     const changeAttribute = () => {
-        const newFilters = stateFilters.filters.map(f => {
+        const newFilters: IFilter[] = stateFilters.filters.map(f => {
             if (f.index === filter.index) {
                 const attrSelected = attrsSelected[0];
 
@@ -72,8 +74,8 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
                         ...filter,
                         key,
                         attribute: attributeFind,
-                        condition: defaultFilterConditionByAttributeFormat(attributeFind.format),
-                        value: defaultFilterValueByAttributeFormat(attributeFind.format)
+                        condition: RecordFilterCondition[defaultFilterConditionByAttributeFormat(attributeFind.format)],
+                        value: {value: defaultFilterValueByAttributeFormat(attributeFind.format)}
                     };
                 } else {
                     throw new Error('attribute selected not found');

@@ -28,13 +28,13 @@ function FormBoolean({filter, updateFilterValue}: IFormBooleanProps): JSX.Elemen
     return (
         <CustomForm>
             <Form.Item>
-                <Radio name="checkboxRadioGroup" checked={!!filter.value} value={1} onChange={e => handleChange(e)}>
+                <Radio name="checkboxRadioGroup" checked={!!filter.value.value} value={1} onChange={handleChange}>
                     True
                 </Radio>
             </Form.Item>
 
             <Form.Item>
-                <Radio name="checkboxRadioGroup" checked={!filter.value} value={0} onChange={e => handleChange(e)}>
+                <Radio name="checkboxRadioGroup" checked={!filter.value.value} value={0} onChange={handleChange}>
                     False
                 </Radio>
             </Form.Item>

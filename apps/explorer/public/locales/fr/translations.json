@@ -7,7 +7,8 @@
         "delete": "Supprimer",
         "apply": "Appliquer",
         "clear": "Effacer",
-        "submit": "Valider"
+        "submit": "Valider",
+        "select": "Sélectionner"
     },
     "login": {
         "header": "Authentification",
@@ -150,13 +151,17 @@
         "less-than": "Plus petit que",
         "exist": "Valeur existante",
         "search-in": "Chercher dans...",
+        "classified-in": "Classé dans",
+        "not-classified-in": "Non classé dans",
         "where": "Ou",
+        "trees": "Arbres",
         "label": "Libellé",
         "value": "Valeur",
         "apply": "Appliquer",
         "and": "Et",
         "or": "Ou",
-        "modal-header": "Attributs",
+        "select": "Sélectionner",
+        "attributes": "Attributs",
         "filters-options": "Options de Filtres",
         "add-filters": "Ajouter des filtres",
         "remove-filters": "Supprimer les filtres",
@@ -164,18 +169,26 @@
         "search-active": "Impossible d'appliquer les filtres tant que la recherche est active",
         "no-filters": "Pas de filtres à appliquer",
         "submit": "Appliquer les filtres",
-        "make-inactive": "Passer en inactif",
-        "make-active": "Passer en actif"
+        "deactivate": "Désactiver",
+        "activate": "Activer"
     },
     "filter-item": {
         "no-operator": "Si"
     },
     "attributes-list": {
-        "add": "Ajoute les filtres",
+        "add": "Ajouter les filtres",
         "cancel": "Annuler",
         "search": "Recherche...",
         "items-selected": {
             "library": "Bibliothèque"
+        }
+    },
+    "trees-list": {
+        "add": "Ajouter les filtres",
+        "cancel": "Annuler",
+        "search": "Recherche...",
+        "items-selected": {
+            "tree": "Arbre"
         }
     },
     "menu-selection": {
@@ -190,6 +203,9 @@
         "header": "Colonnes disponibles",
         "cancel": "Annuler",
         "submit": "Mettre à jour les colonnes"
+    },
+    "tree-node-selection": {
+        "title": "Sélectionner un nœud de l'arbre"
     },
     "change-attribute": {
         "submit": "Changer",

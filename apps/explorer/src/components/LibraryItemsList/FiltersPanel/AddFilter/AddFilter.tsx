@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Modal} from 'antd';
+import {Button, Modal, Tabs} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
 import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
@@ -10,8 +10,10 @@ import moment from 'moment';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {defaultFilterConditionByAttributeFormat, getFieldsKeyFromAttribute} from 'utils';
-import {AttributeFormat, IFilter, ISelectedAttribute} from '../../../../_types/types';
+import {RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {AttributeFormat, IFilter, ISelectedAttribute, TreeConditionFilter, ITree} from '../../../../_types/types';
 import AttributesSelectionList from '../../../AttributesSelectionList';
+import TreesSelectionList from '../../../TreesSelectionList';
 
 interface IAttributeListProps {
     showAttr: boolean;
@@ -38,35 +40,45 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
     const {stateFilters, dispatchFilters} = useStateFilters();
 
     const [attributesChecked, setAttributesChecked] = useState<ISelectedAttribute[]>([]);
+    const [selectedTrees, setSelectedTrees] = useState<ITree[]>([]);
 
     const addFilters = () => {
-        let filterIndex = stateFilters.filters.length + 1;
-        const newFilters: IFilter[] = attributesChecked.map(attributeChecked => {
+        let filterIndex = stateFilters.filters.length;
+
+        const attributesFilters: IFilter[] = attributesChecked.map(attributeChecked => {
             const attribute = searchState.attributes.find(
                 att => att.id === attributeChecked.id && att.library === attributeChecked.library
             );
 
-            const key = getFieldsKeyFromAttribute(attributeChecked);
-
-            const filter = {
-                index: filterIndex++,
-                key,
+            return {
+                index: ++filterIndex,
+                key: getFieldsKeyFromAttribute(attributeChecked),
                 active: true,
-                condition: defaultFilterConditionByAttributeFormat(attribute.format),
+                condition: RecordFilterCondition[defaultFilterConditionByAttributeFormat(attribute.format)],
                 attribute,
-                value: _getDefaultFilterValueByFormat(attribute.format)
+                value: {value: _getDefaultFilterValueByFormat(attribute.format)}
             };
-            return filter;
         });
 
-        dispatchFilters(setFilters([...stateFilters.filters, ...newFilters]));
+        const treeFilters: IFilter[] = selectedTrees.map(selectedTree => ({
+            index: ++filterIndex,
+            key: String(filterIndex),
+            active: true,
+            condition: RecordFilterCondition[TreeConditionFilter.CLASSIFIED_IN],
+            tree: selectedTree,
+            value: {value: null}
+        }));
+
+        dispatchFilters(setFilters([...stateFilters.filters, ...attributesFilters, ...treeFilters]));
 
         setShowAttr(false);
         setAttributesChecked([]);
+        setSelectedTrees([]);
     };
 
     const handleCancel = () => {
         setAttributesChecked([]);
+        setSelectedTrees([]);
         setShowAttr(false);
     };
 
@@ -74,7 +86,7 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
         <Modal
             visible={showAttr}
             onCancel={() => setShowAttr(false)}
-            title={t('filters.modal-header')}
+            // title={t('filters.filters')}
             width="70rem"
             centered
             footer={[
@@ -87,11 +99,18 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
             ]}
             destroyOnClose
         >
-            <AttributesSelectionList
-                library={searchState.library.id ?? ''}
-                selectedAttributes={attributesChecked}
-                onSelectionChange={setAttributesChecked}
-            />
+            <Tabs>
+                <Tabs.TabPane tab={t('filters.attributes')} key="1">
+                    <AttributesSelectionList
+                        library={searchState.library?.id ?? ''}
+                        selectedAttributes={attributesChecked}
+                        onSelectionChange={setAttributesChecked}
+                    />
+                </Tabs.TabPane>
+                <Tabs.TabPane tab={t('filters.trees')} key="2">
+                    <TreesSelectionList library={searchState.library?.id ?? ''} onSelectionChange={setSelectedTrees} />
+                </Tabs.TabPane>
+            </Tabs>
         </Modal>
     );
 }
