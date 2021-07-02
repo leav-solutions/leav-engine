@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileAddOutlined} from '@ant-design/icons';
-import {ICommonFieldsSettings} from '@leav/types/src';
+import {ICommonFieldsSettings} from '@leav/utils';
 import {Button, List} from 'antd';
 import {ITreeNode} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';

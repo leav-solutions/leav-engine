@@ -135,7 +135,7 @@ export const getRecordPropertiesQuery = (libraryGqlType: string, fields: IRecord
             ${libraryGqlType}(filters: [{field: "id", condition: ${RecordFilterCondition.EQUAL}, value: $recordId}]) {
                 list {
                     _id: id
-                    ${fields.length ? fields.map(field => _getFieldQueryPart(field)).join('\n') : 'id'}
+                    ${fields.length ? fields.map(field => _getFieldQueryPart(field)).join('\n') : ''}
                 }
             }
         }

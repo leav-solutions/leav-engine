@@ -44,6 +44,7 @@ export function getRecordDependenciesValuesQuery(libraryGqlName: string, attribu
                 ${
                     attributes.length
                         ? `list {
+                            _id: id
                             ${attributes.map(
                                 attr => `${attr} {
                                     ancestors {record {id library {id}}}

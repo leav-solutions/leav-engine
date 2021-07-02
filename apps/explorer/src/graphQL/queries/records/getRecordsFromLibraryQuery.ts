@@ -133,6 +133,7 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
             ) {
                 totalCount
                 list {
+                    _id: id
                     ${getRecordsFields(fields)}
                     whoAmI {
                         id
