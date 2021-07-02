@@ -6,13 +6,19 @@ import {render, screen} from '_tests/testUtils';
 import {mockAttribute} from '__mocks__/common/attribute';
 import {mockFilter} from '__mocks__/common/filter';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
+import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {MockStateFilters} from '__mocks__/stateFilters/mockStateFilters';
 import FilterAttributeCondition from './FilterAttributeCondition';
 
 describe('FilterAttributeCondition', () => {
     test('should contain select for condition', async () => {
         render(
-            <MockSearchContextProvider state={{attributes: [mockAttribute]}}>
+            <MockSearchContextProvider
+                state={{
+                    attributes: [mockAttribute],
+                    library: {...mockGetLibraryDetailExtendedElement, id: 'testLibrary'}
+                }}
+            >
                 <MockStateFilters stateFilters={{filters: [mockFilter]}}>
                     <FilterAttributeCondition filter={mockFilter} updateFilterValue={jest.fn()} />
                 </MockStateFilters>

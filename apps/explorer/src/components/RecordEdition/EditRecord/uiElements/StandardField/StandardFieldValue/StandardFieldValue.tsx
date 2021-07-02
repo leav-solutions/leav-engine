@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, DeleteOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import {AnyPrimitive} from '@leav/types';
+import {AnyPrimitive} from '@leav/utils';
 import {Button, Form, Popconfirm, Popover, Space, Tooltip} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';

@@ -86,7 +86,7 @@ function SearchItems(): JSX.Element {
             const totalCount = data[activeLib.id]?.totalCount;
             const itemsFromQuery: ISearchFullTextResult[] = data[activeLib.id].list;
 
-            const newRecords = manageItems({items: itemsFromQuery, lang, fields: searchState.fields});
+            const newRecords = manageItems({items: itemsFromQuery, fields: searchState.fields});
 
             searchDispatch({type: SearchActionTypes.SET_TOTAL_COUNT, totalCount});
             searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});

@@ -8,7 +8,7 @@ import {isEqual} from 'lodash';
 import get from 'lodash/get';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useFlexLayout, useTable} from 'react-table';
+import {ColumnWithLooseAccessor, useFlexLayout, useTable} from 'react-table';
 import {useSticky} from 'react-table-sticky';
 import styled from 'styled-components';
 import {infosCol} from '../../../constants/constants';
@@ -20,7 +20,7 @@ import Header from './Header';
 
 interface ITableColumn {
     Header: string;
-    accessor: string;
+    accessor: string | ((row, rowIndex) => string);
     key: string;
     sticky?: 'left' | 'right';
     type?: AttributeType;
@@ -188,7 +188,7 @@ const Table = () => {
 
                     const id = record.whoAmI.id;
 
-                    acc[column.accessor] = {value, type: column.type, id};
+                    acc[column.accessor as string] = {value, type: column.type, id};
 
                     return acc;
                 }, {});
@@ -215,7 +215,7 @@ const Table = () => {
 
     const tableInstance = useTable<ITableItems>(
         {
-            columns: tableColumns,
+            columns: tableColumns as Array<ColumnWithLooseAccessor<ITableItems>>,
             data: tableData
         },
         useFlexLayout,
@@ -259,7 +259,10 @@ const Table = () => {
 
                                 return (
                                     <HeaderCell {...headerCellProps}>
-                                        <Header id={column.id} type={AttributeType.simple}>
+                                        <Header
+                                            id={((column as unknown) as ITableColumn).key}
+                                            type={AttributeType.simple}
+                                        >
                                             {column.render('Header')}
                                         </Header>
                                     </HeaderCell>

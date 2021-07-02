@@ -11,7 +11,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {allowedTypeOperator, getAttributeFromKey} from '../../../../utils';
-import {AttributeFormat, AttributeConditionFilter, IFilter} from '../../../../_types/types';
+import {AttributeConditionFilter, AttributeFormat, IFilter} from '../../../../_types/types';
 import {getAttributeConditionOptions} from '../FiltersOptions';
 
 const Wrapper = styled.span`
@@ -43,7 +43,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
     const {state: searchState} = useSearchReducer();
     const {stateFilters, dispatchFilters} = useStateFilters();
 
-    const attribute = getAttributeFromKey(filter.key, searchState.attributes);
+    const attribute = getAttributeFromKey(filter.key, searchState.library.id, searchState.attributes);
 
     if (!attribute) {
         return <div>error</div>;

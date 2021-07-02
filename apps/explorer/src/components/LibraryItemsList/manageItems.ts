@@ -5,22 +5,30 @@ import {isArray} from 'lodash';
 import objectPath from 'object-path';
 import {ISearchFullTextResult} from '../../graphQL/queries/searchFullText/searchFullText';
 import {AttributeFormat, AttributeType, IField, IItem} from '../../_types/types';
-import {localizedLabel} from './../../utils/utils';
+
+const _extractValueFromParent = (field: IField, linkValue: any) => {
+    const linkedElement = field.parentAttributeData.type === AttributeType.tree ? linkValue.record : linkValue;
+    return linkedElement[field.id];
+};
 
 const manageFields = (fields: IField[], item: ISearchFullTextResult) => {
     return fields.reduce((acc, field) => {
         const key: string = field.key;
 
         if (field.format === AttributeFormat.extended) {
-            const [, , attributeId, ...path] = key.split('.');
-
-            let attributeExtendedContent: object;
+            const [attributeId, ...path] = key.split('.');
 
             try {
-                attributeExtendedContent = JSON.parse(item[attributeId]);
+                // If we ask for the whole extended attribute, just return the json
+                if (!path.length) {
+                    acc[key] = item[attributeId];
+                    return acc;
+                }
+
+                // If we ask for a specific field, parse json and return value
+                const attributeExtendedContent = JSON.parse(item[attributeId]);
                 if (attributeExtendedContent) {
-                    const value = objectPath.get(attributeExtendedContent, path);
-                    acc[key] = value;
+                    acc[key] = objectPath.get(attributeExtendedContent, path);
                     return acc;
                 }
             } catch (e) {
@@ -61,17 +69,30 @@ const manageFields = (fields: IField[], item: ISearchFullTextResult) => {
             case AttributeType.simple:
             case AttributeType.advanced:
             default:
-                if (field?.parentAttributeData) {
-                    if (item[field.parentAttributeData.id]) {
-                        if (isArray(item[field.parentAttributeData.id])) {
-                            acc[key] = item[field.parentAttributeData.id][0].record[field.id];
-                        } else {
-                            acc[key] = item[field.parentAttributeData.id][field.id];
-                        }
-                    }
-                } else {
+                // Simple field, not via link or tree attribute
+                if (!field?.parentAttributeData) {
                     acc[key] = item[field.id];
+                    return acc;
                 }
+
+                // Attribute via link or tree, but no value
+                if (!item[field.parentAttributeData.id]) {
+                    acc[key] = null;
+                    return acc;
+                }
+
+                // Parent attribute has multiple values, value is an array
+                if (isArray(item[field.parentAttributeData.id])) {
+                    acc[key] = item[field.parentAttributeData.id].map(linkValue => {
+                        return _extractValueFromParent(field, linkValue);
+                    });
+                    return acc;
+                }
+
+                // Parent attribute has not multiple values, value is not an array
+                const linkValue = item[field.parentAttributeData.id];
+                acc[key] = _extractValueFromParent(field, linkValue);
+
                 return acc;
         }
     }, {});
@@ -79,24 +100,19 @@ const manageFields = (fields: IField[], item: ISearchFullTextResult) => {
 
 interface IManageItemsProps {
     items: ISearchFullTextResult[];
-    lang: any;
     fields: IField[];
 }
 
-export const manageItems = ({items, lang, fields}: IManageItemsProps): IItem[] => {
+/**
+ * Convert search result to a list of items usable by LibraryItemsList
+ */
+export const manageItems = ({items, fields}: IManageItemsProps): IItem[] => {
     const resultItems: IItem[] = items.map((item, index) => {
         const itemFields = manageFields(fields, item);
 
         const resultItem: IItem = {
             index: index + 1,
-            whoAmI: {
-                id: item.whoAmI.id,
-                label:
-                    typeof item.whoAmI.label === 'string' ? item.whoAmI.label : localizedLabel(item.whoAmI.label, lang),
-                color: item.whoAmI.color,
-                preview: item.whoAmI.preview,
-                library: item.whoAmI.library
-            },
+            whoAmI: {...item.whoAmI},
             fields: itemFields
         };
 

@@ -36,6 +36,7 @@ export interface IGetTreeContentQueryVar {
 
 const recordField = `
     record {
+        id
         whoAmI {
             id
             label

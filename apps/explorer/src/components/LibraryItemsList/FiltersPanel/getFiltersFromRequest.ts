@@ -4,13 +4,16 @@
 import {getAttributeFromKey} from 'utils';
 import {IAttribute, IFilter, IQueryFilter} from '_types/types';
 
-export const getFiltersFromRequest = (queryFilters: IQueryFilter[], attributes: IAttribute[]): IFilter[] => {
+export const getFiltersFromRequest = (
+    queryFilters: IQueryFilter[],
+    library: string,
+    attributes: IAttribute[]
+): IFilter[] => {
     let result: IFilter[] = [];
 
     for (const queryFilter of queryFilters) {
         if (queryFilter.value) {
-            const attribute = getAttributeFromKey(queryFilter.field, attributes);
-
+            const attribute = getAttributeFromKey(queryFilter.field, library, attributes);
             const filter = {
                 index: result.length,
                 key: queryFilter.field,

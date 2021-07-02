@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IRecordSort} from '_types/record';
+import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
-import {IRecordSort} from '_types/record';
-import {IAttribute, AttributeFormats} from '../../_types/attribute';
 
 const VALUES_COLLECTION = 'core_values';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -260,9 +260,9 @@ export default function ({
             )`;
 
             const query =
-                attributes[0].format !== AttributeFormats.EXTENDED
-                    ? aql`SORT ${advancedValue} ${order}`
-                    : aql`SORT ${_getExtendedFilterPart(attributes, advancedValue)} ${order}`;
+                attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
+                    ? aql`SORT ${_getExtendedFilterPart(attributes, advancedValue)} ${order}`
+                    : aql`SORT ${advancedValue} ${order}`;
 
             return query;
         },
@@ -276,9 +276,9 @@ export default function ({
             )`;
 
             const query =
-                attributes[0].format !== AttributeFormats.EXTENDED
-                    ? aql`FILTER ${advancedValue} ${queryPart}`
-                    : aql`FILTER ${_getExtendedFilterPart(attributes, advancedValue)} ${queryPart}`;
+                attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
+                    ? aql`FILTER ${_getExtendedFilterPart(attributes, advancedValue)} ${queryPart}`
+                    : aql`FILTER ${advancedValue} ${queryPart}`;
 
             return query;
         },

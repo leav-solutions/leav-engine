@@ -88,7 +88,7 @@ function RecordPreviewList({label, color, image, size, style}: IRecordPreviewPro
         );
     }
 
-    const initial = label[0] ? label[0].toLocaleUpperCase() : label;
+    const initial = String(label) ? label[0].toLocaleUpperCase() : '?';
 
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
@@ -158,7 +158,7 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
         );
     }
 
-    const initial = label[0].toLocaleUpperCase();
+    const initial = label ? label[0].toLocaleUpperCase() : '?';
 
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileAddOutlined} from '@ant-design/icons';
-import {ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/types';
+import {ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/utils';
 import {Button, Popover, Switch, Table} from 'antd';
 import SearchModal from 'components/SearchModal';
 import ErrorMessage from 'components/shared/ErrorMessage';

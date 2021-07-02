@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
-import {AttributeType, IField} from '../../../_types/types';
+import {AttributeType, IField, IFieldTypeTree} from '../../../_types/types';
 
 const handleType = (field: IField): string => {
     switch (field.type) {
@@ -80,11 +81,16 @@ export const getRecordsFields = (fields: IField[] = []) => {
                         ${handleType(field)}
                     }`;
                 case AttributeType.tree:
-                    return `${parentAttributeId} {
+                    const libTypeName = getGraphqlTypeFromLibraryName((field as IFieldTypeTree).recordLibrary);
+                    return libTypeName
+                        ? `${parentAttributeId} {
                         record {
-                            ${handleType(field)}
+                            ...on ${libTypeName} {
+                                ${handleType(field)}
+                            }
                         }
-                    }`;
+                    }`
+                        : '';
             }
         } else if (field.embeddedData) {
             const path = [...field.embeddedData.path.split('.')].shift();
@@ -127,6 +133,7 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
             ) {
                 totalCount
                 list {
+                    _id: id
                     ${getRecordsFields(fields)}
                     whoAmI {
                         id

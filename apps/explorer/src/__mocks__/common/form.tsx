@@ -8,7 +8,7 @@ import {
     IFormDividerSettings,
     IFormTabsSettings,
     TabsDirection
-} from '@leav/types';
+} from '@leav/utils';
 import {FormElement} from 'components/RecordEdition/EditRecord/_types';
 import React from 'react';
 import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';

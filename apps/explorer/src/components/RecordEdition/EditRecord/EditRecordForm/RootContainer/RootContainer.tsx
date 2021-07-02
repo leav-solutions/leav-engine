@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {FormUIElementTypes, IFormLinkFieldSettings} from '@leav/types';
+import {FormUIElementTypes, IFormLinkFieldSettings} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {
     getRecordPropertiesQuery,

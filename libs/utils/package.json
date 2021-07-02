@@ -1,0 +1,23 @@
+{
+  "name": "@leav/utils",
+  "version": "1.0.0",
+  "description": "Shared utils and types to use across projects",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "tsc --build",
+    "tscheck": "tsc --noEmit -p .",
+    "tscheck:watch": "tsc -w --noEmit -p .",
+    "test": "jest -c jest-config.json"
+  },
+  "main": "dist/index",
+  "author": "",
+  "license": "LGPL3",
+  "devDependencies": {
+    "jest": "26.6.3",
+    "ts-jest": "26",
+    "typescript": "4.1"
+  },
+  "dependencies": {
+    "lodash": "4.17.21"
+  }
+}

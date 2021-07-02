@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, act, screen, waitForElement} from '@testing-library/react';
+import {act, render, screen, waitForElement} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {getTreeContentQuery} from '../../../graphQL/queries/trees/getTreeContentQuery';
@@ -25,6 +25,7 @@ describe('SelectTreeNodeModal', () => {
                                 __typename: 'TreeNode',
                                 record: {
                                     __typename: 'Categorie',
+                                    id: 'id1',
                                     whoAmI: {
                                         __typename: 'RecordIdentity',
                                         id: 'id1',
@@ -48,6 +49,7 @@ describe('SelectTreeNodeModal', () => {
                                         __typename: 'TreeNode',
                                         record: {
                                             __typename: 'Categorie',
+                                            id: 'id2',
                                             whoAmI: {
                                                 __typename: 'RecordIdentity',
                                                 id: 'id2',

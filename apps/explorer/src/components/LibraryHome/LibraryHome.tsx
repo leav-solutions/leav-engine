@@ -85,7 +85,7 @@ function LibraryHome(): JSX.Element {
         return <ErrorDisplay message={t('lib_detail.not_found')} />;
     }
 
-    return <LibraryItemsList selectionMode={false} library={data.libraries.list[0]} />;
+    return <LibraryItemsList selectionMode={false} library={data.libraries.list[0]} key={libId} />;
 }
 
 export default LibraryHome;

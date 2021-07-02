@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloError, useMutation} from '@apollo/client';
-import {ErrorTypes} from '@leav/types';
+import {ErrorTypes} from '@leav/utils';
 import {saveValueBatchMutation} from 'graphQL/mutations/values/saveValueBatchMutation';
 import {useTranslation} from 'react-i18next';
 import {SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables} from '_gqlTypes/SAVE_VALUE_BATCH';

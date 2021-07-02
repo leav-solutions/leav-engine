@@ -16,6 +16,10 @@ const SimpleCell = styled.div`
     padding: 5px;
 `;
 
+const RecordCardCellWrapper = styled.div`
+    display: flex;
+`;
+
 interface ICellProps {
     columnName: string;
     data: ITableItem;
@@ -35,7 +39,7 @@ const Cell = ({columnName, data, index}: ICellProps) => {
         library,
         label
     };
-    if (!value) {
+    if (!value || (Array.isArray(value) && !value.length)) {
         return <></>;
     }
 
@@ -45,9 +49,15 @@ const Cell = ({columnName, data, index}: ICellProps) => {
             return <SimpleCell>{value}</SimpleCell>;
         case AttributeType.simple_link:
         case AttributeType.advanced_link:
-            return <CellRecordCard record={{...value.whoAmI}} size={previewSize} lang={lang} />;
         case AttributeType.tree:
-            return <CellRecordCard record={{...value.whoAmI}} size={previewSize} lang={lang} />;
+            const valuesToDisplay = Array.isArray(value) ? value : [value];
+            return (
+                <RecordCardCellWrapper>
+                    {valuesToDisplay.map(val => (
+                        <CellRecordCard record={{...val.whoAmI}} size={previewSize} lang={lang} key={val.whoAmI.id} />
+                    ))}
+                </RecordCardCellWrapper>
+            );
         default:
             //selection and infos column has no type
             if (columnName === infosCol) {

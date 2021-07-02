@@ -12,7 +12,7 @@ import FilterTreeCondition from './FilterTreeCondition';
 describe('FilterTreeCondition', () => {
     test('should contain select for condition', async () => {
         render(
-            <MockSearchContextProvider state={{attributes: [mockAttribute]}}>
+            <MockSearchContextProvider state={{attributes: [{...mockAttribute, library: 'test'}]}}>
                 <MockStateFilters stateFilters={{filters: [mockFilter]}}>
                     <FilterTreeCondition filter={mockFilter} />
                 </MockStateFilters>

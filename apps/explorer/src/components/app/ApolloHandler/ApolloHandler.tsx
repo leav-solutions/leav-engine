@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloClient, ApolloLink, ApolloProvider, InMemoryCache} from '@apollo/client';
+import {ApolloClient, ApolloLink, ApolloProvider, defaultDataIdFromObject, InMemoryCache} from '@apollo/client';
 import {onError} from '@apollo/link-error';
 import {Spin} from 'antd';
 import {createUploadLink} from 'apollo-upload-client';
@@ -94,6 +94,8 @@ function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
         }
     });
 
+    console.log(possibleTypes);
+
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
             _handleApolloError,
@@ -105,6 +107,22 @@ function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
             })
         ]),
         cache: new InMemoryCache({
+            // For records, ID might sometimes be in the _id property to avoid messing up
+            // with the ID attribute (eg. in the getRecordPropertiesQuery).
+            // Thus, we have to force Apollo to use the _id field for cache key.
+            dataIdFromObject(responseObject) {
+                // If it's not a record, just use regular caching
+                if (
+                    !possibleTypes ||
+                    !possibleTypes.Record.includes(responseObject.__typename) ||
+                    (!responseObject._id && !responseObject.id)
+                ) {
+                    return defaultDataIdFromObject(responseObject);
+                }
+
+                const idValue = responseObject._id || responseObject.id;
+                return String(idValue);
+            },
             typePolicies: {
                 EmbeddedAttribute: {
                     keyFields: false
