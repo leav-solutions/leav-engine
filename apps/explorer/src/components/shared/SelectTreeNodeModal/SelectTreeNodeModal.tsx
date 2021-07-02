@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Modal, Tree, Input} from 'antd';
+import {Button, Modal, Tree} from 'antd';
 import {useQuery} from '@apollo/client';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import React, {useState} from 'react';
