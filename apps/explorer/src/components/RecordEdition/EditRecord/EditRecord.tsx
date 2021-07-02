@@ -10,6 +10,7 @@ import {GET_FORM, GET_FORMVariables} from '_gqlTypes/GET_FORM';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import EditRecordForm from './EditRecordForm';
 import EditRecordSkeleton from './EditRecordSkeleton';
+import useRecordsConsultationHistory from 'hooks/useRecordsConsultationHistory';
 
 interface IEditRecordProps {
     record: IRecordIdentityWhoAmI;
@@ -18,6 +19,8 @@ interface IEditRecordProps {
 function EditRecord({record}: IEditRecordProps): JSX.Element {
     const formId = 'edition';
     const {t} = useTranslation();
+
+    useRecordsConsultationHistory(record.library.id, record.id);
 
     // Get Form
     const {loading, error, data} = useQuery<GET_FORM, GET_FORMVariables>(getFormQuery, {
