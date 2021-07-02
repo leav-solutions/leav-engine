@@ -16,5 +16,6 @@ describe('toBooleanAction', () => {
         expect(action('true', {}, ctx)).toBe(true);
         expect(action('false', {}, ctx)).toBe(false);
         expect(action('totot', {}, ctx)).toBe(true);
+        expect(action(null, {}, ctx)).toBe(false);
     });
 });

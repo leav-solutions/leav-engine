@@ -68,6 +68,10 @@ export default function (): IActionsListFunction {
             }
         ],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
+            if (value === null) {
+                return null;
+            }
+
             const defaultParams = {
                 decimals: 2,
                 thousandsSeparator: ',',

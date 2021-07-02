@@ -15,5 +15,6 @@ describe('toNumberAction', () => {
         expect(action(true, {}, ctx)).toBe(1);
         expect(action(false, {}, ctx)).toBe(0);
         expect(action('aaaa', {}, ctx)).toBe(NaN);
+        expect(action(null, {}, ctx)).toBe(null);
     });
 });

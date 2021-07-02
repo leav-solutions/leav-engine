@@ -16,7 +16,7 @@ export default function (): IActionsListFunction {
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
         output_types: [ActionsListIOTypes.STRING],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
-            return '' + value;
+            return value !== null ? '' + value : null;
         }
     };
 }

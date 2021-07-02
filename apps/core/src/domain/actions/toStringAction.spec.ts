@@ -12,5 +12,6 @@ describe('toStringAction', () => {
         expect(action('test', {}, ctx)).toBe('test');
         expect(action(12345, {}, ctx)).toBe('12345');
         expect(action(true, {}, ctx)).toBe('true');
+        expect(action(null, {}, ctx)).toBe(null);
     });
 });

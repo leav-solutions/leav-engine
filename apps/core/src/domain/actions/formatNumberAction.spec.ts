@@ -23,5 +23,6 @@ describe('formatNumberAction', () => {
             '123.456,7800'
         );
         expect(action('aaa', {}, ctx)).toBe('');
+        expect(action(null, {}, ctx)).toBe(null);
     });
 });

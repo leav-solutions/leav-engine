@@ -2,12 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import moment from 'moment';
-import {
-    ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
-} from '../../_types/actionsList';
+import {ActionsListIOTypes, ActionsListValueType, IActionsListFunction} from '../../_types/actionsList';
 
 export default function (): IActionsListFunction {
     return {
@@ -25,7 +20,11 @@ export default function (): IActionsListFunction {
                 default_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
+        action: (value: ActionsListValueType, params: any): string => {
+            if (value === null) {
+                return null;
+            }
+
             const format = params.format || '';
             const numberVal = Number(value);
 
