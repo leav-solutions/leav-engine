@@ -6,9 +6,9 @@ import {useDrag} from 'react-dnd';
 import styled from 'styled-components';
 import {v4 as uuidv4} from 'uuid';
 import useLang from '../../../../../../../../../../../hooks/useLang';
-import {isLinkAttribute, localizedLabel} from '../../../../../../../../../../../utils';
+import {localizedLabel} from '../../../../../../../../../../../utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeFormat, FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
 import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {formElements} from '../../../uiElements';
@@ -41,14 +41,26 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
             [AttributeFormat.text]: formElements[FieldTypes.TEXT_INPUT]
         };
 
+        let uiElement;
+        switch (attribute.type) {
+            case AttributeType.simple_link:
+            case AttributeType.advanced_link:
+                uiElement = formElements[FieldTypes.LINK];
+                break;
+            case AttributeType.tree:
+                uiElement = formElements[FieldTypes.TREE];
+                break;
+            default:
+                uiElement = elemByFormat[attribute.format!];
+                break;
+        }
+
         return {
             id: uuidv4(),
             order: 0,
             type: FormElementTypes.field,
             containerId: defaultContainerId,
-            uiElement: isLinkAttribute(attribute, false)
-                ? formElements[FieldTypes.LINK]
-                : elemByFormat[attribute.format!],
+            uiElement,
             settings: {
                 attribute: attribute.id,
                 label: attrLabel

@@ -16,7 +16,8 @@ export enum FormFieldTypes {
     CHECKBOX = 'checkbox',
     ENCRYPTED = 'encrypted',
     DROPDOWN = 'dropdown',
-    LINK = 'link'
+    LINK = 'link',
+    TREE = 'tree'
 }
 
 export enum TabsDirection {

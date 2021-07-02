@@ -20,6 +20,7 @@ import DropdownField from './fields/DropdownField';
 import EncryptedField from './fields/EncryptedField';
 import InputField from './fields/InputField';
 import LinkField from './fields/LinkField';
+import TreeField from './fields/TreeField';
 import Container from './layout/Container';
 import Tabs from './layout/Tabs';
 import TextBlock from './layout/TextBlock';
@@ -125,6 +126,12 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
                 })
             }
         ],
+        canDrop: () => false
+    },
+    [FieldTypes.TREE]: {
+        type: FieldTypes.TREE,
+        component: <TreeField settings={{}} />,
+        settings: [...commonFieldSettings],
         canDrop: () => false
     }
 };

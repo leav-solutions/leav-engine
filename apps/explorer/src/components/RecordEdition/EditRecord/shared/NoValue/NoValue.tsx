@@ -1,0 +1,55 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FileAddOutlined, FileOutlined} from '@ant-design/icons';
+import {Button} from 'antd';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+
+interface INoValueProps {
+    canAddValue: boolean;
+    onAddValue: () => void;
+}
+
+const NoValueWrapper = styled.div`
+    font-size: 1.1em;
+
+    span {
+        margin-left: 0.5em;
+    }
+`;
+
+const AddButton = styled(Button)`
+    && {
+        border: none;
+        width: 100%;
+        color: rgba(0, 0, 0, 0.25);
+    }
+
+    &&:hover {
+        border: none;
+    }
+`;
+
+function NoValue({canAddValue, onAddValue}: INoValueProps): JSX.Element {
+    const {t} = useTranslation();
+
+    return (
+        <NoValueWrapper onClick={onAddValue}>
+            {canAddValue ? (
+                <AddButton onClick={onAddValue} size="small">
+                    <FileAddOutlined />
+                    <span>{t('record_edition.add_value')}</span>
+                </AddButton>
+            ) : (
+                <>
+                    <FileOutlined />
+                    <span>{t('record_edition.no_value')}</span>
+                </>
+            )}
+        </NoValueWrapper>
+    );
+}
+
+export default NoValue;

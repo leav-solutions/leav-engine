@@ -59,9 +59,25 @@ export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute {
     linked_library: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library | null;
 }
 
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_linked_tree {
+    id: string;
+    label: any | null;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute {
+    id: string;
+    label: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
+    multiple_values: boolean;
+    linked_tree: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_linked_tree | null;
+}
+
 export type GET_FORM_forms_list_elements_elements_attribute =
     | GET_FORM_forms_list_elements_elements_attribute_StandardAttribute
-    | GET_FORM_forms_list_elements_elements_attribute_LinkAttribute;
+    | GET_FORM_forms_list_elements_elements_attribute_LinkAttribute
+    | GET_FORM_forms_list_elements_elements_attribute_TreeAttribute;
 
 export interface GET_FORM_forms_list_elements_elements_settings {
     key: string;

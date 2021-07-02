@@ -18,6 +18,7 @@ module.exports = {
     '@pagination-item-input-bg': '@default-bg',
     '@border-color-base': '#D9D9D9',
     '@border-radius-base': '4px',
+    '@list-footer-background': '@background-color-light',
     '@leav-secondary-bg': '#f0f0f0',
     '@leav-secondary-action-bg': '#F4F4F4',
     '@leav-background-active': '#DEF4FF',

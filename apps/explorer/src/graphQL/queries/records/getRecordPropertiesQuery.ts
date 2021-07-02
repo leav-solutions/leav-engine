@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/GET_FORM';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {AttributeConditionFilter, ILabel, IRecordIdentityWhoAmI} from '_types/types';
+import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {ILabel, IRecordIdentityWhoAmI} from '_types/types';
+import recordIdentityFragment from './recordIdentityFragment';
 
 export interface IRecordPropertyAttribute {
     id: string;
@@ -19,10 +20,29 @@ export interface ILinkValue {
     whoAmI: IRecordIdentityWhoAmI;
 }
 
+export interface ITreeValueRecord {
+    id: string;
+    whoAmI: IRecordIdentityWhoAmI;
+}
+
+export interface ITreeValue {
+    record: ITreeValueRecord;
+    ancestors: TreePath[];
+}
+
+export type TreePath = Array<{record: ITreeValueRecord}>;
+
+export interface IRecordPropertyModifier {
+    id: string;
+    whoAmI: IRecordIdentityWhoAmI;
+}
+
 interface IRecordPropertyBase {
     id_value: string | null;
     created_at: number | null;
+    created_by: IRecordPropertyModifier | null;
     modified_at: number | null;
+    modified_by: IRecordPropertyModifier | null;
 }
 
 export interface IRecordPropertyStandard extends IRecordPropertyBase {
@@ -34,7 +54,11 @@ export interface IRecordPropertyLink extends IRecordPropertyBase {
     linkValue: ILinkValue | null;
 }
 
-export type RecordProperty = IRecordPropertyStandard | IRecordPropertyLink;
+export interface IRecordPropertyTree extends IRecordPropertyBase {
+    treeValue: ITreeValue | null;
+}
+
+export type RecordProperty = IRecordPropertyStandard | IRecordPropertyLink | IRecordPropertyTree;
 
 export interface IGetRecordProperties {
     [libName: string]: {
@@ -66,6 +90,12 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
         id_value
         created_at
         modified_at
+        created_by {
+            ...RecordIdentity
+        }
+        modified_by {
+            ...RecordIdentity
+        }
 
         ...on Value {
             value
@@ -74,30 +104,24 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
 
         ...on LinkValue {
             linkValue: value {
-                id
-                whoAmI {
-                    id
-                    label
-                    color
-                    library {
-                        id
-                        label
-                        gqlNames {
-                            query
-                            type
-                        }
-                    }
-                    preview {
-                        small
-                        medium
-                        big
-                        pages
-                    }
-                }
-
+                ...RecordIdentity
 
                 ${_getFieldLinkedLibraryPart(field)}
 
+            }
+        }
+
+        ...on TreeValue {
+            treeValue: value {
+                record {
+                    ...RecordIdentity
+                }
+
+                ancestors {
+                    record {
+                        ...RecordIdentity
+                    }
+                }
             }
         }
     }
@@ -105,12 +129,12 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
 
 export const getRecordPropertiesQuery = (libraryGqlType: string, fields: IRecordPropertiesField[]) => {
     return gqlUnchecked`
+        ${recordIdentityFragment}
+
         query RECORD_PROPERTIES_${libraryGqlType}($recordId: String) {
-            ${libraryGqlType}(filters: [{field: "id", condition: ${
-        AttributeConditionFilter.EQUAL
-    }, value: $recordId}]) {
+            ${libraryGqlType}(filters: [{field: "id", condition: ${RecordFilterCondition.EQUAL}, value: $recordId}]) {
                 list {
-                    id
+                    _id: id
                     ${fields.length ? fields.map(field => _getFieldQueryPart(field)).join('\n') : 'id'}
                 }
             }

@@ -325,6 +325,8 @@
         "delete_value_confirm": "Êtes-vous sûr de vouloir supprimer cette valeur?",
         "whoAmI": "Informations",
         "no_value": "Pas de valeur",
+        "value_details": "Détails",
+        "by": "par",
         "attribute": {
             "id": "ID",
             "type": "Type",

@@ -57,5 +57,9 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.LINK]: {
         ...baseMock,
         type: FieldTypes.LINK
+    },
+    [FieldTypes.TREE]: {
+        ...baseMock,
+        type: FieldTypes.TREE
     }
 };
