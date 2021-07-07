@@ -27,6 +27,7 @@ export interface GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute {
 
 export interface GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute_linked_tree {
     id: string;
+    label: any | null;
 }
 
 export interface GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute {

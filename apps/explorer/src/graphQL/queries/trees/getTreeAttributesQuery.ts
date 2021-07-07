@@ -71,6 +71,7 @@ export const getTreeAttributesQuery = gql`
                             ... on TreeAttribute {
                                 linked_tree {
                                     id
+                                    label
                                 }
                             }
                         }

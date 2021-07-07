@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/GET_FORM';
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
@@ -80,7 +81,7 @@ export interface IRecordPropertiesField {
 
 const _getFieldLinkedLibraryPart = (field: IRecordPropertiesField): string =>
     field.linkedLibrary
-        ? `... on ${field.linkedLibrary.gqlNames.type} {
+        ? `... on ${getGraphqlTypeFromLibraryName(field.linkedLibrary.id)} {
             ${field.linkedAttributes.length ? field.linkedAttributes.join(' ') : 'id'}
         }`
         : '';

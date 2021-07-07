@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event';
 import {IRecordPropertyLink} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
-import {mockAttributeLink} from '__mocks__/common/attribute';
 import {mockFormElementLink} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
@@ -126,7 +125,7 @@ describe('LinkField', () => {
         await act(async () => {
             render(
                 <LinkField
-                    element={{...mockFormElementLink, attribute: {...mockAttributeLink, system: true}}}
+                    element={{...mockFormElementLink, attribute: {...mockFormElementLink.attribute, system: true}}}
                     record={mockRecordWhoAmI}
                     recordValues={{test_attribute: []}}
                 />
@@ -152,8 +151,7 @@ describe('LinkField', () => {
         const mockFormElementLinkMultivalue: FormElement<{}> = {
             ...mockFormElementLink,
             attribute: {
-                ...mockAttributeLink,
-                system: false,
+                ...mockFormElementLink.attribute,
                 multiple_values: true
             }
         };
@@ -174,8 +172,7 @@ describe('LinkField', () => {
         const mockFormElementLinkNoMultivalue: FormElement<{}> = {
             ...mockFormElementLink,
             attribute: {
-                ...mockAttributeLink,
-                system: false,
+                ...mockFormElementLink.attribute,
                 multiple_values: false
             }
         };

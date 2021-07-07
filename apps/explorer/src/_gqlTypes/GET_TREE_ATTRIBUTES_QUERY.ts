@@ -48,6 +48,7 @@ export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attribut
 
 export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_TreeAttribute_linked_tree {
     id: string;
+    label: any | null;
 }
 
 export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_TreeAttribute {
