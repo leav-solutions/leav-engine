@@ -133,7 +133,7 @@
         }
     },
     "items-list-row": {
-        "nb-elements": "{{nb1}} à {{nb2}} / {{nbItems}} résultats",
+        "nb-elements": "{{nbItems}} résultats",
         "switch-to-selection-mode": "Passer au mode séléction",
         "edit": "Éditer le record"
     },

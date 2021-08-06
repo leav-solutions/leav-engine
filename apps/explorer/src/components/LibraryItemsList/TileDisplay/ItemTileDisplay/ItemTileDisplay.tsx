@@ -13,6 +13,7 @@ import {getFileUrl, localizedTranslation} from 'utils';
 import themingVar from '../../../../themingVar';
 import {IItem, ISharedSelected, SharedStateSelectionType} from '../../../../_types/types';
 import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
+import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 
 const ImageWrapper = styled.div`
     position: relative;
@@ -115,6 +116,7 @@ interface IItemTileDisplayProps {
 
 function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
     const selectionMode = useContext(SelectionModeContext);
+    const [editRecordModal, setEditRecordModal] = useState<boolean>(false);
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection
     }));
@@ -171,41 +173,56 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
         (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected) ||
         selectionState.selection.selected.length;
 
+    const _handleClose = () => {
+        setEditRecordModal(false);
+    };
+
     return (
-        <Card
-            cover={
-                <ImageWrapper>
-                    <ActionsWrapper>
-                        {selectionMode || selectionActive ? (
-                            <Selection>
-                                <CheckboxWrapper checked={isSelected} onClick={selectedToggle}>
-                                    {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}
-                                </CheckboxWrapper>
-                            </Selection>
-                        ) : (
-                            <Actions className="actions">
-                                <Button shape="circle" ghost icon={<CheckOutlined />} onClick={selectedToggle} />
-                                <Button
-                                    shape="circle"
-                                    icon={<EditOutlined />}
-                                    ghost
-                                    onClick={() => showRecordEdition(item)}
-                                />
-                                <Button shape="circle" ghost icon={<HeartOutlined />} />
-                                <Button shape="circle" ghost icon={<EllipsisOutlined />} />
-                            </Actions>
-                        )}
-                    </ActionsWrapper>
-                    <RecordPreview
-                        label={item.whoAmI.label || item.whoAmI.id}
-                        image={item.whoAmI.preview?.medium ? getFileUrl(item.whoAmI.preview.medium) : ''}
-                        tile={true}
-                    />
-                </ImageWrapper>
-            }
-        >
-            <Card.Meta title={item.whoAmI.label || item.whoAmI.id} description={item.whoAmI.library?.id} />
-        </Card>
+        <>
+            {editRecordModal && (
+                <EditRecordModal
+                    open={editRecordModal}
+                    record={{id: item.whoAmI.id, label: item.whoAmI.label, library: item.whoAmI.library}}
+                    onClose={_handleClose}
+                />
+            )}
+            <Card
+                onClick={selectedToggle}
+                onDoubleClick={() => setEditRecordModal(true)}
+                cover={
+                    <ImageWrapper>
+                        <ActionsWrapper>
+                            {selectionMode || selectionActive ? (
+                                <Selection>
+                                    <CheckboxWrapper checked={isSelected} onClick={selectedToggle}>
+                                        {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}
+                                    </CheckboxWrapper>
+                                </Selection>
+                            ) : (
+                                <Actions className="actions">
+                                    <Button shape="circle" ghost icon={<CheckOutlined />} onClick={selectedToggle} />
+                                    <Button
+                                        shape="circle"
+                                        icon={<EditOutlined />}
+                                        ghost
+                                        onClick={() => showRecordEdition(item)}
+                                    />
+                                    <Button shape="circle" ghost icon={<HeartOutlined />} />
+                                    <Button shape="circle" ghost icon={<EllipsisOutlined />} />
+                                </Actions>
+                            )}
+                        </ActionsWrapper>
+                        <RecordPreview
+                            label={item.whoAmI.label || item.whoAmI.id}
+                            image={item.whoAmI.preview?.medium ? getFileUrl(item.whoAmI.preview.medium) : ''}
+                            tile={true}
+                        />
+                    </ImageWrapper>
+                }
+            >
+                <Card.Meta title={item.whoAmI.label || item.whoAmI.id} description={item.whoAmI.library?.id} />
+            </Card>
+        </>
     );
 }
 

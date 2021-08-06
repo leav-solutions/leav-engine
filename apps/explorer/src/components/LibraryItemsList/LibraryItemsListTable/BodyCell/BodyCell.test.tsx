@@ -5,6 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {AttributeType} from '../../../../_types/types';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
 import BodyCell from './BodyCell';
 
 jest.mock(
@@ -23,11 +24,16 @@ describe('BodyCell', () => {
         },
         value: {value: 'valueCell', type: AttributeType.simple, id: 'idCell'}
     };
+
     test('should call cell', async () => {
         let comp: any;
 
         await act(async () => {
-            comp = mount(<BodyCell cell={mockCell as any} index="0" />);
+            comp = mount(
+                <MockStore>
+                    <BodyCell cell={mockCell as any} index="0" />
+                </MockStore>
+            );
         });
 
         expect(comp.find('Cell')).toHaveLength(1);

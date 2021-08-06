@@ -8,7 +8,7 @@ import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import {SelectionModeContext} from 'context';
 import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppSelector} from 'redux/store';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {IconCross} from '../../../../../assets/icons/IconCross';
 import {IconEllipsisHorizontal} from '../../../../../assets/icons/IconEllipsisHorizontal';
@@ -85,7 +85,6 @@ function CellInfos({record, previewSize, lang, index, selectionData}: ICellInfos
 
     const {display} = useAppSelector(state => ({display: state.display}));
     const selectionMode = useContext(SelectionModeContext);
-
     const [isHover, setIsHover] = useState<boolean>(false);
 
     const btnSize: SizeType = 'small';
@@ -123,49 +122,51 @@ function CellInfos({record, previewSize, lang, index, selectionData}: ICellInfos
     };
 
     return (
-        <Wrapper>
-            <div style={{position: 'relative'}}>
-                <CellSelection index={index} selectionData={selectionData} />
-            </div>
-            <div style={{position: 'relative'}} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                <Info>
-                    <CellRecordCard record={record} size={previewSize} lang={lang} style={getSize(display.size)} />
-                </Info>
-                <FloatingMenu data-testid="floating-menu" className="floating-menu" isHover={isHover}>
-                    {!selectionMode ? (
-                        <>
-                            {actions.map(action => (
-                                <Tooltip title={action.tooltip} key={action.tooltip}>
-                                    {action.button ?? <Button size={btnSize} icon={action.icon} />}
+        <>
+            <Wrapper>
+                <div style={{position: 'relative'}}>
+                    <CellSelection selectionData={selectionData} />
+                </div>
+                <div style={{position: 'relative'}} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                    <Info>
+                        <CellRecordCard record={record} size={previewSize} lang={lang} style={getSize(display.size)} />
+                    </Info>
+                    <FloatingMenu data-testid="floating-menu" className="floating-menu" isHover={isHover}>
+                        {!selectionMode ? (
+                            <>
+                                {actions.map(action => (
+                                    <Tooltip title={action.tooltip} key={action.tooltip}>
+                                        {action.button ?? <Button size={btnSize} icon={action.icon} />}
+                                    </Tooltip>
+                                ))}
+                                <Tooltip title={t('items_list.table.actions-tooltips.more')}>
+                                    <Dropdown
+                                        placement="bottomRight"
+                                        overlay={
+                                            <Menu className="floating-menu-overlay">
+                                                {moreActions.map(moreAction => (
+                                                    <Menu.Item key={moreAction.tooltip}>
+                                                        {moreAction.icon} {moreAction.tooltip}
+                                                    </Menu.Item>
+                                                ))}
+                                            </Menu>
+                                        }
+                                    >
+                                        <Button size="small" icon={<IconEllipsisHorizontal />} />
+                                    </Dropdown>
                                 </Tooltip>
-                            ))}
-                            <Tooltip title={t('items_list.table.actions-tooltips.more')}>
-                                <Dropdown
-                                    placement="bottomRight"
-                                    overlay={
-                                        <Menu className="floating-menu-overlay">
-                                            {moreActions.map(moreAction => (
-                                                <Menu.Item key={moreAction.tooltip}>
-                                                    {moreAction.icon} {moreAction.tooltip}
-                                                </Menu.Item>
-                                            ))}
-                                        </Menu>
-                                    }
-                                >
-                                    <Button size="small" icon={<IconEllipsisHorizontal />} />
-                                </Dropdown>
-                            </Tooltip>
-                        </>
-                    ) : (
-                        selectionModeActions.map(action => (
-                            <Tooltip title={action.tooltip} key={action.tooltip}>
-                                <Button size="small" icon={action.icon} />
-                            </Tooltip>
-                        ))
-                    )}
-                </FloatingMenu>
-            </div>
-        </Wrapper>
+                            </>
+                        ) : (
+                            selectionModeActions.map(action => (
+                                <Tooltip title={action.tooltip} key={action.tooltip}>
+                                    <Button size="small" icon={action.icon} />
+                                </Tooltip>
+                            ))
+                        )}
+                    </FloatingMenu>
+                </div>
+            </Wrapper>
+        </>
     );
 }
 

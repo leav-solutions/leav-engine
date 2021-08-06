@@ -14,9 +14,11 @@ describe('Header', () => {
 
         await act(async () => {
             render(
-                <Header id="test" type={AttributeType.simple}>
-                    {value}
-                </Header>
+                <MockSearchContextProvider>
+                    <Header id="test" type={AttributeType.simple}>
+                        {value}
+                    </Header>
+                </MockSearchContextProvider>
             );
         });
 

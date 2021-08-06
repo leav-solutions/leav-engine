@@ -13,6 +13,7 @@ import {infosCol} from '../../../../constants/constants';
 import themingVar from '../../../../themingVar';
 import {getSortFieldByAttributeType} from '../../../../utils';
 import {AttributeType} from '../../../../_types/types';
+import ChooseTableColumns from '../../LibraryItemsListTable/ChooseTableColumns';
 
 interface IWrapperProps {
     isHover: boolean;
@@ -116,6 +117,7 @@ const Header = ({id, children, type}: IHeaderProps) => {
     const {t} = useTranslation();
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
+    const [openChangeColumns, setOpenChangeColumns] = useState(false);
     const [isHover, setIsHover] = useState<boolean>(false);
 
     const handleSort = (attId: string, order: SortOrder, attType: AttributeType) => {
@@ -148,6 +150,7 @@ const Header = ({id, children, type}: IHeaderProps) => {
     return (
         <Wrapper isHover={isHover} isInfoColumn={infosCol === id}>
             <div>
+                <ChooseTableColumns openChangeColumns={openChangeColumns} setOpenChangeColumns={setOpenChangeColumns} />
                 <Dropdown
                     placement="bottomCenter"
                     overlay={
@@ -156,6 +159,9 @@ const Header = ({id, children, type}: IHeaderProps) => {
                             onMouseEnter={() => setIsHover(true)}
                             onMouseLeave={() => setIsHover(false)}
                         >
+                            <Menu.Item onClick={() => setOpenChangeColumns(true)}>
+                                {t('items_list.table.header-cell-menu.choose-columns')}
+                            </Menu.Item>
                             <Menu.Item onClick={() => handleAsc(id, type)}>
                                 {t('items_list.table.header-cell-menu.sort-ascend')}
                             </Menu.Item>

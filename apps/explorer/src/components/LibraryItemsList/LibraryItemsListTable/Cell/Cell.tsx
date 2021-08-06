@@ -39,6 +39,7 @@ const Cell = ({columnName, data, index}: ICellProps) => {
         library,
         label
     };
+
     if (!value || (Array.isArray(value) && !value.length)) {
         return <></>;
     }
@@ -51,6 +52,7 @@ const Cell = ({columnName, data, index}: ICellProps) => {
         case AttributeType.advanced_link:
         case AttributeType.tree:
             const valuesToDisplay = Array.isArray(value) ? value : [value];
+
             return (
                 <RecordCardCellWrapper>
                     {valuesToDisplay.map(val => (
@@ -59,7 +61,7 @@ const Cell = ({columnName, data, index}: ICellProps) => {
                 </RecordCardCellWrapper>
             );
         default:
-            //selection and infos column has no type
+            // selection and infos column has no type
             if (columnName === infosCol) {
                 return (
                     <CellInfos
