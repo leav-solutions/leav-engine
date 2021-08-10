@@ -19,6 +19,7 @@ import DisplayOptions from '../DisplayOptions';
 import MenuItemActions from '../MenuItemActions';
 import MenuSelection from '../MenuSelection';
 import MenuView from '../MenuView';
+import SearchItems from '../SearchItems';
 
 interface IMenuItemListProps {
     refetch?: () => void;
@@ -100,6 +101,8 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
 
                 <MenuSelection />
             </SubGroupFirst>
+
+            <SearchItems />
 
             <SubGroupLast>
                 <div>

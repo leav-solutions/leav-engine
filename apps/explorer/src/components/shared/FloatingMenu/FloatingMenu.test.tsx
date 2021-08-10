@@ -47,7 +47,9 @@ describe('FloatingMenu', () => {
         const actionBtn = screen.getByRole('button', {name: 'delete'});
         expect(actionBtn).toBeInTheDocument();
 
-        userEvent.click(actionBtn);
+        await act(async () => {
+            userEvent.click(actionBtn);
+        });
 
         expect(_handleClick).toBeCalled();
     });
@@ -77,7 +79,9 @@ describe('FloatingMenu', () => {
         });
 
         const moreBtn = screen.getByRole('button', {name: 'floating_menu.more_actions'});
-        userEvent.hover(moreBtn, null);
+        await act(async () => {
+            userEvent.hover(moreBtn, null);
+        });
 
         await waitForElement(() => screen.getByText('moreActionA'));
 

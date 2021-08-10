@@ -25,6 +25,7 @@ function SearchItems(): JSX.Element {
     const {t} = useTranslation();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
         searchDispatch({type: SearchActionTypes.SET_FULLTEXT, fullText: event.target.value});
     };
 
@@ -34,11 +35,13 @@ function SearchItems(): JSX.Element {
 
     const resetSearch = () => {
         setSearch('');
+        searchDispatch({type: SearchActionTypes.SET_FULLTEXT, fullText: ''});
+        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
     };
 
     return (
         <div>
-            <Input
+            <Input.Search
                 placeholder={t('search.placeholder')}
                 value={searchState.fullText}
                 onChange={handleChange}
