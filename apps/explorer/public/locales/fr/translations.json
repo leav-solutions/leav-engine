@@ -303,6 +303,7 @@
         "import_failure": "Erreur lors de l'import des données",
         "empty_file": "Le fichier ne contient pas de données",
         "mapping": "Sélection des attributs",
+        "attribute_selection": "Sélectionner un attribut",
         "key": "Sélection de l'attribut référence"
     },
     "error": {

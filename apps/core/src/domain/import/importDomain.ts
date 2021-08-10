@@ -216,21 +216,23 @@ export default function ({
             data.shift();
 
             for (const d of data) {
-                const matches = key
-                    ? [
-                          {
-                              attribute: key,
-                              value: String(d[mapping.indexOf(key)])
-                          }
-                      ]
-                    : [];
+                const matches =
+                    key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
+                        ? [
+                              {
+                                  attribute: key,
+                                  value: String(d[mapping.indexOf(key)])
+                              }
+                          ]
+                        : [];
 
                 file.elements.push({
                     library,
                     matches,
                     data: d
+                        .filter((_, i) => mapping[i])
                         .map((e, i) => ({
-                            attribute: mapping[i],
+                            attribute: mapping.filter(m => m !== null)[i],
                             values: [{value: String(e)}],
                             action: Action.REPLACE
                         }))
