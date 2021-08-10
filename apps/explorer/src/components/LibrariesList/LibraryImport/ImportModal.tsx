@@ -174,7 +174,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
         }
     };
 
-    const _handleOk = async () => {
+    const _onOk = async () => {
         switch (currentStep) {
             case ImportSteps.SELECT_FILE:
                 dispatch({okBtn: false});
@@ -197,12 +197,27 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
             : 'global.close'
     );
 
+    const _onMappingSelect = (idx, id) => {
+        mapping[idx] = id;
+        dispatch({
+            mapping: [...mapping],
+            okBtn: mapping.length === Object.keys(data[0]).length && (!keyChecked || !!key),
+            key: !!key && mapping.includes(key) ? key : null,
+            keyChecked: !!key && mapping.includes(key)
+        });
+    };
+
+    const _onClear = idx => {
+        mapping[idx] = null;
+        dispatch({mapping: [...mapping]});
+    };
+
     return (
         <Modal
             title={t('import.title')}
             okText={validateButtonLabel}
             cancelText={t('global.cancel')}
-            onOk={_handleOk}
+            onOk={_onOk}
             onCancel={onClose}
             visible={open}
             closable
@@ -255,19 +270,11 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
                                         [col]: (
                                             <Select
                                                 style={{width: '100%'}}
-                                                placeholder={'Select an attribute'}
+                                                placeholder={t('import.attribute_selection')}
                                                 value={mapping[idx]}
-                                                onSelect={id => {
-                                                    mapping[idx] = id;
-                                                    dispatch({
-                                                        mapping: [...mapping],
-                                                        okBtn:
-                                                            mapping.length === Object.keys(data[0]).length &&
-                                                            (!keyChecked || !!key),
-                                                        key: !!key && mapping.includes(key) ? key : null,
-                                                        keyChecked: !!key && mapping.includes(key)
-                                                    });
-                                                }}
+                                                allowClear
+                                                onClear={() => _onClear(idx)}
+                                                onSelect={id => _onMappingSelect(idx, id)}
                                             >
                                                 {attributes.map(a => (
                                                     <Select.Option key={a.id} value={a.id}>

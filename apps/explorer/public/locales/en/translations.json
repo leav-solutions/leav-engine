@@ -300,6 +300,7 @@
         "import_failure": "Import failed",
         "empty_file": "Empty file",
         "mapping": "Mapping",
+        "attribute_selection": "Select an attribute",
         "key": "Select reference attribute"
     },
     "error": {

@@ -253,6 +253,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.medium:
                     return 1;
                 case NotificationPriority.high:
+                default:
                     return 1;
             }
         case NotificationPriority.medium:
@@ -262,6 +263,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.medium:
                     return 0;
                 case NotificationPriority.high:
+                default:
                     return 1;
             }
         case NotificationPriority.high:
@@ -271,6 +273,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 case NotificationPriority.medium:
                     return -1;
                 case NotificationPriority.high:
+                default:
                     return 0;
             }
     }

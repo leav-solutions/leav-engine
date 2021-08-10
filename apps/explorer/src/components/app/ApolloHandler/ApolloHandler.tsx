@@ -94,8 +94,6 @@ function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
         }
     });
 
-    console.log(possibleTypes);
-
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
             _handleApolloError,

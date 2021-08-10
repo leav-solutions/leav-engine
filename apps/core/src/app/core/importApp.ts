@@ -109,7 +109,14 @@ export default function ({'core.domain.import': importDomain = null}: IDeps = {}
                             const data: string[][] = [];
 
                             workbook.eachSheet(s => {
-                                s.eachRow(r => data.push((r.values as string[]).slice(1)));
+                                s.eachRow(r => {
+                                    let elem = (r.values as string[]).slice(1);
+
+                                    // replace empty item by null
+                                    elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
+
+                                    data.push(elem);
+                                });
                             });
 
                             return importDomain.importExcel({data, library, mapping, key}, ctx);
