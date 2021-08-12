@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IFormDateFieldSettings} from '@leav/utils';
-import {DatePicker, Input} from 'antd';
+import {DatePicker} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import moment from 'moment';
 import React from 'react';
 import themingVar from 'themingVar';
 
 function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardInputProps): JSX.Element {
-    const {editingValue, displayValue, isEditing} = fieldValue;
+    const {editingValue} = fieldValue;
     const _handleDateChange = (selectedDate: moment.Moment) => {
         const dateToSave = selectedDate ? String(selectedDate.unix()) : null;
         onSubmit(dateToSave);
@@ -17,7 +17,7 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardIn
 
     const dateValue = editingValue ? moment(Number(editingValue) * 1000) : null;
 
-    return isEditing ? (
+    return (
         <DatePicker
             className="field-wrapper"
             data-testid="datepicker"
@@ -32,13 +32,6 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardIn
             popupStyle={{background: themingVar['@default-bg']}}
             style={{background: themingVar['@default-bg']}}
             allowClear={false}
-        />
-    ) : (
-        <Input
-            className={displayValue ? 'has-value' : ''}
-            value={String(displayValue)}
-            onFocus={onFocus}
-            disabled={state.isReadOnly}
         />
     );
 }

@@ -338,6 +338,9 @@
         "no_value": "No value",
         "value_details": "Details",
         "by": "by",
+        "no_matching_value": "No matching value",
+        "copy_value": "Copy",
+        "new_value": "New value",
         "attribute": {
             "id": "Id",
             "type": "Type",

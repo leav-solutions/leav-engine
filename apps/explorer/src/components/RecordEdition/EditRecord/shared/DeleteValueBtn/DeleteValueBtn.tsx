@@ -30,6 +30,8 @@ function DeleteValueBtn({onDelete}: IDeleteValueBtnProps): JSX.Element {
                 style={{background: '#FFF'}}
                 danger
                 aria-label="delete-value"
+                onClick={e => e.stopPropagation()}
+                className="delete-value-button"
             />
         </Popconfirm>
     );

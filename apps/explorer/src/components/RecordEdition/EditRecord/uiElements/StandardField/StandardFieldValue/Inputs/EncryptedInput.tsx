@@ -5,19 +5,19 @@ import {Input} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import React from 'react';
 
-function EncryptedInput({state, fieldValue, onFocus, onChange, onSubmit}: IStandardInputProps): JSX.Element {
-    const {editingValue, displayValue, isEditing} = fieldValue;
+function EncryptedInput({state, fieldValue, onFocus, onChange, onPressEnter}: IStandardInputProps): JSX.Element {
+    const {editingValue} = fieldValue;
     const _handleChange = e => {
         onChange(e.target.value);
     };
 
     const _handleKeyPress = e => {
         if (e.key === 'Enter') {
-            onSubmit(String(editingValue));
+            onPressEnter();
         }
     };
 
-    return isEditing ? (
+    return (
         <Input.Password
             className="nested-input"
             value={String(editingValue)}
@@ -27,8 +27,6 @@ function EncryptedInput({state, fieldValue, onFocus, onChange, onSubmit}: IStand
             autoFocus
             data-testid="encrypted-input"
         />
-    ) : (
-        <Input value={displayValue ? '•••••••••' : ''} onFocus={onFocus} />
     );
 }
 

@@ -5,20 +5,20 @@ import {Input} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import React, {ChangeEvent} from 'react';
 
-function NumberInput({state, fieldValue, onFocus, onSubmit, onChange}: IStandardInputProps): JSX.Element {
-    const {displayValue, editingValue, isEditing} = fieldValue;
+function NumberInput({state, fieldValue, onFocus, onPressEnter, onChange}: IStandardInputProps): JSX.Element {
+    const {editingValue} = fieldValue;
 
     const _handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
         onChange(String(e.target.value));
     };
 
     const _handlePressEnter = () => {
-        onSubmit(editingValue);
+        onPressEnter();
     };
 
     const editingValueNumber = Number(editingValue);
 
-    return isEditing ? (
+    return (
         <Input
             type="number"
             className="nested-input"
@@ -27,10 +27,9 @@ function NumberInput({state, fieldValue, onFocus, onSubmit, onChange}: IStandard
             onChange={_handleNumberChange}
             onPressEnter={_handlePressEnter}
             disabled={state.isReadOnly}
+            allowClear
             autoFocus
         />
-    ) : (
-        <Input value={String(displayValue)} onFocus={onFocus} className={displayValue ? 'has-value' : ''} />
     );
 }
 

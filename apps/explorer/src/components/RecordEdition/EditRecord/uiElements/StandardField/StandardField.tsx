@@ -27,10 +27,12 @@ const Wrapper = styled.div`
 `;
 
 const AddValueWrapper = styled.div`
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    color: #999;
-    cursor: pointer;
+    && {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        color: #999;
+        cursor: pointer;
+    }
 `;
 
 function StandardField({element, recordValues, record}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
