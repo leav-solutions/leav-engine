@@ -4,9 +4,8 @@
 import {Select} from 'antd';
 import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/BooleanFilter';
 import {formatNotUsingCondition} from 'constants/constants';
-import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
-import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -40,8 +39,7 @@ interface IFilterAttributeConditionProps {
 const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeConditionProps) => {
     const {t} = useTranslation();
 
-    const {state: searchState} = useSearchReducer();
-    const {stateFilters, dispatchFilters} = useStateFilters();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const attribute = getAttributeFromKey(filter.key, searchState.library.id, searchState.attributes);
 
@@ -55,7 +53,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
     );
 
     const handleOperatorChange = (e: any) => {
-        const newFilters = stateFilters.filters.map(f => {
+        const newFilters = searchState.filters.map(f => {
             if (f.index === filter.index) {
                 return {
                     ...filter,
@@ -65,7 +63,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             return f;
         });
 
-        dispatchFilters(setFilters(newFilters));
+        searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
     };
 
     const showStandardCondition = !formatNotUsingCondition.find(format => format === filter.attribute.format);

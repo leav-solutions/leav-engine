@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
-import TileDisplay from '../TileDisplay';
+import Table from '../LibraryItemsListTable';
 import DisplayTypeSelector from './DisplayTypeSelector';
 
 jest.mock(
@@ -24,13 +24,13 @@ jest.mock(
 );
 
 describe('DisplayTypeSelector', () => {
-    test('Should call ItemsTitleDisplay', async () => {
+    test('Should call LibraryItemsListTable', async () => {
         const comp = mount(
             <MockStore>
                 <DisplayTypeSelector />
             </MockStore>
         );
 
-        expect(comp.find(TileDisplay)).toHaveLength(1);
+        expect(comp.find(Table)).toHaveLength(1);
     });
 });

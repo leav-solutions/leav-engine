@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {useAppSelector} from 'redux/store';
 import {ViewTypes} from '_gqlTypes/globalTypes';
 import Table from '../LibraryItemsListTable';
 import TileDisplay from '../TileDisplay';
+import useSearchReducer from 'hooks/useSearchReducer';
 
 function DisplayTypeSelector(): JSX.Element {
-    const view = useAppSelector(state => state.view);
+    const {state: searchState} = useSearchReducer();
 
-    switch (view.current?.type) {
+    switch (searchState.view.current?.type) {
         case ViewTypes.list:
             return <Table />;
         case ViewTypes.timeline:

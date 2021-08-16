@@ -31,9 +31,10 @@ export interface IGetRecordsFromLibraryQuery {
 }
 
 export interface IGetRecordsFromLibraryQueryVariables {
-    limit: number;
-    offset: number;
-    filters: IQueryFilter[];
+    limit?: number;
+    offset?: number;
+    filters?: IQueryFilter[];
     sortField?: string;
     sortOrder: SortOrder;
+    fullText?: string;
 }

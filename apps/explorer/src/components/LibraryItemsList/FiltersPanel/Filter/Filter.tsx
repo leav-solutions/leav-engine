@@ -8,8 +8,8 @@ import React, {useState, useCallback} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {setFilters} from '../../../../hooks/FiltersStateHook/FilterReducerAction';
-import useStateFilters from '../../../../hooks/FiltersStateHook/FiltersStateHook';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
 import {localizedLabel} from '../../../../utils';
@@ -130,17 +130,20 @@ interface ISwitchFormType {
 function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
-    const {stateFilters, dispatchFilters} = useStateFilters();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [showChangeAttribute, setShowChangeAttribute] = useState(false);
     const [showChangeTree, setShowChangeTree] = useState(false);
     const [showSelectTreeNodeModal, setShowSelectTreeNodeModal] = useState(false);
 
     const handleDelete = () => {
-        dispatchFilters(setFilters(stateFilters.filters.filter(f => f.index !== filter.index)));
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters: searchState.filters.filter(f => f.index !== filter.index)
+        });
     };
 
     const updateFilterValue = (newFilterValue: IFilter['value']) => {
-        const newFilters: IFilter[] = stateFilters.filters.map(f => {
+        const newFilters: IFilter[] = searchState.filters.map(f => {
             if (f.index === filter.index) {
                 return {...f, value: newFilterValue};
             }
@@ -148,7 +151,10 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             return f;
         });
 
-        dispatchFilters(setFilters(newFilters));
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters: newFilters
+        });
     };
 
     const _getValueFromNode = (node: ITreeNode): IFilter['value'] => {
@@ -166,7 +172,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     };
 
     const toggleActiveStatus = () => {
-        const newFilters = stateFilters.filters.map(f => {
+        const newFilters = searchState.filters.map(f => {
             if (f.index === filter.index) {
                 return {...f, active: !f.active};
             }
@@ -174,7 +180,10 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             return f;
         });
 
-        dispatchFilters(setFilters(newFilters));
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters: newFilters
+        });
     };
 
     const filterOptions = (

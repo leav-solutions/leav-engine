@@ -6,6 +6,7 @@ import {useLazyQuery} from '@apollo/client';
 import {Button, Result, Steps} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import AttributesSelectionList from 'components/AttributesSelectionList';
+import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addNotification} from 'redux/notifications';
@@ -57,7 +58,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
 
     const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
 
-    const filters = useAppSelector(state => state.filters);
+    const {state: searchState} = useSearchReducer();
     const dispatch = useAppDispatch();
 
     const [activeLibrary] = useActiveLibrary();
@@ -91,7 +92,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
 
         let queryFilters: RecordFilterInput[];
         if (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected) {
-            queryFilters = (filters.queryFilters as unknown) as RecordFilterInput[];
+            queryFilters = (searchState.queryFilters as unknown) as RecordFilterInput[];
         } else {
             const selectedIds = selectionState.selection.selected.map(elementSelected => elementSelected.id);
 

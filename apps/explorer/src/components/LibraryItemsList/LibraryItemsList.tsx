@@ -4,18 +4,12 @@
 import {useLazyQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {SelectionModeContext} from 'context';
-import {setFilters, setQueryFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
-import {filterReducerInitialState} from 'hooks/FiltersStateHook/FilterReducerInitialState';
-import {filterStateReducer} from 'hooks/FiltersStateHook/FiltersStateReducer';
-import {FilterStateContext} from 'hooks/FiltersStateHook/FilterStateContext';
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setFiltersQueryFilters} from 'redux/filters';
-import {useAppDispatch, useAppSelector} from 'redux/store';
-import {setViewCurrent, setViewReload} from 'redux/view';
+import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from 'utils';
 import {
@@ -84,15 +78,10 @@ interface ILibraryItemsListProps {
 
 function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX.Element {
     const {t} = useTranslation();
-
-    const libId = library.id;
-
-    const {view, filters, display, selection: selectionState} = useAppSelector(state => state);
-    const dispatch = useAppDispatch();
-
-    const [stateFilters, dispatchFilters] = useReducer(filterStateReducer, filterReducerInitialState);
-    const [searchState, searchDispatch] = useReducer(searchReducer, {...initialSearchState, library});
     const [{lang}] = useLang();
+
+    const {display, selection: selectionState} = useAppSelector(state => state); // keep selection
+    const [searchState, searchDispatch] = useReducer(searchReducer, {...initialSearchState, library});
 
     const currentLibId = library.id;
 
@@ -117,8 +106,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
             newView = {...defaultView, label: t(defaultView.label)};
         }
 
-        dispatch(setViewCurrent(newView));
-        dispatch(setViewReload(true));
+        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: newView, reload: true}});
 
         // Attributes
         const attributesFromQuery: IAttribute[] = library.attributes.reduce((acc: IAttribute[], attribute) => {
@@ -199,16 +187,16 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         }, []);
 
         searchDispatch({type: SearchActionTypes.SET_ATTRIBUTES, attributes: attributesFromQuery});
-    }, [currentLibId, dispatch, lang, library.attributes, library.defaultView, t, searchDispatch]);
+    }, [currentLibId, lang, library.attributes, library.defaultView, t, searchDispatch]);
 
     useEffect(() => {
-        if (!view.current || !view.reload) {
+        if (!searchState.view.current || !searchState.view.reload) {
             return;
         }
 
-        if (view.current.type === ViewTypes.list) {
+        if (searchState.view.current.type === ViewTypes.list) {
             // Load initials fields from view fields
-            const newFields = view.current.fields?.reduce((acc, fieldKey) => {
+            const newFields = searchState.view.current.fields?.reduce((acc, fieldKey) => {
                 let parentAttributeData: IParentAttributeData | undefined;
 
                 const splitKey = fieldKey.split('.');
@@ -257,85 +245,77 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         }
 
         // update Filters
-        if (view.current.filters) {
-            dispatchFilters(
-                setFilters(getFiltersFromRequest(view.current.filters, searchState.library.id, searchState.attributes))
-            );
-            dispatchFilters(setQueryFilters(view.current.filters));
+        if (searchState.view.current.filters) {
+            searchDispatch({
+                type: SearchActionTypes.SET_FILTERS,
+                filters: getFiltersFromRequest(
+                    searchState.view.current.filters,
+                    searchState.library.id,
+                    searchState.attributes
+                )
+            });
+
+            searchDispatch({
+                type: SearchActionTypes.SET_QUERY_FILTERS,
+                queryFilters: searchState.view.current.filters
+            });
         } else {
             // reset filters
-            dispatch(setFiltersQueryFilters([]));
+            searchDispatch({
+                type: SearchActionTypes.SET_QUERY_FILTERS,
+                queryFilters: []
+            });
         }
 
         // update sort
-        const field = view.current.sort?.field ?? defaultSort.field;
-        const order = view.current.sort?.order ?? defaultSort.order;
+        const field = searchState.view.current.sort?.field ?? defaultSort.field;
+        const order = searchState.view.current.sort?.order ?? defaultSort.order;
 
-        dispatch(setViewReload(false));
+        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: searchState.view.current, reload: false}});
         searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
-    }, [view, searchState.attributes, searchState.library.id, lang, dispatchFilters, dispatch, library]);
+    }, [searchState.view, searchState.attributes, searchState.library.id, lang, searchDispatch, library]);
 
     // Get data
-    const [
-        getRecords,
-        {called: calledRecords, loading: loadingRecords, data: dataRecords, error: errorRecords, refetch}
-    ] = useLazyQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
-        getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields),
-        {
-            variables: {
-                limit: searchState.pagination,
-                offset: searchState.offset,
-                filters: stateFilters.queryFilters,
-                sortField: searchState.sort?.field ?? defaultSort.field,
-                sortOrder: searchState.sort?.order ?? defaultSort.order
-            }
+    const [getRecords, {error, refetch}] = useLazyQuery<
+        IGetRecordsFromLibraryQuery,
+        IGetRecordsFromLibraryQueryVariables
+    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields), {
+        fetchPolicy: 'no-cache',
+        onCompleted: data => {
+            const itemsFromQuery = data ? data[library.gqlNames.query || ''].list : [];
+
+            const newRecords: ISearchRecord[] = manageItems({
+                items: itemsFromQuery,
+                fields: searchState.fields
+            });
+
+            searchDispatch({
+                type: SearchActionTypes.SET_TOTAL_COUNT,
+                totalCount: data[library.gqlNames.query]?.totalCount
+            });
+
+            searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});
+            searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
         }
-    );
+    });
 
     useEffect(() => {
-        if (!filters.searchFullTextActive) {
-            if (!loadingRecords && calledRecords && dataRecords && library.gqlNames.filter) {
-                const libQuery = library.gqlNames.query;
-
-                const itemsFromQuery = dataRecords ? dataRecords[library.gqlNames.query || ''].list : [];
-
-                const newRecords: ISearchRecord[] = manageItems({
-                    items: itemsFromQuery,
-                    fields: searchState.fields
-                });
-
-                searchDispatch({
-                    type: SearchActionTypes.SET_TOTAL_COUNT,
-                    totalCount: dataRecords[libQuery]?.totalCount
-                });
-                searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});
-                searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
-            } else {
-                searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
-            }
+        if (searchState.loading || searchState.view.reload) {
+            getRecords({
+                variables: {
+                    limit: searchState.pagination,
+                    offset: searchState.offset,
+                    filters: searchState.queryFilters,
+                    sortField: searchState.sort?.field ?? defaultSort.field,
+                    sortOrder: searchState.sort?.order ?? defaultSort.order,
+                    fullText: searchState.fullText
+                }
+            });
         }
-    }, [
-        searchDispatch,
-        loadingRecords,
-        dataRecords,
-        calledRecords,
-        lang,
-        libId,
-        searchState.attributes,
-        searchState.fields,
-        filters.searchFullTextActive,
-        dispatch,
-        library
-    ]);
+    }, [searchState, library.gqlNames.query, getRecords]);
 
-    useEffect(() => {
-        if (!filters.searchFullTextActive && library.gqlNames.query) {
-            getRecords();
-        }
-    }, [view.reload, filters, library.gqlNames.query, getRecords]);
-
-    if (errorRecords) {
-        return <ErrorDisplay message={errorRecords.message} />;
+    if (error) {
+        return <ErrorDisplay message={error.message} />;
     }
 
     // if some elements are selected and the selection type is search, show the selection Menu
@@ -347,24 +327,24 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
           (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected);
 
     return (
-        <FilterStateContext.Provider value={{stateFilters, dispatchFilters}}>
-            <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
-                <SelectionModeContext.Provider value={selectionMode}>
-                    <MenuWrapper>
-                        <MenuItemList refetch={refetch} />
-                        <MenuItemListSelected active={menuSelectedActive} />
-                    </MenuWrapper>
+        // <FilterStateContext.Provider value={{stateFilters, dispatchFilters}}>
+        <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
+            <SelectionModeContext.Provider value={selectionMode}>
+                <MenuWrapper>
+                    <MenuItemList refetch={refetch} />
+                    <MenuItemListSelected active={menuSelectedActive} />
+                </MenuWrapper>
 
-                    <Wrapper
-                        showSide={display.side.visible}
-                        className={display.side.visible ? 'wrapper-open' : 'wrapper-close'}
-                    >
-                        <SideItems />
-                        <DisplayTypeSelector />
-                    </Wrapper>
-                </SelectionModeContext.Provider>
-            </SearchContext.Provider>
-        </FilterStateContext.Provider>
+                <Wrapper
+                    showSide={display.side.visible}
+                    className={display.side.visible ? 'wrapper-open' : 'wrapper-close'}
+                >
+                    <SideItems />
+                    <DisplayTypeSelector />
+                </Wrapper>
+            </SelectionModeContext.Provider>
+        </SearchContext.Provider>
+        // </FilterStateContext.Provider>
     );
 }
 

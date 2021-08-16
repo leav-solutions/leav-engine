@@ -7,7 +7,7 @@ import {mockAttribute} from '__mocks__/common/attribute';
 import {mockFilter} from '__mocks__/common/filter';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
-import {MockStateFilters} from '__mocks__/stateFilters/mockStateFilters';
+// import {MockStateFilters} from '__mocks__/stateFilters/mockStateFilters';
 import FilterAttributeCondition from './FilterAttributeCondition';
 
 describe('FilterAttributeCondition', () => {
@@ -19,9 +19,9 @@ describe('FilterAttributeCondition', () => {
                     library: {...mockGetLibraryDetailExtendedElement, id: 'testLibrary'}
                 }}
             >
-                <MockStateFilters stateFilters={{filters: [mockFilter]}}>
-                    <FilterAttributeCondition filter={mockFilter} updateFilterValue={jest.fn()} />
-                </MockStateFilters>
+                {/* <MockStateFilters stateFilters={{filters: [mockFilter]}}> */}
+                <FilterAttributeCondition filter={mockFilter} updateFilterValue={jest.fn()} />
+                {/* </MockStateFilters> */}
             </MockSearchContextProvider>
         );
         const selectElement = screen.getByTestId('filter-condition-select');

@@ -8,7 +8,8 @@
         "apply": "Appliquer",
         "clear": "Effacer",
         "submit": "Valider",
-        "select": "Sélectionner"
+        "select": "Sélectionner",
+        "search": "Rechercher"
     },
     "login": {
         "header": "Authentification",

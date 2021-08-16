@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal, Tabs} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
-import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
-import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
-import useSearchReducer from 'hooks/useSearchReducer';
 import moment from 'moment';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {defaultFilterConditionByAttributeFormat, getFieldsKeyFromAttribute} from 'utils';
@@ -36,14 +35,13 @@ const _getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | stri
 function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {state: searchState} = useSearchReducer();
-    const {stateFilters, dispatchFilters} = useStateFilters();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const [attributesChecked, setAttributesChecked] = useState<ISelectedAttribute[]>([]);
     const [selectedTrees, setSelectedTrees] = useState<ITree[]>([]);
 
     const addFilters = () => {
-        let filterIndex = stateFilters.filters.length;
+        let filterIndex = searchState.filters.length;
 
         const attributesFilters: IFilter[] = attributesChecked.map(attributeChecked => {
             const attribute = searchState.attributes.find(
@@ -69,7 +67,10 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
             value: {value: null}
         }));
 
-        dispatchFilters(setFilters([...stateFilters.filters, ...attributesFilters, ...treeFilters]));
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters: [...searchState.filters, ...attributesFilters, ...treeFilters]
+        });
 
         setShowAttr(false);
         setAttributesChecked([]);

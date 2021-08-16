@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Select} from 'antd';
-import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
-import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import useSearchReducer from 'hooks/useSearchReducer';
 import {TreeConditionFilter, IFilter} from '../../../../_types/types';
 import {getTreeConditionOptions} from '../FiltersOptions';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 
 const Wrapper = styled.span`
     padding: 3px 8px;
@@ -27,12 +27,12 @@ interface IFilterTreeConditionProps {
 
 const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
     const {t} = useTranslation();
-    const {stateFilters, dispatchFilters} = useStateFilters();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const conditionOptions = getTreeConditionOptions(t);
 
     const handleOperatorChange = (e: any) => {
-        const newFilters = stateFilters.filters.map(f => {
+        const newFilters = searchState.filters.map(f => {
             if (f.index === filter.index) {
                 return {
                     ...filter,
@@ -43,7 +43,7 @@ const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
             return f;
         });
 
-        dispatchFilters(setFilters(newFilters));
+        searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
     };
 
     return (

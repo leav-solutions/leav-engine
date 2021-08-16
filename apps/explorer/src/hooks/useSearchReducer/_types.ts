@@ -4,6 +4,7 @@
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {IAttribute, IField} from '_types/types';
+import {IFilter, IQueryFilter, IView} from '../../_types/types';
 
 export type IRecordPreview = {
     small: string;
@@ -45,4 +46,13 @@ export interface ISearchState {
     sort: ISearchSort | null;
     attributes: IAttribute[];
     fields: IField[];
+    fullText: string;
+    filters: IFilter[];
+    queryFilters: IQueryFilter[];
+    view: IViewState;
+}
+
+export interface IViewState {
+    current: IView | null;
+    reload: boolean;
 }

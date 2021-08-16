@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {defaultSort} from 'constants/constants';
-import {IAttribute, IField} from '_types/types';
-import {ISearchRecord, ISearchSort, ISearchState} from './_types';
+import {defaultSort, defaultView} from 'constants/constants';
+import {IAttribute, IField, IFilter, IQueryFilter} from '_types/types';
+import {ISearchRecord, ISearchSort, ISearchState, IViewState} from './_types';
 
 export enum SearchActionTypes {
     SET_RECORDS = 'SET_RECORDS',
@@ -14,7 +14,11 @@ export enum SearchActionTypes {
     SET_SORT = 'SET_SORT',
     CANCEL_SORT = 'CANCEL_SORT',
     SET_ATTRIBUTES = 'SET_ATTRIBUTES',
-    SET_FIELDS = 'SET_FIELDS'
+    SET_FIELDS = 'SET_FIELDS',
+    SET_FULLTEXT = 'SET_FULLTEXT',
+    SET_FILTERS = 'SET_FILTERS',
+    SET_QUERY_FILTERS = 'SET_QUERY_FILTERS',
+    SET_VIEW = 'SET_VIEW'
 }
 
 export type SearchAction =
@@ -26,7 +30,11 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_SORT; sort: ISearchSort}
     | {type: SearchActionTypes.CANCEL_SORT}
     | {type: SearchActionTypes.SET_ATTRIBUTES; attributes: IAttribute[]}
-    | {type: SearchActionTypes.SET_FIELDS; fields: IField[]};
+    | {type: SearchActionTypes.SET_FIELDS; fields: IField[]}
+    | {type: SearchActionTypes.SET_FULLTEXT; fullText: string}
+    | {type: SearchActionTypes.SET_FILTERS; filters: IFilter[]}
+    | {type: SearchActionTypes.SET_QUERY_FILTERS; queryFilters: IQueryFilter[]}
+    | {type: SearchActionTypes.SET_VIEW; view: IViewState};
 
 export const initialSearchState: ISearchState = {
     library: null,
@@ -37,7 +45,11 @@ export const initialSearchState: ISearchState = {
     offset: 0,
     sort: {...defaultSort, active: false},
     attributes: [],
-    fields: []
+    fields: [],
+    fullText: '',
+    filters: [],
+    queryFilters: [],
+    view: {current: defaultView, reload: false}
 };
 
 const searchReducer = (state: ISearchState, action: SearchAction): ISearchState => {
@@ -60,6 +72,14 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             return {...state, attributes: action.attributes};
         case SearchActionTypes.SET_FIELDS:
             return {...state, fields: action.fields};
+        case SearchActionTypes.SET_FULLTEXT:
+            return {...state, fullText: action.fullText};
+        case SearchActionTypes.SET_FILTERS:
+            return {...state, filters: action.filters};
+        case SearchActionTypes.SET_QUERY_FILTERS:
+            return {...state, queryFilters: action.queryFilters};
+        case SearchActionTypes.SET_VIEW:
+            return {...state, view: action.view};
     }
 };
 
