@@ -5,13 +5,12 @@ import {MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {Dropdown, Menu, Spin} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
-import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {setViewCurrent} from 'redux/view';
 import styled, {CSSObject} from 'styled-components';
 import {ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
@@ -69,10 +68,9 @@ interface ISelectViewProps {
 function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {state: searchState} = useSearchReducer();
-    const {view, display, filters} = useAppSelector(state => state);
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
+    const {display} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
-    const {stateFilters} = useStateFilters();
 
     const [modalNewProps, setModalNewProps] = useState<Omit<IModalProps, 'id'>>({
         visible: false
@@ -86,7 +84,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
         }
     });
 
-    const currentView = data?.views.list.find(dataView => dataView.id === view.current?.id);
+    const currentView = data?.views.list.find(dataView => dataView.id === searchState.view.current?.id);
 
     const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(addViewMutation);
 
@@ -102,7 +100,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
     };
 
     const _saveView = async () => {
-        if (view.current && view.current.id !== defaultView.id) {
+        if (searchState.view.current && searchState.view.current.id !== defaultView.id) {
             if (currentView && activeLibrary) {
                 // Fields
                 let viewFields: string[] = [];
@@ -113,7 +111,7 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
                     });
                 }
 
-                const viewFilters = stateFilters.queryFilters.reduce((acc, queryFilter) => {
+                const viewFilters = searchState.queryFilters.reduce((acc, queryFilter) => {
                     return [...acc, queryFilter];
                 }, [] as IQueryFilter[]);
 
@@ -156,11 +154,17 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
                     color: newView.color,
                     shared: newView.shared,
                     fields: newView.settings?.find(setting => setting.name === viewSettingsField)?.value ?? [],
-                    filters: filters.queryFilters,
+                    filters: searchState.queryFilters,
                     sort: viewSort
                 };
 
-                dispatch(setViewCurrent(newCurrentView));
+                searchDispatch({
+                    type: SearchActionTypes.SET_VIEW,
+                    view: {
+                        current: newCurrentView,
+                        reload: searchState.view.reload
+                    }
+                });
             }
         }
     };
@@ -192,7 +196,11 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
 
     const menu = (
         <Menu>
-            <Menu.Item icon={<SaveFilled />} onClick={_saveView} disabled={view.current?.id === defaultView.id}>
+            <Menu.Item
+                icon={<SaveFilled />}
+                onClick={_saveView}
+                disabled={searchState.view.current?.id === defaultView.id}
+            >
                 {t('select-view.save')}
             </Menu.Item>
             <Menu.Divider />
@@ -210,8 +218,8 @@ function SelectView({activeLibrary}: ISelectViewProps): JSX.Element {
         <>
             <AddView visible={modalNewProps.visible} onClose={_closeModal} activeLibrary={activeLibrary} />
             <DropdownButton overlay={menu} data-testid="dropdown-view-options">
-                <InnerDropdown onClick={_toggleShowView} color={view.current?.color}>
-                    {limitTextSize(view.current?.label ?? t('select-view.default-view'), 'medium')}
+                <InnerDropdown onClick={_toggleShowView} color={searchState.view.current?.color}>
+                    {limitTextSize(searchState.view.current?.label ?? t('select-view.default-view'), 'medium')}
                 </InnerDropdown>
             </DropdownButton>
         </>

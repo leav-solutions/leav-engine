@@ -4,14 +4,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 
-import {ISearchFullTextResult} from 'graphQL/queries/searchFullText/searchFullText';
 import {AttributeFormat, AttributeType, IField} from '_types/types';
 import {manageItems} from './manageItems';
+import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export {};
+
 describe('manageItems', () => {
-    const mockItemBase: ISearchFullTextResult = {
+    const mockItemBase: IGetRecordsFromLibraryQueryElement = {
         whoAmI: {
             id: '123456',
             label: 'record_label',
@@ -38,7 +38,7 @@ describe('manageItems', () => {
     };
 
     test('Simple items with no fields', async () => {
-        const mockItems: ISearchFullTextResult[] = [mockItemBase, mockItemBase];
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [mockItemBase, mockItemBase];
 
         const res = manageItems({items: mockItems, fields: []});
         expect(res).toHaveLength(2);
@@ -51,7 +51,7 @@ describe('manageItems', () => {
     });
 
     test('Simple field', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myAttribute: 'myValue'
@@ -78,7 +78,7 @@ describe('manageItems', () => {
     });
 
     test('Field with multiple values', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myAttribute: ['myValue1', 'myValue2']
@@ -106,7 +106,7 @@ describe('manageItems', () => {
     });
 
     test('Simple field via link attribute', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myLinkAttribute: {
@@ -139,7 +139,7 @@ describe('manageItems', () => {
     });
 
     test('Simple field via tree attribute', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myTreeAttribute: {
@@ -175,7 +175,7 @@ describe('manageItems', () => {
     });
 
     test('Advanced field with multiple values via link attribute', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myLinkAttribute: {
@@ -208,7 +208,7 @@ describe('manageItems', () => {
     });
 
     test('Simple field via link attribute with multiple values', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myLinkAttribute: [
@@ -246,7 +246,7 @@ describe('manageItems', () => {
     });
 
     test('Link attribute with no subfields', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myLinkAttribute: {
@@ -278,7 +278,7 @@ describe('manageItems', () => {
     });
 
     test('Tree attribute with no subfields', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myTreeAttribute: {
@@ -310,7 +310,7 @@ describe('manageItems', () => {
     });
 
     test('Extended attribute field', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myAttribute: '{"foo":"bar"}'
@@ -338,7 +338,7 @@ describe('manageItems', () => {
     });
 
     test('Extended attribute field, nested field', async () => {
-        const mockItems: ISearchFullTextResult[] = [
+        const mockItems: IGetRecordsFromLibraryQueryElement[] = [
             {
                 ...mockItemBase,
                 myAttribute: '{"foo":"bar"}'

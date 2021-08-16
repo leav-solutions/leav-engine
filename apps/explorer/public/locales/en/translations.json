@@ -6,7 +6,8 @@
         "done": "Done",
         "delete": "Delete",
         "apply": "Apply",
-        "select": "Select"
+        "select": "Select",
+        "search": "Search"
     },
     "login": {
         "header": "Authentification",

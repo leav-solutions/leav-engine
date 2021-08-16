@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
-import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
-import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
@@ -20,16 +20,16 @@ interface IChangeAttributeProps {
 function ChangeTree({filter, showModal, setShowModal}: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {stateFilters, dispatchFilters} = useStateFilters();
     const [activeLibrary] = useActiveLibrary();
     const [selectedTrees, setSelectedTrees] = useState<ITree[]>();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const handleCancel = () => {
         setShowModal(false);
     };
 
     const changeTree = () => {
-        const newFilters: IFilter[] = stateFilters.filters.map(f => {
+        const newFilters: IFilter[] = searchState.filters.map(f => {
             if (f.index === filter.index) {
                 const treeSelected = selectedTrees[0];
 
@@ -43,7 +43,7 @@ function ChangeTree({filter, showModal, setShowModal}: IChangeAttributeProps): J
             return f;
         });
 
-        dispatchFilters(setFilters(newFilters));
+        searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
         setShowModal(false);
     };
 

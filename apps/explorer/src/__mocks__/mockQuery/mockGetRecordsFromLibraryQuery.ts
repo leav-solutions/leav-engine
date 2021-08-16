@@ -33,5 +33,6 @@ export const mockGetRecordsFromLibraryQueryVar: IGetRecordsFromLibraryQueryVaria
     offset: 0,
     filters: [],
     sortField: 'id',
-    sortOrder: SortOrder.asc
+    sortOrder: SortOrder.asc,
+    fullText: ''
 };

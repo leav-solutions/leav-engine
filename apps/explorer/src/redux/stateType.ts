@@ -33,11 +33,6 @@ export interface IItemsState {
     sort: IItemsSort | null;
 }
 
-export interface IViewState {
-    current: IView | null;
-    reload: boolean;
-}
-
 export interface IDisplayState {
     size: DisplaySize;
     side: IDisplaySide;

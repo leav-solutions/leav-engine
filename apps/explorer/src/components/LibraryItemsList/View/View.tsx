@@ -6,8 +6,8 @@ import {useMutation} from '@apollo/client';
 import {Button, Dropdown, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppDispatch, useAppSelector} from 'redux/store';
-import {setViewCurrent, setViewReload} from 'redux/view';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import useSearchReducer from 'hooks/useSearchReducer';
 import styled from 'styled-components';
 import {IconChecked} from '../../../assets/icons/IconChecked';
 import {viewSettingsField} from '../../../constants/constants';
@@ -91,12 +91,11 @@ interface IViewProps {
 
 function View({view, onRename}: IViewProps): JSX.Element {
     const {t} = useTranslation();
-
-    const viewState = useAppSelector(state => state.view);
-    const dispatch = useAppDispatch();
-
     const [{lang}] = useLang();
 
+    // const viewState = useAppSelector(state => state.view);
+    //  const dispatch = useAppDispatch();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const viewLabel = localizedLabel(view.label, lang);
     const viewDescription = localizedLabel(view.description, lang);
 
@@ -125,22 +124,21 @@ function View({view, onRename}: IViewProps): JSX.Element {
             sort: view.sort
         };
 
-        dispatch(setViewCurrent(currentView));
-        dispatch(setViewReload(true));
+        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: currentView, reload: true}});
     };
 
     const _handleDelete = () => {
         deleteView({variables: {viewId: view.id}});
 
         // set flag to refetch views
-        dispatch(setViewReload(true));
+        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: searchState.view.current, reload: true}});
     };
 
     const _handleRename = () => {
         onRename(view.id);
     };
 
-    const selected = view.id === viewState.current?.id;
+    const selected = view.id === searchState.view.current?.id;
 
     return (
         <>

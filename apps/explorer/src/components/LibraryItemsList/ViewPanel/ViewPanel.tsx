@@ -5,8 +5,8 @@ import {useQuery} from '@apollo/client';
 import {Badge, Input, Spin} from 'antd';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppDispatch, useAppSelector} from 'redux/store';
-import {setViewReload} from 'redux/view';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import useSearchReducer from 'hooks/useSearchReducer';
 import styled from 'styled-components';
 import {
     getViewsListQuery,
@@ -67,17 +67,13 @@ const CustomBadge = styled(Badge)`
 
 function ViewPanel(): JSX.Element {
     const {t} = useTranslation();
-
-    const viewState = useAppSelector(state => state.view);
-    const dispatch = useAppDispatch();
+    const [{lang}] = useLang();
 
     const [search, setSearch] = useState('');
 
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [activeLibrary] = useActiveLibrary();
-    const [{lang}] = useLang();
-
     const [editView, setEditView] = useState<string | false>(false);
-
     const {data, loading, error, refetch} = useQuery<IGetViewListQuery, IGetViewListVariables>(getViewsListQuery, {
         variables: {
             libraryId: activeLibrary?.id || ''
@@ -85,11 +81,14 @@ function ViewPanel(): JSX.Element {
     });
 
     useEffect(() => {
-        if (viewState.reload) {
+        if (searchState.view.reload) {
             refetch();
-            dispatch(setViewReload(false));
+            searchDispatch({
+                type: SearchActionTypes.SET_VIEW,
+                view: {current: searchState.view.current, reload: false}
+            });
         }
-    }, [viewState.reload, refetch, dispatch]);
+    }, [searchState.view, refetch, searchDispatch]);
 
     if (loading) {
         return (

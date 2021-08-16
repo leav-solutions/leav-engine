@@ -3,15 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isArray} from 'lodash';
 import objectPath from 'object-path';
-import {ISearchFullTextResult} from '../../graphQL/queries/searchFullText/searchFullText';
 import {AttributeFormat, AttributeType, IField, IItem} from '../../_types/types';
+import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 
 const _extractValueFromParent = (field: IField, linkValue: any) => {
     const linkedElement = field.parentAttributeData.type === AttributeType.tree ? linkValue.record : linkValue;
     return linkedElement[field.id];
 };
 
-const manageFields = (fields: IField[], item: ISearchFullTextResult) => {
+const manageFields = (fields: IField[], item: IGetRecordsFromLibraryQueryElement) => {
     return fields.reduce((acc, field) => {
         const key: string = field.key;
 
@@ -99,7 +99,7 @@ const manageFields = (fields: IField[], item: ISearchFullTextResult) => {
 };
 
 interface IManageItemsProps {
-    items: ISearchFullTextResult[];
+    items: IGetRecordsFromLibraryQueryElement[];
     fields: IField[];
 }
 

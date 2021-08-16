@@ -3,9 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
-import {setFilters} from 'hooks/FiltersStateHook/FilterReducerAction';
-import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
 import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {RecordFilterCondition} from '_gqlTypes/globalTypes';
@@ -27,8 +26,7 @@ interface IChangeAttributeProps {
 function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {state: searchState} = useSearchReducer();
-    const {stateFilters, dispatchFilters} = useStateFilters();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const [activeLibrary] = useActiveLibrary();
 
@@ -59,7 +57,7 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
     };
 
     const changeAttribute = () => {
-        const newFilters: IFilter[] = stateFilters.filters.map(f => {
+        const newFilters: IFilter[] = searchState.filters.map(f => {
             if (f.index === filter.index) {
                 const attrSelected = attrsSelected[0];
 
@@ -84,8 +82,7 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
             return f;
         });
 
-        dispatchFilters(setFilters(newFilters));
-
+        searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
         setShowModal(false);
     };
 

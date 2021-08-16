@@ -4,17 +4,13 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import displayReducer from './display';
-import filtersReducer from './filters';
 import navigationReducer from './navigation';
 import notificationsReducer from './notifications';
 import selectionReducer from './selection';
-import viewReducer from './view';
 
 const store = configureStore({
     reducer: {
-        view: viewReducer,
         display: displayReducer,
-        filters: filtersReducer,
         selection: selectionReducer,
         navigation: navigationReducer,
         notification: notificationsReducer

@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MoreOutlined, PlusOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
+import useSearchReducer from 'hooks/useSearchReducer';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import React, {useState} from 'react';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {setFilters, setQueryFilters} from '../../../hooks/FiltersStateHook/FilterReducerAction';
-import useStateFilters from '../../../hooks/FiltersStateHook/FiltersStateHook';
 import themingVar from '../../../themingVar';
 import SearchItems from '../SearchItems';
 import AddFilter from './AddFilter';
@@ -79,19 +79,29 @@ const CustomButton = styled(Button)`
 function FiltersPanel(): JSX.Element {
     const {t} = useTranslation();
 
-    const {stateFilters, dispatchFilters} = useStateFilters();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const [showAttr, setShowAttr] = useState(false);
 
-    const applyFilters = () => {
-        const request = getRequestFromFilters(stateFilters.filters);
+    const onSearch = () => {
+        searchDispatch({
+            type: SearchActionTypes.SET_QUERY_FILTERS,
+            queryFilters: getRequestFromFilters(searchState.filters)
+        });
 
-        dispatchFilters(setQueryFilters(request));
+        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
     };
 
     const resetFilters = () => {
-        dispatchFilters(setFilters([]));
-        dispatchFilters(setQueryFilters([]));
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters: []
+        });
+
+        searchDispatch({
+            type: SearchActionTypes.SET_QUERY_FILTERS,
+            queryFilters: []
+        });
     };
 
     const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
@@ -99,7 +109,7 @@ function FiltersPanel(): JSX.Element {
             return;
         }
 
-        const newFilter = stateFilters.filters
+        const newFilter = searchState.filters
             .map(filter => {
                 if (result.source.index === filter.index) {
                     return {
@@ -117,10 +127,13 @@ function FiltersPanel(): JSX.Element {
             })
             .sort((a, b) => a.index - b.index);
 
-        dispatchFilters(setFilters(newFilter));
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters: newFilter
+        });
     };
 
-    const filtersSorted = stateFilters.filters.sort((a, b) => a.index - b.index);
+    const filtersSorted = searchState.filters.sort((a, b) => a.index - b.index);
 
     return (
         <>
@@ -129,12 +142,12 @@ function FiltersPanel(): JSX.Element {
                 <Header>
                     <div>
                         <span>{t('filters.filters')}</span>
-                        <FiltersCounter>{stateFilters.filters.length}</FiltersCounter>
+                        <FiltersCounter>{searchState.filters.length}</FiltersCounter>
                         <PrimaryBtn onClick={() => setShowAttr(true)} icon={<PlusOutlined />} shape="circle" />
                     </div>
 
                     <div>
-                        <CustomButton onClick={applyFilters}>{t('global.apply')}</CustomButton>
+                        <CustomButton onClick={onSearch}>{t('global.search')}</CustomButton>
                         <Dropdown
                             overlay={
                                 <Menu>

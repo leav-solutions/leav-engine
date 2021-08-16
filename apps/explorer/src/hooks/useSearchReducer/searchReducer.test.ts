@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SortOrder} from '_gqlTypes/globalTypes';
+import searchReducer, {initialSearchState, SearchActionTypes} from './searchReducer';
+import {RecordFilterCondition, SortOrder} from '_gqlTypes/globalTypes';
 import {AttributeType} from '_types/types';
 import {mockAttribute} from '__mocks__/common/attribute';
-import searchReducer, {initialSearchState, SearchActionTypes} from './searchReducer';
 
 describe('searchReducer', () => {
     test('SET_RECORDS', async () => {
@@ -139,5 +139,55 @@ describe('searchReducer', () => {
 
         expect(newState.fields.length).toBe(1);
         expect(newState.fields[0].id).toBe('field');
+    });
+
+    test('SET_FULLTEXT', async () => {
+        const newState = searchReducer(
+            {...initialSearchState},
+            {
+                type: SearchActionTypes.SET_FULLTEXT,
+                fullText: 'test'
+            }
+        );
+
+        expect(newState.fullText).toBe('test');
+    });
+
+    test('SET_FILTERS', async () => {
+        const filter = {
+            index: 1,
+            key: '1',
+            value: {value: 'test'},
+            active: true,
+            condition: RecordFilterCondition.EQUAL
+        };
+
+        const newState = searchReducer(
+            {...initialSearchState},
+            {
+                type: SearchActionTypes.SET_FILTERS,
+                filters: [filter]
+            }
+        );
+
+        expect(newState.filters).toEqual(expect.arrayContaining([expect.objectContaining(filter)]));
+    });
+
+    test('SET_QUERY_FILTERS', async () => {
+        const queryFilter = {
+            field: 'id',
+            value: '1',
+            condition: RecordFilterCondition.EQUAL
+        };
+
+        const newState = searchReducer(
+            {...initialSearchState},
+            {
+                type: SearchActionTypes.SET_QUERY_FILTERS,
+                queryFilters: [queryFilter]
+            }
+        );
+
+        expect(newState.queryFilters).toEqual(expect.arrayContaining([expect.objectContaining(queryFilter)]));
     });
 });

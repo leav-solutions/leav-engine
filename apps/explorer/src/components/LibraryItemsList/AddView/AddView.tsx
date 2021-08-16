@@ -3,12 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import {Checkbox, Divider, Form, Input, Modal, Select} from 'antd';
-import useStateFilters from 'hooks/FiltersStateHook/FiltersStateHook';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useDispatch} from 'react-redux';
-import {setViewCurrent, setViewReload} from 'redux/view';
 import {localizedLabel} from 'utils';
 import {ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultSort, viewSettingsField} from '../../../constants/constants';
@@ -34,16 +32,10 @@ interface IAddViewProps {
 
 function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element {
     const {t} = useTranslation();
-
-    const dispatch = useDispatch();
-    const {state: searchState} = useSearchReducer();
-
-    const {stateFilters} = useStateFilters();
-    const [{availableLangs, defaultLang, lang}] = useLang();
-
-    const [form] = Form.useForm();
-
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
+    const [{availableLangs, defaultLang, lang}] = useLang();
+    const [form] = Form.useForm();
 
     const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(addViewMutation, {
         ignoreResults: true
@@ -80,7 +72,7 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
                 label,
                 description,
                 color,
-                filters: stateFilters.queryFilters,
+                filters: searchState.queryFilters,
                 sort: defaultSort,
                 settings: [
                     {
@@ -94,28 +86,28 @@ function AddView({visible, onClose, activeLibrary}: IAddViewProps): JSX.Element 
                 // save view in backend
                 const newViewRes = await addView({variables: {view: newView}});
 
-                dispatch(
-                    setViewCurrent({
-                        id: newViewRes.data.saveView.id,
-                        label: localizedLabel(label, lang),
-                        type: formValues.type,
-                        shared: !!formValues.shared,
-                        sort: defaultSort
-                    })
-                );
+                searchDispatch({
+                    type: SearchActionTypes.SET_VIEW,
+                    view: {
+                        current: {
+                            id: newViewRes.data.saveView.id,
+                            label: localizedLabel(label, lang),
+                            type: formValues.type,
+                            shared: !!formValues.shared,
+                            sort: defaultSort
+                        },
+                        reload: true
+                    }
+                });
             } catch (e) {
                 console.error(e);
             }
-
-            // refetch views
-            dispatch(setViewReload(true));
         }
 
         // reset form fields values
         form.resetFields();
 
         setConfirmLoading(false);
-
         onClose();
     };
 

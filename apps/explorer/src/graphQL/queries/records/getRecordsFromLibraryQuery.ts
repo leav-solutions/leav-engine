@@ -125,11 +125,13 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
             $filters: [RecordFilterInput]
             $sortField: String
             $sortOrder: SortOrder!
+            $fullText: String
         ) {
             ${libraryName} (
                 pagination: {limit: $limit, offset: $offset}
                 filters: $filters
                 sort: {field: $sortField, order: $sortOrder}
+                searchQuery: $fullText
             ) {
                 totalCount
                 list {

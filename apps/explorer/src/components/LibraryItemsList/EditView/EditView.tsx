@@ -4,11 +4,10 @@
 import {useMutation, useQuery} from '@apollo/client';
 import {Divider, Form, Input, Modal, Spin} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {isEqual} from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppDispatch, useAppSelector} from 'redux/store';
-import {setViewCurrent, setViewReload} from 'redux/view';
 import {ViewTypes} from '_gqlTypes/globalTypes';
 import {viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
@@ -41,9 +40,7 @@ interface IEditViewProps {
 function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {state: searchState} = useSearchReducer();
-    const {filters} = useAppSelector(state => state);
-    const dispatch = useAppDispatch();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const [activeLibrary] = useActiveLibrary();
     const [{lang, availableLangs, defaultLang}] = useLang();
@@ -57,9 +54,7 @@ function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
     });
 
     const currentView = data?.views.list.find(view => view.id === id);
-
     const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(addViewMutation);
-
     const [formValues, setFormValues] = useState<IFormValues>();
 
     useEffect(() => {
@@ -132,7 +127,7 @@ function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
                 });
             }
 
-            const viewFilters = filters.queryFilters.reduce((acc, queryFilter) => {
+            const viewFilters = searchState.queryFilters.reduce((acc, queryFilter) => {
                 return [...acc, queryFilter];
             }, [] as IAddViewMutationVariablesFilter[]);
 
@@ -177,15 +172,13 @@ function EditView({visible, onClose, id}: IEditViewProps): JSX.Element {
                 color: newView.color,
                 shared: newView.shared,
                 fields: newView.settings?.find(setting => setting.name === viewSettingsField)?.value ?? [],
-                filters: filters.queryFilters,
+                filters: searchState.queryFilters,
                 sort
             };
 
-            dispatch(setViewCurrent(newCurrentView));
-
-            // refetch views
-            dispatch(setViewReload(true));
+            searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: newCurrentView, reload: true}});
         }
+
         setConfirmLoading(false);
         onClose();
     };
