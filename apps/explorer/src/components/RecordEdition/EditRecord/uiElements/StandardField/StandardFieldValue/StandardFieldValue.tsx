@@ -7,6 +7,7 @@ import {Button, Form, Input, Popover, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
+import Dimmer from 'components/shared/Dimmer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -41,16 +42,6 @@ interface IStandardFieldValueProps {
 const ErrorMessage = styled.div`
     color: ${themingVar['@error-color']};
     font-weight: bold;
-`;
-
-const Dimmer = styled.div`
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.2);
 `;
 
 const FormWrapper = styled.div<{isEditing: boolean}>`

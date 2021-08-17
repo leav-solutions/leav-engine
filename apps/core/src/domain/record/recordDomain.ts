@@ -582,7 +582,7 @@ export default function ({
             }
 
             // Check sort fields
-            if (sort && typeof sort !== 'undefined') {
+            if (sort && sort?.field) {
                 fullSort = {
                     attributes: await _getAttributesFromField(sort.field, ctx),
                     order: sort.order

@@ -53,6 +53,7 @@ function AttributesSelectionList({
     const [{lang}] = useLang();
     const [searchValue, setSearchValue] = useState<string>('');
 
+    console.log({selectedAttributes});
     const [state, dispatch] = useReducer(attributeSelectionListReducer, {
         ...initialState,
         library,

@@ -345,6 +345,8 @@
         "no_matching_value": "Aucune valeur correspondante",
         "copy_value": "Copier",
         "new_value": "Nouvelle valeur",
+        "advanced_search": "Recherche avancée",
+        "search_elements": "Rechercher des éléments",
         "attribute": {
             "id": "ID",
             "type": "Type",
@@ -365,5 +367,4 @@
     "floating_menu": {
         "more_actions": "Plus"
     }
-
 }

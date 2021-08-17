@@ -84,6 +84,10 @@ export const mockFormElementLink: FormElement<{}> = {
     uiElementType: FormFieldTypes.LINK,
     attribute: {
         ...mockAttributeLink,
+        linked_library: {
+            id: 'test_lib',
+            gqlNames: {query: 'test_lib', type: 'TestLib'}
+        },
         system: false,
         linkValuesList: {enable: false, allowFreeEntry: false, values: []}
     }

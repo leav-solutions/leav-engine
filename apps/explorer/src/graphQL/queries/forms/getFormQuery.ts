@@ -49,6 +49,10 @@ export const getFormQuery = gql`
                             ... on LinkAttribute {
                                 linked_library {
                                     id
+                                    gqlNames {
+                                        type
+                                        query
+                                    }
                                 }
                                 linkValuesList: values_list {
                                     enable

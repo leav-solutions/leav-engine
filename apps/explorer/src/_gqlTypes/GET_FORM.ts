@@ -47,8 +47,14 @@ export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribu
     values_list: GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list | null;
 }
 
+export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library_gqlNames {
+    type: string;
+    query: string;
+}
+
 export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library {
     id: string;
+    gqlNames: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library_gqlNames;
 }
 
 export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_library_gqlNames {

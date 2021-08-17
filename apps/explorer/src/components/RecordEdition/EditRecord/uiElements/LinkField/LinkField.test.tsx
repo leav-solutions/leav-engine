@@ -3,12 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {IRecordPropertyLink} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import React from 'react';
-import {act, render, screen} from '_tests/testUtils';
+import {
+    GET_FORM_forms_list_elements_elements_attribute_LinkAttribute,
+    GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI
+} from '_gqlTypes/GET_FORM';
+import {SortOrder} from '_gqlTypes/globalTypes';
+import {act, render, screen, within} from '_tests/testUtils';
 import {mockFormElementLink} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
-import {FormElement} from '../../_types';
+import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
+import {APICallStatus, FormElement} from '../../_types';
 import LinkField from './LinkField';
 
 jest.mock('hooks/LangHook/LangHook');
@@ -25,17 +32,15 @@ jest.mock('../../shared/ValueDetails', () => {
     };
 });
 
+type ValueListWhoAmI = GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI;
+
 describe('LinkField', () => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
     const value: IRecordPropertyLink = {
         linkValue: {
             id: '123456',
             whoAmI: {
-                id: '123456',
-                label: 'Record label',
-                library: {
-                    id: 'linked_lib',
-                    label: {en: 'Linked lib'}
-                }
+                ...mockRecordWhoAmI
             }
         },
         created_at: 123456789,
@@ -201,5 +206,352 @@ describe('LinkField', () => {
         userEvent.click(valueDetailsButton);
 
         expect(screen.getByText('ValueDetails')).toBeInTheDocument();
+    });
+
+    describe('Values list', () => {
+        const mockFormElementLinkMultivalue: FormElement<{}> = {
+            ...mockFormElementLink,
+            attribute: {
+                ...mockFormElementLink.attribute,
+                multiple_values: true,
+                linkValuesList: {
+                    enable: true,
+                    allowFreeEntry: true,
+                    values: [
+                        {
+                            id: '123456',
+                            whoAmI: {
+                                ...(mockRecordWhoAmI as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI)
+                            }
+                        }
+                    ]
+                }
+            }
+        };
+
+        const mockFormElementLinkMultivalueNoFreeEntry: FormElement<{}> = {
+            ...mockFormElementLink,
+            attribute: {
+                ...mockFormElementLinkMultivalue.attribute,
+                linkValuesList: {
+                    enable: true,
+                    allowFreeEntry: false,
+                    values: (mockFormElementLinkMultivalue.attribute as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute)
+                        .linkValuesList.values
+                }
+            }
+        };
+
+        test('Can add record from values list on click on "add" button', async () => {
+            const mockOnAddValue = jest.fn().mockReturnValue({
+                status: APICallStatus.SUCCESS,
+                value: {
+                    id_value: null,
+                    value: 'My value',
+                    raw_value: 'My value'
+                }
+            });
+
+            jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+                saveValues: mockOnAddValue
+            }));
+
+            await act(async () => {
+                render(
+                    <LinkField
+                        element={mockFormElementLinkMultivalue}
+                        record={mockRecordWhoAmI}
+                        recordValues={recordValues}
+                    />
+                );
+            });
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+
+            const valuesListElem = valuesAddBlock.getByText(mockRecordWhoAmI.label);
+            expect(valuesListElem).toBeInTheDocument();
+
+            await act(async () => {
+                userEvent.click(valuesListElem);
+            });
+            expect(mockOnAddValue).toBeCalledWith([{idValue: null, value: mockRecordWhoAmI.id}]);
+            expect(screen.queryByTestId('values-add')).not.toBeInTheDocument();
+        });
+
+        test('Can open search modal', async () => {
+            const mockOnAddValue = jest.fn().mockReturnValue({
+                status: APICallStatus.SUCCESS,
+                value: {
+                    id_value: null,
+                    value: 'My value',
+                    raw_value: 'My value'
+                }
+            });
+
+            jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+                saveValues: mockOnAddValue
+            }));
+
+            await act(async () => {
+                render(
+                    <LinkField
+                        element={mockFormElementLinkMultivalue}
+                        record={mockRecordWhoAmI}
+                        recordValues={recordValues}
+                    />
+                );
+            });
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+
+            const advSearchButton = valuesAddBlock.getByRole('button', {name: /advanced_search/});
+            expect(advSearchButton).toBeInTheDocument();
+
+            await act(async () => {
+                userEvent.click(advSearchButton);
+            });
+            expect(screen.getByText('SearchModal')).toBeInTheDocument();
+        });
+
+        test('Can hide values add block', async () => {
+            await act(async () => {
+                render(
+                    <LinkField
+                        element={mockFormElementLinkMultivalue}
+                        record={mockRecordWhoAmI}
+                        recordValues={recordValues}
+                    />
+                );
+            });
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+            await act(async () => {
+                userEvent.click(valuesAddBlock.getByRole('button', {name: 'close'}));
+            });
+            expect(screen.queryByTestId('values-add')).not.toBeInTheDocument();
+        });
+
+        test('If multiple values, can select multiple elements and add them', async () => {
+            const mockOnAddValue = jest.fn().mockReturnValue({
+                status: APICallStatus.SUCCESS,
+                value: {
+                    id_value: null,
+                    value: 'My value',
+                    raw_value: 'My value'
+                }
+            });
+
+            jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+                saveValues: mockOnAddValue
+            }));
+
+            await act(async () => {
+                render(
+                    <LinkField
+                        element={mockFormElementLinkMultivalue}
+                        record={mockRecordWhoAmI}
+                        recordValues={recordValues}
+                    />
+                );
+            });
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+
+            const itemsCheckboxes = valuesAddBlock.getAllByRole('checkbox');
+            await act(async () => {
+                for (const itemCheckbox of itemsCheckboxes) {
+                    userEvent.click(itemCheckbox);
+                }
+            });
+
+            const submitBtn = valuesAddBlock.getByRole('button', {name: 'global.submit'});
+            await act(async () => {
+                userEvent.click(submitBtn);
+            });
+
+            expect(mockOnAddValue).toBeCalledWith([{idValue: null, value: mockRecordWhoAmI.id}]);
+            expect(screen.queryByTestId('values-add')).not.toBeInTheDocument();
+        });
+
+        test('If closed values list, do not display "advanced search button"', async () => {
+            const mockOnAddValue = jest.fn().mockReturnValue({
+                status: APICallStatus.SUCCESS,
+                value: {
+                    id_value: null,
+                    value: 'My value',
+                    raw_value: 'My value'
+                }
+            });
+
+            jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+                saveValues: mockOnAddValue
+            }));
+
+            await act(async () => {
+                render(
+                    <LinkField
+                        element={mockFormElementLinkMultivalueNoFreeEntry}
+                        record={mockRecordWhoAmI}
+                        recordValues={recordValues}
+                    />
+                );
+            });
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+
+            expect(valuesAddBlock.queryByRole('button', {name: /advanced_search/})).not.toBeInTheDocument();
+        });
+
+        test('Can search elements and add them', async () => {
+            const mocks = [
+                {
+                    request: {
+                        query: getRecordsFromLibraryQuery('test_lib'),
+                        variables: {
+                            fullText: 'a',
+                            limit: 5,
+                            offset: 0,
+                            sortOrder: SortOrder.asc
+                        }
+                    },
+                    result: {
+                        data: {
+                            test_lib: {
+                                totalCount: 1,
+                                list: [
+                                    {
+                                        _id: '2401',
+                                        id: '2401',
+                                        whoAmI: {
+                                            id: '2401',
+                                            label: 'label0',
+                                            color: null,
+                                            preview: {
+                                                small: '',
+                                                medium: '',
+                                                big: ''
+                                            },
+                                            library: {
+                                                id: 'test_lib',
+                                                label: {
+                                                    fr: 'Test'
+                                                },
+                                                gqlNames: {
+                                                    query: 'test_lib',
+                                                    type: 'TestLib'
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            ];
+
+            const mockOnAddValue = jest.fn().mockReturnValue({
+                status: APICallStatus.SUCCESS,
+                value: {
+                    id_value: null,
+                    value: 'My value',
+                    raw_value: 'My value'
+                }
+            });
+
+            jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+                saveValues: mockOnAddValue
+            }));
+
+            await act(async () => {
+                render(
+                    <LinkField
+                        element={mockFormElementLinkMultivalue}
+                        record={mockRecordWhoAmI}
+                        recordValues={recordValues}
+                    />,
+                    {apolloMocks: mocks}
+                );
+            });
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+
+            const searchInput = valuesAddBlock.getByRole('textbox', {name: /search_elements/});
+            expect(searchInput).toBeInTheDocument();
+
+            await act(async () => {
+                userEvent.click(searchInput);
+            });
+
+            await act(async () => {
+                await userEvent.type(searchInput, 'a{enter}', {delay: 5});
+            });
+
+            await new Promise(resolve => setTimeout(resolve, 0));
+
+            expect(valuesAddBlock.getByText('label0')).toBeInTheDocument();
+        });
+
+        test('Elements are paginated', async () => {
+            const mockFormElementLinkForPagination: FormElement<{}> = {
+                ...mockFormElementLink,
+                attribute: {
+                    ...mockFormElementLink.attribute,
+                    multiple_values: true,
+                    linkValuesList: {
+                        enable: true,
+                        allowFreeEntry: true,
+                        values: [
+                            {id: '123451', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI), label: 'first record'}},
+                            {id: '123452', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123453', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123455', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123456', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI), label: 'last label'}}
+                        ]
+                    }
+                }
+            };
+
+            await act(async () => {
+                render(
+                    <LinkField
+                        element={mockFormElementLinkForPagination}
+                        record={mockRecordWhoAmI}
+                        recordValues={recordValues}
+                    />
+                );
+            });
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+
+            expect(valuesAddBlock.getByText('first record')).toBeInTheDocument();
+
+            const nextPageButton = screen.getByRole('button', {name: 'right'});
+            userEvent.click(nextPageButton);
+
+            expect(valuesAddBlock.getByText('last label')).toBeInTheDocument();
+        });
     });
 });

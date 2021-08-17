@@ -4,7 +4,6 @@
 import {FileAddOutlined} from '@ant-design/icons';
 import {ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/utils';
 import {Button, Popover, Switch, Table} from 'antd';
-import SearchModal from 'components/SearchModal';
 import ErrorMessage from 'components/shared/ErrorMessage';
 import {IRecordPropertyLink, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -14,13 +13,15 @@ import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {localizedTranslation} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute} from '_gqlTypes/GET_FORM';
-import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch} from '_types/types';
+import {IRecordIdentityWhoAmI} from '_types/types';
 import useDeleteValueMutation from '../../hooks/useDeleteValueMutation';
 import useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
 import useSaveValueMutation from '../../hooks/useSaveValueMutation';
 import NoValue from '../../shared/NoValue';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import RecordIdentityCell from './RecordIdentityCell';
+import ValuesAdd from './ValuesAdd';
+import {IOnAddValues} from './ValuesAdd/ValuesAdd';
 
 const TableWrapper = styled.div`
     position: relative;
@@ -30,11 +31,9 @@ const TableWrapper = styled.div`
 `;
 
 const FieldLabel = styled.div`
-    position: absolute;
-    left: 5px;
-    top: -0.85em;
-    font-size: 1.1em;
-    background: ${themingVar['@default-bg']};
+    top: calc(50% - 0.9em);
+    font-size: 0.9em;
+    background: ${themingVar['@background-color-light']};
     padding: 0 0.5em;
     color: rgba(0, 0, 0, 0.5);
     z-index: 1;
@@ -55,20 +54,21 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
     const {t} = useTranslation();
     const [{lang}] = useLang();
 
-    const [isSearchModalVisible, setIsSearchModalVisible] = useState<boolean>(false);
-
     const attribute = element.attribute as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute;
 
     useSaveValueMutation(record, attribute.id);
     const {saveValues} = useSaveValueBatchMutation(record, attribute.id);
     const {deleteValue} = useDeleteValueMutation(record, attribute.id);
     const [errorMessage, setErrorMessage] = useState<string | string[]>();
+    const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
 
     const fieldValues = (recordValues[element.settings.attribute] as IRecordPropertyLink[]) ?? [];
 
     const _handleAddValue = () => {
-        setIsSearchModalVisible(true);
+        setIsValuesAddVisible(true);
     };
+
+    const _handleCloseValuesAdd = () => setIsValuesAddVisible(false);
 
     const _handleDeleteValue = async (value: IRecordPropertyLink) => {
         const deleteRes = await deleteValue(value.id_value);
@@ -78,15 +78,10 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
         }
     };
 
-    const _handleSearchModalSubmit = async ({selected}: ISharedStateSelectionSearch) => {
-        if (!selected.length) {
-            return;
-        }
-
-        const selectedRecordToSave = attribute.multiple_values ? selected : [selected[0]];
-        const valuesToSave = selectedRecordToSave.map(selectedRecord => ({
+    const _handleAddValueSubmit = async (values: IOnAddValues[]) => {
+        const valuesToSave = values.map(value => ({
             idValue: null,
-            value: selectedRecord.id
+            value: value.id
         }));
 
         const res = await saveValues(valuesToSave);
@@ -96,7 +91,7 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
         }
 
         if (res?.errors?.length) {
-            const selectedRecordsById = selected.reduce((acc, cur) => ({...acc, [cur.id]: cur}), {});
+            const selectedRecordsById = values.reduce((acc, cur) => ({...acc, [cur.id]: cur}), {});
 
             const errorsMessage = res.errors.map(err => {
                 const linkedRecordLabel = selectedRecordsById[err.input].label || selectedRecordsById[err.input].id;
@@ -104,6 +99,8 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
                 return `${linkedRecordLabel}: ${err.message}`;
             });
             setErrorMessage(errorsMessage);
+        } else {
+            setIsValuesAddVisible(false);
         }
     };
 
@@ -180,6 +177,9 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
                     footer={tableFooter}
                     scroll={{y: 280}}
                 />
+                {isValuesAddVisible && canAddValue && (
+                    <ValuesAdd onAdd={_handleAddValueSubmit} attribute={attribute} onClose={_handleCloseValuesAdd} />
+                )}
             </TableWrapper>
             {errorMessage && (
                 <Popover
@@ -187,14 +187,6 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
                     visible={!!errorMessage}
                     content={<ErrorMessage error={errorMessage} onClose={_handleCloseError} />}
                 ></Popover>
-            )}
-            {canAddValue && (
-                <SearchModal
-                    libId={attribute.linked_library.id}
-                    visible={isSearchModalVisible}
-                    setVisible={setIsSearchModalVisible}
-                    submitAction={_handleSearchModalSubmit}
-                />
             )}
         </>
     );
