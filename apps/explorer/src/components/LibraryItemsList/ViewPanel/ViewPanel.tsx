@@ -13,6 +13,7 @@ import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {
     getViewsListQuery,
@@ -72,6 +73,23 @@ const CustomBadge = styled(Badge)`
         color: ${themingVar['@default-text-color']};
     }
 `;
+
+const _sortViewFunction = (referenceOrder: string[]) => (viewA: IView, viewB: IView) => {
+    const orderA = referenceOrder.indexOf(viewA.id);
+    const orderB = referenceOrder.indexOf(viewB.id);
+    const isAOrdered = orderA !== -1;
+    const isBOrdered = orderB !== -1;
+
+    if (isAOrdered && isBOrdered) {
+        return orderA - orderB;
+    } else if (isAOrdered && !isBOrdered) {
+        return -1;
+    } else if (!isAOrdered && isBOrdered) {
+        return 1;
+    } else {
+        return Number(viewA.id) - Number(viewB.id);
+    }
+};
 
 function ViewPanel(): JSX.Element {
     const {t} = useTranslation();
@@ -143,21 +161,7 @@ function ViewPanel(): JSX.Element {
             }
 
             if (v.shared) {
-                if (!searchState.sharedViewsOrder.includes(v.id)) {
-                    searchDispatch({
-                        type: SearchActionTypes.SET_SHARED_VIEWS_ORDER,
-                        sharedViewsOrder: [...searchState.sharedViewsOrder, v.id]
-                    });
-                }
-
                 return {...acc, sharedViews: [...acc.sharedViews, v]};
-            }
-
-            if (!searchState.userViewsOrder.includes(v.id)) {
-                searchDispatch({
-                    type: SearchActionTypes.SET_USER_VIEWS_ORDER,
-                    userViewsOrder: [...searchState.userViewsOrder, v.id]
-                });
             }
 
             return {...acc, userViews: [...acc.userViews, v]};
@@ -186,27 +190,54 @@ function ViewPanel(): JSX.Element {
             return;
         }
 
-        const order =
-            result.source.droppableId === 'user' ? [...searchState.userViewsOrder] : [...searchState.sharedViewsOrder];
+        const isOrderingUserViews = result.source.droppableId === 'user';
 
-        const element = order[result.source.index];
-        order.splice(result.source.index, 1);
-        order.splice(result.destination.index, 0, element);
+        const viewsListBefore = isOrderingUserViews ? sortedUserViews : sortedSharedViews;
+        const orderedViews = viewsListBefore.map(v => v.id);
+
+        const element = orderedViews[result.source.index];
+        orderedViews.splice(result.source.index, 1);
+        orderedViews.splice(result.destination.index, 0, element);
 
         searchDispatch(
-            result.source.droppableId === 'user'
-                ? {type: SearchActionTypes.SET_USER_VIEWS_ORDER, userViewsOrder: order}
-                : {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER, sharedViewsOrder: order}
+            isOrderingUserViews
+                ? {type: SearchActionTypes.SET_USER_VIEWS_ORDER, userViewsOrder: orderedViews}
+                : {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER, sharedViewsOrder: orderedViews}
         );
 
+        const keyToUpdate = isOrderingUserViews ? USER_VIEWS_ORDER_KEY : SHARED_VIEWS_ORDER_KEY;
         updateViewsOrderMutation({
             variables: {
-                key: USER_VIEWS_ORDER_KEY,
-                value: searchState.userViewsOrder,
+                key: keyToUpdate,
+                value: orderedViews,
                 global: false
+            },
+            update: (cache, mutationResult) => {
+                const queryToUpdate = {
+                    query: getUserDataQuery,
+                    variables: {
+                        keys: [USER_VIEWS_ORDER_KEY, SHARED_VIEWS_ORDER_KEY]
+                    }
+                };
+                const cacheData = cache.readQuery<GET_USER_DATA, GET_USER_DATAVariables>(queryToUpdate);
+                cache.writeQuery<GET_USER_DATA, GET_USER_DATAVariables>({
+                    ...queryToUpdate,
+                    data: {
+                        userData: {
+                            global: cacheData.userData.global,
+                            data: {
+                                ...cacheData.userData.data,
+                                [keyToUpdate]: mutationResult.data.saveUserData
+                            }
+                        }
+                    }
+                });
             }
         });
     };
+
+    const sortedUserViews = userViews.sort(_sortViewFunction(searchState.userViewsOrder));
+    const sortedSharedViews = sharedViews.sort(_sortViewFunction(searchState.sharedViewsOrder));
 
     return (
         <Wrapper>
@@ -225,30 +256,24 @@ function ViewPanel(): JSX.Element {
                 <Droppable droppableId={'shared'}>
                     {providedDroppable => (
                         <Views {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
-                            {sharedViews
-                                .sort(
-                                    (a, b) =>
-                                        searchState.sharedViewsOrder.indexOf(a.id) -
-                                        searchState.sharedViewsOrder.indexOf(b.id)
-                                )
-                                .map((view, idx) => (
-                                    <Draggable key={idx} draggableId={idx.toString()} index={idx}>
-                                        {provided => (
-                                            <div
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                            >
-                                                <View
-                                                    key={view.id}
-                                                    view={view}
-                                                    onEdit={() => _showModal(view)}
-                                                    handleProps={provided.dragHandleProps}
-                                                />
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
+                            {sortedSharedViews.map((view, idx) => (
+                                <Draggable key={idx} draggableId={idx.toString()} index={idx}>
+                                    {provided => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                        >
+                                            <View
+                                                key={view.id}
+                                                view={view}
+                                                onEdit={() => _showModal(view)}
+                                                handleProps={provided.dragHandleProps}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
                             {providedDroppable.placeholder}
                         </Views>
                     )}
@@ -263,30 +288,24 @@ function ViewPanel(): JSX.Element {
                 <Droppable droppableId={'user'}>
                     {providedDroppable => (
                         <Views {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
-                            {userViews
-                                .sort(
-                                    (a, b) =>
-                                        searchState.userViewsOrder.indexOf(a.id) -
-                                        searchState.userViewsOrder.indexOf(b.id)
-                                )
-                                .map((view, idx) => (
-                                    <Draggable key={idx} draggableId={idx.toString()} index={idx}>
-                                        {provided => (
-                                            <div
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                            >
-                                                <View
-                                                    key={view.id}
-                                                    view={view}
-                                                    onEdit={() => _showModal(view)}
-                                                    handleProps={provided.dragHandleProps}
-                                                />
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
+                            {sortedUserViews.map((view, idx) => (
+                                <Draggable key={idx} draggableId={idx.toString()} index={idx}>
+                                    {provided => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                        >
+                                            <View
+                                                key={view.id}
+                                                view={view}
+                                                onEdit={() => _showModal(view)}
+                                                handleProps={provided.dragHandleProps}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
                             {providedDroppable.placeholder}
                         </Views>
                     )}
