@@ -6,7 +6,7 @@ import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import {PlusOutlined} from '@ant-design/icons';
 import React from 'react';
 import styled from 'styled-components';
-import {localizedLabel} from '../../../utils';
+import {localizedTranslation} from '../../../utils';
 import {ICommonTreeComponentProps} from '../_types';
 import {TreesSelectionListActionTypes} from '../reducer/treesSelectionListReducer';
 import {useTreesSelectionListState} from '../reducer/treesSelectionListStateContext';
@@ -28,7 +28,7 @@ function Tree({tree}: ICommonTreeComponentProps): JSX.Element {
         });
     };
 
-    const label = localizedLabel(tree.label, lang);
+    const label = localizedTranslation(tree.label, lang);
     const isSelected = typeof state.selectedTrees.find(t => t.id === tree.id) !== 'undefined';
 
     const treeComp = (

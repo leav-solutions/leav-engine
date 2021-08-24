@@ -1,14 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
+import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
+import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
 import {ViewType} from '../../../_types/types';
 import ViewPanel from './ViewPanel';
 
 jest.mock(
-    '../View',
+    './View',
     () =>
         function View() {
             return <div>View</div>;
@@ -19,15 +22,38 @@ describe('ViewPanel', () => {
     const mocks = [
         {
             request: {
+                query: getUserDataQuery,
+                variables: {
+                    keys: [
+                        'user_views_order_' + mockGetLibraryDetailExtendedElement.id,
+                        'shared_views_order_' + mockGetLibraryDetailExtendedElement.id
+                    ]
+                }
+            },
+            result: {
+                data: {
+                    userData: {
+                        __typename: 'UserData',
+                        global: false,
+                        data: {
+                            ['user_views_order_' + mockGetLibraryDetailExtendedElement.id]: [],
+                            ['shared_views_order_' + mockGetLibraryDetailExtendedElement.id]: []
+                        }
+                    }
+                }
+            }
+        },
+        {
+            request: {
                 query: getViewsListQuery,
                 variables: {
-                    libraryId: ''
+                    libraryId: mockGetLibraryDetailExtendedElement.id
                 }
             },
             result: {
                 data: {
                     views: {
-                        totalCount: 1,
+                        totalCount: 2,
                         list: [
                             {
                                 id: 'id',
@@ -106,7 +132,12 @@ describe('ViewPanel', () => {
 
     test('should display n View', async () => {
         await act(async () => {
-            render(<ViewPanel />, {apolloMocks: mocks});
+            render(
+                <MockSearchContextProvider>
+                    <ViewPanel />
+                </MockSearchContextProvider>,
+                {apolloMocks: mocks}
+            );
         });
 
         expect(screen.getAllByText('View')).toHaveLength(2);

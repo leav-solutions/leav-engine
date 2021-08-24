@@ -11,13 +11,13 @@ import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
-import {checkTypeIsLink, getAttributeFromKey, localizedLabel} from 'utils';
+import {checkTypeIsLink, getAttributeFromKey, localizedTranslation} from 'utils';
 import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {AttributeFormat, AttributeType, ViewTypes} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
 import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
@@ -28,6 +28,7 @@ import {useLang} from '../../hooks/LangHook/LangHook';
 import {IAttribute, IField, IParentAttributeData, IView, SharedStateSelectionType} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import {getFiltersFromRequest} from './FiltersPanel/getFiltersFromRequest';
+import {getRequestFromFilters} from './FiltersPanel/getRequestFromFilter';
 import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
@@ -83,31 +84,8 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     const {display, selection: selectionState} = useAppSelector(state => state); // keep selection
     const [searchState, searchDispatch] = useReducer(searchReducer, {...initialSearchState, library});
 
-    const currentLibId = library.id;
-
     // Current View
     useEffect(() => {
-        let newView: IView | undefined;
-
-        if (library.defaultView) {
-            newView = {
-                id: library.defaultView.id,
-                label: localizedLabel(library.defaultView.label, lang),
-                description: library.defaultView.description,
-                type: library.defaultView.type,
-                color: library.defaultView.color,
-                shared: library.defaultView.shared,
-                fields: library.defaultView.settings?.find(setting => setting.name === viewSettingsField)?.value ?? [],
-                filters: library.defaultView.filters,
-                sort: library.defaultView.sort
-            };
-        } else {
-            // use defaultView and translate label
-            newView = {...defaultView, label: t(defaultView.label)};
-        }
-
-        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: newView, reload: true}});
-
         // Attributes
         const attributesFromQuery: IAttribute[] = library.attributes.reduce((acc: IAttribute[], attribute) => {
             if (
@@ -128,7 +106,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                             .linked_library,
                         linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
                             .linked_tree,
-                        library: currentLibId
+                        library: library.id
                     }
                 ];
 
@@ -186,94 +164,25 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
             return acc;
         }, []);
 
+        const newView: IView = library.defaultView
+            ? {
+                  id: library.defaultView.id,
+                  owner: true,
+                  library: library.id,
+                  label: library.defaultView.label,
+                  description: library.defaultView.description,
+                  type: library.defaultView.type,
+                  color: library.defaultView.color,
+                  shared: library.defaultView.shared,
+                  filters: getFiltersFromRequest(library.defaultView.filters, library.id, attributesFromQuery),
+                  sort: library.defaultView.sort,
+                  settings: library.defaultView.settings
+              }
+            : {...defaultView, label: defaultView.label};
+
+        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: newView, reload: true}});
         searchDispatch({type: SearchActionTypes.SET_ATTRIBUTES, attributes: attributesFromQuery});
-    }, [currentLibId, lang, library.attributes, library.defaultView, t, searchDispatch]);
-
-    useEffect(() => {
-        if (!searchState.view.current || !searchState.view.reload) {
-            return;
-        }
-
-        if (searchState.view.current.type === ViewTypes.list) {
-            // Load initials fields from view fields
-            const newFields = searchState.view.current.fields?.reduce((acc, fieldKey) => {
-                let parentAttributeData: IParentAttributeData | undefined;
-
-                const splitKey = fieldKey.split('.');
-
-                const attribute = getAttributeFromKey(fieldKey, library.id, searchState.attributes);
-                let recordLibrary = null;
-
-                // For attributes through tree attribute, key is [parent attribute].[record library].[attribute]
-                if (splitKey.length === 3) {
-                    const parentAttributeId = splitKey[0];
-                    const parentAttribute = searchState.attributes.find(
-                        att => parentAttributeId === att.id && library.id === att.library
-                    );
-
-                    if (parentAttribute) {
-                        parentAttributeData = {
-                            id: parentAttribute.id,
-                            type: parentAttribute.type
-                        };
-                        recordLibrary = splitKey[1];
-                    }
-                }
-
-                if (!attribute) {
-                    return acc;
-                }
-
-                const label =
-                    typeof attribute.label === 'string' ? attribute.label : localizedLabel(attribute.label, lang);
-
-                const field: IField = {
-                    key: fieldKey,
-                    id: attribute.id,
-                    library: attribute.library,
-                    label,
-                    format: attribute.format,
-                    type: attribute.type,
-                    parentAttributeData,
-                    recordLibrary
-                };
-
-                return [...acc, field];
-            }, []);
-
-            searchDispatch({type: SearchActionTypes.SET_FIELDS, fields: newFields ?? []});
-        }
-
-        // update Filters
-        if (searchState.view.current.filters) {
-            searchDispatch({
-                type: SearchActionTypes.SET_FILTERS,
-                filters: getFiltersFromRequest(
-                    searchState.view.current.filters,
-                    searchState.library.id,
-                    searchState.attributes
-                )
-            });
-
-            searchDispatch({
-                type: SearchActionTypes.SET_QUERY_FILTERS,
-                queryFilters: searchState.view.current.filters
-            });
-        } else {
-            // reset filters
-            searchDispatch({
-                type: SearchActionTypes.SET_QUERY_FILTERS,
-                queryFilters: []
-            });
-        }
-
-        // update sort
-        const field = searchState.view.current.sort?.field ?? defaultSort.field;
-        const order = searchState.view.current.sort?.order ?? defaultSort.order;
-
-        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: searchState.view.current, reload: false}});
-        searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
-    }, [searchState.view, searchState.attributes, searchState.library.id, lang, searchDispatch, library]);
+    }, [library.id, lang, library.attributes, library.defaultView, t, searchDispatch]);
 
     // Get data
     const [getRecords, {error, refetch}] = useLazyQuery<
@@ -300,7 +209,113 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     });
 
     useEffect(() => {
-        if (searchState.loading || searchState.view.reload) {
+        if (!searchState.view.reload) {
+            return;
+        }
+
+        const getFieldFromKey = (fieldKey: string): IField => {
+            let parentAttributeData: IParentAttributeData | undefined;
+            const splitKey = fieldKey.split('.');
+            const attribute = getAttributeFromKey(fieldKey, library.id, searchState.attributes);
+            let recordLibrary = null;
+
+            // For attributes through tree attribute, key is [parent attribute].[record library].[attribute]
+            if (splitKey.length === 3) {
+                const parentAttributeId = splitKey[0];
+                const parentAttribute = searchState.attributes.find(
+                    att => parentAttributeId === att.id && library.id === att.library
+                );
+
+                if (parentAttribute) {
+                    parentAttributeData = {
+                        id: parentAttribute.id,
+                        type: parentAttribute.type
+                    };
+
+                    recordLibrary = splitKey[1];
+                }
+            }
+
+            if (!attribute) {
+                return null;
+            }
+
+            const label =
+                typeof attribute.label === 'string' ? attribute.label : localizedTranslation(attribute.label, lang);
+
+            const field: IField = {
+                key: fieldKey,
+                id: attribute.id,
+                library: attribute.library,
+                label,
+                format: attribute.format,
+                type: attribute.type,
+                parentAttributeData,
+                recordLibrary
+            };
+
+            return field;
+        };
+
+        // Load initials fields from view fields
+        const newFields: IField[] = !!searchState.view.current.settings?.find(s => s.name === viewSettingsField)
+            ? searchState.view.current?.settings
+                  .find(s => s.name === viewSettingsField)
+                  .value.reduce((acc, fieldKey) => {
+                      const field = getFieldFromKey(fieldKey);
+                      return field ? [...acc, field] : acc;
+                  }, [])
+            : [];
+
+        searchDispatch({type: SearchActionTypes.SET_FIELDS, fields: newFields});
+
+        const queryFilters = getRequestFromFilters(searchState.view.current.filters);
+
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters: searchState.view.current.filters
+        });
+
+        searchDispatch({
+            type: SearchActionTypes.SET_QUERY_FILTERS,
+            queryFilters
+        });
+
+        // update sort
+        const field = searchState.view.current.sort?.field ?? defaultSort.field;
+        const order = searchState.view.current.sort?.order ?? defaultSort.order;
+
+        getRecords({
+            variables: {
+                limit: searchState.pagination,
+                offset: searchState.offset,
+                filters: queryFilters,
+                sortField: searchState.sort?.field ?? defaultSort.field,
+                sortOrder: searchState.sort?.order ?? defaultSort.order,
+                fullText: searchState.fullText
+            }
+        });
+
+        searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
+        searchDispatch({type: SearchActionTypes.SET_DISPLAY_TYPE, displayType: searchState.view.current.type});
+        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: searchState.view.current, reload: false}});
+    }, [
+        getRecords,
+        searchState.view,
+        searchState.attributes,
+        searchState.library.id,
+        searchState.fullText,
+        searchState.offset,
+        searchState.pagination,
+        searchState.queryFilters,
+        searchState.sort,
+        lang,
+        searchDispatch,
+        library
+    ]);
+
+    useEffect(() => {
+        if (searchState.loading) {
             getRecords({
                 variables: {
                     limit: searchState.pagination,
@@ -312,7 +327,16 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                 }
             });
         }
-    }, [searchState, library.gqlNames.query, getRecords]);
+    }, [
+        searchState.fullText,
+        searchState.offset,
+        searchState.pagination,
+        searchState.queryFilters,
+        searchState.sort,
+        searchState.loading,
+        library.gqlNames.query,
+        getRecords
+    ]);
 
     if (error) {
         return <ErrorDisplay message={error.message} />;
@@ -327,7 +351,6 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
           (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected);
 
     return (
-        // <FilterStateContext.Provider value={{stateFilters, dispatchFilters}}>
         <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
             <SelectionModeContext.Provider value={selectionMode}>
                 <MenuWrapper>
@@ -344,7 +367,6 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                 </Wrapper>
             </SelectionModeContext.Provider>
         </SearchContext.Provider>
-        // </FilterStateContext.Provider>
     );
 }
 

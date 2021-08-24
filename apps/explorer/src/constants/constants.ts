@@ -24,9 +24,11 @@ export const attributeExtendedKey = 'extended';
 
 export const defaultView: IView = {
     id: 'default-view',
-    label: 'view.default',
+    label: {fr: 'Vue par défaut', en: 'Default view'},
+    owner: true,
     type: ViewTypes.list,
     shared: false,
+    filters: [],
     sort: defaultSort
 };
 

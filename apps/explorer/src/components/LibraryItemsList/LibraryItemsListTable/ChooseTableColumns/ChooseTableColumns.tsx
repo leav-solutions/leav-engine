@@ -5,42 +5,36 @@ import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {getFieldsKeyFromAttribute, localizedLabel} from '../../../../utils';
+import {getFieldsKeyFromAttribute, localizedTranslation} from '../../../../utils';
 import {AttributeFormat, AttributeType, IAttribute, IField, ISelectedAttribute} from '../../../../_types/types';
 import AttributesSelectionList from '../../../AttributesSelectionList';
 
 interface IChooseTableColumnsProps {
-    openChangeColumns: boolean;
-    setOpenChangeColumns: (openChangeColumns: boolean) => void;
+    visible: boolean;
+    onClose: () => void;
 }
 
-function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTableColumnsProps): JSX.Element {
+function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
-    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
-
     const [{lang}] = useLang();
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
+    const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>(
+        (searchState?.fields ?? []).map(col => {
+            const currentAttribute = searchState.attributes.find(
+                attribute => attribute.id === col.id && attribute.library === col.library
+            );
 
-    const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>();
-
-    useEffect(() => {
-        setSelectedAttributes(
-            (searchState?.fields ?? []).map(col => {
-                const currentAttribute = searchState.attributes.find(
-                    attribute => attribute.id === col.id && attribute.library === col.library
-                );
-
-                return {
-                    ...col,
-                    path: col.key,
-                    label: currentAttribute?.label ?? null,
-                    multiple_values: !!col.multipleValues
-                };
-            })
-        );
-    }, [searchState.attributes, searchState.fields, setSelectedAttributes, searchState]);
+            return {
+                ...col,
+                path: col.key,
+                label: currentAttribute?.label ?? null,
+                multiple_values: !!col.multipleValues
+            };
+        })
+    );
 
     const handleSubmit = () => {
         const noDuplicateNewAttribute: IAttribute[] = selectedAttributes
@@ -74,7 +68,8 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
 
             const key = getFieldsKeyFromAttribute(selectedAttribute);
 
-            const label = typeof attribute.label === 'string' ? attribute.label : localizedLabel(attribute.label, lang);
+            const label =
+                typeof attribute.label === 'string' ? attribute.label : localizedTranslation(attribute.label, lang);
 
             const embeddedData = selectedAttribute.embeddedFieldData && {
                 format: selectedAttribute.embeddedFieldData?.format ?? AttributeFormat.text,
@@ -105,11 +100,11 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
             fields: newFields
         });
 
-        setOpenChangeColumns(false);
+        onClose();
     };
 
-    const handleCancel = () => {
-        setOpenChangeColumns(false);
+    const _handleCancel = () => {
+        onClose();
     };
 
     // hack to disable warning "Droppable: unsupported nested scroll container" from react-beautiful-dnd,
@@ -121,13 +116,13 @@ function ChooseTableColumns({openChangeColumns, setOpenChangeColumns}: IChooseTa
 
     return (
         <Modal
-            visible={openChangeColumns}
-            onCancel={() => setOpenChangeColumns(false)}
+            visible={visible}
+            onCancel={_handleCancel}
             title={t('table-columns-selection.header')}
             width="70rem"
             centered
             footer={[
-                <Button key="Cancel" onClick={handleCancel}>
+                <Button key="Cancel" onClick={_handleCancel}>
                     {t('table-columns-selection.cancel')}
                 </Button>,
                 <PrimaryBtn key="Submit" onClick={handleSubmit}>

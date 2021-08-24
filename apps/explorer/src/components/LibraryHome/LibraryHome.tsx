@@ -14,7 +14,7 @@ import {useParams} from 'react-router-dom';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {IBaseNotification, NotificationType} from '_types/types';
 
@@ -48,7 +48,7 @@ function LibraryHome(): JSX.Element {
         }
 
         const currentLibrary = data.libraries.list[0];
-        const currentLibLabel = localizedLabel(currentLibrary.label, lang);
+        const currentLibLabel = localizedTranslation(currentLibrary.label, lang);
 
         if (libId !== activeLibrary.id) {
             const {query, type, filter, searchableFields} = currentLibrary.gqlNames;
@@ -70,6 +70,7 @@ function LibraryHome(): JSX.Element {
             content: t('notification.active-lib', {lib: currentLibLabel}),
             type: NotificationType.basic
         };
+
         dispatch(setNotificationBase(baseNotification));
     }, [activeLibrary, data, dispatch, error, lang, libId, loading, t, updateActiveLibrary]);
 

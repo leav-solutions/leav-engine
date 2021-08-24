@@ -10,7 +10,7 @@ import useSearchReducer from 'hooks/useSearchReducer';
 function DisplayTypeSelector(): JSX.Element {
     const {state: searchState} = useSearchReducer();
 
-    switch (searchState.view.current?.type) {
+    switch (searchState.displayType) {
         case ViewTypes.list:
             return <Table />;
         case ViewTypes.timeline:

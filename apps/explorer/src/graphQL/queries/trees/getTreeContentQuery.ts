@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
-import {ILabel, IPreview} from '../../../_types/types';
+import {ISystemTranslation, IPreview} from '../../../_types/types';
 
 export interface IRecordField {
     whoAmI: {
@@ -12,7 +12,7 @@ export interface IRecordField {
         preview: IPreview;
         library: {
             id: string;
-            label: ILabel;
+            label: ISystemTranslation;
         };
     };
 }

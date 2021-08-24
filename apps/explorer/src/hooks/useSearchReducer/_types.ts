@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {SortOrder} from '_gqlTypes/globalTypes';
+import {ViewTypes, SortOrder} from '_gqlTypes/globalTypes';
 import {IAttribute, IField} from '_types/types';
 import {IFilter, IQueryFilter, IView} from '../../_types/types';
 
@@ -49,7 +49,10 @@ export interface ISearchState {
     fullText: string;
     filters: IFilter[];
     queryFilters: IQueryFilter[];
+    displayType: ViewTypes;
     view: IViewState;
+    userViewsOrder: string[];
+    sharedViewsOrder: string[];
 }
 
 export interface IViewState {

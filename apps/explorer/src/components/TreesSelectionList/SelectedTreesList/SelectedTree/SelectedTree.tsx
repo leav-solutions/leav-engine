@@ -6,7 +6,7 @@ import {Button, Descriptions} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {localizedLabel} from '../../../../utils';
+import {localizedTranslation} from '../../../../utils';
 import {ITree} from '../../../../_types/types';
 import {TreesSelectionListActionTypes} from '../../reducer/treesSelectionListReducer';
 import {useTreesSelectionListState} from '../../reducer/treesSelectionListStateContext';
@@ -56,7 +56,7 @@ const SelectedTree = ({selectedTree, handleProps}: ISelectedTreeProps) => {
     const [{lang}] = useLang();
     const {dispatch} = useTreesSelectionListState();
 
-    const label = localizedLabel(selectedTree.label, lang);
+    const label = localizedTranslation(selectedTree.label, lang);
 
     const _handleUnselectTree = () => {
         dispatch({

@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
-import {ILabel} from '../../../_types/types';
+import {ISystemTranslation} from '../../../_types/types';
 
 export interface IGetLibrariesAndTreesListQuery {
     libraries: {
         list: [
             {
                 id: string;
-                label: ILabel;
+                label: ISystemTranslation;
                 gqlNames: {
                     query: string;
                     filter: string;
@@ -23,10 +23,10 @@ export interface IGetLibrariesAndTreesListQuery {
         list: [
             {
                 id: string;
-                label: ILabel;
+                label: ISystemTranslation;
                 libraries: Array<{
                     id: string;
-                    label: ILabel;
+                    label: ISystemTranslation;
                 }>;
             }
         ];

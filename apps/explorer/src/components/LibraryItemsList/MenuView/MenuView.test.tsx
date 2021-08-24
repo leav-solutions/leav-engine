@@ -4,18 +4,9 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
-// import {MockStateFilters} from '__mocks__/stateFilters/mockStateFilters';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import mocksGetViewsListQuery from '../../../__mocks__/mockQuery/mockGetViewListQuery';
-import SelectView from './SelectView';
-
-jest.mock(
-    '../AddView',
-    () =>
-        function AddView() {
-            return <div>AddView</div>;
-        }
-);
+import SelectView from './MenuView';
 
 describe('SelectView', () => {
     const mocks = mocksGetViewsListQuery('activeLibraryId');
@@ -23,9 +14,7 @@ describe('SelectView', () => {
         render(
             <MockedProviderWithFragments mocks={mocks}>
                 <MockStore>
-                    {/* <MockStateFilters> */}
                     <SelectView activeLibrary={{id: 'activeLibraryId'} as any} />
-                    {/* </MockStateFilters> */}
                 </MockStore>
             </MockedProviderWithFragments>
         );

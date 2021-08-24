@@ -5,5 +5,9 @@ import {mockLabel} from './label';
 
 export const mockLibrary = {
     id: 'libraryId',
-    label: mockLabel('libraryLabel')
+    label: mockLabel('libraryLabel'),
+    gqlNames: {
+        query: 'libraryId',
+        type: 'LibraryId'
+    }
 };

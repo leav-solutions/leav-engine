@@ -4,7 +4,7 @@
 import {Checkbox, Radio} from 'antd';
 import React from 'react';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {attributeToSelectedAttribute, isAttributeSelected, localizedLabel} from '../../../../utils';
+import {attributeToSelectedAttribute, isAttributeSelected, localizedTranslation} from '../../../../utils';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {AttributesSelectionListActionTypes} from '../../reducer/attributesSelectionListReducer';
 import {useAttributesSelectionListState} from '../../reducer/attributesSelectionListStateContext';
@@ -30,7 +30,7 @@ const StandardAttribute = ({attribute, depth, path, parentAttribute, library}: I
         });
     };
 
-    const label = localizedLabel(attribute.label, lang);
+    const label = localizedTranslation(attribute.label, lang);
     const isSelected = isAttributeSelected(path, state.selectedAttributes);
 
     return (

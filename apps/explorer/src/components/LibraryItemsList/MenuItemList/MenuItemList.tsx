@@ -18,7 +18,7 @@ import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
 import MenuItemActions from '../MenuItemActions';
 import MenuSelection from '../MenuSelection';
-import SelectView from '../SelectView';
+import MenuView from '../MenuView';
 
 interface IMenuItemListProps {
     refetch?: () => void;
@@ -92,7 +92,7 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
             <SubGroupFirst>
                 <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
 
-                {activeLibrary?.id && <SelectView activeLibrary={activeLibrary} />}
+                {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
 
                 <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
                     <Button icon={<SearchOutlined />} role="show-filter" onClick={toggleShowFilter} />

@@ -7,7 +7,7 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
 
 interface IValueDetailsProps {
@@ -61,7 +61,7 @@ function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
     );
 
     return (
-        <Card title={localizedLabel(attribute.label, lang)} size="small" data-testid="value-details">
+        <Card title={localizedTranslation(attribute.label, lang)} size="small" data-testid="value-details">
             <Meta description={attributeDetails}></Meta>
         </Card>
     );

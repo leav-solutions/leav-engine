@@ -10,7 +10,7 @@ import {resetNavigationRecordDetail, setNavigationPath, setNavigationRecordDetai
 import {setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../themingVar';
@@ -139,7 +139,7 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
             dispatch(setSelection(selection));
         } else {
             // add to selected
-            const label = localizedLabel(treeElement.record.whoAmI.label, lang);
+            const label = localizedTranslation(treeElement.record.whoAmI.label, lang);
             const newElementSelected: ISharedSelected = {
                 id: treeElement.record.whoAmI.id,
                 library: treeElement.record.whoAmI.library.id,

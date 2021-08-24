@@ -10,7 +10,7 @@ import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setSearchSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {SharedStateSelectionType} from '_types/types';
 
 function MenuSelection(): JSX.Element {
@@ -54,7 +54,7 @@ function MenuSelection(): JSX.Element {
                     {
                         id: record.whoAmI.id,
                         library: record.whoAmI.library.id,
-                        label: localizedLabel(record.whoAmI.label, lang)
+                        label: localizedTranslation(record.whoAmI.label, lang)
                     }
                 ];
             }

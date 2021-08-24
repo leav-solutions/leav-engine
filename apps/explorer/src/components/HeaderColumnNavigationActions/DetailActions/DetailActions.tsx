@@ -15,7 +15,7 @@ import {useTranslation} from 'react-i18next';
 import {resetNavigationRecordDetail, setNavigationPath, setNavigationRefetchTreeData} from 'redux/navigation';
 import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
 import {INotification, NotificationChannel, NotificationType} from '_types/types';
 
@@ -42,7 +42,7 @@ function DetailActions({isDetail, depth}: IDetailActionsProps): JSX.Element {
             library: navigation.recordDetail.whoAmI.library.id
         };
 
-        const label = localizedLabel(navigation.recordDetail.whoAmI.label, lang);
+        const label = localizedTranslation(navigation.recordDetail.whoAmI.label, lang);
 
         try {
             await removeFromTree({

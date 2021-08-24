@@ -7,7 +7,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {localizedLabel} from '../../../../utils';
+import {localizedTranslation} from '../../../../utils';
 import {ISelectedAttribute} from '../../../../_types/types';
 import {AttributesSelectionListActionTypes} from '../../reducer/attributesSelectionListReducer';
 import {useAttributesSelectionListState} from '../../reducer/attributesSelectionListStateContext';
@@ -58,7 +58,7 @@ const SelectedAttribute = ({selectedAttribute, handleProps}: ISelectedAttributeP
     const {t} = useTranslation();
     const {dispatch} = useAttributesSelectionListState();
 
-    const label = localizedLabel(selectedAttribute.label, lang); //localizedLabel(attribute.label, lang);
+    const label = localizedTranslation(selectedAttribute.label, lang); //localizedTranslation(attribute.label, lang);
 
     const _handleUnselectAttribute = () => {
         dispatch({

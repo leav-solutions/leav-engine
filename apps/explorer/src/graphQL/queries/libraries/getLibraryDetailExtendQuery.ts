@@ -7,7 +7,7 @@ import {
     AttributeType,
     AttributeConditionFilter,
     TreeConditionFilter,
-    ILabel,
+    ISystemTranslation,
     OperatorFilter,
     OrderSearch,
     ViewType
@@ -63,7 +63,7 @@ export interface ILibraryDetailExtendedAttributeParentLinkedTree {
 interface ILibraryDetailExtendedAttribute {
     type: AttributeType;
     format: AttributeFormat;
-    label: ILabel;
+    label: ISystemTranslation;
     multiple_values: boolean;
     id: string;
 }
@@ -78,7 +78,7 @@ export interface ILibraryDetailExtendedAttributeParent extends ILibraryDetailExt
 export interface ILibraryDetailExtended {
     id: string;
     system: boolean;
-    label: ILabel;
+    label: ISystemTranslation;
     attributes: ILibraryDetailExtendedAttributeParent[];
     gqlNames: ILibraryDetailExtendedGqlNames;
     defaultView?: ILibraryDetailExtendedDefaultView;

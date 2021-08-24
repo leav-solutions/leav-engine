@@ -4,8 +4,8 @@
 import gql from 'graphql-tag';
 
 export const getUserDataQuery = gql`
-    query GET_USER_DATA($key: String!, $global: Boolean) {
-        userData(key: $key, global: $global) {
+    query GET_USER_DATA($keys: [String!]!, $global: Boolean) {
+        userData(keys: $keys, global: $global) {
             global
             data
         }

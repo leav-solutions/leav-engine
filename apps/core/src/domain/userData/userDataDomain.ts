@@ -10,7 +10,7 @@ import PermissionError from '../../errors/PermissionError';
 
 export interface IUserDataDomain {
     saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<any>;
-    getUserData(key: string, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
+    getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
 }
 
 interface IDeps {
@@ -39,7 +39,7 @@ export default function ({
 
             return userDataRepo.saveUserData(key, value, global, ctx);
         },
-        async getUserData(key: string, global: boolean = false, ctx: IQueryInfos): Promise<IUserData> {
+        async getUserData(keys: string[], global: boolean = false, ctx: IQueryInfos): Promise<IUserData> {
             const isAllowed = await permissionDomain.isAllowed({
                 type: PermissionTypes.APP,
                 action: AppPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
@@ -51,11 +51,15 @@ export default function ({
                 throw new PermissionError(AppPermissionsActions.MANAGE_GLOBAL_PREFERENCES);
             }
 
-            const res = await userDataRepo.getUserData(key, global, ctx);
+            const res = await userDataRepo.getUserData(keys, global, ctx);
 
-            // if private data is null get global data
-            if (isAllowed && res.data === null && !global) {
-                return userDataRepo.getUserData(key, true, ctx);
+            if (isAllowed && !global) {
+                for (const k of keys) {
+                    if (typeof res.data[k] === 'undefined') {
+                        const globalData = (await userDataRepo.getUserData([k], true, ctx)).data;
+                        res.data[k] = globalData ? globalData[k] : null;
+                    }
+                }
             }
 
             return res;

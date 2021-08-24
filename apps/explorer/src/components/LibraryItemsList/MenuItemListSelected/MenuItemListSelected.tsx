@@ -11,7 +11,7 @@ import {useTranslation} from 'react-i18next';
 import {resetSearchSelection, resetSelection, setSearchSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {SharedStateSelectionType} from '_types/types';
 import themingVars from '../../../themingVar';
 import ActionsMenu from './ActionsMenu';
@@ -96,7 +96,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     {
                         id: record.whoAmI.id,
                         library: record.whoAmI.library.id,
-                        label: localizedLabel(record.whoAmI.label, lang)
+                        label: localizedTranslation(record.whoAmI.label, lang)
                     }
                 ];
             }

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {getFileUrl, localizedLabel} from '../../../utils/utils';
+import {getFileUrl, localizedTranslation} from '../../../utils/utils';
 import {IPreview, IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
 import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
 
@@ -72,7 +72,7 @@ const RecordCard = ({record, size, style, lang}: IRecordCardProps): JSX.Element 
             </PreviewWrapper>
             <CardPart className="ui">
                 <RecordLabel>{record.label || record.id}</RecordLabel>
-                <LibLabel>{localizedLabel(record.library?.label, lang ?? []) || record.library?.id}</LibLabel>
+                <LibLabel>{localizedTranslation(record.library?.label, lang ?? []) || record.library?.id}</LibLabel>
             </CardPart>
         </Wrapper>
     );

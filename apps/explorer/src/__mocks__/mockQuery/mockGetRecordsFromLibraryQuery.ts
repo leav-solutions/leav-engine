@@ -12,10 +12,12 @@ import {mockLibrary} from '__mocks__/common/library';
 import {mockPreview} from '__mocks__/common/preview';
 
 export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryElement = {
+    _id: 'id',
     id: 'id',
     whoAmI: {
         id: 'id',
         label: 'label',
+        color: null,
         preview: mockPreview,
         library: mockLibrary
     }

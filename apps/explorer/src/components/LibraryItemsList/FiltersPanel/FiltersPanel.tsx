@@ -110,21 +110,15 @@ function FiltersPanel(): JSX.Element {
         }
 
         const newFilter = searchState.filters
-            .map(filter => {
-                if (result.source.index === filter.index) {
-                    return {
-                        ...filter,
-                        index: result.destination.index
-                    };
-                } else if (result.destination.index === filter.index) {
-                    return {
-                        ...filter,
-                        index: result.source.index
-                    };
-                }
-
-                return filter;
-            })
+            .map(filter => ({
+                ...filter,
+                index:
+                    result.source.index === filter.index
+                        ? result.destination.index
+                        : result.destination.index === filter.index
+                        ? result.source.index
+                        : undefined
+            }))
             .sort((a, b) => a.index - b.index);
 
         searchDispatch({

@@ -12,7 +12,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute} from '_gqlTypes/GET_FORM';
 import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch} from '_types/types';
 import useDeleteValueMutation from '../../hooks/useDeleteValueMutation';
@@ -125,7 +125,7 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
         },
         ...(Array.isArray((element.settings as IFormLinkFieldSettings).columns)
             ? (element.settings as IFormLinkFieldSettings).columns.map(c => ({
-                  title: localizedLabel(c.label, lang),
+                  title: localizedTranslation(c.label, lang),
                   dataIndex: c.id
               }))
             : [])

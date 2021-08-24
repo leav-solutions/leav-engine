@@ -37,7 +37,7 @@ describe('ChooseTableColumns', () => {
         await act(async () => {
             render(
                 <MockSearchContextProvider state={{attributes: attributesMock}}>
-                    <ChooseTableColumns openChangeColumns setOpenChangeColumns={jest.fn()} />
+                    <ChooseTableColumns visible onClose={jest.fn()} />
                 </MockSearchContextProvider>
             );
         });

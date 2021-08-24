@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
+import {AttributeType} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitForElement} from '_tests/testUtils';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
@@ -9,9 +10,8 @@ import {
     mockGetRecordsFromLibraryQuery,
     mockGetRecordsFromLibraryQueryVar
 } from '__mocks__/mockQuery/mockGetRecordsFromLibraryQuery';
-import LibraryItemsList from '.';
 import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
-import {AttributeType} from '../../_types/types';
+import LibraryItemsList from './LibraryItemsList';
 
 jest.mock('../../hooks/ActiveLibHook/ActiveLibHook', () => ({
     useActiveLibrary: () => [mockActiveLibrary, jest.fn()]
@@ -70,28 +70,7 @@ describe('LibraryItemsList', () => {
         ]
     };
 
-    test('should call Child', async () => {
-        await act(async () => {
-            const mocks = [
-                {
-                    request: {
-                        query: getRecordsFromLibraryQuery(libQueryName, mockStateItem.field),
-                        variables: mockGetRecordsFromLibraryQueryVar
-                    },
-                    result: {
-                        data: mockGetRecordsFromLibraryQuery(libQueryName, mockStateItem.field)
-                    }
-                }
-            ];
-            render(<LibraryItemsList library={mockGetLibraryDetailExtendedElement} />, {apolloMocks: mocks});
-
-            expect(screen.getByText('SideItems')).toBeInTheDocument();
-            expect(screen.getByText('MenuItemList')).toBeInTheDocument();
-            expect(screen.getByText('DisplayTypeSelector')).toBeInTheDocument();
-        });
-    });
-
-    test('should call the same child', async () => {
+    test('should call the child', async () => {
         const mocks = [
             {
                 request: {

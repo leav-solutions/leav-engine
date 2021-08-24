@@ -12,7 +12,7 @@ import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {localizedLabel} from '../../../../utils';
+import {localizedTranslation} from '../../../../utils';
 import {AttributeFormat, IFilter, TreeConditionFilter, AttributeConditionFilter} from '../../../../_types/types';
 import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
 import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
@@ -258,7 +258,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                             <FilterLabel
                                 onClick={!!filter.attribute ? handleShowChangeAttribute : handleShowChangeTree}
                             >
-                                {localizedLabel(filter.attribute?.label || filter.tree.label, lang)}
+                                {localizedTranslation(filter.attribute?.label || filter.tree.label, lang)}
                             </FilterLabel>
                             {!!filter.attribute ? (
                                 <FilterAttributeCondition filter={filter} updateFilterValue={updateFilterValue} />

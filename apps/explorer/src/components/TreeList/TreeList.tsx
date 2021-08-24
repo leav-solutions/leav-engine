@@ -24,14 +24,14 @@ function TreeList(): JSX.Element {
 
     const treeListQuery = useQuery(getTreeListQuery);
     const userDataQuery = useQuery(getUserDataQuery, {
-        variables: {key: FAVORITE_TREES_KEY}
+        variables: {keys: [FAVORITE_TREES_KEY]}
     });
 
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData, {
         refetchQueries: [
             {
                 query: getUserDataQuery,
-                variables: {key: FAVORITE_TREES_KEY}
+                variables: {keys: [FAVORITE_TREES_KEY]}
             }
         ],
         ignoreResults: true
@@ -64,7 +64,7 @@ function TreeList(): JSX.Element {
     }
 
     const treeList = treeListQuery.data?.trees?.list ?? [];
-    const favoriteIds = userDataQuery.data?.userData?.data ?? [];
+    const favoriteIds = userDataQuery.data?.userData?.data[FAVORITE_TREES_KEY] ?? [];
 
     return (
         <div className="wrapper-page">

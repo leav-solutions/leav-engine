@@ -7,15 +7,15 @@ import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
 } from '../graphQL/queries/libraries/getLibraryDetailExtendQuery';
-import {IGetViewListSort} from '../graphQL/queries/views/getViewsListQuery';
+import {IGetViewListSettings, IGetViewListSort} from '../graphQL/queries/views/getViewsListQuery';
 
-export interface ILabel {
-    [x: string]: string;
+export interface ISystemTranslation {
+    [lang: string]: string;
 }
 
 export interface ILibrary {
     id: string;
-    label: ILabel;
+    label: ISystemTranslation;
     gqlNames: {
         query: string;
         filter: string;
@@ -42,7 +42,7 @@ export interface IItemWhoAmI {
     color?: string;
     library?: {
         id: string;
-        label: ILabel;
+        label: ISystemTranslation;
     };
 }
 
@@ -62,7 +62,7 @@ export interface IRecordIdentityWhoAmI {
     color?: string;
     library?: {
         id: string;
-        label: ILabel;
+        label: ISystemTranslation;
         gqlNames?: {
             query: string;
             type: string;
@@ -163,9 +163,9 @@ export enum OrderSearch {
 }
 
 export enum DisplaySize {
-    small = 'listSmall',
-    medium = 'listMedium',
-    big = 'listBig'
+    small = 'small',
+    medium = 'medium',
+    big = 'big'
 }
 
 export interface IAttribute {
@@ -254,7 +254,7 @@ export interface ITreeData {
 export interface IEmbeddedFields {
     id: string;
     format: AttributeFormat;
-    label: ILabel;
+    label: ISystemTranslation;
     embedded_fields: IEmbeddedFields[];
 }
 
@@ -274,11 +274,11 @@ export interface IAttributeSelected {
 
 export interface ITree {
     id: string;
-    label: ILabel;
+    label: ISystemTranslation;
     libraries: Array<{
         library: {
             id: string;
-            label: ILabel;
+            label: ISystemTranslation;
         };
     }>;
 }
@@ -327,14 +327,16 @@ export enum TypeSideItem {
 
 export interface IView {
     id: string;
-    label: string;
+    library?: string;
+    label: ISystemTranslation;
     type: ViewTypes;
-    color?: string;
+    owner: boolean;
     shared: boolean;
-    description?: string;
-    fields?: string[];
-    filters?: IQueryFilter[];
-    sort: IGetViewListSort;
+    description?: ISystemTranslation;
+    color?: string;
+    filters?: IFilter[];
+    settings?: IGetViewListSettings[];
+    sort?: IGetViewListSort;
 }
 
 export enum ViewType {

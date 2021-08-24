@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
-import {ILabel} from '../../../_types/types';
+import {ISystemTranslation} from '../../../_types/types';
 
 export interface IGetViewListFilter {
     field?: string;
@@ -24,6 +24,7 @@ export interface IGetViewListSettings {
 }
 
 export interface IGetViewListElement {
+    __typename: string; // FIXME: ??
     id: string;
     type: ViewTypes;
     shared: boolean;
@@ -31,7 +32,7 @@ export interface IGetViewListElement {
         id: string;
         whoAmI: {
             id: string;
-            label: ILabel;
+            label: ISystemTranslation;
             library: {
                 id: string;
                 gqlNames: {
@@ -41,8 +42,8 @@ export interface IGetViewListElement {
             };
         };
     };
-    label: ILabel;
-    description?: ILabel;
+    label: ISystemTranslation;
+    description?: ISystemTranslation;
     color?: string;
     filters?: IGetViewListFilter[] | null;
     sort?: IGetViewListSort | null;

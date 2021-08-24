@@ -15,7 +15,7 @@ const CustomButton = styled(Button)`
 function MenuItemActions(): JSX.Element {
     const {t} = useTranslation();
 
-    const [openChangeColumns, setOpenChangeColumns] = useState(false);
+    const [openChangeColumns, setOpenChangeColumns] = useState<boolean>(false);
 
     const menu = (
         <Menu>
@@ -29,7 +29,9 @@ function MenuItemActions(): JSX.Element {
 
     return (
         <>
-            <ChooseTableColumns openChangeColumns={openChangeColumns} setOpenChangeColumns={setOpenChangeColumns} />
+            {openChangeColumns && (
+                <ChooseTableColumns visible={openChangeColumns} onClose={() => setOpenChangeColumns(false)} />
+            )}
             <Dropdown overlay={menu}>
                 <CustomButton>
                     <SettingOutlined />

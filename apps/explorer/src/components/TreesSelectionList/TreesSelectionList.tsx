@@ -8,7 +8,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {getLibraryDetailQuery} from '../../graphQL/queries/libraries/getLibraryDetailQuery';
 import {useLang} from '../../hooks/LangHook/LangHook';
-import {localizedLabel} from '../../utils';
+import {localizedTranslation} from '../../utils';
 import {ITree} from '../../_types/types';
 import ErrorDisplay from '../shared/ErrorDisplay';
 import Tree from './Tree';
@@ -86,7 +86,7 @@ function TreesSelectionList({
 
     const _getResultSearch = (): ITree[] => {
         return state.trees.filter(tree => {
-            const treeLabel = localizedLabel(tree.label, lang).toLowerCase();
+            const treeLabel = localizedTranslation(tree.label, lang).toLowerCase();
 
             return treeLabel.indexOf(searchValue) !== -1 || tree.id.indexOf(searchValue) !== -1;
         });
