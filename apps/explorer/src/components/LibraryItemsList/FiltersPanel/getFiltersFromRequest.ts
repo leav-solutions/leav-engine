@@ -9,13 +9,13 @@ export const getFiltersFromRequest = (
     library: string,
     attributes: IAttribute[]
 ): IFilter[] => {
-    let result: IFilter[] = [];
+    let filters: IFilter[] = [];
 
     for (const queryFilter of queryFilters) {
         if (queryFilter.value) {
             const attribute = getAttributeFromKey(queryFilter.field, library, attributes);
             const filter = {
-                index: result.length,
+                index: filters.length,
                 key: queryFilter.field,
                 value: {value: queryFilter.value},
                 active: true,
@@ -24,9 +24,9 @@ export const getFiltersFromRequest = (
                 treeId: queryFilter.treeId
             };
 
-            result = [...result, filter];
+            filters = [...filters, filter];
         }
     }
 
-    return result;
+    return filters;
 };

@@ -9,7 +9,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
-import {getFileUrl, localizedLabel} from 'utils';
+import {getFileUrl, localizedTranslation} from 'utils';
 import themingVar from '../../../../themingVar';
 import {IItem, ISharedSelected, SharedStateSelectionType} from '../../../../_types/types';
 import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
@@ -134,7 +134,7 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
         const newSelected: ISharedSelected = {
             id: item.whoAmI.id,
             library: item.whoAmI.library.id,
-            label: localizedLabel(item.whoAmI.label, lang)
+            label: localizedTranslation(item.whoAmI.label, lang)
         };
 
         if (selectionMode) {

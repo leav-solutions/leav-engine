@@ -18,11 +18,11 @@ describe('User Data', () => {
         expect(save.data.errors).toBeUndefined();
 
         const get = await makeGraphQlCall(`{
-            userData(key: "test") { global data }
+            userData(keys: ["test"]) { global data }
         }`);
 
         expect(get.status).toBe(200);
-        expect(get.data.data.userData).toEqual({global: false, data: 'data'});
+        expect(get.data.data.userData).toEqual({global: false, data: {test: 'data'}});
         expect(get.data.errors).toBeUndefined();
     });
 
@@ -68,13 +68,13 @@ describe('User Data', () => {
 
         const get = await makeGraphQlCall(`{
             userData(
-               key: "test_global",
+               keys: ["test_global"],
                global: true
               ) { global data }
         }`);
 
         expect(get.status).toBe(200);
-        expect(get.data.data.userData).toEqual({global: true, data: 'data_global'});
+        expect(get.data.data.userData).toEqual({global: true, data: {test_global: 'data_global'}});
         expect(get.data.errors).toBeUndefined();
     });
 
@@ -120,7 +120,7 @@ describe('User Data', () => {
 
         const get = await makeGraphQlCall(`{
             userData(
-               key: "test_global",
+               keys: ["test_global"],
                global: true
               ) { global data }
         }`);

@@ -123,14 +123,15 @@ export const getPreviewSizes = (): PreviewAttributes[] => {
     return Object.keys(PreviewAttributes).filter(previewAttribute => !(parseInt(previewAttribute, 10) + 1)) as any;
 };
 
-export const localizedLabel = (labels: any, availableLanguages: AvailableLanguage[] | string[]): string => {
-    if (!labels) {
+export const localizedTranslation = (translations: any, availableLanguages: AvailableLanguage[] | string[]): string => {
+    if (!translations) {
         return '';
     }
+
     const userLang = availableLanguages[0];
     const fallbackLang = availableLanguages[1] ? availableLanguages[1] : '';
 
-    return labels[userLang] || labels[fallbackLang] || labels[Object.keys(labels)[0]] || '';
+    return translations[userLang] || translations[fallbackLang] || translations[Object.keys(translations)[0]] || '';
 };
 
 export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage[] => {

@@ -10,7 +10,7 @@ import Attribute from '..';
 import {getAttributesByLibQuery} from '../../../../graphQL/queries/attributes/getAttributesByLib';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {attributeToSelectedAttribute, isAttributeSelected, localizedLabel} from '../../../../utils';
+import {attributeToSelectedAttribute, isAttributeSelected, localizedTranslation} from '../../../../utils';
 import {
     GET_ATTRIBUTES_BY_LIB,
     GET_ATTRIBUTES_BY_LIBVariables,
@@ -58,7 +58,7 @@ function RecordLinkAttribute({attribute, depth, path, library}: IRecordLinkAttri
 
     const isSelected = isAttributeSelected(path, state.selectedAttributes);
     const isAccordionActive = state.expandedAttributePath.includes(path);
-    const label = localizedLabel(attribute.label, lang);
+    const label = localizedTranslation(attribute.label, lang);
     const linkedLibrary = attribute.linked_library?.id ?? '';
 
     const linkedAttributes: GET_ATTRIBUTES_BY_LIB_attributes_list[] = data?.attributes?.list ?? [];

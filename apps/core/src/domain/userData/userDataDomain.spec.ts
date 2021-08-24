@@ -83,7 +83,7 @@ describe('UserDataDomain', () => {
             };
 
             const mockUserDataRepo: Mockify<IUserDataRepo> = {
-                getUserData: global.__mockPromise('data')
+                getUserData: global.__mockPromise({global: false, data: {key: 'data'}})
             };
 
             const udd = userDataDomain({
@@ -91,10 +91,10 @@ describe('UserDataDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            const res = await udd.getUserData('data', false, ctx);
+            const res = await udd.getUserData(['key'], false, ctx);
 
             expect(mockUserDataRepo.getUserData.mock.calls.length).toBe(1);
-            expect(res).toBe('data');
+            expect(res).toEqual({global: false, data: {key: 'data'}});
         });
 
         test('should get a global preference', async function () {
@@ -103,7 +103,7 @@ describe('UserDataDomain', () => {
             };
 
             const mockUserDataRepo: Mockify<IUserDataRepo> = {
-                getUserData: global.__mockPromise('data')
+                getUserData: global.__mockPromise({global: true, data: {key: 'data'}})
             };
 
             const udd = userDataDomain({
@@ -111,10 +111,10 @@ describe('UserDataDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            const res = await udd.getUserData('data', true, ctx);
+            const res = await udd.getUserData(['key'], true, ctx);
 
             expect(mockUserDataRepo.getUserData.mock.calls.length).toBe(1);
-            expect(res).toBe('data');
+            expect(res).toEqual({global: true, data: {key: 'data'}});
         });
 
         test('should throw on getting global preference', async function () {
@@ -123,7 +123,7 @@ describe('UserDataDomain', () => {
             };
 
             const mockUserDataRepo: Mockify<IUserDataRepo> = {
-                getUserData: global.__mockPromise('data')
+                getUserData: global.__mockPromise({global: true, data: {key: 'data'}})
             };
 
             const udd = userDataDomain({
@@ -131,7 +131,7 @@ describe('UserDataDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            await expect(udd.getUserData('data', true, ctx)).rejects.toThrow(PermissionError);
+            await expect(udd.getUserData(['key'], true, ctx)).rejects.toThrow(PermissionError);
         });
     });
 });

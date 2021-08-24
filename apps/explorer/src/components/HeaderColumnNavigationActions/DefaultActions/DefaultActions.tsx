@@ -17,7 +17,7 @@ import {useTranslation} from 'react-i18next';
 import {setNavigationRefetchTreeData} from 'redux/navigation';
 import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
@@ -186,7 +186,7 @@ function DefaultActions({activeTree, setItems, isDetail, parent}: IDefaultAction
                                             key={library.library.id}
                                             onClick={() => showSearch(library.library.id)}
                                         >
-                                            {localizedLabel(library.library.label, lang)}
+                                            {localizedTranslation(library.library.label, lang)}
                                         </Menu.Item>
                                     ))}
                                 </Menu>

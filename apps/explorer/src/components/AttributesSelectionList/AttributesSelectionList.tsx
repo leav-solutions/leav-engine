@@ -8,7 +8,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
 import {useLang} from '../../hooks/LangHook/LangHook';
-import {localizedLabel} from '../../utils';
+import {localizedTranslation} from '../../utils';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {ISelectedAttribute} from '../../_types/types';
 import ErrorDisplay from '../shared/ErrorDisplay';
@@ -108,7 +108,7 @@ function AttributesSelectionList({
                                         return true;
                                     }
 
-                                    const attributeLabel = localizedLabel(attribute.label, lang).toLowerCase();
+                                    const attributeLabel = localizedTranslation(attribute.label, lang).toLowerCase();
 
                                     return (
                                         attributeLabel.indexOf(searchValue) !== -1 ||

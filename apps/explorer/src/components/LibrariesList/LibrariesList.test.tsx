@@ -62,14 +62,14 @@ describe('LibrariesList', () => {
         {
             request: {
                 query: getUserDataQuery,
-                variables: {key: FAVORITE_LIBRARIES_KEY}
+                variables: {keys: [FAVORITE_LIBRARIES_KEY]}
             },
             result: {
                 data: {
                     userData: {
                         __typename: 'UserData',
                         global: false,
-                        data: []
+                        data: {FAVORITE_LIBRARIES_KEY: []}
                     }
                 }
             }

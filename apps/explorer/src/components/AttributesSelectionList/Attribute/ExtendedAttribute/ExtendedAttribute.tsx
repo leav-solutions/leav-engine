@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import {getAttributeWithEmbeddedFields} from '../../../../graphQL/queries/attributes/getAttributeWithEmbeddedFields';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {attributeToSelectedAttribute, isAttributeSelected, localizedLabel} from '../../../../utils';
+import {attributeToSelectedAttribute, isAttributeSelected, localizedTranslation} from '../../../../utils';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {IEmbeddedFields} from '../../../../_types/types';
 import ErrorDisplay from '../../../shared/ErrorDisplay';
@@ -81,7 +81,7 @@ function ExtendedAttribute({attribute, depth = 0, path, library}: IExtendedAttri
         });
     };
 
-    const label = localizedLabel(attribute.label, lang);
+    const label = localizedTranslation(attribute.label, lang);
 
     return (
         <>

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SortOrder} from '_gqlTypes/globalTypes';
-import {ILabel, IQueryFilter} from '../../../_types/types';
+import {ISystemTranslation, IQueryFilter} from '../../../_types/types';
 
 export interface IGetRecordsFromLibraryQueryElement {
     [x: string]: any;
@@ -18,7 +18,7 @@ export interface IGetRecordsFromLibraryQueryElement {
         };
         library: {
             id: string;
-            label: ILabel;
+            label: ISystemTranslation;
         };
     };
 }

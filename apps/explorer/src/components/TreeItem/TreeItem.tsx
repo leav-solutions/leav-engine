@@ -8,7 +8,7 @@ import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
 import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
 import {useLang} from '../../hooks/LangHook/LangHook';
-import {localizedLabel} from '../../utils';
+import {localizedTranslation} from '../../utils';
 
 interface ITreeItemProps {
     tree: GET_TREE_LIST_QUERY_trees_list;
@@ -30,7 +30,7 @@ function TreeItem({tree, isFavorite = false, onUpdateFavorite}: ITreeItemProps):
         history.push(detailUrl);
     };
 
-    const title = localizedLabel(tree.label, lang) ?? tree.id;
+    const title = localizedTranslation(tree.label, lang) ?? tree.id;
 
     const _handleFavoriteClick = async () => {
         await onUpdateFavorite(tree.id);
@@ -57,7 +57,7 @@ function TreeItem({tree, isFavorite = false, onUpdateFavorite}: ITreeItemProps):
                         </p>
                         <p>
                             {t('navigation.list.info.label')}:{' '}
-                            {localizedLabel(lib.library.label, lang) ?? lib.library.id}
+                            {localizedTranslation(lib.library.label, lang) ?? lib.library.id}
                         </p>
                     </div>
                 ))}

@@ -4,6 +4,7 @@
 import {defaultSort, defaultView} from 'constants/constants';
 import {IAttribute, IField, IFilter, IQueryFilter} from '_types/types';
 import {ISearchRecord, ISearchSort, ISearchState, IViewState} from './_types';
+import {ViewTypes} from '_gqlTypes/globalTypes';
 
 export enum SearchActionTypes {
     SET_RECORDS = 'SET_RECORDS',
@@ -18,7 +19,10 @@ export enum SearchActionTypes {
     SET_FULLTEXT = 'SET_FULLTEXT',
     SET_FILTERS = 'SET_FILTERS',
     SET_QUERY_FILTERS = 'SET_QUERY_FILTERS',
-    SET_VIEW = 'SET_VIEW'
+    SET_VIEW = 'SET_VIEW',
+    SET_USER_VIEWS_ORDER = 'SET_USER_VIEWS_ORDER',
+    SET_SHARED_VIEWS_ORDER = 'SET_SHARED_VIEWS_ORDER',
+    SET_DISPLAY_TYPE = 'SET_DISPLAY_TYPE'
 }
 
 export type SearchAction =
@@ -34,7 +38,10 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_FULLTEXT; fullText: string}
     | {type: SearchActionTypes.SET_FILTERS; filters: IFilter[]}
     | {type: SearchActionTypes.SET_QUERY_FILTERS; queryFilters: IQueryFilter[]}
-    | {type: SearchActionTypes.SET_VIEW; view: IViewState};
+    | {type: SearchActionTypes.SET_VIEW; view: IViewState}
+    | {type: SearchActionTypes.SET_DISPLAY_TYPE; displayType: ViewTypes}
+    | {type: SearchActionTypes.SET_USER_VIEWS_ORDER; userViewsOrder: string[]}
+    | {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER; sharedViewsOrder: string[]};
 
 export const initialSearchState: ISearchState = {
     library: null,
@@ -49,7 +56,10 @@ export const initialSearchState: ISearchState = {
     fullText: '',
     filters: [],
     queryFilters: [],
-    view: {current: defaultView, reload: false}
+    displayType: ViewTypes.list,
+    view: {current: defaultView, reload: false},
+    userViewsOrder: [],
+    sharedViewsOrder: []
 };
 
 const searchReducer = (state: ISearchState, action: SearchAction): ISearchState => {
@@ -80,6 +90,12 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             return {...state, queryFilters: action.queryFilters};
         case SearchActionTypes.SET_VIEW:
             return {...state, view: action.view};
+        case SearchActionTypes.SET_DISPLAY_TYPE:
+            return {...state, displayType: action.displayType};
+        case SearchActionTypes.SET_USER_VIEWS_ORDER:
+            return {...state, userViewsOrder: action.userViewsOrder};
+        case SearchActionTypes.SET_SHARED_VIEWS_ORDER:
+            return {...state, sharedViewsOrder: action.sharedViewsOrder};
     }
 };
 

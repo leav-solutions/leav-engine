@@ -18,7 +18,10 @@ function AppHandler(): JSX.Element {
     const availableLangs = process.env.REACT_APP_AVAILABLE_LANG
         ? process.env.REACT_APP_AVAILABLE_LANG.split(',').map(l => AvailableLanguage[l as AvailableLanguage])
         : [];
-    const defaultLang = i18n.language ? AvailableLanguage[i18n.language as AvailableLanguage] : AvailableLanguage.en;
+
+    // Depending on browser, user language might be "fr" or "fr-FR".
+    // We don't handle sub-language, thus extract first part only (eg. 'fr')
+    const defaultLang = AvailableLanguage?.[i18n.language.split('-')[0]] ?? AvailableLanguage.en;
 
     const [langInfo, updateLang] = useLang();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();

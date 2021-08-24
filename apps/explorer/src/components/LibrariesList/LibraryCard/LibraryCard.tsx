@@ -14,7 +14,7 @@ import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import themingVar from '../../../themingVar.js';
-import {localizedLabel} from '../../../utils';
+import {localizedTranslation} from '../../../utils';
 import {ILibrary} from '../../../_types/types';
 import ImportModal from '../LibraryImport/ImportModal';
 
@@ -63,7 +63,7 @@ function LibraryCard({lib, active, isFavorite = false, onUpdateFavorite}: ILibra
                 style={active ? {border: `1px solid ${themingVar['@primary-color']}`} : {}}
             >
                 <Card.Meta>{lib.id}</Card.Meta>
-                <Card.Meta title={localizedLabel(lib.label, lang) ?? lib.id} description={lib.id} />
+                <Card.Meta title={localizedTranslation(lib.label, lang) ?? lib.id} description={lib.id} />
             </Card>
             {importModal && (
                 <ImportModal key={'import'} library={lib.id} open={importModal} onClose={() => setImportModal(false)} />

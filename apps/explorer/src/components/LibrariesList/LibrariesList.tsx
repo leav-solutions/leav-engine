@@ -28,14 +28,14 @@ function LibrariesList(): JSX.Element {
 
     const librariesListQuery = useQuery(getLibrariesListQuery);
     const userDataQuery = useQuery(getUserDataQuery, {
-        variables: {key: FAVORITE_LIBRARIES_KEY}
+        variables: {keys: [FAVORITE_LIBRARIES_KEY]}
     });
 
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData, {
         refetchQueries: [
             {
                 query: getUserDataQuery,
-                variables: {key: FAVORITE_LIBRARIES_KEY}
+                variables: {keys: [FAVORITE_LIBRARIES_KEY]}
             }
         ]
     });
@@ -71,7 +71,7 @@ function LibrariesList(): JSX.Element {
     }
 
     const libraries = librariesListQuery.data?.libraries?.list ?? [];
-    const favoriteIds = userDataQuery.data?.userData?.data ?? [];
+    const favoriteIds = userDataQuery.data?.userData?.data[FAVORITE_LIBRARIES_KEY] ?? [];
 
     return (
         <div className="wrapper-page">

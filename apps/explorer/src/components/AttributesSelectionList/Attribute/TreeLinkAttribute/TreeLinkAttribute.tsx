@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import Attribute from '..';
 import {getTreeAttributesQuery} from '../../../../graphQL/queries/trees/getTreeAttributesQuery';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {attributeToSelectedAttribute, isAttributeSelected, localizedLabel} from '../../../../utils';
+import {attributeToSelectedAttribute, isAttributeSelected, localizedTranslation} from '../../../../utils';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     GET_TREE_ATTRIBUTES_QUERY,
@@ -93,7 +93,7 @@ function TreeLinkAttribute({attribute, depth, path, library}: ITreeLinkAttribute
         });
     };
 
-    const label = localizedLabel(attribute.label, lang);
+    const label = localizedTranslation(attribute.label, lang);
     const isSelected = isAttributeSelected(path, state.selectedAttributes);
 
     return (
@@ -134,7 +134,7 @@ function TreeLinkAttribute({attribute, depth, path, library}: ITreeLinkAttribute
                                 <div key={treeLibrary.library.id}>
                                     <LibraryName>
                                         {treeLibrary.library.label
-                                            ? localizedLabel(treeLibrary.library.label, lang)
+                                            ? localizedTranslation(treeLibrary.library.label, lang)
                                             : treeLibrary.library.id}
                                     </LibraryName>
                                     <List>

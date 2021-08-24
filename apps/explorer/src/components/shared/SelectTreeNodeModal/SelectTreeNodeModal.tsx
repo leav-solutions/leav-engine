@@ -8,7 +8,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {getTreeContentQuery, IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import {ITree} from '../../../_types/types';
-import {localizedLabel} from '../../../utils';
+import {localizedTranslation} from '../../../utils';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 
 interface ISelectTreeNodeModalProps {
@@ -58,7 +58,7 @@ export default function SelectTreeNodeModal({
     const [{lang}] = useLang();
 
     const rootNode: ITreeNode = {
-        title: localizedLabel(tree.label, lang) || tree.id,
+        title: localizedTranslation(tree.label, lang) || tree.id,
         key: tree.id,
         children: []
     };

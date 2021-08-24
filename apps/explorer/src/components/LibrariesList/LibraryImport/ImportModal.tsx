@@ -14,7 +14,7 @@ import * as XLSX from 'xlsx';
 import {getAttributesByLibQuery} from '../../../graphQL/queries/attributes/getAttributesByLib';
 import {importExcel} from '../../../graphQL/queries/import/importExcel';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import {localizedLabel} from '../../../utils';
+import {localizedTranslation} from '../../../utils';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {IMPORT, IMPORTVariables} from '../../../_gqlTypes/IMPORT';
 import {
@@ -96,7 +96,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
     const attributes =
         attrsList?.attributes?.list
             .filter(a => a.type === AttributeType.simple || a.type === AttributeType.advanced)
-            .map(a => ({id: a.id, label: localizedLabel(a?.label, lang) ?? a.id})) || [];
+            .map(a => ({id: a.id, label: localizedTranslation(a?.label, lang) ?? a.id})) || [];
 
     const [runImport, {error: importError}] = useMutation<IMPORT, IMPORTVariables>(importExcel, {
         fetchPolicy: 'no-cache',

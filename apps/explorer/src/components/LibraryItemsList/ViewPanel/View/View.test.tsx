@@ -6,32 +6,19 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {IGetViewListElement} from '../../../graphQL/queries/views/getViewsListQuery';
-import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
+import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import View from './View';
+import {IView} from '../../../../_types/types';
 
 describe('View', () => {
-    const mockView: IGetViewListElement = {
+    const mockView: IView = {
         id: '0',
         label: {en: 'My view list 1', fr: 'My view list 1'},
         type: ViewTypes.list,
         color: '#50F0C4',
         shared: false,
-        created_by: {
-            id: '1',
-            whoAmI: {
-                id: '1',
-                label: {fr: 'test'},
-                library: {
-                    id: 'test_lib',
-                    gqlNames: {
-                        query: 'test_lib',
-                        type: 'TestLib'
-                    }
-                }
-            }
-        },
         filters: [],
+        owner: true,
         sort: {
             field: 'id',
             order: SortOrder.asc
@@ -45,7 +32,7 @@ describe('View', () => {
             comp = mount(
                 <MockedProviderWithFragments>
                     <MockStore>
-                        <View view={mockView} onRename={jest.fn()} />
+                        <View view={mockView} onEdit={jest.fn()} />
                     </MockStore>
                 </MockedProviderWithFragments>
             );

@@ -47,14 +47,14 @@ describe('TreeList', () => {
         {
             request: {
                 query: getUserDataQuery,
-                variables: {key: FAVORITE_TREES_KEY}
+                variables: {keys: [FAVORITE_TREES_KEY]}
             },
             result: {
                 data: {
                     userData: {
                         __typename: 'UserData',
                         global: false,
-                        data: []
+                        data: {FAVORITE_TREES_KEY: []}
                     }
                 }
             }

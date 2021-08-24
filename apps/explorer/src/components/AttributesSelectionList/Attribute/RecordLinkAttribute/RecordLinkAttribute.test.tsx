@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {ILabel} from '../../../../_types/types';
+import {ISystemTranslation} from '../../../../_types/types';
 import {mockAttributeLink} from '../../../../__mocks__/common/attribute';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import RecordLinkAttribute from './RecordLinkAttribute';
@@ -26,6 +26,6 @@ describe('AttributeLinkedLibrary', () => {
             );
         });
 
-        expect(comp.text()).toContain((mockAttributeLink.label as ILabel).fr);
+        expect(comp.text()).toContain((mockAttributeLink.label as ISystemTranslation).fr);
     });
 });

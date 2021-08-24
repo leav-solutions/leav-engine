@@ -10,10 +10,10 @@ import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFr
 import MenuItemList from './MenuItemList';
 
 jest.mock(
-    '../SelectView',
+    '../MenuView',
     () =>
-        function SelectView() {
-            return <div>SelectView</div>;
+        function MenuView() {
+            return <div>MenuView</div>;
         }
 );
 
@@ -32,7 +32,7 @@ jest.mock('../MenuItemActions', () => {
 jest.mock('../../../hooks/ActiveLibHook/ActiveLibHook', () => ({useActiveLibrary: () => [{id: 'test'}, jest.fn()]}));
 
 describe('MenuItemList', () => {
-    test('should have SelectView', async () => {
+    test('should have MenuView', async () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
@@ -42,11 +42,11 @@ describe('MenuItemList', () => {
                 </MockedProviderWithFragments>
             );
 
-            await waitForElement(() => screen.getByText('SelectView'));
+            await waitForElement(() => screen.getByText('MenuView'));
 
-            const selectViewMockContent = screen.getByText('SelectView');
+            const menuViewMockContent = screen.getByText('MenuView');
 
-            expect(selectViewMockContent).toBeInTheDocument();
+            expect(menuViewMockContent).toBeInTheDocument();
         });
     });
 

@@ -5,7 +5,7 @@ import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import AttributeLinkedTree from '.';
-import {ILabel} from '../../../../_types/types';
+import {ISystemTranslation} from '../../../../_types/types';
 import {mockAttributeTree} from '../../../../__mocks__/common/attribute';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 
@@ -25,6 +25,6 @@ describe('AttributeLinkedTree', () => {
         });
 
         // mockAttributeTree.label.en and mockAttributeTree.id have the same name
-        expect(screen.getAllByText((mockAttributeTree.label as ILabel).en)).toHaveLength(2);
+        expect(screen.getAllByText((mockAttributeTree.label as ISystemTranslation).en)).toHaveLength(2);
     });
 });

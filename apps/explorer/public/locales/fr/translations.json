@@ -3,13 +3,16 @@
         "cancel": "Annuler",
         "close": "Fermer",
         "processing": "Traitement en cours",
+        "edit": "Modifier",
         "done": "Terminé",
         "delete": "Supprimer",
         "apply": "Appliquer",
         "clear": "Effacer",
         "submit": "Valider",
         "select": "Sélectionner",
-        "search": "Rechercher"
+        "search": "Rechercher",
+        "duplicate": "Dupliquer",
+        "copy": "Copie"
     },
     "login": {
         "header": "Authentification",
@@ -123,8 +126,9 @@
         },
         "display": {
             "list-small": "Liste (petit)",
-            "list-medium": "Liste (Moyen)",
-            "list-big": "Liste (Grand)",
+            "list-medium": "Liste (moyen)",
+            "list-big": "Liste (grand)",
+            "cards": "Mosaïque",
             "tile": "Mosaïque"
         }
     },
@@ -214,7 +218,7 @@
     },
     "select-view": {
         "add-view": "Ajouter vue",
-        "default-view": "Vue par défaut...",
+        "default-view": "Vue par défaut",
         "save": "Sauvegarder la vue"
     },
     "search": {
@@ -266,20 +270,28 @@
         "list": "Liste des vues",
         "my-views": "Mes vues",
         "shared-views": "Partagées",
-        "type-list": "Vue Liste",
-        "type-cards": "Vue Mosaïque",
-        "type-timeline": "Vue Timeline",
+        "type-list": "Liste",
+        "type-cards": "Mosaïque",
+        "type-timeline": "Timeline",
         "default": "Vue par défaut",
+        "see-more": "Voir plus",
         "delete": "Supprimer",
         "rename": "Renommer",
         "add-view": {
-            "new-view": "Nouvelle vue",
-            "edit-view": "Edition de vue",
-            "view-name": "Nom de la vue",
-            "view-description": "Description de la vue",
-            "view-type": "Type le la vue",
-            "view-shared": "Vue partagée",
-            "view-color": "Couleur de la vue"
+            "title": "Nouvelle vue",
+            "label": "Nom",
+            "description": "Description",
+            "type": "Type",
+            "shared": "Partagée",
+            "color": "Couleur"
+        },
+        "edit-view": {
+            "title": "Modifier la vue",
+            "label": "Nom",
+            "description": "Description",
+            "type": "Type",
+            "shared": "Partagée",
+            "color": "Couleur"
         },
         "type-tile": "Vue Tuile"
     },

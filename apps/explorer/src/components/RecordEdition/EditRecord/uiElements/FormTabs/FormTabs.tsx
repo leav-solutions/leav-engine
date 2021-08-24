@@ -7,7 +7,7 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {localizedLabel} from 'utils';
+import {localizedTranslation} from 'utils';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {formComponents} from '..';
 import {FormElement, IFormElementProps} from '../../_types';
@@ -38,7 +38,7 @@ function FormTabs({element, record, recordValues}: IFormElementProps<IFormTabsSe
                 };
 
                 return (
-                    <Tabs.TabPane tab={localizedLabel(tab.label, lang)} key={tab.id}>
+                    <Tabs.TabPane tab={localizedTranslation(tab.label, lang)} key={tab.id}>
                         <tabContainer.uiElement element={tabContainer} record={record} recordValues={recordValues} />
                     </Tabs.TabPane>
                 );

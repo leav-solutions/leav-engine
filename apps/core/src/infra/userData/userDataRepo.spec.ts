@@ -37,14 +37,14 @@ describe('UserDataRepo', () => {
     test('get user data', async function () {
         const mockDbServ = {
             db: new Database(),
-            execute: global.__mockPromise(['data'])
+            execute: global.__mockPromise([{test: 'data'}])
         };
 
         const udr = userDataRepo({
             'core.infra.db.dbService': mockDbServ
         });
 
-        const res = await udr.getUserData('test', false, ctx);
+        const res = await udr.getUserData(['test'], false, ctx);
 
         expect(mockDbServ.execute.mock.calls.length).toBe(1);
         expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
@@ -53,6 +53,6 @@ describe('UserDataRepo', () => {
         expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
         expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
-        expect(res).toEqual({global: false, data: 'data'});
+        expect(res).toEqual({global: false, data: {test: 'data'}});
     });
 });

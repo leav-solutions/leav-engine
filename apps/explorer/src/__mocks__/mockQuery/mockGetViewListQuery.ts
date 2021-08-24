@@ -6,6 +6,7 @@ import {getViewsListQuery, IGetViewListElement} from '../../graphQL/queries/view
 
 const views: IGetViewListElement[] = [
     {
+        __typename: 'View',
         id: 'id',
         type: ViewTypes.list,
         shared: false,

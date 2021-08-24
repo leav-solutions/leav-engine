@@ -20,7 +20,7 @@ import {
 import {useActiveLibrary} from '../../hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
-import {localizedLabel} from '../../utils';
+import {localizedTranslation} from '../../utils';
 import {makeActiveLibraryRoute, makeActiveTreeRoute, routes} from '../Router/Routes/ListRoutes';
 
 interface ISideBarMenuProps {
@@ -132,7 +132,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                                 onClick={hide}
                                 activeClassName="nav-link-active"
                             >
-                                {localizedLabel(lib.label, lang)}
+                                {localizedTranslation(lib.label, lang)}
                             </NavLink>
                         </Menu.Item>
                     ))}
@@ -147,7 +147,7 @@ function SideBarMenu({visible, hide}: ISideBarMenuProps): JSX.Element {
                                 onClick={hide}
                                 activeClassName="nav-link-active"
                             >
-                                {localizedLabel(tree.label, lang)}
+                                {localizedTranslation(tree.label, lang)}
                             </NavLink>
                         </Menu.Item>
                     ))}

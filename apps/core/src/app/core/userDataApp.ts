@@ -29,17 +29,17 @@ export default function ({'core.domain.userData': userDataDomain = null}: IDeps 
                     }
 
                     extend type Query {
-                        userData(key: String!, global: Boolean): UserData!
+                        userData(keys: [String!]!, global: Boolean): UserData!
                     }
                 `,
                 resolvers: {
                     Query: {
                         async userData(
                             parent,
-                            {key, global}: {key: string; global: boolean},
+                            {keys, global}: {keys: string[]; global: boolean},
                             ctx: IQueryInfos
                         ): Promise<IUserData> {
-                            return userDataDomain.getUserData(key, global, ctx);
+                            return userDataDomain.getUserData(keys, global, ctx);
                         }
                     },
                     Mutation: {

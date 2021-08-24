@@ -6,7 +6,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../../themingVar';
-import {attributeToSelectedAttribute, isAttributeSelected, localizedLabel} from '../../../../../utils';
+import {attributeToSelectedAttribute, isAttributeSelected, localizedTranslation} from '../../../../../utils';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '../../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {IEmbeddedFields} from '../../../../../_types/types';
 import {AttributesSelectionListActionTypes} from '../../../reducer/attributesSelectionListReducer';
@@ -53,7 +53,7 @@ interface IEmbeddedFieldProps {
 const EmbeddedField = ({attribute, field, fieldPath, depth, library}: IEmbeddedFieldProps): JSX.Element => {
     const [{lang}] = useLang();
     const id = field.id;
-    const label = localizedLabel(field.label, lang);
+    const label = localizedTranslation(field.label, lang);
     const {state, dispatch} = useAttributesSelectionListState();
 
     const isAccordionActive = state.expandedAttributePath === fieldPath;
