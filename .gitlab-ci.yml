@@ -68,8 +68,12 @@ e2eApi:
     services:
         - *arangodb-image
         - *rabbitmq-image
+        - name: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+          alias: elasticsearch
+          command: [ "bin/elasticsearch", "-Expack.security.enabled=false", "-Ediscovery.type=single-node" ]
     variables:
         <<: *common-core-envs
+        ES_JAVA_OPTS: -Xms512m -Xmx512m # For ElasticSearch
     <<: *before-script-common
     script:
         - cd apps/core/

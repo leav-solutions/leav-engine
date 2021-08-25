@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
+import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {AttributeTypes} from '../../_types/attribute';
 import {IAttributeRepo} from '../attribute/attributeRepo';
 import {IDbUtils} from '../db/dbUtils';
@@ -69,9 +70,15 @@ describe('LibraryRepo', () => {
                 convertToDoc: jest.fn().mockReturnValue(docLibData)
             };
 
+            const mockElasticService: Mockify<IElasticsearchService> = {
+                indiceCreate: jest.fn(),
+                indiceExists: jest.fn().mockReturnValue(false)
+            };
+
             const libRepo = libraryRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.infra.elasticsearch.elasticsearchService': mockElasticService as IElasticsearchService
             });
 
             const createdLib = await libRepo.createLibrary({libData, ctx});

@@ -10,6 +10,7 @@ import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
+import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../_gqlTypes/SAVE_USER_DATA';
 import {IBaseNotification, NotificationType} from '../../_types/types';
@@ -27,7 +28,7 @@ function LibrariesList(): JSX.Element {
     const [activeLibrary, setActiveLibrary] = useState<string>(libId);
 
     const librariesListQuery = useQuery(getLibrariesListQuery);
-    const userDataQuery = useQuery(getUserDataQuery, {
+    const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_LIBRARIES_KEY]}
     });
 
