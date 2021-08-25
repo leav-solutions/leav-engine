@@ -110,7 +110,7 @@ function ViewPanel(): JSX.Element {
         }
     });
 
-    const orderDataQuery = useQuery(getUserDataQuery, {
+    const orderDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [USER_VIEWS_ORDER_KEY, SHARED_VIEWS_ORDER_KEY]},
         onCompleted: d => {
             searchDispatch({

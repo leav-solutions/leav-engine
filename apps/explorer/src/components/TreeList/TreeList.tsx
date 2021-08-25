@@ -10,6 +10,8 @@ import {default as React, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
+import {GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables} from '_gqlTypes/GET_TREE_LIST_QUERY';
+import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../_gqlTypes/SAVE_USER_DATA';
 import {IBaseNotification, NotificationType} from '../../_types/types';
 import ErrorDisplay from '../shared/ErrorDisplay';
@@ -22,8 +24,8 @@ function TreeList(): JSX.Element {
 
     const dispatch = useAppDispatch();
 
-    const treeListQuery = useQuery(getTreeListQuery);
-    const userDataQuery = useQuery(getUserDataQuery, {
+    const treeListQuery = useQuery<GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables>(getTreeListQuery);
+    const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_TREES_KEY]}
     });
 
