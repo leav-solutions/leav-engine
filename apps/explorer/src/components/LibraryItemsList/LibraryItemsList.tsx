@@ -174,7 +174,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                   type: library.defaultView.type,
                   color: library.defaultView.color,
                   shared: library.defaultView.shared,
-                  filters: getFiltersFromRequest(library.defaultView.filters, library.id, attributesFromQuery),
+                  filters: getFiltersFromRequest(library.defaultView.filters ?? [], library.id, attributesFromQuery),
                   sort: library.defaultView.sort,
                   settings: library.defaultView.settings
               }
