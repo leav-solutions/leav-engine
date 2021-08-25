@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
+import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {difference} from 'lodash';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
@@ -88,12 +89,14 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attribute'?: IAttributeRepo;
+    'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.attribute': attributeRepo = null
+    'core.infra.attribute': attributeRepo = null,
+    'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null
 }: IDeps = {}): ILibraryRepo {
     return {
         async getLibraries({params = {}, ctx}): Promise<IList<ILibrary>> {
@@ -126,6 +129,11 @@ export default function ({
                 query: aql`INSERT ${docToInsert} IN ${libCollc} RETURN NEW`,
                 ctx
             });
+
+            // Create elasticsearch index
+            if (!(await elasticsearchService.indiceExists(libData.id))) {
+                await elasticsearchService.indiceCreate(libData.id);
+            }
 
             return dbUtils.cleanup(libRes.pop());
         },
