@@ -34,6 +34,7 @@ function EditRecordModal({open, record, onClose}: IEditRecordModalProps): JSX.El
                     {t('global.close')}
                 </Button>
             ]}
+            wrapProps={{onClick: (e: MouseEvent) => e.stopPropagation()}}
         >
             <EditRecord record={record} />
         </Modal>

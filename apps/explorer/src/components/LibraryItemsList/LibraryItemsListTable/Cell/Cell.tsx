@@ -1,6 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import Paragraph from 'antd/lib/typography/Paragraph';
+import RecordCard from 'components/shared/RecordCard';
 import React from 'react';
 import {useSelector} from 'react-redux';
 import {RootState} from 'redux/store';
@@ -8,9 +10,8 @@ import styled from 'styled-components';
 import {infosCol} from '../../../../constants/constants';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {displayTypeToPreviewSize} from '../../../../utils';
-import {AttributeType, ITableItem, PreviewSize} from '../../../../_types/types';
+import {AttributeType, IRecordIdentityWhoAmI, ITableCell, PreviewSize} from '../../../../_types/types';
 import CellInfos from './CellInfos';
-import CellRecordCard from './CellRecordCard';
 
 const SimpleCell = styled.div`
     padding: 5px;
@@ -21,24 +22,19 @@ const RecordCardCellWrapper = styled.div`
 `;
 
 interface ICellProps {
+    record: IRecordIdentityWhoAmI;
     columnName: string;
-    data: ITableItem;
+    data: ITableCell;
     index: string;
 }
 
-const Cell = ({columnName, data, index}: ICellProps) => {
-    const {value, type, id, library, label} = data;
+const Cell = ({columnName, data, index, record}: ICellProps) => {
+    const {value, type} = data;
 
     const {size} = useSelector((state: RootState) => state.display);
     const [{lang}] = useLang();
 
     const previewSize: PreviewSize = displayTypeToPreviewSize(size);
-
-    const selectionData = {
-        id,
-        library,
-        label
-    };
 
     if (!value || (Array.isArray(value) && !value.length)) {
         return <></>;
@@ -47,7 +43,18 @@ const Cell = ({columnName, data, index}: ICellProps) => {
     switch (type) {
         case AttributeType.simple:
         case AttributeType.advanced:
-            return <SimpleCell>{value}</SimpleCell>;
+            return (
+                <SimpleCell>
+                    <Paragraph
+                        ellipsis={{
+                            rows: 1,
+                            tooltip: value
+                        }}
+                    >
+                        {value}
+                    </Paragraph>
+                </SimpleCell>
+            );
         case AttributeType.simple_link:
         case AttributeType.advanced_link:
         case AttributeType.tree:
@@ -56,22 +63,14 @@ const Cell = ({columnName, data, index}: ICellProps) => {
             return (
                 <RecordCardCellWrapper>
                     {valuesToDisplay.map(val => (
-                        <CellRecordCard record={{...val.whoAmI}} size={previewSize} lang={lang} key={val.whoAmI.id} />
+                        <RecordCard record={{...val.whoAmI}} size={previewSize} lang={lang} key={val.whoAmI.id} />
                     ))}
                 </RecordCardCellWrapper>
             );
         default:
             // selection and infos column has no type
             if (columnName === infosCol) {
-                return (
-                    <CellInfos
-                        record={value}
-                        previewSize={previewSize}
-                        lang={lang}
-                        index={index}
-                        selectionData={selectionData}
-                    />
-                );
+                return <CellInfos record={value} previewSize={previewSize} lang={lang} />;
             }
 
             return <></>;

@@ -350,15 +350,14 @@ export interface ILinkedElement {
     linkedType: LinkedType;
 }
 
-export interface ITableItem {
+export interface ITableCell {
     value: any;
     type?: AttributeType;
-    id: string;
-    library: string;
-    label: string;
 }
-export interface ITableItems {
-    [x: string]: ITableItem;
+
+export interface ITableRow {
+    record: IRecordIdentityWhoAmI;
+    [x: string]: ITableCell | IRecordIdentityWhoAmI | string;
 }
 
 export interface ISharedStateSelectionSearch {

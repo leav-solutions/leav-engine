@@ -1,30 +1,33 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {SelectionModeContext} from 'context';
 import React, {useContext, useState} from 'react';
 import {Cell as ReactTableTypeCell} from 'react-table';
-import styled from 'styled-components';
-import {infosCol} from '../../../../constants/constants';
-import themingVar from '../../../../themingVar';
-import Cell from '../Cell';
-import {SelectionModeContext} from 'context';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {SharedStateSelectionType} from '../../../../_types/types';
+import styled from 'styled-components';
+import {infosCol, selectionColumn} from '../../../../constants/constants';
+import themingVar from '../../../../themingVar';
+import {ITableRow, SharedStateSelectionType} from '../../../../_types/types';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
+import Cell from '../Cell';
+import CellSelection from '../Cell/CellSelection';
 
-const CustomBodyCell = styled.div<{selected: boolean}>`
+const CustomBodyCell = styled.div<{selected: boolean; id?: string | number}>`
+    max-width: ${p => (p.id === selectionColumn ? '35px' : 'auto')};
     background-color: ${p =>
         p.selected ? themingVar['@leav-view-panel-label-background-active'] : themingVar['@default-bg']};
 `;
 
 interface IBodyCellProps {
-    cell: ReactTableTypeCell<any, any>;
+    cell: ReactTableTypeCell<ITableRow>;
     index: string;
 }
 
 function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
     const props = cell.getCellProps();
+    const record = cell.row.original.record;
 
     const selectionMode = useContext(SelectionModeContext);
     const [editRecordModal, setEditRecordModal] = useState<boolean>(false);
@@ -39,18 +42,19 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
         props.style = {
             ...props.style,
             flex: '1 0 auto',
-            width: '250px'
+            width: '250px',
+            zIndex: 'auto'
         };
     }
 
     const data = {
-        id: cell.value.id,
-        key: cell.value.id,
-        library: cell.value.library,
-        label: cell.value.label,
-        value: cell.value.value,
-        type: cell.value.type,
-        format: cell.value.format
+        id: cell?.value?.id,
+        key: cell?.value?.id,
+        library: cell?.value?.library,
+        label: cell?.value?.label,
+        value: cell?.value?.value,
+        type: cell?.value?.type,
+        format: cell?.value?.format
     };
 
     const allSelected =
@@ -58,14 +62,14 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
 
     const selected =
         selectionState.selection.type === SharedStateSelectionType.search &&
-        !!selectionState.selection.selected.find(e => e.id === data.id && e.library === data.library);
+        !!selectionState.selection.selected.find(e => e.id === record.id && e.library === record.library.id);
 
     if (!cell.value) {
         return <CustomBodyCell selected={selected} {...props}></CustomBodyCell>;
     }
 
     const _handleCellSelected = () => {
-        const selectionData = {id: data.id, library: data.library, label: data.label};
+        const selectionData = {id: record.id, library: record.library.id, label: record.label};
 
         if (selectionMode) {
             dispatch(setSelectionToggleSearchSelectionElement(selectionData));
@@ -79,24 +83,31 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
         }
     };
 
+    const _handleDoubleClick = () => {
+        setEditRecordModal(true);
+    };
+
     const _handleClose = () => {
         setEditRecordModal(false);
     };
 
+    const isRowSelected = allSelected || selected;
+
     return (
         <CustomBodyCell
             {...props}
-            selected={allSelected || selected}
+            id={cell.column.id}
+            selected={isRowSelected}
             onClick={_handleCellSelected}
-            onDoubleClick={() => setEditRecordModal(true)}
+            onDoubleClick={_handleDoubleClick}
             className="body-cell"
         >
-            <div>
-                {editRecordModal && (
-                    <EditRecordModal open={editRecordModal} record={data.value} onClose={_handleClose} />
-                )}
-                <Cell columnName={cell.column.id} data={data} index={index} />
-            </div>
+            {editRecordModal && <EditRecordModal open={editRecordModal} record={record} onClose={_handleClose} />}
+            {cell.column.id === selectionColumn ? (
+                <CellSelection record={record} onClick={_handleCellSelected} selected={isRowSelected} />
+            ) : (
+                <Cell columnName={cell.column.id} data={data} index={index} record={record} />
+            )}
         </CustomBodyCell>
     );
 }

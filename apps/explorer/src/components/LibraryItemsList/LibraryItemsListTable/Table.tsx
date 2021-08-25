@@ -2,24 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
+import Paragraph from 'antd/lib/typography/Paragraph';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {isEqual} from 'lodash';
 import get from 'lodash/get';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {ColumnWithLooseAccessor, useFlexLayout, useTable} from 'react-table';
+import {ColumnWithLooseAccessor, useFlexLayout, useTable, UseTableColumnOptions} from 'react-table';
 import {useSticky} from 'react-table-sticky';
 import styled from 'styled-components';
-import {infosCol} from '../../../constants/constants';
+import {infosCol, selectionColumn} from '../../../constants/constants';
 import themingVar from '../../../themingVar';
-import {AttributeFormat, AttributeType, ITableItem, ITableItems} from '../../../_types/types';
+import {AttributeFormat, AttributeType, ITableCell, ITableRow} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
 
-interface ITableColumn {
-    Header: string;
+interface ITableColumn extends UseTableColumnOptions<ITableRow> {
     accessor: string | ((row, rowIndex) => string);
     key: string;
     sticky?: 'left' | 'right';
@@ -45,11 +45,8 @@ const CustomTable = styled.div<ICustomTableProps>`
 
         .header {
             position: sticky;
-            z-index: 1;
-        }
-
-        .header {
             top: 0;
+            z-index: 1;
         }
 
         .body {
@@ -60,14 +57,6 @@ const CustomTable = styled.div<ICustomTableProps>`
         [data-sticky-td] {
             position: sticky;
         }
-
-        [data-sticky-last-left-td] {
-            /* box-shadow: 5px 0px 3px -1px #ccc; */
-        }
-
-        [data-sticky-first-right-td] {
-            /* box-shadow: -5px 0px 3px -1px #ccc; */
-        }
     }
 `;
 
@@ -77,18 +66,17 @@ const TableHead = styled.div`
     background: ${themingVar['@leav-secondary-action-bg']};
     width: fit-content;
     min-width: 100%;
-    border-left: 4px solid transparent;
 `;
 
-const HeaderRow = styled.div``;
+const HeaderRow = styled.div`
+    margin-left: 3px; // For better alignment with rows
+`;
 
-const HeaderCell = styled.div`
+const HeaderCell = styled.div<{id: string}>`
     background: ${themingVar['@leav-secondary-action-bg']};
     border-right: 1px solid ${themingVar['@divider-color']};
-
-    &:first-child {
-        border-left: 1px solid ${themingVar['@divider-color']};
-    }
+    min-width: 35px;
+    max-width: ${p => (p.id === selectionColumn ? '35px' : 'auto')};
 
     &:last-child {
         border-right: none;
@@ -116,12 +104,21 @@ const Table = () => {
 
     const {state: searchState} = useSearchReducer();
     const [tableColumns, setTableColumns] = useState<ITableColumn[]>([]);
-    const [tableData, setTableData] = useState<ITableItems[]>([]);
+    const [tableData, setTableData] = useState<ITableRow[]>([]);
     const [scrollHorizontalActive, setScrollHorizontalActive] = useState(false);
 
     //columns
     useEffect(() => {
         const startColumns: ITableColumn[] = [
+            {
+                Header: '',
+                accessor: selectionColumn,
+                key: selectionColumn,
+                sticky: 'left',
+                width: 35,
+                maxWidth: 35,
+                minWidth: 30
+            },
             {
                 Header: t('items_list.table.infos'),
                 accessor: infosCol,
@@ -136,7 +133,17 @@ const Table = () => {
                 const validAccessor = field.key.replaceAll('.', '');
 
                 return {
-                    Header: field.label,
+                    Header: (
+                        <Paragraph
+                            ellipsis={{
+                                rows: 2,
+                                tooltip: field.label
+                            }}
+                            style={{marginBottom: 0, textAlign: 'center'}}
+                        >
+                            {field.label}
+                        </Paragraph>
+                    ),
                     accessor: validAccessor,
                     key: field.key,
                     type: field.type,
@@ -155,48 +162,45 @@ const Table = () => {
 
     // data
     useEffect(() => {
-        const data = searchState.records.reduce((allData, record, index) => {
+        const data: ITableRow[] = searchState.records.reduce((allData, record, index) => {
             if (index < searchState.pagination) {
-                const tableItem: ITableItems = tableColumns.reduce((acc, column) => {
-                    // handle selection and infos column
-                    if (!column.type) {
-                        if (column.accessor === infosCol) {
-                            const value = record.whoAmI;
-                            const id = record.whoAmI.id;
-                            const library = record.whoAmI.library.id;
-                            const label = record.whoAmI.label;
+                const tableItem: ITableRow = tableColumns.reduce(
+                    (acc, column) => {
+                        // handle selection and infos column
+                        if (!column.type) {
+                            if (column.accessor === infosCol) {
+                                const value = record.whoAmI;
 
-                            const cellData: ITableItem = {value, type: column.type, id, library, label};
-                            acc[column.accessor] = cellData;
+                                const cellData: ITableCell = {value, type: column.type};
+                                acc[column.accessor] = cellData;
 
-                            return acc;
+                                return acc;
+                            }
                         }
-                    }
 
-                    const key = column.key;
-
-                    let value = record.fields[key];
-                    if (column.embeddedPath && column.embeddedPath.length) {
-                        const pathWithoutRoot = column.embeddedPath.split('.').slice(1).join('.');
-                        try {
-                            const content = JSON.parse(record.fields[key]);
-                            value = get(content, pathWithoutRoot);
-                        } catch (e) {
-                            value = 'error';
+                        const key = column.key;
+                        let value = record.fields[key];
+                        if (column.embeddedPath && column.embeddedPath.length) {
+                            const pathWithoutRoot = column.embeddedPath.split('.').slice(1).join('.');
+                            try {
+                                const content = JSON.parse(record.fields[key]);
+                                value = get(content, pathWithoutRoot);
+                            } catch (e) {
+                                value = 'error';
+                            }
                         }
-                    }
 
-                    const id = record.whoAmI.id;
+                        acc[column.accessor as string] = {value, type: column.type};
 
-                    acc[column.accessor as string] = {value, type: column.type, id};
-
-                    return acc;
-                }, {});
+                        return acc;
+                    },
+                    {[selectionColumn]: null, record: record.whoAmI}
+                );
 
                 return [...allData, tableItem];
             }
             return allData;
-        }, [] as any);
+        }, []);
 
         if (data) {
             setTableData([...data]);
@@ -213,9 +217,9 @@ const Table = () => {
         }
     };
 
-    const tableInstance = useTable<ITableItems>(
+    const tableInstance = useTable<ITableRow>(
         {
-            columns: tableColumns as Array<ColumnWithLooseAccessor<ITableItems>>,
+            columns: tableColumns as Array<ColumnWithLooseAccessor<ITableRow>>,
             data: tableData
         },
         useFlexLayout,
@@ -258,13 +262,15 @@ const Table = () => {
                                 }
 
                                 return (
-                                    <HeaderCell {...headerCellProps}>
-                                        <Header
-                                            id={((column as unknown) as ITableColumn).key}
-                                            type={AttributeType.simple}
-                                        >
-                                            {column.render('Header')}
-                                        </Header>
+                                    <HeaderCell {...headerCellProps} id={column.id}>
+                                        {((column as unknown) as ITableColumn).key !== selectionColumn && (
+                                            <Header
+                                                id={((column as unknown) as ITableColumn).key}
+                                                type={AttributeType.simple}
+                                            >
+                                                {column.render('Header')}
+                                            </Header>
+                                        )}
                                     </HeaderCell>
                                 );
                             })}
