@@ -13,16 +13,12 @@ const CustomBodyRow = styled.div`
     position: relative;
     border: 2px solid transparent;
 
+    &:not(:hover) .floating-menu {
+        display: none;
+    }
+
     &:hover {
         border: 2px solid ${themingVar['@primary-color']};
-
-        .floating-menu {
-            display: flex;
-        }
-
-        .hidden-checkbox {
-            display: flex;
-        }
     }
 `;
 

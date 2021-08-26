@@ -3,10 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dropdown, Menu, Tooltip} from 'antd';
 import Button, {ButtonSize} from 'antd/lib/button';
+import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import {IconEllipsisHorizontal} from 'assets/icons/IconEllipsisHorizontal';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
+import styled, {CSSObject} from 'styled-components';
 import themingVar from 'themingVar';
 
 export interface IFloatingMenuActionWithBtn extends IFloatingMenuActionCommon {
@@ -28,9 +29,11 @@ export type FloatingMenuAction = IFloatingMenuActionWithIcon | IFloatingMenuActi
 export interface IFloatingMenuProps {
     actions: FloatingMenuAction[];
     moreActions?: IFloatingMenuActionWithIcon[];
+    size?: SizeType;
+    style?: CSSObject;
 }
 
-const FloatingMenuWrapper = styled.div`
+const FloatingMenuWrapper = styled.div<{overrideStyle?: CSSObject}>`
     position: absolute;
     z-index: 1000;
     right: 18px;
@@ -41,20 +44,27 @@ const FloatingMenuWrapper = styled.div`
 
     display: flex;
     justify-content: space-around;
-    padding: 0.3rem 0;
+    padding: 0.5rem;
     transform: scale(0.7) translate(48px, -28px);
 
     & > * {
         margin: 0 0.2rem;
         box-shadow: 0px 2px 6px #0000002f;
     }
+
+    ${p => p.overrideStyle}
 `;
 
-function FloatingMenu({actions, moreActions}: IFloatingMenuProps): JSX.Element {
+function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMenuProps): JSX.Element {
     const {t} = useTranslation();
 
     return (
-        <FloatingMenuWrapper data-testid="floating-menu" className="floating-menu">
+        <FloatingMenuWrapper
+            data-testid="floating-menu"
+            className="floating-menu"
+            style={style}
+            onClick={e => e.stopPropagation()}
+        >
             {actions.map(action => (
                 <Tooltip title={action.title} key={action.title}>
                     {(action as IFloatingMenuActionWithBtn).button ?? (
@@ -80,11 +90,7 @@ function FloatingMenu({actions, moreActions}: IFloatingMenuProps): JSX.Element {
                             </Menu>
                         }
                     >
-                        <Button
-                            size="small"
-                            icon={<IconEllipsisHorizontal />}
-                            title={t('floating_menu.more_actions')}
-                        />
+                        <Button size={size} icon={<IconEllipsisHorizontal />} title={t('floating_menu.more_actions')} />
                     </Dropdown>
                 </Tooltip>
             )}

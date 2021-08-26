@@ -1,12 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckSquareTwoTone, DeleteOutlined, DownOutlined, LogoutOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu} from 'antd';
+import {CheckSquareTwoTone, CloseCircleOutlined, DeleteOutlined, DownOutlined} from '@ant-design/icons';
+import {Button, Dropdown, Menu, message} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
-import searchReducer, {initialSearchState} from 'hooks/useSearchReducer/searchReducer';
-import React, {useContext, useEffect, useReducer, useState} from 'react';
+import useSearchReducer from 'hooks/useSearchReducer';
+import uniqBy from 'lodash/uniqBy';
+import React, {useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {resetSearchSelection, resetSelection, setSearchSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -55,6 +56,34 @@ const Wrapper = styled.div<IWrapperProps>`
     }
 `;
 
+const DropdownButton = styled.div`
+    && {
+        display: flex;
+        padding: 0;
+    }
+`;
+
+const SelectionSummary = styled(Button)`
+    && {
+        padding: 0 1em;
+        display: flex;
+        align-items: center;
+        border-right-color: transparent;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+`;
+
+const ClearSelection = styled(Button)`
+    && {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        display: flex;
+        padding: 0 1em;
+        align-items: center;
+    }
+`;
+
 function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element {
     const {t} = useTranslation();
 
@@ -64,7 +93,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
         display: state.display
     }));
     const dispatch = useAppDispatch();
-    const [searchState] = useReducer(searchReducer, initialSearchState);
+    const {state: searchState} = useSearchReducer();
 
     const [{lang}] = useLang();
 
@@ -101,6 +130,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                 ];
             }
         }
+        selected = uniqBy(selected, item => `${item.id}_${item.library}`);
 
         if (selectionMode) {
             dispatch(
@@ -146,6 +176,10 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
           selectionState.searchSelection.allSelected
         : selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
 
+    const _handleClickDelete = () => {
+        message.warn(t('global.feature_not_available'));
+    };
+
     return (
         <Wrapper active={active}>
             <div>
@@ -164,16 +198,21 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                         </Menu>
                     }
                 >
-                    <Button>
-                        {allSelectActive ? (
-                            <>
-                                <CheckSquareTwoTone /> {t('menu-selection.all-selected-enabled')}
-                            </>
-                        ) : (
-                            t('menu-selection.nb-selected', {nb: countItemsSelected})
-                        )}
-                        <DownOutlined style={{paddingLeft: 12}} />
-                    </Button>
+                    <DropdownButton>
+                        <SelectionSummary>
+                            {allSelectActive ? (
+                                <>
+                                    <CheckSquareTwoTone /> {t('menu-selection.all-selected-enabled')}
+                                </>
+                            ) : (
+                                t('menu-selection.nb-selected', {nb: countItemsSelected})
+                            )}
+                            <DownOutlined style={{paddingLeft: 12}} />
+                        </SelectionSummary>
+                        <ClearSelection onClick={disableModeSelection}>
+                            <CloseCircleOutlined />
+                        </ClearSelection>
+                    </DropdownButton>
                 </Dropdown>
 
                 {!selectionMode && (
@@ -181,16 +220,12 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                         <ActionsMenu />
 
                         <div>
-                            <Button icon={<DeleteOutlined />}>{t('global.delete')}</Button>
+                            <Button icon={<DeleteOutlined />} onClick={_handleClickDelete}>
+                                {t('global.delete')}
+                            </Button>
                         </div>
                     </>
                 )}
-
-                <div>
-                    <Button icon={<LogoutOutlined />} onClick={disableModeSelection}>
-                        {t('menu-selection.quit')}
-                    </Button>
-                </div>
             </div>
         </Wrapper>
     );

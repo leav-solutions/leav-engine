@@ -26,12 +26,6 @@ function MenuSelection(): JSX.Element {
     const dispatch = useAppDispatch();
     const [{lang}] = useLang();
 
-    const offsetDisplay = searchState.totalCount > 0 ? searchState.offset + 1 : 0;
-    const nextOffsetDisplay =
-        searchState.offset + searchState.pagination > searchState.totalCount
-            ? searchState.totalCount
-            : searchState.offset + searchState.pagination;
-
     const selectAll = () => {
         if (!selectionMode) {
             dispatch(
@@ -97,8 +91,6 @@ function MenuSelection(): JSX.Element {
             >
                 <span>
                     {t('items-list-row.nb-elements', {
-                        nb1: offsetDisplay,
-                        nb2: nextOffsetDisplay,
                         nbItems: searchState.totalCount
                     })}
                     <DownOutlined style={{paddingLeft: 6}} />

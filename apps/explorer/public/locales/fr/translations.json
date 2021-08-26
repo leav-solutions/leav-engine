@@ -12,7 +12,8 @@
         "select": "Sélectionner",
         "search": "Rechercher",
         "duplicate": "Dupliquer",
-        "copy": "Copie"
+        "copy": "Copie",
+        "feature_not_available": "Cette fonctionnalité sera bientôt disponible!"
     },
     "login": {
         "header": "Authentification",
@@ -133,7 +134,7 @@
         }
     },
     "items-list-row": {
-        "nb-elements": "{{nb1}} à {{nb2}} / {{nbItems}} résultats",
+        "nb-elements": "{{nbItems}} résultats",
         "switch-to-selection-mode": "Passer au mode séléction",
         "edit": "Éditer le record"
     },

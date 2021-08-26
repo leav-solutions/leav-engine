@@ -13,6 +13,7 @@ import {infosCol} from '../../../../constants/constants';
 import themingVar from '../../../../themingVar';
 import {getSortFieldByAttributeType} from '../../../../utils';
 import {AttributeType} from '../../../../_types/types';
+import ChooseTableColumns from '../../LibraryItemsListTable/ChooseTableColumns';
 
 interface IWrapperProps {
     isHover: boolean;
@@ -20,8 +21,11 @@ interface IWrapperProps {
 }
 
 const Wrapper = styled.div<IWrapperProps>`
-    border-left: solid 3px ${({isHover}) => (isHover ? themingVar['@primary-color'] : 'transparent')};
-    border-right: solid 3px ${({isHover}) => (isHover ? themingVar['@primary-color'] : 'transparent')};
+    border-left: solid 3px transparent;
+    border-right: solid 3px transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
 
     ${({isHover}) =>
@@ -36,31 +40,17 @@ const Wrapper = styled.div<IWrapperProps>`
         }
     `}
 
-    ${({isInfoColumn}) =>
-        isInfoColumn &&
-        `
-        margin-left: calc(2rem);
-        border-left: 1px solid ${themingVar['@divider-color']};
-    `}
-
     &:hover {
-        padding: 0 0.3rem;
         border-left: ${themingVar['@primary-color']} 3px solid;
         border-right: ${themingVar['@primary-color']} 3px solid;
         box-shadow: 0px 3px 6px #00000029;
-        transition: 500ms ease;
+        transition: 200ms ease;
 
         .wrapper-arrow {
-            transition: 500ms ease;
             background: ${themingVar['@default-bg']};
             box-shadow: 0px 3px 6px #00000029;
             border: 1px solid ${themingVar['@leav-secondary-divider-color']};
         }
-    }
-
-    & > div {
-        display: grid;
-        place-items: center;
     }
 `;
 
@@ -81,6 +71,7 @@ interface IWrapperArrowProps {
 
 const WrapperArrow = styled.div<IWrapperArrowProps>`
     border-radius: 50%;
+    cursor: pointer;
     border: 1px solid transparent;
     height: 2rem;
     width: 2rem;
@@ -89,6 +80,7 @@ const WrapperArrow = styled.div<IWrapperArrowProps>`
     place-items: center;
     align-content: center;
     margin: 0 8px;
+    flex-shrink: 0;
 
     & > * {
         transform: scale(0.7);
@@ -116,6 +108,7 @@ const Header = ({id, children, type}: IHeaderProps) => {
     const {t} = useTranslation();
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
+    const [openChangeColumns, setOpenChangeColumns] = useState(false);
     const [isHover, setIsHover] = useState<boolean>(false);
 
     const handleSort = (attId: string, order: SortOrder, attType: AttributeType) => {
@@ -145,43 +138,48 @@ const Header = ({id, children, type}: IHeaderProps) => {
         });
     };
 
+    const _handleCloseChooseTableColumns = () => setOpenChangeColumns(false);
+
     return (
-        <Wrapper isHover={isHover} isInfoColumn={infosCol === id}>
-            <div>
-                <Dropdown
-                    placement="bottomCenter"
-                    overlay={
-                        <Menu
-                            style={{transform: 'translateY(-8px)'}} // move overlay to avoid trigger css transition
-                            onMouseEnter={() => setIsHover(true)}
-                            onMouseLeave={() => setIsHover(false)}
-                        >
-                            <Menu.Item onClick={() => handleAsc(id, type)}>
-                                {t('items_list.table.header-cell-menu.sort-ascend')}
-                            </Menu.Item>
-                            <Menu.Item onClick={() => handleDesc(id, type)}>
-                                {t('items_list.table.header-cell-menu.sort-descend')}
-                            </Menu.Item>
-                            <Menu.Item onClick={cancelSort}>
-                                {t('items_list.table.header-cell-menu.cancel-sort')}
-                            </Menu.Item>
-                        </Menu>
-                    }
-                >
-                    <DropdownContent>
-                        {children}
-                        <WrapperArrow
-                            className="wrapper-arrow"
-                            data-testid={`wrapper-arrow-${searchState.sort.order}`}
-                            filterDirection={searchState.sort?.order}
-                            filterActive={!!searchState.sort?.active}
-                        >
-                            <CaretUpOutlined />
-                            <CaretDownOutlined />
-                        </WrapperArrow>
-                    </DropdownContent>
-                </Dropdown>
-            </div>
+        <Wrapper isHover={isHover} isInfoColumn={infosCol === id} id={id}>
+            {children}
+            <Dropdown
+                placement="bottomCenter"
+                trigger={['click']}
+                overlay={
+                    <Menu
+                        style={{transform: 'translateY(-8px)'}} // move overlay to avoid trigger css transition
+                        onMouseEnter={() => setIsHover(true)}
+                        onMouseLeave={() => setIsHover(false)}
+                    >
+                        <Menu.Item onClick={() => setOpenChangeColumns(true)}>
+                            {t('items_list.table.header-cell-menu.choose-columns')}
+                        </Menu.Item>
+                        <Menu.Item onClick={() => handleAsc(id, type)}>
+                            {t('items_list.table.header-cell-menu.sort-ascend')}
+                        </Menu.Item>
+                        <Menu.Item onClick={() => handleDesc(id, type)}>
+                            {t('items_list.table.header-cell-menu.sort-descend')}
+                        </Menu.Item>
+                        <Menu.Item onClick={cancelSort}>{t('items_list.table.header-cell-menu.cancel-sort')}</Menu.Item>
+                    </Menu>
+                }
+            >
+                <DropdownContent>
+                    <WrapperArrow
+                        className="wrapper-arrow"
+                        data-testid={`wrapper-arrow-${searchState.sort.order}`}
+                        filterDirection={searchState.sort?.order}
+                        filterActive={!!searchState.sort?.active}
+                    >
+                        <CaretUpOutlined />
+                        <CaretDownOutlined />
+                    </WrapperArrow>
+                </DropdownContent>
+            </Dropdown>
+            {openChangeColumns && (
+                <ChooseTableColumns visible={openChangeColumns} onClose={_handleCloseChooseTableColumns} />
+            )}
         </Wrapper>
     );
 };

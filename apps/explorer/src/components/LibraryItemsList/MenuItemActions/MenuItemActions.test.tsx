@@ -25,18 +25,6 @@ describe('MenuItemActions', () => {
         expect(comp.find('Button')).toHaveLength(1);
     });
 
-    test('should get choose-columns', async () => {
-        let comp: any;
-        let menu: any;
-
-        await act(async () => {
-            comp = shallow(<MenuItemActions />);
-            menu = shallow(comp.find('Dropdown').first().props().overlay);
-        });
-
-        expect(menu.html()).toContain('items_list.table.header-cell-menu.choose-columns');
-    });
-
     test('should get sort-advance', async () => {
         let comp: any;
         let menu: any;

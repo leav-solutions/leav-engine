@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import Paragraph from 'antd/lib/typography/Paragraph';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedTranslation} from '../../../utils/utils';
@@ -40,11 +41,7 @@ const PreviewWrapper = styled(CardPart)`
 
 const RecordLabel = styled.div`
     font-weight: bold;
-    word-break: keep-all;
-    text-overflow: ellipsis;
-    max-width: 10rem;
     overflow: hidden;
-    white-space: nowrap;
 `;
 
 const LibLabel = styled.div`
@@ -59,6 +56,8 @@ const getPreviewBySize = (preview?: IPreview, size?: PreviewSize) => {
 };
 
 const RecordCard = ({record, size, style, lang}: IRecordCardProps): JSX.Element => {
+    const label = record.label || record.id;
+
     return (
         <Wrapper recordColor={record.color ?? ''} style={style} className="ui fluid">
             <PreviewWrapper className="ui">
@@ -71,7 +70,11 @@ const RecordCard = ({record, size, style, lang}: IRecordCardProps): JSX.Element 
                 />
             </PreviewWrapper>
             <CardPart className="ui">
-                <RecordLabel>{record.label || record.id}</RecordLabel>
+                <RecordLabel>
+                    <Paragraph ellipsis={{rows: 1, tooltip: label}} style={{marginBottom: 0}}>
+                        {label}
+                    </Paragraph>
+                </RecordLabel>
                 <LibLabel>{localizedTranslation(record.library?.label, lang ?? []) || record.library?.id}</LibLabel>
             </CardPart>
         </Wrapper>

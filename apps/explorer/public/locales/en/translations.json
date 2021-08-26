@@ -10,7 +10,8 @@
         "select": "Select",
         "search": "Search",
         "duplicate": "Duplicate",
-        "copy": "Copy"
+        "copy": "Copy",
+        "feature_not_available": "This feature will be available soon!"
     },
     "login": {
         "header": "Authentification",
@@ -128,7 +129,7 @@
         }
     },
     "items-list-row": {
-        "nb-elements": "{{nb1}} to {{nb2}} / {{nbItems}} results",
+        "nb-elements": "{{nbItems}} results",
         "switch-to-selection-mode": "Switch to selection mode",
         "edit": "Edit the record"
     },

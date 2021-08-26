@@ -1,18 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {AttributeFormat, AttributeType, ITableItem} from '../../../../_types/types';
-import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
+import {act, render, screen} from '_tests/testUtils';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {AttributeFormat, AttributeType, ITableCell} from '../../../../_types/types';
 import Cell from './Cell';
 
 describe('Cell', () => {
     test('should display value', async () => {
-        let comp: any;
-
         const mockData = {
             id: 'id',
             value: 'value',
@@ -21,15 +17,16 @@ describe('Cell', () => {
         };
 
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <Cell columnName="test" data={(mockData as unknown) as ITableItem} index="0" />
-                    </MockStore>
-                </MockedProviderWithFragments>
+            render(
+                <Cell
+                    columnName="test"
+                    data={(mockData as unknown) as ITableCell}
+                    index="0"
+                    record={mockRecordWhoAmI}
+                />
             );
         });
 
-        expect(comp.text()).toContain(mockData.value);
+        expect(screen.getByText(mockData.value)).toBeInTheDocument();
     });
 });

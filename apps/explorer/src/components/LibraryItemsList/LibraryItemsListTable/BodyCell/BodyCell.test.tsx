@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {render, screen} from '_tests/testUtils';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {AttributeType} from '../../../../_types/types';
 import BodyCell from './BodyCell';
 
@@ -21,15 +22,20 @@ describe('BodyCell', () => {
         column: {
             id: 'columnId'
         },
-        value: {value: 'valueCell', type: AttributeType.simple, id: 'idCell'}
+        value: {value: 'valueCell', type: AttributeType.simple, id: 'idCell'},
+        row: {
+            original: {
+                record: mockRecordWhoAmI
+            }
+        },
+        render: jest.fn()
     };
-    test('should call cell', async () => {
-        let comp: any;
 
+    test('should call cell', async () => {
         await act(async () => {
-            comp = mount(<BodyCell cell={mockCell as any} index="0" />);
+            render(<BodyCell cell={mockCell as any} index="0" />);
         });
 
-        expect(comp.find('Cell')).toHaveLength(1);
+        expect(screen.getByText('Cell')).toBeInTheDocument();
     });
 });
