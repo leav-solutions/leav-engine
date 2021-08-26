@@ -12,7 +12,8 @@
         "select": "Sélectionner",
         "search": "Rechercher",
         "duplicate": "Dupliquer",
-        "copy": "Copie"
+        "copy": "Copie",
+        "feature_not_available": "Cette fonctionnalité sera bientôt disponible!"
     },
     "login": {
         "header": "Authentification",
