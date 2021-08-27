@@ -57,12 +57,15 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
         format: cell?.value?.format
     };
 
-    const allSelected =
-        selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
+    const allSelected = selectionMode
+        ? selectionState.searchSelection.type === SharedStateSelectionType.search &&
+          selectionState.searchSelection.allSelected
+        : selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
 
+    const selectionToCheck = selectionMode ? selectionState.searchSelection : selectionState.selection;
     const selected =
-        selectionState.selection.type === SharedStateSelectionType.search &&
-        !!selectionState.selection.selected.find(e => e.id === record.id && e.library === record.library.id);
+        selectionToCheck.type === SharedStateSelectionType.search &&
+        !!selectionToCheck.selected.find(e => e.id === record.id && e.library === record.library.id);
 
     if (!cell.value) {
         return <CustomBodyCell selected={selected} {...props}></CustomBodyCell>;
