@@ -25,7 +25,7 @@ const DateFilter = ({filter, updateFilterValue}: IDateFilterProps) => {
         updateFilterValue({...filter.value, value: value.unix()});
     };
 
-    const momentValue = filter.value.value ? moment(Number(filter.value.value) * 1000) : null;
+    const momentValue = filter?.value?.value ? moment(Number(filter.value.value) * 1000) : null;
 
     return (
         <DatePicker

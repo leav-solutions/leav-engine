@@ -9,30 +9,14 @@ import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import styled, {CSSObject} from 'styled-components';
+import styled from 'styled-components';
 import {IconCross} from '../../../../../assets/icons/IconCross';
 import themingVar from '../../../../../themingVar';
-import {DisplaySize, IRecordIdentityWhoAmI, PreviewSize} from '../../../../../_types/types';
+import {IRecordIdentityWhoAmI, PreviewSize} from '../../../../../_types/types';
 
 const Info = styled.div`
     border-left: 1px solid ${themingVar['@divider-color']};
 `;
-
-const getSize = (size: DisplaySize): CSSObject => {
-    let cssSize: string;
-    switch (size) {
-        case DisplaySize.small:
-            cssSize = '3rem';
-            break;
-        case DisplaySize.medium:
-            cssSize = '5rem';
-            break;
-        case DisplaySize.big:
-            cssSize = '8rem';
-            break;
-    }
-    return {height: cssSize, width: cssSize};
-};
 
 interface ICellInfosProps {
     record: IRecordIdentityWhoAmI;

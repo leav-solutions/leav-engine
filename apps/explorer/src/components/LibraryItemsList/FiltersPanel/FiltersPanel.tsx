@@ -3,15 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MoreOutlined, PlusOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
-import useSearchReducer from 'hooks/useSearchReducer';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
-import React, {useState} from 'react';
+import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import React, {useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
-import SearchItems from '../SearchItems';
 import AddFilter from './AddFilter';
 import Filter from './Filter/Filter';
 import './Filters.css';
@@ -56,10 +55,6 @@ const FiltersCounter = styled.div`
     border: ${themingVar['@leav-border']};
     border-radius: 3px;
     padding: 4px 8px;
-`;
-
-const SearchWrapper = styled.div`
-    padding: 1rem;
 `;
 
 const FiltersWrapper = styled.div`
@@ -153,10 +148,6 @@ function FiltersPanel(): JSX.Element {
                         </Dropdown>
                     </div>
                 </Header>
-
-                <SearchWrapper>
-                    <SearchItems />
-                </SearchWrapper>
 
                 <FiltersWrapper>
                     <DragDropContext onDragEnd={onDragEnd}>

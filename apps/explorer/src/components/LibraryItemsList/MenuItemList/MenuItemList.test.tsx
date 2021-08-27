@@ -8,6 +8,7 @@ import {act} from 'react-dom/test-utils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import MenuItemList from './MenuItemList';
+import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 
 jest.mock(
     '../MenuView',
@@ -37,7 +38,9 @@ describe('MenuItemList', () => {
             render(
                 <MockedProviderWithFragments>
                     <MockStore>
-                        <MenuItemList refetch={jest.fn()} />
+                        <MockSearchContextProvider>
+                            <MenuItemList refetch={jest.fn()} />
+                        </MockSearchContextProvider>
                     </MockStore>
                 </MockedProviderWithFragments>
             );
@@ -55,7 +58,9 @@ describe('MenuItemList', () => {
             render(
                 <MockedProviderWithFragments>
                     <MockStore>
-                        <MenuItemList refetch={jest.fn()} />
+                        <MockSearchContextProvider>
+                            <MenuItemList refetch={jest.fn()} />
+                        </MockSearchContextProvider>
                     </MockStore>
                 </MockedProviderWithFragments>
             );
@@ -73,7 +78,9 @@ describe('MenuItemList', () => {
             comp = mount(
                 <MockedProviderWithFragments>
                     <MockStore>
-                        <MenuItemList refetch={jest.fn()} />
+                        <MockSearchContextProvider>
+                            <MenuItemList refetch={jest.fn()} />
+                        </MockSearchContextProvider>
                     </MockStore>
                 </MockedProviderWithFragments>
             );

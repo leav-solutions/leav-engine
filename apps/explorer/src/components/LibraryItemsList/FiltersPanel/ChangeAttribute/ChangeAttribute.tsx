@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
@@ -56,34 +55,41 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
         setAttrsSelected(initialAttSelected);
     };
 
-    const changeAttribute = () => {
-        const newFilters: IFilter[] = searchState.filters.map(f => {
-            if (f.index === filter.index) {
-                const attrSelected = attrsSelected[0];
+    const _onSelectionChange = (selectedAttribute: ISelectedAttribute[]) => {
+        // check if selected attr is different because _onSelectionChange is triggered on first render
+        if (JSON.stringify(attrsSelected) !== JSON.stringify(selectedAttribute)) {
+            setAttrsSelected(selectedAttribute);
 
-                const attributeFind = searchState.attributes.find(
-                    att => att.id === attrSelected.id && att.library === attrSelected.library
-                );
+            const newFilters: IFilter[] = searchState.filters.map(f => {
+                if (f.index === filter.index) {
+                    const attrSelected = selectedAttribute[0];
 
-                if (attributeFind) {
-                    const key = getFieldsKeyFromAttribute(attributeFind);
+                    const attributeFind = searchState.attributes.find(
+                        att => att.id === attrSelected.id && att.library === attrSelected.library
+                    );
 
-                    return {
-                        ...filter,
-                        key,
-                        attribute: attributeFind,
-                        condition: RecordFilterCondition[defaultFilterConditionByAttributeFormat(attributeFind.format)],
-                        value: {value: defaultFilterValueByAttributeFormat(attributeFind.format)}
-                    };
-                } else {
-                    throw new Error('attribute selected not found');
+                    if (attributeFind) {
+                        const key = getFieldsKeyFromAttribute(attributeFind);
+
+                        return {
+                            ...filter,
+                            key,
+                            attribute: attributeFind,
+                            condition:
+                                RecordFilterCondition[defaultFilterConditionByAttributeFormat(attributeFind.format)],
+                            value: {value: defaultFilterValueByAttributeFormat(attributeFind.format)}
+                        };
+                    } else {
+                        throw new Error('attribute selected not found');
+                    }
                 }
-            }
-            return f;
-        });
+                return f;
+            });
 
-        searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
-        setShowModal(false);
+            searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
+
+            setShowModal(false);
+        }
     };
 
     return (
@@ -91,19 +97,16 @@ function ChangeAttribute({filter, showModal, setShowModal}: IChangeAttributeProp
             visible={showModal}
             onCancel={handleCancel}
             width="70rem"
-            footer={[
+            footer={
                 <Button key="cancel" onClick={handleCancel}>
                     {t('change-attribute.cancel')}
-                </Button>,
-                <PrimaryBtn key="submit" onClick={changeAttribute}>
-                    {t('change-attribute.submit')}
-                </PrimaryBtn>
-            ]}
+                </Button>
+            }
         >
             <AttributesSelectionList
                 library={activeLibrary?.id ?? ''}
                 selectedAttributes={attrsSelected}
-                onSelectionChange={setAttrsSelected}
+                onSelectionChange={_onSelectionChange}
                 multiple={false}
                 data-testid="attribute-selection-list"
             />
