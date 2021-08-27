@@ -19,6 +19,8 @@ interface ITextFilterProps {
     updateFilterValue: (newFilterValue: IFilter['value']) => void;
 }
 
+const MAX_INPUT_ROWS = 5;
+
 const TextFilter = ({filter, updateFilterValue}: ITextFilterProps) => {
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newValue = (event.target.value ?? '').toString();
@@ -27,9 +29,17 @@ const TextFilter = ({filter, updateFilterValue}: ITextFilterProps) => {
     };
 
     const value = filter.value.value ? String(filter.value.value) : null;
+    const textRows = value ? value.split('\n').length : 1;
+    const inputRows = textRows <= MAX_INPUT_ROWS ? textRows : MAX_INPUT_ROWS;
 
     return (
-        <Text disabled={!filter.active} rows={1} value={value} onChange={handleChange} data-testid="filter-textarea" />
+        <Text
+            disabled={!filter.active}
+            rows={inputRows}
+            value={value}
+            onChange={handleChange}
+            data-testid="filter-textarea"
+        />
     );
 };
 

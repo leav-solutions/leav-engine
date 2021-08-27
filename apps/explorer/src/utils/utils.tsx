@@ -152,6 +152,14 @@ export const allowedTypeOperator = {
         AttributeConditionFilter.BEGIN_WITH,
         AttributeConditionFilter.END_WITH
     ],
+    [AttributeFormat.encrypted]: [
+        AttributeConditionFilter.CONTAINS,
+        AttributeConditionFilter.NOT_CONTAINS,
+        AttributeConditionFilter.EQUAL,
+        AttributeConditionFilter.NOT_EQUAL,
+        AttributeConditionFilter.BEGIN_WITH,
+        AttributeConditionFilter.END_WITH
+    ],
     [AttributeFormat.numeric]: [
         AttributeConditionFilter.EQUAL,
         AttributeConditionFilter.NOT_EQUAL,
