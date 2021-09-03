@@ -27,6 +27,8 @@ jest.mock('../../shared/ValueDetails', () => {
 });
 
 describe('Input', () => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
     jest.spyOn(useSaveValueMutation, 'default').mockImplementation(() => ({
         saveValue: onSubmit
     }));

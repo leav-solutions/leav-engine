@@ -8,7 +8,7 @@ import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import Dimmer from 'components/shared/Dimmer';
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -182,11 +182,16 @@ function StandardFieldValue({
     dispatch
 }: IStandardFieldValueProps): JSX.Element {
     const {t} = useTranslation();
+    const actionsWrapperRef = useRef<HTMLDivElement>();
 
     const attribute = state.formElement.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
 
     const isValuesListEnabled = !!attribute?.values_list?.enable;
     const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
+
+    useEffect(() => {
+        actionsWrapperRef?.current?.scrollIntoView({block: 'end'});
+    }, [fieldValue.isEditing]);
 
     const _handleSubmit = async (valueToSave: AnyPrimitive) => {
         if (valueToSave === '') {
@@ -290,9 +295,13 @@ function StandardFieldValue({
     const _getFilteredValuesList = (): IValueOfValuesList[] => {
         const values =
             isValuesListEnabled && attribute?.values_list?.values
-                ? attribute.values_list.values.filter(
-                      val => !fieldValue.editingValue || val.match(new RegExp(String(fieldValue.editingValue), 'i'))
-                  )
+                ? attribute.values_list.values.filter(val => {
+                      return (
+                          !fieldValue.editingValue ||
+                          attribute.format === AttributeFormat.date ||
+                          val.match(new RegExp(String(fieldValue.editingValue), 'i'))
+                      );
+                  })
                 : [];
 
         const hydratedValues = values.map(value => ({
@@ -356,9 +365,10 @@ function StandardFieldValue({
                                 )}
                             </InputWrapper>
                         </Popover>
-                        <ActionsWrapper>
+                        <ActionsWrapper ref={actionsWrapperRef}>
                             {fieldValue.isEditing && attribute.values_list.enable && (
                                 <ValuesList
+                                    attribute={attribute}
                                     valuesList={valuesList}
                                     onValueSelect={_handleSubmit}
                                     onValueCopy={_handleValueChange}

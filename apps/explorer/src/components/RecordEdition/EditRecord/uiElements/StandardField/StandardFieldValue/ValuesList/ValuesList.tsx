@@ -6,6 +6,9 @@ import {Button, Tooltip} from 'antd';
 import List from 'components/shared/List';
 import React, {SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
+import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
+import {AttributeFormat} from '_gqlTypes/globalTypes';
 
 export interface IValueOfValuesList {
     value: string;
@@ -14,13 +17,20 @@ export interface IValueOfValuesList {
 }
 
 interface IValuesListProps {
+    attribute: GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
     valuesList: IValueOfValuesList[];
     onValueSelect: (value: string) => void;
     onValueCopy: (value: string) => void;
 }
+const ListItem = styled.div`
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+`;
 
-function ValuesList({valuesList: values, onValueCopy, onValueSelect}: IValuesListProps): JSX.Element {
-    const {t} = useTranslation();
+function ValuesList({attribute, valuesList: values, onValueCopy, onValueSelect}: IValuesListProps): JSX.Element {
+    const {t, i18n} = useTranslation();
     const _handleClick = item => onValueSelect(item.value);
 
     const renderItem = (item: IValueOfValuesList) => {
@@ -30,10 +40,15 @@ function ValuesList({valuesList: values, onValueCopy, onValueSelect}: IValuesLis
             onValueCopy(item.value);
         };
 
+        const valueToDisplay =
+            attribute.format === AttributeFormat.date
+                ? new Intl.DateTimeFormat(i18n.language).format(new Date(Number(item.value) * 1000))
+                : item.value;
+
         return (
-            <>
+            <ListItem>
                 <span>
-                    {item.value}
+                    {valueToDisplay}
                     {item.isNewValue && ` (${t('record_edition.new_value')})`}
                 </span>
                 {item.canCopy && (
@@ -41,7 +56,7 @@ function ValuesList({valuesList: values, onValueCopy, onValueSelect}: IValuesLis
                         <Button icon={<CopyOutlined />} shape="circle" onClick={_handleCopy} />
                     </Tooltip>
                 )}
-            </>
+            </ListItem>
         );
     };
 

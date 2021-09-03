@@ -5,6 +5,8 @@ import {wait} from '@apollo/react-testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
+import {mockAttrSimple} from '__mocks__/attributes';
 import StandardValuesList from './StandardValuesList';
 
 describe('StandardValuesList', () => {
@@ -13,14 +15,35 @@ describe('StandardValuesList', () => {
         jest.clearAllMocks();
     });
 
+    const mockAttribute: GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute = {
+        ...mockAttrSimple,
+        values_list: {
+            enable: true,
+            allowFreeEntry: false,
+            values: ['valueA', 'valueB']
+        }
+    };
+
     test('Render existing list', async () => {
-        const comp = shallow(<StandardValuesList values={['value 1', 'value 2']} onValuesUpdate={onValuesUpdate} />);
+        const comp = shallow(
+            <StandardValuesList
+                attribute={mockAttribute}
+                values={['value 1', 'value 2']}
+                onValuesUpdate={onValuesUpdate}
+            />
+        );
 
         expect(comp.find('[data-test-id="values-list-value"]')).toHaveLength(2);
     });
 
     test('Add a value', async () => {
-        const comp = shallow(<StandardValuesList values={['value 1', 'value 2']} onValuesUpdate={onValuesUpdate} />);
+        const comp = shallow(
+            <StandardValuesList
+                attribute={mockAttribute}
+                values={['value 1', 'value 2']}
+                onValuesUpdate={onValuesUpdate}
+            />
+        );
 
         act(() => {
             comp.find('Button[data-test-id="values-list-add-btn"]').simulate('click');
@@ -30,7 +53,13 @@ describe('StandardValuesList', () => {
     });
 
     test('Delete a value', async () => {
-        const comp = mount(<StandardValuesList values={['value 1', 'value 2']} onValuesUpdate={onValuesUpdate} />);
+        const comp = mount(
+            <StandardValuesList
+                attribute={mockAttribute}
+                values={['value 1', 'value 2']}
+                onValuesUpdate={onValuesUpdate}
+            />
+        );
 
         await act(async () => {
             comp.find('[data-test-id="values-list-value"] Input')
@@ -45,7 +74,13 @@ describe('StandardValuesList', () => {
     });
 
     test('When editing a value, calls value update on blur', async () => {
-        const comp = mount(<StandardValuesList values={['value 1', 'value 2']} onValuesUpdate={onValuesUpdate} />);
+        const comp = mount(
+            <StandardValuesList
+                attribute={mockAttribute}
+                values={['value 1', 'value 2']}
+                onValuesUpdate={onValuesUpdate}
+            />
+        );
 
         const input = comp.find('[data-test-id="values-list-value"] Input').find('input').at(1);
 
@@ -62,7 +97,13 @@ describe('StandardValuesList', () => {
     });
 
     test('When editing a value, calls value update on "enter""', async () => {
-        const comp = mount(<StandardValuesList values={['value 1', 'value 2']} onValuesUpdate={onValuesUpdate} />);
+        const comp = mount(
+            <StandardValuesList
+                attribute={mockAttribute}
+                values={['value 1', 'value 2']}
+                onValuesUpdate={onValuesUpdate}
+            />
+        );
 
         const input = comp.find('[data-test-id="values-list-value"] Input').find('input').at(1);
 
