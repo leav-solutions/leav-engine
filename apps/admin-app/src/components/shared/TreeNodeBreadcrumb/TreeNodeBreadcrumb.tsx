@@ -28,6 +28,7 @@ function TreeNodeBreadcrumb({element, actions}: ITreeNodeBreadcrumbProps): JSX.E
             altPaths.push(path.map(p => p.record?.whoAmI));
         }
 
+        console.log('ANCESTORS', element.ancestors[0]);
         const defaultPath = element.ancestors[0].slice(0, -1);
 
         for (const el of defaultPath) {

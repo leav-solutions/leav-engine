@@ -150,9 +150,11 @@ export const getTreeNodeKey = (nodeData: TreeNode | null) => {
         return '';
     }
 
-    return nodeData.node.path?.length
+    const key = nodeData.node.path?.length
         ? [nodeData.node.path.join('/'), nodeData.node.library.id, nodeData.node.id].join('/')
         : [nodeData.node.library.id, nodeData.node.id].join('/');
+    console.log({nodeData, key});
+    return key;
 };
 
 export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: string]: boolean} => {
