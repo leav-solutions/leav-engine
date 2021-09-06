@@ -394,23 +394,6 @@ export default function ({
                 errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
             }
 
-            if (treeExists && elementExists && (await treeRepo.isElementPresent({treeId, element, ctx}))) {
-                const siblings = parentTo
-                    ? await treeRepo.getElementChildren({
-                          treeId,
-                          element: {library: element.library, id: parentTo.id},
-                          ctx
-                      })
-                    : await treeRepo.getTreeContent({
-                          treeId,
-                          ctx
-                      });
-
-                if (siblings.some(c => c.record?.id === element.id)) {
-                    errors.element = Errors.ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT;
-                }
-            }
-
             // If files tree, check if parent is not a file
             if (treeExists && treeProps.behavior === TreeBehavior.FILES) {
                 const validateParentDir = await validateFilesParent(parentTo, {valueDomain}, ctx);

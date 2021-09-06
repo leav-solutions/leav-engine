@@ -1,14 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloConsumer} from '@apollo/react-common';
-import {ApolloClient} from 'apollo-client';
+import {useApolloClient} from '@apollo/react-hooks';
 import {FetchResult} from 'apollo-link';
 import React, {useState} from 'react';
 import {
     addNodeUnderParent,
     changeNodeAtPath,
-    ExtendedNodeData,
     find,
     FullTree,
     getNodeAtPath,
@@ -18,6 +16,7 @@ import {
     TreeItem
 } from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
+import {Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
 import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
@@ -33,7 +32,7 @@ import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from '../../../_gqlTypes/TREE_CONTENT';
 import {ITreeItem} from '../../attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import RecordCard from '../../shared/RecordCard';
-import StructureView from '../EditTree/EditTreeTabs/StructureTab/StructureView';
+import StructureView from './StructureView';
 
 interface ITreeStructureProps {
     tree: GET_TREE_BY_ID_trees_list;
@@ -90,6 +89,8 @@ const TreeStructure = ({
     startAt,
     compact = false
 }: ITreeStructureProps) => {
+    const apolloClient = useApolloClient();
+
     const fakeRootData = [
         {
             record: {
@@ -114,6 +115,7 @@ const TreeStructure = ({
 
     const [treeData, setTreeData] = useState<TreeItem[]>(initTreeData);
     const [loaded, setLoaded] = useState<boolean>(false);
+    const [error, setError] = useState<string>();
 
     /**
      * Retrieve node children.
@@ -125,7 +127,6 @@ const TreeStructure = ({
      * @param expand    Should expand node?
      */
     const _loadChildren = async (
-        client: ApolloClient<any>,
         parent?: TreeElementInput | null,
         path?: Array<string | number>,
         expand: boolean = true
@@ -151,7 +152,7 @@ const TreeStructure = ({
         }
 
         // Retrieve data
-        const data = await client.query<TREE_CONTENT, TREE_CONTENTVariables>({
+        const data = await apolloClient.query<TREE_CONTENT, TREE_CONTENTVariables>({
             query: getTreeContentQuery,
             variables: {
                 treeId: tree.id,
@@ -185,6 +186,7 @@ const TreeStructure = ({
 
         setLoaded(true);
         setTreeData(newTreeData);
+        setError('');
     };
 
     /**
@@ -193,10 +195,7 @@ const TreeStructure = ({
      * @param client
      * @param moveData
      */
-    const _saveMove = async (
-        client: ApolloClient<any>,
-        moveData: NodeData & FullTree & OnMovePreviousAndNextLocation
-    ) => {
+    const _saveMove = async (moveData: NodeData & FullTree & OnMovePreviousAndNextLocation) => {
         const element: TreeElementInput = _nodeToTreeElement(moveData.node);
 
         // Parent node in tree
@@ -217,42 +216,48 @@ const TreeStructure = ({
             position = parentNodeAtPath ? moveData.treeIndex - parentNodeAtPath.treeIndex - 1 : moveData.treeIndex;
         }
 
-        // Save element move
-        await client.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
-            mutation: moveTreeElementQuery,
-            variables: {
-                treeId: tree.id,
-                element,
-                parentTo,
-                order: position
-            }
-        });
+        try {
+            // Save element move
+            await apolloClient.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
+                mutation: moveTreeElementQuery,
+                variables: {
+                    treeId: tree.id,
+                    element,
+                    parentTo,
+                    order: position
+                }
+            });
 
-        // Update positions for all siblings in destination
-        const siblings = parentNode !== null ? parentNode.children : treeData;
-        if (siblings?.length) {
-            await Promise.all(
-                (siblings as ITreeItem[]).map(
-                    (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> => {
-                        const siblingElement = _nodeToTreeElement(s);
-                        return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
-                            ? client.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
-                                  mutation: moveTreeElementQuery,
-                                  variables: {
-                                      treeId: tree.id,
-                                      element: siblingElement,
-                                      parentTo,
-                                      order: i
-                                  }
-                              })
-                            : Promise.resolve();
-                    }
-                )
-            );
+            // Update positions (field 'order') for all siblings in destination
+            const siblings = parentNode !== null ? parentNode.children : treeData;
+            if (siblings?.length) {
+                await Promise.all(
+                    (siblings as ITreeItem[]).map(
+                        (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> => {
+                            const siblingElement = _nodeToTreeElement(s);
+                            return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
+                                ? apolloClient.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
+                                      mutation: moveTreeElementQuery,
+                                      variables: {
+                                          treeId: tree.id,
+                                          element: siblingElement,
+                                          parentTo,
+                                          order: i
+                                      }
+                                  })
+                                : Promise.resolve();
+                        }
+                    )
+                );
+            }
+            setError('');
+        } catch (err) {
+            const message = err.graphQLErrors?.[0]?.extensions?.fields?.element ?? err.message;
+            setError(message);
         }
     };
 
-    const _deleteNode = async (client: ApolloClient<any>, node: ExtendedNodeData) => {
+    const _deleteNode = async (node: NodeData) => {
         const element: TreeElementInput = _nodeToTreeElement(node.node);
 
         const variables: DELETE_TREE_ELEMENTVariables = {
@@ -260,7 +265,7 @@ const TreeStructure = ({
             element
         };
 
-        await client.mutate<DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables>({
+        await apolloClient.mutate<DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables>({
             mutation: deleteTreeElementQuery,
             variables
         });
@@ -271,6 +276,7 @@ const TreeStructure = ({
             getNodeKey: getTreeNodeKey
         });
         setTreeData(updatedTree);
+        setError('');
     };
 
     const _mergeNode = (nodeData: TreeItem, path: Array<string | number>) => {
@@ -310,7 +316,7 @@ const TreeStructure = ({
      * @param record
      * @param parent
      */
-    const _handleAddElement = async (client: ApolloClient<any>, record: RecordIdentity_whoAmI, parent: TreeItem) => {
+    const _handleAddElement = async (record: RecordIdentity_whoAmI, parent: TreeItem) => {
         const parentToSave =
             parent.id !== fakeRootId
                 ? {
@@ -319,9 +325,8 @@ const TreeStructure = ({
                   }
                 : null;
 
-        // TODO properly handle errors
         try {
-            await client.mutate<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>({
+            await apolloClient.mutate<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>({
                 mutation: addTreeElementQuery,
                 variables: {
                     treeId: tree.id,
@@ -352,50 +357,51 @@ const TreeStructure = ({
                 expandParent: true
             });
             setTreeData(updatedTree.treeData);
-        } catch (e) {
-            console.error(e.message);
+            setError('');
+        } catch (err) {
+            const message = err.graphQLErrors?.[0]?.extensions?.fields?.element ?? err.message;
+            setError(message);
         }
     };
 
+    if (!loaded) {
+        const path = withFakeRoot ? ['root/root'] : undefined;
+        _loadChildren(startAt || null, path);
+    }
+
+    const onVisibilityToggle = ({expanded, node, path}) => {
+        if (node.expanded || node.loaded) {
+            return;
+        }
+
+        return _loadChildren({id: node.id, library: node.library.id}, path, expanded);
+    };
+
+    const onAddElement = (record: RecordIdentity_whoAmI, parent: TreeItem) => _handleAddElement(record, parent);
+
     return (
-        <ApolloConsumer>
-            {client => {
-                // Init tree with root children
-                if (!loaded) {
-                    const path = withFakeRoot ? ['root/root'] : undefined;
-                    _loadChildren(client, startAt || null, path);
-                }
-
-                const onVisibilityToggle = ({expanded, node, path}) => {
-                    if (node.expanded || node.loaded) {
-                        return;
-                    }
-
-                    return _loadChildren(client, {id: node.id, library: node.library.id}, path, expanded);
-                };
-
-                const onMoveNode = moveData => _saveMove(client, moveData);
-                const onDeleteNode = nodeData => _deleteNode(client, nodeData);
-                const onAddElement = (record: RecordIdentity_whoAmI, parent: TreeItem) =>
-                    _handleAddElement(client, record, parent);
-
-                return (
-                    <StructureView
-                        treeSettings={tree}
-                        treeData={treeData}
-                        readOnly={readOnly || false}
-                        onTreeChange={setTreeData}
-                        onVisibilityToggle={onVisibilityToggle}
-                        onMoveNode={onMoveNode}
-                        onDeleteNode={onDeleteNode}
-                        onClickNode={_handleClickNode}
-                        selection={selection}
-                        onAddElement={onAddElement}
-                        compact={compact}
-                    />
-                );
-            }}
-        </ApolloConsumer>
+        <>
+            {error && (
+                <Message negative>
+                    <Message.Header>
+                        <Icon name="ban" /> {error}
+                    </Message.Header>
+                </Message>
+            )}
+            <StructureView
+                treeSettings={tree}
+                treeData={treeData}
+                readOnly={readOnly || false}
+                onTreeChange={setTreeData}
+                onVisibilityToggle={onVisibilityToggle}
+                onMoveNode={_saveMove}
+                onDeleteNode={_deleteNode}
+                onClickNode={_handleClickNode}
+                selection={selection}
+                onAddElement={onAddElement}
+                compact={compact}
+            />
+        </>
     );
 };
 

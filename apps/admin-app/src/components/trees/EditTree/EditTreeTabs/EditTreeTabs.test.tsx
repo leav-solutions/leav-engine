@@ -16,9 +16,9 @@ jest.mock('./InfosTab', () => {
     };
 });
 
-jest.mock('./StructureTab', () => {
-    return function StructureTab() {
-        return <div>StructureTab</div>;
+jest.mock('components/trees/TreeStructure', () => {
+    return function TreeStructure() {
+        return <div>TreeStructure</div>;
     };
 });
 
