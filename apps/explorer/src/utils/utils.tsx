@@ -4,6 +4,7 @@
 import {gql} from 'graphql-tag';
 import {i18n} from 'i18next';
 import {isString, pick} from 'lodash';
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {attributeExtendedKey, infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
@@ -404,3 +405,5 @@ export const getQueryFilterField = (key: string): string => {
             return splitKey.pop();
     }
 };
+
+export const getTreeRecordKey = (record: RecordIdentity): string => `${record.whoAmI.library.id}/${record.id}`;

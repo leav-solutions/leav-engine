@@ -30,6 +30,7 @@ const Wrapper = styled.div<{maxHeight: string}>`
 const ListItem = styled(AntdList.Item)<{onClick: any}>`
     cursor: ${p => (p.onClick ? 'pointer' : 'auto')};
     && {
+        padding: 0;
         justify-content: flex-start;
     }
 `;

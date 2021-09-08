@@ -22,15 +22,21 @@ describe('ColumnFromPath', () => {
     const mockTreeElements: IRecordAndChildren[] = [
         {
             record: {
+                id: 'recordId',
                 whoAmI: {
                     id: 'recordId',
                     label: 'recordLabel',
+                    color: null,
                     preview: null,
                     library: {
                         id: 'recordLibraryId',
                         label: {
                             fr: 'recordLibraryLabel',
                             en: 'recordLibraryLabel'
+                        },
+                        gqlNames: {
+                            type: 'RecordLibraryId',
+                            query: 'RecordLibraryId'
                         }
                     }
                 }
@@ -38,15 +44,21 @@ describe('ColumnFromPath', () => {
             children: [
                 {
                     record: {
+                        id: 'childRecordId',
                         whoAmI: {
                             id: 'childRecordId',
                             label: 'childRecordLabel',
                             preview: null,
+                            color: null,
                             library: {
                                 id: 'childRecordLibraryId',
                                 label: {
                                     fr: 'childRecordLibraryLabel',
                                     en: 'childRecordLibraryLabel'
+                                },
+                                gqlNames: {
+                                    type: 'ShildRecordLibraryId',
+                                    query: 'childRecordLibraryId'
                                 }
                             }
                         }
@@ -54,15 +66,21 @@ describe('ColumnFromPath', () => {
                 },
                 {
                     record: {
+                        id: 'secondChildRecordId',
                         whoAmI: {
                             id: 'secondChildRecordId',
                             label: 'secondChildRecordLabel',
                             preview: null,
+                            color: null,
                             library: {
                                 id: 'secondChildRecordLibraryId',
                                 label: {
                                     fr: 'secondChildRecordLibraryLabel',
                                     en: 'secondChildRecordLibraryLabel'
+                                },
+                                gqlNames: {
+                                    type: 'SecondChildRecordLibraryId',
+                                    query: 'secondChildRecordLibraryId'
                                 }
                             }
                         }

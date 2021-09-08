@@ -552,13 +552,15 @@ describe('Input', () => {
         });
 
         test('If open values list, current value appears on the list', async () => {
-            render(
-                <StandardField
-                    element={mockFormElementWithValuesListOpen}
-                    recordValues={recordValuesNoValue}
-                    record={mockRecordWhoAmI}
-                />
-            );
+            await act(async () => {
+                render(
+                    <StandardField
+                        element={mockFormElementWithValuesListOpen}
+                        recordValues={recordValuesNoValue}
+                        record={mockRecordWhoAmI}
+                    />
+                );
+            });
 
             await act(async () => {
                 userEvent.click(screen.getByRole('textbox'));

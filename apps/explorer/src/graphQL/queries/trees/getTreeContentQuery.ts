@@ -2,23 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
-import {ISystemTranslation, IPreview} from '../../../_types/types';
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import recordIdentityFragment from '../records/recordIdentityFragment';
 
-export interface IRecordField {
-    whoAmI: {
-        id: string;
-        label: string | null;
-        color?: string;
-        preview: IPreview;
-        library: {
-            id: string;
-            label: ISystemTranslation;
-        };
-    };
-}
+export type TreeNodeAncestors = Array<{
+    record: RecordIdentity;
+}>;
 
 export interface IRecordAndChildren {
-    record: IRecordField;
+    record: RecordIdentity;
     children?: IRecordAndChildren[];
 }
 
@@ -36,25 +28,7 @@ export interface IGetTreeContentQueryVar {
 
 const recordField = `
     record {
-        id
-        whoAmI {
-            id
-            label
-            color
-            preview {
-                small
-                medium
-                big
-            }
-            library {
-                id
-                label
-                gqlNames {
-                    type
-                    query
-                }
-            }
-        }
+        ...RecordIdentity
     }
 `;
 
@@ -72,6 +46,7 @@ const recGetChildren = (depth: number) => {
 
 export const getTreeContentQuery = (depth: number) => {
     return gqlUnchecked`
+        ${recordIdentityFragment}
         query GET_TREE_CONTENT($treeId: ID!, $startAt: TreeElementInput) {
             treeContent(treeId: $treeId, startAt: $startAt) {
                 ${recGetChildren(depth)}

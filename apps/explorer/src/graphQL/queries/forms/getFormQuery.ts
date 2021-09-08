@@ -75,6 +75,11 @@ export const getFormQuery = gql`
                                         record {
                                             ...RecordIdentity
                                         }
+                                        ancestors {
+                                            record {
+                                                ...RecordIdentity
+                                            }
+                                        }
                                     }
                                 }
                             }

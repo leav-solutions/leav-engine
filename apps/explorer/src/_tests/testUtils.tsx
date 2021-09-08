@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import React, {PropsWithChildren, ReactElement} from 'react';
@@ -11,17 +12,19 @@ import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];
     storeState?: Partial<RootState>;
+    cacheSettings?: InMemoryCacheConfig;
     [key: string]: any;
 }
 
 interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];
     storeState?: Partial<RootState>;
+    cacheSettings?: InMemoryCacheConfig;
 }
 
-const Providers = ({children, apolloMocks, storeState}: PropsWithChildren<IProvidersProps>) => {
+const Providers = ({children, apolloMocks, storeState, cacheSettings}: PropsWithChildren<IProvidersProps>) => {
     return (
-        <MockedProviderWithFragments mocks={apolloMocks}>
+        <MockedProviderWithFragments mocks={apolloMocks} cacheSettings={cacheSettings}>
             <MockStore state={storeState}>{children ?? <></>}</MockStore>
         </MockedProviderWithFragments>
     );

@@ -12,7 +12,7 @@
 
 export interface GET_USER_DATA_userData {
     global: boolean;
-    data: {[key: string]: any};
+    data: any | null;
 }
 
 export interface GET_USER_DATA {

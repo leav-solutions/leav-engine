@@ -141,8 +141,44 @@ export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_t
     whoAmI: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI;
 }
 
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library_gqlNames {
+    query: string;
+    type: string;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library {
+    id: string;
+    label: any | null;
+    gqlNames: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library_gqlNames;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    big: string | null;
+    pages: string | null;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI {
+    id: string;
+    label: string | null;
+    color: string | null;
+    library: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library;
+    preview: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview | null;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record {
+    id: string;
+    whoAmI: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors {
+    record: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record;
+}
+
 export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values {
     record: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_record;
+    ancestors: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors[][] | null;
 }
 
 export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList {

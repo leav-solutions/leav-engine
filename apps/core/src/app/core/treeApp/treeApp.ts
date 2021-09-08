@@ -4,13 +4,13 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
-import {GraphQLScalarType, GraphQLResolveInfo} from 'graphql';
+import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {isNumber} from 'util';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {ITree, ITreeElement, TreeBehavior, ITreeNode, TreePaths} from '../../../_types/tree';
 import {IRecord} from '../../../_types/record';
+import {ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../../_types/tree';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {ISaveTreeMutationArgs, ITreeLibraryForGraphQL, ITreePermissionsConfForGraphQL, ITreesQueryArgs} from './_types';
@@ -215,6 +215,7 @@ export default function ({
                             {treeId, startAt}: {treeId: string; startAt: ITreeElement},
                             ctx: IQueryInfos
                         ): Promise<ITreeNode[]> {
+                            ctx.treeId = treeId;
                             const res = await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx});
 
                             // Add treeId as it might be useful for nested resolvers
@@ -322,7 +323,8 @@ export default function ({
                                 library: parent.record.library
                             };
 
-                            const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
+                            const treeId =
+                                parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
 
                             const children = await treeDomain.getElementChildren({treeId, element, ctx});
 
@@ -340,7 +342,8 @@ export default function ({
                                 library: parent.record.library
                             };
 
-                            const treeId = parent.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
+                            const treeId =
+                                parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
 
                             const ancestors = await treeDomain.getElementAncestors({treeId, element, ctx});
 

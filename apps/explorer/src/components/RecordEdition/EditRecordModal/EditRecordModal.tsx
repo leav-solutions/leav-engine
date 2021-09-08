@@ -18,26 +18,30 @@ interface IEditRecordModalProps {
 function EditRecordModal({open, record, onClose}: IEditRecordModalProps): JSX.Element {
     const {t} = useTranslation();
 
-    return (
-        <Modal
-            visible={open}
-            onCancel={onClose}
-            destroyOnClose
-            title={<RecordCard record={record} size={PreviewSize.small} />}
-            cancelText={t('global.close')}
-            closable
-            width="90vw"
-            centered
-            bodyStyle={{height: 'calc(100vh - 10rem)', overflowY: 'auto'}}
-            footer={[
-                <Button aria-label={t('global.close')} key="close" onClick={onClose}>
-                    {t('global.close')}
-                </Button>
-            ]}
-            wrapProps={{onClick: (e: MouseEvent) => e.stopPropagation()}}
-        >
-            <EditRecord record={record} />
-        </Modal>
+    return open ? (
+        <div onClick={e => e.stopPropagation()} onDoubleClick={e => e.stopPropagation()}>
+            <Modal
+                visible={open}
+                onCancel={onClose}
+                destroyOnClose
+                title={<RecordCard record={record} size={PreviewSize.small} />}
+                cancelText={t('global.close')}
+                closable
+                width="90vw"
+                centered
+                bodyStyle={{height: 'calc(100vh - 10rem)', overflowY: 'auto'}}
+                footer={[
+                    <Button aria-label={t('global.close')} key="close" onClick={onClose}>
+                        {t('global.close')}
+                    </Button>
+                ]}
+                wrapProps={{onClick: (e: MouseEvent) => e.stopPropagation()}}
+            >
+                <EditRecord record={record} />
+            </Modal>
+        </div>
+    ) : (
+        <></>
     );
 }
 

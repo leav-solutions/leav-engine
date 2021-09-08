@@ -42,11 +42,13 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
             ...values,
             {
                 record: {whoAmI: node.whoAmI},
-                ancestors: node.parents.map(p => ({
-                    record: {
-                        whoAmI: p.whoAmI
-                    }
-                }))
+                ancestors: [
+                    node.parents.map(p => ({
+                        record: {
+                            whoAmI: p.whoAmI
+                        }
+                    }))
+                ]
             }
         ];
         onValuesUpdate(newValuesList);
