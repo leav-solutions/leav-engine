@@ -54,6 +54,7 @@ export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_l
 
 export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library {
     id: string;
+    label: any | null;
     gqlNames: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library_gqlNames;
 }
 

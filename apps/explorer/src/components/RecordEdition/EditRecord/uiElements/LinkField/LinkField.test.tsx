@@ -281,6 +281,68 @@ describe('LinkField', () => {
             expect(screen.queryByTestId('values-add')).not.toBeInTheDocument();
         });
 
+        test('Can filter values list', async () => {
+            const mockFormElementLinkValuesList: FormElement<{}> = {
+                ...mockFormElementLink,
+                attribute: {
+                    ...mockFormElementLinkMultivalue.attribute,
+                    linkValuesList: {
+                        enable: true,
+                        allowFreeEntry: false,
+                        values: [
+                            {
+                                id: '123456',
+                                whoAmI: {
+                                    ...(mockRecordWhoAmI as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI),
+                                    label: 'valueA'
+                                }
+                            },
+                            {
+                                id: '123457',
+                                whoAmI: {
+                                    ...(mockRecordWhoAmI as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI),
+                                    label: 'valueB'
+                                }
+                            }
+                        ]
+                    }
+                }
+            };
+            await act(async () => {
+                render(
+                    <LinkField
+                        element={mockFormElementLinkValuesList}
+                        record={mockRecordWhoAmI}
+                        recordValues={recordValues}
+                    />
+                );
+            });
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+            const valuesListBlock = within(valuesAddBlock.getByTestId('values_list'));
+            const valuesList = within(valuesListBlock.getAllByRole('list')[0]);
+
+            expect(valuesList.getAllByRole('listitem')).toHaveLength(2);
+
+            const searchInput = valuesAddBlock.getByRole('textbox', {name: /search_elements/});
+            expect(searchInput).toBeInTheDocument();
+
+            await act(async () => {
+                userEvent.click(searchInput);
+            });
+
+            await act(async () => {
+                await userEvent.type(searchInput, 'B{enter}', {delay: 5});
+            });
+
+            expect(searchInput).toHaveValue('B');
+            expect(valuesList.queryByText('valueA')).not.toBeInTheDocument();
+            expect(valuesList.getByText('valueB')).toBeInTheDocument();
+        });
+
         test('Can open search modal', async () => {
             const mockOnAddValue = jest.fn().mockReturnValue({
                 status: APICallStatus.SUCCESS,
@@ -424,7 +486,7 @@ describe('LinkField', () => {
                         query: getRecordsFromLibraryQuery('test_lib'),
                         variables: {
                             fullText: 'a',
-                            limit: 5,
+                            limit: 10,
                             offset: 0,
                             sortOrder: SortOrder.asc
                         }
@@ -490,7 +552,9 @@ describe('LinkField', () => {
             });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
-            userEvent.click(addValueBtn);
+            await act(async () => {
+                userEvent.click(addValueBtn);
+            });
 
             const valuesAddBlock = within(screen.getByTestId('values-add'));
 
@@ -525,6 +589,15 @@ describe('LinkField', () => {
                             {id: '123453', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
                             {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
                             {id: '123455', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123452', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123453', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123455', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123452', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123453', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
+                            {id: '123455', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
                             {id: '123456', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI), label: 'last label'}}
                         ]
                     }
@@ -542,14 +615,18 @@ describe('LinkField', () => {
             });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
-            userEvent.click(addValueBtn);
+            await act(async () => {
+                userEvent.click(addValueBtn);
+            });
 
             const valuesAddBlock = within(screen.getByTestId('values-add'));
 
             expect(valuesAddBlock.getByText('first record')).toBeInTheDocument();
 
             const nextPageButton = screen.getByRole('button', {name: 'right'});
-            userEvent.click(nextPageButton);
+            await act(async () => {
+                userEvent.click(nextPageButton);
+            });
 
             expect(valuesAddBlock.getByText('last label')).toBeInTheDocument();
         });

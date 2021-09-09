@@ -7,7 +7,7 @@ import React from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 
-interface IListProps<D> extends Omit<ListProps<D>, 'renderItem'> {
+export interface IListProps<D> extends Omit<ListProps<D>, 'renderItem'> {
     maxHeight?: number | string;
     dataSource: D[];
     renderItemContent?: (item: D) => JSX.Element;

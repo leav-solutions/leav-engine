@@ -86,6 +86,7 @@ export const mockFormElementLink: FormElement<{}> = {
         ...mockAttributeLink,
         linked_library: {
             id: 'test_lib',
+            label: {fr: 'Lib'},
             gqlNames: {query: 'test_lib', type: 'TestLib'}
         },
         system: false,
