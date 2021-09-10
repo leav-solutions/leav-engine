@@ -14,7 +14,8 @@ describe('SystemTranslation', () => {
         }
     };
 
-    const scalar = systemTranslation({config: mockConfig as IConfig});
+    const scalar = systemTranslation({config: mockConfig as IConfig}).getScalarType();
+    const scalarOptional = systemTranslation({config: mockConfig as IConfig}).getScalarType(true);
 
     describe('serialize', () => {
         test('Return translations as a key/value object', async () => {
@@ -39,7 +40,11 @@ describe('SystemTranslation', () => {
         });
 
         test('Default language must be present', async () => {
-            expect(() => scalar.parseValue({en: 'English label'})).toThrow(); // FIXME: ??
+            expect(() => scalar.parseValue({en: 'English label'})).toThrow();
+        });
+
+        test('If optional, default language can be absent', async () => {
+            expect(scalarOptional.parseValue({en: 'English label'})).toEqual({en: 'English label'});
         });
     });
 
@@ -134,6 +139,26 @@ describe('SystemTranslation', () => {
                 ]
             };
             expect(() => scalar.parseLiteral(mockAst, null)).toThrow();
+        });
+
+        test('If optional, default language can be absent', async () => {
+            const mockAst = {
+                kind: Kind.OBJECT,
+                fields: [
+                    {
+                        kind: Kind.OBJECT_FIELD,
+                        name: {
+                            kind: Kind.NAME,
+                            value: 'en'
+                        },
+                        value: {
+                            kind: Kind.STRING,
+                            value: 'The description'
+                        }
+                    }
+                ]
+            };
+            expect(scalarOptional.parseLiteral(mockAst, null)).toEqual({en: 'The description'});
         });
     });
 });

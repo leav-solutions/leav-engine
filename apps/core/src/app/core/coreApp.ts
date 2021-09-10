@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ISystemTranslationGenerator} from 'app/graphql/customScalars/systemTranslation/systemTranslation';
 import {constants, promises as fs} from 'fs';
 import {GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
@@ -17,7 +18,7 @@ export interface ICoreApp extends IAppModule {
 
 interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
-    'core.app.graphql.customScalars.systemTranslation'?: GraphQLScalarType;
+    'core.app.graphql.customScalars.systemTranslation'?: ISystemTranslationGenerator;
     'core.app.graphql.customScalars.dateTime'?: GraphQLScalarType;
     'core.app.graphql.customScalars.any'?: GraphQLScalarType;
     config?: any;
@@ -49,7 +50,7 @@ const _parseLiteralAny = ast => {
 export default function (
     {
         'core.app.graphql': graphqlApp = null,
-        'core.app.graphql.customScalars.systemTranslation': SystemTranslation = null,
+        'core.app.graphql.customScalars.systemTranslation': systemTranslation = null,
         'core.app.graphql.customScalars.dateTime': DateTime = null,
         'core.app.graphql.customScalars.any': Any = null,
         config = null,
@@ -70,6 +71,7 @@ export default function (
                     }
 
                     scalar SystemTranslation
+                    scalar SystemTranslationOptional
 
                     input Pagination {
                         limit: Int!,
@@ -87,7 +89,8 @@ export default function (
                     JSON: GraphQLJSON,
                     JSONObject: GraphQLJSONObject,
                     Any,
-                    SystemTranslation,
+                    SystemTranslation: systemTranslation.getScalarType(),
+                    SystemTranslationOptional: systemTranslation.getScalarType(true),
                     DateTime
                 }
             };

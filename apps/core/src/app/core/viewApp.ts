@@ -53,7 +53,7 @@ export default function ({
                         created_at: Int!,
                         modified_at: Int!,
                         label: SystemTranslation!,
-                        description: SystemTranslation,
+                        description: SystemTranslationOptional,
                         color: String,
                         filters: [RecordFilter!],
                         sort: RecordSort,
@@ -66,7 +66,7 @@ export default function ({
                         type: ViewTypes!
                         shared: Boolean!,
                         label: SystemTranslation,
-                        description: SystemTranslation,
+                        description: SystemTranslationOptional,
                         color: String,
                         filters: [RecordFilterInput!],
                         sort: RecordSortInput,
