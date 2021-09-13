@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {List as AntdList, ListProps} from 'antd';
 import Checkbox, {CheckboxChangeEvent} from 'antd/lib/checkbox/Checkbox';
+import isEqual from 'lodash/isEqual';
 import React from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -70,7 +71,10 @@ function List({
                 <ListItem onClick={_handleClick}>
                     {selectable && (
                         <CheckboxWrapper onClick={e => e.stopPropagation()}>
-                            <Checkbox checked={selectedItems.indexOf(item) !== -1} onChange={_handleCheck} />
+                            <Checkbox
+                                checked={selectedItems.some(selectedItem => isEqual(item, selectedItem))}
+                                onChange={_handleCheck}
+                            />
                         </CheckboxWrapper>
                     )}
                     {renderItemContent ? renderItemContent(item) : item}
