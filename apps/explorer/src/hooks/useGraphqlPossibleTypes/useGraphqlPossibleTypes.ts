@@ -4,6 +4,7 @@
 import {PossibleTypesMap} from '@apollo/client';
 import {IntrospectionResultData} from 'apollo-cache-inmemory';
 import {useCallback, useEffect, useState} from 'react';
+import {UNAUTHORIZED} from 'components/app/ApolloHandler/ApolloHandler';
 
 export interface IUseGraphqlPossibleTypes {
     loading: boolean;
@@ -43,6 +44,10 @@ export default function (url: string, token: string): IUseGraphqlPossibleTypes {
                 `
                 })
             });
+
+            if (res.status === 401) {
+                throw new Error(UNAUTHORIZED);
+            }
 
             const resData: IntrospectionResultData = (await res.json()).data;
             const fetchedPossibleTypes: PossibleTypesMap = resData.__schema.types.reduce((allTypes, type) => {

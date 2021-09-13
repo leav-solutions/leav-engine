@@ -3,12 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useQuery} from '@apollo/client';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {getSysTranslationQueryLanguage} from '../../../utils';
 import {AvailableLanguage} from '../../../_types/types';
 import Router from '../../Router';
+import {ME} from '../../../_gqlTypes/ME';
+import {getMe} from '../../../graphQL/queries/userData/me';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
 
 function AppHandler(): JSX.Element {
     const {i18n} = useTranslation();
@@ -26,6 +30,7 @@ function AppHandler(): JSX.Element {
     const [langInfo, updateLang] = useLang();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const [user, updateUser] = useUser();
+    const {data: userData, loading: meLoading, error: meError} = useQuery<{me: ME}>(getMe);
 
     useEffect(() => {
         if (!langInfo.lang.length) {
@@ -49,17 +54,18 @@ function AppHandler(): JSX.Element {
     }, [updateActiveLibrary, activeLibrary]);
 
     useEffect(() => {
-        if (!user) {
-            // TODO: get real user ID and name
-            const userData = {
-                id: '1',
-                name: 'Admin',
-                permissions: {}
-            };
-
-            updateUser({userId: userData.id, userName: userData.name, userPermissions: userData.permissions});
+        if (!user && userData && !meLoading) {
+            updateUser({
+                userId: userData.me.id,
+                userName: userData.me.whoAmI.label || userData.me.login,
+                userPermissions: {}
+            }); // FIXME: permissions ??
         }
-    }, [updateUser, user]);
+    }, [updateUser, user, meLoading, userData]);
+
+    if (meError) {
+        return <ErrorDisplay message={meError.message} />;
+    }
 
     return <Router />;
 }

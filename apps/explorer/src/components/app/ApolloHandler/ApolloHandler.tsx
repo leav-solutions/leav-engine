@@ -1,7 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloClient, ApolloLink, ApolloProvider, defaultDataIdFromObject, InMemoryCache} from '@apollo/client';
+import {
+    ApolloClient,
+    ApolloLink,
+    ApolloProvider,
+    defaultDataIdFromObject,
+    InMemoryCache,
+    ServerError
+} from '@apollo/client';
 import {onError} from '@apollo/link-error';
 import {Spin} from 'antd';
 import {createUploadLink} from 'apollo-upload-client';
@@ -19,9 +26,12 @@ interface IApolloHandlerProps {
     children: ReactNode;
 }
 
-function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
+export const UNAUTHORIZED = 'Unauthorized';
+
+function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
+
     const {loading, error, possibleTypes} = useGraphqlPossibleTypes(process.env.REACT_APP_API_URL, token);
 
     if (loading) {
@@ -29,6 +39,11 @@ function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
     }
 
     if (error) {
+        if (error.includes(UNAUTHORIZED)) {
+            onTokenInvalid();
+            return <></>;
+        }
+
         return <ErrorDisplay message={error} />;
     }
 
@@ -70,6 +85,10 @@ function ApolloHandler({token, children}: IApolloHandlerProps): JSX.Element {
         }
 
         if (networkError) {
+            if ((networkError as ServerError).statusCode === 401) {
+                onTokenInvalid();
+            }
+
             const errorContent = t('error.network_error_occurred');
 
             const notification: INotification = {

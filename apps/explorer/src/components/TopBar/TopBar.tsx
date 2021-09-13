@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import themingVars from '../../themingVar';
 import HeaderNotification from '../HeaderNotification';
 import UserMenu from './UserMenu';
+
 interface ITopBarProps {
     sideBarVisible: boolean;
     userPanelVisible: boolean;
@@ -18,7 +19,7 @@ interface ITopBarProps {
 const Wrapper = styled.div`
     display: grid;
     grid-template-rows: 5rem;
-    grid-template-columns: 5rem 1fr repeat(2, 8rem) 10rem;
+    grid-template-columns: 5rem 1fr repeat(2, 8rem) 12rem;
     align-items: start;
     justify-items: start;
     justify-content: start;
