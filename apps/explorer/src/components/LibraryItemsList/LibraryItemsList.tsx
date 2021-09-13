@@ -1,17 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLazyQuery} from '@apollo/client';
+import {useLazyQuery, useQuery, useMutation} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {SelectionModeContext} from 'context';
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
 import React, {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
+import {useUser} from '../../hooks/UserHook/UserHook';
 import styled, {CSSObject} from 'styled-components';
 import {checkTypeIsLink, getAttributeFromKey, localizedTranslation} from 'utils';
+import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
+import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
+import _ from 'lodash';
 import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
@@ -25,6 +30,7 @@ import {
     IGetRecordsFromLibraryQueryVariables
 } from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {useLang} from '../../hooks/LangHook/LangHook';
+
 import {IAttribute, IField, IParentAttributeData, IView, SharedStateSelectionType} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import {getFiltersFromRequest} from './FiltersPanel/getFiltersFromRequest';
@@ -33,6 +39,13 @@ import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 import SideItems from './SideItems';
+import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {
+    getViewByIdQuery,
+    IGetViewQuery,
+    IGetViewSort,
+    IGetViewVariables
+} from '../../graphQL/queries/views/getViewById';
 
 interface IWrapperProps {
     showSide: boolean;
@@ -80,112 +93,152 @@ interface ILibraryItemsListProps {
 function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
+    const [user] = useUser();
 
     const {display, selection: selectionState} = useAppSelector(state => state); // keep selection
     const [searchState, searchDispatch] = useReducer(searchReducer, {...initialSearchState, library});
+    const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
+    const SELECTED_VIEW_KEY = 'selected_view_' + library.id;
 
-    // Current View
-    useEffect(() => {
-        // Attributes
-        const attributesFromQuery: IAttribute[] = library.attributes.reduce((acc: IAttribute[], attribute) => {
-            if (
-                (attribute.format === null ||
-                    (attribute.format && Object.values(AttributeFormat).includes(attribute.format))) &&
-                attribute.type &&
-                Object.values(AttributeType).includes(attribute.type)
-            ) {
-                const newAttributes: IAttribute[] = [
-                    {
-                        id: attribute.id,
-                        type: attribute.type,
-                        format: attribute.format,
-                        label: attribute.label,
-                        isLink: checkTypeIsLink(attribute.type),
-                        isMultiple: attribute.multiple_values,
-                        linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
-                            .linked_library,
-                        linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
-                            .linked_tree,
-                        library: library.id
+    useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
+        variables: {keys: [SELECTED_VIEW_KEY]},
+        onCompleted: d => {
+            const viewId = d.userData?.data[SELECTED_VIEW_KEY] || defaultView.id;
+
+            if (viewId === defaultView.id) {
+                const attributesFromQuery: IAttribute[] = library.attributes.reduce((acc: IAttribute[], attribute) => {
+                    if (
+                        (attribute.format === null ||
+                            (attribute.format && Object.values(AttributeFormat).includes(attribute.format))) &&
+                        attribute.type &&
+                        Object.values(AttributeType).includes(attribute.type)
+                    ) {
+                        const newAttributes: IAttribute[] = [
+                            {
+                                id: attribute.id,
+                                type: attribute.type,
+                                format: attribute.format,
+                                label: attribute.label,
+                                isLink: checkTypeIsLink(attribute.type),
+                                isMultiple: attribute.multiple_values,
+                                linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                                    .linked_library,
+                                linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
+                                    .linked_tree,
+                                library: library.id
+                            }
+                        ];
+
+                        // case attribute is a linked attribute
+                        if (
+                            (attribute.type === AttributeType.simple_link ||
+                                attribute.type === AttributeType.advanced_link) &&
+                            (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                                .linked_library
+                        ) {
+                            const linkedLibraryId = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                                .linked_library.id;
+                            const newLinkedAttributes: IAttribute[] = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute).linked_library.attributes.map(
+                                linkedAttribute => ({
+                                    id: linkedAttribute.id,
+                                    type: linkedAttribute.type,
+                                    format: linkedAttribute.format,
+                                    label: linkedAttribute.label,
+                                    isLink: checkTypeIsLink(linkedAttribute.type),
+                                    isMultiple: linkedAttribute.multiple_values,
+                                    linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                                        .linked_library,
+                                    linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
+                                        .linked_tree,
+                                    library: linkedLibraryId
+                                })
+                            );
+
+                            newAttributes.push(...newLinkedAttributes);
+                        }
+
+                        if (
+                            attribute.type === AttributeType.tree &&
+                            (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
+                                .linked_tree
+                        ) {
+                            const newLinkedAttributes: IAttribute[] = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute).linked_tree.libraries
+                                .map(linkedTreeLibrary => {
+                                    const linkedLibraryId = linkedTreeLibrary.library.id;
+                                    return linkedTreeLibrary.library.attributes.map(linkedAttribute => ({
+                                        id: linkedAttribute.id,
+                                        type: linkedAttribute.type,
+                                        format: linkedAttribute.format,
+                                        label: linkedAttribute.label,
+                                        isLink: checkTypeIsLink(linkedAttribute.type),
+                                        isMultiple: linkedAttribute.multiple_values,
+                                        library: linkedLibraryId
+                                    }));
+                                })
+                                .flat();
+
+                            newAttributes.push(...newLinkedAttributes);
+                        }
+
+                        return [...acc, ...newAttributes];
                     }
-                ];
 
-                // case attribute is a linked attribute
-                if (
-                    (attribute.type === AttributeType.simple_link || attribute.type === AttributeType.advanced_link) &&
-                    (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute).linked_library
-                ) {
-                    const linkedLibraryId = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
-                        .linked_library.id;
-                    const newLinkedAttributes: IAttribute[] = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute).linked_library.attributes.map(
-                        linkedAttribute => ({
-                            id: linkedAttribute.id,
-                            type: linkedAttribute.type,
-                            format: linkedAttribute.format,
-                            label: linkedAttribute.label,
-                            isLink: checkTypeIsLink(linkedAttribute.type),
-                            isMultiple: linkedAttribute.multiple_values,
-                            linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
-                                .linked_library,
-                            linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
-                                .linked_tree,
-                            library: linkedLibraryId
-                        })
-                    );
+                    return acc;
+                }, []);
 
-                    newAttributes.push(...newLinkedAttributes);
-                }
+                const newView: IView = library.defaultView
+                    ? {
+                          id: library.defaultView.id,
+                          owner: true,
+                          library: library.id,
+                          label: library.defaultView.label,
+                          description: library.defaultView.description,
+                          type: library.defaultView.type,
+                          color: library.defaultView.color,
+                          shared: library.defaultView.shared,
+                          filters: getFiltersFromRequest(
+                              library.defaultView.filters ?? [],
+                              library.id,
+                              attributesFromQuery
+                          ),
+                          sort: library.defaultView.sort,
+                          settings: library.defaultView.settings
+                      }
+                    : {...defaultView, label: defaultView.label};
 
-                if (
-                    attribute.type === AttributeType.tree &&
-                    (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute).linked_tree
-                ) {
-                    const newLinkedAttributes: IAttribute[] = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute).linked_tree.libraries
-                        .map(linkedTreeLibrary => {
-                            const linkedLibraryId = linkedTreeLibrary.library.id;
-                            return linkedTreeLibrary.library.attributes.map(linkedAttribute => ({
-                                id: linkedAttribute.id,
-                                type: linkedAttribute.type,
-                                format: linkedAttribute.format,
-                                label: linkedAttribute.label,
-                                isLink: checkTypeIsLink(linkedAttribute.type),
-                                isMultiple: linkedAttribute.multiple_values,
-                                library: linkedLibraryId
-                            }));
-                        })
-                        .flat();
-
-                    newAttributes.push(...newLinkedAttributes);
-                }
-
-                return [...acc, ...newAttributes];
+                searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: newView, reload: true}});
+                searchDispatch({type: SearchActionTypes.SET_ATTRIBUTES, attributes: attributesFromQuery});
+            } else {
+                getSelectedView({
+                    variables: {
+                        viewId
+                    }
+                });
             }
+        }
+    });
 
-            return acc;
-        }, []);
+    const [getSelectedView, {error: getSelectedViewError}] = useLazyQuery<IGetViewQuery, IGetViewVariables>(
+        getViewByIdQuery,
+        {
+            onCompleted: data => {
+                const v: IView = {
+                    ..._.omit(data.view, ['created_by', '__typename']),
+                    owner: data.view.created_by.id === user?.userId,
+                    filters: Array.isArray(data.view.filters)
+                        ? getFiltersFromRequest(data.view.filters, searchState.library.id, searchState.attributes)
+                        : [],
+                    sort: _.omit(data.view.sort, ['__typename']) as IGetViewSort,
+                    settings: data.view.settings?.map(s => _.omit(s, '__typename'))
+                };
 
-        const newView: IView = library.defaultView
-            ? {
-                  id: library.defaultView.id,
-                  owner: true,
-                  library: library.id,
-                  label: library.defaultView.label,
-                  description: library.defaultView.description,
-                  type: library.defaultView.type,
-                  color: library.defaultView.color,
-                  shared: library.defaultView.shared,
-                  filters: getFiltersFromRequest(library.defaultView.filters ?? [], library.id, attributesFromQuery),
-                  sort: library.defaultView.sort,
-                  settings: library.defaultView.settings
-              }
-            : {...defaultView, label: defaultView.label};
-
-        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: newView, reload: true}});
-        searchDispatch({type: SearchActionTypes.SET_ATTRIBUTES, attributes: attributesFromQuery});
-    }, [library.id, lang, library.attributes, library.defaultView, t, searchDispatch]);
+                searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: v, reload: true}});
+            }
+        }
+    );
 
     // Get data
-    const [getRecords, {error, refetch}] = useLazyQuery<
+    const [getRecords, {error: getRecordsError, refetch}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
     >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields), {
@@ -296,6 +349,14 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
             }
         });
 
+        updateSelectedViewMutation({
+            variables: {
+                key: SELECTED_VIEW_KEY,
+                value: searchState.view.current.id,
+                global: false
+            }
+        });
+
         searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
         searchDispatch({type: SearchActionTypes.SET_DISPLAY_TYPE, displayType: searchState.view.current.type});
         searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: searchState.view.current, reload: false}});
@@ -338,8 +399,8 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         getRecords
     ]);
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (getRecordsError || getSelectedViewError) {
+        return <ErrorDisplay message={(getRecordsError || getSelectedViewError).message} />;
     }
 
     // if some elements are selected and the selection type is search, show the selection Menu
