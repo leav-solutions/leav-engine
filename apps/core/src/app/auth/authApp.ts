@@ -98,6 +98,7 @@ export default function ({
                             attribute: 'password',
                             ctx
                         });
+
                         const isValidPwd = await bcrypt.compare(password, userPwd[0].value);
 
                         if (!isValidPwd) {
@@ -146,10 +147,12 @@ export default function ({
             if (!tokenPayload.userId) {
                 return false;
             }
+
             const ctx: IQueryInfos = {
                 userId: '0',
                 queryId: 'validateToken'
             };
+
             const users = await recordDomain.find({
                 params: {
                     library: 'users',
@@ -157,6 +160,7 @@ export default function ({
                 },
                 ctx
             });
+
             return !!users.list.length;
         }
     };

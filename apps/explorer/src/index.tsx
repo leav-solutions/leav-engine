@@ -4,7 +4,7 @@
 import React from 'react';
 import {ThemeSwitcherProvider} from 'react-css-theme-switcher';
 import ReactDOM from 'react-dom';
-import AuthHandler from './components/shared/AuthHandler';
+import AuthHandler from './components/app/AuthHandler';
 import './i18n';
 import './index.less';
 import * as serviceWorker from './serviceWorker';

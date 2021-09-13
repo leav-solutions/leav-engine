@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {Suspense, useState} from 'react';
-// import Loader from '../Loading';
-import App from '../../app/App';
-import Login from '../Login';
+import App from '../App';
+import Login from '../../shared/Login';
 
 interface IAuthHandlerProps {
     url: string;
@@ -29,6 +28,8 @@ function AuthHandler({url, storage = window.sessionStorage}: IAuthHandlerProps):
         if (message) {
             setInternalMessage(message);
         }
+
+        return <Login onSuccess={recordToken} message={internalMessage} url={url} />;
     };
 
     if (token) {

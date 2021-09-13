@@ -12,12 +12,13 @@ const Wrapper = styled.div`
         align-items: center;
         justify-content: space-between;
         cursor: pointer;
-        width: 5rem;
+        width: 8rem;
     }
 `;
 
 const CustomIcon = styled.div`
     & {
+        flex-shrink: 0;
         border-radius: 50%;
         background: hsl(130, 52%, 58%);
         color: #ffffff;
