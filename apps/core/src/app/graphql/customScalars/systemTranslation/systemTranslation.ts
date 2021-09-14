@@ -8,19 +8,26 @@ import {IKeyValue} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import parseLiteral from '../helpers/parseLiteral';
 
+export interface ISystemTranslationGenerator {
+    getScalarType: (optional?: boolean) => GraphQLScalarType;
+}
+
 interface IDeps {
     config: IConfig;
 }
 
-export default function ({config}: IDeps): GraphQLScalarType {
-    const _validateValue = (val: unknown) => {
+export default function ({config}: IDeps): ISystemTranslationGenerator {
+    const _validateValue = (val: unknown, optional: boolean) => {
         // We accept a key-value object, keys being an available language and value being a string.
         // The default language has to be present
         const validValueSchema = Joi.object().keys(
             config.lang.available.reduce((acc, lng) => {
                 return {
                     ...acc,
-                    [lng]: lng === config.lang.default ? Joi.string().required() : Joi.string().optional().allow('')
+                    [lng]:
+                        lng === config.lang.default && !optional
+                            ? Joi.string().required()
+                            : Joi.string().optional().allow('')
                 };
             }, {})
         );
@@ -32,23 +39,28 @@ export default function ({config}: IDeps): GraphQLScalarType {
         }
     };
 
-    const SystemTranslation = new GraphQLScalarType({
-        name: 'SystemTranslation',
-        description: 'System entities fields translation (label...)',
-        serialize: (val: ISystemTranslation): ISystemTranslation => val,
-        parseValue: (val: unknown): ISystemTranslation => {
-            _validateValue(val);
+    const getScalar = (optional: boolean = true) =>
+        new GraphQLScalarType({
+            name: 'SystemTranslation',
+            description: 'System entities fields translation (label...)',
+            serialize: (val: ISystemTranslation): ISystemTranslation => val,
+            parseValue: (val: unknown): ISystemTranslation => {
+                _validateValue(val, optional);
 
-            return val as ISystemTranslation;
-        },
-        parseLiteral: (valAst: ValueNode, valVariables?: IKeyValue<unknown>): ISystemTranslation => {
-            const objVal = parseLiteral('SystemTranslation', valAst, valVariables);
+                return val as ISystemTranslation;
+            },
+            parseLiteral: (valAst: ValueNode, valVariables?: IKeyValue<unknown>): ISystemTranslation => {
+                const objVal = parseLiteral('SystemTranslation', valAst, valVariables);
 
-            _validateValue(objVal);
+                _validateValue(objVal, optional);
 
-            return objVal as ISystemTranslation;
+                return objVal as ISystemTranslation;
+            }
+        });
+
+    return {
+        getScalarType(optional = false) {
+            return getScalar(optional);
         }
-    });
-
-    return SystemTranslation;
+    };
 }

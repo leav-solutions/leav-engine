@@ -27,7 +27,6 @@ interface IInfosTabProps {
 }
 
 function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps): JSX.Element {
-    // const {lang} = useLang();
     const [saveAttribute, {error}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: e => undefined,
@@ -74,7 +73,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                     en: dataToSave.label?.en ?? ''
                 },
                 description:
-                    dataToSave.description?.fr === '' && dataToSave.description?.en === ''
+                    !dataToSave.description?.fr && !dataToSave.description?.en
                         ? null
                         : {
                               fr: dataToSave.description?.fr ?? '',

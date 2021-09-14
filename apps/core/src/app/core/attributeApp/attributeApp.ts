@@ -9,11 +9,11 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
-import {AttributeCondition} from '../../../_types/record';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {AttributeCondition} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {getFormatFromALConf, getFormatFromAttribute} from './helpers/graphqlFormats';
@@ -107,7 +107,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        description(lang: [AvailableLanguage!]): SystemTranslation,
+                        description(lang: [AvailableLanguage!]): SystemTranslationOptional,
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
                         multiple_values: Boolean!,
@@ -124,7 +124,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        description(lang: [AvailableLanguage!]): SystemTranslation,
+                        description(lang: [AvailableLanguage!]): SystemTranslationOptional,
                         embedded_fields: [EmbeddedAttribute],
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
@@ -142,7 +142,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        description(lang: [AvailableLanguage!]): SystemTranslation,
+                        description(lang: [AvailableLanguage!]): SystemTranslationOptional,
                         linked_library: Library,
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
@@ -160,7 +160,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        description(lang: [AvailableLanguage!]): SystemTranslation,
+                        description(lang: [AvailableLanguage!]): SystemTranslationOptional,
                         linked_tree: Tree,
                         actions_list: ActionsListConfiguration,
                         permissions_conf: Treepermissions_conf,
@@ -177,7 +177,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         type: AttributeType
                         format: AttributeFormat
                         label: SystemTranslation,
-                        description: SystemTranslation,
+                        description: SystemTranslationOptional,
                         linked_library: String,
                         linked_tree: String,
                         embedded_fields: [EmbeddedAttributeInput],
@@ -193,7 +193,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         id: ID!,
                         format: AttributeFormat,
                         label: SystemTranslation,
-                        description: SystemTranslation,
+                        description: SystemTranslationOptional,
                         validation_regex: String,
                         embedded_fields: [EmbeddedAttribute]
                     }
@@ -202,7 +202,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         id: ID!
                         format: AttributeFormat
                         label: SystemTranslation,
-                        description: SystemTranslation,
+                        description: SystemTranslationOptional,
                         validation_regex: String,
                         embedded_fields: [EmbeddedAttributeInput]
                     }

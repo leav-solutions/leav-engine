@@ -99,17 +99,37 @@ function InfosForm({
     }
 
     const validationSchema: yup.ObjectSchema<
-        Partial<Override<AttributeInfosFormValues, {type: string; format?: string}>>
+        Partial<
+            Override<
+                AttributeInfosFormValues,
+                {type: string; format?: string; versions_conf: {versionable: boolean; mode: string; trees: string[]}}
+            >
+        >
     > = yup.object().shape({
         label: yup.object().shape({
             [defaultLang]: yup.string().required()
         }),
-        description: yup.object().shape({
-            [defaultLang]: yup.string()
-        }),
+        description: yup
+            .object()
+            .shape({
+                [defaultLang]: yup.string()
+            })
+            .nullable(),
         id: idValidator,
         type: yup.string().required(),
-        format: yup.string()
+        format: yup.string(),
+        multiple_values: yup.boolean(),
+        versions_conf: yup
+            .object()
+            .shape({
+                versionable: yup.boolean().nullable(),
+                mode: yup
+                    .string()
+                    .oneOf([...Object.values(ValueVersionMode), null])
+                    .nullable(),
+                trees: yup.array(yup.string()).nullable()
+            })
+            .nullable()
     });
 
     const _renderForm = ({
@@ -120,6 +140,7 @@ function InfosForm({
         values,
         touched
     }: FormikProps<AttributeInfosFormValues>) => {
+        console.log({values});
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
 
@@ -295,7 +316,7 @@ function InfosForm({
                 {allowVersionable && (
                     <Form.Group grouped>
                         <label>{t('attributes.values_versions')}</label>
-                        <FormFieldWrapper error={_getErrorByField('versions_conf')}>
+                        <FormFieldWrapper error={_getErrorByField('versions_conf.versionable')}>
                             <Form.Checkbox
                                 label={t('attributes.versionable')}
                                 disabled={values.system || readonly}
