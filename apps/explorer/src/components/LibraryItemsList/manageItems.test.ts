@@ -6,13 +6,16 @@
 
 import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {AttributeFormat, AttributeType, IField} from '_types/types';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {manageItems} from './manageItems';
 
 export {};
 
 describe('manageItems', () => {
     const mockItemBase: IGetRecordsFromLibraryQueryElement = {
+        id: '123456',
         whoAmI: {
+            ...mockRecordWhoAmI,
             id: '123456',
             label: 'record_label',
             library: {
@@ -47,7 +50,7 @@ describe('manageItems', () => {
         const res = manageItems({items: mockItems, fields: []});
         expect(res).toHaveLength(2);
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {}
         });
@@ -73,7 +76,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 myAttribute: 'myValue'
@@ -101,7 +104,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 myAttribute: ['myValue1', 'myValue2']
@@ -134,7 +137,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 myAttribute: 'myValue'
@@ -170,7 +173,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 'myTreeAttribute.test_lib.myAttribute': 'myValue'
@@ -203,7 +206,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 myAttribute: ['myValue1', 'myValue2']
@@ -241,7 +244,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 myAttribute: ['myValue1', 'myValue2']
@@ -273,7 +276,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 myLinkAttribute: {id: '1', whoAmI: {...mockItemBase.whoAmI}}
@@ -305,7 +308,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 myTreeAttribute: {id: '1', whoAmI: {...mockItemBase.whoAmI}}
@@ -333,7 +336,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 myAttribute: '{"foo":"bar"}'
@@ -362,7 +365,7 @@ describe('manageItems', () => {
         });
 
         expect(res[0]).toEqual({
-            ...mockItemBase,
+            whoAmI: {...mockItemBase.whoAmI},
             index: 1,
             fields: {
                 'myAttribute.foo': 'bar'

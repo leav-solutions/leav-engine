@@ -7,6 +7,7 @@ import {Cell as ReactTableTypeCell} from 'react-table';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {infosCol, selectionColumn} from '../../../../constants/constants';
 import themingVar from '../../../../themingVar';
 import {ITableRow, SharedStateSelectionType} from '../../../../_types/types';
@@ -105,7 +106,14 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
             onDoubleClick={_handleDoubleClick}
             className="body-cell"
         >
-            {editRecordModal && <EditRecordModal open={editRecordModal} record={record} onClose={_handleClose} />}
+            {editRecordModal && (
+                <EditRecordModal
+                    open={editRecordModal}
+                    library={record.library.id}
+                    record={record as RecordIdentity_whoAmI}
+                    onClose={_handleClose}
+                />
+            )}
             {cell.column.id === selectionColumn ? (
                 <CellSelection record={record} onClick={_handleCellSelected} selected={isRowSelected} />
             ) : (

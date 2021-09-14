@@ -42,7 +42,17 @@ describe('EditRecord', () => {
             }
         ];
 
-        render(<EditRecord record={mockRecordWhoAmI} />, {apolloMocks: mocks});
+        render(
+            <EditRecord
+                record={mockRecordWhoAmI}
+                library={mockRecordWhoAmI.library.id}
+                onValueDelete={jest.fn()}
+                onValueSubmit={jest.fn()}
+            />,
+            {
+                apolloMocks: mocks
+            }
+        );
 
         await act(async () => {
             expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);

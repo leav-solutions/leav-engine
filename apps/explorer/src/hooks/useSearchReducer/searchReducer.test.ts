@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import searchReducer, {initialSearchState, SearchActionTypes} from './searchReducer';
 import {RecordFilterCondition, SortOrder} from '_gqlTypes/globalTypes';
 import {AttributeType} from '_types/types';
 import {mockAttribute} from '__mocks__/common/attribute';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
+import searchReducer, {initialSearchState, SearchActionTypes} from './searchReducer';
 
 describe('searchReducer', () => {
     test('SET_RECORDS', async () => {
@@ -15,6 +16,7 @@ describe('searchReducer', () => {
                 records: [
                     {
                         whoAmI: {
+                            ...mockRecordWhoAmI,
                             id: '123456',
                             label: 'My record'
                         },

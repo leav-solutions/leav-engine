@@ -8,6 +8,7 @@ import {
     IGetRecordDependenciesValues,
     IGetRecordDependenciesValuesVariables
 } from 'graphQL/queries/forms/getRecordDependenciesValuesQuery';
+import {noopQuery} from 'graphQL/queries/noopQuery';
 import React from 'react';
 import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 import {IRecordIdentityWhoAmI} from '_types/types';
@@ -15,22 +16,28 @@ import EditRecordSkeleton from '../EditRecordSkeleton';
 import convertDependenciesRecordValues from '../helpers/convertDependenciesRecordValues';
 import extractFormElements from '../helpers/extractFormElements';
 import {FormElementsByContainerContext} from '../hooks/useFormElementsByContainerContext';
+import {DeleteValueFunc, SubmitValueFunc} from '../_types';
 import RootContainer from './RootContainer';
 
 interface IEditRecordFormProps {
     form: GET_FORM_forms_list;
-    record: IRecordIdentityWhoAmI;
+    record: IRecordIdentityWhoAmI | null;
+    library: string;
+    onValueSubmit: SubmitValueFunc;
+    onValueDelete: DeleteValueFunc;
 }
 
-function EditRecordForm({form, record}: IEditRecordFormProps): JSX.Element {
+function EditRecordForm({form, record, library, onValueSubmit, onValueDelete}: IEditRecordFormProps): JSX.Element {
     const depAttributes = form.dependencyAttributes.map(dependencyAttribute => dependencyAttribute.id);
-    const dependenciesValuesQuery = getRecordDependenciesValuesQuery(record.library.gqlNames.query, depAttributes);
+    const dependenciesValuesQuery = record
+        ? getRecordDependenciesValuesQuery(record?.library?.gqlNames?.query, depAttributes)
+        : noopQuery;
 
     const {loading, error, data} = useQuery<IGetRecordDependenciesValues, IGetRecordDependenciesValuesVariables>(
         dependenciesValuesQuery,
         {
-            skip: !form.dependencyAttributes.length,
-            variables: {id: record.id}
+            skip: !record || !form.dependencyAttributes.length,
+            variables: {id: record?.id}
         }
     );
 
@@ -49,7 +56,7 @@ function EditRecordForm({form, record}: IEditRecordFormProps): JSX.Element {
 
     return (
         <FormElementsByContainerContext.Provider value={elementsByContainer}>
-            <RootContainer record={record} />
+            <RootContainer record={record} onValueSubmit={onValueSubmit} onValueDelete={onValueDelete} />
         </FormElementsByContainerContext.Provider>
     );
 }

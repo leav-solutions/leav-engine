@@ -6,7 +6,7 @@ import React from 'react';
 import {useFormElementsByContainerContext} from '../../hooks/useFormElementsByContainerContext';
 import {IFormElementProps} from '../../_types';
 
-function Container({element, record, recordValues}: IFormElementProps<{}>): JSX.Element {
+function Container({element, record, recordValues, onValueSubmit, onValueDelete}: IFormElementProps<{}>): JSX.Element {
     const formElements = useFormElementsByContainerContext();
     const children = formElements[element.id] ?? [];
 
@@ -15,7 +15,15 @@ function Container({element, record, recordValues}: IFormElementProps<{}>): JSX.
             {children.map(el => (
                 <Row data-testid="container-child-element" key={el.id}>
                     <Col span={24}>
-                        {el.uiElement && <el.uiElement element={el} record={record} recordValues={recordValues} />}
+                        {el.uiElement && (
+                            <el.uiElement
+                                element={el}
+                                record={record}
+                                recordValues={recordValues}
+                                onValueSubmit={onValueSubmit}
+                                onValueDelete={onValueDelete}
+                            />
+                        )}
                     </Col>
                 </Row>
             ))}

@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useQuery} from '@apollo/client';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useQuery} from '@apollo/client';
+import {getMe} from '../../../graphQL/queries/userData/me';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {getSysTranslationQueryLanguage} from '../../../utils';
+import {ME} from '../../../_gqlTypes/ME';
 import {AvailableLanguage} from '../../../_types/types';
 import Router from '../../Router';
-import {ME} from '../../../_gqlTypes/ME';
-import {getMe} from '../../../graphQL/queries/userData/me';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
 
 function AppHandler(): JSX.Element {
     const {i18n} = useTranslation();
@@ -30,7 +30,7 @@ function AppHandler(): JSX.Element {
     const [langInfo, updateLang] = useLang();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const [user, updateUser] = useUser();
-    const {data: userData, loading: meLoading, error: meError} = useQuery<{me: ME}>(getMe);
+    const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
 
     useEffect(() => {
         if (!langInfo.lang.length) {

@@ -12,8 +12,8 @@ import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedTranslation} from 'utils';
 import themingVar from '../../../../themingVar';
 import {IItem, ISharedSelected, SharedStateSelectionType} from '../../../../_types/types';
-import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
+import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
 
 const ImageWrapper = styled.div`
     position: relative;
@@ -182,7 +182,8 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
             {editRecordModal && (
                 <EditRecordModal
                     open={editRecordModal}
-                    record={{id: item.whoAmI.id, label: item.whoAmI.label, library: item.whoAmI.library}}
+                    record={item.whoAmI}
+                    library={item.whoAmI.library.id}
                     onClose={_handleClose}
                 />
             )}

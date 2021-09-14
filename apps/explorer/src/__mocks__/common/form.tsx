@@ -14,6 +14,7 @@ import React from 'react';
 import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {mockAttributeLink, mockAttributeTree, mockFormAttribute} from './attribute';
+import {mockRecordWhoAmI} from './record';
 
 export const mockForm: GET_FORM_forms_list = {
     id: 'edition_form',
@@ -98,7 +99,7 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
     ...formElementBase,
     id: 'tree_element',
     containerId: '__root',
-    settings: {label: 'my label', attribute: 'test_attribute'},
+    settings: {label: 'my label', attribute: 'test'},
     uiElement: () => <div>{FormFieldTypes.TREE}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.TREE,
@@ -137,4 +138,11 @@ export const mockFormElementTabs: FormElement<IFormTabsSettings> = {
     },
     uiElement: () => <div>{FormUIElementTypes.TABS}</div>,
     uiElementType: FormUIElementTypes.TABS
+};
+
+export const mockCommonFormElementProps = {
+    record: mockRecordWhoAmI,
+    recordValues: {},
+    onValueDelete: jest.fn(),
+    onValueSubmit: jest.fn()
 };

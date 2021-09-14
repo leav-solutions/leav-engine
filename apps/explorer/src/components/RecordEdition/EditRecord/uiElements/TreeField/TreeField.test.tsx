@@ -6,13 +6,13 @@ import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQu
 import React from 'react';
 import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
 import {act, render, screen, waitForElement, within} from '_tests/testUtils';
+import {mockAttributeTree} from '__mocks__/common/attribute';
 import {mockFormElementTree} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
 import {mockModifier} from '__mocks__/common/value';
 import TreeField from '.';
-import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
-import {APICallStatus} from '../../_types';
+import {APICallStatus, DeleteValueFunc, ISubmitMultipleResult, SubmitValueFunc} from '../../_types';
 
 jest.mock('../../shared/ValueDetails', () => {
     return function ValueDetails() {
@@ -39,9 +39,11 @@ describe('TreeField', () => {
     const mockRecord = {
         id: '123456',
         whoAmI: {
+            ...mockRecordWhoAmI,
             id: '123456',
             label: 'Record label A',
             library: {
+                ...mockRecordWhoAmI.library,
                 id: 'linked_lib',
                 label: {en: 'Linked lib'}
             }
@@ -51,9 +53,11 @@ describe('TreeField', () => {
     const mockRecord2 = {
         id: '123458',
         whoAmI: {
+            ...mockRecordWhoAmI,
             id: '123458',
             label: 'Record label B',
             library: {
+                ...mockRecordWhoAmI.library,
                 id: 'linked_lib',
                 label: {en: 'Linked lib'}
             }
@@ -63,9 +67,11 @@ describe('TreeField', () => {
     const mockRecordAncestor = {
         id: '123457',
         whoAmI: {
+            ...mockRecordWhoAmI,
             id: '123457',
             label: 'Record label ancestor',
             library: {
+                ...mockRecordWhoAmI.library,
                 id: 'linked_lib',
                 label: {en: 'Linked lib'}
             }
@@ -75,9 +81,11 @@ describe('TreeField', () => {
     const mockRecordAncestor2 = {
         id: '223457',
         whoAmI: {
+            ...mockRecordWhoAmI,
             id: '223457',
             label: 'Record label other ancestor',
             library: {
+                ...mockRecordWhoAmI.library,
                 id: 'linked_lib',
                 label: {en: 'Linked lib'}
             }
@@ -123,12 +131,36 @@ describe('TreeField', () => {
         id_value: '987654'
     };
 
+    const mockSubmitRes: ISubmitMultipleResult = {
+        status: APICallStatus.SUCCESS,
+        values: [
+            {
+                ...valueA,
+                id_value: '987654',
+                version: null,
+                attribute: {...mockAttributeTree, system: false}
+            }
+        ]
+    };
+    const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
+    const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
+
     const recordValues = {
         test: [valueA, valueB]
     };
 
+    beforeEach(() => jest.clearAllMocks());
+
     test('Display tree values with ancestors', async () => {
-        render(<TreeField recordValues={recordValues} element={mockFormElementTree} record={mockRecordWhoAmI} />);
+        render(
+            <TreeField
+                recordValues={recordValues}
+                element={mockFormElementTree}
+                record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         expect(screen.getByText(mockFormElementTree.settings.label)).toBeInTheDocument();
         expect(screen.getByText(mockRecord.whoAmI.label)).toBeInTheDocument();
@@ -172,6 +204,8 @@ describe('TreeField', () => {
                 recordValues={recordValuesMultiAncestor}
                 element={mockFormElementTree}
                 record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
             />
         );
 
@@ -186,7 +220,15 @@ describe('TreeField', () => {
     });
 
     test('If no values, display "add values" button', async () => {
-        render(<TreeField recordValues={{test: []}} element={mockFormElementTree} record={mockRecordWhoAmI} />);
+        render(
+            <TreeField
+                recordValues={{test: []}}
+                element={mockFormElementTree}
+                record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         expect(screen.getByRole('button', {name: /add/})).toBeInTheDocument();
     });
@@ -201,6 +243,8 @@ describe('TreeField', () => {
                         attribute: {...mockFormElementTree.attribute, multiple_values: true}
                     }}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
         });
@@ -224,6 +268,8 @@ describe('TreeField', () => {
                     attribute: {...mockFormElementTree.attribute, multiple_values: false}
                 }}
                 record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
             />
         );
 
@@ -231,19 +277,43 @@ describe('TreeField', () => {
     });
 
     test('Can delete existing value', async () => {
-        render(<TreeField recordValues={recordValues} element={mockFormElementTree} record={mockRecordWhoAmI} />);
+        render(
+            <TreeField
+                recordValues={recordValues}
+                element={mockFormElementTree}
+                record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         expect(screen.getAllByRole('button', {name: /delete/, hidden: true})).toHaveLength(2);
     });
 
     test('Can edit linked node', async () => {
-        render(<TreeField recordValues={recordValues} element={mockFormElementTree} record={mockRecordWhoAmI} />);
+        render(
+            <TreeField
+                recordValues={recordValues}
+                element={mockFormElementTree}
+                record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         expect(screen.getAllByRole('button', {name: 'edit-record', hidden: true})).toHaveLength(2);
     });
 
     test('Can display value details', async () => {
-        render(<TreeField recordValues={recordValues} element={mockFormElementTree} record={mockRecordWhoAmI} />);
+        render(
+            <TreeField
+                recordValues={recordValues}
+                element={mockFormElementTree}
+                record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         const valueDetailsButtons = screen.getAllByRole('button', {name: /info/, hidden: true});
         expect(valueDetailsButtons).toHaveLength(2);
@@ -254,19 +324,6 @@ describe('TreeField', () => {
     });
 
     test('Can select value from values list', async () => {
-        const mockOnAddValue = jest.fn().mockReturnValue({
-            status: APICallStatus.SUCCESS,
-            value: {
-                id_value: null,
-                value: 'My value',
-                raw_value: 'My value'
-            }
-        });
-
-        jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
-            saveValues: mockOnAddValue
-        }));
-
         const mockRecordFromList = {
             ...mockTreeRecord,
             whoAmI: {...mockTreeRecord.whoAmI, label: 'Record from value'}
@@ -296,9 +353,11 @@ describe('TreeField', () => {
                     recordValues={recordValues}
                     element={{
                         ...mockFormElementTree,
-                        attribute: mockAttribute
+                        attribute: {...mockAttribute}
                     }}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
         });
@@ -317,6 +376,6 @@ describe('TreeField', () => {
         await act(async () => {
             userEvent.click(elementInList);
         });
-        expect(mockOnAddValue).toBeCalled();
+        expect(mockHandleSubmit).toBeCalled();
     });
 });

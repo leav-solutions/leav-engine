@@ -40,6 +40,7 @@ export interface ITreeValue extends IGenericValue {
     value?: {
         record: IRecord;
     };
+    treeId: string;
 }
 
 export type IValue = IStandardValue | ILinkValue | ITreeValue;

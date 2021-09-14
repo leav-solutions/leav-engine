@@ -47,7 +47,13 @@ describe('EditRecordForm', () => {
 
         render(
             <MockedProviderWithFragments mocks={mocks}>
-                <EditRecordForm form={mockForm} record={mockRecordWhoAmI} />
+                <EditRecordForm
+                    form={mockForm}
+                    record={mockRecordWhoAmI}
+                    library="test_lib"
+                    onValueDelete={jest.fn()}
+                    onValueSubmit={jest.fn()}
+                />
             </MockedProviderWithFragments>
         );
 
@@ -91,7 +97,13 @@ describe('EditRecordForm', () => {
 
         render(
             <MockedProviderWithFragments mocks={mocks}>
-                <EditRecordForm form={mockFormWithDeps} record={mockRecordWhoAmI} />
+                <EditRecordForm
+                    form={mockFormWithDeps}
+                    record={mockRecordWhoAmI}
+                    library="test_lib"
+                    onValueDelete={jest.fn()}
+                    onValueSubmit={jest.fn()}
+                />
             </MockedProviderWithFragments>
         );
 

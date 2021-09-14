@@ -3,13 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {mockFormElementDivider} from '__mocks__/common/form';
-import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockCommonFormElementProps, mockFormElementDivider} from '__mocks__/common/form';
 import FormDivider from './FormDivider';
 
 describe('FormDivider', () => {
     test('Render divider', async () => {
-        render(<FormDivider record={mockRecordWhoAmI} element={mockFormElementDivider} recordValues={{}} />);
+        render(<FormDivider {...mockCommonFormElementProps} element={mockFormElementDivider} />);
 
         expect(screen.getByRole('separator')).toBeInTheDocument();
     });
@@ -17,9 +16,8 @@ describe('FormDivider', () => {
     test('Render divider with title', async () => {
         render(
             <FormDivider
-                record={mockRecordWhoAmI}
+                {...mockCommonFormElementProps}
                 element={{...mockFormElementDivider, settings: {title: 'divider title'}}}
-                recordValues={{}}
             />
         );
 

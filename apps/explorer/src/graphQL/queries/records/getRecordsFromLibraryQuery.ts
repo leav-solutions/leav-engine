@@ -4,6 +4,7 @@
 import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
 import {AttributeType, IField, IFieldTypeTree} from '../../../_types/types';
+import recordIdentityFragment from './recordIdentityFragment';
 
 const handleType = (field: IField): string => {
     switch (field.type) {
@@ -13,49 +14,12 @@ const handleType = (field: IField): string => {
         case AttributeType.simple_link:
         case AttributeType.advanced_link:
             return `${field.id} {
-                id
-                whoAmI {
-                    id
-                    label
-                    color
-                    library {
-                        id
-                        label
-                        gqlNames {
-                            query
-                            type
-                        }
-                    }
-                    preview {
-                        small
-                        medium
-                        big
-                        pages
-                    }
-                }
+                ...RecordIdentity
             }`;
         case AttributeType.tree:
             return `${field.id} {
                 record {
-                    whoAmI {
-                        id
-                        label
-                        color
-                        library {
-                            id
-                            label
-                            gqlNames {
-                                query
-                                type
-                            }
-                        }
-                        preview {
-                            small
-                            medium
-                            big
-                            pages
-                        }
-                    }
+                    ...RecordIdentity
                 }
             }`;
     }
@@ -119,6 +83,7 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
     }
 
     return gqlUnchecked`
+        ${recordIdentityFragment}
         query ${'GET_RECORDS_FROM_' + libQueryName} (
             $limit: Int!
             $offset: Int
@@ -137,24 +102,7 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
                 list {
                     _id: id
                     ${getRecordsFields(fields)}
-                    whoAmI {
-                        id
-                        label
-                        color
-                        preview {
-                            small
-                            medium
-                            big
-                        }
-                        library {
-                            id
-                            label
-                            gqlNames {
-                                query
-                                type
-                            }
-                        }
-                    }
+                    ...RecordIdentity
                 }
             }
         }

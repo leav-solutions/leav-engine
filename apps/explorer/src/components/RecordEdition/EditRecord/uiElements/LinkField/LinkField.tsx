@@ -7,21 +7,19 @@ import {Button, Popover, Switch, Table} from 'antd';
 import ErrorMessage from 'components/shared/ErrorMessage';
 import {IRecordPropertyLink, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {localizedTranslation} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute} from '_gqlTypes/GET_FORM';
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {IRecordIdentityWhoAmI} from '_types/types';
-import useDeleteValueMutation from '../../hooks/useDeleteValueMutation';
-import useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
-import useSaveValueMutation from '../../hooks/useSaveValueMutation';
 import NoValue from '../../shared/NoValue';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import RecordIdentityCell from './RecordIdentityCell';
 import ValuesAdd from './ValuesAdd';
-import {IOnAddValues} from './ValuesAdd/ValuesAdd';
 
 const TableWrapper = styled.div`
     position: relative;
@@ -50,19 +48,30 @@ interface IRowData {
     [columnName: string]: unknown;
 }
 
-function LinkField({element, recordValues, record}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+function LinkField({
+    record,
+    element,
+    recordValues,
+    onValueSubmit,
+    onValueDelete
+}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
 
     const attribute = element.attribute as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute;
 
-    useSaveValueMutation(record, attribute.id);
-    const {saveValues} = useSaveValueBatchMutation(record, attribute.id);
-    const {deleteValue} = useDeleteValueMutation(record, attribute.id);
     const [errorMessage, setErrorMessage] = useState<string | string[]>();
     const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
+    const [fieldValues, setFieldValues] = useState<IRecordPropertyLink[]>(
+        (recordValues[element.settings.attribute] as IRecordPropertyLink[]) ?? []
+    );
 
-    const fieldValues = (recordValues[element.settings.attribute] as IRecordPropertyLink[]) ?? [];
+    useEffect(() => {
+        if (record) {
+            // Update values only for existing record. On creation, we handle everything here
+            setFieldValues((recordValues[element.settings.attribute] as IRecordPropertyLink[]) ?? []);
+        }
+    }, [recordValues, element.settings.attribute, record]);
 
     const _handleAddValue = () => {
         setIsValuesAddVisible(true);
@@ -71,23 +80,27 @@ function LinkField({element, recordValues, record}: IFormElementProps<ICommonFie
     const _handleCloseValuesAdd = () => setIsValuesAddVisible(false);
 
     const _handleDeleteValue = async (value: IRecordPropertyLink) => {
-        const deleteRes = await deleteValue(value.id_value);
+        const deleteRes = await onValueDelete(value.id_value, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
+            setFieldValues(fieldValues.filter(val => val.id_value !== value.id_value));
             return;
         }
     };
 
-    const _handleAddValueSubmit = async (values: IOnAddValues[]) => {
+    const _handleAddValueSubmit = async (values: RecordIdentity[]) => {
         const valuesToSave = values.map(value => ({
+            attribute,
             idValue: null,
-            value: value.id
+            value
         }));
 
-        const res = await saveValues(valuesToSave);
+        const res = await onValueSubmit(valuesToSave);
 
         if (res.status === APICallStatus.ERROR) {
             setErrorMessage(res.error);
+        } else if (res.values) {
+            setFieldValues([...fieldValues, ...(res.values as SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue[])]);
         }
 
         if (res?.errors?.length) {

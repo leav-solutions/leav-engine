@@ -24,14 +24,9 @@ interface IDeps {
     'core.depsManager'?: AwilixContainer;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
-    config?: any;
 }
 
-export default function ({
-    'core.depsManager': depsManager = null,
-    'core.utils': utils = null,
-    config = null
-}: IDeps = {}): IGraphqlApp {
+export default function({'core.depsManager': depsManager = null, 'core.utils': utils = null}: IDeps = {}): IGraphqlApp {
     let _fullSchema: GraphQLSchema;
     const _pluginsSchema: IAppGraphQLSchema[] = [];
 

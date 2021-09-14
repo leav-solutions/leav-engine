@@ -2,29 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SortOrder} from '_gqlTypes/globalTypes';
-import {IQueryFilter, ISystemTranslation} from '../../../_types/types';
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {IQueryFilter} from '../../../_types/types';
 
-export interface IGetRecordsFromLibraryQueryElement {
+export interface IGetRecordsFromLibraryQueryElement extends RecordIdentity {
     [x: string]: any;
-    whoAmI: {
-        id: string;
-        label: string;
-        color: string;
-        preview: {
-            small: string;
-            medium: string;
-            big: string;
-            pages: string;
-        };
-        library: {
-            id: string;
-            label: ISystemTranslation;
-            gqlNames: {
-                query: string;
-                type: string;
-            };
-        };
-    };
 }
 
 export interface IGetRecordsFromLibraryQuery {

@@ -5,6 +5,7 @@ import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {IItem} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import ItemTileDisplay from './ItemTileDisplay';
@@ -19,6 +20,7 @@ describe('ItemTileDisplay', () => {
     const itemMock: IItem = {
         fields: {},
         whoAmI: {
+            ...mockRecordWhoAmI,
             id: 'test'
         },
         index: 0
