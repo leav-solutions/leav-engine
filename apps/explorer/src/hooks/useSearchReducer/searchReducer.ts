@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {defaultSort, defaultView} from 'constants/constants';
+import {ViewTypes} from '_gqlTypes/globalTypes';
 import {IAttribute, IField, IFilter, IQueryFilter} from '_types/types';
 import {ISearchRecord, ISearchSort, ISearchState, IViewState} from './_types';
-import {ViewTypes} from '_gqlTypes/globalTypes';
 
 export enum SearchActionTypes {
     SET_RECORDS = 'SET_RECORDS',
@@ -69,9 +69,9 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         case SearchActionTypes.SET_TOTAL_COUNT:
             return {...state, totalCount: action.totalCount};
         case SearchActionTypes.SET_PAGINATION:
-            return {...state, pagination: action.page};
+            return {...state, pagination: action.page, loading: true};
         case SearchActionTypes.SET_OFFSET:
-            return {...state, offset: action.offset};
+            return {...state, offset: action.offset, loading: true};
         case SearchActionTypes.SET_LOADING:
             return {...state, loading: action.loading};
         case SearchActionTypes.SET_SORT:
