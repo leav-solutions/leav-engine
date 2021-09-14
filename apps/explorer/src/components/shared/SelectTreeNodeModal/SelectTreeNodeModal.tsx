@@ -1,15 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Modal, Tree} from 'antd';
-import {useQuery} from '@apollo/client';
+import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {getTreeContentQuery, IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import {ITree} from '../../../_types/types';
-import {localizedTranslation} from '../../../utils';
-import {useLang} from '../../../hooks/LangHook/LangHook';
+import SelectTreeNode from '../SelectTreeNode';
 
 interface ISelectTreeNodeModalProps {
     tree: Pick<ITree, 'id' | 'label'>;
@@ -21,31 +18,10 @@ interface ISelectTreeNodeModalProps {
 
 export interface ITreeNode {
     title: string;
+    id: string;
     key: string | null;
     children: ITreeNode[];
 }
-
-const _constructTreeContent = (data: IRecordAndChildren[]): ITreeNode[] => {
-    return data.map(e => ({
-        title: e.record.whoAmI.label || e.record.whoAmI.id,
-        key: e.record.whoAmI.library.id + '/' + e.record.whoAmI.id,
-        children: !!e.children ? _constructTreeContent(e.children) : []
-    }));
-};
-
-const _getTreeNodeByKey = (key: string, treeContent: ITreeNode[]): ITreeNode => {
-    for (const node of treeContent) {
-        if (key === node.key) {
-            return node;
-        }
-
-        const n = _getTreeNodeByKey(key, node.children);
-
-        if (!!n) {
-            return n;
-        }
-    }
-};
 
 export default function SelectTreeNodeModal({
     tree,
@@ -55,27 +31,11 @@ export default function SelectTreeNodeModal({
     onClose
 }: ISelectTreeNodeModalProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
-
-    const rootNode: ITreeNode = {
-        title: localizedTranslation(tree.label, lang) || tree.id,
-        key: tree.id,
+    const [selectedNode, setSelectedNode] = useState<ITreeNode>({
+        id: selectedNodeKey,
+        key: selectedNodeKey,
+        title: '',
         children: []
-    };
-    const [selectedNode, setSelectedNode] = useState<string>();
-    const [treeContent, setTreeContent] = useState<ITreeNode[]>([]);
-
-    // Retrieve tree content
-    useQuery(getTreeContentQuery(100), {
-        variables: {
-            treeId: tree.id
-        },
-        onCompleted: data => {
-            const formattedData = [{...rootNode, children: _constructTreeContent(data.treeContent)}];
-
-            setTreeContent(formattedData);
-            setSelectedNode(selectedNodeKey);
-        }
     });
 
     const handleCancel = () => {
@@ -83,18 +43,12 @@ export default function SelectTreeNodeModal({
     };
 
     const handleApply = () => {
-        if (typeof selectedNode === 'undefined') {
-            onSubmit(selectedNode);
-        } else {
-            const node = _getTreeNodeByKey(selectedNode, treeContent);
-            onSubmit(node);
-        }
-
+        onSubmit(selectedNode);
         onClose();
     };
 
-    const onSelect = (_, e: {selected: boolean; node: any}) => {
-        setSelectedNode(!e.selected ? undefined : e.node.key);
+    const onSelect = (node: ITreeNode, selected: boolean) => {
+        setSelectedNode(!selected ? undefined : node);
     };
 
     return (
@@ -114,16 +68,7 @@ export default function SelectTreeNodeModal({
             ]}
             destroyOnClose
         >
-            {treeContent.length && (
-                <Tree
-                    defaultExpandedKeys={[selectedNode]}
-                    multiple={false}
-                    selectable={true}
-                    selectedKeys={[selectedNode]}
-                    onSelect={onSelect}
-                    treeData={treeContent}
-                />
-            )}
+            <SelectTreeNode tree={tree} onSelect={onSelect} selectedNode={selectedNode.key} />
         </Modal>
     );
 }

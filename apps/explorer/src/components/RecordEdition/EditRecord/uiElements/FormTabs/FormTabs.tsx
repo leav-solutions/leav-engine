@@ -13,11 +13,13 @@ import {formComponents} from '..';
 import {FormElement, IFormElementProps} from '../../_types';
 
 const StyledTabs = styled(Tabs)`
-    padding: 1rem;
-    border: 1px solid ${themingVar['@leav-secondary-divider-color']};
-    margin: 1rem 0;
-    border-radius: 3px;
-    overflow: visible;
+    && {
+        padding: 1rem;
+        border: 1px solid ${themingVar['@leav-secondary-divider-color']};
+        margin: 1rem 0;
+        border-radius: 3px;
+        overflow: visible;
+    }
 `;
 
 function FormTabs({element, record, recordValues}: IFormElementProps<IFormTabsSettings>): JSX.Element {

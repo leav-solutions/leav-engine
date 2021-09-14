@@ -5,7 +5,11 @@ import {ApolloError, useMutation} from '@apollo/client';
 import {ErrorTypes} from '@leav/utils';
 import {saveValueBatchMutation} from 'graphQL/mutations/values/saveValueBatchMutation';
 import {useTranslation} from 'react-i18next';
-import {SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {
+    SAVE_VALUE_BATCH,
+    SAVE_VALUE_BATCHVariables,
+    SAVE_VALUE_BATCH_saveValueBatch_values
+} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import {APICallStatus, FieldSubmitMultipleFunc} from '../_types';
 import getPropertyCacheFieldName from './helpers/getPropertyCacheFieldName';
@@ -14,15 +18,28 @@ export interface ISaveValueHook {
     saveValues: FieldSubmitMultipleFunc;
 }
 
-export default function useSaveValueMutation(record: IRecordIdentityWhoAmI, attribute: string): ISaveValueHook {
+export default function useSaveValueBatchMutation(record: IRecordIdentityWhoAmI, attribute: string): ISaveValueHook {
     const [executeSaveValueBatch] = useMutation<SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables>(saveValueBatchMutation, {
         update: (cache, {data: {saveValueBatch}}) => {
             const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
             cache.modify({
                 id: cache.identify(recordWithTypename),
                 fields: {
-                    [getPropertyCacheFieldName(attribute)]: cacheValue => {
-                        return [...cacheValue, ...saveValueBatch.values];
+                    [getPropertyCacheFieldName(attribute)]: (cacheValue: SAVE_VALUE_BATCH_saveValueBatch_values[]) => {
+                        const newCacheValue = [...cacheValue];
+
+                        // Update or add each saved value to the cache
+                        for (const savedValue of saveValueBatch.values) {
+                            const cacheIndex = cacheValue.findIndex(val => val.id_value === savedValue.id_value);
+
+                            if (cacheIndex !== -1) {
+                                newCacheValue[cacheIndex] = savedValue;
+                            } else {
+                                newCacheValue.push(savedValue);
+                            }
+                        }
+
+                        return newCacheValue;
                     }
                 }
             });

@@ -49,7 +49,7 @@ export const mockAttributeLink: GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttrib
 export const mockAttributeTree: GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute = {
     ...mockQueryAttribute,
     type: AttributeType.tree,
-    linked_tree: {id: 'test_tree'}
+    linked_tree: {id: 'test_tree', label: {fr: 'test_tree'}}
 };
 
 export const mockSelectedAttributeA: ISelectedAttribute = {
@@ -95,5 +95,10 @@ export const mockFormAttribute: GET_FORM_forms_list_elements_elements_attribute 
         en: 'test'
     },
     system: false,
-    multiple_values: false
+    multiple_values: false,
+    values_list: {
+        enable: false,
+        allowFreeEntry: false,
+        values: []
+    }
 };

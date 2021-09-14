@@ -1,19 +1,25 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import EditRecordModal from 'components/records/EditRecordModal';
+import SelectRecordModal from 'components/records/SelectRecordModal';
+import Loading from 'components/shared/Loading';
+import useLang from 'hooks/useLang';
 import React, {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {ExtendedNodeData, NodeData, SortableTreeWithoutDndContext as SortableTree, TreeItem} from 'react-sortable-tree';
+import {
+    ExtendedNodeData,
+    NodeData,
+    OnDragPreviousAndNextLocation,
+    SortableTreeWithoutDndContext as SortableTree,
+    TreeItem
+} from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
-import useLang from '../../../../../../hooks/useLang';
-import {getTreeNodeKey, localizedLabel, stringToColor} from '../../../../../../utils/utils';
-import {GET_TREE_BY_ID_trees_list} from '../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {TreeElementInput} from '../../../../../../_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '../../../../../../_gqlTypes/RecordIdentity';
-import EditRecordModal from '../../../../../records/EditRecordModal';
-import SelectRecordModal from '../../../../../records/SelectRecordModal';
-import Loading from '../../../../../shared/Loading';
+import {getTreeNodeKey, localizedLabel, stringToColor} from 'utils';
+import {GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
+import {TreeElementInput} from '_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import './rstOverride.css';
 
 interface IStructureViewProps {
@@ -194,7 +200,10 @@ const StructureView = ({
         };
     };
 
-    const canDrop = d => d.nextParent !== null;
+    const canDrop = (d: OnDragPreviousAndNextLocation & NodeData) => {
+        return d.nextParent !== null;
+    };
+
     const orTxt = t('admin.or');
 
     const theme = compact

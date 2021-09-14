@@ -2,23 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MoreOutlined} from '@ant-design/icons';
-import {Dropdown, Menu, Button} from 'antd';
+import {Button, Dropdown, Menu} from 'antd';
 import {formatNotUsingCondition} from 'constants/constants';
-import React, {useState, useCallback} from 'react';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import React, {useCallback, useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import useSearchReducer from 'hooks/useSearchReducer';
-import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
 import {localizedTranslation} from '../../../../utils';
-import {AttributeFormat, IFilter, TreeConditionFilter, AttributeConditionFilter} from '../../../../_types/types';
+import {AttributeConditionFilter, AttributeFormat, IFilter, TreeConditionFilter} from '../../../../_types/types';
+import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
 import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
 import TextFilter from '../../DisplayTypeSelector/FilterInput/TextFilter';
 import ChangeAttribute from '../ChangeAttribute';
-import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import ChangeTree from '../ChangeTree';
 import FilterAttributeCondition from '../FilterAttributeCondition';
 import FilterTreeCondition from '../FilterTreeCondition';
@@ -38,7 +38,7 @@ const Wrapper = styled.div<IWrapperProps>`
 
     ${({active}) =>
         active
-            ? ` 
+            ? `
         :hover,
         :active {
             border: 2px solid ${themingVar['@primary-color']};
@@ -158,9 +158,9 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     };
 
     const _getValueFromNode = (node: ITreeNode): IFilter['value'] => {
-        return typeof node === 'undefined' || node.key === filter.tree.id
+        return typeof node === 'undefined' || node.id === filter.tree.id
             ? {value: null}
-            : {value: node.key, label: node.title};
+            : {value: node.id, label: node.title};
     };
 
     const handleShowChangeAttribute = () => {

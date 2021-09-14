@@ -6,10 +6,18 @@ import {DatePicker, Input} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import moment from 'moment';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import themingVar from 'themingVar';
+import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 
 function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardInputProps): JSX.Element {
-    const {editingValue, displayValue, isEditing} = fieldValue;
+    const {editingValue} = fieldValue;
+    const {i18n} = useTranslation();
+
+    const attribute = state.formElement.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
+    const isValuesListEnabled = !!attribute?.values_list?.enable;
+    const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
+
     const _handleDateChange = (selectedDate: moment.Moment) => {
         const dateToSave = selectedDate ? String(selectedDate.unix()) : null;
         onSubmit(dateToSave);
@@ -17,7 +25,10 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardIn
 
     const dateValue = editingValue ? moment(Number(editingValue) * 1000) : null;
 
-    return isEditing ? (
+    // If we have a values list, picker must be on top to keep list readable
+    const pickerPosition = isValuesListEnabled ? {points: ['bl', 'tl'], offset: [0, -1]} : null;
+
+    return !isValuesListEnabled || isValuesListOpen ? (
         <DatePicker
             className="field-wrapper"
             data-testid="datepicker"
@@ -32,13 +43,17 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardIn
             popupStyle={{background: themingVar['@default-bg']}}
             style={{background: themingVar['@default-bg']}}
             allowClear={false}
+            dropdownAlign={pickerPosition}
         />
     ) : (
         <Input
-            className={displayValue ? 'has-value' : ''}
-            value={String(displayValue)}
+            key="editing"
+            className={`field-wrapper ${editingValue ? 'has-value' : ''}`}
+            value={new Intl.DateTimeFormat(i18n.language).format(new Date(Number(editingValue) * 1000))}
             onFocus={onFocus}
-            disabled={state.isReadOnly}
+            disabled={true}
+            allowClear
+            autoFocus
         />
     );
 }

@@ -1,10 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {INavigationPath} from '_types/types';
-import {IRecordAndChildren, IRecordField} from '../../graphQL/queries/trees/getTreeContentQuery';
+import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
 
-export const mockTreeRecord: IRecordField = {
+export const mockTreeRecord: RecordIdentity = {
+    id: 'id',
     whoAmI: {
         id: 'id',
         color: 'color',
@@ -20,12 +22,17 @@ export const mockTreeRecord: IRecordField = {
             label: {
                 fr: 'library-label',
                 en: 'library-label'
+            },
+            gqlNames: {
+                type: 'library_id',
+                query: 'LibraryId'
             }
         }
     }
 };
 
-export const mockTreeRecordChild: IRecordField = {
+export const mockTreeRecordChild: RecordIdentity = {
+    id: 'child',
     whoAmI: {
         id: 'child',
         color: 'color',
@@ -41,6 +48,10 @@ export const mockTreeRecordChild: IRecordField = {
             label: {
                 fr: 'library-label',
                 en: 'library-label'
+            },
+            gqlNames: {
+                type: 'library_id',
+                query: 'LibraryId'
             }
         }
     }

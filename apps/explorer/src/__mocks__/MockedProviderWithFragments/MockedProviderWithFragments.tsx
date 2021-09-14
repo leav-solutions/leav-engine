@@ -1,18 +1,20 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {InMemoryCache} from '@apollo/client';
-import {MockedProvider} from '@apollo/client/testing';
+import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
+import {MockedProvider, MockedProviderProps} from '@apollo/client/testing';
 import React from 'react';
 
-// export const getMockCacheWithFragments = () => new InMemoryCache({fragmentMatcher: attributesFragmentMatcher});
-export const getMockCacheWithFragments = () => new InMemoryCache();
+export interface IMockedProviderWithFragmentsProps extends MockedProviderProps {
+    children?: JSX.Element;
+    cacheSettings?: InMemoryCacheConfig;
+}
 
-function MockedProviderWithFragments({children, ...props}: any) {
+function MockedProviderWithFragments({children, cacheSettings, ...props}: IMockedProviderWithFragmentsProps) {
     // Set a new cache for each test to avoid fetching data in cache and not in provided mocks
-    const mockCache = getMockCacheWithFragments();
+    const mockCache = new InMemoryCache(cacheSettings);
     return (
-        <MockedProvider cache={mockCache} {...props}>
+        <MockedProvider cache={mockCache} addTypename {...props}>
             {children}
         </MockedProvider>
     );

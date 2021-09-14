@@ -5,7 +5,7 @@ import {ApolloError, useMutation} from '@apollo/client';
 import {ErrorTypes} from '@leav/utils';
 import {saveValueMutation} from 'graphQL/mutations/values/saveValueMutation';
 import {useTranslation} from 'react-i18next';
-import {SAVE_VALUE, SAVE_VALUEVariables} from '_gqlTypes/SAVE_VALUE';
+import {SAVE_VALUE, SAVE_VALUEVariables, SAVE_VALUE_saveValue} from '_gqlTypes/SAVE_VALUE';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import {APICallStatus, FieldSubmitFunc} from '../_types';
 import getPropertyCacheFieldName from './helpers/getPropertyCacheFieldName';
@@ -21,8 +21,18 @@ export default function useSaveValueMutation(record: IRecordIdentityWhoAmI, attr
             cache.modify({
                 id: cache.identify(recordWithTypename),
                 fields: {
-                    [getPropertyCacheFieldName(attribute)]: cacheValue => {
-                        return [...cacheValue, saveValue];
+                    [getPropertyCacheFieldName(attribute)]: (cacheValue: SAVE_VALUE_saveValue[]) => {
+                        // Update or add saved value to the cache
+                        const newCacheValue = [...cacheValue];
+                        const cacheIndex = cacheValue.findIndex(val => val.id_value === saveValue.id_value);
+
+                        if (cacheIndex !== -1) {
+                            newCacheValue[cacheIndex] = saveValue;
+                        } else {
+                            newCacheValue.push(saveValue);
+                        }
+
+                        return newCacheValue;
                     }
                 }
             });

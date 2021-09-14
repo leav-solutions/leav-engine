@@ -82,7 +82,16 @@ export const mockFormElementLink: FormElement<{}> = {
     uiElement: () => <div>{FormFieldTypes.LINK}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.LINK,
-    attribute: {...mockAttributeLink, system: false}
+    attribute: {
+        ...mockAttributeLink,
+        linked_library: {
+            id: 'test_lib',
+            label: {fr: 'Lib'},
+            gqlNames: {query: 'test_lib', type: 'TestLib'}
+        },
+        system: false,
+        linkValuesList: {enable: false, allowFreeEntry: false, values: []}
+    }
 };
 
 export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
@@ -93,7 +102,7 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
     uiElement: () => <div>{FormFieldTypes.TREE}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.TREE,
-    attribute: {...mockAttributeTree, system: false}
+    attribute: {...mockAttributeTree, system: false, treeValuesList: {enable: false, allowFreeEntry: false, values: []}}
 };
 
 export const mockFormElementTextBlock: FormElement<{}> = {

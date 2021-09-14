@@ -34,7 +34,8 @@ describe('ValueDetails', () => {
         label: {
             fr: 'my attribute label'
         },
-        system: false
+        system: false,
+        values_list: {enable: false, allowFreeEntry: false, values: []}
     };
 
     test('Display infos about attribute and value', async () => {

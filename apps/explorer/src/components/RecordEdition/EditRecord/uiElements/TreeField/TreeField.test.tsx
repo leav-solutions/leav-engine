@@ -4,11 +4,15 @@
 import userEvent from '@testing-library/user-event';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
-import {render, screen} from '_tests/testUtils';
+import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
+import {act, render, screen, waitForElement, within} from '_tests/testUtils';
 import {mockFormElementTree} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockTreeRecord} from '__mocks__/common/treeElements';
 import {mockModifier} from '__mocks__/common/value';
 import TreeField from '.';
+import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
+import {APICallStatus} from '../../_types';
 
 jest.mock('../../shared/ValueDetails', () => {
     return function ValueDetails() {
@@ -16,13 +20,22 @@ jest.mock('../../shared/ValueDetails', () => {
     };
 });
 
-jest.mock('../../../../shared/SelectTreeNodeModal', () => {
-    return function SelectTreeNodeModal() {
-        return <div>SelectTreeNodeModal</div>;
+jest.mock('../../../../shared/SelectTreeNode', () => {
+    return function SelectTreeNode() {
+        return <div>SelectTreeNode</div>;
+    };
+});
+
+// To skip ellipsis in RecordCard, which is not very predictable during tests (sometimes only render "...")
+jest.mock('antd/lib/typography/Paragraph', () => {
+    return function Paragraph({children}) {
+        return <div>{children}</div>;
     };
 });
 
 describe('TreeField', () => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
     const mockRecord = {
         id: '123456',
         whoAmI: {
@@ -179,20 +192,27 @@ describe('TreeField', () => {
     });
 
     test('If multiple values, can add a new value', async () => {
-        render(
-            <TreeField
-                recordValues={recordValues}
-                element={{...mockFormElementTree, attribute: {...mockFormElementTree.attribute, multiple_values: true}}}
-                record={mockRecordWhoAmI}
-            />
-        );
+        await act(async () => {
+            render(
+                <TreeField
+                    recordValues={recordValues}
+                    element={{
+                        ...mockFormElementTree,
+                        attribute: {...mockFormElementTree.attribute, multiple_values: true}
+                    }}
+                    record={mockRecordWhoAmI}
+                />
+            );
+        });
 
         const addValueBtn = screen.getByRole('button', {name: /add/});
         expect(addValueBtn).toBeInTheDocument();
 
-        userEvent.click(addValueBtn);
+        await act(async () => {
+            userEvent.click(addValueBtn);
+        });
 
-        expect(screen.getByText('SelectTreeNodeModal')).toBeInTheDocument();
+        expect(screen.getByText('SelectTreeNode')).toBeInTheDocument();
     });
 
     test('If not multiple values, cannot add a new value', async () => {
@@ -231,5 +251,72 @@ describe('TreeField', () => {
         userEvent.click(valueDetailsButtons[0]);
 
         expect(screen.getByText('ValueDetails')).toBeInTheDocument();
+    });
+
+    test('Can select value from values list', async () => {
+        const mockOnAddValue = jest.fn().mockReturnValue({
+            status: APICallStatus.SUCCESS,
+            value: {
+                id_value: null,
+                value: 'My value',
+                raw_value: 'My value'
+            }
+        });
+
+        jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+            saveValues: mockOnAddValue
+        }));
+
+        const mockRecordFromList = {
+            ...mockTreeRecord,
+            whoAmI: {...mockTreeRecord.whoAmI, label: 'Record from value'}
+        };
+        const mockAttribute: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute = {
+            ...mockFormElementTree.attribute,
+            linked_tree: {
+                id: 'some_tree',
+                label: {fr: 'Mon arbre'}
+            },
+            treeValuesList: {
+                enable: true,
+                allowFreeEntry: true,
+                values: [
+                    {
+                        record: mockRecordFromList,
+                        ancestors: [[{record: mockRecordFromList}]]
+                    }
+                ]
+            },
+            multiple_values: true
+        };
+
+        await act(async () => {
+            render(
+                <TreeField
+                    recordValues={recordValues}
+                    element={{
+                        ...mockFormElementTree,
+                        attribute: mockAttribute
+                    }}
+                    record={mockRecordWhoAmI}
+                />
+            );
+        });
+
+        const addValueBtn = screen.getByRole('button', {name: /add/});
+
+        await act(async () => {
+            userEvent.click(addValueBtn);
+        });
+
+        const valuesAddBlock = within(screen.getByTestId('values-add'));
+
+        const elementInList = await waitForElement(() => valuesAddBlock.getByText(mockRecordFromList.whoAmI.label));
+        expect(elementInList).toBeInTheDocument();
+
+        await act(async () => {
+            userEvent.click(elementInList);
+        });
+        expect(mockOnAddValue).toBeCalled();
     });
 });

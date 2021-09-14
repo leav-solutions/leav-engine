@@ -10,8 +10,9 @@ import {
 } from 'apollo-cache-inmemory';
 import {ApolloClient} from 'apollo-client';
 import {ApolloLink} from 'apollo-link';
-import {onError} from 'apollo-link-error';
+import {ErrorResponse, onError} from 'apollo-link-error';
 import {HttpLink} from 'apollo-link-http';
+import {ServerError} from 'apollo-link-http-common';
 import React, {useCallback, useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
@@ -82,7 +83,7 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
     }, [onTokenInvalid, token]);
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = err => {
+    const _handleApolloError = (err: ErrorResponse) => {
         const {graphQLErrors, networkError} = err;
         if (graphQLErrors) {
             graphQLErrors.map(({message, locations, path}) =>
@@ -91,10 +92,12 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
         }
         if (networkError) {
             console.log(`[Network error]: ${networkError}`);
-            if (networkError.statusCode === 401) {
+            if ((networkError as ServerError).statusCode === 401) {
                 onTokenInvalid('login.error.session_expired');
             }
         }
+
+        return err;
     };
 
     useEffect(() => {
@@ -109,7 +112,8 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
-            onError(err => {
+            onError((err: ErrorResponse) => {
+                console.log({err});
                 _handleApolloError(err);
             }),
             new HttpLink({

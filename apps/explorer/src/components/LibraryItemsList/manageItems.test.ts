@@ -4,9 +4,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 
+import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {AttributeFormat, AttributeType, IField} from '_types/types';
 import {manageItems} from './manageItems';
-import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 
 export {};
 
@@ -17,7 +17,11 @@ describe('manageItems', () => {
             label: 'record_label',
             library: {
                 id: 'record_lib',
-                label: {fr: 'Test Lib'}
+                label: {fr: 'Test Lib'},
+                gqlNames: {
+                    query: 'record_lib',
+                    type: 'RecordLib'
+                }
             },
             preview: {
                 small: '/fake/url/small.jpg',

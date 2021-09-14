@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import TreeStructure from 'components/trees/TreeStructure';
 import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -10,7 +11,6 @@ import {localizedLabel} from '../../../../utils';
 import {GET_TREE_BY_ID_trees_list} from '../../../../_gqlTypes/GET_TREE_BY_ID';
 import TreeInfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
-import StructureTab from './StructureTab';
 
 export interface IEditTreeMatchParams {
     id: string;
@@ -47,7 +47,12 @@ function EditTreeTabs({tree, readonly, history, location}: IEditTreeTabsProps): 
             menuItem: t('trees.structure'),
             render: () => (
                 <Tab.Pane key="structure" className="grow">
-                    <StructureTab withFakeRoot fakeRootLabel={label} tree={tree as GET_TREE_BY_ID_trees_list} readonly={readonly} />
+                    <TreeStructure
+                        withFakeRoot
+                        fakeRootLabel={label}
+                        tree={tree as GET_TREE_BY_ID_trees_list}
+                        readOnly={readonly}
+                    />
                 </Tab.Pane>
             )
         },

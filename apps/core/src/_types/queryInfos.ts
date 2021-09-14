@@ -8,4 +8,5 @@ export interface IQueryInfos {
     lang?: string;
     queryId?: string;
     version?: IValueVersion;
+    treeId?: string;
 }

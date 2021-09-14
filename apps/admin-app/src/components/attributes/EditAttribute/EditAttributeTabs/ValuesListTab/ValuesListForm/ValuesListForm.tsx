@@ -123,7 +123,13 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
         switch (attrType) {
             case AttributeType.simple:
             case AttributeType.advanced:
-                return <StandardValuesList values={state.conf.values || []} onValuesUpdate={_handleValuesChange} />;
+                return (
+                    <StandardValuesList
+                        values={state.conf.values || []}
+                        onValuesUpdate={_handleValuesChange}
+                        attribute={attribute}
+                    />
+                );
             case AttributeType.simple_link:
             case AttributeType.advanced_link:
                 return (

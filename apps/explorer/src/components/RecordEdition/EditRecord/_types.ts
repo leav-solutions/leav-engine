@@ -77,5 +77,6 @@ export interface IStandardInputProps {
     onFocus: () => void;
     onChange: (value: string) => void;
     onSubmit: (valueToSave: AnyPrimitive) => void;
+    onPressEnter?: () => void;
     settings: ICommonFieldsSettings;
 }

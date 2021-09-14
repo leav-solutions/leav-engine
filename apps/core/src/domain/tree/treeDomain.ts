@@ -14,8 +14,8 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
-import {IRecord, AttributeCondition} from '../../_types/record';
-import {ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths, IGetCoreTreesParams} from '../../_types/tree';
+import {AttributeCondition, IRecord} from '../../_types/record';
+import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
@@ -327,17 +327,18 @@ export default function ({
                         errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
                     }
 
-                    const parentId = parent
-                        ? parent.id
-                        : `${'TREES_COLLECTION_NAME'}/${utils.getLibraryTreeId(element.library)}`;
+                    const siblings = parent
+                        ? await treeRepo.getElementChildren({
+                              treeId,
+                              element: {library: element.library, id: parent.id},
+                              ctx
+                          })
+                        : await treeRepo.getTreeContent({
+                              treeId,
+                              ctx
+                          });
 
-                    const childrens = await treeRepo.getElementChildren({
-                        treeId,
-                        element: {library: element.library, id: parentId},
-                        ctx
-                    });
-
-                    if (childrens.some(c => c.record?.id === element.id)) {
+                    if (siblings.some(c => c.record?.id === element.id)) {
                         errors.element = Errors.ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT;
                     }
                 }

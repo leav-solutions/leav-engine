@@ -338,6 +338,12 @@
         "no_value": "No value",
         "value_details": "Details",
         "by": "by",
+        "no_matching_value": "No matching value",
+        "copy_value": "Copy",
+        "new_value": "New value",
+        "advanced_search": "Advanced search",
+        "search_elements": "Search elements",
+        "values_list": "Values List",
         "attribute": {
             "id": "Id",
             "type": "Type",

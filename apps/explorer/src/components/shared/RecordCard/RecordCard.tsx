@@ -2,17 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Paragraph from 'antd/lib/typography/Paragraph';
+import RecordPreview from 'components/LibraryItemsList/LibraryItemsListTable/RecordPreview';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {getFileUrl, localizedTranslation} from '../../../utils/utils';
+import {getFileUrl, localizedTranslation} from 'utils';
 import {IPreview, IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
-import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
 
-interface IRecordCardProps {
+export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;
     size: PreviewSize;
     style?: CSSObject;
     lang?: string[];
+    withPreview?: boolean;
+    withLibrary?: boolean;
 }
 
 interface IWrapperProps {
@@ -55,27 +57,40 @@ const getPreviewBySize = (preview?: IPreview, size?: PreviewSize) => {
     return previewBySize ? getFileUrl(previewBySize) : '';
 };
 
-const RecordCard = ({record, size, style, lang}: IRecordCardProps): JSX.Element => {
+const RecordCard = ({
+    record,
+    size,
+    style,
+    lang,
+    withPreview = true,
+    withLibrary = true
+}: IRecordCardProps): JSX.Element => {
     const label = record.label || record.id;
 
     return (
-        <Wrapper recordColor={record.color ?? ''} style={style} className="ui fluid">
-            <PreviewWrapper className="ui">
-                <RecordPreview
-                    label={record.label || record.id}
-                    color={record.color}
-                    image={getPreviewBySize(record.preview, size)}
-                    size={size}
-                    style={style}
-                />
-            </PreviewWrapper>
-            <CardPart className="ui">
-                <RecordLabel>
+        <Wrapper recordColor={record.color ?? ''} style={style} className="record-card">
+            {withPreview && (
+                <PreviewWrapper className="preview">
+                    <RecordPreview
+                        label={record.label || record.id}
+                        color={record.color}
+                        image={getPreviewBySize(record.preview, size)}
+                        size={size}
+                        style={style}
+                    />
+                </PreviewWrapper>
+            )}
+            <CardPart>
+                <RecordLabel className="label">
                     <Paragraph ellipsis={{rows: 1, tooltip: label}} style={{marginBottom: 0}}>
                         {label}
                     </Paragraph>
                 </RecordLabel>
-                <LibLabel>{localizedTranslation(record.library?.label, lang ?? []) || record.library?.id}</LibLabel>
+                {withLibrary && (
+                    <LibLabel className="library-label">
+                        {localizedTranslation(record.library?.label, lang ?? []) || record.library?.id}
+                    </LibLabel>
+                )}
             </CardPart>
         </Wrapper>
     );

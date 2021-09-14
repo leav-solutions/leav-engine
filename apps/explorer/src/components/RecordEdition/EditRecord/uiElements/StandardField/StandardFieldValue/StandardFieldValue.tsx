@@ -1,15 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloseOutlined, DeleteOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
+import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive} from '@leav/utils';
-import {Button, Form, Popconfirm, Popover, Space, Tooltip} from 'antd';
+import {Button, Form, Input, Popover, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
+import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
-import React from 'react';
+import Dimmer from 'components/shared/Dimmer';
+import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
+import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 import {AttributeFormat} from '_types/types';
 import ValueDetails from '../../../shared/ValueDetails';
 import {
@@ -25,6 +28,8 @@ import DateInput from './Inputs/DateInput';
 import EncryptedInput from './Inputs/EncryptedInput';
 import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
+import ValuesList from './ValuesList';
+import {IValueOfValuesList} from './ValuesList/ValuesList';
 
 interface IStandardFieldValueProps {
     value: IStandardFieldValue;
@@ -39,16 +44,6 @@ const ErrorMessage = styled.div`
     font-weight: bold;
 `;
 
-const Dimmer = styled.div`
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.2);
-`;
-
 const FormWrapper = styled.div<{isEditing: boolean}>`
     position: relative;
     z-index: ${p => (p.isEditing ? 2 : 0)};
@@ -61,9 +56,10 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         background: ${themingVar['@default-bg']};
         transition: none;
         border-radius: 0;
+        line-height: 2em;
     }
 
-    ${FormWrapper}:not(:last-child) & input {
+    ${FormWrapper}:not(:last-child) & input:not(:hover) {
         border-bottom: none;
     }
 
@@ -77,10 +73,13 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         border-bottom-right-radius: 5px;
     }
 
+    &.editing input {
+        border-radius: 5px;
+    }
+
     &.editing .field-wrapper,
     &.editing .nested-input {
         width: 60%;
-        line-height: 2.5em;
         z-index: 0;
     }
 
@@ -91,7 +90,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
     &:not(.format-boolean) label {
         position: absolute;
         left: 5px;
-        top: 5px;
+        top: calc(50% - 0.9em);
         font-size: 1.1em;
         background: transparent;
         padding: 0 0.5em;
@@ -107,21 +106,49 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
 
     &.has-value:not(.format-boolean) label,
     &.editing:not(.format-boolean) label {
-        top: -10px;
+        top: 0px;
         font-size: 0.9em;
-        background: ${p => (p.isEditing ? 'transparent' : themingVar['@default-bg'])};
-        color: ${p => (p.isEditing ? 'rgba(0, 0, 0, 1)' : 'rgba(0,0,0,0.5)')};
+        background: transparent;
         text-shadow: 0px 0px 4px #fff;
-        z-index: 1;
+        z-index: 2;
+        border-radius: 5px;
+    }
+
+    &.has-value:not(.format-boolean) input:not(:first-child),
+    &.editing:not(.format-boolean) input:not(:only-child) {
+        padding-top: 1em;
+    }
+
+    &:not(.has-value):not(.editing):not(.format-boolean) input {
+        padding: 9px 0;
+    }
+
+    .delete-value-button {
+        position: absolute;
+        top: calc(50% - 12px);
+        right: 1em;
+    }
+
+    &:not(:hover) .delete-value-button {
+        display: none;
     }
 `;
 
-const ButtonsWrapper = styled(Space)`
+const ActionsWrapper = styled.div`
     position: absolute;
-    top: 45px;
-    right: 40%;
-    float: right;
+    display: flex;
+    width: 60%;
+    flex-direction: column;
+`;
+
+const ButtonsWrapper = styled.div`
+    display: flex;
     margin: 0.5em 0;
+    justify-content: flex-end;
+
+    & > button {
+        margin-left: 0.5em;
+    }
 `;
 
 const ValueDetailsWrapper = styled.div`
@@ -130,6 +157,12 @@ const ValueDetailsWrapper = styled.div`
     top: 0;
     width: 40%;
     padding-left: 1em;
+`;
+
+const FormItem = styled(Form.Item)`
+    && {
+        margin: 0;
+    }
 `;
 
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
@@ -149,14 +182,43 @@ function StandardFieldValue({
     dispatch
 }: IStandardFieldValueProps): JSX.Element {
     const {t} = useTranslation();
+    const actionsWrapperRef = useRef<HTMLDivElement>();
 
-    const {attribute} = state.formElement;
+    const attribute = state.formElement.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
+
+    const isValuesListEnabled = !!attribute?.values_list?.enable;
+    const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
+
+    useEffect(() => {
+        actionsWrapperRef?.current?.scrollIntoView({block: 'end'});
+    }, [fieldValue.isEditing]);
 
     const _handleSubmit = async (valueToSave: AnyPrimitive) => {
+        if (valueToSave === '') {
+            return _handleDelete();
+        }
+
         onSubmit(fieldValue.idValue, valueToSave);
     };
 
+    const _handlePressEnter = async () => {
+        if (!isValuesListEnabled) {
+            return _handleSubmit(fieldValue.editingValue);
+        }
+
+        const valuesList = _getFilteredValuesList();
+        if (!valuesList.length) {
+            return;
+        }
+
+        return _handleSubmit(valuesList[0].value);
+    };
+
     const _handleDelete = async () => {
+        if (fieldValue.idValue === newValueId) {
+            return _handleCancel();
+        }
+
         onDelete(fieldValue.idValue);
     };
 
@@ -194,6 +256,22 @@ function StandardFieldValue({
     };
 
     const _getInput = (): JSX.Element => {
+        if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
+            const displayedValue =
+                attribute.format === AttributeFormat.encrypted && fieldValue.displayValue
+                    ? '•••••••••'
+                    : String(fieldValue.displayValue);
+            return (
+                <Input
+                    key="display"
+                    className={fieldValue.displayValue ? 'has-value' : ''}
+                    value={displayedValue}
+                    onFocus={_handleFocus}
+                    disabled={state.isReadOnly}
+                />
+            );
+        }
+
         const InputComponent = inputComponentByFormat[attribute.format];
 
         // This should never happen, unless we have some bad settings in DB
@@ -208,9 +286,39 @@ function StandardFieldValue({
                 onChange={_handleValueChange}
                 onFocus={_handleFocus}
                 onSubmit={_handleSubmit}
+                onPressEnter={_handlePressEnter}
                 settings={state.formElement.settings}
             />
         );
+    };
+
+    const _getFilteredValuesList = (): IValueOfValuesList[] => {
+        const values =
+            isValuesListEnabled && attribute?.values_list?.values
+                ? attribute.values_list.values.filter(val => {
+                      return (
+                          !fieldValue.editingValue ||
+                          attribute.format === AttributeFormat.date ||
+                          val.match(new RegExp(String(fieldValue.editingValue), 'i'))
+                      );
+                  })
+                : [];
+
+        const hydratedValues = values.map(value => ({
+            value,
+            isNewValue: false,
+            canCopy: isValuesListOpen
+        }));
+
+        if (isValuesListOpen && String(fieldValue.editingValue)) {
+            hydratedValues.unshift({
+                value: String(fieldValue.editingValue),
+                isNewValue: true,
+                canCopy: false
+            });
+        }
+
+        return hydratedValues;
     };
 
     const errorContent = (
@@ -232,59 +340,59 @@ function StandardFieldValue({
         ${fieldValue.isEditing ? 'editing' : ''}
     `;
 
-    const canDeleteValue = fieldValue.idValue !== newValueId;
+    const canDeleteValue = fieldValue.idValue !== newValueId && attribute.format !== AttributeFormat.boolean;
+
+    const valuesList = _getFilteredValuesList();
 
     return (
         <>
             {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
             <FormWrapper isEditing={fieldValue.isEditing}>
                 <Form>
-                    <Form.Item style={{margin: 0}}>
-                        {
-                            <Popover placement="topLeft" visible={isErrorVisible} content={errorContent}>
-                                <InputWrapper isEditing={fieldValue.isEditing} className={wrapperClasses}>
-                                    {!fieldValue.index && (
-                                        <label onClick={_handleFocus}>{state.formElement.settings.label}</label>
-                                    )}
-                                    {_getInput()}
-                                </InputWrapper>
-                            </Popover>
-                        }
-                        {fieldValue.isEditing && (
-                            <ButtonsWrapper size="small">
-                                <Button size="small" onClick={_handleCancel} style={{background: '#FFF'}}>
-                                    {t('global.cancel')}
-                                </Button>
-                                <PrimaryBtn size="small" onClick={_handleClickSubmit}>
-                                    {t('global.submit')}
-                                </PrimaryBtn>
-                                {canDeleteValue && (
-                                    <Tooltip placement="bottom" title={t('global.delete')}>
-                                        <Popconfirm
-                                            placement="leftTop"
-                                            title={t('record_edition.delete_value_confirm')}
-                                            onConfirm={_handleDelete}
-                                            okText={t('global.submit')}
-                                            okButtonProps={{'aria-label': 'delete-confirm-btn'}}
-                                            cancelText={t('global.cancel')}
-                                        >
-                                            <Button
-                                                size="small"
-                                                icon={<DeleteOutlined />}
-                                                style={{background: '#FFF'}}
-                                                danger
-                                            />
-                                        </Popconfirm>
-                                    </Tooltip>
+                    <FormItem>
+                        <Popover placement="topLeft" visible={isErrorVisible} content={errorContent}>
+                            <InputWrapper
+                                isEditing={fieldValue.isEditing}
+                                className={wrapperClasses}
+                                data-testid="input-wrapper"
+                            >
+                                {!fieldValue.index && (
+                                    <label onClick={_handleFocus}>{state.formElement.settings.label}</label>
                                 )}
-                            </ButtonsWrapper>
-                        )}
+                                {_getInput()}
+                                {canDeleteValue && !fieldValue.isEditing && fieldValue.displayValue && (
+                                    <DeleteValueBtn onDelete={_handleDelete} />
+                                )}
+                            </InputWrapper>
+                        </Popover>
+                        <ActionsWrapper ref={actionsWrapperRef}>
+                            {fieldValue.isEditing && attribute.values_list.enable && (
+                                <ValuesList
+                                    attribute={attribute}
+                                    valuesList={valuesList}
+                                    onValueSelect={_handleSubmit}
+                                    onValueCopy={_handleValueChange}
+                                />
+                            )}
+                            {fieldValue.isEditing && (
+                                <ButtonsWrapper>
+                                    <Button size="small" onClick={_handleCancel} style={{background: '#FFF'}}>
+                                        {t('global.cancel')}
+                                    </Button>
+                                    {(!isValuesListEnabled || isValuesListOpen) && (
+                                        <PrimaryBtn size="small" onClick={_handleClickSubmit}>
+                                            {t('global.submit')}
+                                        </PrimaryBtn>
+                                    )}
+                                </ButtonsWrapper>
+                            )}
+                        </ActionsWrapper>
                         {fieldValue.isEditing && (
                             <ValueDetailsWrapper>
                                 <ValueDetails value={fieldValue.value} attribute={attribute} />
                             </ValueDetailsWrapper>
                         )}
-                    </Form.Item>
+                    </FormItem>
                 </Form>
             </FormWrapper>
         </>

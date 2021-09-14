@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {IAttribute, IOAllowedTypes, IGetCoreAttributesParams} from '../../_types/attribute';
+import {IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';

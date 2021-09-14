@@ -12,10 +12,7 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
         .reduce((acc, filter, index) => {
             let queryFilter: IQueryFilter[] = [];
 
-            // TODO: parse /n in text filter to separate entries between OR operators
             if (typeof filter.value.value === 'string' && filter.value.value.match(/\n/g)) {
-                console.log('filter.value.value', JSON.stringify(filter.value.value));
-
                 const values = filter.value.value.split('\n').filter(Boolean);
 
                 queryFilter.push({operator: RecordFilterOperator.OPEN_BRACKET});
