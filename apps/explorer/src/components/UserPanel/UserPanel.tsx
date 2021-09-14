@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Drawer, Menu} from 'antd';
+import useAuthToken from 'hooks/useAuthToken';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
@@ -14,6 +15,12 @@ interface IUserPanelProps {
 
 function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Element {
     const {t} = useTranslation();
+    const {deleteToken} = useAuthToken();
+
+    const _handleLogout = () => {
+        deleteToken();
+        window.location.replace('/');
+    };
 
     return (
         <Drawer
@@ -42,7 +49,7 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                     <NavLink to="/setting">{t('sidebar.setting')}</NavLink>
                 </Menu.Item>
 
-                <Menu.Item>
+                <Menu.Item onClick={_handleLogout}>
                     <LogoutOutlined />
                     {t('menu.user_menu.logout')}
                 </Menu.Item>
