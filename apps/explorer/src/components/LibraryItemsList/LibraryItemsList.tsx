@@ -98,7 +98,10 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
     const SELECTED_VIEW_KEY = 'selected_view_' + library.id;
 
+    console.log('Library items list');
+
     useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
+        fetchPolicy: 'no-cache',
         variables: {keys: [SELECTED_VIEW_KEY]},
         onCompleted: d => {
             const viewId = d.userData?.data[SELECTED_VIEW_KEY] || defaultView.id;
