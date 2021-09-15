@@ -15,10 +15,8 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useAppSelector} from 'redux/store';
 import {IconCross} from '../../../../../assets/icons/IconCross';
-import {isSelected, isAllSelected} from '../../BodyCell/getSelectedCell';
 import themingVar from '../../../../../themingVar';
-import {IRecordIdentityWhoAmI, PreviewSize} from '../../../../../_types/types';
-import {SelectionModeContext} from 'context';
+import {IRecordIdentityWhoAmI, PreviewSize, ISharedStateSelectionSearch} from '../../../../../_types/types';
 
 const Info = styled.div`
     border-left: 1px solid ${themingVar['@divider-color']};
@@ -33,7 +31,6 @@ interface ICellInfosProps {
 function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
     const {t} = useTranslation();
 
-    const selectionMode = useContext(SelectionModeContext);
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
         display: state.display
@@ -89,15 +86,16 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
         }
     ];
 
-    const selected = isSelected(selectionState, selectionMode, record.id, record.library.id);
-    const allSelected = isAllSelected(selectionState, selectionMode);
+    const selectMode =
+        selectionState.selection.selected.length ||
+        (selectionState.selection as ISharedStateSelectionSearch).allSelected;
 
     return (
         <>
             <Info>
                 <RecordCard record={record} size={previewSize} lang={lang} />
             </Info>
-            {selected || allSelected ? (
+            {selectMode ? (
                 <FloatingMenu actions={selectActions} size={menuBtnSize} />
             ) : (
                 <FloatingMenu actions={menuActions} moreActions={moreActions} size={menuBtnSize} />
