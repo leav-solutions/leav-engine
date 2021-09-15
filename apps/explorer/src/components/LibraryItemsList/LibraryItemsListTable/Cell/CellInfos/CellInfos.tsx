@@ -4,15 +4,21 @@
 import {HeartOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
+import SelectCellsBtn, {
+    SelectCellsBtnType
+} from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
-import React from 'react';
+import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {useAppSelector} from 'redux/store';
 import {IconCross} from '../../../../../assets/icons/IconCross';
+import {isSelected, isAllSelected} from '../../BodyCell/getSelectedCell';
 import themingVar from '../../../../../themingVar';
 import {IRecordIdentityWhoAmI, PreviewSize} from '../../../../../_types/types';
+import {SelectionModeContext} from 'context';
 
 const Info = styled.div`
     border-left: 1px solid ${themingVar['@divider-color']};
@@ -26,6 +32,12 @@ interface ICellInfosProps {
 
 function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
     const {t} = useTranslation();
+
+    const selectionMode = useContext(SelectionModeContext);
+    const {selectionState} = useAppSelector(state => ({
+        selectionState: state.selection,
+        display: state.display
+    }));
 
     const menuBtnSize: SizeType = 'middle';
     const moreActions = [
@@ -52,12 +64,44 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
         }
     ];
 
+    const selectActions: FloatingMenuAction[] = [
+        {
+            title: t('items-list-row.select-only'),
+            button: (
+                <SelectCellsBtn
+                    type={SelectCellsBtnType.ONLY}
+                    text={t('items-list-row.select-only')}
+                    record={record}
+                    size={menuBtnSize}
+                />
+            )
+        },
+        {
+            title: t('items-list-row.select-all'),
+            button: (
+                <SelectCellsBtn
+                    type={SelectCellsBtnType.ALL}
+                    text={t('items-list-row.select-all')}
+                    record={record}
+                    size={menuBtnSize}
+                />
+            )
+        }
+    ];
+
+    const selected = isSelected(selectionState, selectionMode, record.id, record.library.id);
+    const allSelected = isAllSelected(selectionState, selectionMode);
+
     return (
         <>
             <Info>
                 <RecordCard record={record} size={previewSize} lang={lang} />
             </Info>
-            <FloatingMenu actions={menuActions} moreActions={moreActions} size={menuBtnSize} />
+            {selected || allSelected ? (
+                <FloatingMenu actions={selectActions} size={menuBtnSize} />
+            ) : (
+                <FloatingMenu actions={menuActions} moreActions={moreActions} size={menuBtnSize} />
+            )}
         </>
     );
 }
