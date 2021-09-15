@@ -9,7 +9,6 @@ import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSea
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
 import React, {useEffect, useReducer} from 'react';
-import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
 import {useUser} from '../../hooks/UserHook/UserHook';
 import styled, {CSSObject} from 'styled-components';
@@ -91,7 +90,6 @@ interface ILibraryItemsListProps {
 }
 
 function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX.Element {
-    const {t} = useTranslation();
     const [{lang}] = useLang();
     const [user] = useUser();
 
@@ -361,6 +359,8 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         searchDispatch({type: SearchActionTypes.SET_DISPLAY_TYPE, displayType: searchState.view.current.type});
         searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: searchState.view.current, reload: false}});
     }, [
+        SELECTED_VIEW_KEY,
+        updateSelectedViewMutation,
         getRecords,
         searchState.view,
         searchState.attributes,

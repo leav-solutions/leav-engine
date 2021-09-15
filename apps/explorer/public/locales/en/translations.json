@@ -131,7 +131,9 @@
     "items-list-row": {
         "nb-elements": "{{nbItems}} results",
         "switch-to-selection-mode": "Switch to selection mode",
-        "edit": "Edit the record"
+        "edit": "Edit the record",
+        "select-only": "only",
+        "select-all": "all"
     },
     "items-menu-dropdown": {
         "nb-elements": "{{nb1}} to {{nb2}} / {{nbItems}} results",
