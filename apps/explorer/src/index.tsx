@@ -16,7 +16,7 @@ const themes = {
 
 ReactDOM.render(
     <ThemeSwitcherProvider themeMap={themes} defaultTheme="light">
-        <AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} storage={window.sessionStorage} />
+        <AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} />
     </ThemeSwitcherProvider>,
     document.getElementById('root')
 );
