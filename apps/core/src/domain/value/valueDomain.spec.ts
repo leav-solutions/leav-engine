@@ -1106,6 +1106,10 @@ describe('ValueDomain', () => {
                 })
             };
 
+            const mockUtils: Mockify<IUtils> = {
+                translateError: jest.fn().mockImplementation(err => err.msg ?? err)
+            };
+
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1114,7 +1118,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtils as IUtils
             });
 
             const res = await valDomain.saveValueBatch({

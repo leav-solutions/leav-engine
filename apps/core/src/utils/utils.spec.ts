@@ -1,6 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {i18n} from 'i18next';
+import {Errors} from '../_types/errors';
 import {
     mockAttrAdv,
     mockAttrAdvLink,
@@ -263,6 +265,31 @@ describe('Utils', () => {
             const utilsModule = utils();
 
             expect(utilsModule.decomposeValueEdgeDestination('my_lib/12345')).toEqual({library: 'my_lib', id: '12345'});
+        });
+    });
+
+    describe('translateError', () => {
+        const mockTranslator: Mockify<i18n> = {
+            t: jest.fn().mockImplementation((str, options) => `${str}_${JSON.stringify(options)}`)
+        };
+        test('Translate error by code', async () => {
+            const utilsModule = utils({translator: mockTranslator as i18n});
+
+            expect(utilsModule.translateError(Errors.FORMAT_ERROR, 'fr')).toMatch('errors.FORMAT_ERROR');
+        });
+
+        test('Translate error with vars', async () => {
+            const utilsModule = utils({translator: mockTranslator as i18n});
+
+            const toTranslate = {msg: 'my_error', vars: {foo: 'bar'}};
+            expect(utilsModule.translateError(toTranslate, 'fr')).toMatch('errors.my_error');
+            expect(utilsModule.translateError(toTranslate, 'fr')).toMatch('"foo":"bar"');
+        });
+
+        test('Translate simple string', async () => {
+            const utilsModule = utils({translator: mockTranslator as i18n});
+
+            expect(utilsModule.translateError('custom_error', 'fr')).toMatch('custom_error');
         });
     });
 });

@@ -23,7 +23,7 @@ export default function ({
     'core.infra.db.dbUtils': dbUtils = null,
     'core.utils': utils = null
 }: IDeps = {}): IAttributeTypeRepo {
-    const _buildTreeValue = (linkedRecord: IRecord, valueEdge: IValueEdge): ITreeValue => {
+    const _buildTreeValue = (treeId: string, linkedRecord: IRecord, valueEdge: IValueEdge): ITreeValue => {
         return {
             id_value: valueEdge._key,
             value: linkedRecord
@@ -37,7 +37,8 @@ export default function ({
             created_at: valueEdge.created_at,
             created_by: valueEdge.created_by,
             version: valueEdge.version ? dbUtils.convertValueVersionFromDb(valueEdge.version) : null,
-            metadata: valueEdge.metadata
+            metadata: valueEdge.metadata,
+            treeId
         };
     };
 
@@ -88,7 +89,7 @@ export default function ({
             });
             const savedEdge: IValueEdge = resEdge.length ? resEdge[0] : {};
 
-            return _buildTreeValue(utils.decomposeValueEdgeDestination(value.value), savedEdge);
+            return _buildTreeValue(attribute.linked_tree, utils.decomposeValueEdgeDestination(value.value), savedEdge);
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -121,7 +122,7 @@ export default function ({
             });
             const savedEdge = resEdge.length ? resEdge[0] : {};
 
-            return _buildTreeValue(utils.decomposeValueEdgeDestination(value.value), savedEdge);
+            return _buildTreeValue(attribute.linked_tree, utils.decomposeValueEdgeDestination(value.value), savedEdge);
         },
         async deleteValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -139,7 +140,11 @@ export default function ({
             });
             const deletedEdge = resEdge.length ? resEdge[0] : {};
 
-            return _buildTreeValue(utils.decomposeValueEdgeDestination(deletedEdge._to), deletedEdge);
+            return _buildTreeValue(
+                attribute.linked_tree,
+                utils.decomposeValueEdgeDestination(deletedEdge._to),
+                deletedEdge
+            );
         },
         async getValues({
             library,
@@ -176,7 +181,7 @@ export default function ({
             return treeElements.map(r => {
                 r.linkedRecord.library = r.linkedRecord._id.split('/')[0];
 
-                return _buildTreeValue(dbUtils.cleanup(r.linkedRecord), r.edge);
+                return _buildTreeValue(attribute.linked_tree, dbUtils.cleanup(r.linkedRecord), r.edge);
             });
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
@@ -198,7 +203,7 @@ export default function ({
                 return null;
             }
 
-            return _buildTreeValue(dbUtils.cleanup(res[0].linkedRecord), res[0].edge);
+            return _buildTreeValue(attribute.linked_tree, dbUtils.cleanup(res[0].linkedRecord), res[0].edge);
         },
         sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);

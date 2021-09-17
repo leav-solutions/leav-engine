@@ -8,7 +8,6 @@ import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {execute, GraphQLFormattedError} from 'graphql';
 import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
-import {i18n} from 'i18next';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
@@ -25,7 +24,6 @@ interface IDeps {
     'core.app.auth'?: IAuthApp;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
-    translator?: i18n;
 }
 
 export default function ({
@@ -33,8 +31,7 @@ export default function ({
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
     'core.utils.logger': logger = null,
-    'core.utils': utils = null,
-    translator = null
+    'core.utils': utils = null
 }: IDeps = {}): IServer {
     const _handleError = (err: GraphQLFormattedError, {context}: any) => {
         const newError = {...err};
@@ -50,11 +47,8 @@ export default function ({
                 typeof errorDetails === 'string' ? {msg: errorDetails, vars: {}} : (errorDetails as IExtendedErrorMsg);
 
             const lang = context.lang ?? config.lang.default;
-            errorFields[field] = translator.t(('errors.' + toTranslate.msg) as string, {
-                ...toTranslate.vars,
-                lng: lang,
-                interpolation: {escapeValue: false}
-            });
+
+            errorFields[field] = utils.translateError(toTranslate, lang);
         }
 
         newError.extensions.code = errorType;
