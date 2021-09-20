@@ -17,14 +17,24 @@ jest.mock(
 describe('CellInfos', () => {
     test('should contain floating menu', async () => {
         await act(async () => {
-            render(<CellInfos record={{} as any} previewSize={PreviewSize.small} />);
+            render(
+                <CellInfos
+                    record={{id: 'recordId', library: {id: 'libraryId'}} as any}
+                    previewSize={PreviewSize.small}
+                />
+            );
         });
 
         expect(screen.getByTestId('floating-menu')).toBeInTheDocument();
     });
     test('should call RecordCard', async () => {
         await act(async () => {
-            render(<CellInfos record={{} as any} previewSize={PreviewSize.small} />);
+            render(
+                <CellInfos
+                    record={{id: 'recordId', library: {id: 'libraryId'}} as any}
+                    previewSize={PreviewSize.small}
+                />
+            );
         });
 
         expect(screen.getByText('RecordCard')).toBeInTheDocument();

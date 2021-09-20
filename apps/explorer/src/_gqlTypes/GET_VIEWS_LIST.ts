@@ -69,7 +69,7 @@ export interface GET_VIEWS_LIST_views {
 }
 
 export interface GET_VIEWS_LIST {
-    views: GET_VIEWS_LIST_views | null;
+    views: GET_VIEWS_LIST_views;
 }
 
 export interface GET_VIEWS_LISTVariables {

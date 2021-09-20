@@ -37,8 +37,8 @@ export interface ME_me_whoAmI {
 }
 
 export interface ME_me {
-    id: string;
     login: string | null;
+    id: string;
     whoAmI: ME_me_whoAmI;
 }
 
