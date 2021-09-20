@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '@testing-library/react';
 import React from 'react';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {IItem} from '../../../../../_types/types';
 import FormPreviewsModal from './FormPreviewsModal';
 
@@ -25,8 +26,9 @@ beforeEach(() => {
 describe('FormPreviewModal', () => {
     const mockValues: IItem = {
         whoAmI: {
+            ...mockRecordWhoAmI,
             id: 'id',
-            library: {id: 'libId', label: {fr: 'libLabelFr', en: 'libLabelEn'}},
+            library: {...mockRecordWhoAmI.library, id: 'libId', label: {fr: 'libLabelFr', en: 'libLabelEn'}},
             preview: {
                 small: 'small-preview',
                 medium: 'medium-preview',

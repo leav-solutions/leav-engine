@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {ViewTypes, SortOrder} from '_gqlTypes/globalTypes';
+import {SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {IAttribute, IField} from '_types/types';
 import {IFilter, IQueryFilter, IView} from '../../_types/types';
 
@@ -25,7 +26,7 @@ export interface IRecordWhoAmI {
 }
 
 export interface ISearchRecord {
-    whoAmI: IRecordWhoAmI;
+    whoAmI: RecordIdentity_whoAmI;
     index: number;
     fields: {[x: string]: any};
 }

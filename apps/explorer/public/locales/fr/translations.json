@@ -348,6 +348,7 @@
         "advanced_search": "Recherche avancée",
         "search_elements": "Rechercher des éléments",
         "values_list": "Liste de valeurs",
+        "new_record": "Nouvel élément",
         "attribute": {
             "id": "ID",
             "type": "Type",

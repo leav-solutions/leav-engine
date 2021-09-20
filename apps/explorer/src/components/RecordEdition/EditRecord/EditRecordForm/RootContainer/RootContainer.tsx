@@ -4,6 +4,7 @@
 import {useQuery} from '@apollo/client';
 import {FormUIElementTypes, IFormLinkFieldSettings} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {noopQuery} from 'graphQL/queries/noopQuery';
 import {
     getRecordPropertiesQuery,
     IGetRecordProperties,
@@ -17,13 +18,15 @@ import {IRecordIdentityWhoAmI} from '_types/types';
 import EditRecordSkeleton from '../../EditRecordSkeleton';
 import {useFormElementsByContainerContext} from '../../hooks/useFormElementsByContainerContext';
 import {formComponents} from '../../uiElements';
-import {FormElement} from '../../_types';
+import {DeleteValueFunc, FormElement, SubmitValueFunc} from '../../_types';
 
 interface IRootContainerProps {
-    record: IRecordIdentityWhoAmI;
+    record: IRecordIdentityWhoAmI | null;
+    onValueSubmit: SubmitValueFunc;
+    onValueDelete: DeleteValueFunc;
 }
 
-function RootContainer({record}: IRootContainerProps): JSX.Element {
+function RootContainer({record, onValueSubmit, onValueDelete}: IRootContainerProps): JSX.Element {
     const formElements = useFormElementsByContainerContext();
 
     const rootElement: FormElement<{}> = {
@@ -58,11 +61,13 @@ function RootContainer({record}: IRootContainerProps): JSX.Element {
         []
     );
 
-    const recordPropertiesQuery = getRecordPropertiesQuery(record.library.gqlNames.query, allFields);
+    const recordPropertiesQuery = record
+        ? getRecordPropertiesQuery(record?.library?.gqlNames?.query, allFields)
+        : noopQuery;
 
     const {loading, error, data} = useQuery<IGetRecordProperties, IGetRecordPropertiesVariables>(
         recordPropertiesQuery,
-        {variables: {recordId: record.id}}
+        {skip: !record, variables: {recordId: record?.id}}
     );
 
     if (loading) {
@@ -73,9 +78,17 @@ function RootContainer({record}: IRootContainerProps): JSX.Element {
         return <ErrorDisplay message={error.message} />;
     }
 
-    const recordValues = data?.[record.library.gqlNames.query]?.list?.[0] ?? {};
+    const recordValues = data?.[record?.library?.gqlNames?.query]?.list?.[0] ?? {};
 
-    return <rootElement.uiElement element={rootElement} record={record} recordValues={recordValues} />;
+    return (
+        <rootElement.uiElement
+            element={rootElement}
+            record={record}
+            recordValues={recordValues}
+            onValueSubmit={onValueSubmit}
+            onValueDelete={onValueDelete}
+        />
+    );
 }
 
 export default RootContainer;

@@ -29,18 +29,14 @@ import {
     GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values
 } from '_gqlTypes/GET_FORM';
 import {SortOrder} from '_gqlTypes/globalTypes';
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {ISharedStateSelectionSearch, PreviewSize} from '_types/types';
 
 type ValueFromList = GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values;
 
-export interface IOnAddValues {
-    id: string;
-    label: string;
-}
-
 interface IValuesAddProps {
     attribute: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute;
-    onAdd: (values: IOnAddValues[]) => void;
+    onAdd: (values: RecordIdentity[]) => void;
     onClose: () => void;
 }
 
@@ -125,7 +121,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     }, []);
 
     const _handleItemClick = (valueListItem: ValueFromList) => {
-        onAdd([{id: valueListItem.id, label: valueListItem.whoAmI.label}]);
+        onAdd([valueListItem]);
     };
 
     const _handleClose = () => onClose();
@@ -133,7 +129,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const _handleSelectionChange = (selection: ValueFromList[]) => setSelectedValues(selection);
 
     const _handleSubmit = () => {
-        onAdd(selectedValues.map(selectedVal => ({id: selectedVal.id, label: selectedVal.whoAmI.label})));
+        onAdd(selectedValues);
     };
 
     const _handleClickAdvancedSearch = () => {
@@ -148,7 +144,13 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         const selectedRecordToSave = attribute.multiple_values ? selected : [selected[0]];
         const valuesToSave = selectedRecordToSave.map(selectedRecord => ({
             id: selectedRecord.id,
-            label: selectedRecord.label
+            whoAmI: {
+                id: selectedRecord.id,
+                label: selectedRecord.label,
+                library: attribute.linked_library,
+                color: null,
+                preview: null
+            }
         }));
 
         onAdd(valuesToSave);

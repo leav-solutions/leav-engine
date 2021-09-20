@@ -8,11 +8,17 @@ export const itemMock: IItem = {
     whoAmI: {
         id: 'id',
         label: 'label',
+        color: null,
+        preview: null,
         library: {
             id: 'library-id',
             label: {
                 fr: 'library',
                 en: 'library'
+            },
+            gqlNames: {
+                type: 'LibraryId',
+                query: 'library_id'
             }
         }
     },

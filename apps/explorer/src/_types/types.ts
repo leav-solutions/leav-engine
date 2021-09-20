@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {RecordFilterCondition, RecordFilterOperator, TreeElementInput, ViewTypes} from '_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
@@ -35,39 +36,16 @@ export type IPreview = {
     pages: string;
 } | null;
 
-export interface IItemWhoAmI {
-    id: string;
-    label?: string;
-    preview?: IPreview;
-    color?: string;
-    library?: {
-        id: string;
-        label: ISystemTranslation;
-    };
-}
-
 export interface IItemBase {
     fields: {[x: string]: any};
-    whoAmI: IItemWhoAmI;
+    whoAmI: RecordIdentity_whoAmI;
     index: number;
 }
 
 export type IItem = IItemBase;
 
-export interface IRecordIdentityWhoAmI {
+export interface IRecordIdentityWhoAmI extends RecordIdentity_whoAmI {
     [x: string]: any;
-    id: string;
-    label?: string;
-    preview?: IPreview;
-    color?: string;
-    library?: {
-        id: string;
-        label: ISystemTranslation;
-        gqlNames?: {
-            query: string;
-            type: string;
-        };
-    };
     index?: number;
 }
 
@@ -356,7 +334,7 @@ export interface ITableCell {
 }
 
 export interface ITableRow {
-    record: IRecordIdentityWhoAmI;
+    record: RecordIdentity_whoAmI;
     [x: string]: ITableCell | IRecordIdentityWhoAmI | string;
 }
 

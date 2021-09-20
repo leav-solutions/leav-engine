@@ -11,11 +11,12 @@ import {
 } from '_gqlTypes/GET_FORM';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {act, render, screen, within} from '_tests/testUtils';
+import {mockAttributeLink} from '__mocks__/common/attribute';
 import {mockFormElementLink} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
 import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
-import {APICallStatus, FormElement} from '../../_types';
+import {APICallStatus, DeleteValueFunc, FormElement, ISubmitMultipleResult, SubmitValueFunc} from '../../_types';
 import LinkField from './LinkField';
 
 jest.mock('hooks/LangHook/LangHook');
@@ -36,6 +37,38 @@ type ValueListWhoAmI = GET_FORM_forms_list_elements_elements_attribute_LinkAttri
 
 describe('LinkField', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
+    const mockSubmitRes: ISubmitMultipleResult = {
+        status: APICallStatus.SUCCESS,
+        values: [
+            {
+                id_value: '123456',
+                created_at: 1234567890,
+                created_by: {
+                    ...mockModifier
+                },
+                modified_at: 1234567890,
+                modified_by: {
+                    ...mockModifier
+                },
+                value: 'new value',
+                version: null,
+                attribute: {
+                    ...mockAttributeLink,
+                    system: false
+                },
+                linkValue: {
+                    id: '123456',
+                    whoAmI: {
+                        ...mockRecordWhoAmI
+                    }
+                }
+            }
+        ]
+    };
+    const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
+    const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
+
     const value: IRecordPropertyLink = {
         linkValue: {
             id: '123456',
@@ -54,9 +87,19 @@ describe('LinkField', () => {
         test_attribute: [value]
     };
 
+    beforeEach(() => jest.clearAllMocks());
+
     test('Display list of values', async () => {
         await act(async () => {
-            render(<LinkField element={mockFormElementLink} record={mockRecordWhoAmI} recordValues={recordValues} />);
+            render(
+                <LinkField
+                    element={mockFormElementLink}
+                    record={mockRecordWhoAmI}
+                    recordValues={recordValues}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
         });
 
         expect(screen.getByRole('table')).toBeInTheDocument();
@@ -101,6 +144,8 @@ describe('LinkField', () => {
                     element={mockFormElementLinkWithColumns}
                     record={mockRecordWhoAmI}
                     recordValues={recordValuesWithColumns}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
         });
@@ -118,6 +163,8 @@ describe('LinkField', () => {
                     element={mockFormElementLink}
                     record={mockRecordWhoAmI}
                     recordValues={{test_attribute: []}}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
         });
@@ -133,6 +180,8 @@ describe('LinkField', () => {
                     element={{...mockFormElementLink, attribute: {...mockFormElementLink.attribute, system: true}}}
                     record={mockRecordWhoAmI}
                     recordValues={{test_attribute: []}}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
         });
@@ -142,7 +191,15 @@ describe('LinkField', () => {
 
     test('Can edit and delete linked record', async () => {
         await act(async () => {
-            render(<LinkField element={mockFormElementLink} record={mockRecordWhoAmI} recordValues={recordValues} />);
+            render(
+                <LinkField
+                    element={mockFormElementLink}
+                    record={mockRecordWhoAmI}
+                    recordValues={recordValues}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
         });
 
         const recordIdentityCell = screen.getByTestId('whoami-cell');
@@ -166,6 +223,8 @@ describe('LinkField', () => {
                     element={mockFormElementLinkMultivalue}
                     record={mockRecordWhoAmI}
                     recordValues={recordValues}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
         });
@@ -188,6 +247,8 @@ describe('LinkField', () => {
                     element={mockFormElementLinkNoMultivalue}
                     record={mockRecordWhoAmI}
                     recordValues={recordValues}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
         });
@@ -197,7 +258,15 @@ describe('LinkField', () => {
 
     test('Can display value details', async () => {
         await act(async () => {
-            render(<LinkField element={mockFormElementLink} record={mockRecordWhoAmI} recordValues={recordValues} />);
+            render(
+                <LinkField
+                    element={mockFormElementLink}
+                    record={mockRecordWhoAmI}
+                    recordValues={recordValues}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
         });
 
         const valueDetailsButton = screen.getByRole('button', {name: /info/, hidden: true});
@@ -242,26 +311,15 @@ describe('LinkField', () => {
             }
         };
 
-        test('Can add record from values list on click on "add" button', async () => {
-            const mockOnAddValue = jest.fn().mockReturnValue({
-                status: APICallStatus.SUCCESS,
-                value: {
-                    id_value: null,
-                    value: 'My value',
-                    raw_value: 'My value'
-                }
-            });
-
-            jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
-                saveValues: mockOnAddValue
-            }));
-
+        test.only('Can add record from values list on click on "add" button', async () => {
             await act(async () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
                         recordValues={recordValues}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />
                 );
             });
@@ -277,7 +335,14 @@ describe('LinkField', () => {
             await act(async () => {
                 userEvent.click(valuesListElem);
             });
-            expect(mockOnAddValue).toBeCalledWith([{idValue: null, value: mockRecordWhoAmI.id}]);
+
+            expect(mockHandleSubmit).toBeCalledWith([
+                {
+                    attribute: {...mockFormElementLinkMultivalue.attribute},
+                    idValue: null,
+                    value: {id: mockRecordWhoAmI.id, whoAmI: mockRecordWhoAmI}
+                }
+            ]);
             expect(screen.queryByTestId('values-add')).not.toBeInTheDocument();
         });
 
@@ -314,6 +379,8 @@ describe('LinkField', () => {
                         element={mockFormElementLinkValuesList}
                         record={mockRecordWhoAmI}
                         recordValues={recordValues}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />
                 );
             });
@@ -363,6 +430,8 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
                         recordValues={recordValues}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />
                 );
             });
@@ -388,6 +457,8 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
                         recordValues={recordValues}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />
                 );
             });
@@ -403,25 +474,14 @@ describe('LinkField', () => {
         });
 
         test('If multiple values, can select multiple elements and add them', async () => {
-            const mockOnAddValue = jest.fn().mockReturnValue({
-                status: APICallStatus.SUCCESS,
-                value: {
-                    id_value: null,
-                    value: 'My value',
-                    raw_value: 'My value'
-                }
-            });
-
-            jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
-                saveValues: mockOnAddValue
-            }));
-
             await act(async () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
                         recordValues={recordValues}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />
                 );
             });
@@ -443,7 +503,7 @@ describe('LinkField', () => {
                 userEvent.click(submitBtn);
             });
 
-            expect(mockOnAddValue).toBeCalledWith([{idValue: null, value: mockRecordWhoAmI.id}]);
+            expect(mockHandleSubmit).toBeCalledWith([{attribute: 'test', idValue: null, value: mockRecordWhoAmI.id}]);
             expect(screen.queryByTestId('values-add')).not.toBeInTheDocument();
         });
 
@@ -467,6 +527,8 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalueNoFreeEntry}
                         record={mockRecordWhoAmI}
                         recordValues={recordValues}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />
                 );
             });
@@ -546,6 +608,8 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
                         recordValues={recordValues}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />,
                     {apolloMocks: mocks}
                 );
@@ -610,6 +674,8 @@ describe('LinkField', () => {
                         element={mockFormElementLinkForPagination}
                         record={mockRecordWhoAmI}
                         recordValues={recordValues}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />
                 );
             });

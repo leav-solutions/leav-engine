@@ -5,6 +5,7 @@ import {Modal} from 'antd';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {IItem} from '../../../../_types/types';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import LibraryItemsModal from './LibraryItemsModal';
@@ -14,8 +15,13 @@ describe('LibraryItemsModal', () => {
         const items: IItem = {
             fields: {},
             whoAmI: {
+                ...mockRecordWhoAmI,
                 id: 'testId',
-                library: {id: 'testLibId', label: {fr: 'testLibLabelFr', en: 'testLibLabelEn'}},
+                library: {
+                    ...mockRecordWhoAmI.library,
+                    id: 'testLibId',
+                    label: {fr: 'testLibLabelFr', en: 'testLibLabelEn'}
+                },
                 label: 'label-test'
             },
             index: 0

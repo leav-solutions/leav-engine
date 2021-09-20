@@ -134,7 +134,9 @@ describe('standardFieldReducer', () => {
                     modified_at: null,
                     created_at: null,
                     created_by: mockModifier,
-                    modified_by: mockModifier
+                    modified_by: mockModifier,
+                    version: null,
+                    attribute: mockAttribute
                 }
             }
         );
@@ -175,7 +177,9 @@ describe('standardFieldReducer', () => {
                     modified_at: 1234567890,
                     created_at: 1234567890,
                     created_by: mockModifier,
-                    modified_by: mockModifier
+                    modified_by: mockModifier,
+                    version: null,
+                    attribute: mockAttribute
                 }
             }
         );

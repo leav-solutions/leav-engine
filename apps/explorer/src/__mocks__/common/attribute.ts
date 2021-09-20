@@ -1,7 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
+import {
+    GET_FORM_forms_list_elements_elements_attribute,
+    GET_FORM_forms_list_elements_elements_attribute_TreeAttribute
+} from '_gqlTypes/GET_FORM';
 import {
     GET_ATTRIBUTES_BY_LIB_attributes_list,
     GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute,
@@ -101,4 +104,10 @@ export const mockFormAttribute: GET_FORM_forms_list_elements_elements_attribute 
         allowFreeEntry: false,
         values: []
     }
+};
+
+export const mockFormAttributeTree: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute = {
+    ...mockFormAttribute,
+    ...mockAttributeTree,
+    treeValuesList: {enable: false, allowFreeEntry: false, values: []}
 };

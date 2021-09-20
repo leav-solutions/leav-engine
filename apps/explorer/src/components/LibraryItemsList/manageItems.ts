@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {isArray} from 'lodash';
 import objectPath from 'object-path';
 import {AttributeFormat, AttributeType, IField, IItem} from '../../_types/types';
-import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 
 const _extractValueFromParent = (field: IField, linkValue: any) => {
     const linkedElement = field.parentAttributeData.type === AttributeType.tree ? linkValue.record : linkValue;

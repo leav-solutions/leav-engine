@@ -5,6 +5,7 @@ import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {ITree} from '../../../_types/types';
 import SelectTreeNode from '../SelectTreeNode';
 
@@ -21,6 +22,10 @@ export interface ITreeNode {
     id: string;
     key: string | null;
     children: ITreeNode[];
+}
+export interface ITreeNodeWithRecord extends ITreeNode {
+    record: RecordIdentity;
+    children: ITreeNodeWithRecord[];
 }
 
 export default function SelectTreeNodeModal({
@@ -47,7 +52,7 @@ export default function SelectTreeNodeModal({
         onClose();
     };
 
-    const onSelect = (node: ITreeNode, selected: boolean) => {
+    const onSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         setSelectedNode(!selected ? undefined : node);
     };
 

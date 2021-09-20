@@ -395,7 +395,9 @@ export default function ({
 
                         prevRes.errors.push({
                             type: e.type,
-                            message: e.fields && e.fields[value.attribute] ? e.fields[value.attribute] : e.message,
+                            message: e?.fields?.[value.attribute]
+                                ? utils.translateError(e.fields[value.attribute], ctx.lang)
+                                : e.message,
                             input: value.value,
                             attribute: value.attribute
                         });

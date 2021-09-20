@@ -5,12 +5,12 @@ import {FormFieldTypes, FormUIElementTypes} from '@leav/utils';
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {
+    mockCommonFormElementProps,
     mockFormElementContainer,
     mockFormElementInput,
     mockFormElementTabs,
     mockFormElementTextBlock
 } from '__mocks__/common/form';
-import {mockRecordWhoAmI} from '__mocks__/common/record';
 import Container from './Container';
 
 jest.mock('../../hooks/useFormElementsByContainerContext', () => ({
@@ -21,7 +21,7 @@ jest.mock('../../hooks/useFormElementsByContainerContext', () => ({
 
 describe('Container', () => {
     test('Render children', async () => {
-        render(<Container record={mockRecordWhoAmI} element={mockFormElementContainer} recordValues={{}} />);
+        render(<Container {...mockCommonFormElementProps} element={mockFormElementContainer} />);
 
         const children = await screen.findAllByTestId('container-child-element');
         expect(children.length).toBe(4);

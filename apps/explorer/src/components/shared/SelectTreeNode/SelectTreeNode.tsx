@@ -9,20 +9,21 @@ import React, {useEffect, useState} from 'react';
 import {localizedTranslation} from 'utils';
 import {ITree} from '_types/types';
 import ErrorDisplay from '../ErrorDisplay';
-import {ITreeNode} from '../SelectTreeNodeModal/SelectTreeNodeModal';
+import {ITreeNodeWithRecord} from '../SelectTreeNodeModal/SelectTreeNodeModal';
 
 interface ISelectTreeNodeProps {
     tree: Pick<ITree, 'id' | 'label'>;
     selectedNode?: string;
-    onSelect: (node: ITreeNode, selected: boolean) => void;
+    onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
 }
 
-const _constructTreeContent = (data: IRecordAndChildren[], parentPath?: string): ITreeNode[] => {
+const _constructTreeContent = (data: IRecordAndChildren[], parentPath?: string): ITreeNodeWithRecord[] => {
     return data.map(e => {
         const recordKey = e.record.whoAmI.library.id + '/' + e.record.whoAmI.id;
         const path = [parentPath, recordKey].filter(el => !!el).join('_');
 
         return {
+            record: e.record,
             title: e.record.whoAmI.label || e.record.whoAmI.id,
             id: recordKey,
             key: path,
@@ -31,7 +32,7 @@ const _constructTreeContent = (data: IRecordAndChildren[], parentPath?: string):
     });
 };
 
-const _getTreeNodeByKey = (key: string, treeContent: ITreeNode[]): ITreeNode => {
+const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITreeNodeWithRecord => {
     for (const node of treeContent) {
         if (key === node.key) {
             return node;
@@ -48,8 +49,9 @@ const _getTreeNodeByKey = (key: string, treeContent: ITreeNode[]): ITreeNode => 
 function SelectTreeNode({tree, onSelect, selectedNode: initSelectedNode}: ISelectTreeNodeProps): JSX.Element {
     const [{lang}] = useLang();
 
-    const rootNode: ITreeNode = {
+    const rootNode: ITreeNodeWithRecord = {
         title: localizedTranslation(tree.label, lang) || tree.id,
+        record: null,
         id: tree.id,
         key: tree.id,
         children: []
@@ -78,7 +80,7 @@ function SelectTreeNode({tree, onSelect, selectedNode: initSelectedNode}: ISelec
         onSelect(node, e.selected);
     };
 
-    const [treeContent, setTreeContent] = useState<ITreeNode[]>([]);
+    const [treeContent, setTreeContent] = useState<ITreeNodeWithRecord[]>([]);
 
     if (loading) {
         return <Spin />;

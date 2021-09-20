@@ -47,7 +47,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.app': appPermissionDomain = null,
@@ -82,7 +82,7 @@ export default function ({
             });
 
             if (!attrs.list.length) {
-                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
+                throw new ValidationError<IAttribute>({id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: id}}});
             }
             const props = attrs.list.pop();
 

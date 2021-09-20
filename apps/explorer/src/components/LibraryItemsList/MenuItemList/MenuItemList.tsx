@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
 import {Button, Tooltip} from 'antd';
+import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {SelectionModeContext} from 'context';
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
-import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {IconOpenPanel} from '../../../assets/icons/IconOpenPanel';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
-import {NotificationChannel, NotificationType, TypeSideItem} from '../../../_types/types';
+import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
 import MenuItemActions from '../MenuItemActions';
@@ -51,6 +51,7 @@ const SubGroupLast = styled(SubGroup)`
 function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
     const [activeLibrary] = useActiveLibrary();
+    const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
 
     const selectionMode = useContext(SelectionModeContext);
     const {display} = useAppSelector(state => state);
@@ -76,14 +77,12 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
         );
     };
 
-    const handleNew = () => {
-        dispatch(
-            addNotification({
-                content: t('items_list.actions.new'),
-                type: NotificationType.warning,
-                channel: NotificationChannel.trigger
-            })
-        );
+    const _handleCreateRecord = () => {
+        setIsRecordCreationVisible(true);
+    };
+
+    const _handleRecordCreationClose = () => {
+        setIsRecordCreationVisible(false);
     };
 
     const panelActive = display.side.visible;
@@ -107,7 +106,7 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
             <SubGroupLast>
                 <div>
                     {!selectionMode && (
-                        <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={handleNew}>
+                        <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={_handleCreateRecord}>
                             {t('items_list.new')}
                         </PrimaryBtn>
                     )}
@@ -118,6 +117,14 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
 
                 <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()} />
             </SubGroupLast>
+            {isRecordCreationVisible && (
+                <EditRecordModal
+                    record={null}
+                    library={activeLibrary.id}
+                    open={isRecordCreationVisible}
+                    onClose={_handleRecordCreationClose}
+                />
+            )}
         </Wrapper>
     );
 }

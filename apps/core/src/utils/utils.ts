@@ -1,9 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {i18n} from 'i18next';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
 import {IActionsListConfig} from '_types/actionsList';
+import {Errors, IExtendedErrorMsg} from '_types/errors';
 import {LibraryBehavior} from '_types/library';
 import {AttributeTypes, IAttribute} from '../_types/attribute';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
@@ -66,9 +68,15 @@ export interface IUtils {
      * @param value Edge destination in the form of "<library>/<record_id>"
      */
     decomposeValueEdgeDestination(value: string): {library: string; id: string};
+
+    translateError(error: Errors | IExtendedErrorMsg | string, lang: string): string;
 }
 
-export default function (): IUtils {
+export interface IUtilsDeps {
+    translator?: i18n;
+}
+
+export default function({translator = null}: IUtilsDeps = {}): IUtils {
     return {
         libNameToQueryName(name: string): string {
             return flow([camelCase, trimEnd])(name);
@@ -154,6 +162,15 @@ export default function (): IUtils {
             const [library, id]: [string, string] = value.split('/') as [string, string];
 
             return {library, id};
+        },
+        translateError(error: Errors | IExtendedErrorMsg | string, lang: string): string {
+            const toTranslate = typeof error === 'string' ? {msg: error, vars: {}} : (error as IExtendedErrorMsg);
+
+            return translator.t(('errors.' + toTranslate.msg) as string, {
+                ...toTranslate.vars,
+                lng: lang,
+                interpolation: {escapeValue: false}
+            });
         }
     };
 }

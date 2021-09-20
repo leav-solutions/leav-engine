@@ -6,7 +6,7 @@ import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import Dimmer from 'components/shared/Dimmer';
 import List from 'components/shared/List';
 import SelectTreeNode from 'components/shared/SelectTreeNode';
-import {ITreeNode} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
+import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -21,7 +21,7 @@ import PathsList from '../PathsList';
 
 interface IValuesAddProps {
     attribute: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute;
-    onAdd: (values: ITreeNode[]) => void;
+    onAdd: (values: ITreeNodeWithRecord[]) => void;
     onClose: () => void;
 }
 
@@ -62,7 +62,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const _handleSelectionChange = (selection: ValueFromList[]) => setSelectedValues(selection);
 
-    const _handleSelect = (node: ITreeNode, selected: boolean) => {
+    const _handleSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         if (selected) {
             onAdd([node]);
         }
@@ -74,6 +74,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         const recordKey = getTreeRecordKey(valueListItem.record);
         onAdd([
             {
+                record: valueListItem.record,
                 key: recordKey,
                 id: recordKey,
                 title: valueListItem.record.whoAmI.label,
@@ -85,7 +86,13 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         onAdd(
             selectedValues.map(selectedVal => {
                 const recordKey = getTreeRecordKey(selectedVal.record);
-                return {id: recordKey, key: recordKey, title: selectedVal.record.whoAmI.label, children: null};
+                return {
+                    record: selectedVal.record,
+                    id: recordKey,
+                    key: recordKey,
+                    title: selectedVal.record.whoAmI.label,
+                    children: null
+                };
             })
         );
     };

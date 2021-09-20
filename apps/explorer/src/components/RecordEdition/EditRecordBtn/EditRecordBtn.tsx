@@ -32,7 +32,14 @@ function EditRecordBtn({record, size}: IEditRecordBtnProps): JSX.Element {
                 size={size}
                 onClick={_handleClick}
             />
-            {isModalOpen && <EditRecordModal open={isModalOpen} record={record} onClose={_handleClose} />}
+            {isModalOpen && (
+                <EditRecordModal
+                    open={isModalOpen}
+                    record={record}
+                    library={record.library.id}
+                    onClose={_handleClose}
+                />
+            )}
         </>
     );
 }

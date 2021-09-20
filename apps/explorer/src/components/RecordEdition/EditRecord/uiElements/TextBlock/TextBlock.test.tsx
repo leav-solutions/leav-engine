@@ -9,7 +9,15 @@ import TextBlock from './TextBlock';
 
 describe('TextBlock', () => {
     test('Render text block with markdown converted', async () => {
-        render(<TextBlock element={mockFormElementTextBlock} record={mockRecordWhoAmI} recordValues={{}} />);
+        render(
+            <TextBlock
+                element={mockFormElementTextBlock}
+                record={mockRecordWhoAmI}
+                recordValues={{}}
+                onValueDelete={jest.fn()}
+                onValueSubmit={jest.fn()}
+            />
+        );
 
         expect(screen.getByText(/text content/i)).toBeInTheDocument();
         expect(screen.getByText('text content')).toHaveStyle('font-weight: bold');

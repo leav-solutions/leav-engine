@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
+import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React, {useReducer} from 'react';
+import React, {useContext, useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import useDeleteValueMutation from '../../hooks/useDeleteValueMutation';
-import useSaveValueMutation from '../../hooks/useSaveValueMutation';
+import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import standardFieldReducer, {
     IdValue,
@@ -35,15 +35,19 @@ const AddValueWrapper = styled.div`
     }
 `;
 
-function StandardField({element, recordValues, record}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+function StandardField({
+    element,
+    recordValues,
+    record,
+    onValueSubmit,
+    onValueDelete
+}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
 
-    const fieldValues = recordValues[element.settings.attribute] as IRecordPropertyStandard[];
+    const fieldValues = (recordValues[element.settings.attribute] as IRecordPropertyStandard[]) ?? [];
     const isMultipleValues = element.attribute.multiple_values;
     const {attribute} = element;
-
-    const {saveValue} = useSaveValueMutation(record, attribute.id);
-    const {deleteValue} = useDeleteValueMutation(record, attribute.id);
+    const creationErrors = useContext(CreationErrorContext);
 
     const initialValues = fieldValues.length
         ? fieldValues.reduce(
@@ -80,18 +84,34 @@ function StandardField({element, recordValues, record}: IFormElementProps<ICommo
 
     const [state, dispatch] = useReducer(standardFieldReducer, initialState);
 
+    useEffect(() => {
+        if (creationErrors[attribute.id]) {
+            const idValue =
+                Object.values(state.values).filter(val => val.editingValue === creationErrors[attribute.id].input)?.[0]
+                    .idValue ?? null;
+            dispatch({
+                type: StandardFieldReducerActionsTypes.SET_ERROR,
+                idValue,
+                error: creationErrors[attribute.id].message
+            });
+        }
+    }, [creationErrors, attribute.id]);
+
     const _handleSubmit = async (idValue: IdValue, valueToSave: AnyPrimitive) => {
         const isSavingNewValue = idValue === newValueId;
         dispatch({
             type: StandardFieldReducerActionsTypes.CLEAR_ERROR,
             idValue
         });
-        const submitRes = await saveValue({value: valueToSave, idValue: isSavingNewValue ? null : idValue});
+
+        const submitRes = await onValueSubmit([
+            {value: valueToSave, idValue: isSavingNewValue ? null : idValue, attribute}
+        ]);
 
         if (submitRes.status === APICallStatus.SUCCESS) {
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
-                newValue: submitRes.value,
+                newValue: submitRes.values[0] as SAVE_VALUE_BATCH_saveValueBatch_values_Value,
                 idValue
             });
 
@@ -101,7 +121,8 @@ function StandardField({element, recordValues, record}: IFormElementProps<ICommo
         dispatch({
             type: StandardFieldReducerActionsTypes.SET_ERROR,
             idValue,
-            error: submitRes.error
+            error:
+                submitRes.error || (submitRes?.errors ?? []).filter(err => err.attribute === attribute.id)?.[0].message
         });
     };
 
@@ -111,7 +132,7 @@ function StandardField({element, recordValues, record}: IFormElementProps<ICommo
             idValue
         });
 
-        const deleteRes = await deleteValue(idValue);
+        const deleteRes = await onValueDelete(idValue, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             dispatch({

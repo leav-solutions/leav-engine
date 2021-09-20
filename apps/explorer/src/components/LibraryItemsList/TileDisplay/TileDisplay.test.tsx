@@ -5,6 +5,7 @@ import {ISearchState} from 'hooks/useSearchReducer/_types';
 import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import TileDisplay from './TileDisplay';
 
 jest.mock(
@@ -38,6 +39,7 @@ describe('TileDisplay', () => {
                 {
                     fields: {},
                     whoAmI: {
+                        ...mockRecordWhoAmI,
                         id: 'test'
                     },
                     index: 0

@@ -14,14 +14,14 @@ export interface ISaveValueHook {
     deleteValue: DeleteValueFunc;
 }
 
-export default function useDeleteValueMutation(record: IRecordIdentityWhoAmI, attribute: string): ISaveValueHook {
+export default function useDeleteValueMutation(record: IRecordIdentityWhoAmI): ISaveValueHook {
     const [executeDeleteValue] = useMutation<DELETE_VALUE, DELETE_VALUEVariables>(deleteValueMutation, {
         update: (cache, {data: {deleteValue}}) => {
             const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
             cache.modify({
                 id: cache.identify(recordWithTypename),
                 fields: {
-                    [getPropertyCacheFieldName(attribute)]: cacheValue => {
+                    [getPropertyCacheFieldName(deleteValue.attribute.id)]: cacheValue => {
                         return cacheValue.filter(val => val.id_value !== deleteValue.id_value);
                     }
                 }
@@ -31,7 +31,7 @@ export default function useDeleteValueMutation(record: IRecordIdentityWhoAmI, at
     const {t} = useTranslation();
 
     return {
-        deleteValue: async valueId => {
+        deleteValue: async (valueId, attribute) => {
             try {
                 await executeDeleteValue({
                     variables: {

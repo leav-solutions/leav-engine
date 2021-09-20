@@ -332,7 +332,8 @@ function StandardFieldValue({
     );
 
     const isErrorVisible =
-        (fieldValue.isEditing || attribute.format === AttributeFormat.boolean) && fieldValue.isErrorDisplayed;
+        (fieldValue.isEditing || attribute.format === AttributeFormat.boolean || !state.record) &&
+        fieldValue.isErrorDisplayed;
 
     const wrapperClasses = `
         ${attribute.format ? `format-${attribute.format}` : ''}

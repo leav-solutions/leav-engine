@@ -88,18 +88,6 @@ export interface ValueBatchInput {
     metadata?: any | null;
 }
 
-export interface ValueInput {
-    id_value?: string | null;
-    value?: string | null;
-    metadata?: (ValueMetadataInput | null)[] | null;
-    version?: (ValueVersionInput | null)[] | null;
-}
-
-export interface ValueMetadataInput {
-    name: string;
-    value?: string | null;
-}
-
 export interface ValueVersionInput {
     name: string;
     value: TreeElementInput;

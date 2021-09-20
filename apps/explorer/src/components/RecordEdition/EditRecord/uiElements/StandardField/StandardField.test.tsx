@@ -7,16 +7,14 @@ import {IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropert
 import React from 'react';
 import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {mockFormAttribute} from '__mocks__/common/attribute';
 import {mockFormElementInput} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
-import * as useDeleteValueMutation from '../../hooks/useDeleteValueMutation';
-import * as useSaveValueMutation from '../../hooks/useSaveValueMutation';
-import {APICallStatus, DeleteValueFunc, FieldSubmitFunc, FormElement} from '../../_types';
+import {APICallStatus, DeleteValueFunc, FormElement, ISubmitMultipleResult, SubmitValueFunc} from '../../_types';
 import StandardField from './StandardField';
 
-jest.mock('../../hooks/useSaveValueMutation');
 jest.mock('../../hooks/useDeleteValueMutation');
 jest.mock('hooks/LangHook/LangHook');
 
@@ -26,29 +24,8 @@ jest.mock('../../shared/ValueDetails', () => {
     };
 });
 
-describe('Input', () => {
+describe('StandardField', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-
-    jest.spyOn(useSaveValueMutation, 'default').mockImplementation(() => ({
-        saveValue: onSubmit
-    }));
-
-    jest.spyOn(useDeleteValueMutation, 'default').mockImplementation(() => ({
-        deleteValue: onDelete
-    }));
-
-    const onSubmit: FieldSubmitFunc = jest.fn().mockReturnValue({
-        status: APICallStatus.SUCCESS,
-        value: {
-            id_value: null,
-            value: 'new value',
-            raw_value: 'new raw value'
-        }
-    });
-
-    const onDelete: DeleteValueFunc = jest.fn().mockReturnValue({
-        status: APICallStatus.SUCCESS
-    });
 
     const mockAttribute: IRecordPropertyAttribute = {
         id: 'test_attribute',
@@ -57,6 +34,29 @@ describe('Input', () => {
         type: AttributeType.simple,
         system: false
     };
+
+    const mockSubmitRes: ISubmitMultipleResult = {
+        status: APICallStatus.SUCCESS,
+        values: [
+            {
+                id_value: null,
+                created_at: 1234567890,
+                created_by: {
+                    ...mockModifier
+                },
+                modified_at: 1234567890,
+                modified_by: {
+                    ...mockModifier
+                },
+                value: 'new value',
+                raw_value: 'new raw value',
+                version: null,
+                attribute: mockAttribute as SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute
+            }
+        ]
+    };
+    const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
+    const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
 
     const recordValues = {
         test_attribute: [
@@ -76,7 +76,15 @@ describe('Input', () => {
     beforeEach(() => jest.clearAllMocks());
 
     test('Render text field, type value and submit', async () => {
-        render(<StandardField element={mockFormElementInput} recordValues={recordValues} record={mockRecordWhoAmI} />);
+        render(
+            <StandardField
+                element={mockFormElementInput}
+                recordValues={recordValues}
+                record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         const inputElem = screen.getByRole('textbox');
         expect(inputElem).toBeInTheDocument();
@@ -101,11 +109,19 @@ describe('Input', () => {
             userEvent.click(submitBtn);
         });
 
-        expect(onSubmit).toHaveBeenCalled();
+        expect(mockHandleSubmit).toHaveBeenCalled();
     });
 
     test('Display informations about value', async () => {
-        render(<StandardField element={mockFormElementInput} recordValues={recordValues} record={mockRecordWhoAmI} />);
+        render(
+            <StandardField
+                element={mockFormElementInput}
+                recordValues={recordValues}
+                record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         const valueDisplayElem = screen.getByRole('textbox');
         await act(async () => {
@@ -116,7 +132,17 @@ describe('Input', () => {
     });
 
     test('Cancel input', async () => {
-        render(<StandardField element={mockFormElementInput} recordValues={recordValues} record={mockRecordWhoAmI} />);
+        await act(async () => {
+            render(
+                <StandardField
+                    element={mockFormElementInput}
+                    recordValues={recordValues}
+                    record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
+        });
 
         let inputElem = screen.getByRole('textbox');
         await act(async () => {
@@ -143,7 +169,13 @@ describe('Input', () => {
     test('Submit on enter', async () => {
         await act(async () => {
             render(
-                <StandardField element={mockFormElementInput} recordValues={recordValues} record={mockRecordWhoAmI} />
+                <StandardField
+                    element={mockFormElementInput}
+                    recordValues={recordValues}
+                    record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
             );
         });
 
@@ -156,7 +188,7 @@ describe('Input', () => {
         await act(async () => {
             userEvent.type(inputElem, 'value modified{enter}');
         });
-        expect(onSubmit).toHaveBeenCalled();
+        expect(mockHandleSubmit).toHaveBeenCalled();
     });
 
     test('Disable system attribute', async () => {
@@ -179,6 +211,8 @@ describe('Input', () => {
                 element={{...mockFormElementInput, attribute: {...mockFormAttribute, system: true}}}
                 recordValues={recordValuesSystem}
                 record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
             />
         );
 
@@ -206,6 +240,8 @@ describe('Input', () => {
                 element={{...mockFormElementInput, attribute: {...mockFormAttribute, format: AttributeFormat.date}}}
                 recordValues={recordValuesDate}
                 record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
             />
         );
 
@@ -218,7 +254,7 @@ describe('Input', () => {
         await act(async () => {
             userEvent.click(screen.getByRole('cell', {name: '2021-03-11'}));
         });
-        expect(onSubmit).toHaveBeenCalled();
+        expect(mockHandleSubmit).toHaveBeenCalled();
     });
 
     test('Render checkbox', async () => {
@@ -241,6 +277,8 @@ describe('Input', () => {
                 element={{...mockFormElementInput, attribute: {...mockFormAttribute, format: AttributeFormat.boolean}}}
                 recordValues={recordValuesBoolean}
                 record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
             />
         );
 
@@ -249,7 +287,7 @@ describe('Input', () => {
         await act(async () => {
             userEvent.click(inputElem);
         });
-        expect(onSubmit).toHaveBeenCalled();
+        expect(mockHandleSubmit).toHaveBeenCalled();
     });
 
     test('Render encrypted field', async () => {
@@ -274,6 +312,8 @@ describe('Input', () => {
                 }}
                 recordValues={recordValuesEncrypted}
                 record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
             />
         );
 
@@ -309,6 +349,8 @@ describe('Input', () => {
                 element={{...mockFormElementInput, attribute: {...mockFormAttribute, format: AttributeFormat.numeric}}}
                 recordValues={recordValuesNumeric}
                 record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
             />
         );
 
@@ -321,16 +363,20 @@ describe('Input', () => {
     });
 
     test('Display error message', async () => {
-        const onSubmitFail: FieldSubmitFunc = jest.fn().mockReturnValue({
+        const onSubmitFail: SubmitValueFunc = jest.fn().mockReturnValue({
             status: APICallStatus.ERROR,
             error: 'ERROR_MESSAGE'
         });
 
-        jest.spyOn(useSaveValueMutation, 'default').mockImplementation(() => ({
-            saveValue: onSubmitFail
-        }));
-
-        render(<StandardField element={mockFormElementInput} recordValues={recordValues} record={mockRecordWhoAmI} />);
+        render(
+            <StandardField
+                element={mockFormElementInput}
+                recordValues={recordValues}
+                record={mockRecordWhoAmI}
+                onValueSubmit={onSubmitFail}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         userEvent.click(screen.getByRole('textbox'));
 
@@ -342,7 +388,15 @@ describe('Input', () => {
     });
 
     test('Delete value', async () => {
-        render(<StandardField element={mockFormElementInput} recordValues={recordValues} record={mockRecordWhoAmI} />);
+        render(
+            <StandardField
+                element={mockFormElementInput}
+                recordValues={recordValues}
+                record={mockRecordWhoAmI}
+                onValueSubmit={mockHandleSubmit}
+                onValueDelete={mockHandleDelete}
+            />
+        );
 
         const inputWrapper = screen.getByTestId('input-wrapper');
         userEvent.hover(inputWrapper, null);
@@ -360,7 +414,7 @@ describe('Input', () => {
             userEvent.click(confirmDeleteBtn);
         });
 
-        expect(onDelete).toHaveBeenCalled();
+        expect(mockHandleDelete).toHaveBeenCalled();
     });
 
     describe('Values list', () => {
@@ -396,6 +450,8 @@ describe('Input', () => {
                     element={mockFormElementWithValuesList}
                     recordValues={recordValuesNoValue}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
 
@@ -413,6 +469,8 @@ describe('Input', () => {
                     element={mockFormElementWithValuesList}
                     recordValues={recordValuesNoValue}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
 
@@ -430,24 +488,13 @@ describe('Input', () => {
         });
 
         test('On click on a value, save it', async () => {
-            const onSubmitValueList = jest.fn().mockReturnValue({
-                status: APICallStatus.SUCCESS,
-                value: {
-                    id_value: null,
-                    value: 'My value',
-                    raw_value: 'My value'
-                }
-            });
-
-            jest.spyOn(useSaveValueMutation, 'default').mockImplementation(() => ({
-                saveValue: onSubmitValueList
-            }));
-
             render(
                 <StandardField
                     element={mockFormElementWithValuesList}
                     recordValues={recordValuesNoValue}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
 
@@ -457,28 +504,19 @@ describe('Input', () => {
                 userEvent.click(screen.getByText('My value'));
             });
 
-            expect(onSubmitValueList).toHaveBeenCalledWith({idValue: null, value: 'My value'});
+            expect(mockHandleSubmit).toHaveBeenCalledWith([
+                {idValue: null, value: 'My value', attribute: mockFormElementWithValuesList.attribute}
+            ]);
         });
 
         test('On Enter, first matching value is selected', async () => {
-            const onSubmitValueList = jest.fn().mockReturnValue({
-                status: APICallStatus.SUCCESS,
-                value: {
-                    id_value: null,
-                    value: 'My value',
-                    raw_value: 'My value'
-                }
-            });
-
-            jest.spyOn(useSaveValueMutation, 'default').mockImplementation(() => ({
-                saveValue: onSubmitValueList
-            }));
-
             render(
                 <StandardField
                     element={mockFormElementWithValuesList}
                     recordValues={recordValuesNoValue}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
 
@@ -490,7 +528,13 @@ describe('Input', () => {
                 userEvent.type(editingInputElem, '{enter}');
             });
 
-            expect(onSubmitValueList).toHaveBeenCalledWith({idValue: null, value: 'My value'});
+            expect(mockHandleSubmit).toHaveBeenCalledWith([
+                {
+                    idValue: null,
+                    value: 'My value',
+                    attribute: mockFormElementWithValuesList.attribute
+                }
+            ]);
         });
 
         test('If no match, display a message', async () => {
@@ -499,6 +543,8 @@ describe('Input', () => {
                     element={mockFormElementWithValuesList}
                     recordValues={recordValuesNoValue}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
 
@@ -520,6 +566,8 @@ describe('Input', () => {
                     element={mockFormElementWithValuesListOpen}
                     recordValues={recordValuesNoValue}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
 
@@ -534,6 +582,8 @@ describe('Input', () => {
                     element={mockFormElementWithValuesListOpen}
                     recordValues={recordValuesNoValue}
                     record={mockRecordWhoAmI}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
                 />
             );
 
@@ -558,6 +608,8 @@ describe('Input', () => {
                         element={mockFormElementWithValuesListOpen}
                         recordValues={recordValuesNoValue}
                         record={mockRecordWhoAmI}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
                     />
                 );
             });

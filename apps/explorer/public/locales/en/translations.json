@@ -344,6 +344,7 @@
         "advanced_search": "Advanced search",
         "search_elements": "Search elements",
         "values_list": "Values List",
+        "new_record": "New record",
         "attribute": {
             "id": "Id",
             "type": "Type",

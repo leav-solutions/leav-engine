@@ -5,7 +5,7 @@ import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
 import {FormElement} from 'components/RecordEdition/EditRecord/_types';
 import {IRecordPropertyAttribute, IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {SAVE_VALUE_saveValue, SAVE_VALUE_saveValue_Value} from '_gqlTypes/SAVE_VALUE';
+import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {IRecordIdentityWhoAmI} from '_types/types';
 
 export type IdValue = string | null;
@@ -92,7 +92,7 @@ export type StandardFieldReducerAction =
     | {
           type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT;
           idValue: IdValue;
-          newValue: SAVE_VALUE_saveValue;
+          newValue: SAVE_VALUE_BATCH_saveValueBatch_values_Value;
       }
     | {
           type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE;
@@ -163,10 +163,12 @@ const standardFieldReducer = (
                 isEditing: true
             });
         case StandardFieldReducerActionsTypes.SET_ERROR:
-            return _updateValueData({
-                error: action.error,
-                isErrorDisplayed: true
-            });
+            return state.values[action.idValue]
+                ? _updateValueData({
+                      error: action.error,
+                      isErrorDisplayed: true
+                  })
+                : state;
         case StandardFieldReducerActionsTypes.CLEAR_ERROR:
             return _updateValueData({
                 error: '',
@@ -185,13 +187,13 @@ const standardFieldReducer = (
         case StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT: {
             const newRawValue =
                 state.attribute.format !== AttributeFormat.encrypted
-                    ? (action.newValue as SAVE_VALUE_saveValue_Value).raw_value
+                    ? (action.newValue as SAVE_VALUE_BATCH_saveValueBatch_values_Value).raw_value
                     : state.values[action.idValue].editingValue;
 
             const newValueData = {
                 idValue: action.newValue.id_value,
-                value: action.newValue as SAVE_VALUE_saveValue_Value,
-                displayValue: (action.newValue as SAVE_VALUE_saveValue_Value).value,
+                value: action.newValue as SAVE_VALUE_BATCH_saveValueBatch_values_Value,
+                displayValue: (action.newValue as SAVE_VALUE_BATCH_saveValueBatch_values_Value).value,
                 editingValue: newRawValue,
                 originRawValue: newRawValue,
                 error: '',

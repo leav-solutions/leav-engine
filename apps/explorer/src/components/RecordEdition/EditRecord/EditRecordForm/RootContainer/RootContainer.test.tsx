@@ -5,7 +5,7 @@ import {mount} from 'enzyme';
 import {getRecordPropertiesQuery} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockCommonFormElementProps} from '__mocks__/common/form';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import RootContainer from './RootContainer';
 
@@ -32,7 +32,7 @@ describe('RootContainer', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
-                    <RootContainer record={mockRecordWhoAmI} />
+                    <RootContainer {...mockCommonFormElementProps} />
                 </MockedProviderWithFragments>
             );
         });

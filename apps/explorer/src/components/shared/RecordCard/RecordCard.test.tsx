@@ -5,6 +5,7 @@ import {mount} from 'enzyme';
 import 'jest-styled-components';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
@@ -12,8 +13,10 @@ import RecordCard from './RecordCard';
 
 describe('RecordCard', () => {
     const mockRecord: IRecordIdentityWhoAmI = {
+        ...mockRecordWhoAmI,
         id: '12345',
         library: {
+            ...mockRecordWhoAmI.library,
             id: 'test_lib',
             label: {fr: 'Test Lib', en: 'test lib'}
         },

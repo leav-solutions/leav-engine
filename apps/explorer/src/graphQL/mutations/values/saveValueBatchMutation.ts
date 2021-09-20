@@ -2,8 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
+import recordIdentityFragment from 'graphQL/queries/records/recordIdentityFragment';
 
 export const saveValueBatchMutation = gql`
+    ${recordIdentityFragment}
     mutation SAVE_VALUE_BATCH(
         $library: ID!
         $recordId: ID!
@@ -14,7 +16,13 @@ export const saveValueBatchMutation = gql`
             values {
                 id_value
                 modified_at
+                modified_by {
+                    ...RecordIdentity
+                }
                 created_at
+                created_by {
+                    ...RecordIdentity
+                }
                 version
                 attribute {
                     id
@@ -30,24 +38,19 @@ export const saveValueBatchMutation = gql`
 
                 ... on LinkValue {
                     linkValue: value {
-                        id
-                        whoAmI {
-                            id
-                            label
-                            color
-                            library {
-                                id
-                                label
-                                gqlNames {
-                                    query
-                                    type
-                                }
-                            }
-                            preview {
-                                small
-                                medium
-                                big
-                                pages
+                        ...RecordIdentity
+                    }
+                }
+
+                ... on TreeValue {
+                    treeValue: value {
+                        record {
+                            ...RecordIdentity
+                        }
+
+                        ancestors {
+                            record {
+                                ...RecordIdentity
                             }
                         }
                     }

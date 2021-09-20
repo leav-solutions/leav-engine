@@ -10,7 +10,7 @@ import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../_gqlTypes/SAVE_USER
 const RECORDS_CONSULTATION_KEY = 'records_consultation';
 const HISTORY_LENGTH = 10;
 
-export default async function (libraryId: string, recordId: string) {
+export default async function (libraryId: string | null, recordId: string | null) {
     const [updatingRecordsConsultationMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData, {
         refetchQueries: [
             {
@@ -21,6 +21,7 @@ export default async function (libraryId: string, recordId: string) {
     });
 
     useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
+        skip: !libraryId || !recordId,
         variables: {
             keys: [`${RECORDS_CONSULTATION_KEY}_${libraryId}`]
         },
