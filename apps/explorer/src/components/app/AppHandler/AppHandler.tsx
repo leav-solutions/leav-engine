@@ -55,8 +55,6 @@ function AppHandler(): JSX.Element {
 
     useEffect(() => {
         if (!user && userData && !meLoading) {
-            console.log(userData.me);
-
             updateUser({
                 userId: userData.me.id,
                 userName: userData.me.whoAmI.label || userData.me.login,

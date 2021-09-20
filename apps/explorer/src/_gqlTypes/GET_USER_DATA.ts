@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* tslint:disable */
 /* eslint-disable */
 // @generated
@@ -8,15 +11,15 @@
 // ====================================================
 
 export interface GET_USER_DATA_userData {
-  global: boolean;
-  data: any | null;
+    global: boolean;
+    data: any | null;
 }
 
 export interface GET_USER_DATA {
-  userData: GET_USER_DATA_userData;
+    userData: GET_USER_DATA_userData;
 }
 
 export interface GET_USER_DATAVariables {
-  keys: string[];
-  global?: boolean | null;
+    keys: string[];
+    global?: boolean | null;
 }
