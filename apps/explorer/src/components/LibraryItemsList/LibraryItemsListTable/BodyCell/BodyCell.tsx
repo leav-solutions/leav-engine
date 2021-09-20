@@ -14,6 +14,7 @@ import {ITableRow, SharedStateSelectionType} from '../../../../_types/types';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 import Cell from '../Cell';
 import CellSelection from '../Cell/CellSelection';
+import {isSelected, isAllSelected} from './getSelectedCell';
 
 const CustomBodyCell = styled.div<{selected: boolean; id?: string | number}>`
     max-width: ${p => (p.id === selectionColumn ? '35px' : 'auto')};
@@ -58,15 +59,8 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
         format: cell?.value?.format
     };
 
-    const allSelected = selectionMode
-        ? selectionState.searchSelection.type === SharedStateSelectionType.search &&
-          selectionState.searchSelection.allSelected
-        : selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
-
-    const selectionToCheck = selectionMode ? selectionState.searchSelection : selectionState.selection;
-    const selected =
-        selectionToCheck.type === SharedStateSelectionType.search &&
-        !!selectionToCheck.selected.find(e => e.id === record.id && e.library === record.library.id);
+    const selected = isSelected(selectionState, selectionMode, record.id, record.library.id);
+    const allSelected = isAllSelected(selectionState, selectionMode);
 
     if (!cell.value) {
         return <CustomBodyCell selected={selected} {...props}></CustomBodyCell>;

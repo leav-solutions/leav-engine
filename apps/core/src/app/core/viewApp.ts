@@ -79,7 +79,8 @@ export default function ({
                     }
 
                     extend type Query {
-                        views(library: String!): ViewsList
+                        views(library: String!): ViewsList!
+                        view(viewId: String!): View!
                     }
 
                     extend type Mutation {
@@ -90,7 +91,9 @@ export default function ({
                 resolvers: {
                     Query: {
                         views: (_, {library}: {library: string}, ctx: IQueryInfos): Promise<IList<IView>> =>
-                            viewDomain.getViews(library, ctx)
+                            viewDomain.getViews(library, ctx),
+                        view: (_, {viewId}: {viewId: string}, ctx: IQueryInfos): Promise<IView> =>
+                            viewDomain.getViewById(viewId, ctx)
                     },
                     Mutation: {
                         saveView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> => {
