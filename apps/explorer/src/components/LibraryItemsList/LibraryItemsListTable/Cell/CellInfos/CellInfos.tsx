@@ -10,7 +10,7 @@ import SelectCellsBtn, {
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
-import React from 'react';
+import React, {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useAppSelector} from 'redux/store';
