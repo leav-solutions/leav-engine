@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* tslint:disable */
 /* eslint-disable */
 // @generated
@@ -11,41 +8,41 @@
 // ====================================================
 
 export interface GET_LIBRARIES_AND_TREES_LIST_libraries_list_gqlNames {
-    query: string;
-    filter: string;
-    searchableFields: string;
+  query: string;
+  filter: string;
+  searchableFields: string;
 }
 
 export interface GET_LIBRARIES_AND_TREES_LIST_libraries_list {
-    id: string;
-    label: any | null;
-    gqlNames: GET_LIBRARIES_AND_TREES_LIST_libraries_list_gqlNames;
+  id: string;
+  label: any | null;
+  gqlNames: GET_LIBRARIES_AND_TREES_LIST_libraries_list_gqlNames;
 }
 
 export interface GET_LIBRARIES_AND_TREES_LIST_libraries {
-    list: GET_LIBRARIES_AND_TREES_LIST_libraries_list[];
+  list: GET_LIBRARIES_AND_TREES_LIST_libraries_list[];
 }
 
 export interface GET_LIBRARIES_AND_TREES_LIST_trees_list_libraries_library {
-    id: string;
-    label: any | null;
+  id: string;
+  label: any | null;
 }
 
 export interface GET_LIBRARIES_AND_TREES_LIST_trees_list_libraries {
-    library: GET_LIBRARIES_AND_TREES_LIST_trees_list_libraries_library;
+  library: GET_LIBRARIES_AND_TREES_LIST_trees_list_libraries_library;
 }
 
 export interface GET_LIBRARIES_AND_TREES_LIST_trees_list {
-    id: string;
-    label: any | null;
-    libraries: GET_LIBRARIES_AND_TREES_LIST_trees_list_libraries[];
+  id: string;
+  label: any | null;
+  libraries: GET_LIBRARIES_AND_TREES_LIST_trees_list_libraries[];
 }
 
 export interface GET_LIBRARIES_AND_TREES_LIST_trees {
-    list: GET_LIBRARIES_AND_TREES_LIST_trees_list[];
+  list: GET_LIBRARIES_AND_TREES_LIST_trees_list[];
 }
 
 export interface GET_LIBRARIES_AND_TREES_LIST {
-    libraries: GET_LIBRARIES_AND_TREES_LIST_libraries | null;
-    trees: GET_LIBRARIES_AND_TREES_LIST_trees | null;
+  libraries: GET_LIBRARIES_AND_TREES_LIST_libraries | null;
+  trees: GET_LIBRARIES_AND_TREES_LIST_trees | null;
 }

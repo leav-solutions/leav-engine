@@ -1,28 +1,25 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* tslint:disable */
 /* eslint-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeElementInput} from './globalTypes';
+import { TreeElementInput } from "./globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: ADD_TREE_ELEMENT
 // ====================================================
 
 export interface ADD_TREE_ELEMENT_treeAddElement {
-    id: string | null;
+  id: string | null;
 }
 
 export interface ADD_TREE_ELEMENT {
-    treeAddElement: ADD_TREE_ELEMENT_treeAddElement;
+  treeAddElement: ADD_TREE_ELEMENT_treeAddElement;
 }
 
 export interface ADD_TREE_ELEMENTVariables {
-    treeId: string;
-    element: TreeElementInput;
-    parent?: TreeElementInput | null;
-    order?: number | null;
+  treeId: string;
+  element: TreeElementInput;
+  parent?: TreeElementInput | null;
+  order?: number | null;
 }

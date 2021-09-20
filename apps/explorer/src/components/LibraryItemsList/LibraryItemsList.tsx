@@ -39,12 +39,8 @@ import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 import SideItems from './SideItems';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {
-    getViewByIdQuery,
-    IGetViewQuery,
-    IGetViewSort,
-    IGetViewVariables
-} from '../../graphQL/queries/views/getViewById';
+import {GET_VIEW_view_sort, GET_VIEWVariables, GET_VIEW, GET_VIEW_view} from '_gqlTypes/GET_VIEW';
+import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
 
 interface IWrapperProps {
     showSide: boolean;
@@ -97,8 +93,6 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     const [searchState, searchDispatch] = useReducer(searchReducer, {...initialSearchState, library});
     const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
     const SELECTED_VIEW_KEY = 'selected_view_' + library.id;
-
-    console.log('Library items list');
 
     useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         fetchPolicy: 'no-cache',
@@ -219,17 +213,17 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         }
     });
 
-    const [getSelectedView, {error: getSelectedViewError}] = useLazyQuery<IGetViewQuery, IGetViewVariables>(
+    const [getSelectedView, {error: getSelectedViewError}] = useLazyQuery<GET_VIEW, GET_VIEWVariables>(
         getViewByIdQuery,
         {
             onCompleted: data => {
                 const v: IView = {
-                    ..._.omit(data.view, ['created_by', '__typename']),
+                    ...(_.omit(data.view, ['created_by', '__typename']) as GET_VIEW_view),
                     owner: data.view.created_by.id === user?.userId,
                     filters: Array.isArray(data.view.filters)
                         ? getFiltersFromRequest(data.view.filters, searchState.library.id, searchState.attributes)
                         : [],
-                    sort: _.omit(data.view.sort, ['__typename']) as IGetViewSort,
+                    sort: _.omit(data.view.sort, ['__typename']) as GET_VIEW_view_sort,
                     settings: data.view.settings?.map(s => _.omit(s, '__typename'))
                 };
 

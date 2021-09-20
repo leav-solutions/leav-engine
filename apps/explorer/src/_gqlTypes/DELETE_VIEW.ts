@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* tslint:disable */
 /* eslint-disable */
 // @generated
@@ -11,13 +8,13 @@
 // ====================================================
 
 export interface DELETE_VIEW_deleteView {
-    id: string;
+  id: string;
 }
 
 export interface DELETE_VIEW {
-    deleteView: DELETE_VIEW_deleteView;
+  deleteView: DELETE_VIEW_deleteView;
 }
 
 export interface DELETE_VIEWVariables {
-    viewId: string;
+  viewId: string;
 }

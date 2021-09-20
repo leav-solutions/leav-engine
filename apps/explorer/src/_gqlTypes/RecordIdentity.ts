@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* tslint:disable */
 /* eslint-disable */
 // @generated
@@ -11,32 +8,32 @@
 // ====================================================
 
 export interface RecordIdentity_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
+  query: string;
+  type: string;
 }
 
 export interface RecordIdentity_whoAmI_library {
-    id: string;
-    label: any | null;
-    gqlNames: RecordIdentity_whoAmI_library_gqlNames;
+  id: string;
+  label: any | null;
+  gqlNames: RecordIdentity_whoAmI_library_gqlNames;
 }
 
 export interface RecordIdentity_whoAmI_preview {
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    pages: string | null;
+  small: string | null;
+  medium: string | null;
+  big: string | null;
+  pages: string | null;
 }
 
 export interface RecordIdentity_whoAmI {
-    id: string;
-    label: string | null;
-    color: string | null;
-    library: RecordIdentity_whoAmI_library;
-    preview: RecordIdentity_whoAmI_preview | null;
+  id: string;
+  label: string | null;
+  color: string | null;
+  library: RecordIdentity_whoAmI_library;
+  preview: RecordIdentity_whoAmI_preview | null;
 }
 
 export interface RecordIdentity {
-    id: string;
-    whoAmI: RecordIdentity_whoAmI;
+  id: string;
+  whoAmI: RecordIdentity_whoAmI;
 }
