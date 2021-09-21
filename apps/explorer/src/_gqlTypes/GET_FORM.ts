@@ -40,6 +40,7 @@ export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribu
 export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribute {
     id: string;
     label: any | null;
+    description: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
@@ -98,6 +99,7 @@ export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_l
 export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute {
     id: string;
     label: any | null;
+    description: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
@@ -191,6 +193,7 @@ export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_t
 export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute {
     id: string;
     label: any | null;
+    description: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;

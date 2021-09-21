@@ -1,20 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {BranchesOutlined, InfoCircleOutlined} from '@ant-design/icons';
-import {Button, Popover} from 'antd';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
+import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
+import RecordCard from 'components/shared/RecordCard';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React, {useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
-import ValueDetails from '../../../shared/ValueDetails';
-import PathsList from '../PathsList';
+import {PreviewSize} from '_types/types';
 
 interface ITreeFieldValueProps {
     value: IRecordPropertyTree;
@@ -23,6 +22,7 @@ interface ITreeFieldValueProps {
 }
 
 const ListItem = styled.div`
+    padding: 0.5em 0;
     position: relative;
     &:not(:last-child) {
         border-bottom: 1px solid ${themingVar['@border-color-base']};
@@ -40,7 +40,6 @@ const ListItem = styled.div`
 function TreeFieldValue({value, attribute, onDelete}: ITreeFieldValueProps): JSX.Element {
     const {t} = useTranslation();
     const _handleDelete = async () => onDelete();
-    const [displayAllPaths, setDisplayAllPaths] = useState<boolean>(false);
 
     const valueMenuActions: FloatingMenuAction[] = [
         {
@@ -49,16 +48,7 @@ function TreeFieldValue({value, attribute, onDelete}: ITreeFieldValueProps): JSX
         },
         {
             title: t('record_edition.value_details'),
-            button: (
-                <Popover
-                    overlayStyle={{maxWidth: '50vw'}}
-                    placement="topLeft"
-                    content={<ValueDetails value={value} attribute={attribute} />}
-                    trigger="click"
-                >
-                    <Button icon={<InfoCircleOutlined />} size="small" />
-                </Popover>
-            )
+            button: <ValueDetailsBtn value={value} attribute={attribute} />
         },
         {
             title: t('global.delete'),
@@ -66,20 +56,9 @@ function TreeFieldValue({value, attribute, onDelete}: ITreeFieldValueProps): JSX
         }
     ];
 
-    if (value.treeValue.ancestors.length > 1) {
-        valueMenuActions.splice(2, 0, {
-            title: t('record_edition.other_paths'),
-            size: 'small',
-            icon: <BranchesOutlined />,
-            onClick: () => setDisplayAllPaths(!displayAllPaths)
-        });
-    }
-
-    const pathsToDisplay = displayAllPaths ? value.treeValue.ancestors : value.treeValue.ancestors.slice(0, 1);
-
     return (
         <ListItem>
-            <PathsList paths={pathsToDisplay} />
+            <RecordCard record={value.treeValue.record.whoAmI} size={PreviewSize.small} />
             <FloatingMenu actions={valueMenuActions} />
         </ListItem>
     );

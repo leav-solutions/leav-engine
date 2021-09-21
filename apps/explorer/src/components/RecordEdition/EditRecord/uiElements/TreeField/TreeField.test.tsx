@@ -2,6 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {
+    EditRecordReducerActionsTypes,
+    initialState
+} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
+import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
 import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
@@ -13,12 +18,6 @@ import {mockTreeRecord} from '__mocks__/common/treeElements';
 import {mockModifier} from '__mocks__/common/value';
 import TreeField from '.';
 import {APICallStatus, DeleteValueFunc, ISubmitMultipleResult, SubmitValueFunc} from '../../_types';
-
-jest.mock('../../shared/ValueDetails', () => {
-    return function ValueDetails() {
-        return <div>ValueDetails</div>;
-    };
-});
 
 jest.mock('../../../../shared/SelectTreeNode', () => {
     return function SelectTreeNode() {
@@ -34,6 +33,12 @@ jest.mock('antd/lib/typography/Paragraph', () => {
 });
 
 describe('TreeField', () => {
+    const mockEditRecordDispatch = jest.fn();
+    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+        state: initialState,
+        dispatch: mockEditRecordDispatch
+    }));
+
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     const mockRecord = {
@@ -151,74 +156,6 @@ describe('TreeField', () => {
 
     beforeEach(() => jest.clearAllMocks());
 
-    test('Display tree values with ancestors', async () => {
-        render(
-            <TreeField
-                recordValues={recordValues}
-                element={mockFormElementTree}
-                record={mockRecordWhoAmI}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
-
-        expect(screen.getByText(mockFormElementTree.settings.label)).toBeInTheDocument();
-        expect(screen.getByText(mockRecord.whoAmI.label)).toBeInTheDocument();
-        expect(screen.getByText(mockRecord2.whoAmI.label)).toBeInTheDocument();
-        expect(screen.getAllByText(mockRecordAncestor.whoAmI.label)).toHaveLength(2); // Once per value
-    });
-
-    test('If multiple parents, show other paths', async () => {
-        const valueMultiAncestor: IRecordPropertyTree = {
-            ...valueA,
-            treeValue: {
-                record: mockRecord,
-                ancestors: [
-                    [
-                        {
-                            record: mockRecordAncestor
-                        },
-                        {
-                            record: mockRecord
-                        }
-                    ],
-                    [
-                        {
-                            record: mockRecordAncestor2
-                        },
-                        {
-                            record: mockRecord
-                        }
-                    ]
-                ]
-            },
-            id_value: '987654'
-        };
-
-        const recordValuesMultiAncestor = {
-            test: [valueMultiAncestor]
-        };
-
-        render(
-            <TreeField
-                recordValues={recordValuesMultiAncestor}
-                element={mockFormElementTree}
-                record={mockRecordWhoAmI}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
-
-        expect(screen.getByText(mockRecord.whoAmI.label)).toBeInTheDocument();
-        expect(screen.getByText(mockRecordAncestor.whoAmI.label)).toBeInTheDocument();
-
-        const otherPathBtn = screen.getByRole('button', {name: 'branches', hidden: true});
-        userEvent.click(otherPathBtn);
-
-        expect(screen.getByText(mockRecordAncestor.whoAmI.label)).toBeInTheDocument();
-        expect(screen.getByText(mockRecordAncestor2.whoAmI.label)).toBeInTheDocument();
-    });
-
     test('If no values, display "add values" button', async () => {
         render(
             <TreeField
@@ -320,7 +257,7 @@ describe('TreeField', () => {
 
         userEvent.click(valueDetailsButtons[0]);
 
-        expect(screen.getByText('ValueDetails')).toBeInTheDocument();
+        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 
     test('Can select value from values list', async () => {

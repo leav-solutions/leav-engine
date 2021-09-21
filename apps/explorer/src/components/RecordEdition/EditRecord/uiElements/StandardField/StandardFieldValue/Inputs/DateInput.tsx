@@ -41,7 +41,7 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardIn
             showTime={!!(settings as IFormDateFieldSettings).withTime}
             onOk={_handleDateChange}
             popupStyle={{background: themingVar['@default-bg']}}
-            style={{background: themingVar['@default-bg']}}
+            style={{background: themingVar['@default-bg'], width: '100%'}}
             allowClear={false}
             dropdownAlign={pickerPosition}
         />
