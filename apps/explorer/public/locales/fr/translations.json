@@ -112,7 +112,8 @@
                 "cancel-sort": "Annuler Tri",
                 "sort-advance": "Tri Avancé",
                 "regroup": "Regrouper",
-                "choose-columns": "Choix Colonnes"
+                "choose-columns": "Choix Colonnes",
+                "hide-column": "Masquer la colonne"
             },
             "actions-tooltips": {
                 "informations": "Informations",
@@ -200,7 +201,7 @@
         }
     },
     "menu-selection": {
-        "nb-selected": "{{nb}} éléments sélectionné(s)",
+        "nb-selected": "Sélection {{nbSelected}} / {{total}}",
         "quit": "Quitter le mode sélection",
         "actions": "Actions",
         "all-selected-enabled": "Tout sélectionné actif",

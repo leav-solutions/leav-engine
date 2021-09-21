@@ -200,13 +200,10 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                 >
                     <DropdownButton>
                         <SelectionSummary>
-                            {allSelectActive ? (
-                                <>
-                                    <CheckSquareTwoTone /> {t('menu-selection.all-selected-enabled')}
-                                </>
-                            ) : (
-                                t('menu-selection.nb-selected', {nb: countItemsSelected})
-                            )}
+                            {t('menu-selection.nb-selected', {
+                                nbSelected: !allSelectActive ? countItemsSelected : searchState.totalCount,
+                                total: searchState.totalCount
+                            })}
                             <DownOutlined style={{paddingLeft: 12}} />
                         </SelectionSummary>
                         <ClearSelection onClick={disableModeSelection}>

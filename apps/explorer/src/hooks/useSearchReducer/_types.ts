@@ -59,4 +59,5 @@ export interface ISearchState {
 export interface IViewState {
     current: IView | null;
     reload: boolean;
+    sync: boolean;
 }

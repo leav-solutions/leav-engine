@@ -107,7 +107,8 @@
                 "cancel-sort": "Cancel Sort",
                 "sort-advance": "Sort Advance",
                 "regroup": "regroup",
-                "choose-columns": "Choose Columns"
+                "choose-columns": "Choose Columns",
+                "hide-column": "Hide column"
             },
             "actions-tooltips": {
                 "informations": "Informations",
@@ -196,7 +197,7 @@
         }
     },
     "menu-selection": {
-        "nb-selected": "{{nb}} items selected",
+        "nb-selected": "Selection {{nbSelected}} / {{total}}",
         "quit": "Quit selection mode",
         "actions": "Actions",
         "all-selected-enabled": "All selected mode enabled",
