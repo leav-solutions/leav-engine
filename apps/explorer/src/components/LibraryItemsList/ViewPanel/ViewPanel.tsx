@@ -244,7 +244,7 @@ function ViewPanel(): JSX.Element {
             {editView && <EditView view={editView} visible={!!editView} onClose={_closeModal} />}
             <Header>{t('view.list')}</Header>
             <SearchWrapper>
-                <Input.Search onSearch={_handleSearchSubmit} />
+                <Input.Search placeholder={t('view.search')} onSearch={_handleSearchSubmit} />
             </SearchWrapper>
 
             <SubHeader>

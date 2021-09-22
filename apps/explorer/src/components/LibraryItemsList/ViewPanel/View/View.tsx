@@ -147,7 +147,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                         },
                         filters: getRequestFromFilters(view.filters),
                         id: undefined,
-                        library: activeLibrary.id
+                        library: activeLibrary.id,
+                        shared: false
                     }
                 }
             });
@@ -161,17 +162,10 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                 }
             });
 
-            searchDispatch(
-                !view.shared
-                    ? {
-                          type: SearchActionTypes.SET_USER_VIEWS_ORDER,
-                          userViewsOrder: [...searchState.userViewsOrder, newViewRes.data.saveView.id]
-                      }
-                    : {
-                          type: SearchActionTypes.SET_SHARED_VIEWS_ORDER,
-                          sharedViewsOrder: [...searchState.sharedViewsOrder, newViewRes.data.saveView.id]
-                      }
-            );
+            searchDispatch({
+                type: SearchActionTypes.SET_USER_VIEWS_ORDER,
+                userViewsOrder: [...searchState.userViewsOrder, newViewRes.data.saveView.id]
+            });
         } catch (e) {
             console.error(e);
         }

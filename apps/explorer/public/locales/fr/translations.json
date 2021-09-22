@@ -271,6 +271,7 @@
     },
     "view": {
         "list": "Liste des vues",
+        "search": "Rechercher une vue",
         "my-views": "Mes vues",
         "shared-views": "Partagées",
         "type-list": "Liste",

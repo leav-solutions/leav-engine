@@ -268,6 +268,7 @@
     },
     "view": {
         "list": "List View",
+        "search": "Search view",
         "my-views": "My views",
         "shared-views": "Shared",
         "type-list": "View List",

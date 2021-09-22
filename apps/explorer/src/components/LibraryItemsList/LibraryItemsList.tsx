@@ -29,7 +29,6 @@ import {
     IGetRecordsFromLibraryQueryVariables
 } from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {useLang} from '../../hooks/LangHook/LangHook';
-
 import {IAttribute, IField, IParentAttributeData, IView, SharedStateSelectionType} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import {getFiltersFromRequest} from './FiltersPanel/getFiltersFromRequest';

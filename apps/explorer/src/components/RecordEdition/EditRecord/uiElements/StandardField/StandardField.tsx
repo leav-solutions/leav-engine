@@ -95,7 +95,7 @@ function StandardField({
                 error: creationErrors[attribute.id].message
             });
         }
-    }, [creationErrors, attribute.id]);
+    }, [creationErrors, attribute.id, state.values]);
 
     const _handleSubmit = async (idValue: IdValue, valueToSave: AnyPrimitive) => {
         const isSavingNewValue = idValue === newValueId;
