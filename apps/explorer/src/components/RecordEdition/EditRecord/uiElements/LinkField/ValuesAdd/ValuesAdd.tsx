@@ -116,7 +116,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     });
 
     useEffect(() => {
-        wrapperRef.current.scrollIntoView({block: 'end'});
+        wrapperRef.current.scrollIntoView({block: 'nearest'});
         searchInputRef.current?.focus();
     }, []);
 

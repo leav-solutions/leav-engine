@@ -348,8 +348,11 @@
         "search_elements": "Search elements",
         "values_list": "Values List",
         "new_record": "New record",
+        "value_details_section": "Value",
+        "attribute_details_section": "Attribute",
+        "path_section": "Path",
         "attribute": {
-            "id": "Id",
+            "id": "Identifier",
             "type": "Type",
             "format": "Format",
             "type_simple": "Simple",
@@ -364,6 +367,11 @@
             "format_numeric": "Numeric",
             "format_text": "Text"
         }
+    },
+    "record_summary": {
+        "id": "Identifiant",
+        "label": "Libellé",
+        "library": "Bibliothèque"
     },
     "floating_menu": {
         "more_actions": "More"

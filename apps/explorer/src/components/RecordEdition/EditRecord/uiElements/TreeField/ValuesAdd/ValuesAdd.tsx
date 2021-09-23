@@ -57,7 +57,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const [selectedValues, setSelectedValues] = useState<ValueFromList[]>([]);
 
     useEffect(() => {
-        wrapperRef.current.scrollIntoView({block: 'end'});
+        wrapperRef.current.scrollIntoView({block: 'nearest'});
     }, []);
 
     const _handleSelectionChange = (selection: ValueFromList[]) => setSelectedValues(selection);

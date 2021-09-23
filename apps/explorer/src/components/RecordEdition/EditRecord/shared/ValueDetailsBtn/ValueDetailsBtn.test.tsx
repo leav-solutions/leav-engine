@@ -2,20 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {
+    EditRecordReducerActionsTypes,
+    initialState
+} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
+import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
 import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 import {render, screen} from '_tests/testUtils';
-import {mockAttributeStandard} from '__mocks__/common/attribute';
+import {mockFormAttribute} from '__mocks__/common/attribute';
 import ValueDetailsBtn from './ValueDetailsBtn';
 
-jest.mock('../../shared/ValueDetails', () => {
-    return function ValueDetails() {
-        return <div>ValueDetails</div>;
-    };
-});
-
 describe('ValueDetailsBtn', () => {
+    const mockEditRecordDispatch = jest.fn();
+    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+        state: initialState,
+        dispatch: mockEditRecordDispatch
+    }));
+
     const mockValue: IRecordPropertyStandard = {
         value: 'my value',
         raw_value: 'my raw value',
@@ -27,7 +32,7 @@ describe('ValueDetailsBtn', () => {
     };
 
     const mockAttribute: GET_FORM_forms_list_elements_elements_attribute_StandardAttribute = {
-        ...mockAttributeStandard,
+        ...mockFormAttribute,
         label: {
             fr: 'my attribute label'
         },
@@ -44,6 +49,6 @@ describe('ValueDetailsBtn', () => {
         expect(valueDetailsBtn).toBeInTheDocument();
         userEvent.click(valueDetailsBtn);
 
-        expect(screen.queryByText('ValueDetails')).toBeInTheDocument();
+        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 });

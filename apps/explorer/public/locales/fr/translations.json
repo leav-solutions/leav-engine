@@ -352,8 +352,11 @@
         "search_elements": "Rechercher des éléments",
         "values_list": "Liste de valeurs",
         "new_record": "Nouvel élément",
+        "value_details_section": "Valeur",
+        "attribute_details_section": "Attribut",
+        "path_section": "Chemin",
         "attribute": {
-            "id": "ID",
+            "id": "Identifiant",
             "type": "Type",
             "format": "Format",
             "type_simple": "Simple",
@@ -368,6 +371,11 @@
             "format_numeric": "Numérique",
             "format_text": "Texte"
         }
+    },
+    "record_summary": {
+        "id": "Identifiant",
+        "label": "Libellé",
+        "library": "Bibliothèque"
     },
     "floating_menu": {
         "more_actions": "Plus"

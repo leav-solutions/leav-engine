@@ -4,12 +4,16 @@
 import {useMutation} from '@apollo/client';
 import {Button} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
+import {IconClosePanel} from 'assets/icons/IconClosePanel';
+import {IconOpenPanel} from 'assets/icons/IconOpenPanel';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import RecordCard from 'components/shared/RecordCard';
 import createRecordMutation from 'graphQL/mutations/records/createRecordMutation';
-import React, {useState} from 'react';
+import React, {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addNotification} from 'redux/notifications';
+import styled from 'styled-components';
+import themingVar from 'themingVar';
 import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord} from '_gqlTypes/CREATE_RECORD';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
@@ -33,6 +37,9 @@ import {
     IValueToSubmit,
     SubmitValueFunc
 } from '../EditRecord/_types';
+import editRecordReducer from '../editRecordReducer';
+import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
+import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext from './creationErrorContext';
 
 interface IEditRecordModalProps {
@@ -47,9 +54,59 @@ interface IPendingValues {
     [attributeId: string]: {[idValue: string]: SAVE_VALUE_BATCH_saveValueBatch_values};
 }
 
+const Container = styled.div<{isSidebarCollapsed: boolean}>`
+    height: calc(100vh - 12rem);
+    display: grid;
+    grid-template-columns: auto ${p => (p.isSidebarCollapsed ? 0 : '300px')};
+    grid-template-rows: 5em auto;
+    grid-template-areas:
+        'title sidebar'
+        'content sidebar';
+    overflow: hidden;
+`;
+
+const Title = styled.div`
+    grid-area: title;
+    align-self: center;
+    font-size: 1.2rem;
+    padding: 1rem;
+`;
+
+const Content = styled.div`
+    height: calc(100vh - 16.5rem);
+    grid-area: content;
+    padding: 1em;
+    overflow-x: hidden;
+    overflow-y: scroll;
+`;
+
+const Sidebar = styled.div`
+    position: relative;
+    grid-area: sidebar;
+    background: ${themingVar['@leav-secondary-bg']};
+    border-top-right-radius: 3px;
+    z-index: 1;
+`;
+
+const ToggleExpand = styled.div`
+    position: absolute;
+    left: -25px;
+    padding: 5px;
+    background: ${themingVar['@leav-secondary-bg']};
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    cursor: pointer;
+`;
+
 function EditRecordModal({open, record, library, onClose, afterCreate: afterSave}: IEditRecordModalProps): JSX.Element {
     const {t} = useTranslation();
 
+    const [state, dispatch] = useReducer(editRecordReducer, {
+        record,
+        activeValue: null
+    });
+
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useDeleteValueMutation(record);
     const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordMutation, {
@@ -231,7 +288,13 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
         };
     };
 
-    const title = record ? <RecordCard record={record} size={PreviewSize.small} /> : t('record_edition.new_record');
+    const _handleToggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+
+    const title = record ? (
+        <RecordCard record={record} size={PreviewSize.small} withLibrary={false} withPreview={false} />
+    ) : (
+        t('record_edition.new_record')
+    );
 
     const footerButtons = [
         <Button aria-label={t('global.close')} key="close" onClick={onClose}>
@@ -258,24 +321,36 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 visible={open}
                 onCancel={onClose}
                 destroyOnClose
-                title={title}
-                cancelText={t('global.close')}
-                closable
-                width="60vw"
+                cancelText={t('global.cancel')}
+                closable={false}
+                width="90vw"
                 centered
-                style={{padding: 0}}
-                bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto'}}
+                style={{padding: 0, maxWidth: '800px'}}
+                bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
                 footer={footerButtons}
                 wrapProps={{onClick: (e: MouseEvent) => e.stopPropagation()}}
             >
-                <CreationErrorContext.Provider value={creationErrors}>
-                    <EditRecord
-                        record={record}
-                        library={library}
-                        onValueSubmit={_handleValueSubmit}
-                        onValueDelete={_handleDeleteValue}
-                    />
-                </CreationErrorContext.Provider>
+                <EditRecordReducerContext.Provider value={{state, dispatch}}>
+                    <CreationErrorContext.Provider value={creationErrors}>
+                        <Container isSidebarCollapsed={isSidebarCollapsed}>
+                            <Title>{title}</Title>
+                            <Content className="content">
+                                <EditRecord
+                                    record={record}
+                                    library={library}
+                                    onValueSubmit={_handleValueSubmit}
+                                    onValueDelete={_handleDeleteValue}
+                                />
+                            </Content>
+                            <Sidebar className="sidebar">
+                                <ToggleExpand onClick={_handleToggleSidebar}>
+                                    {isSidebarCollapsed ? <IconClosePanel /> : <IconOpenPanel />}
+                                </ToggleExpand>
+                                <EditRecordSidebar />
+                            </Sidebar>
+                        </Container>
+                    </CreationErrorContext.Provider>
+                </EditRecordReducerContext.Provider>
             </Modal>
         </div>
     ) : (

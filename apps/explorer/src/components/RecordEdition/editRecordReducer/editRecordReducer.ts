@@ -1,0 +1,46 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+
+export interface IRecordPropertyWithAttribute {
+    attribute: GET_FORM_forms_list_elements_elements_attribute;
+    value: RecordProperty;
+}
+
+export interface IEditRecordReducerState {
+    record: RecordIdentity_whoAmI;
+    activeValue: IRecordPropertyWithAttribute;
+}
+
+export enum EditRecordReducerActionsTypes {
+    SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE'
+}
+
+export interface IEditRecordReducerActions {
+    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE;
+    value: IRecordPropertyWithAttribute;
+}
+
+export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void;
+
+export const initialState: IEditRecordReducerState = {
+    record: null,
+    activeValue: null
+};
+
+const editRecordReducer = (
+    state: IEditRecordReducerState,
+    action: IEditRecordReducerActions
+): IEditRecordReducerState => {
+    switch (action.type) {
+        case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
+            return {...state, activeValue: action.value};
+        default:
+            return state;
+    }
+};
+
+export default editRecordReducer;
