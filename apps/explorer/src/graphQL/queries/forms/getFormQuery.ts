@@ -33,6 +33,7 @@ export const getFormQuery = gql`
                         attribute {
                             id
                             label
+                            description
                             type
                             format
                             system

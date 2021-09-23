@@ -97,6 +97,10 @@ export const mockFormAttribute: GET_FORM_forms_list_elements_elements_attribute 
         fr: 'test',
         en: 'test'
     },
+    description: {
+        fr: 'Mon attribut',
+        en: 'My attribute'
+    },
     system: false,
     multiple_values: false,
     values_list: {

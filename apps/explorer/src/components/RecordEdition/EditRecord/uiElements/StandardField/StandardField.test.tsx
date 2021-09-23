@@ -3,6 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {
+    EditRecordReducerActionsTypes,
+    initialState
+} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
+import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
 import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
@@ -18,13 +23,13 @@ import StandardField from './StandardField';
 jest.mock('../../hooks/useDeleteValueMutation');
 jest.mock('hooks/LangHook/LangHook');
 
-jest.mock('../../shared/ValueDetails', () => {
-    return function ValueDetails() {
-        return <div>ValueDetails</div>;
-    };
-});
-
 describe('StandardField', () => {
+    const mockEditRecordDispatch = jest.fn();
+    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+        state: initialState,
+        dispatch: mockEditRecordDispatch
+    }));
+
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     const mockAttribute: IRecordPropertyAttribute = {
@@ -128,7 +133,7 @@ describe('StandardField', () => {
             userEvent.click(valueDisplayElem);
         });
 
-        expect(screen.getByText('ValueDetails')).toBeInTheDocument();
+        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 
     test('Cancel input', async () => {
@@ -577,15 +582,17 @@ describe('StandardField', () => {
         });
 
         test('If open values list, can copy a value from the list and edit it', async () => {
-            render(
-                <StandardField
-                    element={mockFormElementWithValuesListOpen}
-                    recordValues={recordValuesNoValue}
-                    record={mockRecordWhoAmI}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            await act(async () => {
+                render(
+                    <StandardField
+                        element={mockFormElementWithValuesListOpen}
+                        recordValues={recordValuesNoValue}
+                        record={mockRecordWhoAmI}
+                        onValueSubmit={mockHandleSubmit}
+                        onValueDelete={mockHandleDelete}
+                    />
+                );
+            });
 
             await act(async () => {
                 userEvent.click(screen.getByRole('textbox'));

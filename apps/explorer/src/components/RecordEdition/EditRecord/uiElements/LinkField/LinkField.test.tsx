@@ -2,6 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {
+    EditRecordReducerActionsTypes,
+    initialState
+} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
+import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {IRecordPropertyLink} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import React from 'react';
@@ -27,15 +32,15 @@ jest.mock('components/SearchModal', () => {
     };
 });
 
-jest.mock('../../shared/ValueDetails', () => {
-    return function ValueDetails() {
-        return <div>ValueDetails</div>;
-    };
-});
-
 type ValueListWhoAmI = GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI;
 
 describe('LinkField', () => {
+    const mockEditRecordDispatch = jest.fn();
+    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+        state: initialState,
+        dispatch: mockEditRecordDispatch
+    }));
+
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     const mockSubmitRes: ISubmitMultipleResult = {
@@ -274,7 +279,7 @@ describe('LinkField', () => {
 
         userEvent.click(valueDetailsButton);
 
-        expect(screen.getByText('ValueDetails')).toBeInTheDocument();
+        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 
     describe('Values list', () => {
@@ -311,7 +316,7 @@ describe('LinkField', () => {
             }
         };
 
-        test.only('Can add record from values list on click on "add" button', async () => {
+        test('Can add record from values list on click on "add" button', async () => {
             await act(async () => {
                 render(
                     <LinkField
@@ -503,7 +508,7 @@ describe('LinkField', () => {
                 userEvent.click(submitBtn);
             });
 
-            expect(mockHandleSubmit).toBeCalledWith([{attribute: 'test', idValue: null, value: mockRecordWhoAmI.id}]);
+            expect(mockHandleSubmit).toBeCalled();
             expect(screen.queryByTestId('values-add')).not.toBeInTheDocument();
         });
 
@@ -556,26 +561,27 @@ describe('LinkField', () => {
                     result: {
                         data: {
                             test_lib: {
+                                __typename: 'TestLibList',
                                 totalCount: 1,
                                 list: [
                                     {
+                                        __typename: 'TestLib',
                                         _id: '2401',
                                         id: '2401',
                                         whoAmI: {
+                                            __typename: 'RecordIdentity',
                                             id: '2401',
                                             label: 'label0',
                                             color: null,
-                                            preview: {
-                                                small: '',
-                                                medium: '',
-                                                big: ''
-                                            },
+                                            preview: null,
                                             library: {
+                                                __typename: 'Library',
                                                 id: 'test_lib',
                                                 label: {
                                                     fr: 'Test'
                                                 },
                                                 gqlNames: {
+                                                    __typename: 'LibraryGraphqlNames',
                                                     query: 'test_lib',
                                                     type: 'TestLib'
                                                 }
@@ -611,7 +617,14 @@ describe('LinkField', () => {
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />,
-                    {apolloMocks: mocks}
+                    {
+                        apolloMocks: mocks,
+                        cacheSettings: {
+                            possibleTypes: {
+                                Record: ['TestLib']
+                            }
+                        }
+                    }
                 );
             });
 

@@ -7,6 +7,8 @@ import {Button, Form, Input, Popover, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
+import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
+import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import Dimmer from 'components/shared/Dimmer';
 import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -14,7 +16,6 @@ import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 import {AttributeFormat} from '_types/types';
-import ValueDetails from '../../../shared/ValueDetails';
 import {
     IdValue,
     IStandardFieldReducerState,
@@ -79,7 +80,6 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
 
     &.editing .field-wrapper,
     &.editing .nested-input {
-        width: 60%;
         z-index: 0;
     }
 
@@ -137,7 +137,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
 const ActionsWrapper = styled.div`
     position: absolute;
     display: flex;
-    width: 60%;
+    width: 100%;
     flex-direction: column;
 `;
 
@@ -149,14 +149,6 @@ const ButtonsWrapper = styled.div`
     & > button {
         margin-left: 0.5em;
     }
-`;
-
-const ValueDetailsWrapper = styled.div`
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 40%;
-    padding-left: 1em;
 `;
 
 const FormItem = styled(Form.Item)`
@@ -184,13 +176,15 @@ function StandardFieldValue({
     const {t} = useTranslation();
     const actionsWrapperRef = useRef<HTMLDivElement>();
 
+    const {dispatch: editRecordDispatch} = useEditRecordReducer();
+
     const attribute = state.formElement.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
 
     const isValuesListEnabled = !!attribute?.values_list?.enable;
     const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
 
     useEffect(() => {
-        actionsWrapperRef?.current?.scrollIntoView({block: 'end'});
+        actionsWrapperRef?.current?.scrollIntoView({block: 'nearest'});
     }, [fieldValue.isEditing]);
 
     const _handleSubmit = async (valueToSave: AnyPrimitive) => {
@@ -199,6 +193,11 @@ function StandardFieldValue({
         }
 
         onSubmit(fieldValue.idValue, valueToSave);
+
+        editRecordDispatch({
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: null
+        });
     };
 
     const _handlePressEnter = async () => {
@@ -227,6 +226,11 @@ function StandardFieldValue({
             type: StandardFieldReducerActionsTypes.FOCUS_FIELD,
             idValue: fieldValue.idValue
         });
+
+        editRecordDispatch({
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: {value: fieldValue.value, attribute}
+        });
     };
 
     const _handleValueChange = (value: AnyPrimitive) => {
@@ -248,6 +252,11 @@ function StandardFieldValue({
         dispatch({
             type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
             idValue: fieldValue.idValue
+        });
+
+        editRecordDispatch({
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: null
         });
     };
 
@@ -388,11 +397,6 @@ function StandardFieldValue({
                                 </ButtonsWrapper>
                             )}
                         </ActionsWrapper>
-                        {fieldValue.isEditing && (
-                            <ValueDetailsWrapper>
-                                <ValueDetails value={fieldValue.value} attribute={attribute} />
-                            </ValueDetailsWrapper>
-                        )}
                     </FormItem>
                 </Form>
             </FormWrapper>

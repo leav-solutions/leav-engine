@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {HeartOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
-import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import SelectCellsBtn, {
     SelectCellsBtnType
 } from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
+import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
-import React, {useContext} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {useAppSelector} from 'redux/store';
+import styled from 'styled-components';
 import {IconCross} from '../../../../../assets/icons/IconCross';
 import themingVar from '../../../../../themingVar';
 import {IRecordIdentityWhoAmI, PreviewSize, ISharedStateSelectionSearch} from '../../../../../_types/types';
