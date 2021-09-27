@@ -47,7 +47,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 ctx
             });
 
-            return {global, data: userData[0]};
+            return {global, data: userData[0] || {}};
         }
     };
 }
