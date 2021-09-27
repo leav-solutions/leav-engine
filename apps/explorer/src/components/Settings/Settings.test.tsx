@@ -11,7 +11,7 @@ import {act} from 'react-dom/test-utils';
 import wait from 'waait';
 import {getAvailableLangs} from '../../graphQL/queries/cache/lang/getLangQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import Setting from './Setting';
+import Settings from './Settings';
 
 describe('Setting', () => {
     const mockCache = new InMemoryCache();
@@ -33,7 +33,7 @@ describe('Setting', () => {
                         themeMap={{light: `${process.env.PUBLIC_URL}/dark-theme.css`}}
                         defaultTheme="light"
                     >
-                        <Setting />
+                        <Settings />
                     </ThemeSwitcherProvider>
                 </MockedProviderWithFragments>
             );
@@ -55,7 +55,7 @@ describe('Setting', () => {
                         themeMap={{light: `${process.env.PUBLIC_URL}/dark-theme.css`}}
                         defaultTheme="light"
                     >
-                        <Setting />
+                        <Settings />
                     </ThemeSwitcherProvider>
                 </MockedProvider>
             );

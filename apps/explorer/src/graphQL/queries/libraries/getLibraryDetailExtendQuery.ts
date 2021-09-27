@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 import {
+    AttributeConditionFilter,
     AttributeFormat,
     AttributeType,
-    AttributeConditionFilter,
-    TreeConditionFilter,
     ISystemTranslation,
     OperatorFilter,
     OrderSearch,
+    TreeConditionFilter,
     ViewType
 } from '../../../_types/types';
 
@@ -101,6 +101,10 @@ export const getLibraryDetailExtendedQuery = gql`
                 id
                 system
                 label
+                linkedTrees {
+                    id
+                    label
+                }
                 attributes {
                     type
                     format

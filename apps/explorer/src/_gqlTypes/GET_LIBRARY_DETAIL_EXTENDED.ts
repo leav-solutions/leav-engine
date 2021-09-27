@@ -19,6 +19,11 @@ import {
 // GraphQL query operation: GET_LIBRARY_DETAIL_EXTENDED
 // ====================================================
 
+export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees {
+    id: string;
+    label: any | null;
+}
+
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_StandardAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
@@ -173,6 +178,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list {
     id: string;
     system: boolean | null;
     label: any | null;
+    linkedTrees: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[] | null;
     attributes: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] | null;
     gqlNames: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_gqlNames;
     defaultView: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView | null;

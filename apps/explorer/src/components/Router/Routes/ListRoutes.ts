@@ -6,23 +6,23 @@ import {IActiveTree} from '../../../graphQL/queries/cache/activeTree/getActiveTr
 
 export const routes = {
     root: '/',
-    home: '/home',
+    home: '/:panel(home)',
+    workspace: '/:panel(tree|library)/:entityId',
     navigation: {
-        listTree: '/navigation/list',
-        tree: '/navigation/:treeId'
+        listTree: '/tree/list',
+        tree: '/:panel(tree)/:treeId'
     },
     library: {
         list: '/library/list/',
-        listWithDetail: '/library/list/:libId/:libQueryName/:filterName',
-        items: '/library/items/:libId/:libQueryName/:filterName'
+        items: '/:panel(library)/:libId'
     },
-    settings: '/setting'
+    settings: '/settings'
 };
 
 export const makeActiveLibraryRoute = (activeLibrary: IActiveLibrary) => {
-    return `/library/items/${activeLibrary.id}/${activeLibrary.gql.query}/${activeLibrary.filter}`;
+    return `/library/${activeLibrary.id}`;
 };
 
 export const makeActiveTreeRoute = (activeTree: IActiveTree) => {
-    return `/navigation/${activeTree.id}`;
+    return `/tree/${activeTree.id}`;
 };

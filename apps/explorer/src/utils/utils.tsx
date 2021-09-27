@@ -407,3 +407,6 @@ export const getQueryFilterField = (key: string): string => {
 };
 
 export const getTreeRecordKey = (record: RecordIdentity): string => `${record.whoAmI.library.id}/${record.id}`;
+
+export const getLibraryLink = (libId: string) => `/library/${libId}`;
+export const getTreeLink = (treeId: string) => `/tree/${treeId}`;

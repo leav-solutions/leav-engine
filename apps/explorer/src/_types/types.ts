@@ -368,3 +368,9 @@ export interface IToggleSelection {
     elementSelected: ISharedSelected;
     parent?: TreeElementInput;
 }
+
+export enum WorkspacePanels {
+    HOME = 'home',
+    LIBRARY = 'library',
+    TREE = 'tree'
+}
