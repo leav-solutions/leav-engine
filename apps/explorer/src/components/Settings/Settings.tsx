@@ -9,7 +9,7 @@ import {useTranslation} from 'react-i18next';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {AvailableLanguage} from '../../_types/types';
 
-function Setting(): JSX.Element {
+function Settings(): JSX.Element {
     const {t, i18n: i18nClient} = useTranslation();
 
     const {switcher, themes} = useThemeSwitcher();
@@ -81,4 +81,4 @@ function Setting(): JSX.Element {
     );
 }
 
-export default Setting;
+export default Settings;

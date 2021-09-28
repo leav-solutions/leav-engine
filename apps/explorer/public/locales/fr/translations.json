@@ -33,7 +33,10 @@
         }
     },
     "home": {
-        "title": "Accueil"
+        "libraries": "Bibliothèques",
+        "trees" : "Arbres",
+        "id": "Identifiant",
+        "label": "Libellé"
     },
     "settings": {
         "header": "Paramètres",
@@ -59,13 +62,19 @@
     },
     "sidebar": {
         "close": "Fermer",
-        "lib_list": "Bibliothèques",
+        "library": "Bibliothèque",
         "setting": "Paramètres",
         "shortcuts": "Raccourcis",
         "libraries": "Bibliothèques",
-        "trees": "Arbres",
+        "tree": "Arbre",
         "navigation": "Navigation",
-        "recent": "Récent"
+        "recent": "Récent",
+        "others_libraries": "Autres bibliothèques",
+        "related_libraries": "Associée(s) à l'arbre actif",
+        "favorites_libraries": "Favorites",
+        "others_trees": "Autres arbres",
+        "related_trees": "Associée(s) à la bibliothèque active",
+        "favorites_trees": "Favoris"
     },
     "lib_list": {
         "header": "Bibliothèques"

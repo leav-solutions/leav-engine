@@ -63,7 +63,10 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
             data-testid="floating-menu"
             className="floating-menu"
             style={style}
-            onClick={e => e.stopPropagation()}
+            onClick={e => {
+                e.stopPropagation();
+                e.preventDefault();
+            }}
         >
             {actions.map(action => (
                 <Tooltip title={action.title} key={action.title}>

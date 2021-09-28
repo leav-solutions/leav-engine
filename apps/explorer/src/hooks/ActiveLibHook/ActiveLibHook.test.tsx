@@ -17,7 +17,8 @@ describe('ActiveLibHook', () => {
             searchableFields: 'test',
             query: 'test',
             type: 'test'
-        }
+        },
+        trees: []
     };
     test('should get undefined if no activeLibrary set', async () => {
         let givenActiveLibrary: any;

@@ -10,11 +10,15 @@ describe('User Data', () => {
                key: "test",
                value: "data",
                global: false
-              )
+              ) {
+                  global
+                  data
+              }
         }`);
 
         expect(save.status).toBe(200);
-        expect(save.data.data.saveUserData).toBe('data');
+        expect(save.data.data.saveUserData.global).toBe(false);
+        expect(save.data.data.saveUserData.data.test).toBe('data');
         expect(save.data.errors).toBeUndefined();
 
         const get = await makeGraphQlCall(`{
@@ -59,11 +63,15 @@ describe('User Data', () => {
                key: "test_global",
                value: "data_global",
                global: true
-              )
+              ) {
+                global
+                data
+            }
         }`);
 
         expect(res.status).toBe(200);
-        expect(res.data.data.saveUserData).toBe('data_global');
+        expect(res.data.data.saveUserData.global).toBe(true);
+        expect(res.data.data.saveUserData.data.test_global).toBe('data_global');
         expect(res.data.errors).toBeUndefined();
 
         const get = await makeGraphQlCall(`{
@@ -111,7 +119,10 @@ describe('User Data', () => {
                key: "test",
                value: "data",
                global: true
-              )
+              ) {
+                global
+                data
+            }
         }`);
 
         expect(res.status).toBe(200);

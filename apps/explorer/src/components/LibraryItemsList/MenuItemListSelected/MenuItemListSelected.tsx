@@ -37,7 +37,7 @@ const Wrapper = styled.div<IWrapperProps>`
     height: 4rem;
     z-index: 11;
 
-    animation: ${({active}) => (active ? 'moveToBottom 1s ease' : 'none')};
+    animation: ${({active}) => (active ? 'moveToBottom .3s ease' : 'none')};
 
     & > div {
         display: grid;

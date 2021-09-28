@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {Console} from 'node:console';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUserData} from '_types/userData';
 import {IDbService} from '../db/dbService';
@@ -10,7 +9,7 @@ import {IDbService} from '../db/dbService';
 const USER_DATA_COLLECTION = 'core_user_data';
 
 export interface IUserDataRepo {
-    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<any>;
+    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
 }
 
@@ -20,7 +19,7 @@ interface IDeps {
 
 export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IUserDataRepo {
     return {
-        async saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<any> {
+        async saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData> {
             const collection = dbService.db.collection(USER_DATA_COLLECTION);
 
             const res = await dbService.execute({
@@ -34,7 +33,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 ctx
             });
 
-            return res[0].data[key];
+            return {global, data: {[key]: res[0].data[key]}};
         },
         async getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData> {
             const collection = dbService.db.collection(USER_DATA_COLLECTION);

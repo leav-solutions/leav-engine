@@ -9,10 +9,6 @@ import {getTreeContentQuery} from '../../graphQL/queries/trees/getTreeContentQue
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import NavigationView from './NavigationView';
 
-jest.mock('react-router-dom', () => ({
-    useParams: jest.fn(() => ({treeId: 'files'}))
-}));
-
 jest.mock(
     '../ColumnNavigation',
     () =>
@@ -43,7 +39,7 @@ describe('NavigationView', () => {
             render(
                 <MockStore>
                     <MockedProviderWithFragments mocks={mocks} addTypename>
-                        <NavigationView />
+                        <NavigationView tree="files" />
                     </MockedProviderWithFragments>
                 </MockStore>
             );

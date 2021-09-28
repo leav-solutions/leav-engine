@@ -10,13 +10,16 @@ import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useParams} from 'react-router-dom';
 import {setNotificationBase} from 'redux/notifications';
-import {useAppDispatch} from 'redux/store';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
 import {GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {IBaseNotification, NotificationType} from '_types/types';
+import {IBaseNotification, NotificationType, WorkspacePanels} from '_types/types';
+
+export interface ILibraryHomeProps {
+    library?: string;
+}
 
 const Loading = styled(Spin)`
     && {
@@ -25,43 +28,45 @@ const Loading = styled(Spin)`
     }
 `;
 
-function LibraryHome(): JSX.Element {
-    const {libId} = useParams<{libId: string}>();
+function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const [{lang}] = useLang();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
+    const {activePanel} = useAppSelector(state => state);
 
     const {loading, data, error} = useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
         getLibraryDetailExtendedQuery,
         {
             variables: {
-                libId
-            }
+                libId: library
+            },
+            skip: !library
         }
     );
 
     useEffect(() => {
         // Update infos about current lib (active library, notification message)
-        if (loading || error || !data.libraries.list.length) {
+        if (loading || error || !data?.libraries?.list.length || activePanel !== WorkspacePanels.LIBRARY) {
             return;
         }
 
         const currentLibrary = data.libraries.list[0];
         const currentLibLabel = localizedTranslation(currentLibrary.label, lang);
 
-        if (libId !== activeLibrary.id) {
+        if (library !== activeLibrary?.id) {
             const {query, type, filter, searchableFields} = currentLibrary.gqlNames;
 
             updateActiveLibrary({
-                id: libId,
+                id: library,
                 name: currentLibLabel,
                 filter,
                 gql: {
                     searchableFields,
                     query,
                     type
-                }
+                },
+                trees: currentLibrary.linkedTrees.map(tree => tree.id)
             });
         }
 
@@ -72,7 +77,7 @@ function LibraryHome(): JSX.Element {
         };
 
         dispatch(setNotificationBase(baseNotification));
-    }, [activeLibrary, data, dispatch, error, lang, libId, loading, t, updateActiveLibrary]);
+    }, [activeLibrary, data, dispatch, error, lang, library, loading, t, updateActiveLibrary, activePanel]);
 
     if (loading) {
         return <Loading size="large" />;
@@ -82,11 +87,11 @@ function LibraryHome(): JSX.Element {
         return <ErrorDisplay message={error.message} />;
     }
 
-    if (!data.libraries.list.length) {
+    if (!data?.libraries?.list.length) {
         return <ErrorDisplay message={t('lib_detail.not_found')} />;
     }
 
-    return <LibraryItemsList selectionMode={false} library={data.libraries.list[0]} key={libId} />;
+    return <LibraryItemsList selectionMode={false} library={data.libraries.list[0]} key={library} />;
 }
 
 export default LibraryHome;

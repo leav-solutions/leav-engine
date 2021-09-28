@@ -1,34 +1,37 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLazyQuery, useQuery, useMutation} from '@apollo/client';
+import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {SelectionModeContext} from 'context';
+import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
+import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
+import _ from 'lodash';
 import React, {useEffect, useReducer} from 'react';
 import {useAppSelector} from 'redux/store';
-import {useUser} from '../../hooks/UserHook/UserHook';
 import styled, {CSSObject} from 'styled-components';
 import {checkTypeIsLink, getAttributeFromKey, localizedTranslation} from 'utils';
-import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
-import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
-import _ from 'lodash';
 import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
+import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {GET_VIEW, GET_VIEWVariables, GET_VIEW_view, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
 import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
+import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
 import {useLang} from '../../hooks/LangHook/LangHook';
+import {useUser} from '../../hooks/UserHook/UserHook';
 import {IAttribute, IField, IParentAttributeData, IView, SharedStateSelectionType} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import {getFiltersFromRequest} from './FiltersPanel/getFiltersFromRequest';
@@ -37,9 +40,6 @@ import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 import SideItems from './SideItems';
-import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {GET_VIEW_view_sort, GET_VIEWVariables, GET_VIEW, GET_VIEW_view} from '_gqlTypes/GET_VIEW';
-import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
 
 interface IWrapperProps {
     showSide: boolean;

@@ -26,7 +26,7 @@ function TreeItem({tree, isFavorite = false, onUpdateFavorite}: ITreeItemProps):
     const history = useHistory();
 
     const goTree = () => {
-        const detailUrl = `/navigation/${tree.id}`;
+        const detailUrl = `/tree/${tree.id}`;
         history.push(detailUrl);
     };
 
