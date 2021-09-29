@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusOutlined} from '@ant-design/icons';
 import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
@@ -11,6 +10,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
+import AddValueBtn from '../../shared/AddValueBtn';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import standardFieldReducer, {
     IdValue,
@@ -24,15 +24,6 @@ import StandardFieldValue from './StandardFieldValue';
 
 const Wrapper = styled.div`
     margin-bottom: 1.5em;
-`;
-
-const AddValueWrapper = styled.div`
-    && {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-        color: #999;
-        cursor: pointer;
-    }
 `;
 
 function StandardField({
@@ -54,15 +45,13 @@ function StandardField({
               (allValues, fieldValue, index): IKeyValue<IStandardFieldValue> => ({
                   ...allValues,
                   [fieldValue.id_value]: {
+                      ...virginValue,
                       idValue: fieldValue?.id_value ?? null,
                       index,
                       value: fieldValue ?? null,
                       displayValue: fieldValue?.value ?? '',
                       editingValue: attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? '',
-                      originRawValue: attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? '',
-                      error: '',
-                      isErrorDisplayed: false,
-                      isEditing: false
+                      originRawValue: attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? ''
                   }
               }),
               {}
@@ -177,10 +166,11 @@ function StandardField({
                 />
             ))}
             {canAddAnotherValue && (
-                <AddValueWrapper className="ant-input" onClick={_handleAddValue}>
-                    <PlusOutlined />
-                    {t('record_edition.add_value')}
-                </AddValueWrapper>
+                <AddValueBtn
+                    onClick={_handleAddValue}
+                    style={{borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%'}}
+                    bordered
+                />
             )}
         </Wrapper>
     );

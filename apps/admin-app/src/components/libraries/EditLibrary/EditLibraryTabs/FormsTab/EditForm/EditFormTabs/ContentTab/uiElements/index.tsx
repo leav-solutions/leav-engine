@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {GET_ATTRIBUTES_attributes_list, GET_ATTRIBUTES_attributes_list_LinkAttribute} from '_gqlTypes/GET_ATTRIBUTES';
+import {AttributeType} from '_gqlTypes/globalTypes';
 import {ISettingsAttributeProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsAttribute';
 import {ISettingsFieldSelectProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsSelect';
 import {
@@ -77,8 +78,6 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
     }
 };
 
-type toto = SettingsFieldSpecificProps<ISettingsFieldSelectProps>;
-
 export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.TEXT_INPUT]: {
         type: FieldTypes.TEXT_INPUT,
@@ -122,8 +121,17 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
                     attributeProps: GET_ATTRIBUTES_attributes_list
                 ): SettingsFieldSpecificProps<ISettingsAttributeProps> => ({
                     multiple: true,
+                    filters: {
+                        // Links and trees are forbidden due to technical issues on the front to handle them
+                        type: [AttributeType.simple, AttributeType.advanced]
+                    },
                     library: (attributeProps as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library.id
                 })
+            },
+            {
+                name: 'displayRecordIdentity',
+                inputType: FormElementSettingsInputTypes.CHECKBOX,
+                defaultValue: true
             }
         ],
         canDrop: () => false

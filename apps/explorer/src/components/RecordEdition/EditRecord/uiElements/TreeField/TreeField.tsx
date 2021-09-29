@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FileAddOutlined} from '@ant-design/icons';
 import {ICommonFieldsSettings} from '@leav/utils';
-import {Button, List, Popover} from 'antd';
+import {List, Popover} from 'antd';
+import Paragraph from 'antd/lib/typography/Paragraph';
+import Dimmer from 'components/shared/Dimmer';
 import ErrorMessage from 'components/shared/ErrorMessage';
 import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
@@ -13,33 +14,43 @@ import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue} from '_gqlTypes/SAVE_VALUE_BATCH';
+import AddValueBtn from '../../shared/AddValueBtn';
 import NoValue from '../../shared/NoValue';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import TreeFieldValue from './TreeFieldValue';
 import ValuesAdd from './ValuesAdd';
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{isValuesAddVisible: boolean}>`
     position: relative;
     border: 1px solid ${themingVar['@border-color-base']};
     margin-bottom: 1.5em;
     border-radius: ${themingVar['@border-radius-base']};
+    background: ${themingVar['@default-bg']};
+    z-index: ${p => (p.isValuesAddVisible ? 1 : 'auto')};
 
     .ant-list-items {
         max-height: 320px;
         overflow-y: auto;
     }
+
+    .ant-list-footer {
+        padding: 0;
+    }
 `;
 
-const FieldLabel = styled.div`
-    top: calc(50% - 0.9em);
-    font-size: 0.9em;
-    padding: 0 0.5em;
-    color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
+const FieldLabel = styled(Paragraph)`
+    && {
+        top: calc(50% - 0.9em);
+        font-size: 0.9em;
+        padding: 0 0.5em;
+        color: ${themingVar['@leav-secondary-font-color']};
+        z-index: 1;
+        margin-bottom: 0;
+    }
 `;
 
 const FooterWrapper = styled.div`
-    text-align: right;
+    text-align: left;
 `;
 
 function TreeField({
@@ -64,7 +75,8 @@ function TreeField({
     }, [recordValues, element.settings.attribute, record]);
 
     const [errorMessage, setErrorMessage] = useState<string | string[]>();
-    const [showValuesAdd, setShowValuesAdd] = useState<boolean>();
+    const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
+    const isReadOnly = element.attribute?.system;
 
     const data = fieldValues.map(val => ({
         ...val,
@@ -81,15 +93,13 @@ function TreeField({
             }
         };
 
-        return <TreeFieldValue value={value} attribute={attribute} onDelete={_handleDelete} />;
+        return <TreeFieldValue value={value} attribute={attribute} onDelete={_handleDelete} isReadOnly={isReadOnly} />;
     };
-
-    const isReadOnly = element.attribute?.system;
 
     const canAddValue = !isReadOnly && (attribute.multiple_values || !fieldValues.length);
 
     const _handleAddValue = () => {
-        setShowValuesAdd(true);
+        setIsValuesAddVisible(true);
     };
 
     const _handleSubmitSelectTreeNodeModal = async (treeNodes: ITreeNodeWithRecord[]) => {
@@ -117,20 +127,18 @@ function TreeField({
             });
             setErrorMessage(errorsMessage);
         } else {
-            setShowValuesAdd(false);
+            setIsValuesAddVisible(false);
         }
     };
 
     const ListFooter =
         fieldValues.length && canAddValue ? (
             <FooterWrapper>
-                <Button icon={<FileAddOutlined />} onClick={_handleAddValue} size="small">
-                    {t('record_edition.add_value')}
-                </Button>
+                <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} />
             </FooterWrapper>
         ) : null;
 
-    const _handleCloseValuesAdd = () => setShowValuesAdd(false);
+    const _handleCloseValuesAdd = () => setIsValuesAddVisible(false);
 
     const _handleCloseError = () => {
         setErrorMessage('');
@@ -138,8 +146,9 @@ function TreeField({
 
     return (
         <>
-            <Wrapper>
-                <FieldLabel>{element.settings.label}</FieldLabel>
+            {isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
+            <Wrapper isValuesAddVisible={isValuesAddVisible}>
+                <FieldLabel ellipsis={{rows: 1, tooltip: true}}>{element.settings.label}</FieldLabel>
                 <List
                     dataSource={data}
                     renderItem={renderItem}
@@ -149,7 +158,7 @@ function TreeField({
                     }}
                     footer={ListFooter}
                 />
-                {showValuesAdd && (
+                {isValuesAddVisible && (
                     <ValuesAdd
                         attribute={attribute}
                         onAdd={_handleSubmitSelectTreeNodeModal}

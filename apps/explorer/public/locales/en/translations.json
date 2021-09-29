@@ -360,6 +360,7 @@
         "value_details_section": "Value",
         "attribute_details_section": "Attribute",
         "path_section": "Path",
+        "start_typing_message": "Start typing to search elements",
         "attribute": {
             "id": "Identifier",
             "type": "Type",

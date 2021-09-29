@@ -5,7 +5,7 @@ import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/GET_FORM';
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
-import {ISystemTranslation, IRecordIdentityWhoAmI} from '_types/types';
+import {IRecordIdentityWhoAmI, ISystemTranslation} from '_types/types';
 import recordIdentityFragment from './recordIdentityFragment';
 
 export interface IRecordPropertyAttribute {

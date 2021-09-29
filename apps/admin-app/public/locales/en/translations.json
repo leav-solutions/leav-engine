@@ -246,7 +246,8 @@
             "select_options": {
                 "VERTICAL": "Vertical",
                 "HORIZONTAL": "Horizontal"
-            }
+            },
+            "displayRecordIdentity": "Display informations column"
         },
         "rte": {
             "bold": "Bold",

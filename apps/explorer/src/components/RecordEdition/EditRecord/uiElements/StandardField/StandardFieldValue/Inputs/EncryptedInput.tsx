@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Input} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
-import React from 'react';
+import React, {MutableRefObject} from 'react';
 
-function EncryptedInput({state, fieldValue, onFocus, onChange, onPressEnter}: IStandardInputProps): JSX.Element {
+function EncryptedInput({state, fieldValue, onChange, onPressEnter, inputRef}: IStandardInputProps): JSX.Element {
     const {editingValue} = fieldValue;
     const _handleChange = e => {
         onChange(e.target.value);
@@ -20,6 +20,7 @@ function EncryptedInput({state, fieldValue, onFocus, onChange, onPressEnter}: IS
     return (
         <Input.Password
             className="nested-input"
+            ref={inputRef as MutableRefObject<Input>}
             value={String(editingValue)}
             onChange={_handleChange}
             onKeyPress={_handleKeyPress}

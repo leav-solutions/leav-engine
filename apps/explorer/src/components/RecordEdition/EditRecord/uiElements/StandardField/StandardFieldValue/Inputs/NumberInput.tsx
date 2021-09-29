@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Input} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, MutableRefObject} from 'react';
 
-function NumberInput({state, fieldValue, onFocus, onPressEnter, onChange}: IStandardInputProps): JSX.Element {
+function NumberInput({state, fieldValue, onFocus, onPressEnter, onChange, inputRef}: IStandardInputProps): JSX.Element {
     const {editingValue} = fieldValue;
 
     const _handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -21,6 +21,7 @@ function NumberInput({state, fieldValue, onFocus, onPressEnter, onChange}: IStan
     return (
         <Input
             type="number"
+            ref={inputRef as MutableRefObject<Input>}
             className="nested-input"
             value={isNaN(editingValueNumber) ? 0 : editingValueNumber}
             onFocus={onFocus}
