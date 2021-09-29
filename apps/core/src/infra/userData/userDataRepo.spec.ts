@@ -31,7 +31,7 @@ describe('UserDataRepo', () => {
         expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
         expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
-        expect(res).toBe('value');
+        expect(res).toEqual({data: {test: 'value'}, global: false});
     });
 
     test('get user data', async function () {

@@ -14,6 +14,7 @@ const Wrapper = styled.div`
     width: auto;
     text-overflow: hidden;
     font-weight: 600;
+    line-height: 1em;
 
     background: #0d1e26 0% 0% no-repeat padding-box;
     border: 1px solid #70707031;

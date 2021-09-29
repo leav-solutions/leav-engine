@@ -11,5 +11,6 @@ export const mockActiveLibrary: IActiveLibrary = {
         searchableFields: 'activeLibrarySearchableFields',
         query: 'activeLibraryQuery',
         type: 'activeLibraryType'
-    }
+    },
+    trees: []
 };

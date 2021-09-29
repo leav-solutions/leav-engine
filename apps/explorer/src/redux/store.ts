@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {configureStore} from '@reduxjs/toolkit';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
+import activePanelReducer from './activePanel';
 import displayReducer from './display';
 import navigationReducer from './navigation';
 import notificationsReducer from './notifications';
@@ -13,7 +14,8 @@ const store = configureStore({
         display: displayReducer,
         selection: selectionReducer,
         navigation: navigationReducer,
-        notification: notificationsReducer
+        notification: notificationsReducer,
+        activePanel: activePanelReducer
     }
 });
 

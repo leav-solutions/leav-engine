@@ -48,7 +48,8 @@ function AppHandler(): JSX.Element {
                     searchableFields: '',
                     query: '',
                     type: ''
-                }
+                },
+                trees: []
             });
         }
     }, [updateActiveLibrary, activeLibrary]);

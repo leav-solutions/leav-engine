@@ -25,7 +25,7 @@ export default function ({'core.domain.userData': userDataDomain = null}: IDeps 
                     }
 
                     extend type Mutation {
-                        saveUserData(key: String!, value: Any, global: Boolean!): Any
+                        saveUserData(key: String!, value: Any, global: Boolean!): UserData
                     }
 
                     extend type Query {
@@ -47,7 +47,7 @@ export default function ({'core.domain.userData': userDataDomain = null}: IDeps 
                             parent,
                             {key, value, global}: {key: string; value: any; global: boolean},
                             ctx: IQueryInfos
-                        ): Promise<any> {
+                        ): Promise<IUserData> {
                             return userDataDomain.saveUserData(key, value, global, ctx);
                         }
                     }

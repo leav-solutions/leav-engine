@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {IUserDataRepo} from 'infra/userData/userDataRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUserData} from '_types/userData';
-import {IUserDataRepo} from 'infra/userData/userDataRepo';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {PermissionTypes, AppPermissionsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
+import {AppPermissionsActions, PermissionTypes} from '../../_types/permissions';
 
 export interface IUserDataDomain {
-    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<any>;
+    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
 }
 
@@ -24,7 +24,7 @@ export default function ({
     'core.domain.permission': permissionDomain = null
 }: IDeps = {}): IUserDataDomain {
     return {
-        async saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<any> {
+        async saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData> {
             if (
                 global &&
                 !(await permissionDomain.isAllowed({

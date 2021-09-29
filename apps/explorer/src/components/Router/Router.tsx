@@ -1,51 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {Layout} from 'antd';
+import Sidebar from 'components/Sidebar';
+import TopBar from 'components/TopBar';
 import React, {useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
-import styled from 'styled-components';
-import SideBarMenu from '../SideBarMenu';
-import TopBar from '../TopBar';
+import themingVar from 'themingVar';
 import UserPanel from '../UserPanel';
 import Routes from './Routes';
 
-const PageWrapper = styled.div`
-    height: 100%;
-    padding: 0;
-    margin: 0;
-
-    display: flex;
-    flex-flow: column;
-`;
-
-const TopBarWrapper = styled.div`
-    height: 3rem;
-    z-index: 1000;
-
-    & > * {
-        height: 3rem;
-
-        & > * {
-            height: 3rem;
-        }
-    }
-`;
-
-const BodyWrapper = styled.div`
-    position: relative; /* relative position for Drawer */
-    height: 100%;
-    overflow: hidden;
-`;
+const {Header, Content, Sider} = Layout;
 
 function Router(): JSX.Element {
-    const [sideBarVisible, setSideBarVisible] = useState<boolean>(false);
     const [userPanelVisible, setUserPanelVisible] = useState<boolean>(false);
-
-    const toggleSidebarVisible = () => {
-        setSideBarVisible(visible => !visible);
-    };
-
-    const hideSideBar = () => setSideBarVisible(false);
 
     const toggleUserPanelVisible = () => {
         setUserPanelVisible(visible => !visible);
@@ -56,22 +24,34 @@ function Router(): JSX.Element {
     return (
         <>
             <BrowserRouter>
-                <PageWrapper>
-                    <TopBarWrapper>
-                        <TopBar
-                            sideBarVisible={sideBarVisible}
-                            userPanelVisible={userPanelVisible}
-                            toggleSidebarVisible={toggleSidebarVisible}
-                            toggleUserPanelVisible={toggleUserPanelVisible}
-                        />
-                    </TopBarWrapper>
-                    <BodyWrapper>
-                        <SideBarMenu visible={sideBarVisible} hide={hideSideBar} />
-                        <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
-
-                        <Routes />
-                    </BodyWrapper>
-                </PageWrapper>
+                <Layout style={{height: '100vh'}}>
+                    <Sider
+                        theme="light"
+                        collapsible
+                        defaultCollapsed
+                        collapsedWidth={60}
+                        width={250}
+                        style={{borderRight: '1px solid #DDD'}}
+                    >
+                        <Sidebar />
+                    </Sider>
+                    <Layout>
+                        <Header style={{height: themingVar['@leav-header-height'], padding: 0}}>
+                            <TopBar
+                                userPanelVisible={userPanelVisible}
+                                toggleUserPanelVisible={toggleUserPanelVisible}
+                            />
+                        </Header>
+                        <Layout style={{overflow: 'hidden', position: 'relative'}}>
+                            <Content
+                                style={{background: themingVar['@default-bg'], padding: '0 .5em', overflow: 'hidden'}}
+                            >
+                                <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
+                                <Routes />
+                            </Content>
+                        </Layout>
+                    </Layout>
+                </Layout>
             </BrowserRouter>
         </>
     );

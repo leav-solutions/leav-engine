@@ -12,6 +12,7 @@ export interface IActiveLibrary {
         query: string;
         type: string;
     };
+    trees: string[];
 }
 
 export interface IGetActiveLibrary {
@@ -29,6 +30,7 @@ export const getActiveLibrary = gql`
                 query @client
                 type @client
             }
+            trees
         }
     }
 `;

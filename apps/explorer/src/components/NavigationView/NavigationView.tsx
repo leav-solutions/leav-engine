@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
 import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
 import {setNavigationIsLoading, setNavigationRefetchTreeData} from 'redux/navigation';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
@@ -25,15 +25,14 @@ const Page = styled.div`
     overflow-y: hidden;
 `;
 
-interface INavigationParams {
-    treeId: string;
+interface INavigationViewProps {
+    tree: string;
 }
 
-function NavigationView(): JSX.Element {
+function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
     const navigation = useAppSelector(state => state.navigation);
     const dispatch = useAppDispatch();
     const [tree, setTree] = useState<IRecordAndChildren[]>([]);
-    const {treeId} = useParams<INavigationParams>();
 
     const depth = navigation.path.length + 1; // add 1 to depth to count children
 
@@ -43,7 +42,8 @@ function NavigationView(): JSX.Element {
     >(getTreeContentQuery(depth), {
         variables: {
             treeId
-        }
+        },
+        skip: !treeId
     });
 
     useEffect(() => {
@@ -61,7 +61,7 @@ function NavigationView(): JSX.Element {
     }, [dataTreeContent, loadingTreeContent, dispatch]);
 
     if (errorTreeContent) {
-        return <>error</>;
+        return <ErrorDisplay message={errorTreeContent.message} />;
     }
 
     return (

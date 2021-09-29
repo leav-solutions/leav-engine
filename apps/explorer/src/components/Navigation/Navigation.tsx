@@ -1,39 +1,43 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import NavigationView from '../NavigationView';
 import {useQuery} from '@apollo/client';
 import NavigationHeader from 'components/NavigationHeader';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useParams} from 'react-router-dom';
 import {setNotificationBase} from 'redux/notifications';
-import {useAppDispatch} from 'redux/store';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../utils';
 import {GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables} from '../../_gqlTypes/GET_TREE_LIST_QUERY';
-import {IBaseNotification, NotificationType} from '../../_types/types';
+import {IBaseNotification, NotificationType, WorkspacePanels} from '../../_types/types';
+import NavigationView from '../NavigationView';
 
-interface INavigationParams {
-    treeId: string;
+interface INavigationProps {
+    tree?: string;
 }
 
-function Navigation(): JSX.Element {
+function Navigation({tree}: INavigationProps): JSX.Element {
     const {t} = useTranslation();
-    const {treeId} = useParams<INavigationParams>();
 
     const dispatch = useAppDispatch();
+    const {activePanel} = useAppSelector(state => state);
 
     const [{lang}] = useLang();
     const [, updateActiveTree] = useActiveTree();
 
     const {data, loading} = useQuery<GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables>(getTreeListQuery, {
-        variables: {treeId}
+        variables: {treeId: tree},
+        skip: !tree
     });
 
     useEffect(() => {
+        if (activePanel !== WorkspacePanels.TREE) {
+            return;
+        }
+
         const currentTree = data?.trees?.list[0];
         if (!loading && currentTree) {
             const treeName = localizedTranslation(currentTree.label, lang);
@@ -51,12 +55,12 @@ function Navigation(): JSX.Element {
 
             dispatch(setNotificationBase(baseNotification));
         }
-    }, [data, loading, lang, updateActiveTree, t, dispatch]);
+    }, [data, loading, lang, updateActiveTree, t, dispatch, activePanel]);
 
     return (
         <>
             <NavigationHeader />
-            <NavigationView />
+            <NavigationView tree={tree} />
         </>
     );
 }

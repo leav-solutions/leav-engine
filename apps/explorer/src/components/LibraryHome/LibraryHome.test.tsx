@@ -1,15 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitForElement} from '@testing-library/react';
 import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {RootState} from 'redux/store';
-import {NotificationType} from '_types/types';
+import {render, screen, waitForElement} from '_tests/testUtils';
+import {NotificationType, WorkspacePanels} from '_types/types';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import {
     mockGetLibraryDetailExtendedQuery,
     mockGetLibraryDetailExtendedQueryVar
@@ -30,11 +28,11 @@ jest.mock('react-router-dom', () => ({
 jest.mock('../../hooks/LangHook/LangHook');
 
 const mockUpdateActiveLib = jest.fn();
-jest.mock('../../hooks/ActiveLibHook/ActiveLibHook', () => ({
+jest.mock('hooks/ActiveLibHook/ActiveLibHook', () => ({
     useActiveLibrary: () => [mockActiveLibrary, mockUpdateActiveLib]
 }));
 
-describe('Search', () => {
+describe('LibraryHome', () => {
     const mockStoreState: Partial<RootState> = {
         notification: {
             base: {
@@ -42,7 +40,8 @@ describe('Search', () => {
                 type: NotificationType.basic
             },
             stack: []
-        }
+        },
+        activePanel: WorkspacePanels.LIBRARY
     };
     const mocks = [
         {
@@ -60,13 +59,10 @@ describe('Search', () => {
 
     test('Load library research', async () => {
         await act(async () => {
-            render(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <MockStore state={mockStoreState}>
-                        <LibraryHome />
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
+            render(<LibraryHome library={mockGetLibraryDetailExtendedQueryVar.libId} />, {
+                apolloMocks: mocks,
+                storeState: mockStoreState
+            });
         });
 
         await waitForElement(() => screen.getByText('LibraryItemsList'));
@@ -76,13 +72,10 @@ describe('Search', () => {
 
     test('Update active library', async () => {
         await act(async () => {
-            render(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <MockStore state={mockStoreState}>
-                        <LibraryHome />
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
+            render(<LibraryHome library={mockGetLibraryDetailExtendedQueryVar.libId} />, {
+                apolloMocks: mocks,
+                storeState: mockStoreState
+            });
         });
 
         await waitForElement(() => screen.getByText('LibraryItemsList'));

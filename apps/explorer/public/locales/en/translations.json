@@ -46,16 +46,25 @@
     },
     "sidebar": {
         "close": "Close Sidebar",
-        "lib_list": "Libraries",
-        "setting": "Setting",
+        "library": "Library",
+        "setting": "Settings",
         "shortcuts": "Shortcuts",
         "libraries": "Libraries",
-        "trees": "Trees",
+        "tree": "Tree",
         "navigation": "Navigation",
-        "recent": "Recent"
+        "recent": "Recent",
+        "others_libraries": "Other libraries",
+        "related_libraries": "Related to active tree",
+        "favorites_libraries": "Favorites",
+        "others_trees": "Other trees",
+        "related_trees": "Related to active library",
+        "favorites_trees": "Favorites"
     },
     "home": {
-        "title": "Home"
+        "libraries": "Libraries",
+        "trees" : "Trees",
+        "id": "ID",
+        "label": "Label"
     },
     "lib_list": {
         "header": "Libraries List"

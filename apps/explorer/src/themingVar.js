@@ -33,5 +33,6 @@ module.exports = {
         'transparent linear-gradient(180deg, #FFFFFF 0%, #F4F4F4 100%) 0% 0% no-repeat padding-box;',
     '@leav-secondary-item-background': '#FAFAFA',
     '@leav-small-shadow': '0px 3px 6px #58585812;',
-    '@leav-border': '0.699999988079071px solid #C7C7C7;'
+    '@leav-border': '0.699999988079071px solid #C7C7C7;',
+    '@leav-header-height': '3rem'
 };

@@ -22,12 +22,7 @@ describe('TopBar', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments>
-                    <TopBar
-                        sideBarVisible={false}
-                        userPanelVisible={false}
-                        toggleSidebarVisible={jest.fn()}
-                        toggleUserPanelVisible={jest.fn()}
-                    />
+                    <TopBar userPanelVisible={false} toggleUserPanelVisible={jest.fn()} />
                 </MockedProviderWithFragments>
             );
         });

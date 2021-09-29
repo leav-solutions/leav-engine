@@ -12,7 +12,8 @@ export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibra
             searchableFields: 'TestLibSearchableFields',
             query: 'TestLib',
             type: 'testLib'
-        }
+        },
+        trees: []
     };
 
     const updateActiveLibrary = jest.fn();

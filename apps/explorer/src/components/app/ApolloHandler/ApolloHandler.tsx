@@ -167,6 +167,16 @@ function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): 
                 },
                 Form: {
                     keyFields: ['id', 'library', ['id']]
+                },
+                UserData: {
+                    keyFields: ['global'],
+                    fields: {
+                        data: {
+                            merge(existing, incoming) {
+                                return {...existing, ...incoming};
+                            }
+                        }
+                    }
                 }
             },
             possibleTypes

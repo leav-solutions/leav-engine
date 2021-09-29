@@ -48,7 +48,8 @@ export const mockGetLibraryDetailExtendedElement: GET_LIBRARY_DETAIL_EXTENDED_li
         searchableFields: 'FileSearchableFields',
         type: 'type'
     },
-    defaultView: mockGetLibraryDetailExtendedDefaultView
+    defaultView: mockGetLibraryDetailExtendedDefaultView,
+    linkedTrees: []
 };
 
 export const mockGetLibraryDetailExtendedQuery: GET_LIBRARY_DETAIL_EXTENDED = {

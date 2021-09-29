@@ -1,26 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {getLibrariesListQuery} from '../../graphQL/queries/libraries/getLibrariesListQuery';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
+import {act, render, screen} from '_tests/testUtils';
 import Router from './Router';
-
-jest.mock(
-    '../SideBarMenu',
-    () =>
-        function SideBarMenu() {
-            return <div>SideBarMenu</div>;
-        }
-);
 
 jest.mock(
     '../TopBar',
     () =>
         function TopBar() {
             return <div>TopBar</div>;
+        }
+);
+
+jest.mock(
+    '../Sidebar',
+    () =>
+        function Sidebar() {
+            return <div>Sidebar</div>;
         }
 );
 
@@ -32,79 +29,21 @@ jest.mock(
         }
 );
 
-jest.mock(
-    './Routes',
-    () =>
-        function Routes() {
-            return <div>Routes</div>;
-        }
-);
+jest.mock('./Routes', () => {
+    return function Routes() {
+        return <div>Routes</div>;
+    };
+});
 
 describe('Router', () => {
-    const mocks = [
-        {
-            request: {
-                query: getLibrariesListQuery
-            },
-            result: {
-                data: {
-                    libraries: {
-                        list: [
-                            {
-                                id: 'test',
-                                label: 'test',
-                                gqlNames: {
-                                    query: 'test',
-                                    filter: 'TestFilter',
-                                    searchableFields: 'TestSearchableFields'
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-    ];
-
-    test('should add a router', async () => {
-        let comp: any;
-
+    test('Should add a router and layout elements', async () => {
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <Router />
-                </MockedProviderWithFragments>
-            );
+            render(<Router />);
         });
 
-        expect(comp.find('BrowserRouter')).toHaveLength(1);
-    });
-
-    test('should call Sidebar', async () => {
-        let comp: any;
-
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <Router />
-                </MockedProviderWithFragments>
-            );
-        });
-
-        expect(comp.find('SideBarMenu')).toHaveLength(1);
-    });
-
-    test('should call Route', async () => {
-        let comp: any;
-
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <Router />
-                </MockedProviderWithFragments>
-            );
-        });
-
-        expect(comp.find('Routes')).toHaveLength(1);
+        expect(screen.getByText('Routes')).toBeInTheDocument();
+        expect(screen.getByText('Sidebar')).toBeInTheDocument();
+        expect(screen.getByText('TopBar')).toBeInTheDocument();
+        expect(screen.getByText('UserPanel')).toBeInTheDocument();
     });
 });

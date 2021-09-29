@@ -11,19 +11,19 @@ import {addNotification} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import * as XLSX from 'xlsx';
-import {getAttributesByLibQuery} from '../../../graphQL/queries/attributes/getAttributesByLib';
-import {importExcel} from '../../../graphQL/queries/import/importExcel';
-import {useLang} from '../../../hooks/LangHook/LangHook';
-import {localizedTranslation} from '../../../utils';
-import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {IMPORT, IMPORTVariables} from '../../../_gqlTypes/IMPORT';
+import {getAttributesByLibQuery} from '../../../../graphQL/queries/attributes/getAttributesByLib';
+import {importExcel} from '../../../../graphQL/queries/import/importExcel';
+import {useLang} from '../../../../hooks/LangHook/LangHook';
+import {localizedTranslation} from '../../../../utils';
+import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {IMPORT, IMPORTVariables} from '../../../../_gqlTypes/IMPORT';
 import {
     AttributeType,
     INotification,
     NotificationChannel,
     NotificationPriority,
     NotificationType
-} from '../../../_types/types';
+} from '../../../../_types/types';
 
 const {Step} = Steps;
 const {Dragger} = Upload;
