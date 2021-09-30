@@ -9,7 +9,6 @@ import ErrorMessage from 'components/shared/ErrorMessage';
 import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React, {useEffect, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
@@ -60,7 +59,6 @@ function TreeField({
     onValueSubmit,
     onValueDelete
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
-    const {t} = useTranslation();
     const attribute = element.attribute as GET_FORM_forms_list_elements_elements_attribute_TreeAttribute;
 
     const [fieldValues, setFieldValues] = useState<IRecordPropertyTree[]>(

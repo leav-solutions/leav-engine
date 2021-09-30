@@ -196,8 +196,6 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const currentSearch = searchInputRef?.current?.input?.value;
 
-    const offset = (valuesListCurrentPage - 1) * pageSize;
-
     const searchResult =
         searchData && currentSearch
             ? searchData[attribute.linked_library.id].list.map(record => ({
