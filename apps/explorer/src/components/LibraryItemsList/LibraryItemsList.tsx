@@ -19,8 +19,6 @@ import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {GET_VIEW, GET_VIEWVariables, GET_VIEW_view, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
@@ -29,7 +27,6 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
-import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {useUser} from '../../hooks/UserHook/UserHook';
 import {IAttribute, IField, IParentAttributeData, IView, SharedStateSelectionType} from '../../_types/types';
@@ -40,6 +37,10 @@ import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 import SideItems from './SideItems';
+import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {GET_VIEW_view_sort, GET_VIEWVariables, GET_VIEW, GET_VIEW_view} from '_gqlTypes/GET_VIEW';
+import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 
 interface IWrapperProps {
     showSide: boolean;
@@ -118,7 +119,9 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                                 .linked_library,
                             linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
                                 .linked_tree,
-                            library: library.id
+                            library: library.id,
+                            embedded_fields: (attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute)
+                                .embedded_fields
                         }
                     ];
 

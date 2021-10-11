@@ -168,7 +168,7 @@
         "greater-than": "Plus grand que",
         "less-than": "Plus petit que",
         "exist": "Valeur existante",
-        "search-in": "Chercher dans...",
+        "search-in": "Chercher dans",
         "classified-in": "Classé dans",
         "not-classified-in": "Non classé dans",
         "where": "Ou",
@@ -188,7 +188,8 @@
         "no-filters": "Pas de filtres à appliquer",
         "submit": "Appliquer les filtres",
         "deactivate": "Désactiver",
-        "activate": "Activer"
+        "activate": "Activer",
+        "add": "Ajouter"
     },
     "filter-item": {
         "no-operator": "Si"

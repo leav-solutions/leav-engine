@@ -2,18 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {Input,List,Spin} from 'antd';
-import React,{useEffect,useReducer,useRef,useState} from 'react';
+import {Input, List, Spin} from 'antd';
+import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {AttributeType} from '_gqlTypes/globalTypes';
 import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../utils';
-import {GET_ATTRIBUTES_BY_LIB,GET_ATTRIBUTES_BY_LIBVariables} from '../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {ISelectedAttribute} from '../../_types/types';
+import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {AttributeFormat, ISelectedAttribute} from '../../_types/types';
 import ErrorDisplay from '../shared/ErrorDisplay';
 import Attribute from './Attribute';
-import attributeSelectionListReducer,{
+import attributeSelectionListReducer, {
     AttributesSelectionListActionTypes,
     initialState
 } from './reducer/attributesSelectionListReducer';
@@ -104,6 +105,14 @@ function AttributesSelectionList({
                         <List>
                             {state.attributes
                                 .filter(attribute => {
+                                    // if (
+                                    //     (attribute.type === AttributeType.simple ||
+                                    //         attribute.type === AttributeType.advanced) &&
+                                    //     state.selectedAttributes.map(sa => sa.path).indexOf(attribute.id) !== -1
+                                    // ) {
+                                    //     return false;
+                                    // }
+
                                     if (!searchValue) {
                                         return true;
                                     }

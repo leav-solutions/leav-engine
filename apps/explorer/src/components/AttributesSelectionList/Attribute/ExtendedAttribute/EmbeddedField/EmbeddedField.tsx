@@ -116,25 +116,23 @@ const EmbeddedField = ({attribute, field, fieldPath, depth, library}: IEmbeddedF
                     </DeployContent>
                 </>
             ) : (
-                <>
-                    <WrapperAttribute isChild={!!depth}>
-                        <TextAttribute>
-                            {label ? (
-                                <span>
-                                    {label}
-                                    <SmallText>{field.id}</SmallText>
-                                </span>
-                            ) : (
-                                field.id
-                            )}
-                        </TextAttribute>
-                        {state.multiple ? (
-                            <Checkbox checked={isSelected} onChange={_handleChange} />
+                <WrapperAttribute isChild={!!depth}>
+                    <TextAttribute>
+                        {label ? (
+                            <span>
+                                {label}
+                                <SmallText>{field.id}</SmallText>
+                            </span>
                         ) : (
-                            <Radio checked={isSelected} onChange={_handleChange} />
+                            field.id
                         )}
-                    </WrapperAttribute>
-                </>
+                    </TextAttribute>
+                    {state.multiple ? (
+                        <Checkbox checked={isSelected} onChange={_handleChange} />
+                    ) : (
+                        <Radio checked={isSelected} onChange={_handleChange} />
+                    )}
+                </WrapperAttribute>
             )}
         </>
     );

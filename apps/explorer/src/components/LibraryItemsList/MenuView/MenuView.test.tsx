@@ -14,7 +14,7 @@ describe('SelectView', () => {
         render(
             <MockedProviderWithFragments mocks={mocks}>
                 <MockStore>
-                    <SelectView activeLibrary={{id: 'activeLibraryId'} as any} />
+                    <SelectView activeLibrary={{id: 'activeLibraryId', attributes: []} as any} />
                 </MockStore>
             </MockedProviderWithFragments>
         );

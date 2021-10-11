@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {RecordFilterCondition, RecordFilterOperator, TreeElementInput, ViewTypes} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
@@ -157,6 +158,7 @@ export interface IAttribute {
     linkedLibrary?: ILibraryDetailExtendedAttributeParentLinkedLibrary;
     linkedTree?: ILibraryDetailExtendedAttributeParentLinkedTree;
     parentAttributeData?: IParentAttributeData;
+    embedded_fields?: Array<GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields | null> | null;
 }
 
 export type ExtendFormat = string | {[key: string]: ExtendFormat[]};

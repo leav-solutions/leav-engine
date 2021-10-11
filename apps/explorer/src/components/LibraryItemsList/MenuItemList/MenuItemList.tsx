@@ -33,20 +33,19 @@ const Wrapper = styled.div`
 `;
 
 const SubGroup = styled.div`
-    display: grid;
-    grid-column-gap: 2rem;
+    display: flex;
+    grid-column-gap: 0.5rem;
     align-items: center;
     justify-content: end;
 `;
 
-const SubGroupFirst = styled(SubGroup)`
-    grid-template-columns: repeat(5, auto);
-    column-gap: calc(2rem + 1px); ;
+const SubGroupMid = styled(SubGroup)`
+    width: 40%;
 `;
 
-const SubGroupLast = styled(SubGroup)`
-    grid-template-columns: 10rem repeat(3, auto);
-`;
+const SubGroupFirst = styled(SubGroup)``;
+
+const SubGroupLast = styled(SubGroup)``;
 
 function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
@@ -91,32 +90,26 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
         <Wrapper>
             <SubGroupFirst>
                 <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
-
                 {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
-
-                <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
-                    <Button icon={<SearchOutlined />} role="show-filter" onClick={toggleShowFilter} />
-                </Tooltip>
-
                 <MenuSelection />
             </SubGroupFirst>
 
-            <SearchItems />
+            <SubGroupMid>
+                <SearchItems />
+                {!selectionMode && (
+                    <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={_handleCreateRecord}>
+                        {t('items_list.new')}
+                    </PrimaryBtn>
+                )}
+            </SubGroupMid>
 
             <SubGroupLast>
-                <div>
-                    {!selectionMode && (
-                        <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={_handleCreateRecord}>
-                            {t('items_list.new')}
-                        </PrimaryBtn>
-                    )}
-                </div>
-
                 <MenuItemActions />
                 <DisplayOptions />
 
                 <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()} />
             </SubGroupLast>
+
             {isRecordCreationVisible && (
                 <EditRecordModal
                     record={null}

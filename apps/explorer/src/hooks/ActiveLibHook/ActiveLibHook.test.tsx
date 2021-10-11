@@ -13,6 +13,7 @@ describe('ActiveLibHook', () => {
         id: 'test',
         name: 'test',
         filter: 'test',
+        attributes: [],
         gql: {
             searchableFields: 'test',
             query: 'test',

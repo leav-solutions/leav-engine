@@ -30,13 +30,13 @@ const Loading = styled(Spin)`
 
 function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const [{lang}] = useLang();
-    const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
+    const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {activePanel} = useAppSelector(state => state);
 
     const {loading, data, error} = useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
-        getLibraryDetailExtendedQuery,
+        getLibraryDetailExtendedQuery(100),
         {
             variables: {
                 libId: library
@@ -56,11 +56,13 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
 
         if (library !== activeLibrary?.id) {
             const {query, type, filter, searchableFields} = currentLibrary.gqlNames;
+            const {attributes} = currentLibrary;
 
             updateActiveLibrary({
                 id: library,
                 name: currentLibLabel,
                 filter,
+                attributes,
                 gql: {
                     searchableFields,
                     query,

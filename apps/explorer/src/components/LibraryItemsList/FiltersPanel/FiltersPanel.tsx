@@ -76,8 +76,6 @@ function FiltersPanel(): JSX.Element {
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const [showAttr, setShowAttr] = useState(false);
-
     const onSearch = () => {
         searchDispatch({
             type: SearchActionTypes.SET_QUERY_FILTERS,
@@ -125,60 +123,56 @@ function FiltersPanel(): JSX.Element {
     const filtersSorted = searchState.filters.sort((a, b) => a.index - b.index);
 
     return (
-        <>
-            <AddFilter showAttr={showAttr} setShowAttr={setShowAttr} />
-            <Wrapper>
-                <Header>
-                    <div>
-                        <span>{t('filters.filters')}</span>
-                        <FiltersCounter>{searchState.filters.length}</FiltersCounter>
-                        <PrimaryBtn onClick={() => setShowAttr(true)} icon={<PlusOutlined />} shape="circle" />
-                    </div>
+        <Wrapper>
+            <Header>
+                <div>
+                    <span>{t('filters.filters')}</span>
+                    <FiltersCounter>{searchState.filters.length}</FiltersCounter>
+                </div>
 
-                    <div>
-                        <CustomButton onClick={onSearch}>{t('global.search')}</CustomButton>
-                        <Dropdown
-                            overlay={
-                                <Menu>
-                                    <Menu.Item onClick={resetFilters}>{t('filters.remove-filters')}</Menu.Item>
-                                </Menu>
-                            }
-                        >
-                            <CustomButton icon={<MoreOutlined />} />
-                        </Dropdown>
-                    </div>
-                </Header>
+                <div>
+                    <CustomButton onClick={onSearch}>{t('global.search')}</CustomButton>
+                    <Dropdown
+                        overlay={
+                            <Menu>
+                                <Menu.Item onClick={resetFilters}>{t('filters.remove-filters')}</Menu.Item>
+                            </Menu>
+                        }
+                    >
+                        <CustomButton icon={<MoreOutlined />} />
+                    </Dropdown>
+                </div>
+            </Header>
 
-                <FiltersWrapper>
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        <Droppable droppableId={'droppable'}>
-                            {providedDroppable => (
-                                <ListFilters {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
-                                    {filtersSorted.map(filter => (
-                                        <Draggable
-                                            key={filter.index}
-                                            draggableId={filter.index.toString()}
-                                            index={filter.index}
-                                        >
-                                            {provided => (
-                                                <div ref={provided.innerRef} {...provided.draggableProps}>
-                                                    <Filter
-                                                        key={filter.index}
-                                                        filter={filter}
-                                                        handleProps={provided.dragHandleProps}
-                                                    />
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {providedDroppable.placeholder}
-                                </ListFilters>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
-                </FiltersWrapper>
-            </Wrapper>
-        </>
+            <FiltersWrapper>
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId={'droppable'}>
+                        {providedDroppable => (
+                            <ListFilters {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
+                                {filtersSorted.map(filter => (
+                                    <Draggable
+                                        key={filter.index}
+                                        draggableId={filter.index.toString()}
+                                        index={filter.index}
+                                    >
+                                        {provided => (
+                                            <div ref={provided.innerRef} {...provided.draggableProps}>
+                                                <Filter
+                                                    key={filter.index}
+                                                    filter={filter}
+                                                    handleProps={provided.dragHandleProps}
+                                                />
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {providedDroppable.placeholder}
+                            </ListFilters>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            </FiltersWrapper>
+        </Wrapper>
     );
 }
 

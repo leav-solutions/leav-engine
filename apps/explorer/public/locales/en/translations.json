@@ -184,7 +184,8 @@
         "no-filters": "No filter to apply",
         "submit": "Apply filters",
         "deactivate": "Deactivate",
-        "activate": "Activate"
+        "activate": "Activate",
+        "add": "Ajouter"
     },
     "filter-item": {
         "no-operator": "If"

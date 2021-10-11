@@ -53,7 +53,7 @@ describe('MenuItemList', () => {
         });
     });
 
-    test('should have button show filter', async () => {
+    test('should have MenuSelection', async () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
@@ -65,13 +65,51 @@ describe('MenuItemList', () => {
                 </MockedProviderWithFragments>
             );
 
-            const showFilterButtonElement = await screen.findByRole('show-filter');
+            await waitForElement(() => screen.getByText('MenuSelection'));
 
-            expect(showFilterButtonElement).toBeInTheDocument();
+            const menuSelectionMockContent = screen.getByText('MenuSelection');
+
+            expect(menuSelectionMockContent).toBeInTheDocument();
         });
     });
 
-    test('should have change column button', async () => {
+    test('should have SearchItems', async () => {
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <MockStore>
+                        <MockSearchContextProvider>
+                            <MenuItemList refetch={jest.fn()} />
+                        </MockSearchContextProvider>
+                    </MockStore>
+                </MockedProviderWithFragments>
+            );
+
+            expect(comp.find('SearchItems')).toHaveLength(1);
+        });
+    });
+
+    test('should have DisplayOptions', async () => {
+        let comp: any;
+
+        await act(async () => {
+            comp = mount(
+                <MockedProviderWithFragments>
+                    <MockStore>
+                        <MockSearchContextProvider>
+                            <MenuItemList refetch={jest.fn()} />
+                        </MockSearchContextProvider>
+                    </MockStore>
+                </MockedProviderWithFragments>
+            );
+
+            expect(comp.find('DisplayOptions')).toHaveLength(1);
+        });
+    });
+
+    test('should have menu item actions', async () => {
         let comp: any;
 
         await act(async () => {

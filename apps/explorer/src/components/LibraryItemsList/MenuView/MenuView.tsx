@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MenuOutlined, PlusOutlined, SaveFilled, AppstoreFilled, ClearOutlined} from '@ant-design/icons';
+import {MenuOutlined, PlusOutlined, SaveFilled, AppstoreFilled, ClearOutlined, DownOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, Menu} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
@@ -10,7 +10,6 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
-import {useUser} from '../../../hooks/UserHook/UserHook';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
@@ -24,6 +23,7 @@ import {TypeSideItem} from '../../../_types/types';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 import {ViewTypes} from '_gqlTypes/globalTypes';
 import _ from 'lodash';
+import FiltersDropdown from './FiltersDropdown';
 
 interface IMenuViewProps {
     activeLibrary: IActiveLibrary;
@@ -31,7 +31,6 @@ interface IMenuViewProps {
 
 function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
     const {t} = useTranslation();
-    const [user] = useUser();
 
     const [{lang, defaultLang}] = useLang();
     const dispatch = useAppDispatch();
@@ -158,16 +157,16 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                 <span>
                     <PlusOutlined />
                     <MenuOutlined />
-                </span>
-                {t('select-view.add-view')}
+                </span>{' '}
+                {t('view.type-list')}
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item onClick={() => _handleAddView(ViewTypes.cards)}>
                 <span>
                     <PlusOutlined />
                     <AppstoreFilled />
-                </span>
-                {t('select-view.add-view')}
+                </span>{' '}
+                {t('view.type-cards')}
             </Menu.Item>
         </Menu>
     );
@@ -184,6 +183,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     'medium'
                 )}
             </Button>
+            <Button icon={<ClearOutlined />} onClick={_setView} />
             <Button
                 icon={<SaveFilled />}
                 onClick={_saveView}
@@ -193,12 +193,12 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     !searchState.view.current.owner
                 }
             />
-            <Button icon={<ClearOutlined />} onClick={_setView} />
             <Dropdown overlay={menu}>
                 <Button>
                     <PlusOutlined />
                 </Button>
             </Dropdown>
+            <FiltersDropdown activeLibrary={activeLibrary} />
         </>
     );
 }

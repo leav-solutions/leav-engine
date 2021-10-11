@@ -390,21 +390,22 @@ export const defaultFilterValueByAttributeFormat = (format: AttributeFormat): st
     }
 };
 
-export const getQueryFilterField = (key: string): string => {
-    const splitKey = key.split('.');
+// export const getQueryFilterField = (key: string): string => {
+//     const splitKey = key.split('.');
 
-    if (splitKey[0] === attributeExtendedKey) {
-        return splitKey.splice(1, 0).toString();
-    }
+//     if (splitKey[0] === attributeExtendedKey) {
+//         return splitKey.splice(1, 0).toString();
+//     }
 
-    switch (splitKey.length) {
-        case 3:
-            return `${splitKey[1]}.${splitKey[2]}`;
-        case 2:
-        default:
-            return splitKey.pop();
-    }
-};
+//     switch (splitKey.length) {
+//         case 3:
+//             return `${splitKey[1]}.${splitKey[2]}`;
+//         case 2:
+//         default:
+//             splitKey.pop();
+//             return splitKey[];
+//     }
+// };
 
 export const getTreeRecordKey = (record: RecordIdentity): string => `${record.whoAmI.library.id}/${record.id}`;
 

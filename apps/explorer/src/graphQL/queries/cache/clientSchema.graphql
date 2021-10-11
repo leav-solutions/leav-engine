@@ -8,7 +8,9 @@ type ActiveLibrary {
     id: String!,
     name: String!,
     filter: String!,
-    gql: ActiveLibraryGqlNames!
+    attributes: [Any]!,
+    gql: ActiveLibraryGqlNames!,
+    trees: [String]!
 }
 
 type ActiveTree {
@@ -27,6 +29,7 @@ enum NotificationType {
     warning
     error
 }
+
 enum NotificationPriority {
     low
     medium

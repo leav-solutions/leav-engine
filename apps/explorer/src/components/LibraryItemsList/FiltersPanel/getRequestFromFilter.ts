@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-
-import {getQueryFilterField} from 'utils';
 import {RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
 import {AttributeConditionFilter, IFilter, IQueryFilter} from '../../../_types/types';
 
@@ -19,7 +17,7 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
 
                 for (const v of values) {
                     queryFilter.push({
-                        field: filter.condition in AttributeConditionFilter ? getQueryFilterField(filter.key) : null,
+                        field: filter.condition in AttributeConditionFilter ? filter.key : null,
                         value: v,
                         condition: RecordFilterCondition[filter.condition]
                     });
@@ -32,7 +30,7 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
             } else {
                 queryFilter = [
                     {
-                        field: filter.condition in AttributeConditionFilter ? getQueryFilterField(filter.key) : null,
+                        field: filter.condition in AttributeConditionFilter ? filter.key : null,
                         value: filter.value.value.toString(),
                         condition: RecordFilterCondition[filter.condition],
                         treeId: filter.tree?.id
