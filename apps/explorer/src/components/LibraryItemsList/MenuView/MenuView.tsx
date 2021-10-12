@@ -83,7 +83,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                 // Fields
                 let viewFields: string[] = [];
 
-                if (searchState.view.current.type === ViewTypes.list) {
+                if (searchState.view.current.display.type === ViewTypes.list) {
                     viewFields = searchState.fields.map(f => f.key);
                 }
 
@@ -96,7 +96,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                             sort: searchState.sort.active
                                 ? {field: searchState.sort.field, order: searchState.sort.order}
                                 : undefined,
-                            type: searchState.displayType,
+                            display: searchState.display,
                             filters: getRequestFromFilters(searchState.filters),
                             settings: [
                                 {
@@ -116,7 +116,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                             sort: searchState.sort.active
                                 ? {field: searchState.sort.field, order: searchState.sort.order}
                                 : undefined,
-                            type: searchState.displayType,
+                            display: searchState.display,
                             filters: searchState.filters,
                             settings: [
                                 {

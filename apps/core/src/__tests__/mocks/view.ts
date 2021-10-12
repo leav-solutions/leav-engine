@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ViewTypes} from '../../_types/views';
+import {ViewTypes, ViewSizes} from '../../_types/views';
 
 export const mockViewBeforeCreation: IView = {
     library: 'test_lib',
     label: {fr: 'My view'},
     description: {fr: 'My test view'},
     color: '#123456',
-    type: ViewTypes.LIST,
+    display: {type: ViewTypes.LIST, size: ViewSizes.MEDIUM},
     filters: [
         {
             field: 'id',

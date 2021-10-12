@@ -10,7 +10,10 @@ export const getViewByIdQuery = gql`
     query GET_VIEW($viewId: String!) {
         view(viewId: $viewId) {
             id
-            type
+            display {
+                size
+                type
+            }
             shared
             created_by {
                 ...RecordIdentity

@@ -13,6 +13,10 @@ Object {
     "description": Object {
       "fr": "My test view",
     },
+    "display": Object {
+      "size": "MEDIUM",
+      "type": "list",
+    },
     "filters": Array [
       Object {
         "field": "id",
@@ -36,7 +40,6 @@ Object {
       "field": "id",
       "order": "asc",
     },
-    "type": "list",
   },
 }
 `;
@@ -70,6 +73,10 @@ Object {
     "description": Object {
       "fr": "My test view",
     },
+    "display": Object {
+      "size": "MEDIUM",
+      "type": "list",
+    },
     "filters": Array [
       Object {
         "field": "id",
@@ -93,7 +100,6 @@ Object {
       "field": "id",
       "order": "asc",
     },
-    "type": "list",
   },
 }
 `;

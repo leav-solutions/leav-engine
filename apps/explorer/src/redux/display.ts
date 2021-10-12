@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {DisplaySize, TypeSideItem} from '_types/types';
+import {TypeSideItem} from '_types/types';
 import {IDisplaySide, IDisplayState} from './stateType';
 
 export const displayInitialState: IDisplayState = {
-    size: DisplaySize.small,
     side: {
         visible: false,
         type: TypeSideItem.filters
@@ -17,15 +16,12 @@ const displaySlice = createSlice({
     name: 'display',
     initialState: displayInitialState,
     reducers: {
-        setDisplaySize: (state, action: PayloadAction<DisplaySize>) => {
-            state.size = action.payload;
-        },
         setDisplaySide: (state, action: PayloadAction<IDisplaySide>) => {
             state.side = action.payload;
         }
     }
 });
 
-export const {setDisplaySize, setDisplaySide} = displaySlice.actions;
+export const {setDisplaySide} = displaySlice.actions;
 
 export default displaySlice.reducer;

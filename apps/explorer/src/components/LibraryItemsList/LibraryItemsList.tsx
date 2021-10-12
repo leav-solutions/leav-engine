@@ -187,7 +187,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                           library: library.id,
                           label: library.defaultView.label,
                           description: library.defaultView.description,
-                          type: library.defaultView.type,
+                          display: library.defaultView.display,
                           color: library.defaultView.color,
                           shared: library.defaultView.shared,
                           filters: getFiltersFromRequest(
@@ -352,7 +352,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         });
 
         searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
-        searchDispatch({type: SearchActionTypes.SET_DISPLAY_TYPE, displayType: searchState.view.current.type});
+        searchDispatch({type: SearchActionTypes.SET_DISPLAY, display: searchState.view.current.display});
         searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: searchState.view.current, reload: false}});
     }, [
         SELECTED_VIEW_KEY,

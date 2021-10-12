@@ -58,7 +58,7 @@ function EditView({visible, onClose, view}: IEditViewProps): JSX.Element {
         const upView: IAddViewMutationVariablesView = {
             id: view.id,
             library: activeLibrary.id,
-            type: values.type,
+            display: {type: values.type, size: view.display.size},
             shared: values.shared,
             label: values.label,
             description: !Object.values(values.description).every(x => x === '') ? values.description : null,
@@ -101,7 +101,7 @@ function EditView({visible, onClose, view}: IEditViewProps): JSX.Element {
                               description: !Object.values(values.description).every(x => x === '')
                                   ? values.description
                                   : null,
-                              type: values.type,
+                              display: {type: values.type, size: view.display.size},
                               shared: values.shared
                           }
                         : searchState.view.current,
@@ -154,7 +154,7 @@ function EditView({visible, onClose, view}: IEditViewProps): JSX.Element {
                     label={t('view.edit-view.type')}
                     name="type"
                     data-testid="input-type"
-                    initialValue={view.type}
+                    initialValue={view.display.type}
                 >
                     <Select>
                         <Select.Option value={ViewTypes.list}>{t('view.type-list')}</Select.Option>

@@ -6,11 +6,16 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ViewTypes, RecordFilterCondition, RecordFilterOperator, SortOrder} from './globalTypes';
+import {ViewSizes, ViewTypes, RecordFilterCondition, RecordFilterOperator, SortOrder} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_VIEW
 // ====================================================
+
+export interface GET_VIEW_view_display {
+    size: ViewSizes;
+    type: ViewTypes;
+}
 
 export interface GET_VIEW_view_created_by_whoAmI_library_gqlNames {
     query: string;
@@ -62,7 +67,7 @@ export interface GET_VIEW_view_settings {
 
 export interface GET_VIEW_view {
     id: string;
-    type: ViewTypes;
+    display: GET_VIEW_view_display | null;
     shared: boolean;
     created_by: GET_VIEW_view_created_by;
     label: any;

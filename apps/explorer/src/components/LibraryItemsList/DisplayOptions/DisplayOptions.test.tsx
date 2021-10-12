@@ -6,13 +6,13 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {displayInitialState} from 'redux/display';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {DisplaySize} from '../../../_types/types';
 import DisplayOptions from './DisplayOptions';
 
 describe('DisplayOptions', () => {
-    test('should display list-big icon', async () => {
+    test('should display list-medium icon', async () => {
         await act(async () => {
-            const mockState = {display: {...displayInitialState, size: DisplaySize.big}};
+            const mockState = {display: displayInitialState};
+
             render(
                 <MockStore state={mockState}>
                     <DisplayOptions />
@@ -20,6 +20,6 @@ describe('DisplayOptions', () => {
             );
         });
 
-        expect(screen.getByRole('button', {name: 'items_list.display.list-big'})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: 'items_list.display.medium'})).toBeInTheDocument();
     });
 });

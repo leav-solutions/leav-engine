@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
+import {SortOrder, ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
 import {AttributeFormat, IView} from '../_types/types';
 
 export const selectionColumn = 'selection-column';
@@ -26,7 +26,7 @@ export const defaultView: IView = {
     id: 'default-view',
     label: {fr: 'Vue par défaut', en: 'Default view'},
     owner: true,
-    type: ViewTypes.list,
+    display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
     shared: false,
     filters: [],
     sort: defaultSort

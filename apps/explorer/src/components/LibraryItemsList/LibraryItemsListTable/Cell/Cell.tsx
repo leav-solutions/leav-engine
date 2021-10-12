@@ -4,8 +4,7 @@
 import Paragraph from 'antd/lib/typography/Paragraph';
 import RecordCard from 'components/shared/RecordCard';
 import React from 'react';
-import {useSelector} from 'react-redux';
-import {RootState} from 'redux/store';
+import useSearchReducer from 'hooks/useSearchReducer';
 import styled from 'styled-components';
 import {infosCol} from '../../../../constants/constants';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
@@ -30,11 +29,10 @@ interface ICellProps {
 
 const Cell = ({columnName, data, index, record}: ICellProps) => {
     const {value, type} = data;
-
-    const {size} = useSelector((state: RootState) => state.display);
     const [{lang}] = useLang();
 
-    const previewSize: PreviewSize = displayTypeToPreviewSize(size);
+    const {state: searchState} = useSearchReducer();
+    const previewSize: PreviewSize = displayTypeToPreviewSize(searchState.display.size);
 
     if (!value || (Array.isArray(value) && !value.length)) {
         return <></>;
