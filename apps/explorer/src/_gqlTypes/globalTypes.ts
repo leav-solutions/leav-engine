@@ -57,6 +57,12 @@ export enum SortOrder {
     desc = 'desc'
 }
 
+export enum ViewSizes {
+    BIG = 'BIG',
+    MEDIUM = 'MEDIUM',
+    SMALL = 'SMALL'
+}
+
 export enum ViewTypes {
     cards = 'cards',
     list = 'list',

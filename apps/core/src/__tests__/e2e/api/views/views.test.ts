@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 import {AttributeCondition} from '../../../../_types/record';
+import {ViewSizes, ViewTypes} from '../../../../_types/views';
 
 describe('Views', () => {
     const testLibName = 'test_views_lib';
@@ -16,7 +17,7 @@ describe('Views', () => {
         const resSaveView = await makeGraphQlCall(`mutation {
             v1: saveView(view: {
               library: "${testLibName}",
-              type: list,
+              display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
               shared: true,
               label: {fr: "test_first_view"},
               description: {fr: "Best view ever!"},
@@ -30,7 +31,7 @@ describe('Views', () => {
             },
             v2: saveView(view: {
                 library: "${testLibName}",
-                type: list,
+                display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
                 shared: true,
                 label: {fr: "test_second_view"},
                 description: {fr: "Best view ever!"},
@@ -80,7 +81,7 @@ describe('Views', () => {
             saveView(view: {
               id: "${viewId}",
               library: "${testLibName}",
-              type: list,
+              display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
               shared: true,
               label: {fr: "My super view!"},
               description: {fr: "Best view ever!"},
@@ -92,7 +93,10 @@ describe('Views', () => {
             }) {
               id
               library
-              type
+              display {
+                type
+                size
+              }
               label
               description
               color

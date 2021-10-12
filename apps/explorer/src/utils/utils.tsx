@@ -5,6 +5,7 @@ import {gql} from 'graphql-tag';
 import {i18n} from 'i18next';
 import {isString, pick} from 'lodash';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {ViewSizes} from '_gqlTypes/globalTypes';
 import {attributeExtendedKey, infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
@@ -12,7 +13,6 @@ import {
     AttributeFormat,
     AttributeType,
     AvailableLanguage,
-    DisplaySize,
     ExtendFormat,
     IAttribute,
     IEmbeddedFields,
@@ -184,13 +184,13 @@ export const checkTypeIsLink = (type: AttributeType) => {
     }
 };
 
-export const displayTypeToPreviewSize = (displayType: DisplaySize) => {
+export const displayTypeToPreviewSize = (displayType: ViewSizes) => {
     switch (displayType) {
-        case DisplaySize.small:
+        case ViewSizes.SMALL:
             return PreviewSize.small;
-        case DisplaySize.medium:
+        case ViewSizes.MEDIUM:
             return PreviewSize.medium;
-        case DisplaySize.big:
+        case ViewSizes.BIG:
             return PreviewSize.big;
         default:
             return PreviewSize.small;

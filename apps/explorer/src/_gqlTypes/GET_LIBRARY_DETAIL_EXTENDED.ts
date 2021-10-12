@@ -9,6 +9,7 @@
 import {
     AttributeType,
     AttributeFormat,
+    ViewSizes,
     ViewTypes,
     RecordFilterCondition,
     RecordFilterOperator,
@@ -145,6 +146,11 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_gqlNames {
     searchableFields: string;
 }
 
+export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView_display {
+    size: ViewSizes;
+    type: ViewTypes;
+}
+
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView_filters {
     field: string | null;
     value: string | null;
@@ -166,7 +172,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView {
     id: string;
     description: any | null;
     label: any;
-    type: ViewTypes;
+    display: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView_display | null;
     shared: boolean;
     filters: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView_filters[] | null;
     color: string | null;

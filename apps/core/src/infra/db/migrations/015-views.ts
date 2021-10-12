@@ -7,7 +7,7 @@ import {IConfig} from '_types/config';
 import {IMigration} from '_types/migration';
 import {LIB_COLLECTION_NAME} from '../../../infra/library/libraryRepo';
 import {VIEWS_COLLECTION_NAME} from '../../../infra/view/_types';
-import {ViewTypes} from '../../../_types/views';
+import {ViewSizes, ViewTypes} from '../../../_types/views';
 import {IDbService} from '../dbService';
 
 interface IDeps {
@@ -37,7 +37,7 @@ export default function ({'core.infra.db.dbService': dbService = null, config = 
                 // Create a default view for files
                 const filesDefaultView: IView = {
                     label: {fr: 'Vue mosaique', en: 'Mosaic view'},
-                    type: ViewTypes.CARDS,
+                    display: {type: ViewTypes.CARDS, size: ViewSizes.MEDIUM},
                     created_by: ctx.userId,
                     created_at: now,
                     modified_at: now,
