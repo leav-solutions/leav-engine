@@ -28,6 +28,8 @@ const Loading = styled(Spin)`
     }
 `;
 
+const DEPTH_EMBEDDED_FIELDS = 100;
+
 function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
@@ -36,7 +38,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const {activePanel} = useAppSelector(state => state);
 
     const {loading, data, error} = useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
-        getLibraryDetailExtendedQuery(100),
+        getLibraryDetailExtendedQuery(DEPTH_EMBEDDED_FIELDS),
         {
             variables: {
                 libId: library

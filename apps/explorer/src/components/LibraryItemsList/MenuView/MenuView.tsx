@@ -60,8 +60,6 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     viewFields = searchState.fields.map(f => f.key);
                 }
 
-                console.log('search state display', searchState.display);
-
                 // save view in backend
                 await addView({
                     variables: {
