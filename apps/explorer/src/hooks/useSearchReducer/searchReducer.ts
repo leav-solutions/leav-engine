@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {defaultSort, defaultView} from 'constants/constants';
+import {defaultSort, defaultView, viewSettingsField} from 'constants/constants';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {IAttribute, IField, IFilter, IQueryFilter, IViewDisplay} from '_types/types';
 import {ISearchRecord, ISearchSort, ISearchState, IViewState} from './_types';
@@ -57,12 +57,51 @@ export const initialSearchState: ISearchState = {
     filters: [],
     queryFilters: [],
     display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
-    view: {current: defaultView, reload: false},
+    view: {current: defaultView, reload: false, sync: true},
     userViewsOrder: [],
     sharedViewsOrder: []
 };
 
+const checkSync = (
+    state: ISearchState,
+    toCheck: {sort: boolean; filters: boolean; display: boolean; fields: boolean}
+): boolean => {
+    let sync = true;
+
+    if (toCheck.sort) {
+        sync = state.sort.field === state.view.current.sort.field && state.sort.order === state.view.current.sort.order;
+    }
+
+    if (toCheck.filters) {
+        sync = sync && JSON.stringify(state.view.current.filters) === JSON.stringify(state.filters);
+    }
+
+    if (toCheck.display) {
+        sync =
+            sync &&
+            state.display.type === state.view.current.display.type &&
+            state.display.size === state.view.current.display.size;
+    }
+
+    if (toCheck.fields) {
+        const viewFieldsKeys: string[] = !!state.view.current.settings?.find(s => s.name === viewSettingsField)
+            ? state.view.current?.settings.find(s => s.name === viewSettingsField).value
+            : [];
+
+        sync = sync && state.fields.map(f => f.id).join('.') === viewFieldsKeys.join('.');
+    }
+
+    return sync;
+};
+
 const searchReducer = (state: ISearchState, action: SearchAction): ISearchState => {
+    let sync = checkSync(state, {
+        sort: action.type !== SearchActionTypes.SET_SORT, // FIXME: probleme avec le sort
+        filters: action.type !== SearchActionTypes.SET_FILTERS,
+        display: action.type !== SearchActionTypes.SET_DISPLAY,
+        fields: action.type !== SearchActionTypes.SET_FIELDS
+    });
+
     switch (action.type) {
         case SearchActionTypes.SET_RECORDS:
             return {...state, records: action.records};
@@ -75,23 +114,39 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         case SearchActionTypes.SET_LOADING:
             return {...state, loading: action.loading};
         case SearchActionTypes.SET_SORT:
-            return {...state, sort: action.sort};
+            sync =
+                sync &&
+                state.view.current.sort.field === action.sort.field &&
+                state.view.current.sort.order === action.sort.order;
+
+            return {...state, sort: action.sort, view: {...state.view, sync}};
         case SearchActionTypes.CANCEL_SORT:
             return {...state, sort: {...defaultSort, active: false}};
         case SearchActionTypes.SET_ATTRIBUTES:
             return {...state, attributes: action.attributes};
         case SearchActionTypes.SET_FIELDS:
-            return {...state, fields: action.fields};
+            const viewFieldsKeys: IField[] = !!state.view.current.settings?.find(s => s.name === viewSettingsField)
+                ? state.view.current?.settings.find(s => s.name === viewSettingsField).value
+                : [];
+
+            sync = sync && action.fields.map(f => f.id).join('.') === viewFieldsKeys.join('.');
+
+            return {...state, fields: action.fields, view: {...state.view, sync}};
         case SearchActionTypes.SET_FULLTEXT:
             return {...state, fullText: action.fullText};
         case SearchActionTypes.SET_FILTERS:
-            return {...state, filters: action.filters};
+            sync = sync && JSON.stringify(state.view.current.filters) === JSON.stringify(action.filters);
+            return {...state, filters: action.filters, view: {...state.view, sync}};
         case SearchActionTypes.SET_QUERY_FILTERS:
             return {...state, queryFilters: action.queryFilters};
         case SearchActionTypes.SET_VIEW:
             return {...state, view: action.view};
         case SearchActionTypes.SET_DISPLAY:
-            return {...state, display: action.display};
+            sync =
+                sync &&
+                action.display.type === state.view.current.display.type &&
+                action.display.size === state.view.current.display.size;
+            return {...state, display: action.display, view: {...state.view, sync}};
         case SearchActionTypes.SET_USER_VIEWS_ORDER:
             return {...state, userViewsOrder: action.userViewsOrder};
         case SearchActionTypes.SET_SHARED_VIEWS_ORDER:

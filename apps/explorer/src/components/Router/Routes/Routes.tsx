@@ -4,7 +4,6 @@
 import Workspace from 'components/Workspace';
 import React from 'react';
 import {Route, Switch} from 'react-router-dom';
-import Settings from '../../Settings';
 import RouteNotFound from '../RouteNotFound';
 import {routes} from './ListRoutes';
 
@@ -21,10 +20,6 @@ function Routes(): JSX.Element {
 
             <Route exact path={routes.workspace}>
                 <Workspace />
-            </Route>
-
-            <Route path={routes.settings}>
-                <Settings />
             </Route>
 
             <Route>

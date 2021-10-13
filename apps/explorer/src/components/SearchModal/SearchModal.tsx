@@ -62,7 +62,7 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
     );
 
     const {loading, data, error} = useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
-        getLibraryDetailExtendedQuery,
+        getLibraryDetailExtendedQuery(0),
         {
             variables: {
                 libId

@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
+import {MenuOutlined, PlusOutlined, SaveFilled, AppstoreFilled, ClearOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Dropdown, Menu} from 'antd';
+import {Button, Dropdown, Menu} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -11,7 +11,6 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import styled, {CSSObject} from 'styled-components';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
     IAddViewMutation,
@@ -19,38 +18,12 @@ import addViewMutation, {
     IAddViewMutationVariablesView
 } from '../../../graphQL/mutations/views/addViewMutation';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import themingVar from '../../../themingVar';
 import {limitTextSize, localizedTranslation} from '../../../utils';
 import {TypeSideItem} from '../../../_types/types';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import _ from 'lodash';
-import {ViewTypes} from '_gqlTypes/globalTypes';
-
-const DropdownButton = styled(Dropdown.Button)`
-    .ant-dropdown-trigger {
-        background-color: ${themingVar['@leav-secondary-action-bg']};
-    }
-`;
-
-interface IInnerDropdownProps {
-    color?: string;
-    style?: CSSObject;
-}
-
-const InnerDropdown = styled.span<IInnerDropdownProps>`
-    transform: translate(5px);
-    position: relative;
-
-    &::before {
-        content: '';
-        position: absolute;
-        left: -11px;
-        top: 8px;
-        border-radius: 50%;
-        padding: 3px;
-        background: ${({color}) => color ?? themingVar['@primary-color']};
-    }
-`;
+import FiltersDropdown from './FiltersDropdown';
 
 interface IMenuViewProps {
     activeLibrary: IActiveLibrary;
@@ -125,7 +98,8 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                                 }
                             ]
                         },
-                        reload: true
+                        reload: true,
+                        sync: false
                     }
                 });
             } catch (e) {
@@ -134,11 +108,19 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         }
     };
 
-    const _handleAddView = async () => {
+    const _setView = () => {
+        searchDispatch({
+            type: SearchActionTypes.SET_VIEW,
+            view: {current: searchState.view.current, reload: true, sync: false}
+        });
+    };
+
+    const _handleAddView = async (viewType: ViewTypes) => {
         const newView: IAddViewMutationVariablesView = {
             ..._.omit(defaultView, ['id', 'owner']),
             label: {[defaultLang]: t('view.add-view.title')},
             library: activeLibrary.id,
+            display: {type: viewType, size: ViewSizes.MEDIUM},
             filters: []
         };
 
@@ -158,7 +140,8 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     id: newViewRes.data.saveView.id,
                     filters: []
                 },
-                reload: true
+                reload: true,
+                sync: false
             }
         });
 
@@ -170,34 +153,52 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
 
     const menu = (
         <Menu>
-            <Menu.Item
-                icon={<SaveFilled />}
-                onClick={_saveView}
-                disabled={searchState.view.current?.id === defaultView.id || !searchState.view.current.owner}
-            >
-                {t('select-view.save')}
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item onClick={_handleAddView}>
+            <Menu.Item onClick={() => _handleAddView(ViewTypes.list)}>
                 <span>
                     <PlusOutlined />
                     <MenuOutlined />
                 </span>{' '}
-                {t('select-view.add-view')}
+                {t('view.type-list')}
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item onClick={() => _handleAddView(ViewTypes.cards)}>
+                <span>
+                    <PlusOutlined />
+                    <AppstoreFilled />
+                </span>{' '}
+                {t('view.type-cards')}
             </Menu.Item>
         </Menu>
     );
 
     return (
         <>
-            <DropdownButton overlay={menu} data-testid="dropdown-view-options">
-                <InnerDropdown onClick={_toggleShowView} color={searchState.view.current?.color}>
-                    {limitTextSize(
-                        localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view'),
-                        'medium'
-                    )}
-                </InnerDropdown>
-            </DropdownButton>
+            <Button
+                data-testid="dropdown-view-options"
+                onClick={_toggleShowView}
+                color={searchState.view.current?.color}
+            >
+                {limitTextSize(
+                    localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view'),
+                    'medium'
+                )}
+            </Button>
+            <Button icon={<ClearOutlined />} onClick={_setView} />
+            <Button
+                icon={<SaveFilled />}
+                onClick={_saveView}
+                disabled={
+                    searchState.view.sync ||
+                    searchState.view.current?.id === defaultView.id ||
+                    !searchState.view.current.owner
+                }
+            />
+            <Dropdown overlay={menu}>
+                <Button>
+                    <PlusOutlined />
+                </Button>
+            </Dropdown>
+            <FiltersDropdown activeLibrary={activeLibrary} />
         </>
     );
 }

@@ -8,6 +8,7 @@ export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibra
         id: 'test_lib',
         name: 'Test Lib',
         filter: '',
+        attributes: [],
         gql: {
             searchableFields: 'TestLibSearchableFields',
             query: 'TestLib',

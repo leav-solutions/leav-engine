@@ -10,8 +10,13 @@
 // GraphQL mutation operation: SAVE_USER_DATA
 // ====================================================
 
+export interface SAVE_USER_DATA_saveUserData {
+    global: boolean;
+    data: any | null;
+}
+
 export interface SAVE_USER_DATA {
-    saveUserData: any | null;
+    saveUserData: SAVE_USER_DATA_saveUserData | null;
 }
 
 export interface SAVE_USER_DATAVariables {

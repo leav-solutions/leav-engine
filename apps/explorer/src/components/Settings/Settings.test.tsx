@@ -24,28 +24,6 @@ describe('Setting', () => {
         }
     });
 
-    test('should contain title', async () => {
-        let comp: any;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <ThemeSwitcherProvider
-                        themeMap={{light: `${process.env.PUBLIC_URL}/dark-theme.css`}}
-                        defaultTheme="light"
-                    >
-                        <Settings />
-                    </ThemeSwitcherProvider>
-                </MockedProviderWithFragments>
-            );
-
-            await wait();
-
-            comp.update();
-        });
-
-        expect(comp.find(PageHeader)).toHaveLength(1);
-    });
-
     test('should display available languages', async () => {
         let comp: any;
         await act(async () => {
@@ -55,7 +33,7 @@ describe('Setting', () => {
                         themeMap={{light: `${process.env.PUBLIC_URL}/dark-theme.css`}}
                         defaultTheme="light"
                     >
-                        <Settings />
+                        <Settings visible={true} onClose={jest.fn()} />
                     </ThemeSwitcherProvider>
                 </MockedProvider>
             );

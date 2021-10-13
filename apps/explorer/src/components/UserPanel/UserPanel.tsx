@@ -4,9 +4,9 @@
 import {LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Drawer, Menu} from 'antd';
 import useAuthToken from 'hooks/useAuthToken';
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {NavLink} from 'react-router-dom';
+import Settings from '../Settings';
 
 interface IUserPanelProps {
     userPanelVisible: boolean;
@@ -17,9 +17,15 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
     const {t} = useTranslation();
     const {deleteToken} = useAuthToken();
 
+    const [openSettings, setOpenSettings] = useState(false);
+
     const _handleLogout = () => {
         deleteToken();
         window.location.replace('/');
+    };
+
+    const _handleCloseSettings = () => {
+        setOpenSettings(false);
     };
 
     return (
@@ -38,15 +44,15 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                 }}
                 mode="inline"
             >
-                <Menu.Item>{t('menu.user_menu.profil')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.tasks')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.shortcuts')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.events')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.admin')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.leav_engine')}</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.profil')} (Coming soon)</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.tasks')} (Coming soon)</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.shortcuts')} (Coming soon)</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.events')} (Coming soon)</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.admin')} (Coming soon)</Menu.Item>
+                <Menu.Item>{t('menu.user_menu.leav_engine')} (Coming soon)</Menu.Item>
 
-                <Menu.Item icon={<SettingOutlined />} onClick={hideUserPanel}>
-                    <NavLink to="/setting">{t('sidebar.setting')}</NavLink>
+                <Menu.Item icon={<SettingOutlined />} onClick={() => setOpenSettings(true)}>
+                    {t('sidebar.setting')}
                 </Menu.Item>
 
                 <Menu.Item onClick={_handleLogout}>
@@ -54,6 +60,7 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                     {t('menu.user_menu.logout')}
                 </Menu.Item>
             </Menu>
+            {openSettings && <Settings visible={openSettings} onClose={_handleCloseSettings} />}
         </Drawer>
     );
 }

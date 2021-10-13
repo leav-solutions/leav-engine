@@ -23,10 +23,15 @@ export interface IGetViewListSettings {
     value: any;
 }
 
+export interface IGetViewListDisplay {
+    size: ViewSizes;
+    type: ViewTypes;
+}
+
 export interface IGetViewListElement {
     __typename: string; // FIXME: ??
     id: string;
-    display: {size: ViewSizes; type: ViewTypes};
+    display: IGetViewListDisplay;
     shared: boolean;
     created_by: {
         id: string;

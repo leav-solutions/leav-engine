@@ -17,6 +17,7 @@ import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {
     getViewsListQuery,
+    IGetViewListDisplay,
     IGetViewListQuery,
     IGetViewListSort,
     IGetViewListVariables
@@ -153,6 +154,7 @@ function ViewPanel(): JSX.Element {
                     ? getFiltersFromRequest(view.filters, searchState.library.id, searchState.attributes)
                     : [],
                 sort: _.omit(view.sort, ['__typename']) as IGetViewListSort,
+                display: _.omit(view.display, ['__typename']) as IGetViewListDisplay,
                 settings: view.settings?.map(s => _.omit(s, '__typename'))
             };
 

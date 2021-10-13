@@ -105,7 +105,8 @@ function EditView({visible, onClose, view}: IEditViewProps): JSX.Element {
                               shared: values.shared
                           }
                         : searchState.view.current,
-                reload: true
+                reload: true,
+                sync: false
             }
         });
 

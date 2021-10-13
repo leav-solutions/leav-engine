@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
-import {Card, Col, PageHeader, Row, Select, Switch} from 'antd';
-import React, {useState} from 'react';
-import {useThemeSwitcher} from 'react-css-theme-switcher';
+import {Card, Col, Row, Select, Modal, Button} from 'antd';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {AvailableLanguage} from '../../_types/types';
 
-function Settings(): JSX.Element {
-    const {t, i18n: i18nClient} = useTranslation();
+interface ISettingsProps {
+    visible: boolean;
+    onClose: () => void;
+}
 
-    const {switcher, themes} = useThemeSwitcher();
-    const [darkMode, setDarkMode] = useState(false);
+function Settings({visible, onClose}: ISettingsProps): JSX.Element {
+    const {t, i18n: i18nClient} = useTranslation();
 
     const [{lang, availableLangs}, updateLang] = useLang();
 
@@ -22,11 +22,6 @@ function Settings(): JSX.Element {
         value: l,
         text: l
     }));
-
-    const toggleTheme = () => {
-        switcher({theme: !darkMode ? themes.dark : themes.light});
-        setDarkMode(mode => !mode);
-    };
 
     const changeLang = (value: string) => {
         i18nClient.changeLanguage(value ?? (lang[0] as any));
@@ -44,10 +39,19 @@ function Settings(): JSX.Element {
         });
     };
 
-    const themeName = darkMode ? t('settings.name-theme-dark') : t('settings.name-theme-light');
     return (
-        <div style={{padding: '1rem'}}>
-            <PageHeader title={t('settings.header')} />
+        <Modal
+            visible={visible}
+            onCancel={onClose}
+            title={t('settings.header')}
+            centered
+            width="70rem"
+            footer={[
+                <Button key="Close" onClick={onClose}>
+                    {t('global.close')}
+                </Button>
+            ]}
+        >
             <Row gutter={[8, 8]}>
                 <Col span={4}>
                     <Card title={t('settings.choose-lang')} hoverable>
@@ -60,24 +64,8 @@ function Settings(): JSX.Element {
                         </Select>
                     </Card>
                 </Col>
-
-                <Col span={4}>
-                    <Card title={t('settings.choose-theme')} hoverable>
-                        <Row gutter={8}>
-                            <Col>{t('settings.current-theme', {theme: themeName})}</Col>
-                            <Col>
-                                <Switch
-                                    checkedChildren={<CheckOutlined />}
-                                    unCheckedChildren={<CloseOutlined />}
-                                    defaultChecked={darkMode}
-                                    onChange={toggleTheme}
-                                />
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
             </Row>
-        </div>
+        </Modal>
     );
 }
 

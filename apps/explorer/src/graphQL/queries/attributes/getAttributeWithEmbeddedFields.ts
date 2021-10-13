@@ -3,11 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
 
-const getEmbeddedFields = (depth = 0) => {
+export const getEmbeddedFields = (depth = 0) => {
     return `
         embedded_fields {
             id
             format
+            label
             ${depth > 0 ? getEmbeddedFields(depth - 1) : ''}
         }
     `;

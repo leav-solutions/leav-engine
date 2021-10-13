@@ -40,21 +40,19 @@ function SearchItems(): JSX.Element {
     };
 
     return (
-        <div>
-            <Input.Search
-                placeholder={t('search.placeholder')}
-                value={searchState.fullText}
-                onChange={handleChange}
-                onPressEnter={handleEnter}
-                suffix={
-                    <DeleteSearchCross search={search}>
-                        <Tooltip placement="bottom" title={t('search.explain-cancel')}>
-                            <CloseOutlined onClick={resetSearch} />
-                        </Tooltip>
-                    </DeleteSearchCross>
-                }
-            />
-        </div>
+        <Input.Search
+            placeholder={t('search.placeholder')}
+            value={searchState.fullText}
+            onChange={handleChange}
+            onPressEnter={handleEnter}
+            suffix={
+                <DeleteSearchCross search={search}>
+                    <Tooltip placement="bottom" title={t('search.explain-cancel')}>
+                        <CloseOutlined onClick={resetSearch} />
+                    </Tooltip>
+                </DeleteSearchCross>
+            }
+        />
     );
 }
 

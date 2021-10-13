@@ -119,16 +119,23 @@ function RecordLinkAttribute({attribute, depth, path, library}: IRecordLinkAttri
                             <ErrorDisplay message={error.message} />
                         ) : (
                             <List>
-                                {linkedAttributes.map(linkAttribute => (
-                                    <Attribute
-                                        key={linkAttribute.id}
-                                        attribute={linkAttribute}
-                                        depth={depth + 1}
-                                        path={path}
-                                        library={linkedLibrary}
-                                        parentAttribute={attribute}
-                                    />
-                                ))}
+                                {linkedAttributes
+                                    // hide selected attributes
+                                    // .filter(
+                                    //     la =>
+                                    //         state.selectedAttributes.map(sa => sa.path).indexOf(`${path}.${la.id}`) ===
+                                    //         -1
+                                    // )
+                                    .map(linkAttribute => (
+                                        <Attribute
+                                            key={linkAttribute.id}
+                                            attribute={linkAttribute}
+                                            depth={depth + 1}
+                                            path={path}
+                                            library={linkedLibrary}
+                                            parentAttribute={attribute}
+                                        />
+                                    ))}
                             </List>
                         )}
                     </StyledDeployContent>

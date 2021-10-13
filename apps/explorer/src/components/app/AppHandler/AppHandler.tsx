@@ -44,6 +44,7 @@ function AppHandler(): JSX.Element {
                 id: '',
                 name: '',
                 filter: '',
+                attributes: [],
                 gql: {
                     searchableFields: '',
                     query: '',

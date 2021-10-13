@@ -20,7 +20,9 @@ export interface GET_ACTIVE_LIBRARY_activeLib {
     id: string;
     name: string;
     filter: string;
+    attributes: (any | null)[];
     gql: GET_ACTIVE_LIBRARY_activeLib_gql;
+    trees: (string | null)[];
 }
 
 export interface GET_ACTIVE_LIBRARY {

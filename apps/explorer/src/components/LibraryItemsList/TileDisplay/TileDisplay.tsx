@@ -48,10 +48,6 @@ function TileDisplay(): JSX.Element {
         show: false
     });
 
-    const showRecordEdition = (item: IItem) => {
-        setRecordEdition(re => ({show: true, item}));
-    };
-
     const closeRecordEdition = () => {
         setRecordEdition(re => ({...re, show: false}));
     };
@@ -77,7 +73,7 @@ function TileDisplay(): JSX.Element {
                     <Row gutter={16}>
                         {searchState.records.map(record => (
                             <Col key={record.whoAmI.id} span={CardSizes[previewSize]}>
-                                <ItemTileDisplay item={record} showRecordEdition={showRecordEdition} />
+                                <ItemTileDisplay item={record} />
                             </Col>
                         ))}
                     </Row>

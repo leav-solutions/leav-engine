@@ -122,6 +122,8 @@ const Header = ({id, children, type}: IHeaderProps) => {
                 active: true
             }
         });
+
+        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
     };
 
     const handleDesc = (attId: string, attType: AttributeType) => {
@@ -135,6 +137,13 @@ const Header = ({id, children, type}: IHeaderProps) => {
     const cancelSort = () => {
         searchDispatch({
             type: SearchActionTypes.CANCEL_SORT
+        });
+    };
+
+    const handleHideColumn = (attId: string) => {
+        searchDispatch({
+            type: SearchActionTypes.SET_FIELDS,
+            fields: searchState.fields.filter(f => f.id !== attId)
         });
     };
 
@@ -152,9 +161,6 @@ const Header = ({id, children, type}: IHeaderProps) => {
                         onMouseEnter={() => setIsHover(true)}
                         onMouseLeave={() => setIsHover(false)}
                     >
-                        <Menu.Item onClick={() => setOpenChangeColumns(true)}>
-                            {t('items_list.table.header-cell-menu.choose-columns')}
-                        </Menu.Item>
                         <Menu.Item onClick={() => handleAsc(id, type)}>
                             {t('items_list.table.header-cell-menu.sort-ascend')}
                         </Menu.Item>
@@ -162,6 +168,14 @@ const Header = ({id, children, type}: IHeaderProps) => {
                             {t('items_list.table.header-cell-menu.sort-descend')}
                         </Menu.Item>
                         <Menu.Item onClick={cancelSort}>{t('items_list.table.header-cell-menu.cancel-sort')}</Menu.Item>
+                        {infosCol !== id && (
+                            <Menu.Item onClick={() => handleHideColumn(id)}>
+                                {t('items_list.table.header-cell-menu.hide-column')}
+                            </Menu.Item>
+                        )}
+                        <Menu.Item onClick={() => setOpenChangeColumns(true)}>
+                            {t('items_list.table.header-cell-menu.choose-columns')}
+                        </Menu.Item>
                     </Menu>
                 }
             >

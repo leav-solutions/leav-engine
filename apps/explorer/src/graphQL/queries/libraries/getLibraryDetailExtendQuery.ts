@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import gql from 'graphql-tag';
+import {gqlUnchecked} from 'utils';
+import {getEmbeddedFields} from '../attributes/getAttributeWithEmbeddedFields';
 import {
     AttributeConditionFilter,
     AttributeFormat,
@@ -94,7 +95,7 @@ export interface IGetLibraryDetailExtendedVariables {
     libId: string;
 }
 
-export const getLibraryDetailExtendedQuery = gql`
+export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gqlUnchecked`
     query GET_LIBRARY_DETAIL_EXTENDED($libId: ID) {
         libraries(filters: {id: $libId}) {
             list {
@@ -112,6 +113,7 @@ export const getLibraryDetailExtendedQuery = gql`
                     multiple_values
                     ... on StandardAttribute {
                         id
+                        ${getEmbeddedFields(depthEmbeddedFields)}
                     }
                     ... on LinkAttribute {
                         id
@@ -125,6 +127,7 @@ export const getLibraryDetailExtendedQuery = gql`
                                 multiple_values
                                 ... on StandardAttribute {
                                     id
+                                    ${getEmbeddedFields(depthEmbeddedFields)}
                                 }
                                 ... on LinkAttribute {
                                     id
@@ -153,6 +156,7 @@ export const getLibraryDetailExtendedQuery = gql`
                                         multiple_values
                                         ... on StandardAttribute {
                                             id
+                                            ${getEmbeddedFields(depthEmbeddedFields)}
                                         }
                                         ... on LinkAttribute {
                                             id

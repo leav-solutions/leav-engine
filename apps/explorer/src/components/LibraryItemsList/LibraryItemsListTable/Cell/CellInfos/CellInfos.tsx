@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {HeartOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
+import {message} from 'antd';
 import SelectCellsBtn, {
     SelectCellsBtnType
 } from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
@@ -16,7 +16,7 @@ import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {IconCross} from '../../../../../assets/icons/IconCross';
 import themingVar from '../../../../../themingVar';
-import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch, PreviewSize} from '../../../../../_types/types';
+import {IRecordIdentityWhoAmI, PreviewSize, ISharedStateSelectionSearch} from '../../../../../_types/types';
 
 const Info = styled.div`
     border-left: 1px solid ${themingVar['@divider-color']};
@@ -37,19 +37,8 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
     }));
 
     const menuBtnSize: SizeType = 'middle';
-    const moreActions = [
-        {
-            title: t('items_list.table.actions-tooltips.favorite'),
-            icon: <HeartOutlined />
-        }
-    ];
 
     const menuActions: FloatingMenuAction[] = [
-        {
-            title: t('items_list.table.actions-tooltips.informations'),
-            icon: <InfoCircleOutlined />,
-            size: menuBtnSize
-        },
         {
             title: t('global.edit'),
             button: <EditRecordBtn record={record} size={menuBtnSize} />
@@ -57,7 +46,8 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
         {
             title: t('items_list.table.actions-tooltips.remove'),
             icon: <IconCross />,
-            size: menuBtnSize
+            size: menuBtnSize,
+            onClick: () => message.warn(t('global.feature_not_available'))
         }
     ];
 
@@ -98,7 +88,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
             {selectMode ? (
                 <FloatingMenu actions={selectActions} size={menuBtnSize} />
             ) : (
-                <FloatingMenu actions={menuActions} moreActions={moreActions} size={menuBtnSize} />
+                <FloatingMenu actions={menuActions} size={menuBtnSize} />
             )}
         </>
     );
