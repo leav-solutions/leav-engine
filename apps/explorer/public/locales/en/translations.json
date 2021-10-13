@@ -131,10 +131,9 @@
             }
         },
         "display": {
-            "list-small": "List (small)",
-            "list-medium": "List (medium)",
-            "list-big": "List (big)",
-            "cards": "Cards",
+            "small": "small",
+            "medium": "medium",
+            "big": "big",
             "display-tile": "Tile"
         }
     },
@@ -282,8 +281,8 @@
         "search": "Search view",
         "my-views": "My views",
         "shared-views": "Shared",
-        "type-list": "View List",
-        "type-cards": "View Tile",
+        "type-list": "List",
+        "type-cards": "Tile",
         "type-timeline": "View Timeline",
         "default": "Default view",
         "delete": "Delete",

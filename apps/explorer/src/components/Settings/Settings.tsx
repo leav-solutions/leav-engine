@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Card, Col, PageHeader, Row, Select, Modal, Button} from 'antd';
+import {Card, Col, Row, Select, Modal, Button} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useLang} from '../../hooks/LangHook/LangHook';

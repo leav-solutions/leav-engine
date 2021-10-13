@@ -1,17 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MoreOutlined, PlusOutlined} from '@ant-design/icons';
+import {MoreOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React, {useState} from 'react';
+import React from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
-import AddFilter from './AddFilter';
 import Filter from './Filter/Filter';
 import './Filters.css';
 import {getRequestFromFilters} from './getRequestFromFilter';

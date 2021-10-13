@@ -10,9 +10,9 @@ import {
     ISystemTranslation,
     OperatorFilter,
     OrderSearch,
-    TreeConditionFilter,
-    ViewType
+    TreeConditionFilter
 } from '../../../_types/types';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 
 export interface ILibraryDetailExtendedFilter {
     field?: string;
@@ -25,7 +25,7 @@ export interface ILibraryDetailExtendedDefaultView {
     id: string;
     label: string;
     description?: string;
-    type: ViewType;
+    display: {size: ViewSizes; type: ViewTypes};
     shared: boolean;
     filters?: ILibraryDetailExtendedFilter[];
     color: string;
@@ -180,7 +180,10 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                     id
                     description
                     label
-                    type
+                    display {
+                        size
+                        type
+                    }
                     shared
                     filters {
                         field

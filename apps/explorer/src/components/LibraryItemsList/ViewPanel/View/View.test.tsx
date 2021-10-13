@@ -4,7 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
+import {SortOrder, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import View from './View';
@@ -14,7 +14,7 @@ describe('View', () => {
     const mockView: IView = {
         id: '0',
         label: {en: 'My view list 1', fr: 'My view list 1'},
-        type: ViewTypes.list,
+        display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
         color: '#50F0C4',
         shared: false,
         filters: [],

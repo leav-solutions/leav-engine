@@ -9,7 +9,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {ViewTypes} from '../../_types/views';
+import {ViewTypes, ViewSizes} from '../../_types/views';
 
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
@@ -34,9 +34,18 @@ export default function ({
                         ${Object.values(ViewTypes).join(' ')}
                     }
 
+                    enum ViewSizes {
+                        ${Object.values(ViewSizes).join(' ')}
+                    }
+
                     type ViewSettings {
                         name: String!,
                         value: Any
+                    }
+
+                    type ViewDisplay {
+                        type: ViewTypes!,
+                        size: ViewSizes!
                     }
 
                     input ViewSettingsInput {
@@ -44,10 +53,14 @@ export default function ({
                         value: Any
                     }
 
+                    input ViewDisplayInput {
+                        type: ViewTypes!,
+                        size: ViewSizes!
+                    }
+
                     type View {
                         id: String!,
                         library: String!,
-                        type: ViewTypes!
                         created_by: User!,
                         shared: Boolean!,
                         created_at: Int!,
@@ -57,13 +70,14 @@ export default function ({
                         color: String,
                         filters: [RecordFilter!],
                         sort: RecordSort,
+                        display: ViewDisplay!,
                         settings: [ViewSettings!]
                     }
 
                     input ViewInput {
                         id: String,
                         library: String!,
-                        type: ViewTypes!
+                        display: ViewDisplayInput!,
                         shared: Boolean!,
                         label: SystemTranslation,
                         description: SystemTranslationOptional,

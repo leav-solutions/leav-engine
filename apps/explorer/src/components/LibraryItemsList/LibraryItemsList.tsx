@@ -38,7 +38,13 @@ import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 import SideItems from './SideItems';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {GET_VIEW_view_sort, GET_VIEWVariables, GET_VIEW, GET_VIEW_view} from '_gqlTypes/GET_VIEW';
+import {
+    GET_VIEW_view_sort,
+    GET_VIEWVariables,
+    GET_VIEW,
+    GET_VIEW_view,
+    GET_VIEW_view_display
+} from '_gqlTypes/GET_VIEW';
 import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 
@@ -191,7 +197,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                           library: library.id,
                           label: library.defaultView.label,
                           description: library.defaultView.description,
-                          type: library.defaultView.type,
+                          display: library.defaultView.display,
                           color: library.defaultView.color,
                           shared: library.defaultView.shared,
                           filters: getFiltersFromRequest(
@@ -226,6 +232,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
                         ? getFiltersFromRequest(data.view.filters, searchState.library.id, searchState.attributes)
                         : [],
                     sort: _.omit(data.view.sort, ['__typename']) as GET_VIEW_view_sort,
+                    display: _.omit(data.view.display, ['__typename']) as GET_VIEW_view_display,
                     settings: data.view.settings?.map(s => _.omit(s, '__typename'))
                 };
 
@@ -355,7 +362,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         });
 
         searchDispatch({type: SearchActionTypes.SET_SORT, sort: {field, order, active: true}});
-        searchDispatch({type: SearchActionTypes.SET_DISPLAY_TYPE, displayType: searchState.view.current.type});
+        searchDispatch({type: SearchActionTypes.SET_DISPLAY, display: searchState.view.current.display});
         searchDispatch({
             type: SearchActionTypes.SET_VIEW,
             view: {current: searchState.view.current, reload: false, sync: true}

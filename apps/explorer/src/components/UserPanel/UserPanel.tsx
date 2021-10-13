@@ -6,7 +6,6 @@ import {Drawer, Menu} from 'antd';
 import useAuthToken from 'hooks/useAuthToken';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {NavLink} from 'react-router-dom';
 import Settings from '../Settings';
 
 interface IUserPanelProps {

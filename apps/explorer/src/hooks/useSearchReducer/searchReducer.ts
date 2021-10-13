@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultSort, defaultView, viewSettingsField} from 'constants/constants';
-import {IAttribute, IField, IFilter, IQueryFilter} from '_types/types';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
+import {IAttribute, IField, IFilter, IQueryFilter, IViewDisplay} from '_types/types';
 import {ISearchRecord, ISearchSort, ISearchState, IViewState} from './_types';
 
 export enum SearchActionTypes {
@@ -22,7 +22,7 @@ export enum SearchActionTypes {
     SET_VIEW = 'SET_VIEW',
     SET_USER_VIEWS_ORDER = 'SET_USER_VIEWS_ORDER',
     SET_SHARED_VIEWS_ORDER = 'SET_SHARED_VIEWS_ORDER',
-    SET_DISPLAY_TYPE = 'SET_DISPLAY_TYPE'
+    SET_DISPLAY = 'SET_DISPLAY'
 }
 
 export type SearchAction =
@@ -39,7 +39,7 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_FILTERS; filters: IFilter[]}
     | {type: SearchActionTypes.SET_QUERY_FILTERS; queryFilters: IQueryFilter[]}
     | {type: SearchActionTypes.SET_VIEW; view: IViewState}
-    | {type: SearchActionTypes.SET_DISPLAY_TYPE; displayType: ViewTypes}
+    | {type: SearchActionTypes.SET_DISPLAY; display: IViewDisplay}
     | {type: SearchActionTypes.SET_USER_VIEWS_ORDER; userViewsOrder: string[]}
     | {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER; sharedViewsOrder: string[]};
 
@@ -56,7 +56,7 @@ export const initialSearchState: ISearchState = {
     fullText: '',
     filters: [],
     queryFilters: [],
-    displayType: ViewTypes.list,
+    display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
     view: {current: defaultView, reload: false, sync: true},
     userViewsOrder: [],
     sharedViewsOrder: []
@@ -64,7 +64,7 @@ export const initialSearchState: ISearchState = {
 
 const checkSync = (
     state: ISearchState,
-    toCheck: {sort: boolean; filters: boolean; displayType: boolean; fields: boolean}
+    toCheck: {sort: boolean; filters: boolean; display: boolean; fields: boolean}
 ): boolean => {
     let sync = true;
 
@@ -76,8 +76,11 @@ const checkSync = (
         sync = sync && JSON.stringify(state.view.current.filters) === JSON.stringify(state.filters);
     }
 
-    if (toCheck.displayType) {
-        sync = sync && state.displayType === state.view.current.type;
+    if (toCheck.display) {
+        sync =
+            sync &&
+            state.display.type === state.view.current.display.type &&
+            state.display.size === state.view.current.display.size;
     }
 
     if (toCheck.fields) {
@@ -95,7 +98,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
     let sync = checkSync(state, {
         sort: action.type !== SearchActionTypes.SET_SORT, // FIXME: probleme avec le sort
         filters: action.type !== SearchActionTypes.SET_FILTERS,
-        displayType: action.type !== SearchActionTypes.SET_DISPLAY_TYPE,
+        display: action.type !== SearchActionTypes.SET_DISPLAY,
         fields: action.type !== SearchActionTypes.SET_FIELDS
     });
 
@@ -138,9 +141,12 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             return {...state, queryFilters: action.queryFilters};
         case SearchActionTypes.SET_VIEW:
             return {...state, view: action.view};
-        case SearchActionTypes.SET_DISPLAY_TYPE:
-            sync = sync && action.displayType === state.view.current.type;
-            return {...state, displayType: action.displayType, view: {...state.view, sync}};
+        case SearchActionTypes.SET_DISPLAY:
+            sync =
+                sync &&
+                action.display.type === state.view.current.display.type &&
+                action.display.size === state.view.current.display.size;
+            return {...state, display: action.display, view: {...state.view, sync}};
         case SearchActionTypes.SET_USER_VIEWS_ORDER:
             return {...state, userViewsOrder: action.userViewsOrder};
         case SearchActionTypes.SET_SHARED_VIEWS_ORDER:

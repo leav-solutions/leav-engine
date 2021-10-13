@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
-import {Button, Tooltip} from 'antd';
+import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {SelectionModeContext} from 'context';
+import {Button} from 'antd';
 import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
@@ -56,16 +56,16 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {display} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
 
-    const toggleShowFilter = () => {
-        const visible = !display.side.visible || display.side.type !== TypeSideItem.filters;
+    // const toggleShowFilter = () => {
+    //     const visible = !display.side.visible || display.side.type !== TypeSideItem.filters;
 
-        dispatch(
-            setDisplaySide({
-                visible,
-                type: TypeSideItem.filters
-            })
-        );
-    };
+    //     dispatch(
+    //         setDisplaySide({
+    //             visible,
+    //             type: TypeSideItem.filters
+    //         })
+    //     );
+    // };
 
     const handleHide = () => {
         dispatch(

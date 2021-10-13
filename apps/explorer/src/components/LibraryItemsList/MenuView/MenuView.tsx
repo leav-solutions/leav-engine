@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MenuOutlined, PlusOutlined, SaveFilled, AppstoreFilled, ClearOutlined, DownOutlined} from '@ant-design/icons';
+import {MenuOutlined, PlusOutlined, SaveFilled, AppstoreFilled, ClearOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, Menu} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
@@ -21,7 +21,7 @@ import {useLang} from '../../../hooks/LangHook/LangHook';
 import {limitTextSize, localizedTranslation} from '../../../utils';
 import {TypeSideItem} from '../../../_types/types';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
-import {ViewTypes} from '_gqlTypes/globalTypes';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import _ from 'lodash';
 import FiltersDropdown from './FiltersDropdown';
 
@@ -56,9 +56,11 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                 // Fields
                 let viewFields: string[] = [];
 
-                if (searchState.view.current.type === ViewTypes.list) {
+                if (searchState.view.current.display.type === ViewTypes.list) {
                     viewFields = searchState.fields.map(f => f.key);
                 }
+
+                console.log('search state display', searchState.display);
 
                 // save view in backend
                 await addView({
@@ -69,7 +71,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                             sort: searchState.sort.active
                                 ? {field: searchState.sort.field, order: searchState.sort.order}
                                 : undefined,
-                            type: searchState.displayType,
+                            display: searchState.display,
                             filters: getRequestFromFilters(searchState.filters),
                             settings: [
                                 {
@@ -89,7 +91,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                             sort: searchState.sort.active
                                 ? {field: searchState.sort.field, order: searchState.sort.order}
                                 : undefined,
-                            type: searchState.displayType,
+                            display: searchState.display,
                             filters: searchState.filters,
                             settings: [
                                 {
@@ -120,7 +122,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
             ..._.omit(defaultView, ['id', 'owner']),
             label: {[defaultLang]: t('view.add-view.title')},
             library: activeLibrary.id,
-            type: viewType,
+            display: {type: viewType, size: ViewSizes.MEDIUM},
             filters: []
         };
 

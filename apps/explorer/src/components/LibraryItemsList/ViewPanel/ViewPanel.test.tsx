@@ -7,7 +7,7 @@ import {act, render, screen} from '_tests/testUtils';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
-import {ViewType} from '../../../_types/types';
+import {ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
 import ViewPanel from './ViewPanel';
 
 jest.mock(
@@ -57,7 +57,7 @@ describe('ViewPanel', () => {
                         list: [
                             {
                                 id: 'id',
-                                type: ViewType.list,
+                                display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
                                 shared: false,
                                 created_by: {
                                     id: '1',
@@ -91,7 +91,7 @@ describe('ViewPanel', () => {
                             },
                             {
                                 id: 'otherId',
-                                type: ViewType.cards,
+                                display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
                                 shared: true,
                                 created_by: {
                                     id: '1',

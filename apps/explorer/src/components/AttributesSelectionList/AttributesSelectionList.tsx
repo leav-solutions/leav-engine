@@ -6,12 +6,11 @@ import {Input, List, Spin} from 'antd';
 import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AttributeType} from '_gqlTypes/globalTypes';
 import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../utils';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {AttributeFormat, ISelectedAttribute} from '../../_types/types';
+import {ISelectedAttribute} from '../../_types/types';
 import ErrorDisplay from '../shared/ErrorDisplay';
 import Attribute from './Attribute';
 import attributeSelectionListReducer, {

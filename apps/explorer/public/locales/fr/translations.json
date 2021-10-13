@@ -136,10 +136,9 @@
             }
         },
         "display": {
-            "list-small": "Liste (petit)",
-            "list-medium": "Liste (moyen)",
-            "list-big": "Liste (grand)",
-            "cards": "Mosaïque",
+            "small": "petit",
+            "medium": "moyen",
+            "big": "grand",
             "tile": "Mosaïque"
         }
     },

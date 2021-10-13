@@ -10,6 +10,12 @@ export enum ViewTypes {
     TIMELINE = 'timeline'
 }
 
+export enum ViewSizes {
+    SMALL = 'SMALL',
+    MEDIUM = 'MEDIUM',
+    BIG = 'BIG'
+}
+
 declare global {
     interface IView extends ICoreEntity {
         shared?: boolean;
@@ -19,10 +25,15 @@ declare global {
         library?: string;
         description?: ISystemTranslation;
         color?: string;
-        type: ViewTypes;
+        display?: IViewDisplay;
         filters?: IRecordFilterLight[];
         sort?: IRecordSortLight;
         settings: IViewSettings;
+    }
+
+    interface IViewDisplay {
+        type: ViewTypes;
+        size: ViewSizes;
     }
 
     interface IViewSettingsNameVal {

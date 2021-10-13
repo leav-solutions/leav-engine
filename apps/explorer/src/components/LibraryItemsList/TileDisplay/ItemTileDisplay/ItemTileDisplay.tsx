@@ -112,10 +112,9 @@ const Actions = styled.div`
 
 interface IItemTileDisplayProps {
     item: IItem;
-    showRecordEdition: (item: IItem) => void;
 }
 
-function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
+function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     const {t} = useTranslation();
 
     const selectionMode = useContext(SelectionModeContext);
@@ -171,10 +170,6 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
             );
         }
     }, [selectionState.selection, selectionState.searchSelection, item, selectionMode]);
-
-    const selectionActive =
-        (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected) ||
-        selectionState.selection.selected.length;
 
     const _handleClose = () => {
         setEditRecordModal(false);
