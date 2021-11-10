@@ -8,6 +8,7 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
+import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 
 interface IDeleteSearchCross {
     style?: CSSObject;
@@ -30,6 +31,11 @@ function SearchItems(): JSX.Element {
     };
 
     const handleEnter = e => {
+        searchDispatch({
+            type: SearchActionTypes.SET_QUERY_FILTERS,
+            queryFilters: getRequestFromFilters(searchState.filters)
+        });
+
         searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
     };
 
@@ -45,6 +51,9 @@ function SearchItems(): JSX.Element {
             value={searchState.fullText}
             onChange={handleChange}
             onPressEnter={handleEnter}
+            onSearch={handleEnter}
+            enterButton={t('search.type.search')}
+            loading={searchState.loading}
             suffix={
                 <DeleteSearchCross search={search}>
                     <Tooltip placement="bottom" title={t('search.explain-cancel')}>

@@ -74,15 +74,6 @@ function FiltersPanel(): JSX.Element {
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const onSearch = () => {
-        searchDispatch({
-            type: SearchActionTypes.SET_QUERY_FILTERS,
-            queryFilters: getRequestFromFilters(searchState.filters)
-        });
-
-        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
-    };
-
     const resetFilters = () => {
         searchDispatch({
             type: SearchActionTypes.SET_FILTERS,
@@ -129,7 +120,6 @@ function FiltersPanel(): JSX.Element {
                 </div>
 
                 <div>
-                    <CustomButton onClick={onSearch}>{t('global.search')}</CustomButton>
                     <Dropdown
                         overlay={
                             <Menu>

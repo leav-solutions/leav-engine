@@ -54,18 +54,13 @@ function DisplayOptions(): JSX.Element {
         <Dropdown
             overlay={
                 <CustomMenu>
-                    <Menu.Item onClick={() => changeType(ViewTypes.list)} icon={<MenuOutlined />}>
-                        {t('view.type-list')}
-                    </Menu.Item>
-                    <Menu.Item onClick={() => changeType(ViewTypes.cards)} icon={<AppstoreFilled />}>
-                        {t('view.type-cards')}
-                    </Menu.Item>
                     {
                         <Menu.Item>
                             <Button
                                 shape="circle"
                                 disabled={searchState.display.size === ViewSizes.SMALL}
                                 onClick={() => changeSize(SizeAction.LESS)}
+                                size="small"
                             >
                                 -
                             </Button>
@@ -74,11 +69,19 @@ function DisplayOptions(): JSX.Element {
                                 shape="circle"
                                 disabled={searchState.display.size === ViewSizes.BIG}
                                 onClick={() => changeSize(SizeAction.MORE)}
+                                size="small"
                             >
                                 +
                             </Button>
                         </Menu.Item>
                     }
+                    <Menu.Divider />
+                    <Menu.Item onClick={() => changeType(ViewTypes.list)} icon={<MenuOutlined />}>
+                        {t('view.type-list')}
+                    </Menu.Item>
+                    <Menu.Item onClick={() => changeType(ViewTypes.cards)} icon={<AppstoreFilled />}>
+                        {t('view.type-cards')}
+                    </Menu.Item>
                 </CustomMenu>
             }
         >
