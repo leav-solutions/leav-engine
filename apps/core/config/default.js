@@ -11,7 +11,7 @@ module.exports = {
         name: process.env.DB_NAME
     },
     elasticsearch: {
-        url: process.env.ELASTICSEARCH_URL
+        url: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200'
     },
     auth: {
         scheme: 'jwt',
