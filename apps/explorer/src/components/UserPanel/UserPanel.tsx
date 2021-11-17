@@ -1,12 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {LogoutOutlined, SettingOutlined} from '@ant-design/icons';
+import {CarryOutOutlined, DoubleRightOutlined, ExclamationCircleOutlined, LogoutOutlined} from '@ant-design/icons';
 import {Drawer, Menu} from 'antd';
+import AvailableSoon from 'components/shared/AvailableSoon';
 import useAuthToken from 'hooks/useAuthToken';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {NavLink} from 'react-router-dom';
+import LangSwitcher from './LangSwitcher';
 
 interface IUserPanelProps {
     userPanelVisible: boolean;
@@ -32,21 +33,29 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
             bodyStyle={{padding: 0}}
         >
             <Menu
-                theme="dark"
                 style={{
                     height: '100%'
                 }}
                 mode="inline"
             >
-                <Menu.Item>{t('menu.user_menu.profil')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.tasks')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.shortcuts')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.events')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.admin')}</Menu.Item>
-                <Menu.Item>{t('menu.user_menu.leav_engine')}</Menu.Item>
+                <Menu.Item>
+                    <CarryOutOutlined />
+                    {t('menu.user_menu.tasks')}
+                    <AvailableSoon />
+                </Menu.Item>
+                <Menu.Item>
+                    <DoubleRightOutlined />
+                    {t('menu.user_menu.shortcuts')}
+                    <AvailableSoon />
+                </Menu.Item>
+                <Menu.Item>
+                    <ExclamationCircleOutlined />
+                    {t('menu.user_menu.events')}
+                    <AvailableSoon />
+                </Menu.Item>
 
-                <Menu.Item icon={<SettingOutlined />} onClick={hideUserPanel}>
-                    <NavLink to="/setting">{t('sidebar.setting')}</NavLink>
+                <Menu.Item>
+                    <LangSwitcher />
                 </Menu.Item>
 
                 <Menu.Item onClick={_handleLogout}>

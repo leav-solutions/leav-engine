@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SettingOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
+import AvailableSoon from 'components/shared/AvailableSoon';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -16,8 +17,14 @@ function MenuItemActions(): JSX.Element {
 
     const menu = (
         <Menu>
-            <Menu.Item>{t('items_list.table.header-cell-menu.sort-advance')}</Menu.Item>
-            <Menu.Item>{t('items_list.table.header-cell-menu.regroup')}</Menu.Item>
+            <Menu.Item>
+                {t('items_list.table.header-cell-menu.sort-advance')}
+                <AvailableSoon />
+            </Menu.Item>
+            <Menu.Item>
+                {t('items_list.table.header-cell-menu.regroup')}
+                <AvailableSoon />
+            </Menu.Item>
         </Menu>
     );
 

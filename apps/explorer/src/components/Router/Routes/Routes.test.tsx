@@ -7,13 +7,6 @@ import {act, render, screen} from '_tests/testUtils';
 import Routes from './Routes';
 
 jest.mock(
-    '../../Settings',
-    () =>
-        function Settings() {
-            return <div>Settings</div>;
-        }
-);
-jest.mock(
     '../RouteNotFound',
     () =>
         function RouteNotFound() {
