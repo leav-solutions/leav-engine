@@ -125,7 +125,8 @@ describe('LinkField', () => {
                         id: 'col2',
                         label: 'Second column'
                     }
-                ]
+                ],
+                displayRecordIdentity: true
             }
         };
 
@@ -207,8 +208,8 @@ describe('LinkField', () => {
             );
         });
 
-        const recordIdentityCell = screen.getByTestId('whoami-cell');
-        userEvent.hover(recordIdentityCell, null);
+        const row = screen.getByRole('row', {name: /whoAmI/});
+        userEvent.hover(row, null);
 
         expect(screen.queryByRole('button', {name: /delete/, hidden: true})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: 'edit-record', hidden: true})).toBeInTheDocument();
@@ -426,6 +427,7 @@ describe('LinkField', () => {
             });
 
             jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+                ...useSaveValueBatchMutation.default(),
                 saveValues: mockOnAddValue
             }));
 
@@ -523,6 +525,7 @@ describe('LinkField', () => {
             });
 
             jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+                ...useSaveValueBatchMutation.default(),
                 saveValues: mockOnAddValue
             }));
 
@@ -605,6 +608,7 @@ describe('LinkField', () => {
             });
 
             jest.spyOn(useSaveValueBatchMutation, 'default').mockImplementation(() => ({
+                ...useSaveValueBatchMutation.default(),
                 saveValues: mockOnAddValue
             }));
 
@@ -649,65 +653,6 @@ describe('LinkField', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
 
             expect(valuesAddBlock.getByText('label0')).toBeInTheDocument();
-        });
-
-        test('Elements are paginated', async () => {
-            const mockFormElementLinkForPagination: FormElement<{}> = {
-                ...mockFormElementLink,
-                attribute: {
-                    ...mockFormElementLink.attribute,
-                    multiple_values: true,
-                    linkValuesList: {
-                        enable: true,
-                        allowFreeEntry: true,
-                        values: [
-                            {id: '123451', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI), label: 'first record'}},
-                            {id: '123452', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123453', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123455', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123452', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123453', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123455', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123452', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123453', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123454', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123455', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI)}},
-                            {id: '123456', whoAmI: {...(mockRecordWhoAmI as ValueListWhoAmI), label: 'last label'}}
-                        ]
-                    }
-                }
-            };
-
-            await act(async () => {
-                render(
-                    <LinkField
-                        element={mockFormElementLinkForPagination}
-                        record={mockRecordWhoAmI}
-                        recordValues={recordValues}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                    />
-                );
-            });
-
-            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
-            await act(async () => {
-                userEvent.click(addValueBtn);
-            });
-
-            const valuesAddBlock = within(screen.getByTestId('values-add'));
-
-            expect(valuesAddBlock.getByText('first record')).toBeInTheDocument();
-
-            const nextPageButton = screen.getByRole('button', {name: 'right'});
-            await act(async () => {
-                userEvent.click(nextPageButton);
-            });
-
-            expect(valuesAddBlock.getByText('last label')).toBeInTheDocument();
         });
     });
 });

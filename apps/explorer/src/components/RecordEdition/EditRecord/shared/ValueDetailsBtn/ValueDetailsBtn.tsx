@@ -27,7 +27,7 @@ function ValueDetailsBtn({value, attribute}: IValueDetailsBtnProps): JSX.Element
         });
     };
 
-    return <Button icon={<InfoCircleOutlined />} size="small" onClick={_handleClick} />;
+    return <Button className="value-details-btn" icon={<InfoCircleOutlined />} size="small" onClick={_handleClick} />;
 }
 
 export default ValueDetailsBtn;

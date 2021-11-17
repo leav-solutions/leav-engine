@@ -1,10 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FileAddOutlined} from '@ant-design/icons';
-import {ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/utils';
-import {Button, Popover, Switch, Table} from 'antd';
+import {AnyPrimitive, ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/utils';
+import {Popover, Switch, Table} from 'antd';
+import {ColumnsType} from 'antd/lib/table';
+import Paragraph from 'antd/lib/typography/Paragraph';
+import Dimmer from 'components/shared/Dimmer';
 import ErrorMessage from 'components/shared/ErrorMessage';
+import RecordCard from 'components/shared/RecordCard';
 import {IRecordPropertyLink, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect, useState} from 'react';
@@ -13,35 +16,60 @@ import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {localizedTranslation} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute} from '_gqlTypes/GET_FORM';
-import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue} from '_gqlTypes/SAVE_VALUE_BATCH';
-import {IRecordIdentityWhoAmI} from '_types/types';
+import {IRecordIdentityWhoAmI, PreviewSize} from '_types/types';
+import AddValueBtn from '../../shared/AddValueBtn';
 import NoValue from '../../shared/NoValue';
 import {APICallStatus, IFormElementProps} from '../../_types';
-import RecordIdentityCell from './RecordIdentityCell';
+import FloatingMenuHandler from './FloatingMenuHandler';
 import ValuesAdd from './ValuesAdd';
 
-const TableWrapper = styled.div`
+const TableWrapper = styled.div<{isValuesAddVisible: boolean}>`
     position: relative;
+    z-index: ${p => (p.isValuesAddVisible ? 1 : 'auto')};
     border: 1px solid ${themingVar['@border-color-base']};
     margin-bottom: 1.5em;
     border-radius: ${themingVar['@border-radius-base']};
+
+    tr:not(:hover) .floating-menu {
+        display: none;
+    }
+
+    td {
+        height: 2.5rem; // In case we have no value on the whole row
+    }
+
+    // Disable some unwanted antd styles
+    && table > thead > tr:first-child {
+        th:first-child,
+        th:last-child {
+            border-radius: 0;
+        }
+    }
+
+    &&& .ant-table-footer {
+        padding: 0;
+    }
 `;
 
-const FieldLabel = styled.div`
-    top: calc(50% - 0.9em);
-    font-size: 0.9em;
-    background: ${themingVar['@background-color-light']};
-    padding: 0 0.5em;
-    color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
+const FieldLabel = styled(Paragraph)`
+    && {
+        top: calc(50% - 0.9em);
+        font-size: 0.9em;
+        background: ${themingVar['@background-color-light']};
+        padding: 0 0.5em;
+        color: ${themingVar['@leav-secondary-font-color']};
+        z-index: 1;
+        margin-bottom: 0;
+    }
 `;
 
 const FooterWrapper = styled.div`
-    text-align: right;
+    text-align: left;
 `;
 
-interface IRowData {
+export interface IRowData {
     key: string;
     whoAmI: IRecordIdentityWhoAmI;
     value: IRecordPropertyLink;
@@ -117,55 +145,81 @@ function LinkField({
         }
     };
 
-    const cols = [
-        {
+    const isReadOnly = element.attribute?.system;
+
+    const settings = element.settings as IFormLinkFieldSettings;
+
+    // If no column is selected, force whoAmI column
+    let colsToDisplay = [];
+    if (settings.displayRecordIdentity || !settings?.columns?.length) {
+        colsToDisplay.push({
             title: t('record_edition.whoAmI'),
-            dataIndex: 'whoAmI',
-            render: (whoAmI: IRecordIdentityWhoAmI, rowData: IRowData) => {
-                const _handleDelete = () => _handleDeleteValue(rowData.value);
-                return (
-                    <RecordIdentityCell
-                        record={whoAmI}
-                        onDelete={_handleDelete}
-                        value={rowData.value as RecordProperty}
-                        attribute={attribute}
-                    />
-                );
-            }
-        },
+            key: 'whoAmI'
+        });
+    }
+
+    // Additional columns
+    colsToDisplay = [
+        ...colsToDisplay,
         ...(Array.isArray((element.settings as IFormLinkFieldSettings).columns)
             ? (element.settings as IFormLinkFieldSettings).columns.map(c => ({
                   title: localizedTranslation(c.label, lang),
-                  dataIndex: c.id
+                  key: c.id
               }))
             : [])
     ];
+
+    // Convert selected columns to format required by Table component
+    const cols: ColumnsType<IRowData> = colsToDisplay.map((col, index) => ({
+        title: col.title,
+        dataIndex: col.key,
+        render: (colData: IRecordIdentityWhoAmI | AnyPrimitive, rowData: IRowData) => {
+            const _handleDelete = () => _handleDeleteValue(rowData.value);
+
+            const valueRender =
+                col.key === 'whoAmI' ? (
+                    <RecordCard record={colData as RecordIdentity_whoAmI} size={PreviewSize.small} />
+                ) : (
+                    <span>
+                        {typeof colData === 'boolean' ? <Switch checked={colData} disabled /> : String(colData ?? '')}
+                    </span>
+                );
+
+            // Add floating menu (edit, delete...) on the last column to display it at the end of the row
+            return index === colsToDisplay.length - 1 ? (
+                <FloatingMenuHandler
+                    record={rowData.whoAmI}
+                    onDelete={_handleDelete}
+                    value={rowData.value as RecordProperty}
+                    attribute={attribute}
+                    isReadOnly={isReadOnly}
+                >
+                    {valueRender}
+                </FloatingMenuHandler>
+            ) : (
+                valueRender
+            );
+        }
+    }));
 
     const data: IRowData[] = fieldValues.map(val => ({
         key: val.id_value,
         value: val,
         whoAmI: val.linkValue.whoAmI,
-        ...(Array.isArray((element.settings as IFormLinkFieldSettings).columns)
-            ? (element.settings as IFormLinkFieldSettings).columns.reduce((allCols, col) => {
+        ...(Array.isArray(settings.columns)
+            ? settings.columns.reduce((allCols, col) => {
                   const columnValue = val.linkValue[col.id];
-                  return {
-                      ...allCols,
-                      [col.id]:
-                          typeof columnValue === 'boolean' ? <Switch checked={columnValue} disabled /> : columnValue
-                  };
+                  return {...allCols, [col.id]: columnValue};
               }, {})
             : {})
     }));
 
-    const isReadOnly = element.attribute?.system;
     const canAddValue = !isReadOnly && (attribute.multiple_values || !fieldValues.length);
 
     const tableFooter = () => {
         return fieldValues.length && canAddValue ? (
             <FooterWrapper>
-                <Button icon={<FileAddOutlined />} onClick={_handleAddValue}>
-                    {t('record_edition.add_value')}
-                </Button>
+                <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} />
             </FooterWrapper>
         ) : null;
     };
@@ -176,8 +230,9 @@ function LinkField({
 
     return (
         <>
-            <TableWrapper>
-                <FieldLabel>{element.settings.label}</FieldLabel>
+            {isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
+            <TableWrapper isValuesAddVisible={isValuesAddVisible}>
+                <FieldLabel ellipsis={{rows: 1, tooltip: true}}>{element.settings.label}</FieldLabel>
                 <Table
                     columns={cols}
                     dataSource={data}

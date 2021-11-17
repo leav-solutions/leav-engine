@@ -6,7 +6,12 @@ import {mockFormElementInput} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
 import standardFieldValueReducer from '.';
-import {IStandardFieldReducerState, newValueId, StandardFieldReducerActionsTypes} from './standardFieldReducer';
+import {
+    IStandardFieldReducerState,
+    newValueId,
+    StandardFieldReducerActionsTypes,
+    StandardFieldValueState
+} from './standardFieldReducer';
 
 describe('standardFieldReducer', () => {
     const mockAttribute = {
@@ -18,7 +23,6 @@ describe('standardFieldReducer', () => {
     };
 
     const idValue = '123';
-    const idValueNull = null;
 
     const mockValue = {
         index: 0,
@@ -37,7 +41,8 @@ describe('standardFieldReducer', () => {
             created_by: null,
             modified_by: null
         },
-        error: ''
+        error: '',
+        state: StandardFieldValueState.PRISTINE
     };
 
     const initialState: IStandardFieldReducerState = {
@@ -56,6 +61,7 @@ describe('standardFieldReducer', () => {
         expect(Object.keys(newState.values).length).toBe(Object.keys(initialState.values).length + 1);
         expect(newState.values[newValueId]).toBeDefined();
         expect(newState.values[newValueId].isEditing).toBe(true);
+        expect(newState.values[newValueId].state).toBe(StandardFieldValueState.PRISTINE);
     });
 
     test('CHANGE_VALUE', async () => {
@@ -65,7 +71,11 @@ describe('standardFieldReducer', () => {
             value: 'my new value modified'
         });
 
-        expect(newState.values[idValue]).toEqual({...mockValue, editingValue: 'my new value modified'});
+        expect(newState.values[idValue]).toEqual({
+            ...mockValue,
+            editingValue: 'my new value modified',
+            state: StandardFieldValueState.DIRTY
+        });
     });
 
     test('FOCUS_FIELD', async () => {
@@ -84,12 +94,20 @@ describe('standardFieldReducer', () => {
             error: 'boom'
         });
 
-        expect(newState.values[idValue]).toEqual({...mockValue, error: 'boom', isErrorDisplayed: true});
+        expect(newState.values[idValue]).toEqual({
+            ...mockValue,
+            state: StandardFieldValueState.DIRTY,
+            error: 'boom',
+            isErrorDisplayed: true
+        });
     });
 
     test('UNEDIT_FIELD', async () => {
         const newState = standardFieldValueReducer(
-            {...initialState, values: {[idValue]: {...mockValue, isEditing: true}}},
+            {
+                ...initialState,
+                values: {[idValue]: {...mockValue, isEditing: true, state: StandardFieldValueState.DIRTY}}
+            },
             {
                 type: StandardFieldReducerActionsTypes.UNEDIT_FIELD,
                 idValue
@@ -123,7 +141,17 @@ describe('standardFieldReducer', () => {
 
     test('UPDATE_AFTER_SUBMIT', async () => {
         const newState = standardFieldValueReducer(
-            {...initialState, values: {[idValue]: {...mockValue, error: 'boom', isErrorDisplayed: true}}},
+            {
+                ...initialState,
+                values: {
+                    [idValue]: {
+                        ...mockValue,
+                        error: 'boom',
+                        isErrorDisplayed: true,
+                        state: StandardFieldValueState.DIRTY
+                    }
+                }
+            },
             {
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
                 idValue,
@@ -154,7 +182,8 @@ describe('standardFieldReducer', () => {
             originRawValue: 'updated raw value',
             isErrorDisplayed: false,
             error: '',
-            isEditing: false
+            isEditing: false,
+            state: StandardFieldValueState.PRISTINE
         });
     });
 
@@ -164,7 +193,7 @@ describe('standardFieldReducer', () => {
                 ...initialState,
                 values: {
                     ...initialState.values,
-                    [newValueId]: {...mockValue}
+                    [newValueId]: {...mockValue, state: StandardFieldValueState.DIRTY}
                 }
             },
             {
@@ -199,7 +228,8 @@ describe('standardFieldReducer', () => {
             originRawValue: 'updated raw value',
             isErrorDisplayed: false,
             error: '',
-            isEditing: false
+            isEditing: false,
+            state: StandardFieldValueState.PRISTINE
         });
     });
 
@@ -240,7 +270,12 @@ describe('standardFieldReducer', () => {
 
     test('CANCEL_EDITING', async () => {
         const newState = standardFieldValueReducer(
-            {...initialState, values: {[idValue]: {...mockValue, editingValue: 'raw value modified'}}},
+            {
+                ...initialState,
+                values: {
+                    [idValue]: {...mockValue, editingValue: 'raw value modified', state: StandardFieldValueState.DIRTY}
+                }
+            },
             {
                 type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
                 idValue
@@ -248,7 +283,8 @@ describe('standardFieldReducer', () => {
         );
         expect(newState.values[idValue]).toEqual({
             ...mockValue,
-            editingValue: 'my raw value'
+            editingValue: 'my raw value',
+            state: StandardFieldValueState.PRISTINE
         });
     });
 
@@ -256,7 +292,14 @@ describe('standardFieldReducer', () => {
         const newState = standardFieldValueReducer(
             {
                 ...initialState,
-                values: {'123': {...mockValue}, [newValueId]: {...mockValue, editingValue: 'raw value modified'}}
+                values: {
+                    '123': {...mockValue},
+                    [newValueId]: {
+                        ...mockValue,
+                        editingValue: 'raw value modified',
+                        state: StandardFieldValueState.DIRTY
+                    }
+                }
             },
             {
                 type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
@@ -268,7 +311,16 @@ describe('standardFieldReducer', () => {
 
     test('CANCEL_EDITING when new value is the only value', async () => {
         const newState = standardFieldValueReducer(
-            {...initialState, values: {[newValueId]: {...mockValue, editingValue: 'raw value modified'}}},
+            {
+                ...initialState,
+                values: {
+                    [newValueId]: {
+                        ...mockValue,
+                        editingValue: 'raw value modified',
+                        state: StandardFieldValueState.DIRTY
+                    }
+                }
+            },
             {
                 type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
                 idValue: newValueId
@@ -276,5 +328,6 @@ describe('standardFieldReducer', () => {
         );
         expect(newState.values[newValueId]).toBeDefined();
         expect(newState.values[newValueId].editingValue).toBe('');
+        expect(newState.values[newValueId].state).toBe(StandardFieldValueState.PRISTINE);
     });
 });

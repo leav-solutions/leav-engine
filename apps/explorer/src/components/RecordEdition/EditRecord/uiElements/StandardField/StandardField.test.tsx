@@ -406,7 +406,7 @@ describe('StandardField', () => {
         const inputWrapper = screen.getByTestId('input-wrapper');
         userEvent.hover(inputWrapper, null);
 
-        const deleteBtn = screen.getByRole('button', {hidden: true});
+        const deleteBtn = screen.getByRole('button', {name: /delete/, hidden: true});
         expect(deleteBtn).toBeInTheDocument();
 
         await act(async () => {

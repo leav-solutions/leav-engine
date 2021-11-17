@@ -19,6 +19,7 @@ interface ITreeFieldValueProps {
     value: IRecordPropertyTree;
     attribute: GET_FORM_forms_list_elements_elements_attribute;
     onDelete: () => void;
+    isReadOnly: boolean;
 }
 
 const ListItem = styled.div`
@@ -37,7 +38,7 @@ const ListItem = styled.div`
     }
 `;
 
-function TreeFieldValue({value, attribute, onDelete}: ITreeFieldValueProps): JSX.Element {
+function TreeFieldValue({value, attribute, onDelete, isReadOnly}: ITreeFieldValueProps): JSX.Element {
     const {t} = useTranslation();
     const _handleDelete = async () => onDelete();
 
@@ -49,12 +50,15 @@ function TreeFieldValue({value, attribute, onDelete}: ITreeFieldValueProps): JSX
         {
             title: t('record_edition.value_details'),
             button: <ValueDetailsBtn value={value} attribute={attribute} />
-        },
-        {
-            title: t('global.delete'),
-            button: <DeleteValueBtn onDelete={_handleDelete} />
         }
     ];
+
+    if (!isReadOnly) {
+        valueMenuActions.push({
+            title: t('global.delete'),
+            button: <DeleteValueBtn onDelete={_handleDelete} />
+        });
+    }
 
     return (
         <ListItem>

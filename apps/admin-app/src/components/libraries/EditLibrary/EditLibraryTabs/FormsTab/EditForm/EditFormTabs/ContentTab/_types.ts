@@ -61,6 +61,7 @@ export interface IFormElementSettings {
     inputType: FormElementSettingsInputTypes;
     getInputSettings?: (attributeProps: GET_ATTRIBUTES_attributes_list) => IKeyValue<any>;
     options?: string[];
+    defaultValue?: any;
 }
 
 export interface IUIElement {
