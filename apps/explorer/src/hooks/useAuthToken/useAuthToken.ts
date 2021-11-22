@@ -9,7 +9,7 @@ export interface IUseAuthToken {
 
 const STORAGE_TOKEN_KEY = 'accessToken';
 
-export default function (): IUseAuthToken {
+export default function useAuthToken(): IUseAuthToken {
     const storage = window.sessionStorage;
     return {
         getToken(): string {
