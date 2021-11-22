@@ -3,19 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Input} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
-import React, {useEffect, useRef} from 'react';
+import React, {MutableRefObject, useEffect} from 'react';
 
-function TextInput({state, fieldValue, onFocus, onChange, onPressEnter}: IStandardInputProps): JSX.Element {
-    const inputRef = useRef<Input>();
-
+function TextInput({state, fieldValue, onFocus, onChange, onPressEnter, inputRef}: IStandardInputProps): JSX.Element {
     const {isEditing, editingValue} = fieldValue;
 
     useEffect(() => {
         // Handle focusing via click on label (not standard focus via click on input)
         if (isEditing) {
-            inputRef.current.focus();
+            (inputRef as MutableRefObject<Input>).current.focus();
         }
-    }, [isEditing]);
+    }, [isEditing, inputRef]);
 
     const _handleChange = e => {
         onChange(e.target.value);
@@ -30,7 +28,7 @@ function TextInput({state, fieldValue, onFocus, onChange, onPressEnter}: IStanda
     return (
         <Input
             key="editing"
-            ref={inputRef}
+            ref={inputRef as MutableRefObject<Input>}
             className={`field-wrapper ${editingValue ? 'has-value' : ''}`}
             value={String(editingValue)}
             onFocus={onFocus}

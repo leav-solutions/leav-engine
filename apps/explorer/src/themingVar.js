@@ -34,5 +34,6 @@ module.exports = {
     '@leav-secondary-item-background': '#FAFAFA',
     '@leav-small-shadow': '0px 3px 6px #58585812;',
     '@leav-border': '0.699999988079071px solid #C7C7C7;',
-    '@leav-header-height': '3rem'
+    '@leav-header-height': '3rem',
+    '@leav-secondary-font-color': 'rgba(0, 0, 0, 0.5)'
 };

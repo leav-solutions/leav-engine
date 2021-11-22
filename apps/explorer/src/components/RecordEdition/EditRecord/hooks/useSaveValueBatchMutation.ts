@@ -15,11 +15,14 @@ import getPropertyCacheFieldName from './helpers/getPropertyCacheFieldName';
 
 export interface ISaveValueBatchHook {
     saveValues: FieldSubmitMultipleFunc;
+    loading: boolean;
 }
 
 export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
     const {cache} = useApolloClient();
-    const [executeSaveValueBatch] = useMutation<SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables>(saveValueBatchMutation);
+    const [executeSaveValueBatch, {loading}] = useMutation<SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables>(
+        saveValueBatchMutation
+    );
     const {t} = useTranslation();
 
     return {
@@ -86,6 +89,7 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
 
                 return {status: APICallStatus.ERROR, error: message};
             }
-        }
+        },
+        loading
     };
 }

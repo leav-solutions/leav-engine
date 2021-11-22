@@ -57,4 +57,5 @@ export interface IFormLinkFieldSettings extends ICommonFieldsSettings {
         id: string;
         label: Record<string, string>;
     }>;
+    displayRecordIdentity: boolean;
 }

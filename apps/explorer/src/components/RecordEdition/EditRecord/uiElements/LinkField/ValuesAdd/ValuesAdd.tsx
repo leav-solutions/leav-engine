@@ -1,14 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloseOutlined, SearchOutlined} from '@ant-design/icons';
-import {useQuery} from '@apollo/client';
+import {BulbOutlined, CloseOutlined, SearchOutlined} from '@ant-design/icons';
+import {useLazyQuery} from '@apollo/client';
 import {Button, Divider, Input, Space, Spin} from 'antd';
 import Search from 'antd/lib/input/Search';
 import {PaginationConfig} from 'antd/lib/pagination';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import SearchModal from 'components/SearchModal';
-import Dimmer from 'components/shared/Dimmer';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import List from 'components/shared/List';
 import {IListProps} from 'components/shared/List/List';
@@ -84,6 +83,11 @@ const CloseButton = styled(CloseOutlined)`
     margin-left: 2em;
 `;
 
+const StartTypingMessage = styled.div`
+    padding: 0.5rem;
+    font-style: italic;
+`;
+
 const _renderListItem = (item: ValueFromList) => (
     <RecordCard record={item.whoAmI} key={item.id} size={PreviewSize.small} withLibrary={false} withPreview={false} />
 );
@@ -104,16 +108,10 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const pageSize = 10;
     const canSearch = !attribute.linkValuesList.enable || attribute.linkValuesList.allowFreeEntry;
 
-    const {loading, error, data: searchData, refetch: runSearch} = useQuery<
+    const [runSearch, {loading, error, data: searchData}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(attribute.linked_library.id), {
-        variables: {
-            limit: pageSize,
-            sortOrder: SortOrder.asc
-        },
-        skip: !canSearch
-    });
+    >(getRecordsFromLibraryQuery(attribute.linked_library.id));
 
     useEffect(() => {
         wrapperRef.current.scrollIntoView({block: 'nearest'});
@@ -169,35 +167,42 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
             setFilteredValuesList(newValuesList);
         }
 
-        if (canSearch) {
+        if (canSearch && submittedSearch) {
             runSearch({
-                fullText: submittedSearch,
-                limit: pageSize,
-                offset: 0,
-                sortOrder: SortOrder.asc
+                variables: {
+                    fullText: submittedSearch,
+                    limit: pageSize,
+                    offset: 0,
+                    sortOrder: SortOrder.asc
+                }
             });
         }
     };
 
     const _handleSearchPageChange = (page: number) => {
+        if (!searchInputRef.current.input.value) {
+            return;
+        }
         setSearchCurrentPage(page);
         runSearch({
-            fullText: searchInputRef.current.input.value,
-            limit: pageSize,
-            offset: (page - 1) * pageSize,
-            sortOrder: SortOrder.asc
+            variables: {
+                fullText: searchInputRef.current.input.value,
+                limit: pageSize,
+                offset: (page - 1) * pageSize,
+                sortOrder: SortOrder.asc
+            }
         });
     };
 
-    const offset = (valuesListCurrentPage - 1) * pageSize;
-    const pagedValuesList = [...filteredValuesList].splice(offset, pageSize);
+    const currentSearch = searchInputRef?.current?.input?.value;
 
-    const searchResult = searchData
-        ? searchData[attribute.linked_library.id].list.map(record => ({
-              id: record.whoAmI.id,
-              whoAmI: record.whoAmI
-          }))
-        : [];
+    const searchResult =
+        searchData && currentSearch
+            ? searchData[attribute.linked_library.id].list.map(record => ({
+                  id: record.whoAmI.id,
+                  whoAmI: record.whoAmI
+              }))
+            : [];
 
     const listCommonProps: Partial<IListProps<ValueFromList>> = {
         onItemClick: _handleItemClick,
@@ -215,7 +220,6 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     return (
         <>
-            <Dimmer onClick={_handleClose} />
             <Wrapper data-testid="values-add" ref={wrapperRef}>
                 <SearchActions>
                     <SearchInput
@@ -234,23 +238,23 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                     <CloseButton onClick={_handleClose} role="button" />
                 </SearchActions>
                 <ListsWrapper>
-                    {!!valuesList.length && (
+                    {!filteredValuesList.length && !searchResult.length && currentSearch ? (
+                        t('record_edition.no_matching_value')
+                    ) : (
+                        <></>
+                    )}
+                    {!!filteredValuesList.length && (
                         <>
                             <Divider orientation="left">{t('record_edition.values_list')}</Divider>
                             <List
                                 {...listCommonProps}
                                 data-testid="values_list"
-                                dataSource={pagedValuesList}
-                                pagination={{
-                                    ...paginationCommonProps,
-                                    total: filteredValuesList.length,
-                                    current: valuesListCurrentPage,
-                                    onChange: setValuesListCurrentPage
-                                }}
+                                dataSource={filteredValuesList}
+                                pagination={false}
                             />
                         </>
                     )}
-                    {canSearch && (
+                    {canSearch && !!searchResult.length && (
                         <>
                             <Divider orientation="left">
                                 {localizedTranslation(attribute.linked_library.label, lang)}
@@ -271,6 +275,11 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                                 />
                             )}
                         </>
+                    )}
+                    {canSearch && !currentSearch && (
+                        <StartTypingMessage>
+                            <BulbOutlined /> {t('record_edition.start_typing_message')}
+                        </StartTypingMessage>
                     )}
                 </ListsWrapper>
                 {attribute.multiple_values && (
