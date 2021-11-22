@@ -11,6 +11,11 @@ import {IRecordIdentityWhoAmI} from '_types/types';
 export type IdValue = string | null;
 export const newValueId = '__new__';
 
+export enum StandardFieldValueState {
+    PRISTINE = 'PRISTINE',
+    DIRTY = 'DIRTY'
+}
+
 export interface IStandardFieldValue {
     idValue: IdValue;
     index: number;
@@ -21,6 +26,7 @@ export interface IStandardFieldValue {
     isEditing: boolean;
     error?: string;
     isErrorDisplayed: boolean;
+    state: StandardFieldValueState;
 }
 
 export interface IStandardFieldReducerState {
@@ -54,7 +60,8 @@ export const virginValue: IStandardFieldValue = {
     originRawValue: '',
     error: '',
     isErrorDisplayed: false,
-    isEditing: false
+    isEditing: false,
+    state: StandardFieldValueState.PRISTINE
 };
 
 export type StandardFieldReducerAction =
@@ -150,13 +157,15 @@ const standardFieldReducer = (
                         editingValue: '',
                         originRawValue: '',
                         isEditing: true,
-                        isErrorDisplayed: false
+                        isErrorDisplayed: false,
+                        state: StandardFieldValueState.PRISTINE
                     }
                 }
             };
         case StandardFieldReducerActionsTypes.CHANGE_VALUE:
             return _updateValueData({
-                editingValue: action.value
+                editingValue: action.value,
+                state: StandardFieldValueState.DIRTY
             });
         case StandardFieldReducerActionsTypes.FOCUS_FIELD:
             return _updateValueData({
@@ -166,7 +175,8 @@ const standardFieldReducer = (
             return state.values[action.idValue]
                 ? _updateValueData({
                       error: action.error,
-                      isErrorDisplayed: true
+                      isErrorDisplayed: true,
+                      state: StandardFieldValueState.DIRTY
                   })
                 : state;
         case StandardFieldReducerActionsTypes.CLEAR_ERROR:
@@ -182,7 +192,8 @@ const standardFieldReducer = (
             return _updateValueData({
                 isEditing: false,
                 isErrorDisplayed: false,
-                error: ''
+                error: '',
+                state: StandardFieldValueState.PRISTINE
             });
         case StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT: {
             const newRawValue =
@@ -198,7 +209,8 @@ const standardFieldReducer = (
                 originRawValue: newRawValue,
                 error: '',
                 isErrorDisplayed: false,
-                isEditing: false
+                isEditing: false,
+                state: StandardFieldValueState.PRISTINE
             };
 
             if (action.idValue !== newValueId) {
@@ -220,6 +232,17 @@ const standardFieldReducer = (
             delete newState.values[action.idValue];
 
             newState.values = _ensureOneValueIsPresent(newState.values);
+            // Restore index on all remaining values
+            newState.values = Object.values(newState.values).reduce(
+                (values, value, index) => ({
+                    ...values,
+                    [value.idValue]: {
+                        ...value,
+                        index
+                    }
+                }),
+                {}
+            );
 
             return newState;
         }
@@ -227,7 +250,8 @@ const standardFieldReducer = (
             if (action.idValue !== newValueId) {
                 return _updateValueData({
                     editingValue: state.values[action.idValue].originRawValue,
-                    isEditing: false
+                    isEditing: false,
+                    state: StandardFieldValueState.PRISTINE
                 });
             }
 

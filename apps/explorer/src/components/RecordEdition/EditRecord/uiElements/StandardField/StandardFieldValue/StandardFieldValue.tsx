@@ -6,11 +6,12 @@ import {AnyPrimitive} from '@leav/utils';
 import {Button, Form, Input, Popover, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
-import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
+import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
+import {InputRefPossibleTypes, IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import Dimmer from 'components/shared/Dimmer';
-import React, {useEffect, useRef} from 'react';
+import React, {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -22,7 +23,8 @@ import {
     IStandardFieldValue,
     newValueId,
     StandardFieldDispatchFunc,
-    StandardFieldReducerActionsTypes
+    StandardFieldReducerActionsTypes,
+    StandardFieldValueState
 } from '../standardFieldReducer/standardFieldReducer';
 import CheckboxInput from './Inputs/CheckboxInput';
 import DateInput from './Inputs/DateInput';
@@ -94,10 +96,18 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         font-size: 1.1em;
         background: transparent;
         padding: 0 0.5em;
-        color: rgba(0, 0, 0, 0.5);
+        color: ${themingVar['@leav-secondary-font-color']};
         transition: all 0.2s ease;
         transition-property: left, top, font-size;
         z-index: 1;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    &:not(.format-boolean):not(.editing):not(.has-value) label {
+        padding-right: 3rem;
     }
 
     input:disabled {
@@ -123,13 +133,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         padding: 9px 0;
     }
 
-    .delete-value-button {
-        position: absolute;
-        top: calc(50% - 12px);
-        right: 1em;
-    }
-
-    &:not(:hover) .delete-value-button {
+    &:not(:hover) .hover-buttons {
         display: none;
     }
 `;
@@ -157,6 +161,21 @@ const FormItem = styled(Form.Item)`
     }
 `;
 
+const HoverButtons = styled(Space)`
+    position: absolute;
+    top: calc(50% - 12px);
+    right: 1em;
+
+    ${InputWrapper}:not(:hover) &,
+    ${InputWrapper}.editing & {
+        display: none;
+    }
+
+    ${InputWrapper}.has-value & {
+        margin-top: 5px;
+    }
+`;
+
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
     [AttributeFormat.text]: TextInput,
     [AttributeFormat.date]: DateInput,
@@ -175,6 +194,7 @@ function StandardFieldValue({
 }: IStandardFieldValueProps): JSX.Element {
     const {t} = useTranslation();
     const actionsWrapperRef = useRef<HTMLDivElement>();
+    const inputRef = useRef<InputRefPossibleTypes>();
 
     const {dispatch: editRecordDispatch} = useEditRecordReducer();
 
@@ -184,7 +204,9 @@ function StandardFieldValue({
     const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
 
     useEffect(() => {
-        actionsWrapperRef?.current?.scrollIntoView({block: 'nearest'});
+        if (fieldValue.isEditing) {
+            actionsWrapperRef?.current?.scrollIntoView({block: 'nearest'});
+        }
     }, [fieldValue.isEditing]);
 
     const _handleSubmit = async (valueToSave: AnyPrimitive) => {
@@ -222,6 +244,10 @@ function StandardFieldValue({
     };
 
     const _handleFocus = () => {
+        if (state.isReadOnly || fieldValue.isEditing || attribute.format === AttributeFormat.boolean) {
+            return;
+        }
+
         dispatch({
             type: StandardFieldReducerActionsTypes.FOCUS_FIELD,
             idValue: fieldValue.idValue
@@ -264,6 +290,12 @@ function StandardFieldValue({
         _handleSubmit(fieldValue.editingValue);
     };
 
+    const _handleValueCopy = (value: AnyPrimitive) => {
+        (inputRef as MutableRefObject<Input>)?.current?.focus();
+
+        _handleValueChange(value);
+    };
+
     const _getInput = (): JSX.Element => {
         if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
             const displayedValue =
@@ -297,6 +329,7 @@ function StandardFieldValue({
                 onSubmit={_handleSubmit}
                 onPressEnter={_handlePressEnter}
                 settings={state.formElement.settings}
+                inputRef={inputRef}
             />
         );
     };
@@ -306,6 +339,7 @@ function StandardFieldValue({
             isValuesListEnabled && attribute?.values_list?.values
                 ? attribute.values_list.values.filter(val => {
                       return (
+                          fieldValue.state === StandardFieldValueState.PRISTINE ||
                           !fieldValue.editingValue ||
                           attribute.format === AttributeFormat.date ||
                           val.match(new RegExp(String(fieldValue.editingValue), 'i'))
@@ -319,7 +353,11 @@ function StandardFieldValue({
             canCopy: isValuesListOpen
         }));
 
-        if (isValuesListOpen && String(fieldValue.editingValue)) {
+        if (
+            isValuesListOpen &&
+            String(fieldValue.editingValue) &&
+            !attribute.values_list.values.some(v => v === fieldValue.editingValue)
+        ) {
             hydratedValues.unshift({
                 value: String(fieldValue.editingValue),
                 isNewValue: true,
@@ -350,7 +388,8 @@ function StandardFieldValue({
         ${fieldValue.isEditing ? 'editing' : ''}
     `;
 
-    const canDeleteValue = fieldValue.idValue !== newValueId && attribute.format !== AttributeFormat.boolean;
+    const canDeleteValue =
+        !state.isReadOnly && fieldValue.idValue !== newValueId && attribute.format !== AttributeFormat.boolean;
 
     const valuesList = _getFilteredValuesList();
 
@@ -367,21 +406,26 @@ function StandardFieldValue({
                                 data-testid="input-wrapper"
                             >
                                 {!fieldValue.index && (
-                                    <label onClick={_handleFocus}>{state.formElement.settings.label}</label>
+                                    <label className="attribute-label" onClick={_handleFocus}>
+                                        {state.formElement.settings.label}
+                                    </label>
                                 )}
                                 {_getInput()}
-                                {canDeleteValue && !fieldValue.isEditing && fieldValue.displayValue && (
-                                    <DeleteValueBtn onDelete={_handleDelete} />
-                                )}
+                                <HoverButtons>
+                                    <ValueDetailsBtn value={fieldValue.value} attribute={attribute} />
+                                    {canDeleteValue && !fieldValue.isEditing && fieldValue.displayValue && (
+                                        <DeleteValueBtn onDelete={_handleDelete} />
+                                    )}
+                                </HoverButtons>
                             </InputWrapper>
                         </Popover>
                         <ActionsWrapper ref={actionsWrapperRef}>
-                            {fieldValue.isEditing && attribute.values_list.enable && (
+                            {fieldValue.isEditing && attribute?.values_list?.enable && (
                                 <ValuesList
                                     attribute={attribute}
                                     valuesList={valuesList}
                                     onValueSelect={_handleSubmit}
-                                    onValueCopy={_handleValueChange}
+                                    onValueCopy={_handleValueCopy}
                                 />
                             )}
                             {fieldValue.isEditing && (

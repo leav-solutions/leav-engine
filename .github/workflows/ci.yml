@@ -1,0 +1,140 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: 'yarn'
+      - run: yarn install
+      - run: yarn lint
+
+  tscheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: 'yarn'
+      - run: yarn install
+      - run: yarn tscheck
+
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: 'yarn'
+      - run: yarn install
+      - run: yarn test --all
+        env:
+          SKIP_PREFLIGHT_CHECK: 'true'
+
+  e2e-api:
+    runs-on: ubuntu-latest
+    services:
+      arangodb:
+        image: arangodb:3.7
+        env:
+          ARANGO_NO_AUTH: 1
+        ports:
+          - "8529:8529"
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - "5672:5672"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: 'yarn'
+      - name: Configure sysctl limits for ElasticSearch
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 7.8.0
+      - run: yarn install
+      - run: cd apps/core
+      - run: yarn run test:e2e:api
+        env:
+          NODE_ENV: test
+          ARANGO_URL: 'http://root:@localhost:8529'
+          AUTH_KEY: 123456789
+          AMQP_HOST: localhost
+          AMQP_PORT: 5672
+          AMQP_USERNAME: guest
+          AMQP_PWD: guest
+          APP_ROOT_PATH: .
+          ELASTICSEARCH_URL: "http://localhost:9200"
+
+  e2e-indexation-manager:
+    runs-on: ubuntu-latest
+    services:
+      arangodb:
+        image: arangodb:3.7
+        env:
+          ARANGO_NO_AUTH: 1
+        ports:
+          - "8529:8529"
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - "5672:5672"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: 'yarn'
+      - name: Configure sysctl limits for ElasticSearch
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 7.8.0
+      - run: yarn install
+      - run: cd apps/core
+      - run: yarn run test:e2e:indexationManager
+        env:
+          NODE_ENV: test
+          ARANGO_URL: 'http://root:@localhost:8529'
+          AUTH_KEY: 123456789
+          AMQP_HOST: localhost
+          AMQP_PORT: 5672
+          AMQP_USERNAME: guest
+          AMQP_PWD: guest
+          APP_ROOT_PATH: .
+          ELASTICSEARCH_URL: "http://localhost:9200"

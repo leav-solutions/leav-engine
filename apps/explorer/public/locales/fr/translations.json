@@ -367,6 +367,7 @@
         "value_details_section": "Valeur",
         "attribute_details_section": "Attribut",
         "path_section": "Chemin",
+        "start_typing_message": "Commencez à taper pour chercher des éléments",
         "attribute": {
             "id": "Identifiant",
             "type": "Type",

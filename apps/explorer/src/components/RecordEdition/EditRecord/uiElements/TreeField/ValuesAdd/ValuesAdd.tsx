@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Divider, Pagination, Space} from 'antd';
+import {Button, Divider, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
-import Dimmer from 'components/shared/Dimmer';
 import List from 'components/shared/List';
 import SelectTreeNode from 'components/shared/SelectTreeNode';
 import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
@@ -27,15 +26,21 @@ interface IValuesAddProps {
 
 const Wrapper = styled.div`
     background-color: ${themingVar['@default-bg']};
-    padding: 1em;
     z-index: 1;
     position: relative;
 `;
 
+const SelectionWrapper = styled.div`
+    padding: 1em;
+    max-height: 350px;
+    overflow: auto;
+`;
+
 const FooterWrapper = styled.div`
-    padding: 0 1em;
+    padding: 0.5em 1em;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    background: ${themingVar['@background-color-light']};
 `;
 
 const BreadcrumbWrapper = styled.div`
@@ -51,22 +56,23 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const [{lang}] = useLang();
     const valuesList = attribute.treeValuesList.enable ? attribute.treeValuesList.values : [];
     const wrapperRef = useRef<HTMLDivElement>();
-    const pageSize = 5;
-    const [currentPage, setCurrentPage] = useState<number>(1);
 
-    const [selectedValues, setSelectedValues] = useState<ValueFromList[]>([]);
+    const [selectedValuesFromTree, setSelectedValuesFromTree] = useState<ITreeNodeWithRecord[]>([]);
+    const [selectedValuesFromList, setSelectedValuesFromList] = useState<ValueFromList[]>([]);
 
     useEffect(() => {
         wrapperRef.current.scrollIntoView({block: 'nearest'});
     }, []);
 
-    const _handleSelectionChange = (selection: ValueFromList[]) => setSelectedValues(selection);
+    const _handleSelectionChange = (selection: ValueFromList[]) => setSelectedValuesFromList(selection);
 
     const _handleSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         if (selected) {
             onAdd([node]);
         }
     };
+
+    const _handleCheck = (selectedNodes: ITreeNodeWithRecord[]) => setSelectedValuesFromTree(selectedNodes);
 
     const _handleClose = () => onClose();
 
@@ -82,9 +88,10 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
             }
         ]);
     };
+
     const _handleSubmit = () => {
-        onAdd(
-            selectedValues.map(selectedVal => {
+        const selection: ITreeNodeWithRecord[] = [
+            ...selectedValuesFromList.map(selectedVal => {
                 const recordKey = getTreeRecordKey(selectedVal.record);
                 return {
                     record: selectedVal.record,
@@ -93,8 +100,11 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                     title: selectedVal.record.whoAmI.label,
                     children: null
                 };
-            })
-        );
+            }),
+            ...selectedValuesFromTree
+        ];
+
+        onAdd(selection);
     };
 
     const _renderListItem = (item: ValueFromList) => {
@@ -107,48 +117,44 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         );
     };
 
-    const ListFooter = (
-        <FooterWrapper>
-            <Pagination
-                simple
-                total={valuesList.length}
-                pageSize={pageSize}
-                showSizeChanger
-                current={currentPage}
-                onChange={page => setCurrentPage(page)}
-            />
-            {attribute.multiple_values && (
-                <Space>
-                    <Button size="small" onClick={_handleClose}>
-                        {t('global.cancel')}
-                    </Button>
-                    <PrimaryBtn size="small" onClick={_handleSubmit}>
-                        {t('global.submit')}
-                    </PrimaryBtn>
-                </Space>
-            )}
-        </FooterWrapper>
-    );
     return (
         <>
-            <Dimmer onClick={_handleClose} />
             <Wrapper data-testid="values-add" ref={wrapperRef}>
-                {valuesList.length && (
-                    <>
-                        <Divider orientation="left">{t('record_edition.values_list')}</Divider>
-                        <List
-                            dataSource={valuesList}
-                            onItemClick={_handleItemClick}
-                            renderItemContent={_renderListItem}
-                            selectable={attribute.multiple_values}
-                            selectedItems={selectedValues}
-                            onSelectionChange={_handleSelectionChange}
-                            footer={ListFooter}
-                        />
-                    </>
+                <SelectionWrapper>
+                    {!!valuesList.length && (
+                        <>
+                            <Divider orientation="left">{t('record_edition.values_list')}</Divider>
+                            <List
+                                dataSource={valuesList}
+                                onItemClick={_handleItemClick}
+                                renderItemContent={_renderListItem}
+                                selectable={attribute.multiple_values}
+                                selectedItems={selectedValuesFromList}
+                                onSelectionChange={_handleSelectionChange}
+                                pagination={false}
+                            />
+                        </>
+                    )}
+                    <Divider orientation="left">{localizedTranslation(attribute.linked_tree.label, lang)}</Divider>
+                    <SelectTreeNode
+                        tree={attribute.linked_tree}
+                        onSelect={_handleSelect}
+                        onCheck={_handleCheck}
+                        multiple={attribute.multiple_values}
+                    />
+                </SelectionWrapper>
+                {attribute.multiple_values && (
+                    <FooterWrapper>
+                        <Space>
+                            <Button size="small" onClick={_handleClose}>
+                                {t('global.cancel')}
+                            </Button>
+                            <PrimaryBtn size="small" onClick={_handleSubmit}>
+                                {t('global.submit')}
+                            </PrimaryBtn>
+                        </Space>
+                    </FooterWrapper>
                 )}
-                <Divider orientation="left">{localizedTranslation(attribute.linked_tree.label, lang)}</Divider>
-                <SelectTreeNode tree={attribute.linked_tree} onSelect={_handleSelect} />
             </Wrapper>
         </>
     );

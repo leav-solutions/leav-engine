@@ -41,7 +41,7 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
             [AttributeFormat.text]: formElements[FieldTypes.TEXT_INPUT]
         };
 
-        let uiElement;
+        let uiElement: IUIElement;
         switch (attribute.type) {
             case AttributeType.simple_link:
             case AttributeType.advanced_link:
@@ -61,10 +61,16 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
             type: FormElementTypes.field,
             containerId: defaultContainerId,
             uiElement,
-            settings: {
-                attribute: attribute.id,
-                label: attrLabel
-            }
+            settings: uiElement.settings.reduce(
+                (acc, cur) => ({
+                    [cur.name]: cur.defaultValue,
+                    ...acc
+                }),
+                {
+                    attribute: attribute.id,
+                    label: attrLabel
+                }
+            )
         };
     };
 

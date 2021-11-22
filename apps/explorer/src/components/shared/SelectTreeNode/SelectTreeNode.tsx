@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {Spin, Tree} from 'antd';
+import {Key} from 'antd/lib/table/interface';
 import {getTreeContentQuery, IGetTreeContentQuery, IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect, useState} from 'react';
@@ -15,6 +16,8 @@ interface ISelectTreeNodeProps {
     tree: Pick<ITree, 'id' | 'label'>;
     selectedNode?: string;
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
+    onCheck?: (selection: ITreeNodeWithRecord[]) => void;
+    multiple?: boolean;
 }
 
 const _constructTreeContent = (data: IRecordAndChildren[], parentPath?: string): ITreeNodeWithRecord[] => {
@@ -46,7 +49,13 @@ const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITr
     }
 };
 
-function SelectTreeNode({tree, onSelect, selectedNode: initSelectedNode}: ISelectTreeNodeProps): JSX.Element {
+function SelectTreeNode({
+    tree,
+    onSelect,
+    onCheck,
+    selectedNode: initSelectedNode,
+    multiple = false
+}: ISelectTreeNodeProps): JSX.Element {
     const [{lang}] = useLang();
 
     const rootNode: ITreeNodeWithRecord = {
@@ -80,6 +89,12 @@ function SelectTreeNode({tree, onSelect, selectedNode: initSelectedNode}: ISelec
         onSelect(node, e.selected);
     };
 
+    const _handleCheck = (selection: {checked: Key[]} | Key[]) => {
+        const checkedKeys = typeof selection === 'object' ? (selection as {checked: Key[]}).checked : selection;
+        const nodes = checkedKeys.map(key => _getTreeNodeByKey(String(key), treeContent));
+        onCheck(nodes);
+    };
+
     const [treeContent, setTreeContent] = useState<ITreeNodeWithRecord[]>([]);
 
     if (loading) {
@@ -93,11 +108,14 @@ function SelectTreeNode({tree, onSelect, selectedNode: initSelectedNode}: ISelec
     return treeContent.length ? (
         <Tree
             defaultExpandedKeys={[selectedNode]}
-            multiple={false}
+            multiple={multiple}
             selectable={true}
             selectedKeys={[selectedNode]}
             onSelect={_handleSelect}
+            onCheck={_handleCheck}
             treeData={treeContent}
+            checkStrictly
+            checkable={multiple}
         />
     ) : (
         <></>

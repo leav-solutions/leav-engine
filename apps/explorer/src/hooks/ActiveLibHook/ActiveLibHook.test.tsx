@@ -6,7 +6,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
-import {useActiveLibrary} from './ActiveLibHook';
+import {initialActiveLibrary, useActiveLibrary} from './ActiveLibHook';
 
 describe('ActiveLibHook', () => {
     const mockActiveLibrary: IActiveLibrary = {
@@ -21,7 +21,7 @@ describe('ActiveLibHook', () => {
         },
         trees: []
     };
-    test('should get undefined if no activeLibrary set', async () => {
+    test('should get empty library if no activeLibrary set', async () => {
         let givenActiveLibrary: any;
 
         const ComponentUsingNotification = () => {
@@ -39,7 +39,7 @@ describe('ActiveLibHook', () => {
             );
         });
 
-        expect(givenActiveLibrary).toEqual(undefined);
+        expect(givenActiveLibrary).toEqual(initialActiveLibrary);
     });
 
     test('should get activeLibrary', async () => {

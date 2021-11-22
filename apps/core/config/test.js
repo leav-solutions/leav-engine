@@ -9,9 +9,6 @@ module.exports = {
     db: {
         name: 'leav_test'
     },
-    elasticsearch: {
-        url: 'http://elasticsearch:9200'
-    },
     amqp: {
         exchange: 'test_leav_core'
     },

@@ -4,15 +4,23 @@
 import AttributeSelector from 'components/attributes/AttributeSelector';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {ISettingsFieldCommonProps} from '../../../../_types';
 
 export interface ISettingsAttributeProps extends ISettingsFieldCommonProps {
     library: string;
+    filters?: GET_ATTRIBUTESVariables;
     multiple?: boolean;
 }
 
-function SettingsAttribute({onChange, fieldName, library, multiple = false}: ISettingsAttributeProps): JSX.Element {
+function SettingsAttribute({
+    onChange,
+    fieldName,
+    library,
+    filters,
+    multiple = false
+}: ISettingsAttributeProps): JSX.Element {
     const {t} = useTranslation();
     const {
         state: {elementInSettings}
@@ -29,6 +37,7 @@ function SettingsAttribute({onChange, fieldName, library, multiple = false}: ISe
             name={fieldName}
             onChange={_handleChange}
             filters={{
+                ...filters,
                 libraries: [library]
             }}
             fluid

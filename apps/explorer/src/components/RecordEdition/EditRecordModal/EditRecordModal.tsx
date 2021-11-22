@@ -107,7 +107,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
     });
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
-    const {saveValues} = useSaveValueBatchMutation();
+    const {saveValues, loading: saveValuesLoading} = useSaveValueBatchMutation();
     const {deleteValue} = useDeleteValueMutation(record);
     const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordMutation, {
         variables: {library}
@@ -309,6 +309,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 key="submit"
                 onClick={_handleRecordSubmit}
                 disabled={!hasPendingValues}
+                loading={saveValuesLoading}
             >
                 {t('global.submit')}
             </PrimaryBtn>
@@ -323,12 +324,12 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 destroyOnClose
                 cancelText={t('global.cancel')}
                 closable={false}
+                maskClosable
                 width="90vw"
                 centered
                 style={{padding: 0, maxWidth: '800px'}}
                 bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
                 footer={footerButtons}
-                wrapProps={{onClick: (e: MouseEvent) => e.stopPropagation()}}
             >
                 <EditRecordReducerContext.Provider value={{state, dispatch}}>
                     <CreationErrorContext.Provider value={creationErrors}>

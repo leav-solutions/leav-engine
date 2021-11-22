@@ -9,10 +9,23 @@ import {
     IGetActiveLibrary
 } from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 
+export const initialActiveLibrary = {
+    id: '',
+    name: '',
+    filter: '',
+    gql: {
+        searchableFields: '',
+        query: '',
+        type: ''
+    },
+    attributes: [],
+    trees: []
+};
+
 export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibrary: IActiveLibrary) => void] => {
     const {data, client} = useQuery<IGetActiveLibrary>(getActiveLibrary);
 
-    const activeLibrary: IActiveLibrary | undefined = useMemo(() => data?.activeLib, [data]);
+    const activeLibrary: IActiveLibrary | undefined = useMemo(() => data?.activeLib ?? initialActiveLibrary, [data]);
 
     const updateActiveLibrary = useCallback(
         (newActiveLibrary: IActiveLibrary) => {
