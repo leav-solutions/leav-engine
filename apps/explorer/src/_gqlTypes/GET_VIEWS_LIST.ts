@@ -57,7 +57,7 @@ export interface GET_VIEWS_LIST_views_list_settings {
 
 export interface GET_VIEWS_LIST_views_list {
     id: string;
-    display: GET_VIEWS_LIST_views_list_display | null;
+    display: GET_VIEWS_LIST_views_list_display;
     shared: boolean;
     created_by: GET_VIEWS_LIST_views_list_created_by;
     label: any;

@@ -84,7 +84,7 @@ function Sidebar(): JSX.Element {
     const [executeSaveUserData] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
 
     const activeTreeLibrariesIds = (activeTree?.libraries ?? []).map(l => l.id);
-    const activeLibraryTreesIds = activeLibrary?.trees ?? [];
+    const activeLibraryTreesIds = activeLibrary?.trees.map(tree => tree.id) ?? [];
     const libraryFavorites = favoritesList?.data?.userData?.data?.[FAVORITE_LIBRARIES_KEY] ?? [];
     const treeFavorites = favoritesList?.data?.userData?.data?.[FAVORITE_TREES_KEY] ?? [];
 

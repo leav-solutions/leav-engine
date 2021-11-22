@@ -54,7 +54,7 @@ const treeSelectionListReducer = (
             return {...state, trees: action.trees};
         }
         case TreesSelectionListActionTypes.TOGGLE_TREE_ADD: {
-            let newSelection = [...state.selectedTrees, action.tree];
+            const newSelection = [...state.selectedTrees, action.tree];
 
             return {
                 ...state,
@@ -62,7 +62,7 @@ const treeSelectionListReducer = (
             };
         }
         case TreesSelectionListActionTypes.TOGGLE_TREE_DEL: {
-            let newSelection = [...state.selectedTrees];
+            const newSelection = [...state.selectedTrees];
             const index = newSelection.map(t => t.id).indexOf(action.tree.id);
 
             if (index > -1) {

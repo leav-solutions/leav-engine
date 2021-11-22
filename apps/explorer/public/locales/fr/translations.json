@@ -155,6 +155,8 @@
         "items-display": "Nombre d'éléments par page"
     },
     "filters": {
+        "trees-group": "Arbres",
+        "attributes-group": "Attributs",
         "filters": "Filtres",
         "contains": "Contient",
         "not-contains": "Ne contient pas",

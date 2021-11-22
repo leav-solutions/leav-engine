@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MenuOutlined, PlusOutlined, SaveFilled, AppstoreFilled, ClearOutlined} from '@ant-design/icons';
+import {MenuOutlined, PlusOutlined, SaveFilled, AppstoreFilled, ClearOutlined, FilterOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, Menu} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
@@ -171,34 +171,47 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         </Menu>
     );
 
+    const _toggleShowFilters = () => {
+        dispatch(
+            setDisplaySide({
+                visible: !display.side.visible || display.side.type !== TypeSideItem.filters,
+                type: TypeSideItem.filters
+            })
+        );
+    };
     return (
         <>
-            <Button
-                data-testid="dropdown-view-options"
-                onClick={_toggleShowView}
-                color={searchState.view.current?.color}
-            >
-                {limitTextSize(
-                    localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view'),
-                    'medium'
-                )}
-            </Button>
-            <Button icon={<ClearOutlined />} onClick={_setView} />
-            <Button
-                icon={<SaveFilled />}
-                onClick={_saveView}
-                disabled={
-                    searchState.view.sync ||
-                    searchState.view.current?.id === defaultView.id ||
-                    !searchState.view.current.owner
-                }
-            />
+            <Button.Group>
+                <Button
+                    data-testid="dropdown-view-options"
+                    onClick={_toggleShowView}
+                    color={searchState.view.current?.color}
+                >
+                    {limitTextSize(
+                        localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view'),
+                        'medium'
+                    )}
+                </Button>
+                <Button icon={<ClearOutlined />} onClick={_setView} />
+                <Button
+                    icon={<SaveFilled />}
+                    onClick={_saveView}
+                    disabled={
+                        searchState.view.sync ||
+                        searchState.view.current?.id === defaultView.id ||
+                        !searchState.view.current.owner
+                    }
+                />
+                <Button onClick={_toggleShowFilters}>
+                    <FilterOutlined /> {t('filters.filters')}
+                </Button>
+                <FiltersDropdown icon={<PlusOutlined />} type={'default'} activeLibrary={activeLibrary} />
+            </Button.Group>
             <Dropdown overlay={menu}>
                 <Button>
                     <PlusOutlined />
                 </Button>
             </Dropdown>
-            <FiltersDropdown activeLibrary={activeLibrary} />
         </>
     );
 }

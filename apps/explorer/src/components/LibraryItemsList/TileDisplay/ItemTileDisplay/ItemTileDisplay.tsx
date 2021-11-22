@@ -133,7 +133,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     );
 
     const selectedToggle = () => {
-        setIsSelect(s => !s);
+        setIsSelect(!isSelected);
 
         const newSelected: ISharedSelected = {
             id: item.whoAmI.id,
@@ -154,22 +154,13 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     };
 
     useEffect(() => {
-        if (selectionMode) {
-            setIsSelect(
-                selectionState.searchSelection.selected.some(
-                    elementSelected =>
-                        elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
-                )
-            );
-        } else {
-            setIsSelect(
-                selectionState.selection.selected.some(
-                    elementSelected =>
-                        elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
-                )
-            );
-        }
-    }, [selectionState.selection, selectionState.searchSelection, item, selectionMode]);
+        setIsSelect(
+            selectionState[selectionMode ? 'searchSelection' : 'selection'].selected.some(
+                elementSelected =>
+                    elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
+            )
+        );
+    }, [selectionState.selection, selectionState.searchSelection, item, selectionState, selectionMode]);
 
     const _handleClose = () => {
         setEditRecordModal(false);
@@ -185,7 +176,6 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     const _handleSelect = e => {
         e.stopPropagation();
         e.preventDefault();
-
         selectedToggle();
     };
 
@@ -208,12 +198,13 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
             )}
             <Card
                 onClick={selectedToggle}
+                onDoubleClick={() => setEditRecordModal(true)}
                 cover={
                     <ImageWrapper>
                         <ActionsWrapper>
                             {isSelected ? (
-                                <Selection onClick={selectedToggle}>
-                                    <CheckboxWrapper checked={isSelected} onClick={selectedToggle}>
+                                <Selection>
+                                    <CheckboxWrapper checked={isSelected}>
                                         {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}
                                     </CheckboxWrapper>
                                 </Selection>
