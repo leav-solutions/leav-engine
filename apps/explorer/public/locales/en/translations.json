@@ -11,7 +11,8 @@
         "search": "Search",
         "duplicate": "Duplicate",
         "copy": "Copy",
-        "feature_not_available": "This feature will be available soon!"
+        "feature_not_available": "This feature will be available soon!",
+        "available_soon": "Soon"
     },
     "login": {
         "header": "Authentification",
@@ -35,19 +36,16 @@
         "shortcuts": "Shortcuts",
         "events": "Events",
         "user_menu": {
-            "profil": "Profil",
             "tasks": "Tasks",
             "shortcuts": "Shortcuts",
             "events": "Events",
             "admin": "Admin",
-            "leav_engine": "LEAV-Engine 4.1",
             "logout": "Logout"
         }
     },
     "sidebar": {
         "close": "Close Sidebar",
         "library": "Library",
-        "setting": "Settings",
         "shortcuts": "Shortcuts",
         "libraries": "Libraries",
         "tree": "Tree",
@@ -81,12 +79,7 @@
         "not_found": "Unknown library"
     },
     "settings": {
-        "header": "Settings",
-        "choose-lang": "Choose language",
-        "choose-theme": "Choose theme",
-        "current-theme": "Current theme is {{theme}}",
-        "name-theme-dark": "dark",
-        "name-theme-light": "light"
+        "choose-lang": "Language"
     },
     "loading": "Loading",
     "items_list": {

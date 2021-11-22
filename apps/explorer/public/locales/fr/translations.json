@@ -13,7 +13,8 @@
         "search": "Rechercher",
         "duplicate": "Dupliquer",
         "copy": "Copie",
-        "feature_not_available": "Cette fonctionnalité sera bientôt disponible!"
+        "feature_not_available": "Cette fonctionnalité sera bientôt disponible!",
+        "available_soon": "Bientôt"
     },
     "login": {
         "header": "Authentification",
@@ -39,24 +40,17 @@
         "label": "Libellé"
     },
     "settings": {
-        "header": "Paramètres",
-        "choose-lang": "Choix de langue",
-        "choose-theme": "Choix du thème",
-        "current-theme": "Le thème actuel est {{theme}}",
-        "name-theme-dark": "sombre",
-        "name-theme-light": "éclairé"
+        "choose-lang": "Langue"
     },
     "menu": {
         "app_name": "Explorer",
         "shortcuts": "Raccourcis",
         "events": "Évènements",
         "user_menu": {
-            "profil": "Profile",
             "tasks": "Tâches",
             "shortcuts": "Raccourcis",
             "events": "Évènements",
             "admin": "Admin",
-            "leav_engine": "LEAV-Engine 4.1",
             "logout": "Déconnexion"
         }
     },
