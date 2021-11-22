@@ -110,6 +110,7 @@ export type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library {
     id: string;
+    label: any | null;
     attributes:
         | GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes[]
         | null;

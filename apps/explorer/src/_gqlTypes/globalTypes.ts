@@ -99,10 +99,15 @@ export interface ValueVersionInput {
     value: TreeElementInput;
 }
 
+export interface ViewDisplayInput {
+    type: ViewTypes;
+    size: ViewSizes;
+}
+
 export interface ViewInput {
     id?: string | null;
     library: string;
-    type: ViewTypes;
+    display: ViewDisplayInput;
     shared: boolean;
     label?: any | null;
     description?: any | null;

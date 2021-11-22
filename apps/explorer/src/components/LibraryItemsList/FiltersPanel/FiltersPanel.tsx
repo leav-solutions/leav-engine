@@ -11,8 +11,8 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
 import Filter from './Filter/Filter';
+
 import './Filters.css';
-import {getRequestFromFilters} from './getRequestFromFilter';
 
 const Wrapper = styled.div`
     width: 100%;

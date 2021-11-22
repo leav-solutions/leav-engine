@@ -87,12 +87,11 @@ const WrapperArrow = styled.div<IWrapperArrowProps>`
     }
 
     & > span:first-child {
-        opacity: ${({filterDirection, filterActive}) => (!filterActive || filterDirection === SortOrder.asc ? 1 : 0.5)};
+        opacity: ${({filterDirection, filterActive}) => (filterActive && filterDirection === SortOrder.asc ? 1 : 0.5)};
     }
 
     & > span:last-child {
-        opacity: ${({filterDirection, filterActive}) =>
-            !filterActive || filterDirection === SortOrder.desc ? 1 : 0.5};
+        opacity: ${({filterDirection, filterActive}) => (filterActive && filterDirection === SortOrder.desc ? 1 : 0.5)};
     }
 `;
 
@@ -110,6 +109,8 @@ const Header = ({id, children, type}: IHeaderProps) => {
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [openChangeColumns, setOpenChangeColumns] = useState(false);
     const [isHover, setIsHover] = useState<boolean>(false);
+
+    id = infosCol === id ? 'id' : id;
 
     const handleSort = (attId: string, order: SortOrder, attType: AttributeType) => {
         const newSortField = getSortFieldByAttributeType(attId, attType);
@@ -184,7 +185,8 @@ const Header = ({id, children, type}: IHeaderProps) => {
                         className="wrapper-arrow"
                         data-testid={`wrapper-arrow-${searchState.sort.order}`}
                         filterDirection={searchState.sort?.order}
-                        filterActive={!!searchState.sort?.active}
+                        filterActive={!!searchState.sort?.active && searchState.sort?.field === id}
+                        style={{fontSize: '130%'}}
                     >
                         <CaretUpOutlined />
                         <CaretDownOutlined />

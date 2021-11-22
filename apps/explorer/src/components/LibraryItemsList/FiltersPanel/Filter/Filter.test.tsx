@@ -6,6 +6,11 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockFilter} from '__mocks__/common/filter';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import Filter from './Filter';
+import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
+
+jest.mock('../../../../hooks/ActiveLibHook/ActiveLibHook', () => ({
+    useActiveLibrary: () => [mockActiveLibrary, jest.fn()]
+}));
 
 describe('Filter', () => {
     test('should contain filter', async () => {

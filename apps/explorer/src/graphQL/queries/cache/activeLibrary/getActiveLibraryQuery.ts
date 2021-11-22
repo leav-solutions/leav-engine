@@ -2,7 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
-import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
+import {
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
+} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 
 export interface IActiveLibrary {
     id: string;
@@ -14,7 +17,7 @@ export interface IActiveLibrary {
         query: string;
         type: string;
     };
-    trees: string[];
+    trees: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[];
 }
 
 export interface IGetActiveLibrary {

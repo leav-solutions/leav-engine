@@ -67,7 +67,7 @@ export interface GET_VIEW_view_settings {
 
 export interface GET_VIEW_view {
     id: string;
-    display: GET_VIEW_view_display | null;
+    display: GET_VIEW_view_display;
     shared: boolean;
     created_by: GET_VIEW_view_created_by;
     label: any;

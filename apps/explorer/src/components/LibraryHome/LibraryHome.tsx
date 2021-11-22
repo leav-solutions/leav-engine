@@ -70,7 +70,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
                     query,
                     type
                 },
-                trees: currentLibrary.linkedTrees.map(tree => tree.id)
+                trees: currentLibrary.linkedTrees
             });
         }
 

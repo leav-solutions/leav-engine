@@ -65,18 +65,16 @@ function LibraryItemsModal({showModal, closeModal, values, updateValues}: ILibra
             ]}
         >
             {values && (
-                <>
-                    <Form ref={formRef} onFinish={handleSubmit}>
-                        <Form.Item label="ID" name="ID">
-                            <Input disabled type="text" value={values?.whoAmI.id} />
-                        </Form.Item>
-                        <Form.Item label="Label">
-                            <Input type="text" value={values?.whoAmI.label || ''} onChange={handleChange} />
-                        </Form.Item>
-                        <h2>Preview</h2>
-                        <FormPreviewsModal values={values} updateValues={updateValues} />
-                    </Form>
-                </>
+                <Form ref={formRef} onFinish={handleSubmit}>
+                    <Form.Item label="ID" name="ID">
+                        <Input disabled type="text" value={values?.whoAmI.id} />
+                    </Form.Item>
+                    <Form.Item label="Label">
+                        <Input type="text" value={values?.whoAmI.label || ''} onChange={handleChange} />
+                    </Form.Item>
+                    <h2>Preview</h2>
+                    <FormPreviewsModal values={values} updateValues={updateValues} />
+                </Form>
             )}
         </Modal>
     );

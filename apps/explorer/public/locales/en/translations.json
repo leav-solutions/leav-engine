@@ -151,6 +151,8 @@
         "items-display": "Number of items per page"
     },
     "filters": {
+        "trees-group": "Trees",
+        "attributes-group": "Attributes",
         "filters": "Filters",
         "contains": "Contains",
         "not-contains": "Don't Contain",
