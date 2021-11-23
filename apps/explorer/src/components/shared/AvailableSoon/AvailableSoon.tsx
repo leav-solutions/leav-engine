@@ -17,7 +17,14 @@ const Wrapper = styled.span`
 
 function AvailableSoon(): JSX.Element {
     const {t} = useTranslation();
-    return <Wrapper>🔥 {t('global.available_soon').toLocaleUpperCase()}</Wrapper>;
+    return (
+        <Wrapper>
+            <span role="img" aria-label="available_soon">
+                🔥
+            </span>{' '}
+            {t('global.available_soon').toLocaleUpperCase()}
+        </Wrapper>
+    );
 }
 
 export default AvailableSoon;

@@ -104,14 +104,6 @@ function AttributesSelectionList({
                         <List>
                             {state.attributes
                                 .filter(attribute => {
-                                    // if (
-                                    //     (attribute.type === AttributeType.simple ||
-                                    //         attribute.type === AttributeType.advanced) &&
-                                    //     state.selectedAttributes.map(sa => sa.path).indexOf(attribute.id) !== -1
-                                    // ) {
-                                    //     return false;
-                                    // }
-
                                     if (!searchValue) {
                                         return true;
                                     }

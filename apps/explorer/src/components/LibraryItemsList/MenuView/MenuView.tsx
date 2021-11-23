@@ -1,9 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MenuOutlined, PlusOutlined, SaveFilled, AppstoreFilled, ClearOutlined, FilterOutlined} from '@ant-design/icons';
+import {
+    MenuOutlined,
+    SaveFilled,
+    AppstoreFilled,
+    RollbackOutlined,
+    FilterOutlined,
+    MoreOutlined
+} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Button, Dropdown, Menu} from 'antd';
+import {Button, Dropdown, Menu, Space, Badge} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -12,6 +19,7 @@ import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
+import styled from 'styled-components';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
@@ -24,6 +32,7 @@ import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import _ from 'lodash';
 import FiltersDropdown from './FiltersDropdown';
+import themingVar from '../../../themingVar';
 
 interface IMenuViewProps {
     activeLibrary: IActiveLibrary;
@@ -153,21 +162,14 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
 
     const menu = (
         <Menu>
-            <Menu.Item onClick={() => _handleAddView(ViewTypes.list)}>
-                <span>
-                    <PlusOutlined />
-                    <MenuOutlined />
-                </span>{' '}
-                {t('view.type-list')}
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item onClick={() => _handleAddView(ViewTypes.cards)}>
-                <span>
-                    <PlusOutlined />
-                    <AppstoreFilled />
-                </span>{' '}
-                {t('view.type-cards')}
-            </Menu.Item>
+            <Menu.ItemGroup title="Create view">
+                <Menu.Item onClick={() => _handleAddView(ViewTypes.list)} icon={<MenuOutlined />}>
+                    {t('view.type-list')}
+                </Menu.Item>
+                <Menu.Item onClick={() => _handleAddView(ViewTypes.cards)} icon={<AppstoreFilled />}>
+                    {t('view.type-cards')}
+                </Menu.Item>
+            </Menu.ItemGroup>
         </Menu>
     );
 
@@ -179,8 +181,17 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
             })
         );
     };
+
+    const CustomBadge = styled(Badge)`
+        float: right;
+
+        .ant-badge-count {
+            background: ${themingVar['@leav-primary-btn-bg-hover']};
+        }
+    `;
+
     return (
-        <>
+        <Space size="large">
             <Button.Group>
                 <Button
                     data-testid="dropdown-view-options"
@@ -192,7 +203,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                         'medium'
                     )}
                 </Button>
-                <Button icon={<ClearOutlined />} onClick={_setView} />
+                <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_setView} />
                 <Button
                     icon={<SaveFilled />}
                     onClick={_saveView}
@@ -202,17 +213,19 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                         !searchState.view.current.owner
                     }
                 />
-                <Button onClick={_toggleShowFilters}>
-                    <FilterOutlined /> {t('filters.filters')}
-                </Button>
-                <FiltersDropdown icon={<PlusOutlined />} type={'default'} activeLibrary={activeLibrary} />
+                <Dropdown overlay={menu}>
+                    <Button icon={<MoreOutlined />}></Button>
+                </Dropdown>
             </Button.Group>
-            <Dropdown overlay={menu}>
-                <Button>
-                    <PlusOutlined />
-                </Button>
-            </Dropdown>
-        </>
+            <Badge count={searchState.filters.length}>
+                <Button.Group>
+                    <Button onClick={_toggleShowFilters} icon={<FilterOutlined />}>
+                        {t('filters.filters')}
+                    </Button>
+                    <FiltersDropdown icon={<MoreOutlined />} type={'default'} activeLibrary={activeLibrary} />
+                </Button.Group>
+            </Badge>
+        </Space>
     );
 }
 

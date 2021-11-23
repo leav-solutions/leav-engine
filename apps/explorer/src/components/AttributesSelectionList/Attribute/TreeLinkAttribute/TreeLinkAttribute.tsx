@@ -139,26 +139,16 @@ function TreeLinkAttribute({attribute, depth, path, library}: ITreeLinkAttribute
                                     </LibraryName>
                                     <List>
                                         {treeLibrary.library.attributes &&
-                                            treeLibrary.library.attributes
-                                                // hide selected attributes
-                                                // .filter(
-                                                //     ta =>
-                                                //         state.selectedAttributes
-                                                //             .map(sa => sa.path)
-                                                //             .indexOf(
-                                                //                 `${attribute.id}.${treeLibrary.library.id}.${ta.id}`
-                                                //             ) === -1
-                                                // )
-                                                .map(a => (
-                                                    <Attribute
-                                                        key={a.id}
-                                                        attribute={a}
-                                                        depth={depth + 1}
-                                                        path={[path, treeLibrary.library.id].join('.')}
-                                                        library={treeLibrary.library.id}
-                                                        parentAttribute={attribute}
-                                                    />
-                                                ))}
+                                            treeLibrary.library.attributes.map(a => (
+                                                <Attribute
+                                                    key={a.id}
+                                                    attribute={a}
+                                                    depth={depth + 1}
+                                                    path={[path, treeLibrary.library.id].join('.')}
+                                                    library={treeLibrary.library.id}
+                                                    parentAttribute={attribute}
+                                                />
+                                            ))}
                                     </List>
                                 </div>
                             ))

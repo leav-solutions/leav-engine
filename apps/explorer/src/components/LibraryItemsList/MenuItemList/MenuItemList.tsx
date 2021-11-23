@@ -4,7 +4,7 @@
 import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {SelectionModeContext} from 'context';
-import {Button} from 'antd';
+import {Button, Space} from 'antd';
 import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
@@ -32,21 +32,6 @@ const Wrapper = styled.div`
     width: 100%;
 `;
 
-const SubGroup = styled.div`
-    display: flex;
-    grid-column-gap: 0.5rem;
-    align-items: center;
-    justify-content: end;
-`;
-
-const SubGroupMid = styled(SubGroup)`
-    width: 40%;
-`;
-
-const SubGroupFirst = styled(SubGroup)``;
-
-const SubGroupLast = styled(SubGroup)``;
-
 function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
     const [activeLibrary] = useActiveLibrary();
@@ -55,17 +40,6 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const selectionMode = useContext(SelectionModeContext);
     const {display} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
-
-    // const toggleShowFilter = () => {
-    //     const visible = !display.side.visible || display.side.type !== TypeSideItem.filters;
-
-    //     dispatch(
-    //         setDisplaySide({
-    //             visible,
-    //             type: TypeSideItem.filters
-    //         })
-    //     );
-    // };
 
     const handleHide = () => {
         dispatch(
@@ -88,27 +62,29 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
 
     return (
         <Wrapper>
-            <SubGroupFirst>
+            <Space size="large">
                 <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
                 {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
-                <MenuSelection />
-            </SubGroupFirst>
+            </Space>
 
-            <SubGroupMid>
+            <Space size="large">
+                <MenuSelection />
                 <SearchItems />
+            </Space>
+
+            <Space size="large">
                 {!selectionMode && (
                     <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={_handleCreateRecord}>
                         {t('items_list.new')}
                     </PrimaryBtn>
                 )}
-            </SubGroupMid>
 
-            <SubGroupLast>
-                <MenuItemActions />
-                <DisplayOptions />
-
-                <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()} />
-            </SubGroupLast>
+                <Space size="small">
+                    <MenuItemActions />
+                    <DisplayOptions />
+                    <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()} />
+                </Space>
+            </Space>
 
             {isRecordCreationVisible && (
                 <EditRecordModal

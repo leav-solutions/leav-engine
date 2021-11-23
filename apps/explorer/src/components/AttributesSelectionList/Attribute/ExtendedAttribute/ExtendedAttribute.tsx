@@ -115,20 +115,16 @@ function ExtendedAttribute({attribute, depth = 0, path, library}: IExtendedAttri
                         <ErrorDisplay message={error.message} />
                     ) : (
                         <List>
-                            {embeddedFields
-                                // .filter(
-                                //     ef => state.selectedAttributes.map(sa => sa.path).indexOf(`${path}.${ef.id}`) === -1
-                                // )
-                                .map(f => (
-                                    <EmbeddedField
-                                        attribute={attribute}
-                                        field={f}
-                                        depth={depth + 1}
-                                        key={f.id}
-                                        fieldPath={`${attribute.id}.${f.id}`}
-                                        library={library}
-                                    />
-                                ))}
+                            {embeddedFields.map(f => (
+                                <EmbeddedField
+                                    attribute={attribute}
+                                    field={f}
+                                    depth={depth + 1}
+                                    key={f.id}
+                                    fieldPath={`${attribute.id}.${f.id}`}
+                                    library={library}
+                                />
+                            ))}
                         </List>
                     )}
                 </StyledDeployContent>
