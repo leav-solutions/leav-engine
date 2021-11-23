@@ -7,7 +7,8 @@ import {
     AppstoreFilled,
     RollbackOutlined,
     FilterOutlined,
-    MoreOutlined
+    MoreOutlined,
+    EyeOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, Menu, Space, Badge} from 'antd';
@@ -33,6 +34,7 @@ import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import _ from 'lodash';
 import FiltersDropdown from './FiltersDropdown';
 import themingVar from '../../../themingVar';
+import IconViewType from '../../IconViewType/IconViewType';
 
 interface IMenuViewProps {
     activeLibrary: IActiveLibrary;
@@ -162,7 +164,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
 
     const menu = (
         <Menu>
-            <Menu.ItemGroup title="Create view">
+            <Menu.ItemGroup title={t('view.add-view.title')}>
                 <Menu.Item onClick={() => _handleAddView(ViewTypes.list)} icon={<MenuOutlined />}>
                     {t('view.type-list')}
                 </Menu.Item>
@@ -194,6 +196,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         <Space size="large">
             <Button.Group>
                 <Button
+                    icon={<IconViewType type={searchState.view.current.display.type} />}
                     data-testid="dropdown-view-options"
                     onClick={_toggleShowView}
                     color={searchState.view.current?.color}
@@ -213,7 +216,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                         !searchState.view.current.owner
                     }
                 />
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={menu} trigger={['click']}>
                     <Button icon={<MoreOutlined />}></Button>
                 </Dropdown>
             </Button.Group>

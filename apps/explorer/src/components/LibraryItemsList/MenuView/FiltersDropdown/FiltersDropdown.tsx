@@ -260,7 +260,7 @@ function FiltersDropdown({label, type, icon, filterIndex, activeLibrary}: IFilte
     );
 
     return (
-        <Dropdown overlay={menu}>
+        <Dropdown overlay={menu} trigger={['click']}>
             <Button type={type} icon={icon}>
                 {label}
             </Button>

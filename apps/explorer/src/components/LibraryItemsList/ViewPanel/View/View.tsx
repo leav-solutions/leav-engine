@@ -195,8 +195,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
             <Handle className="view-handle" {...handleProps} />
             <Infos>
                 <Title>
-                    <IconViewType type={view.display.type} showDescription={false} />
-                    <Typography.Text strong>
+                    <IconViewType type={view.display.type} />
+                    <Typography.Text strong style={{marginLeft: '8px'}}>
                         {limitTextSize(localizedTranslation(view.label, lang), 'medium')}
                     </Typography.Text>
                 </Title>

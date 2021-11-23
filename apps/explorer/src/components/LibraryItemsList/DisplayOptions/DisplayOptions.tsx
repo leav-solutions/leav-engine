@@ -9,6 +9,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
+import IconViewType from '../../IconViewType/IconViewType';
 
 const CustomButton = styled(Button)`
     padding: 0.3rem;
@@ -86,7 +87,7 @@ function DisplayOptions(): JSX.Element {
             }
         >
             <CustomButton title={sizes[searchState.display.size]}>
-                {searchState.display.type === ViewTypes.list ? <MenuOutlined /> : <AppstoreFilled />}
+                {<IconViewType type={searchState.display.type} />}
                 <DownOutlined />
             </CustomButton>
         </Dropdown>
