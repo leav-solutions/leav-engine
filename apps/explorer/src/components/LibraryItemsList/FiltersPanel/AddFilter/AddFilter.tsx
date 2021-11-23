@@ -19,7 +19,7 @@ interface IAttributeListProps {
     setShowAttr: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const _getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | string | number => {
+export const getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | string | number => {
     switch (format) {
         case AttributeFormat.boolean:
             return true;
@@ -54,7 +54,7 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
                 active: true,
                 condition: RecordFilterCondition[defaultFilterConditionByAttributeFormat(attribute.format)],
                 attribute,
-                value: {value: _getDefaultFilterValueByFormat(attribute.format)}
+                value: {value: getDefaultFilterValueByFormat(attribute.format)}
             };
         });
 

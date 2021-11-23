@@ -31,7 +31,7 @@ describe('ItemTileDisplay', () => {
             render(
                 <MockedProviderWithFragments>
                     <MockStore>
-                        <ItemTileDisplay item={itemMock} showRecordEdition={jest.fn()} />
+                        <ItemTileDisplay item={itemMock} />
                     </MockStore>
                 </MockedProviderWithFragments>
             );

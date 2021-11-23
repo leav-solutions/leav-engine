@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusOutlined, RedoOutlined, SearchOutlined} from '@ant-design/icons';
-import {Button, Tooltip} from 'antd';
+import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {SelectionModeContext} from 'context';
+import {Button, Space} from 'antd';
 import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
@@ -32,22 +32,6 @@ const Wrapper = styled.div`
     width: 100%;
 `;
 
-const SubGroup = styled.div`
-    display: grid;
-    grid-column-gap: 2rem;
-    align-items: center;
-    justify-content: end;
-`;
-
-const SubGroupFirst = styled(SubGroup)`
-    grid-template-columns: repeat(5, auto);
-    column-gap: calc(2rem + 1px); ;
-`;
-
-const SubGroupLast = styled(SubGroup)`
-    grid-template-columns: 10rem repeat(3, auto);
-`;
-
 function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
     const [activeLibrary] = useActiveLibrary();
@@ -56,17 +40,6 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const selectionMode = useContext(SelectionModeContext);
     const {display} = useAppSelector(state => state);
     const dispatch = useAppDispatch();
-
-    const toggleShowFilter = () => {
-        const visible = !display.side.visible || display.side.type !== TypeSideItem.filters;
-
-        dispatch(
-            setDisplaySide({
-                visible,
-                type: TypeSideItem.filters
-            })
-        );
-    };
 
     const handleHide = () => {
         dispatch(
@@ -89,34 +62,30 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
 
     return (
         <Wrapper>
-            <SubGroupFirst>
+            <Space size="large">
                 <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
-
                 {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
+            </Space>
 
-                <Tooltip placement="bottomLeft" title={t('items_list.show-filter-panel')}>
-                    <Button icon={<SearchOutlined />} role="show-filter" onClick={toggleShowFilter} />
-                </Tooltip>
-
+            <Space size="large">
                 <MenuSelection />
-            </SubGroupFirst>
+                <SearchItems />
+            </Space>
 
-            <SearchItems />
+            <Space size="large">
+                {!selectionMode && (
+                    <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={_handleCreateRecord}>
+                        {t('items_list.new')}
+                    </PrimaryBtn>
+                )}
 
-            <SubGroupLast>
-                <div>
-                    {!selectionMode && (
-                        <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={_handleCreateRecord}>
-                            {t('items_list.new')}
-                        </PrimaryBtn>
-                    )}
-                </div>
+                <Space size="small">
+                    <MenuItemActions />
+                    <DisplayOptions />
+                    <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()} />
+                </Space>
+            </Space>
 
-                <MenuItemActions />
-                <DisplayOptions />
-
-                <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()} />
-            </SubGroupLast>
             {isRecordCreationVisible && (
                 <EditRecordModal
                     record={null}

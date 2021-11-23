@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
+import {SortOrder, ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
 import {getViewsListQuery, IGetViewListElement} from '../../graphQL/queries/views/getViewsListQuery';
 
 const views: IGetViewListElement[] = [
     {
         __typename: 'View',
         id: 'id',
-        type: ViewTypes.list,
+        display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
         shared: false,
         created_by: {
             id: '1',

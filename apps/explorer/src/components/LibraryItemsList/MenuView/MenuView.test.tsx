@@ -7,6 +7,7 @@ import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import mocksGetViewsListQuery from '../../../__mocks__/mockQuery/mockGetViewListQuery';
 import SelectView from './MenuView';
+import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 
 describe('SelectView', () => {
     const mocks = mocksGetViewsListQuery('activeLibraryId');
@@ -14,7 +15,7 @@ describe('SelectView', () => {
         render(
             <MockedProviderWithFragments mocks={mocks}>
                 <MockStore>
-                    <SelectView activeLibrary={{id: 'activeLibraryId'} as any} />
+                    <SelectView activeLibrary={mockActiveLibrary} />
                 </MockStore>
             </MockedProviderWithFragments>
         );

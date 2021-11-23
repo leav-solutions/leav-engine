@@ -255,9 +255,8 @@ const Table = () => {
                                     // define info column row style
                                     headerCellProps.style = {
                                         ...headerCellProps.style,
-                                        flex: '1 0 auto',
-                                        width: 'auto',
-                                        minWidth: '250px'
+                                        minWidth: '250px',
+                                        maxWidth: '250px'
                                     };
                                 }
 

@@ -26,7 +26,7 @@ describe('SearchModal', () => {
         const mocks = [
             {
                 request: {
-                    query: getLibraryDetailExtendedQuery,
+                    query: getLibraryDetailExtendedQuery(0),
                     variables: mockGetLibraryDetailExtendedQueryVar
                 },
                 result: {

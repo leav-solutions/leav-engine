@@ -18,6 +18,7 @@ export const initialActiveLibrary = {
         query: '',
         type: ''
     },
+    attributes: [],
     trees: []
 };
 

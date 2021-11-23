@@ -4,7 +4,7 @@
 import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {ViewTypes} from '_gqlTypes/globalTypes';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import mocksGetViewsListQuery from '../../../../__mocks__/mockQuery/mockGetViewListQuery';
@@ -28,7 +28,7 @@ describe('EditView', () => {
                             view={{
                                 id: 'id',
                                 label: {fr: 'label', en: 'label'},
-                                type: ViewTypes.list,
+                                display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
                                 shared: false,
                                 owner: true
                             }}

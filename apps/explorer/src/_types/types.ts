@@ -2,7 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {RecordFilterCondition, RecordFilterOperator, TreeElementInput, ViewTypes} from '_gqlTypes/globalTypes';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {
+    RecordFilterCondition,
+    RecordFilterOperator,
+    TreeElementInput,
+    ViewTypes,
+    ViewSizes
+} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
@@ -140,12 +147,6 @@ export enum OrderSearch {
     ASC = 'ASC'
 }
 
-export enum DisplaySize {
-    small = 'small',
-    medium = 'medium',
-    big = 'big'
-}
-
 export interface IAttribute {
     id: string;
     library: string;
@@ -157,6 +158,7 @@ export interface IAttribute {
     linkedLibrary?: ILibraryDetailExtendedAttributeParentLinkedLibrary;
     linkedTree?: ILibraryDetailExtendedAttributeParentLinkedTree;
     parentAttributeData?: IParentAttributeData;
+    embedded_fields?: Array<GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields | null> | null;
 }
 
 export type ExtendFormat = string | {[key: string]: ExtendFormat[]};
@@ -307,7 +309,7 @@ export interface IView {
     id: string;
     library?: string;
     label: ISystemTranslation;
-    type: ViewTypes;
+    display: IViewDisplay;
     owner: boolean;
     shared: boolean;
     description?: ISystemTranslation;
@@ -317,10 +319,9 @@ export interface IView {
     sort?: IGetViewListSort;
 }
 
-export enum ViewType {
-    list = 'list',
-    cards = 'cards',
-    timeline = 'timeline'
+export interface IViewDisplay {
+    type: ViewTypes;
+    size: ViewSizes;
 }
 
 export interface ILinkedElement {

@@ -7,6 +7,7 @@ export const mockActiveLibrary: IActiveLibrary = {
     id: 'activeLibraryId',
     name: 'activeLibraryName',
     filter: 'activeLibraryFilter',
+    attributes: [],
     gql: {
         searchableFields: 'activeLibrarySearchableFields',
         query: 'activeLibraryQuery',

@@ -102,7 +102,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const [deleteView] = useMutation<IDeleteViewMutation, IDeleteViewMutationVariables>(deleteViewMutation);
 
     const _changeView = () => {
-        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: view, reload: true}});
+        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: view, reload: true, sync: false}});
     };
 
     const _handleDelete = async (event: any) => {
@@ -116,7 +116,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
             type: SearchActionTypes.SET_VIEW,
             view: {
                 current: view.id === searchState.view.current.id ? defaultView : searchState.view.current,
-                reload: true
+                reload: true,
+                sync: false
             }
         });
 
@@ -158,7 +159,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                 type: SearchActionTypes.SET_VIEW,
                 view: {
                     current: searchState.view.current,
-                    reload: true
+                    reload: true,
+                    sync: false
                 }
             });
 
@@ -193,7 +195,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
             <Handle className="view-handle" {...handleProps} />
             <Infos>
                 <Title>
-                    <IconViewType type={view.type} showDescription={false} />
+                    <IconViewType type={view.display.type} showDescription={false} />
                     <Typography.Text strong>
                         {limitTextSize(localizedTranslation(view.label, lang), 'medium')}
                     </Typography.Text>

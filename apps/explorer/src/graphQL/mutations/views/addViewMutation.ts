@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 import {IGetViewListElement, IGetViewListSort} from 'graphQL/queries/views/getViewsListQuery';
-import {RecordFilterCondition, RecordFilterOperator, ViewTypes} from '_gqlTypes/globalTypes';
+import {RecordFilterCondition, RecordFilterOperator, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {ISystemTranslation} from '../../../_types/types';
 
 export interface IAddViewMutation {
@@ -27,7 +27,7 @@ export interface IAddViewMutationVariablesView {
     id?: string;
     library: string;
     label: ISystemTranslation;
-    type: ViewTypes;
+    display: {size: ViewSizes; type: ViewTypes};
     shared: boolean;
     description?: ISystemTranslation;
     color?: string;

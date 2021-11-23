@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MoreOutlined} from '@ant-design/icons';
+import {MoreOutlined, DownOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -18,10 +18,10 @@ import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModa
 import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
 import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
 import TextFilter from '../../DisplayTypeSelector/FilterInput/TextFilter';
-import ChangeAttribute from '../ChangeAttribute';
-import ChangeTree from '../ChangeTree';
 import FilterAttributeCondition from '../FilterAttributeCondition';
 import FilterTreeCondition from '../FilterTreeCondition';
+import FiltersDropdown from '../../MenuView/FiltersDropdown';
+import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 
 interface IWrapperProps {
     active: boolean;
@@ -102,10 +102,6 @@ const HeadInfos = styled.div`
     }
 `;
 
-const FilterLabel = styled.span`
-    padding: 8px;
-`;
-
 const HeadOptions = styled.div`
     display: grid;
     place-items: center;
@@ -131,9 +127,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
-    const [showChangeAttribute, setShowChangeAttribute] = useState(false);
-    const [showChangeTree, setShowChangeTree] = useState(false);
     const [showSelectTreeNodeModal, setShowSelectTreeNodeModal] = useState(false);
+    const [activeLibrary] = useActiveLibrary();
 
     const handleDelete = () => {
         searchDispatch({
@@ -161,14 +156,6 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         return typeof node === 'undefined' || node.id === filter.tree.id
             ? {value: null}
             : {value: node.id, label: node.title};
-    };
-
-    const handleShowChangeAttribute = () => {
-        setShowChangeAttribute(true);
-    };
-
-    const handleShowChangeTree = () => {
-        setShowChangeTree(true);
     };
 
     const toggleActiveStatus = () => {
@@ -228,18 +215,6 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
     return (
         <>
-            {!!filter.attribute && (
-                <ChangeAttribute
-                    filter={filter}
-                    showModal={showChangeAttribute}
-                    setShowModal={setShowChangeAttribute}
-                />
-            )}
-
-            {!!filter.tree && (
-                <ChangeTree filter={filter} showModal={showChangeTree} setShowModal={setShowChangeTree} />
-            )}
-
             {showSelectTreeNodeModal && (
                 <SelectTreeNodeModal
                     selectedNodeKey={(filter.value.value as string) || filter.tree.id}
@@ -255,11 +230,13 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                 <Content>
                     <Head>
                         <HeadInfos>
-                            <FilterLabel
-                                onClick={!!filter.attribute ? handleShowChangeAttribute : handleShowChangeTree}
-                            >
-                                {localizedTranslation(filter.attribute?.label || filter.tree.label, lang)}
-                            </FilterLabel>
+                            <FiltersDropdown
+                                label={`${localizedTranslation(filter.attribute?.label || filter.tree.label, lang)}`}
+                                icon={<DownOutlined />}
+                                type={'text'}
+                                filterIndex={filter.index}
+                                activeLibrary={activeLibrary}
+                            />
                             {!!filter.attribute ? (
                                 <FilterAttributeCondition filter={filter} updateFilterValue={updateFilterValue} />
                             ) : (
@@ -280,3 +257,4 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 }
 
 export default Filter;
+/* */

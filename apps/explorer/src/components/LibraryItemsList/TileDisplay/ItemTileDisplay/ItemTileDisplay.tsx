@@ -1,14 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined, EditOutlined, EllipsisOutlined, HeartOutlined} from '@ant-design/icons';
-import {Button, Card} from 'antd';
+import {CheckOutlined, ArrowsAltOutlined, DeleteOutlined} from '@ant-design/icons';
+import {Button, Card, message} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useContext, useEffect, useState} from 'react';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
+import {useTranslation} from 'react-i18next';
 import {getFileUrl, localizedTranslation} from 'utils';
 import themingVar from '../../../../themingVar';
 import {IItem, ISharedSelected, SharedStateSelectionType} from '../../../../_types/types';
@@ -111,10 +112,11 @@ const Actions = styled.div`
 
 interface IItemTileDisplayProps {
     item: IItem;
-    showRecordEdition: (item: IItem) => void;
 }
 
-function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.Element {
+function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
+    const {t} = useTranslation();
+
     const selectionMode = useContext(SelectionModeContext);
     const [editRecordModal, setEditRecordModal] = useState<boolean>(false);
     const {selectionState} = useAppSelector(state => ({
@@ -131,7 +133,7 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
     );
 
     const selectedToggle = () => {
-        setIsSelect(s => !s);
+        setIsSelect(!isSelected);
 
         const newSelected: ISharedSelected = {
             id: item.whoAmI.id,
@@ -152,29 +154,36 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
     };
 
     useEffect(() => {
-        if (selectionMode) {
-            setIsSelect(
-                selectionState.searchSelection.selected.some(
-                    elementSelected =>
-                        elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
-                )
-            );
-        } else {
-            setIsSelect(
-                selectionState.selection.selected.some(
-                    elementSelected =>
-                        elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
-                )
-            );
-        }
-    }, [selectionState.selection, selectionState.searchSelection, item, selectionMode]);
-
-    const selectionActive =
-        (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected) ||
-        selectionState.selection.selected.length;
+        setIsSelect(
+            selectionState[selectionMode ? 'searchSelection' : 'selection'].selected.some(
+                elementSelected =>
+                    elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
+            )
+        );
+    }, [selectionState.selection, selectionState.searchSelection, item, selectionState, selectionMode]);
 
     const _handleClose = () => {
         setEditRecordModal(false);
+    };
+
+    const _handleEdit = e => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        setEditRecordModal(true);
+    };
+
+    const _handleSelect = e => {
+        e.stopPropagation();
+        e.preventDefault();
+        selectedToggle();
+    };
+
+    const _handleDelete = e => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        message.warn(t('global.feature_not_available'));
     };
 
     return (
@@ -193,23 +202,17 @@ function ItemTileDisplay({item, showRecordEdition}: IItemTileDisplayProps): JSX.
                 cover={
                     <ImageWrapper>
                         <ActionsWrapper>
-                            {selectionMode || selectionActive ? (
+                            {isSelected ? (
                                 <Selection>
-                                    <CheckboxWrapper checked={isSelected} onClick={selectedToggle}>
+                                    <CheckboxWrapper checked={isSelected}>
                                         {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}
                                     </CheckboxWrapper>
                                 </Selection>
                             ) : (
                                 <Actions className="actions">
-                                    <Button shape="circle" ghost icon={<CheckOutlined />} onClick={selectedToggle} />
-                                    <Button
-                                        shape="circle"
-                                        icon={<EditOutlined />}
-                                        ghost
-                                        onClick={() => showRecordEdition(item)}
-                                    />
-                                    <Button shape="circle" ghost icon={<HeartOutlined />} />
-                                    <Button shape="circle" ghost icon={<EllipsisOutlined />} />
+                                    <Button shape="circle" ghost icon={<CheckOutlined />} onClick={_handleSelect} />
+                                    <Button shape="circle" icon={<ArrowsAltOutlined />} ghost onClick={_handleEdit} />
+                                    <Button shape="circle" ghost icon={<DeleteOutlined />} onClick={_handleDelete} />
                                 </Actions>
                             )}
                         </ActionsWrapper>

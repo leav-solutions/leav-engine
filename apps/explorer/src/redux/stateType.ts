@@ -4,7 +4,6 @@
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {
-    DisplaySize,
     IAttribute,
     IBaseNotification,
     IField,
@@ -33,7 +32,6 @@ export interface IItemsState {
 }
 
 export interface IDisplayState {
-    size: DisplaySize;
     side: IDisplaySide;
 }
 

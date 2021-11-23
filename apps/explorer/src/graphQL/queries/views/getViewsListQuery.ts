@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
-import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
+import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
 import {ISystemTranslation} from '../../../_types/types';
 
 export interface IGetViewListFilter {
@@ -23,10 +23,15 @@ export interface IGetViewListSettings {
     value: any;
 }
 
+export interface IGetViewListDisplay {
+    size: ViewSizes;
+    type: ViewTypes;
+}
+
 export interface IGetViewListElement {
     __typename: string; // FIXME: ??
     id: string;
-    type: ViewTypes;
+    display: IGetViewListDisplay;
     shared: boolean;
     created_by: {
         id: string;
@@ -64,7 +69,10 @@ export const getViewsListQuery = gql`
             totalCount
             list {
                 id
-                type
+                display {
+                    size
+                    type
+                }
                 shared
                 created_by {
                     id

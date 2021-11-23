@@ -57,6 +57,12 @@ export enum SortOrder {
     desc = 'desc'
 }
 
+export enum ViewSizes {
+    BIG = 'BIG',
+    MEDIUM = 'MEDIUM',
+    SMALL = 'SMALL'
+}
+
 export enum ViewTypes {
     cards = 'cards',
     list = 'list',
@@ -93,10 +99,15 @@ export interface ValueVersionInput {
     value: TreeElementInput;
 }
 
+export interface ViewDisplayInput {
+    type: ViewTypes;
+    size: ViewSizes;
+}
+
 export interface ViewInput {
     id?: string | null;
     library: string;
-    type: ViewTypes;
+    display: ViewDisplayInput;
     shared: boolean;
     label?: any | null;
     description?: any | null;

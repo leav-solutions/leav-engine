@@ -115,7 +115,8 @@
                 "cancel-sort": "Annuler Tri",
                 "sort-advance": "Tri Avancé",
                 "regroup": "Regrouper",
-                "choose-columns": "Choix Colonnes"
+                "choose-columns": "Choix Colonnes",
+                "hide-column": "Masquer la colonne"
             },
             "actions-tooltips": {
                 "informations": "Informations",
@@ -129,10 +130,9 @@
             }
         },
         "display": {
-            "list-small": "Liste (petit)",
-            "list-medium": "Liste (moyen)",
-            "list-big": "Liste (grand)",
-            "cards": "Mosaïque",
+            "small": "petit",
+            "medium": "moyen",
+            "big": "grand",
             "tile": "Mosaïque"
         }
     },
@@ -149,6 +149,8 @@
         "items-display": "Nombre d'éléments par page"
     },
     "filters": {
+        "trees-group": "Arbres",
+        "attributes-group": "Attributs",
         "filters": "Filtres",
         "contains": "Contient",
         "not-contains": "Ne contient pas",
@@ -161,7 +163,7 @@
         "greater-than": "Plus grand que",
         "less-than": "Plus petit que",
         "exist": "Valeur existante",
-        "search-in": "Chercher dans...",
+        "search-in": "Chercher dans",
         "classified-in": "Classé dans",
         "not-classified-in": "Non classé dans",
         "where": "Ou",
@@ -181,7 +183,8 @@
         "no-filters": "Pas de filtres à appliquer",
         "submit": "Appliquer les filtres",
         "deactivate": "Désactiver",
-        "activate": "Activer"
+        "activate": "Activer",
+        "add": "Ajouter"
     },
     "filter-item": {
         "no-operator": "Si"
@@ -203,7 +206,7 @@
         }
     },
     "menu-selection": {
-        "nb-selected": "{{nb}} éléments sélectionné(s)",
+        "nb-selected": "Sélection {{nbSelected}} / {{total}}",
         "quit": "Quitter le mode sélection",
         "actions": "Actions",
         "all-selected-enabled": "Tout sélectionné actif",

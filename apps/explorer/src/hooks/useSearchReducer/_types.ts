@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {SortOrder, ViewTypes} from '_gqlTypes/globalTypes';
+import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {IAttribute, IField} from '_types/types';
-import {IFilter, IQueryFilter, IView} from '../../_types/types';
+import {IFilter, IQueryFilter, IView, IViewDisplay} from '../../_types/types';
 
 export type IRecordPreview = {
     small: string;
@@ -50,7 +50,7 @@ export interface ISearchState {
     fullText: string;
     filters: IFilter[];
     queryFilters: IQueryFilter[];
-    displayType: ViewTypes;
+    display: IViewDisplay;
     view: IViewState;
     userViewsOrder: string[];
     sharedViewsOrder: string[];
@@ -59,4 +59,5 @@ export interface ISearchState {
 export interface IViewState {
     current: IView | null;
     reload: boolean;
+    sync: boolean;
 }

@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {default as themingVar, default as themingVars} from '../../themingVar';
 import HeaderNotification from '../HeaderNotification';
@@ -55,8 +54,6 @@ interface IMenuItemProps {
 }
 
 function TopBar({userPanelVisible, toggleUserPanelVisible}: ITopBarProps): JSX.Element {
-    const {t} = useTranslation();
-
     const userPanelKey = 'trigger-user-panel';
 
     const handleUserPanelClick = () => {

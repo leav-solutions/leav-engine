@@ -6,10 +6,11 @@ import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
-import {IItem, IRecordEdition} from '../../../_types/types';
+import {IItem, IRecordEdition, PreviewSize} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import LibraryItemsModal from '../LibraryItemsListTable/LibraryItemsModal';
 import ItemTileDisplay from './ItemTileDisplay';
+import {displayTypeToPreviewSize} from 'utils';
 
 const LoadingWrapper = styled.div`
     height: 30rem;
@@ -42,13 +43,10 @@ const Footer = styled.div`
 
 function TileDisplay(): JSX.Element {
     const {state: searchState} = useSearchReducer();
+    const previewSize: PreviewSize = displayTypeToPreviewSize(searchState.display.size);
     const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
         show: false
     });
-
-    const showRecordEdition = (item: IItem) => {
-        setRecordEdition(re => ({show: true, item}));
-    };
 
     const closeRecordEdition = () => {
         setRecordEdition(re => ({...re, show: false}));
@@ -56,6 +54,12 @@ function TileDisplay(): JSX.Element {
 
     const updateItem = (newItem: IItem) => {
         setRecordEdition(re => ({...re, item: newItem}));
+    };
+
+    const CardSizes = {
+        [PreviewSize.small]: 2,
+        [PreviewSize.medium]: 4,
+        [PreviewSize.big]: 8
     };
 
     return (
@@ -66,10 +70,10 @@ function TileDisplay(): JSX.Element {
                         <Spin size="large" />
                     </LoadingWrapper>
                 ) : (
-                    <Row gutter={[24, 24]}>
+                    <Row gutter={16}>
                         {searchState.records.map(record => (
-                            <Col key={record.whoAmI.id} span={4}>
-                                <ItemTileDisplay item={record} showRecordEdition={showRecordEdition} />
+                            <Col key={record.whoAmI.id} span={CardSizes[previewSize]}>
+                                <ItemTileDisplay item={record} />
                             </Col>
                         ))}
                     </Row>

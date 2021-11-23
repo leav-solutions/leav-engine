@@ -1,9 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
+import {
+    MenuOutlined,
+    SaveFilled,
+    AppstoreFilled,
+    RollbackOutlined,
+    FilterOutlined,
+    MoreOutlined
+} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Dropdown, Menu} from 'antd';
+import {Button, Dropdown, Menu, Space, Badge} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -11,46 +18,21 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import styled, {CSSObject} from 'styled-components';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
+import styled from 'styled-components';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
     IAddViewMutationVariablesView
 } from '../../../graphQL/mutations/views/addViewMutation';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import themingVar from '../../../themingVar';
 import {limitTextSize, localizedTranslation} from '../../../utils';
 import {TypeSideItem} from '../../../_types/types';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import _ from 'lodash';
-import {ViewTypes} from '_gqlTypes/globalTypes';
-
-const DropdownButton = styled(Dropdown.Button)`
-    .ant-dropdown-trigger {
-        background-color: ${themingVar['@leav-secondary-action-bg']};
-    }
-`;
-
-interface IInnerDropdownProps {
-    color?: string;
-    style?: CSSObject;
-}
-
-const InnerDropdown = styled.span<IInnerDropdownProps>`
-    transform: translate(5px);
-    position: relative;
-
-    &::before {
-        content: '';
-        position: absolute;
-        left: -11px;
-        top: 8px;
-        border-radius: 50%;
-        padding: 3px;
-        background: ${({color}) => color ?? themingVar['@primary-color']};
-    }
-`;
+import FiltersDropdown from './FiltersDropdown';
+import themingVar from '../../../themingVar';
 
 interface IMenuViewProps {
     activeLibrary: IActiveLibrary;
@@ -83,7 +65,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                 // Fields
                 let viewFields: string[] = [];
 
-                if (searchState.view.current.type === ViewTypes.list) {
+                if (searchState.view.current.display.type === ViewTypes.list) {
                     viewFields = searchState.fields.map(f => f.key);
                 }
 
@@ -96,7 +78,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                             sort: searchState.sort.active
                                 ? {field: searchState.sort.field, order: searchState.sort.order}
                                 : undefined,
-                            type: searchState.displayType,
+                            display: searchState.display,
                             filters: getRequestFromFilters(searchState.filters),
                             settings: [
                                 {
@@ -116,7 +98,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                             sort: searchState.sort.active
                                 ? {field: searchState.sort.field, order: searchState.sort.order}
                                 : undefined,
-                            type: searchState.displayType,
+                            display: searchState.display,
                             filters: searchState.filters,
                             settings: [
                                 {
@@ -125,7 +107,8 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                                 }
                             ]
                         },
-                        reload: true
+                        reload: true,
+                        sync: false
                     }
                 });
             } catch (e) {
@@ -134,11 +117,19 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         }
     };
 
-    const _handleAddView = async () => {
+    const _setView = () => {
+        searchDispatch({
+            type: SearchActionTypes.SET_VIEW,
+            view: {current: searchState.view.current, reload: true, sync: false}
+        });
+    };
+
+    const _handleAddView = async (viewType: ViewTypes) => {
         const newView: IAddViewMutationVariablesView = {
             ..._.omit(defaultView, ['id', 'owner']),
             label: {[defaultLang]: t('view.add-view.title')},
             library: activeLibrary.id,
+            display: {type: viewType, size: ViewSizes.MEDIUM},
             filters: []
         };
 
@@ -158,7 +149,8 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     id: newViewRes.data.saveView.id,
                     filters: []
                 },
-                reload: true
+                reload: true,
+                sync: false
             }
         });
 
@@ -170,35 +162,70 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
 
     const menu = (
         <Menu>
-            <Menu.Item
-                icon={<SaveFilled />}
-                onClick={_saveView}
-                disabled={searchState.view.current?.id === defaultView.id || !searchState.view.current.owner}
-            >
-                {t('select-view.save')}
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item onClick={_handleAddView}>
-                <span>
-                    <PlusOutlined />
-                    <MenuOutlined />
-                </span>{' '}
-                {t('select-view.add-view')}
-            </Menu.Item>
+            <Menu.ItemGroup title="Create view">
+                <Menu.Item onClick={() => _handleAddView(ViewTypes.list)} icon={<MenuOutlined />}>
+                    {t('view.type-list')}
+                </Menu.Item>
+                <Menu.Item onClick={() => _handleAddView(ViewTypes.cards)} icon={<AppstoreFilled />}>
+                    {t('view.type-cards')}
+                </Menu.Item>
+            </Menu.ItemGroup>
         </Menu>
     );
 
+    const _toggleShowFilters = () => {
+        dispatch(
+            setDisplaySide({
+                visible: !display.side.visible || display.side.type !== TypeSideItem.filters,
+                type: TypeSideItem.filters
+            })
+        );
+    };
+
+    const CustomBadge = styled(Badge)`
+        float: right;
+
+        .ant-badge-count {
+            background: ${themingVar['@leav-primary-btn-bg-hover']};
+        }
+    `;
+
     return (
-        <>
-            <DropdownButton overlay={menu} data-testid="dropdown-view-options">
-                <InnerDropdown onClick={_toggleShowView} color={searchState.view.current?.color}>
+        <Space size="large">
+            <Button.Group>
+                <Button
+                    data-testid="dropdown-view-options"
+                    onClick={_toggleShowView}
+                    color={searchState.view.current?.color}
+                >
                     {limitTextSize(
                         localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view'),
                         'medium'
                     )}
-                </InnerDropdown>
-            </DropdownButton>
-        </>
+                </Button>
+                <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_setView} />
+                <Button
+                    icon={<SaveFilled />}
+                    onClick={_saveView}
+                    disabled={
+                        searchState.view.sync ||
+                        searchState.view.current?.id === defaultView.id ||
+                        !searchState.view.current.owner
+                    }
+                />
+                <Dropdown overlay={menu}>
+                    <Button icon={<MoreOutlined />}></Button>
+                </Dropdown>
+            </Button.Group>
+            <Badge count={searchState.filters.length}>
+                <Button.Group>
+                    <Button onClick={_toggleShowFilters} icon={<FilterOutlined />}>
+                        {t('filters.filters')}
+                    </Button>
+                    <FiltersDropdown icon={<MoreOutlined />} type={'default'} activeLibrary={activeLibrary} />
+                </Button.Group>
+            </Badge>
+        </Space>
     );
 }
 
