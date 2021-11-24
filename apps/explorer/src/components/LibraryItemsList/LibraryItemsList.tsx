@@ -14,11 +14,20 @@ import React, {useEffect, useReducer} from 'react';
 import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {checkTypeIsLink, getAttributeFromKey, localizedTranslation} from 'utils';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
+import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {
+    GET_VIEW,
+    GET_VIEWVariables,
+    GET_VIEW_view,
+    GET_VIEW_view_display,
+    GET_VIEW_view_sort
+} from '_gqlTypes/GET_VIEW';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
@@ -27,6 +36,7 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '../../graphQL/queries/records/getRecordsFromLibraryQueryTypes';
+import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {useUser} from '../../hooks/UserHook/UserHook';
 import {IAttribute, IField, IParentAttributeData, IView, SharedStateSelectionType} from '../../_types/types';
@@ -37,16 +47,6 @@ import {manageItems} from './manageItems';
 import MenuItemList from './MenuItemList';
 import MenuItemListSelected from './MenuItemListSelected';
 import SideItems from './SideItems';
-import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {
-    GET_VIEW_view_sort,
-    GET_VIEWVariables,
-    GET_VIEW,
-    GET_VIEW_view,
-    GET_VIEW_view_display
-} from '_gqlTypes/GET_VIEW';
-import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
-import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 
 interface IWrapperProps {
     showSide: boolean;
@@ -100,117 +100,114 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
     const SELECTED_VIEW_KEY = 'selected_view_' + library.id;
 
+    const attributesFromQuery: IAttribute[] = library.attributes.reduce((acc: IAttribute[], attribute) => {
+        if (
+            (attribute.format === null ||
+                (attribute.format && Object.values(AttributeFormat).includes(attribute.format))) &&
+            attribute.type &&
+            Object.values(AttributeType).includes(attribute.type)
+        ) {
+            const newAttributes: IAttribute[] = [
+                {
+                    id: attribute.id,
+                    type: attribute.type,
+                    format: attribute.format,
+                    label: attribute.label,
+                    isLink: checkTypeIsLink(attribute.type),
+                    isMultiple: attribute.multiple_values,
+                    linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                        .linked_library,
+                    linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
+                        .linked_tree,
+                    library: library.id,
+                    embedded_fields: (attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute)
+                        .embedded_fields
+                }
+            ];
+
+            // case attribute is a linked attribute
+            if (
+                (attribute.type === AttributeType.simple_link || attribute.type === AttributeType.advanced_link) &&
+                (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute).linked_library
+            ) {
+                const linkedLibraryId = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                    .linked_library.id;
+                const newLinkedAttributes: IAttribute[] = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute).linked_library.attributes.map(
+                    linkedAttribute => ({
+                        id: linkedAttribute.id,
+                        type: linkedAttribute.type,
+                        format: linkedAttribute.format,
+                        label: linkedAttribute.label,
+                        isLink: checkTypeIsLink(linkedAttribute.type),
+                        isMultiple: linkedAttribute.multiple_values,
+                        linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                            .linked_library,
+                        linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
+                            .linked_tree,
+                        library: linkedLibraryId
+                    })
+                );
+
+                newAttributes.push(...newLinkedAttributes);
+            }
+
+            if (
+                attribute.type === AttributeType.tree &&
+                (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute).linked_tree
+            ) {
+                const newLinkedAttributes: IAttribute[] = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute).linked_tree.libraries
+                    .map(linkedTreeLibrary => {
+                        const linkedLibraryId = linkedTreeLibrary.library.id;
+                        return linkedTreeLibrary.library.attributes.map(linkedAttribute => ({
+                            id: linkedAttribute.id,
+                            type: linkedAttribute.type,
+                            format: linkedAttribute.format,
+                            label: linkedAttribute.label,
+                            isLink: checkTypeIsLink(linkedAttribute.type),
+                            isMultiple: linkedAttribute.multiple_values,
+                            library: linkedLibraryId
+                        }));
+                    })
+                    .flat();
+
+                newAttributes.push(...newLinkedAttributes);
+            }
+
+            return [...acc, ...newAttributes];
+        }
+
+        return acc;
+    }, []);
+
+    const libraryDefaultView = library.defaultView
+        ? {
+              id: library.defaultView.id,
+              owner: true,
+              library: library.id,
+              label: library.defaultView.label,
+              description: library.defaultView.description,
+              display: library.defaultView.display,
+              color: library.defaultView.color,
+              shared: library.defaultView.shared,
+              filters: getFiltersFromRequest(library.defaultView.filters ?? [], library.id, attributesFromQuery),
+              sort: library.defaultView.sort,
+              settings: library.defaultView.settings
+          }
+        : {...defaultView, label: defaultView.label};
+
     useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         fetchPolicy: 'no-cache',
         variables: {keys: [SELECTED_VIEW_KEY]},
         onCompleted: d => {
-            const viewId = d.userData?.data[SELECTED_VIEW_KEY] || defaultView.id;
-
-            const attributesFromQuery: IAttribute[] = library.attributes.reduce((acc: IAttribute[], attribute) => {
-                if (
-                    (attribute.format === null ||
-                        (attribute.format && Object.values(AttributeFormat).includes(attribute.format))) &&
-                    attribute.type &&
-                    Object.values(AttributeType).includes(attribute.type)
-                ) {
-                    const newAttributes: IAttribute[] = [
-                        {
-                            id: attribute.id,
-                            type: attribute.type,
-                            format: attribute.format,
-                            label: attribute.label,
-                            isLink: checkTypeIsLink(attribute.type),
-                            isMultiple: attribute.multiple_values,
-                            linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
-                                .linked_library,
-                            linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
-                                .linked_tree,
-                            library: library.id,
-                            embedded_fields: (attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute)
-                                .embedded_fields
-                        }
-                    ];
-
-                    // case attribute is a linked attribute
-                    if (
-                        (attribute.type === AttributeType.simple_link ||
-                            attribute.type === AttributeType.advanced_link) &&
-                        (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
-                            .linked_library
-                    ) {
-                        const linkedLibraryId = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
-                            .linked_library.id;
-                        const newLinkedAttributes: IAttribute[] = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute).linked_library.attributes.map(
-                            linkedAttribute => ({
-                                id: linkedAttribute.id,
-                                type: linkedAttribute.type,
-                                format: linkedAttribute.format,
-                                label: linkedAttribute.label,
-                                isLink: checkTypeIsLink(linkedAttribute.type),
-                                isMultiple: linkedAttribute.multiple_values,
-                                linkedLibrary: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
-                                    .linked_library,
-                                linkedTree: (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute)
-                                    .linked_tree,
-                                library: linkedLibraryId
-                            })
-                        );
-
-                        newAttributes.push(...newLinkedAttributes);
-                    }
-
-                    if (
-                        attribute.type === AttributeType.tree &&
-                        (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute).linked_tree
-                    ) {
-                        const newLinkedAttributes: IAttribute[] = (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute).linked_tree.libraries
-                            .map(linkedTreeLibrary => {
-                                const linkedLibraryId = linkedTreeLibrary.library.id;
-                                return linkedTreeLibrary.library.attributes.map(linkedAttribute => ({
-                                    id: linkedAttribute.id,
-                                    type: linkedAttribute.type,
-                                    format: linkedAttribute.format,
-                                    label: linkedAttribute.label,
-                                    isLink: checkTypeIsLink(linkedAttribute.type),
-                                    isMultiple: linkedAttribute.multiple_values,
-                                    library: linkedLibraryId
-                                }));
-                            })
-                            .flat();
-
-                        newAttributes.push(...newLinkedAttributes);
-                    }
-
-                    return [...acc, ...newAttributes];
-                }
-
-                return acc;
-            }, []);
+            const viewId = d.userData?.data[SELECTED_VIEW_KEY] || libraryDefaultView.id;
 
             searchDispatch({type: SearchActionTypes.SET_ATTRIBUTES, attributes: attributesFromQuery});
 
-            if (viewId === defaultView.id) {
-                const newView: IView = library.defaultView
-                    ? {
-                          id: library.defaultView.id,
-                          owner: true,
-                          library: library.id,
-                          label: library.defaultView.label,
-                          description: library.defaultView.description,
-                          display: library.defaultView.display,
-                          color: library.defaultView.color,
-                          shared: library.defaultView.shared,
-                          filters: getFiltersFromRequest(
-                              library.defaultView.filters ?? [],
-                              library.id,
-                              attributesFromQuery
-                          ),
-                          sort: library.defaultView.sort,
-                          settings: library.defaultView.settings
-                      }
-                    : {...defaultView, label: defaultView.label};
-
-                searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: newView, reload: true, sync: false}});
+            if (viewId === libraryDefaultView.id) {
+                searchDispatch({
+                    type: SearchActionTypes.SET_VIEW,
+                    view: {current: libraryDefaultView, reload: true, sync: false}
+                });
             } else {
                 getSelectedView({
                     variables: {
@@ -221,25 +218,28 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         }
     });
 
-    const [getSelectedView, {error: getSelectedViewError}] = useLazyQuery<GET_VIEW, GET_VIEWVariables>(
-        getViewByIdQuery,
-        {
-            onCompleted: data => {
-                const v: IView = {
-                    ...(_.omit(data.view, ['created_by', '__typename']) as GET_VIEW_view),
-                    owner: data.view.created_by.id === user?.userId,
-                    filters: Array.isArray(data.view.filters)
-                        ? getFiltersFromRequest(data.view.filters, searchState.library.id, searchState.attributes)
-                        : [],
-                    sort: _.omit(data.view.sort, ['__typename']) as GET_VIEW_view_sort,
-                    display: _.omit(data.view.display, ['__typename']) as GET_VIEW_view_display,
-                    settings: data.view.settings?.map(s => _.omit(s, '__typename'))
-                };
+    const [getSelectedView] = useLazyQuery<GET_VIEW, GET_VIEWVariables>(getViewByIdQuery, {
+        onCompleted: data => {
+            const v: IView = {
+                ...(_.omit(data.view, ['created_by', '__typename']) as GET_VIEW_view),
+                owner: data.view.created_by.id === user?.userId,
+                filters: Array.isArray(data.view.filters)
+                    ? getFiltersFromRequest(data.view.filters, searchState.library.id, searchState.attributes)
+                    : [],
+                sort: _.omit(data.view.sort, ['__typename']) as GET_VIEW_view_sort,
+                display: _.omit(data.view.display, ['__typename']) as GET_VIEW_view_display,
+                settings: data.view.settings?.map(s => _.omit(s, '__typename'))
+            };
 
-                searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: v, reload: true, sync: false}});
-            }
-        }
-    );
+            searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: v, reload: true, sync: false}});
+        },
+        onError: () =>
+            // Error when fetching view, just load default view
+            searchDispatch({
+                type: SearchActionTypes.SET_VIEW,
+                view: {current: libraryDefaultView, reload: true, sync: false}
+            })
+    });
 
     // Get data
     const [getRecords, {error: getRecordsError, refetch}] = useLazyQuery<
@@ -408,8 +408,8 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         getRecords
     ]);
 
-    if (getRecordsError || getSelectedViewError) {
-        return <ErrorDisplay message={(getRecordsError || getSelectedViewError).message} />;
+    if (getRecordsError) {
+        return <ErrorDisplay message={getRecordsError.message} />;
     }
 
     // if some elements are selected and the selection type is search, show the selection Menu
