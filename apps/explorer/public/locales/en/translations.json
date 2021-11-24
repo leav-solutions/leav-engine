@@ -249,12 +249,15 @@
             }
         },
         "action": {
-            "sort-asc": "Sort Ascend",
-            "sort-desc": "Sort Descend",
-            "move-selected": "Move Selected",
-            "detach-selected": "Detach Selected",
-            "detach-element": "Detach element",
-            "add-selected": "Add Selected"
+            "order": "Order",
+            "details": "Details",
+            "edit": "Edit",
+            "classified_in": "Search in",
+            "create": "Créer",
+            "detach": "Détacher",
+            "move-selected": "Déplacer la sélection",
+            "detach-selected": "Détacher la sélection",
+            "add-selected": "Ajouter la sélection"
         },
         "notifications": {
             "success-add": "{{nb}} elements had been add",

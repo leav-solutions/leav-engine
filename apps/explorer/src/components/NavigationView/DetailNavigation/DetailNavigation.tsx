@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import HeaderColumnNavigation from 'components/HeaderColumnNavigation';
+import HeaderColumnNavigation from 'components/NavigationView/ColumnNavigation/HeaderColumnNavigation';
 import React, {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import themingVar from '../../themingVar';
-import {getFileUrl} from '../../utils';
-import RecordPreview from '../LibraryItemsList/LibraryItemsListTable/RecordPreview';
+import themingVar from '../../../themingVar';
+import {getFileUrl} from '../../../utils';
+import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
 
 const Detail = styled.div`
     min-width: 30rem;
@@ -58,13 +58,14 @@ const DetailNavigation = (): JSX.Element => {
 
     useEffect(() => {
         setImmediate(() => {
-            if (!navigation.isLoading && detailRef.current && detailRef.current.scrollIntoView) {
+            if (detailRef?.current?.scrollIntoView) {
                 detailRef.current.scrollIntoView({
-                    behavior: 'smooth'
+                    behavior: 'smooth',
+                    block: 'end'
                 });
             }
         });
-    }, [detailRef, navigation.recordDetail, navigation.isLoading]);
+    }, [detailRef, navigation.isLoading]);
 
     if (!navigation.recordDetail) {
         return <></>;
@@ -77,9 +78,14 @@ const DetailNavigation = (): JSX.Element => {
     const img = recordData.preview?.big;
 
     return (
-        <Detail ref={detailRef}>
+        <Detail ref={detailRef} data-testid="details-column">
             <div className="header-detail">
-                <HeaderColumnNavigation depth={navigation.path.length} isActive={true} isDetail={true} />
+                <HeaderColumnNavigation
+                    depth={navigation.path.length}
+                    isActive={true}
+                    isDetail={true}
+                    treeElement={{record: navigation.recordDetail, children: []}}
+                />
             </div>
             <PreviewWrapper>
                 <RecordPreview

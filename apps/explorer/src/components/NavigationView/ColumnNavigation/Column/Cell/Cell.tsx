@@ -12,31 +12,33 @@ import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {localizedTranslation} from 'utils';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
-import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
-import themingVar from '../../themingVar';
+import {IRecordAndChildren} from '../../../../../graphQL/queries/trees/getTreeContentQuery';
+import themingVar from '../../../../../themingVar';
 import {
-    INavigationPath,
     IRecordIdentityWhoAmI,
     ISharedSelected,
     PreviewSize,
     SharedStateSelectionType
-} from '../../_types/types';
-import RecordCard from '../shared/RecordCard';
+} from '../../../../../_types/types';
+import RecordCard from '../../../../shared/RecordCard';
 
 interface ICellProps {
     style?: CSSObject;
     isInPath: boolean;
+    isActive: boolean;
 }
 
-const Cell = styled.div<ICellProps>`
+const CellWrapper = styled.div<ICellProps>`
     display: grid;
+
     place-items: flex-start;
     align-items: center;
-    grid-template-columns: 1rem auto auto 1rem;
+
+    grid-template-columns: ${props => (props.isActive ? '1rem auto auto 1rem' : 'auto auto 1rem')};
     padding: 1rem;
     background: ${props => {
         if (props.isInPath) {
-            return themingVar['@item-active-bg'];
+            return themingVar['@leav-background-active'];
         }
         return 'none';
     }};
@@ -74,11 +76,12 @@ const CheckboxWrapper = styled.div<ICheckboxWrapperProps>`
 `;
 
 interface IActiveCellNavigationProps {
+    isActive: boolean;
     treeElement: IRecordAndChildren;
     depth: number;
 }
 
-function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps): JSX.Element {
+function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.Element {
     const [{lang}] = useLang();
 
     const {selectionState, navigation} = useAppSelector(state => ({
@@ -90,19 +93,13 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
     const parentElement = navigation.path[depth - 1];
     const parent: TreeElementInput = {
         id: parentElement?.id,
-        library: parentElement?.library
+        library: parentElement?.library.id
     };
 
     const recordLabel = treeElement.record.whoAmI.label;
 
     const addPath = () => {
-        const newPathElement: INavigationPath = {
-            id: treeElement.record.whoAmI.id,
-            library: treeElement.record.whoAmI.library.id,
-            label: recordLabel
-        };
-
-        const newPath = [...navigation.path.slice(0, depth), newPathElement];
+        const newPath = [...navigation.path.slice(0, depth), treeElement.record.whoAmI];
 
         dispatch(setNavigationPath(newPath));
 
@@ -175,7 +172,7 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
 
     const isInPath = navigation.path.some(
         pathPart =>
-            pathPart.id === treeElement.record.whoAmI.id && pathPart.library === treeElement.record.whoAmI.library.id
+            pathPart.id === treeElement.record.whoAmI.id && pathPart.library.id === treeElement.record.whoAmI.library.id
     );
 
     const isChecked = selectionState.selection.selected.some(
@@ -184,18 +181,20 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
     );
 
     return (
-        <Cell onClick={addPath} isInPath={isInPath}>
-            <CheckboxWrapper
-                onClick={e => {
-                    // checkbox onclick doesn't allow to do that
-                    e.preventDefault();
-                    e.stopPropagation();
-                }}
-                className="checkbox-wrapper"
-                selectionActive={!!selectionState.selection.selected.length}
-            >
-                <Checkbox onClick={handleCheckboxOnClick} checked={isChecked} />
-            </CheckboxWrapper>
+        <CellWrapper onClick={addPath} isInPath={isInPath} isActive={isActive} data-testid="navigation-cell">
+            {isActive && (
+                <CheckboxWrapper
+                    onClick={e => {
+                        // checkbox onclick doesn't allow to do that
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }}
+                    className="checkbox-wrapper"
+                    selectionActive={!!selectionState.selection.selected.length}
+                >
+                    <Checkbox onClick={handleCheckboxOnClick} checked={isChecked} />
+                </CheckboxWrapper>
+            )}
             <Tooltip title={treeElement.record.whoAmI.label}>
                 <RecordCardWrapper>
                     <RecordCard record={record} size={PreviewSize.small} />
@@ -212,8 +211,8 @@ function ActiveCellNavigation({treeElement, depth}: IActiveCellNavigationProps):
                     </div>
                 </>
             )}
-        </Cell>
+        </CellWrapper>
     );
 }
 
-export default ActiveCellNavigation;
+export default Cell;

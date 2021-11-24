@@ -1,21 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
+import {Button} from 'antd';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import React from 'react';
 import {useAppSelector} from 'redux/store';
 import DefaultActions from './DefaultActions';
-import DetailActions from './DetailActions';
 import SelectionActions from './SelectionActions';
 
 interface IActiveHeaderCellNavigationProps {
     depth: number;
-    setItems?: React.Dispatch<React.SetStateAction<IRecordAndChildren[]>>;
     isDetail?: boolean;
 }
 
-function HeaderColumnNavigationActions({depth, setItems, isDetail}: IActiveHeaderCellNavigationProps): JSX.Element {
+function HeaderColumnNavigationActions({depth, isDetail}: IActiveHeaderCellNavigationProps): JSX.Element {
     const currentPositionInPath = depth;
 
     const navigation = useAppSelector(state => state.navigation);
@@ -23,16 +21,13 @@ function HeaderColumnNavigationActions({depth, setItems, isDetail}: IActiveHeade
 
     const parent = navigation.path[currentPositionInPath - 1];
 
-    return (
-        <span>
-            {activeTree && (
-                <>
-                    <SelectionActions parent={parent} depth={depth} />
-                    <DefaultActions activeTree={activeTree} parent={parent} setItems={setItems} isDetail={isDetail} />
-                    <DetailActions depth={depth} isDetail={isDetail} />
-                </>
-            )}
-        </span>
+    return activeTree ? (
+        <Button.Group style={{height: '30px'}}>
+            <SelectionActions parent={parent} depth={depth} />
+            <DefaultActions activeTree={activeTree} parent={parent} isDetail={isDetail} />
+        </Button.Group>
+    ) : (
+        <></>
     );
 }
 

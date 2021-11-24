@@ -11,21 +11,16 @@ import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {setNavigationRefetchTreeData} from 'redux/navigation';
+import {resetNavigationRecordDetail, setNavigationRefetchTreeData} from 'redux/navigation';
 import {addNotification} from 'redux/notifications';
 import {resetSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '_gqlTypes/MOVE_TREE_ELEMENT';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
-import {
-    INavigationPath,
-    INotification,
-    NotificationChannel,
-    NotificationType,
-    SharedStateSelectionType
-} from '_types/types';
+import {INotification, NotificationChannel, NotificationType, SharedStateSelectionType} from '_types/types';
 
 interface IMessages {
     countValid: number;
@@ -33,7 +28,7 @@ interface IMessages {
 }
 
 interface ISelectionActionsProps {
-    parent: INavigationPath;
+    parent: RecordIdentity_whoAmI;
     depth: number;
 }
 
@@ -96,7 +91,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             const parentElement = parent?.id
                 ? {
                       id: parent.id,
-                      library: parent.library
+                      library: parent.library.id
                   }
                 : null;
 
@@ -147,6 +142,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         }
 
         dispatch(resetSelection());
+        dispatch(resetNavigationRecordDetail());
         dispatch(setNavigationRefetchTreeData(true));
     };
 
@@ -159,7 +155,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         const parentTo = parent?.id
             ? {
                   id: parent.id,
-                  library: parent.library
+                  library: parent.library.id
               }
             : null;
 
@@ -202,6 +198,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         }
 
         dispatch(resetSelection());
+        dispatch(resetNavigationRecordDetail());
         dispatch(setNavigationRefetchTreeData(true));
     };
 
@@ -254,6 +251,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             );
 
             dispatch(resetSelection());
+            dispatch(resetNavigationRecordDetail());
             dispatch(setNavigationRefetchTreeData(true));
         }
     };
@@ -263,39 +261,36 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
     const columnIsParent =
         selectionState.selection.type === SharedStateSelectionType.navigation &&
         selectionState.selection.parent?.id === parent?.id &&
-        selectionState.selection.parent?.library === parent?.library;
+        selectionState.selection.parent?.library === parent?.library.id;
 
     if (selectionState.selection.selected.length) {
         return (
             <>
                 {!columnIsParent && (
-                    <span>
-                        <StandardBtn
-                            icon={<PlusOutlined />}
-                            onClick={handleAddElements}
-                            aria-label="add-elements-in-tree"
-                        />
-                    </span>
+                    <StandardBtn
+                        icon={<PlusOutlined />}
+                        onClick={handleAddElements}
+                        aria-label="add-selection"
+                        title={t('navigation.actions.add-selected')}
+                    />
                 )}
 
                 {searchIsNavigation && !columnIsParent && (
-                    <span>
-                        <StandardBtn
-                            onClick={handleMoveEnd}
-                            icon={<ArrowDownOutlined />}
-                            title={t('navigation.actions.move-selected')}
-                        />
-                    </span>
+                    <StandardBtn
+                        onClick={handleMoveEnd}
+                        icon={<ArrowDownOutlined />}
+                        aria-label="move-selection"
+                        title={t('navigation.actions.move-selected')}
+                    />
                 )}
 
                 {searchIsNavigation && (
-                    <span>
-                        <StandardBtn
-                            onClick={handleDeleteElements}
-                            icon={<DeleteOutlined />}
-                            title={t('navigation.actions.detach-selected')}
-                        />
-                    </span>
+                    <StandardBtn
+                        onClick={handleDeleteElements}
+                        aria-label="detach-selection"
+                        icon={<DeleteOutlined />}
+                        title={t('navigation.actions.detach-selected')}
+                    />
                 )}
             </>
         );
