@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import NavigationHeader from 'components/NavigationHeader';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
+import {resetNavigationRecordDetail} from 'redux/navigation';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
@@ -26,7 +26,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     const {activePanel} = useAppSelector(state => state);
 
     const [{lang}] = useLang();
-    const [, updateActiveTree] = useActiveTree();
+    const [activeTree, updateActiveTree] = useActiveTree();
 
     const {data, loading} = useQuery<GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables>(getTreeListQuery, {
         variables: {treeId: tree},
@@ -36,6 +36,10 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     useEffect(() => {
         if (activePanel !== WorkspacePanels.TREE) {
             return;
+        }
+
+        if (activeTree?.id !== tree) {
+            dispatch(resetNavigationRecordDetail());
         }
 
         const currentTree = data?.trees?.list[0];
@@ -55,14 +59,9 @@ function Navigation({tree}: INavigationProps): JSX.Element {
 
             dispatch(setNotificationBase(baseNotification));
         }
-    }, [data, loading, lang, updateActiveTree, t, dispatch, activePanel]);
+    }, [data, loading, lang, updateActiveTree, t, dispatch, activePanel, activeTree, tree]);
 
-    return (
-        <>
-            <NavigationHeader />
-            <NavigationView tree={tree} />
-        </>
-    );
+    return <NavigationView tree={tree} />;
 }
 
 export default Navigation;

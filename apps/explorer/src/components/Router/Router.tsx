@@ -43,9 +43,7 @@ function Router(): JSX.Element {
                             />
                         </Header>
                         <Layout style={{overflow: 'hidden', position: 'relative'}}>
-                            <Content
-                                style={{background: themingVar['@default-bg'], padding: '0 .5em', overflow: 'hidden'}}
-                            >
+                            <Content style={{background: themingVar['@default-bg'], overflow: 'hidden'}}>
                                 <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
                                 <Routes />
                             </Content>

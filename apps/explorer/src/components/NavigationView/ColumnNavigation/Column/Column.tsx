@@ -2,17 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
-import ActiveCellNavigation from 'components/ActiveCellNavigation';
+import Cell from 'components/NavigationView/ColumnNavigation/Column/Cell';
 import React, {createRef, useEffect, useState} from 'react';
-import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
-import themingVar from '../../../themingVar';
-import {INavigationPath} from '../../../_types/types';
-import CellNavigation from '../../CellNavigation';
-import HeaderColumnNavigation from '../../HeaderColumnNavigation';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {IRecordAndChildren} from '../../../../graphQL/queries/trees/getTreeContentQuery';
+import themingVar from '../../../../themingVar';
+import HeaderColumnNavigation from '../HeaderColumnNavigation';
 
-const Column = styled.div`
+const ColumnWrapper = styled.div`
     border-right: 1px solid ${themingVar['@divider-color']};
     min-width: 20rem;
     height: 100%;
@@ -23,7 +21,7 @@ const Column = styled.div`
 `;
 
 const ColumnContent = styled.div`
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 100%;
 `;
 
@@ -34,17 +32,15 @@ const SpinWrapper = styled.div`
     place-items: center;
 `;
 
-interface IColumnFromPathProps {
+interface IColumnProps {
     treeElements: IRecordAndChildren[];
-    pathPart: INavigationPath;
+    pathPart: RecordIdentity_whoAmI | null;
     depth: number;
     showLoading: boolean;
     columnActive: boolean;
 }
 
-const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActive}: IColumnFromPathProps) => {
-    const navigation = useAppSelector(state => state.navigation);
-
+const Column = ({pathPart, treeElements, depth, showLoading, columnActive}: IColumnProps) => {
     const parent = findPathInTree(pathPart, treeElements);
 
     const [items, setItems] = useState(parent?.children ?? []);
@@ -56,21 +52,22 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActiv
     }, [treeElements, parent, setItems]);
 
     useEffect(() => {
-        if (ref.current && ref.current.scrollIntoView) {
+        if (ref?.current?.scrollIntoView) {
             ref.current?.scrollIntoView({
-                behavior: 'smooth'
+                behavior: 'smooth',
+                block: 'end'
             });
         }
-    }, [ref, navigation.recordDetail]);
+    }, [ref]);
 
     if (showLoading) {
         return (
-            <Column>
-                <HeaderColumnNavigation depth={depth} />
+            <ColumnWrapper>
+                <HeaderColumnNavigation depth={depth} treeElement={parent} />
                 <SpinWrapper>
                     <Spin />
                 </SpinWrapper>
-            </Column>
+            </ColumnWrapper>
         );
     }
 
@@ -80,26 +77,19 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActiv
         }
 
         return (
-            <Column>
-                <HeaderColumnNavigation depth={depth} setItems={setItems} isActive={columnActive} />
+            <ColumnWrapper data-testid="navigation-column">
+                <HeaderColumnNavigation depth={depth} isActive={columnActive} treeElement={parent} />
                 <ColumnContent ref={ref}>
-                    {items.map(treeElement =>
-                        columnActive ? (
-                            <ActiveCellNavigation
-                                key={treeElement.record.whoAmI.id}
-                                treeElement={treeElement}
-                                depth={depth}
-                            />
-                        ) : (
-                            <CellNavigation
-                                key={treeElement.record.whoAmI.id}
-                                treeElement={treeElement}
-                                depth={depth}
-                            />
-                        )
-                    )}
+                    {items.map(treeElement => (
+                        <Cell
+                            key={treeElement.record.whoAmI.id}
+                            treeElement={treeElement}
+                            depth={depth}
+                            isActive={columnActive}
+                        />
+                    ))}
                 </ColumnContent>
-            </Column>
+            </ColumnWrapper>
         );
     }
 
@@ -107,9 +97,13 @@ const ColumnFromPath = ({pathPart, treeElements, depth, showLoading, columnActiv
 };
 
 const findPathInTree = (
-    pathPart: INavigationPath,
+    pathPart: RecordIdentity_whoAmI | null,
     treeElements: IRecordAndChildren[]
 ): IRecordAndChildren | undefined => {
+    if (!pathPart) {
+        return {record: null, children: treeElements};
+    }
+
     const parent = treeElements.find(treeElement => {
         return treeElement.record.whoAmI.id.toString() === pathPart.id.toString();
     });
@@ -138,4 +132,4 @@ const findPathInTree = (
     return;
 };
 
-export default ColumnFromPath;
+export default Column;

@@ -7,11 +7,11 @@ import {act} from 'react-dom/test-utils';
 import {navigationInitialState} from 'redux/navigation';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
+import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import DetailNavigation from './DetailNavigation';
 
 jest.mock(
-    '../LibraryItemsList/LibraryItemsListTable/RecordPreview',
+    '../../LibraryItemsList/LibraryItemsListTable/RecordPreview',
     () =>
         function RecordPreview() {
             return <div>RecordPreview</div>;
