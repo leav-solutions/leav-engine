@@ -69,3 +69,5 @@ magick-*
 
 # eslint cache
 *.eslintcache
+
+previews

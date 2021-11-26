@@ -69,22 +69,24 @@ const checkSync = (
     let sync = true;
 
     if (toCheck.sort) {
-        sync = state.sort.field === state.view.current.sort.field && state.sort.order === state.view.current.sort.order;
+        sync =
+            state.sort.field === state.view?.current?.sort.field &&
+            state.sort.order === state.view.current?.sort?.order;
     }
 
     if (toCheck.filters) {
-        sync = sync && JSON.stringify(state.view.current.filters) === JSON.stringify(state.filters);
+        sync = sync && JSON.stringify(state.view.current?.filters) === JSON.stringify(state.filters);
     }
 
     if (toCheck.display) {
         sync =
             sync &&
-            state.display.type === state.view.current.display.type &&
-            state.display.size === state.view.current.display.size;
+            state.display.type === state.view.current?.display?.type &&
+            state.display.size === state.view.current?.display?.size;
     }
 
     if (toCheck.fields) {
-        const viewFieldsKeys: string[] = !!state.view.current.settings?.find(s => s.name === viewSettingsField)
+        const viewFieldsKeys: string[] = !!state.view.current?.settings?.find(s => s.name === viewSettingsField)
             ? state.view.current?.settings.find(s => s.name === viewSettingsField).value
             : [];
 
