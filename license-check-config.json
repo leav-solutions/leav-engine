@@ -26,6 +26,7 @@
         "**/README.md",
         "**/*.graphql",
         "**/*.yml",
-        "apps/core/exports/*"
+        "apps/core/exports/*",
+        "docker/**/*"
     ]
 }
