@@ -5,7 +5,7 @@ import {DownOutlined, MenuOutlined, AppstoreFilled} from '@ant-design/icons';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {Button, Dropdown, Menu} from 'antd';
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
@@ -15,13 +15,11 @@ const CustomButton = styled(Button)`
     padding: 0.3rem;
 `;
 
-const CustomMenu = styled(Menu)``;
-
 function DisplayOptions(): JSX.Element {
     const {t} = useTranslation();
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
-
+    const [visible, setVisible] = useState<boolean>(false);
     const sizes = {
         [ViewSizes.SMALL]: t('items_list.display.small'),
         [ViewSizes.MEDIUM]: t('items_list.display.medium'),
@@ -33,14 +31,14 @@ function DisplayOptions(): JSX.Element {
         MORE = 'MORE'
     }
 
-    const changeType = (type: ViewTypes) => {
+    const _handleChangeType = (type: ViewTypes) => {
         searchDispatch({
             type: SearchActionTypes.SET_DISPLAY,
             display: {type, size: searchState.display.size}
         });
     };
 
-    const changeSize = (action: SizeAction) => {
+    const _handleChangeSize = (action: SizeAction) => {
         let idx = Object.keys(sizes).indexOf(searchState.display.size);
         idx = action === SizeAction.LESS ? idx - 1 : idx + 1;
         idx = idx < 0 ? 0 : idx > 2 ? 2 : idx;
@@ -51,45 +49,48 @@ function DisplayOptions(): JSX.Element {
         });
     };
 
+    const _handleVisibleChange = () => setVisible(!visible);
+
     return (
         <Dropdown
+            visible={visible}
+            onVisibleChange={_handleVisibleChange}
+            trigger={['click']}
             overlay={
-                <CustomMenu>
-                    {
-                        <Menu.Item>
-                            <Button
-                                shape="circle"
-                                disabled={searchState.display.size === ViewSizes.SMALL}
-                                onClick={() => changeSize(SizeAction.LESS)}
-                                size="small"
-                            >
-                                -
-                            </Button>
-                            {` ${sizes[searchState.display.size]} `}
-                            <Button
-                                shape="circle"
-                                disabled={searchState.display.size === ViewSizes.BIG}
-                                onClick={() => changeSize(SizeAction.MORE)}
-                                size="small"
-                            >
-                                +
-                            </Button>
-                        </Menu.Item>
-                    }
+                <Menu>
+                    <Menu.Item>
+                        <Button
+                            shape="circle"
+                            disabled={searchState.display.size === ViewSizes.SMALL}
+                            onClick={() => _handleChangeSize(SizeAction.LESS)}
+                            size="small"
+                        >
+                            -
+                        </Button>
+                        {` ${sizes[searchState.display.size]} `}
+                        <Button
+                            shape="circle"
+                            disabled={searchState.display.size === ViewSizes.BIG}
+                            onClick={() => _handleChangeSize(SizeAction.MORE)}
+                            size="small"
+                        >
+                            +
+                        </Button>
+                    </Menu.Item>
                     <Menu.Divider />
-                    <Menu.Item onClick={() => changeType(ViewTypes.list)} icon={<MenuOutlined />}>
+                    <Menu.Item onClick={() => _handleChangeType(ViewTypes.list)} icon={<MenuOutlined />}>
                         {t('view.type-list')}
                     </Menu.Item>
-                    <Menu.Item onClick={() => changeType(ViewTypes.cards)} icon={<AppstoreFilled />}>
+                    <Menu.Item onClick={() => _handleChangeType(ViewTypes.cards)} icon={<AppstoreFilled />}>
                         {t('view.type-cards')}
                     </Menu.Item>
-                </CustomMenu>
+                </Menu>
             }
         >
-            <CustomButton title={sizes[searchState.display.size]}>
-                {<IconViewType type={searchState.display.type} />}
+            <Button>
+                <IconViewType type={searchState.display.type} />
                 <DownOutlined />
-            </CustomButton>
+            </Button>
         </Dropdown>
     );
 }

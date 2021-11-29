@@ -153,6 +153,7 @@
         "not-classified-in": "Not classified in",
         "equal": "Is Equal",
         "not-equal": "Isn't Equal",
+        "through": "Through",
         "begin-with": "Begin With",
         "end-with": "End With",
         "is-empty": "Is Empty",
@@ -272,7 +273,7 @@
         "active-tree": "You are currently on the tree {{tree}}"
     },
     "view": {
-        "list": "List View",
+        "Views": "Views",
         "search": "Search view",
         "my-views": "My views",
         "shared-views": "Shared",

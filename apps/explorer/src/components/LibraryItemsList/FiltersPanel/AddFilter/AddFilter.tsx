@@ -62,7 +62,7 @@ function AddFilter({showAttr, setShowAttr}: IAttributeListProps): JSX.Element {
             index: ++filterIndex,
             key: String(filterIndex),
             active: true,
-            condition: RecordFilterCondition[TreeConditionFilter.CLASSIFIED_IN],
+            condition: TreeConditionFilter.CLASSIFIED_IN,
             tree: selectedTree,
             value: {value: null}
         }));

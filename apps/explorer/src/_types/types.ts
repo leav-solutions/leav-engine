@@ -2,7 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {String} from 'lodash';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {
     RecordFilterCondition,
     RecordFilterOperator,
@@ -89,9 +91,9 @@ export interface IFilter {
     key: string; // attribute / tree key
     value: {value: boolean | string | number | null; label?: string};
     active: boolean;
-    condition: RecordFilterCondition;
-    attribute?: IAttribute; // Put the attribute in the filter to avoid having to fetch him multiple times
-    tree?: ITree;
+    condition: AttributeConditionFilter | TreeConditionFilter | ThroughConditionFilter;
+    attribute?: IAttribute; // Put the attribute in the filter to avoid having to fetch them multiple times
+    treeId?: string;
 }
 
 export enum AttributeFormat {
@@ -124,6 +126,7 @@ export enum TreeConditionFilter {
 }
 
 export enum AttributeConditionFilter {
+    THROUGH = 'THROUGH',
     CONTAINS = 'CONTAINS',
     NOT_CONTAINS = 'NOT_CONTAINS',
     EQUAL = 'EQUAL',
@@ -132,6 +135,10 @@ export enum AttributeConditionFilter {
     END_WITH = 'END_WITH',
     GREATER_THAN = 'GREATER_THAN',
     LESS_THAN = 'LESS_THAN'
+}
+
+export enum ThroughConditionFilter {
+    THROUGH = 'THROUGH'
 }
 
 export interface IQueryFilter {
@@ -157,7 +164,7 @@ export interface IAttribute {
     isMultiple: boolean;
     linkedLibrary?: ILibraryDetailExtendedAttributeParentLinkedLibrary;
     linkedTree?: ILibraryDetailExtendedAttributeParentLinkedTree;
-    parentAttributeData?: IParentAttributeData;
+    parentAttribute?: IAttribute;
     embedded_fields?: Array<GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields | null> | null;
 }
 

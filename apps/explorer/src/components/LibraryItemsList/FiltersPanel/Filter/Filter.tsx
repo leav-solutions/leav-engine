@@ -1,27 +1,50 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MoreOutlined, DownOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu} from 'antd';
+import {
+    MoreOutlined,
+    DownOutlined,
+    CodeSandboxCircleFilled,
+    PropertySafetyFilled,
+    CloseCircleFilled
+} from '@ant-design/icons';
+import {Button, Dropdown, Menu, Typography} from 'antd';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useCallback, useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
+import {AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {localizedTranslation} from '../../../../utils';
-import {AttributeConditionFilter, AttributeFormat, IFilter, TreeConditionFilter} from '../../../../_types/types';
+import {localizedTranslation, checkTypeIsLink, defaultFilterConditionByAttributeFormat} from 'utils';
+import {
+    AttributeConditionFilter,
+    AttributeFormat,
+    IAttribute,
+    IFilter,
+    ISystemTranslation,
+    ThroughConditionFilter,
+    TreeConditionFilter
+} from '../../../../_types/types';
+
 import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
 import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
 import TextFilter from '../../DisplayTypeSelector/FilterInput/TextFilter';
 import FilterAttributeCondition from '../FilterAttributeCondition';
 import FilterTreeCondition from '../FilterTreeCondition';
-import FiltersDropdown from '../../MenuView/FiltersDropdown';
+import FiltersDropdown from '../../FiltersDropdown';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
+import {
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute,
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
+} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
+import {getDefaultFilterValueByFormat} from '../AddFilter/AddFilter';
 
 interface IWrapperProps {
     active: boolean;
@@ -90,6 +113,7 @@ const HeadInfos = styled.div`
     grid-template-columns: 1fr 1fr;
     justify-items: space-around;
     align-items: center;
+    justify-content: center;
 
     background: ${themingVar['@default-bg']} 0% 0% no-repeat padding-box;
     box-shadow: ${themingVar['@leav-small-shadow']};
@@ -153,7 +177,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     };
 
     const _getValueFromNode = (node: ITreeNode): IFilter['value'] => {
-        return typeof node === 'undefined' || node.id === filter.tree.id
+        return typeof node === 'undefined' || node.id === filter.treeId
             ? {value: null}
             : {value: node.id, label: node.title};
     };
@@ -213,12 +237,46 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         [t]
     );
 
+    const getAttributes = (): GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] => {
+        if (filter.condition === ThroughConditionFilter.THROUGH) {
+            return filter.attribute?.linkedLibrary?.attributes;
+        }
+
+        if (typeof filter.attribute?.parentAttribute !== 'undefined') {
+            return filter.attribute?.parentAttribute?.linkedLibrary?.attributes;
+        }
+
+        return activeLibrary.attributes;
+    };
+
+    const _handleResetClick = () => {
+        const filters = [...searchState.filters];
+
+        const newFilter = {
+            index: searchState.filters.length,
+            active: true,
+            key: filter.attribute.id,
+            condition: RecordFilterCondition[defaultFilterConditionByAttributeFormat(filter.attribute.format)],
+            attribute: filter.attribute?.parentAttribute,
+            value: {value: getDefaultFilterValueByFormat(filter.attribute.format)}
+        };
+
+        filters.splice(filter.index, 1, {...newFilter, index: filter.index});
+
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters
+        });
+    };
+
+    // TODO: retrieve label tree (fixmes below)
+
     return (
         <>
             {showSelectTreeNodeModal && (
                 <SelectTreeNodeModal
-                    selectedNodeKey={(filter.value.value as string) || filter.tree.id}
-                    tree={{id: filter.tree.id, label: filter.tree.label}}
+                    selectedNodeKey={(filter.value.value as string) || filter.treeId}
+                    tree={{id: filter.treeId, label: {fr: filter.treeId, en: filter.treeId}}} // FIXME: label
                     onSubmit={node => updateFilterValue(_getValueFromNode(node))}
                     onClose={() => setShowSelectTreeNodeModal(false)}
                     visible={showSelectTreeNodeModal}
@@ -230,13 +288,27 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                 <Content>
                     <Head>
                         <HeadInfos>
-                            <FiltersDropdown
-                                label={`${localizedTranslation(filter.attribute?.label || filter.tree.label, lang)}`}
-                                icon={<DownOutlined />}
-                                type={'text'}
-                                filterIndex={filter.index}
-                                activeLibrary={activeLibrary}
-                            />
+                            <div style={{display: 'grid'}}>
+                                {!!filter.attribute?.parentAttribute && (
+                                    <Button type="text" size="small" onClick={_handleResetClick}>
+                                        <Typography.Text type="secondary">
+                                            {localizedTranslation(filter.attribute?.parentAttribute?.label, lang)}{' '}
+                                            <CloseCircleFilled />
+                                        </Typography.Text>
+                                    </Button>
+                                )}
+                                <FiltersDropdown
+                                    libraryId={activeLibrary.id}
+                                    button={{
+                                        label: localizedTranslation(filter.attribute?.label, lang) || filter.treeId, // FIXME: tree label
+                                        icon: <DownOutlined />,
+                                        type: 'text'
+                                    }}
+                                    filter={filter}
+                                    attributes={getAttributes()}
+                                    trees={activeLibrary.trees}
+                                />
+                            </div>
                             {!!filter.attribute ? (
                                 <FilterAttributeCondition filter={filter} updateFilterValue={updateFilterValue} />
                             ) : (
@@ -257,4 +329,3 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 }
 
 export default Filter;
-/* */

@@ -48,11 +48,13 @@ export interface ILibraryDetailExtendedGqlNames {
 
 export interface ILibraryDetailExtendedAttributeParentLinkedLibrary {
     id: string;
+    label: ISystemTranslation;
     attributes: ILibraryDetailExtendedAttributeChild[];
 }
 
 export interface ILibraryDetailExtendedAttributeParentLinkedTree {
     id: string;
+    label: ISystemTranslation;
     libraries: Array<{
         library: {
             id: string;
@@ -62,11 +64,11 @@ export interface ILibraryDetailExtendedAttributeParentLinkedTree {
 }
 
 interface ILibraryDetailExtendedAttribute {
+    id: string;
     type: AttributeType;
     format: AttributeFormat;
     label: ISystemTranslation;
     multiple_values: boolean;
-    id: string;
 }
 
 export type ILibraryDetailExtendedAttributeChild = ILibraryDetailExtendedAttribute;
@@ -134,6 +136,10 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                                 }
                                 ... on TreeAttribute {
                                     id
+                                    linked_tree {
+                                        id
+                                        label
+                                    }
                                 }
                             }
                             __typename
@@ -163,6 +169,10 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                                         }
                                         ... on TreeAttribute {
                                             id
+                                            linked_tree {
+                                                id
+                                                label
+                                            }
                                         }
                                     }
                                 }

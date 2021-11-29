@@ -62,10 +62,10 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
 
     return (
         <Wrapper>
-            <Space size="large">
-                <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
-                {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
-            </Space>
+            {/* <Space size="large"> */}
+            {/* <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} /> */}
+            {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
+            {/* </Space> */}
 
             <Space size="large">
                 <MenuSelection />

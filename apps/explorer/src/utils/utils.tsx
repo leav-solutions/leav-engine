@@ -221,12 +221,7 @@ export const getExtendedFormat = (itemContent: any): ExtendFormat[] => {
 
 export const paginationOptions = [5, 10, 20, 50, 100];
 
-interface ICustomAttribute extends IAttribute {
-    path?: string;
-    embeddedFieldData?: IEmbeddedFields;
-}
-
-export const getFieldsKeyFromAttribute = (attribute: ISelectedAttribute | ICustomAttribute) => {
+export const getFieldsKeyFromAttribute = (attribute: ISelectedAttribute) => {
     if (attribute?.format === AttributeFormat.extended && attribute.path) {
         return `${attribute.path}`;
     } else if (attribute.parentAttributeData) {
@@ -291,6 +286,7 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
 
 type TextSizeLimit = 'small' | 'medium' | 'big' | number;
 
+// TODO: to del
 export const limitTextSize = (text: string, size: TextSizeLimit) => {
     let numberSize: number;
     if (isString(size)) {
@@ -315,6 +311,7 @@ export const limitTextSize = (text: string, size: TextSizeLimit) => {
         return text;
     }
 };
+
 export const isAttributeSelected = (path: string, selectedAttributes: ISelectedAttribute[]): boolean =>
     selectedAttributes.findIndex(selectedAttribute => selectedAttribute.path === path) !== -1;
 
@@ -366,7 +363,7 @@ export const getAttributeFromKey = (key: string, library: string, attributes: IA
 export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): AttributeConditionFilter => {
     switch (format) {
         case AttributeFormat.text:
-            return AttributeConditionFilter.CONTAINS;
+            return AttributeConditionFilter.EQUAL;
         case AttributeFormat.boolean:
         case AttributeFormat.date:
         case AttributeFormat.numeric:

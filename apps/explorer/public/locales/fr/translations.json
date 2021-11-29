@@ -156,6 +156,7 @@
         "not-contains": "Ne contient pas",
         "equal": "Est égal",
         "not-equal": "N'est pas égal",
+        "through": "A travers",
         "begin-with": "Commence par",
         "end-with": "Fini Par",
         "is-empty": "Est Vide",
@@ -276,7 +277,7 @@
         "active-tree": "Vous êtes sur l'arbre {{tree}}"
     },
     "view": {
-        "list": "Liste des vues",
+        "views": "Vues",
         "search": "Rechercher une vue",
         "my-views": "Mes vues",
         "shared-views": "Partagées",

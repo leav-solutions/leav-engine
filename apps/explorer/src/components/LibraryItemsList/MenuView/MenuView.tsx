@@ -32,7 +32,7 @@ import {TypeSideItem} from '../../../_types/types';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import _ from 'lodash';
-import FiltersDropdown from './FiltersDropdown';
+import FiltersDropdown from '../FiltersDropdown';
 import themingVar from '../../../themingVar';
 import IconViewType from '../../IconViewType/IconViewType';
 
@@ -225,7 +225,15 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     <Button onClick={_toggleShowFilters} icon={<FilterOutlined />}>
                         {t('filters.filters')}
                     </Button>
-                    <FiltersDropdown icon={<MoreOutlined />} type={'default'} activeLibrary={activeLibrary} />
+                    <FiltersDropdown
+                        libraryId={activeLibrary.id}
+                        button={{
+                            icon: <MoreOutlined />,
+                            type: 'default'
+                        }}
+                        attributes={activeLibrary.attributes}
+                        trees={activeLibrary.trees}
+                    />
                 </Button.Group>
             </Badge>
         </Space>

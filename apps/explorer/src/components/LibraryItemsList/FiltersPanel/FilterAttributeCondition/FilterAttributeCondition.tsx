@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Select} from 'antd';
+import {Select, Divider} from 'antd';
 import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/BooleanFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -10,8 +10,9 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {allowedTypeOperator, getAttributeFromKey} from '../../../../utils';
-import {AttributeConditionFilter, AttributeFormat, IFilter} from '../../../../_types/types';
+import {AttributeConditionFilter, AttributeFormat, AttributeType, IFilter} from '../../../../_types/types';
 import {getAttributeConditionOptions} from '../FiltersOptions';
+import {checkTypeIsLink} from 'utils';
 
 const Wrapper = styled.span`
     padding: 3px 8px;
@@ -41,15 +42,16 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const attribute = getAttributeFromKey(filter.key, searchState.library.id, searchState.attributes);
+    // show through condition if attribute is a link and its zero depth
+    const showthroughCondition =
+        checkTypeIsLink(filter.attribute?.type) && typeof filter.attribute?.parentAttribute === 'undefined';
 
-    if (!attribute) {
-        return <div>error</div>;
-    }
+    const attributeConditionOptions = getAttributeConditionOptions(t);
 
-    const conditionOptions = getAttributeConditionOptions(t);
-    const conditionOptionsByType = conditionOptions.filter(
-        conditionOption => attribute.format && allowedTypeOperator[attribute.format]?.includes(conditionOption.value)
+    const conditionOptionsByType = attributeConditionOptions.filter(
+        conditionOption =>
+            (conditionOption.value === AttributeConditionFilter.THROUGH && showthroughCondition) ||
+            (filter.attribute.format && allowedTypeOperator[filter.attribute.format]?.includes(conditionOption.value))
     );
 
     const handleOperatorChange = (e: any) => {
@@ -78,11 +80,13 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
                     onChange={handleOperatorChange}
                     data-testid="filter-condition-select"
                 >
-                    {conditionOptionsByType.map(condition => (
-                        <Select.Option key={condition.value} value={condition.value}>
-                            <span>{condition.text}</span>
-                        </Select.Option>
-                    ))}
+                    {conditionOptionsByType
+                        .filter(c => c.value !== AttributeConditionFilter.THROUGH || showthroughCondition)
+                        .map(condition => (
+                            <Select.Option key={condition.value} value={condition.value}>
+                                <span>{condition.text}</span>
+                            </Select.Option>
+                        ))}
                 </Select>
             </Wrapper>
         );

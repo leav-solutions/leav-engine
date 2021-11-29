@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
-import {AttributeConditionFilter, IFilter, IQueryFilter, OperatorFilter} from '_types/types';
+import {AttributeConditionFilter, IFilter, IQueryFilter} from '_types/types';
 import {mockAttribute} from './attribute';
 
 export const mockFilter: IFilter = {
@@ -10,7 +10,7 @@ export const mockFilter: IFilter = {
     key: 'testId',
     value: {value: 'test-value'},
     active: true,
-    condition: RecordFilterCondition.CONTAINS,
+    condition: AttributeConditionFilter.CONTAINS,
     attribute: mockAttribute
 };
 
