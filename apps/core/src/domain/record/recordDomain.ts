@@ -5,6 +5,7 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 import moment from 'moment';
 import {join} from 'path';
 import {IUtils} from 'utils/utils';
@@ -33,6 +34,7 @@ import {
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
+import getAttributesFromField from './helpers/getAttributesFromField';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -138,6 +140,7 @@ interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.infra.library'?: ILibraryRepo;
+    'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils'?: IUtils;
 }
@@ -150,6 +153,7 @@ export default function ({
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.record': recordPermissionDomain = null,
     'core.infra.library': libraryRepo = null,
+    'core.infra.tree': treeRepo = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.utils': utils = null
 }: IDeps = {}): IRecordDomain {
@@ -308,34 +312,6 @@ export default function ({
         if (stackSize !== 1) {
             throw new ValidationError({id: Errors.INVALID_FILTERS_EXPRESSION});
         }
-    };
-
-    const _getAttributesFromField = async (field: string, ctx: IQueryInfos): Promise<IAttribute[]> => {
-        const fields = field.split('.');
-        const attributes: IAttribute[] = [];
-
-        let linkedLibrary;
-        let extended = false;
-        for (const f of fields) {
-            if (linkedLibrary) {
-                const attrLinkedLibrary = await attributeDomain.getLibraryAttributes(linkedLibrary, ctx);
-
-                if (!attrLinkedLibrary.find(a => a.id === f)) {
-                    throw new ValidationError({id: Errors.INVALID_FILTER_FIELDS});
-                }
-            }
-
-            const attribute: IAttribute = !extended
-                ? await attributeDomain.getAttributeProperties({id: f, ctx})
-                : {id: f, type: AttributeTypes.SIMPLE, format: AttributeFormats.EXTENDED}; // not necessary extended
-
-            linkedLibrary = attribute.linked_library;
-            extended = attribute.format === AttributeFormats.EXTENDED;
-
-            attributes.push(attribute);
-        }
-
-        return attributes;
     };
 
     const _getSimpleLinkedRecords = async (
@@ -555,7 +531,15 @@ export default function ({
                 let filter: IRecordFilterOption = {};
 
                 if (_isAttributeFilter(f)) {
-                    const attributes = await _getAttributesFromField(f.field, ctx);
+                    const attributes = await getAttributesFromField(
+                        f.field,
+                        {
+                            'core.domain.attribute': attributeDomain,
+                            'core.infra.library': libraryRepo,
+                            'core.infra.tree': treeRepo
+                        },
+                        ctx
+                    );
                     let value: any = f.value;
                     const lastAttr = attributes[attributes.length - 1];
 
@@ -584,7 +568,15 @@ export default function ({
             // Check sort fields
             if (sort && sort?.field) {
                 fullSort = {
-                    attributes: await _getAttributesFromField(sort.field, ctx),
+                    attributes: await getAttributesFromField(
+                        sort.field,
+                        {
+                            'core.domain.attribute': attributeDomain,
+                            'core.infra.library': libraryRepo,
+                            'core.infra.tree': treeRepo
+                        },
+                        ctx
+                    ),
                     order: sort.order
                 };
             }

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {TreeCondition, AttributeCondition} from '../../../../_types/record';
+import {AttributeCondition, TreeCondition} from '../../../../_types/record';
 import {
     gqlAddElemToTree,
     gqlCreateRecord,
@@ -598,7 +598,11 @@ describe('Records', () => {
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
                     ${sfTestLibQueryName}(
-                        filters: [{field: "${testTreeAttrId}.${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
+                        filters: [{
+                            field: "${testTreeAttrId}.${sfTestLibTreeId}.${testSimpleAttrId}",
+                            condition: ${AttributeCondition.EQUAL},
+                            value: "C"
+                        }]
                     ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
@@ -609,7 +613,9 @@ describe('Records', () => {
 
             test('Sort', async () => {
                 const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(sort: {field: "${testTreeAttrId}.${testSimpleAttrId}", order: asc}) {
+                    `{ ${sfTestLibQueryName}(
+                            sort: {field: "${testTreeAttrId}.${sfTestLibTreeId}.${testSimpleAttrId}",order: asc}
+                        ) {
                         list {
                             id
                         }
@@ -629,8 +635,8 @@ describe('Records', () => {
                 const res = await makeGraphQlCall(`{
                     ${sfTestLibTreeIdQueryName}(
                         filters: [{
-                            value: "${sfTestLibTreeId}/${sfTreeRecord4}", 
-                            condition: ${TreeCondition.CLASSIFIED_IN}, 
+                            value: "${sfTestLibTreeId}/${sfTreeRecord4}",
+                            condition: ${TreeCondition.CLASSIFIED_IN},
                             treeId: "${testTreeId}"
                         }]) { list {id}} }`);
 
@@ -646,8 +652,8 @@ describe('Records', () => {
                 const res = await makeGraphQlCall(`{
                     ${sfTestLibTreeIdQueryName}(
                         filters: [{
-                            value: "${sfTestLibTreeId}/${sfTreeRecord4}", 
-                            condition: ${TreeCondition.NOT_CLASSIFIED_IN}, 
+                            value: "${sfTestLibTreeId}/${sfTreeRecord4}",
+                            condition: ${TreeCondition.NOT_CLASSIFIED_IN},
                             treeId: "${testTreeId}"
                         }]) { list {id}} }`);
 
