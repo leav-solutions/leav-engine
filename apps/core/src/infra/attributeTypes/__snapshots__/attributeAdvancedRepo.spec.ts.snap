@@ -75,9 +75,9 @@ Object {
     "value2": "MyLabel",
   },
   "query": "FILTER FIRST(
-                FOR v, e IN 1 OUTBOUND r._id
+                FOR rv, re IN 1 OUTBOUND r._id
                 @@value0
-                FILTER e.attribute == @value1 RETURN v.value
+                FILTER re.attribute == @value1 RETURN rv.value
             ) == @value2",
 }
 `;

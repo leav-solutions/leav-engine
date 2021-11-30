@@ -16,7 +16,7 @@ import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {mockAttrSimple, mockAttrSimpleLink, mockAttrTree} from '../../__tests__/mocks/attribute';
+import {mockAttrAdvLink, mockAttrSimple, mockAttrSimpleLink, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -336,6 +336,86 @@ describe('RecordDomain', () => {
                 expect(recRepoFilters[0].attributes.length).toBe(2);
                 expect(recRepoFilters[0].attributes[0].id).toBe('link_attribute');
                 expect(recRepoFilters[0].attributes[1].id).toBe('library_label');
+            });
+
+            test('If child attribute is a link, search on label', async () => {
+                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromiseMultiple([
+                        {
+                            ...mockAttrSimpleLink,
+                            id: 'link_attribute'
+                        },
+                        {
+                            ...mockAttrAdvLink,
+                            id: 'child_link_attribute'
+                        },
+                        {
+                            ...mockAttrSimple,
+                            id: 'child_library_label'
+                        }
+                    ]),
+                    getLibraryAttributes: global.__mockPromise([
+                        {
+                            ...mockAttrSimple,
+                            id: 'child_link_attribute'
+                        }
+                    ])
+                };
+
+                const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromiseMultiple([
+                        {
+                            list: [
+                                {
+                                    ...mockLibrary,
+                                    id: 'lib1',
+                                    recordIdentityConf: {
+                                        label: 'child_link_attribute'
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            list: [
+                                {
+                                    ...mockLibrary,
+                                    id: 'lib1',
+                                    recordIdentityConf: {
+                                        label: 'child_library_label'
+                                    }
+                                }
+                            ]
+                        }
+                    ])
+                };
+
+                const recDomain = recordDomain({
+                    'core.infra.record': recRepo as IRecordRepo,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain
+                });
+
+                await recDomain.find({
+                    params: {
+                        library: 'test_lib',
+                        filters: [
+                            {
+                                field: 'link_attribute.child_link_attribute',
+                                condition: AttributeCondition.CONTAINS,
+                                value: 'some_filter'
+                            }
+                        ]
+                    },
+                    ctx
+                });
+
+                expect(recRepo.find.mock.calls.length).toBe(1);
+                const {filters: recRepoFilters} = recRepo.find.mock.calls[0][0];
+                expect(recRepoFilters[0].attributes.length).toBe(3);
+                expect(recRepoFilters[0].attributes[0].id).toBe('link_attribute');
+                expect(recRepoFilters[0].attributes[1].id).toBe('child_link_attribute');
+                expect(recRepoFilters[0].attributes[2].id).toBe('child_library_label');
             });
         });
 

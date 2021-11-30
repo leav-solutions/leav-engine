@@ -27,15 +27,24 @@ export interface IGetAttributesFromFieldsHelper {
  * @param field
  * @param ctx
  */
-export default async (
-    field: string,
-    {
+const getAttributesFromField = async (field: string, deps: IDeps, ctx: IQueryInfos): Promise<IAttribute[]> => {
+    const {
         'core.domain.attribute': attributeDomain = null,
         'core.infra.library': libraryRepo = null,
         'core.infra.tree': treeRepo = null
-    }: IDeps,
-    ctx: IQueryInfos
-): Promise<IAttribute[]> => {
+    } = deps;
+
+    const _getLabelOrIdAttribute = async (library: string): Promise<string> => {
+        const linkedLibraryProps = await libraryRepo.getLibraries({
+            params: {filters: {id: library}},
+            ctx
+        });
+
+        return linkedLibraryProps.list.length && linkedLibraryProps.list[0].recordIdentityConf?.label
+            ? linkedLibraryProps.list[0].recordIdentityConf?.label
+            : 'id'; // label is not configured, search on ID
+    };
+
     const fields = field.split('.');
 
     if (!fields.length) {
@@ -44,7 +53,7 @@ export default async (
 
     // Get type and format for first field => this is the "main" attribute we're filtering from
     const mainAttribute = await attributeDomain.getAttributeProperties({id: fields[0], ctx});
-    const attributes: IAttribute[] = [mainAttribute];
+    let attributes: IAttribute[] = [mainAttribute];
     switch (mainAttribute.type) {
         case AttributeTypes.SIMPLE:
         case AttributeTypes.ADVANCED:
@@ -68,28 +77,24 @@ export default async (
 
             // If we have not selected a sub-attribute on a link attribute, force search on label
             if (!childAttribute) {
-                const linkedLibraryProps = await libraryRepo.getLibraries({
-                    params: {filters: {id: mainAttribute.linked_library}},
-                    ctx
-                });
-
-                childAttribute =
-                    linkedLibraryProps.list.length && linkedLibraryProps.list[0].recordIdentityConf?.label
-                        ? linkedLibraryProps.list[0].recordIdentityConf?.label
-                        : 'id'; // label is not configured, search on ID
+                childAttribute = await _getLabelOrIdAttribute(mainAttribute.linked_library);
             }
 
-            const attrLinkedLibrary = await attributeDomain.getLibraryAttributes(mainAttribute.linked_library, ctx);
+            // Check if child attribute is really linked to library
+            const attrLinkedLibraryAttributes = await attributeDomain.getLibraryAttributes(
+                mainAttribute.linked_library,
+                ctx
+            );
 
-            if (!attrLinkedLibrary.find(a => a.id === childAttribute)) {
+            if (!attrLinkedLibraryAttributes.find(a => a.id === childAttribute)) {
                 throw new ValidationError({id: Errors.INVALID_FILTER_FIELDS});
             }
 
-            const linkAttributeToSearch = await attributeDomain.getAttributeProperties({
-                id: childAttribute,
-                ctx
-            });
-            attributes.push(linkAttributeToSearch);
+            // Calling this function recursively will handle the case where child attribute is a link
+            // For example, if we filter on "category.created_by", we'll actually search on category.created_by.label
+            const subChildAttributes = await getAttributesFromField(childAttribute, deps, ctx);
+            attributes = [...attributes, ...subChildAttributes];
+
             break;
         }
         case AttributeTypes.TREE: {
@@ -156,19 +161,17 @@ export default async (
                     // Ignore error, we just won't use this attribute for search
                 }
             } else {
-                // Check if child attribute actually exists
+                // Check if child attribute really exists
                 const treeLibraryAttributes = await attributeDomain.getLibraryAttributes(treeLibrary, ctx);
 
                 if (!treeLibraryAttributes.find(a => a.id === childAttribute)) {
                     throw new ValidationError({id: Errors.INVALID_FILTER_FIELDS});
                 }
 
-                const childAttributeProps = await attributeDomain.getAttributeProperties({
-                    id: childAttribute,
-                    ctx
-                });
-
-                attributes.push(childAttributeProps);
+                // Calling this function recursively will handle the case where child attribute is a link
+                // For example, if we filter on "category.created_by", we'll actually search on category.created_by.label
+                const subChildAttributes = await getAttributesFromField(childAttribute, deps, ctx);
+                attributes = [...attributes, ...subChildAttributes];
             }
 
             break;
@@ -177,3 +180,5 @@ export default async (
 
     return attributes;
 };
+
+export default getAttributesFromField;

@@ -7,7 +7,7 @@ import {IRecordSort} from '_types/record';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 
 const VALUES_COLLECTION = 'core_values';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -266,13 +266,19 @@ export default function ({
 
             return query;
         },
-        filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery {
+        filterQueryPart(
+            attributes: IAttribute[],
+            queryPart: GeneratedAqlQuery,
+            parentIdentifier = BASE_QUERY_IDENTIFIER
+        ): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
+            const vIdentifier = aql.literal(parentIdentifier + 'v');
+            const eIdentifier = aql.literal(parentIdentifier + 'e');
             const advancedValue = aql`FIRST(
-                FOR v, e IN 1 OUTBOUND r._id
+                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
                 ${collec}
-                FILTER e.attribute == ${attributes[0].id} RETURN v.value
+                FILTER ${eIdentifier}.attribute == ${attributes[0].id} RETURN ${vIdentifier}.value
             )`;
 
             const query =
