@@ -1,13 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {render, screen} from '_tests/testUtils';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {IItem} from '../../../../_types/types';
-import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import ItemTileDisplay from './ItemTileDisplay';
 jest.mock(
     '../../LibraryItemsListTable/RecordPreview',
@@ -28,13 +26,7 @@ describe('ItemTileDisplay', () => {
 
     test('should call RecordPreview', async () => {
         await act(async () => {
-            render(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <ItemTileDisplay item={itemMock} />
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
+            render(<ItemTileDisplay item={itemMock} />);
         });
 
         expect(screen.getByText('RecordPreview')).toBeInTheDocument();

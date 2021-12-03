@@ -2,24 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    MenuOutlined,
-    SaveFilled,
     AppstoreFilled,
-    RollbackOutlined,
     FilterOutlined,
-    MoreOutlined
+    MenuOutlined,
+    MoreOutlined,
+    RollbackOutlined,
+    SaveFilled
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Button, Dropdown, Menu, Space, Badge} from 'antd';
+import {Badge, Button, Dropdown, Menu, Space} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import _ from 'lodash';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
-import styled from 'styled-components';
 import addViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
@@ -29,10 +30,7 @@ import {useLang} from '../../../hooks/LangHook/LangHook';
 import {limitTextSize, localizedTranslation} from '../../../utils';
 import {TypeSideItem} from '../../../_types/types';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
-import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
-import _ from 'lodash';
 import FiltersDropdown from './FiltersDropdown';
-import themingVar from '../../../themingVar';
 
 interface IMenuViewProps {
     activeLibrary: IActiveLibrary;
@@ -181,14 +179,6 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
             })
         );
     };
-
-    const CustomBadge = styled(Badge)`
-        float: right;
-
-        .ant-badge-count {
-            background: ${themingVar['@leav-primary-btn-bg-hover']};
-        }
-    `;
 
     return (
         <Space size="large">

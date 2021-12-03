@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import {message} from 'antd';
+import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import SelectCellsBtn, {
     SelectCellsBtnType
 } from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
@@ -16,7 +16,7 @@ import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {IconCross} from '../../../../../assets/icons/IconCross';
 import themingVar from '../../../../../themingVar';
-import {IRecordIdentityWhoAmI, PreviewSize, ISharedStateSelectionSearch} from '../../../../../_types/types';
+import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch, PreviewSize} from '../../../../../_types/types';
 
 const Info = styled.div`
     border-left: 1px solid ${themingVar['@divider-color']};
@@ -56,7 +56,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
             title: t('items-list-row.select-only'),
             button: (
                 <SelectCellsBtn
-                    type={SelectCellsBtnType.ONLY}
+                    selectionType={SelectCellsBtnType.ONLY}
                     text={t('items-list-row.select-only')}
                     record={record}
                     size={menuBtnSize}
@@ -67,7 +67,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
             title: t('items-list-row.select-all'),
             button: (
                 <SelectCellsBtn
-                    type={SelectCellsBtnType.ALL}
+                    selectionType={SelectCellsBtnType.ALL}
                     text={t('items-list-row.select-all')}
                     record={record}
                     size={menuBtnSize}

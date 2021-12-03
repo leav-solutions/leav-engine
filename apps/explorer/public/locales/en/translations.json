@@ -127,7 +127,7 @@
             "small": "small",
             "medium": "medium",
             "big": "big",
-            "display-tile": "Tile"
+            "display-tile": "Gallery"
         }
     },
     "items-list-row": {
@@ -221,8 +221,7 @@
         "cancel": "Cancel"
     },
     "select-view": {
-        "add-view-tile": "Add view tile",
-        "add-view-list": "Add view list",
+        "add-view": "Add view",
         "default-view": "Default view",
         "save": "Save view"
     },
@@ -280,7 +279,7 @@
         "my-views": "My views",
         "shared-views": "Shared",
         "type-list": "List",
-        "type-cards": "Tile",
+        "type-cards": "Gallery",
         "type-timeline": "View Timeline",
         "default": "Default view",
         "delete": "Delete",
@@ -301,9 +300,7 @@
             "type": "Type",
             "shared": "Shared",
             "color": "Color"
-        },
-
-        "type-tile": "View Tile"
+        }
     },
     "export": {
         "title": "Export",

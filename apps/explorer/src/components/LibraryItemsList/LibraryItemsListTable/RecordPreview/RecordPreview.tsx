@@ -134,9 +134,12 @@ const ImagePreviewTile = styled.div<IImagePreviewTileProps>`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 10rem;
     overflow: hidden;
     border-radius: 0.25rem 0.25rem 0 0;
+
+    img {
+        object-fit: contain;
+    }
 `;
 ImagePreviewTile.displayName = 'ImagePreviewTile';
 
