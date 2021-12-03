@@ -2,10 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
+import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
+import {ITree} from '_types/tree';
 import {PreviewSizes} from '../../_types/filesManager';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
@@ -18,6 +21,7 @@ export interface ICoreRecordApp {
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.tree'?: ITreeDomain;
     'core.utils'?: IUtils;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core.attribute'?: ICoreAttributeApp;
@@ -27,6 +31,7 @@ interface IDeps {
 export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
+    'core.domain.tree': treeDomain = null,
     'core.utils': utils = null,
     'core.app.core.attribute': attributeApp = null,
     'core.app.core.indexationManager': indexationManagerApp = null
@@ -132,7 +137,7 @@ export default function ({
                         value: String
                         condition: RecordFilterCondition,
                         operator: RecordFilterOperator,
-                        treeId: String
+                        tree: Tree
                     }
 
                     input RecordFilterInput {
@@ -174,6 +179,15 @@ export default function ({
                         },
                         async indexRecords(parent, {libraryId, records}, ctx): Promise<boolean> {
                             return indexationManagerApp.indexDatabase(ctx, libraryId, records);
+                        }
+                    },
+                    RecordFilter: {
+                        tree: async (recordFilter: IRecordFilterLight, _, ctx: IQueryInfos): Promise<ITree> => {
+                            if (!recordFilter.treeId) {
+                                return null;
+                            }
+
+                            return treeDomain.getTreeProperties(recordFilter.treeId, ctx);
                         }
                     }
                 }

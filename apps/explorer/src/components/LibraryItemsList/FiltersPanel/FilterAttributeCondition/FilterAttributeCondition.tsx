@@ -10,7 +10,14 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {allowedTypeOperator, getAttributeFromKey} from '../../../../utils';
-import {AttributeConditionFilter, AttributeFormat, AttributeType, IFilter} from '../../../../_types/types';
+import {
+    AttributeConditionFilter,
+    AttributeFormat,
+    AttributeType,
+    FilterType,
+    IFilterAttribute,
+    IFilterLibrary
+} from '../../../../_types/types';
 import {getAttributeConditionOptions} from '../FiltersOptions';
 import {checkTypeIsLink} from 'utils';
 
@@ -33,7 +40,7 @@ const BooleanWrapper = styled.span`
 `;
 
 interface IFilterAttributeConditionProps {
-    filter: IFilter;
+    filter: IFilterAttribute | IFilterLibrary;
     updateFilterValue: (newValue: any) => void;
 }
 
@@ -44,14 +51,19 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
 
     // show through condition if attribute is a link and its zero depth
     const showthroughCondition =
-        checkTypeIsLink(filter.attribute?.type) && typeof filter.attribute?.parentAttribute === 'undefined';
+        filter.type === FilterType.LIBRARY ||
+        ((checkTypeIsLink((filter as IFilterAttribute).attribute?.type) ||
+            (filter as IFilterAttribute).attribute?.type === AttributeType.tree) &&
+            typeof (filter as IFilterAttribute).attribute?.parentAttribute === 'undefined');
 
     const attributeConditionOptions = getAttributeConditionOptions(t);
 
     const conditionOptionsByType = attributeConditionOptions.filter(
         conditionOption =>
             (conditionOption.value === AttributeConditionFilter.THROUGH && showthroughCondition) ||
-            (filter.attribute.format && allowedTypeOperator[filter.attribute.format]?.includes(conditionOption.value))
+            filter.type === FilterType.LIBRARY ||
+            ((filter as IFilterAttribute).attribute.format &&
+                allowedTypeOperator[(filter as IFilterAttribute).attribute.format]?.includes(conditionOption.value))
     );
 
     const handleOperatorChange = (e: any) => {
@@ -68,7 +80,11 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
         searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
     };
 
-    const showStandardCondition = !formatNotUsingCondition.find(format => format === filter.attribute.format);
+    const showStandardCondition = !formatNotUsingCondition.find(
+        format =>
+            (filter.type === FilterType.LIBRARY && format === AttributeFormat.text) ||
+            (filter.type === FilterType.ATTRIBUTE && format === (filter as IFilterAttribute).attribute.format)
+    );
 
     if (showStandardCondition) {
         return (
@@ -91,7 +107,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             </Wrapper>
         );
     } else {
-        switch (filter.attribute.format) {
+        switch ((filter as IFilterAttribute).attribute.format) {
             case AttributeFormat.boolean:
                 return (
                     <BooleanWrapper>

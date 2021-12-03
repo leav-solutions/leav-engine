@@ -4,7 +4,7 @@
 import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import {mockAttribute} from '__mocks__/common/attribute';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterAttribute} from '__mocks__/common/filter';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 // import {MockStateFilters} from '__mocks__/stateFilters/mockStateFilters';
@@ -20,7 +20,7 @@ describe('FilterAttributeCondition', () => {
                 }}
             >
                 {/* <MockStateFilters stateFilters={{filters: [mockFilter]}}> */}
-                <FilterAttributeCondition filter={mockFilter} updateFilterValue={jest.fn()} />
+                <FilterAttributeCondition filter={mockFilterAttribute} updateFilterValue={jest.fn()} />
                 {/* </MockStateFilters> */}
             </MockSearchContextProvider>
         );

@@ -2,7 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
-import {AttributeConditionFilter, IFilter, IQueryFilter, ThroughConditionFilter} from '../../../_types/types';
+import {
+    AttributeConditionFilter,
+    IFilter,
+    IFilterTree,
+    IQueryFilter,
+    ThroughConditionFilter
+} from '../../../_types/types';
 
 export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
     const queryFilters = filters
@@ -37,7 +43,7 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
                         field: filter.condition in AttributeConditionFilter ? filter.key : null,
                         value: filter.value.value.toString(),
                         condition: RecordFilterCondition[filter.condition],
-                        treeId: filter.treeId
+                        treeId: (filter as IFilterTree).tree?.id
                     }
                 ];
             }

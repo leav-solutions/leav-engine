@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterAttribute} from '__mocks__/common/filter';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import Filter from './Filter';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
@@ -17,7 +17,7 @@ describe('Filter', () => {
         await act(async () => {
             render(
                 <MockSearchContextProvider>
-                    <Filter filter={mockFilter} handleProps={{} as any} />
+                    <Filter filter={mockFilterAttribute} handleProps={{} as any} />
                 </MockSearchContextProvider>
             );
         });

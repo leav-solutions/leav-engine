@@ -10,8 +10,6 @@ import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
-import {IconOpenPanel} from '../../../assets/icons/IconOpenPanel';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';

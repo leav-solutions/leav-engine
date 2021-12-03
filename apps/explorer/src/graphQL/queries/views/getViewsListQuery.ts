@@ -10,7 +10,7 @@ export interface IGetViewListFilter {
     value: any;
     condition: RecordFilterCondition;
     operator: RecordFilterOperator;
-    treeId?: string;
+    tree?: string;
 }
 
 export interface IGetViewListSort {

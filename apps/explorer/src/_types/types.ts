@@ -2,9 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {String} from 'lodash';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {
     RecordFilterCondition,
     RecordFilterOperator,
@@ -86,14 +84,34 @@ export interface IFilterSeparatorCommon {
     id: string;
 }
 
+export enum FilterType {
+    ATTRIBUTE = 'ATTRIBUTE',
+    TREE = 'TREE',
+    LIBRARY = 'LIBRARY'
+}
+
 export interface IFilter {
+    type: FilterType;
     index: number; // use to sort the filters
     key: string; // attribute / tree key
     value: {value: boolean | string | number | null; label?: string};
     active: boolean;
     condition: AttributeConditionFilter | TreeConditionFilter | ThroughConditionFilter;
-    attribute?: IAttribute; // Put the attribute in the filter to avoid having to fetch them multiple times
-    treeId?: string;
+}
+
+export interface IFilterAttribute extends IFilter {
+    attribute: IAttribute; // Put the attribute in the filter to avoid having to fetch them multiple times
+    parentTreeLibrary?: IFilterLibrary; // on tree library attribute
+}
+
+export interface IFilterTree extends IFilter {
+    tree: {id: string; label?: ISystemTranslation | null};
+}
+
+// on library's tree
+export interface IFilterLibrary extends IFilter {
+    library: {id: string; label?: ISystemTranslation | null};
+    parentAttribute: IAttribute;
 }
 
 export enum AttributeFormat {
@@ -261,11 +279,11 @@ export interface IAttributeSelected {
 
 export interface ITree {
     id: string;
-    label: ISystemTranslation;
+    label: ISystemTranslation | null;
     libraries: Array<{
         library: {
             id: string;
-            label: ISystemTranslation;
+            label: ISystemTranslation | null;
         };
     }>;
 }

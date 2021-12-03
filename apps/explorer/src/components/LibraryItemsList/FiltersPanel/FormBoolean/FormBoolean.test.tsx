@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterAttribute} from '__mocks__/common/filter';
 import FormBoolean from './FormBoolean';
 
 beforeEach(() => {
@@ -24,7 +24,7 @@ beforeEach(() => {
 
 describe('FormBoolean', () => {
     test('should checkbox', async () => {
-        const comp = mount(<FormBoolean filter={mockFilter} updateFilterValue={jest.fn()} />);
+        const comp = mount(<FormBoolean filter={mockFilterAttribute} updateFilterValue={jest.fn()} />);
 
         expect(comp.find('Radio')).toHaveLength(2);
     });

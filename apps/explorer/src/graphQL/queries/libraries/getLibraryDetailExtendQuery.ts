@@ -58,6 +58,7 @@ export interface ILibraryDetailExtendedAttributeParentLinkedTree {
     libraries: Array<{
         library: {
             id: string;
+            label: ISystemTranslation;
             attributes: ILibraryDetailExtendedAttributeChild[];
         };
     }>;
@@ -154,6 +155,7 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                             libraries {
                                 library {
                                     id
+                                    label
                                     attributes {
                                         id
                                         type

@@ -1,11 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordDomain} from 'domain/record/recordDomain';
+import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {IViewDomain} from 'domain/view/viewDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
+import {ITree} from '_types/tree';
 import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
@@ -14,6 +16,7 @@ import {ViewTypes, ViewSizes} from '../../_types/views';
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.view'?: IViewDomain;
+    'core.domain.tree'?: ITreeDomain;
     'core.utils'?: IUtils;
 }
 
@@ -24,6 +27,7 @@ export interface IViewApp {
 export default function ({
     'core.domain.view': viewDomain = null,
     'core.domain.record': recordDomain = null,
+    'core.domain.tree': treeDomain = null,
     'core.utils': utils = null
 }: IDeps): IViewApp {
     return {

@@ -10,6 +10,7 @@ import {join} from 'path';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
+import {ITree} from '_types/tree';
 import {IStandardValue, IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';

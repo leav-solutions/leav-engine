@@ -177,11 +177,7 @@ export const allowedTypeOperator = {
 };
 
 export const checkTypeIsLink = (type: AttributeType) => {
-    if (type === AttributeType.simple_link || type === AttributeType.advanced_link) {
-        return true;
-    } else {
-        return false;
-    }
+    return type === AttributeType.simple_link || type === AttributeType.advanced_link;
 };
 
 export const displayTypeToPreviewSize = (displayType: ViewSizes) => {

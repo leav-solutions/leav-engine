@@ -1,13 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    MoreOutlined,
-    DownOutlined,
-    CodeSandboxCircleFilled,
-    PropertySafetyFilled,
-    CloseCircleFilled
-} from '@ant-design/icons';
+import {MoreOutlined, DownOutlined, CloseCircleFilled} from '@ant-design/icons';
 import {Button, Dropdown, Menu, Typography} from 'antd';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -15,21 +9,24 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useCallback, useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
-import {AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {RecordFilterCondition} from '_gqlTypes/globalTypes';
+import moment from 'moment';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {localizedTranslation, checkTypeIsLink, defaultFilterConditionByAttributeFormat} from 'utils';
+import {localizedTranslation, defaultFilterConditionByAttributeFormat} from 'utils';
 import {
     AttributeConditionFilter,
     AttributeFormat,
+    FilterType,
     IAttribute,
     IFilter,
-    ISystemTranslation,
+    IFilterAttribute,
+    IFilterLibrary,
+    IFilterTree,
     ThroughConditionFilter,
     TreeConditionFilter
 } from '../../../../_types/types';
-
 import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
 import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
@@ -40,11 +37,9 @@ import FiltersDropdown from '../../FiltersDropdown';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {getDefaultFilterValueByFormat} from '../AddFilter/AddFilter';
+import {ILibraryDetailExtendedAttributeParentLinkedTree} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 
 interface IWrapperProps {
     active: boolean;
@@ -147,6 +142,19 @@ interface ISwitchFormType {
     updateFilterValue: (newFilterValue: IFilter['value']) => void;
 }
 
+export const getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | string | number => {
+    switch (format) {
+        case AttributeFormat.boolean:
+            return true;
+        case AttributeFormat.date:
+            return moment().utcOffset(0).startOf('day').unix();
+        case AttributeFormat.numeric:
+            return 0;
+        default:
+            return '';
+    }
+};
+
 function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
@@ -177,7 +185,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     };
 
     const _getValueFromNode = (node: ITreeNode): IFilter['value'] => {
-        return typeof node === 'undefined' || node.id === filter.treeId
+        return typeof node === 'undefined' || node.id === (filter as IFilterTree).tree.id
             ? {value: null}
             : {value: node.id, label: node.title};
     };
@@ -210,12 +218,14 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         (props: ISwitchFormType) => {
             const showStandardCondition =
                 props.filter.condition in AttributeConditionFilter &&
-                !formatNotUsingCondition.find(format => format === props.filter.attribute.format);
+                !formatNotUsingCondition.find(
+                    format => format === (props.filter as IFilterAttribute).attribute?.format
+                );
 
             const showTreeCondition = props.filter.condition in TreeConditionFilter;
 
             if (showStandardCondition) {
-                switch (props.filter.attribute.format) {
+                switch ((props.filter as IFilterAttribute).attribute?.format) {
                     case AttributeFormat.date:
                         return <DateFilter {...props} />;
                     case AttributeFormat.numeric:
@@ -238,27 +248,103 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     );
 
     const getAttributes = (): GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] => {
-        if (filter.condition === ThroughConditionFilter.THROUGH) {
-            return filter.attribute?.linkedLibrary?.attributes;
+        if (filter.type === FilterType.ATTRIBUTE) {
+            if (
+                filter.condition === ThroughConditionFilter.THROUGH &&
+                typeof (filter as IFilterAttribute).attribute.linkedTree === 'undefined'
+            ) {
+                return (filter as IFilterAttribute).attribute.linkedLibrary?.attributes;
+            }
+
+            if (typeof (filter as IFilterAttribute).attribute.parentAttribute !== 'undefined') {
+                return (filter as IFilterAttribute).attribute.parentAttribute?.linkedLibrary?.attributes;
+            }
+
+            if (typeof (filter as IFilterAttribute).parentTreeLibrary !== 'undefined') {
+                const lib = (filter as IFilterAttribute).parentTreeLibrary.parentAttribute.linkedTree.libraries.find(
+                    l => l.library.id === (filter as IFilterAttribute).parentTreeLibrary.library.id
+                );
+
+                return lib.library.attributes;
+            }
+
+            if (
+                typeof (filter as IFilterAttribute).attribute.linkedTree !== 'undefined' &&
+                filter.condition === ThroughConditionFilter.THROUGH
+            ) {
+                return [];
+            }
         }
 
-        if (typeof filter.attribute?.parentAttribute !== 'undefined') {
-            return filter.attribute?.parentAttribute?.linkedLibrary?.attributes;
+        if (filter.type === FilterType.LIBRARY) {
+            if (filter.condition !== ThroughConditionFilter.THROUGH) {
+                return [];
+            }
+
+            if (filter.condition === ThroughConditionFilter.THROUGH) {
+                const lib = (filter as IFilterLibrary).parentAttribute.linkedTree?.libraries.find(
+                    l => l.library.id === (filter as IFilterLibrary).library.id
+                );
+
+                return lib.library.attributes;
+            }
         }
 
         return activeLibrary.attributes;
     };
 
+    // on tree attribute type with linkedTree
+    const getLibraries = (): ILibraryDetailExtendedAttributeParentLinkedTree['libraries'] => {
+        if (filter.type === FilterType.LIBRARY) {
+            return (filter as IFilterLibrary).parentAttribute.linkedTree?.libraries;
+        }
+
+        if (
+            filter.type === FilterType.ATTRIBUTE &&
+            typeof (filter as IFilterAttribute).attribute.linkedTree !== 'undefined' &&
+            filter.condition === ThroughConditionFilter.THROUGH
+        ) {
+            return (filter as IFilterAttribute).attribute.linkedTree?.libraries;
+        }
+
+        return [];
+    };
+
+    const getTrees = (): GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[] => {
+        if (
+            filter.type === FilterType.TREE ||
+            (filter.condition !== ThroughConditionFilter.THROUGH &&
+                filter.type === FilterType.ATTRIBUTE &&
+                !(filter as IFilterAttribute).parentTreeLibrary &&
+                !(filter as IFilterAttribute).attribute.parentAttribute)
+        ) {
+            return activeLibrary.trees;
+        }
+
+        return [];
+    };
+
     const _handleResetClick = () => {
         const filters = [...searchState.filters];
 
-        const newFilter = {
+        const parentAttribute: IAttribute =
+            filter.type === FilterType.ATTRIBUTE &&
+            typeof (filter as IFilterAttribute).parentTreeLibrary !== 'undefined'
+                ? (filter as IFilterAttribute).parentTreeLibrary.parentAttribute
+                : filter.type === FilterType.ATTRIBUTE
+                ? (filter as IFilterAttribute).attribute.parentAttribute
+                : (filter as IFilterLibrary).parentAttribute;
+
+        const newFilter: IFilterAttribute = {
+            type: FilterType.ATTRIBUTE,
             index: searchState.filters.length,
+            key: parentAttribute?.id,
+            value: {
+                value: getDefaultFilterValueByFormat(parentAttribute.format)
+            },
             active: true,
-            key: filter.attribute.id,
-            condition: RecordFilterCondition[defaultFilterConditionByAttributeFormat(filter.attribute.format)],
-            attribute: filter.attribute?.parentAttribute,
-            value: {value: getDefaultFilterValueByFormat(filter.attribute.format)}
+            condition: RecordFilterCondition[defaultFilterConditionByAttributeFormat(parentAttribute.format)],
+            attribute: parentAttribute
         };
 
         filters.splice(filter.index, 1, {...newFilter, index: filter.index});
@@ -269,51 +355,84 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         });
     };
 
-    // TODO: retrieve label tree (fixmes below)
+    const getDropdownLabel = (): string => {
+        if (filter.type === FilterType.ATTRIBUTE) {
+            return (
+                localizedTranslation((filter as IFilterAttribute).attribute?.label, lang) ||
+                (filter as IFilterAttribute).attribute?.id
+            );
+        } else if (filter.type === FilterType.TREE) {
+            return localizedTranslation((filter as IFilterTree).tree.label, lang) || (filter as IFilterTree).tree.id;
+        }
+
+        return (
+            localizedTranslation((filter as IFilterLibrary).library.label, lang) ||
+            (filter as IFilterLibrary).library.id
+        );
+    };
 
     return (
         <>
             {showSelectTreeNodeModal && (
                 <SelectTreeNodeModal
-                    selectedNodeKey={(filter.value.value as string) || filter.treeId}
-                    tree={{id: filter.treeId, label: {fr: filter.treeId, en: filter.treeId}}} // FIXME: label
+                    selectedNodeKey={(filter.value.value as string) || (filter as IFilterTree).tree.id}
+                    tree={(filter as IFilterTree).tree}
                     onSubmit={node => updateFilterValue(_getValueFromNode(node))}
                     onClose={() => setShowSelectTreeNodeModal(false)}
                     visible={showSelectTreeNodeModal}
                 />
             )}
-
             <Wrapper data-testid="filter" active={filter.active}>
                 <Handle className="filter-handle" {...handleProps} />
                 <Content>
                     <Head>
                         <HeadInfos>
                             <div style={{display: 'grid'}}>
-                                {!!filter.attribute?.parentAttribute && (
-                                    <Button type="text" size="small" onClick={_handleResetClick}>
-                                        <Typography.Text type="secondary">
-                                            {localizedTranslation(filter.attribute?.parentAttribute?.label, lang)}{' '}
-                                            <CloseCircleFilled />
-                                        </Typography.Text>
-                                    </Button>
-                                )}
+                                {
+                                    // FIXME: clean and add label OR ID
+                                    (!!(filter as IFilterAttribute).attribute?.parentAttribute ||
+                                        (filter as IFilterAttribute).parentTreeLibrary ||
+                                        filter.type === FilterType.LIBRARY) && (
+                                        <Button type="text" size="small" onClick={_handleResetClick}>
+                                            <Typography.Text type="secondary">
+                                                {localizedTranslation(
+                                                    (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
+                                                        (filter as IFilterLibrary).parentAttribute?.label,
+                                                    lang
+                                                ) ||
+                                                    `${localizedTranslation(
+                                                        (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute
+                                                            ?.label,
+                                                        lang
+                                                    )} > ${localizedTranslation(
+                                                        (filter as IFilterAttribute).parentTreeLibrary?.library.label,
+                                                        lang
+                                                    )} `}{' '}
+                                                <CloseCircleFilled />
+                                            </Typography.Text>
+                                        </Button>
+                                    )
+                                }
                                 <FiltersDropdown
                                     libraryId={activeLibrary.id}
                                     button={{
-                                        label: localizedTranslation(filter.attribute?.label, lang) || filter.treeId, // FIXME: tree label
+                                        label: getDropdownLabel(),
                                         icon: <DownOutlined />,
                                         type: 'text'
                                     }}
                                     filter={filter}
                                     attributes={getAttributes()}
-                                    trees={activeLibrary.trees}
+                                    libraries={getLibraries()}
+                                    trees={getTrees()}
                                 />
                             </div>
-                            {!!filter.attribute ? (
-                                <FilterAttributeCondition filter={filter} updateFilterValue={updateFilterValue} />
-                            ) : (
-                                <FilterTreeCondition filter={filter} />
+                            {(filter.type === FilterType.ATTRIBUTE || filter.type === FilterType.LIBRARY) && (
+                                <FilterAttributeCondition
+                                    filter={filter as IFilterAttribute | IFilterLibrary}
+                                    updateFilterValue={updateFilterValue}
+                                />
                             )}
+                            {filter.type === FilterType.TREE && <FilterTreeCondition filter={filter as IFilterTree} />}
                         </HeadInfos>
                         <Dropdown overlay={filterOptions} placement="bottomRight">
                             <HeadOptions>

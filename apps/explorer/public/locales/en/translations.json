@@ -146,6 +146,7 @@
     "filters": {
         "trees-group": "Trees",
         "attributes-group": "Attributes",
+        "libraries-group": "Libraries",
         "filters": "Filters",
         "contains": "Contains",
         "not-contains": "Don't Contain",

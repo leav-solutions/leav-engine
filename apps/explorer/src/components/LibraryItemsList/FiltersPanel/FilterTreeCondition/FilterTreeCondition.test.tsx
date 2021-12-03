@@ -4,7 +4,7 @@
 import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import {mockAttribute} from '__mocks__/common/attribute';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterTree} from '__mocks__/common/filter';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import FilterTreeCondition from './FilterTreeCondition';
 
@@ -13,7 +13,7 @@ describe('FilterTreeCondition', () => {
         render(
             <MockSearchContextProvider state={{attributes: [{...mockAttribute, library: 'test'}]}}>
                 {/* <MockStateFilters stateFilters={{filters: [mockFilter]}}> */}
-                <FilterTreeCondition filter={mockFilter} />
+                <FilterTreeCondition filter={mockFilterTree} />
                 {/* </MockStateFilters> */}
             </MockSearchContextProvider>
         );

@@ -4,12 +4,12 @@
 import {DatePicker} from 'antd';
 import {shallow} from 'enzyme';
 import React from 'react';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterAttribute} from '__mocks__/common/filter';
 import DateFilter from './DateFilter';
 
 describe('DateFilter', () => {
     test('Should have a Date picker', async () => {
-        const comp = shallow(<DateFilter filter={mockFilter} updateFilterValue={jest.fn()} />);
+        const comp = shallow(<DateFilter filter={mockFilterAttribute} updateFilterValue={jest.fn()} />);
 
         expect(comp.find(DatePicker)).toHaveLength(1);
     });

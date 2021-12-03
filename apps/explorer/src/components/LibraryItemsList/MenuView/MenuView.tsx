@@ -7,8 +7,7 @@ import {
     AppstoreFilled,
     RollbackOutlined,
     FilterOutlined,
-    MoreOutlined,
-    EyeOutlined
+    MoreOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, Menu, Space, Badge} from 'antd';
@@ -233,6 +232,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                         }}
                         attributes={activeLibrary.attributes}
                         trees={activeLibrary.trees}
+                        libraries={[]}
                     />
                 </Button.Group>
             </Badge>
