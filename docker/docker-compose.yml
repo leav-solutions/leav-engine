@@ -21,10 +21,11 @@ x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/ap
 x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
 x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
 
+# Host path is relative to the docker folder
 x-mount_point-repo: &mount_point-repo ../:/app:delegated
 x-mount_point-scripts: &mount_point-scripts ./scripts:/scripts
-x-mount_point-files: &mount_point-files ./files:/files
-x-mount_point-previews: &mount_point-previews ../previews:/results
+x-mount_point-files: &mount_point-files ../files/:/files
+x-mount_point-previews: &mount_point-previews ../previews/:/results
 
 x-env-core: &env-core
   NODE_ENV: development
