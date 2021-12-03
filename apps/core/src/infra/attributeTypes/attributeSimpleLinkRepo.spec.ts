@@ -188,14 +188,18 @@ describe('AttributeSimpleLinkRepo', () => {
             const mockDbServ = {
                 db: new Database()
             };
+
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterQueryPart: jest.fn().mockReturnValue(null)
+            };
+
             const attrRepo = attributeSimpleLinkRepo({'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.filterQueryPart(
                 [
-                    {id: 'label', type: AttributeTypes.SIMPLE_LINK},
-                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                    {id: 'label', type: AttributeTypes.SIMPLE_LINK, _repo: mockRepo as IAttributeTypeRepo},
+                    {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
-                aql`== ${'MyLabel'}`,
-                0
+                aql`== ${'MyLabel'}`
             );
 
             expect(filter.query).toMatch(/^FILTER/);

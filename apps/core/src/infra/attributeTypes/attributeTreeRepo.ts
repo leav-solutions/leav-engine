@@ -8,7 +8,7 @@ import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {ITreeValue, IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -226,7 +226,11 @@ export default function ({
 
             return query;
         },
-        filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery {
+        filterQueryPart(
+            attributes: IAttributeWithRepo[],
+            queryPart: GeneratedAqlQuery,
+            parentIdentifier = BASE_QUERY_IDENTIFIER
+        ): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -234,16 +238,26 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
+            const linkIdentifier = parentIdentifier + 'v';
+            const vIdentifier = aql.literal(linkIdentifier);
+            const eIdentifier = aql.literal(parentIdentifier + 'e');
+            const filterLinkedValue = attributes[1]._repo.filterQueryPart(
+                [...attributes].splice(1),
+                queryPart,
+                linkIdentifier
+            );
             const linkedValue = aql`FIRST(
-                FOR v, e IN 1 OUTBOUND r._id
+                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
                 ${collec}
-                FILTER e.attribute == ${attributes[0].id} RETURN v.${linked.id}
+                FILTER ${eIdentifier}.attribute == ${attributes[0].id}
+                ${filterLinkedValue}
+                RETURN ${vIdentifier}
             )`;
 
             const query =
                 linked.format !== AttributeFormats.EXTENDED
-                    ? aql`FILTER ${linkedValue} ${queryPart}`
-                    : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} ${queryPart}`;
+                    ? aql`FILTER ${linkedValue} != null`
+                    : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} != null`;
 
             return query;
         },

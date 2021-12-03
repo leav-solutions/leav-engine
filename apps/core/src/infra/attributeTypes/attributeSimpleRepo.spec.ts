@@ -17,7 +17,7 @@ describe('AttributeIndexRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new index value', async function () {
+        test('Should create a new index value', async function() {
             const updatedRecordData = {
                 _id: 'test_lib/222435651',
                 _rev: '_WSywvyC--_',
@@ -53,7 +53,7 @@ describe('AttributeIndexRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values for index attribute', async function () {
+        test('Should return values for index attribute', async function() {
             const queryRes = ['test val', 'other val that should not be returned'];
 
             const mockDbServ = {
@@ -120,7 +120,10 @@ describe('AttributeIndexRepo', () => {
     describe('filterQueryPart', () => {
         test('Should return simple filter', () => {
             const attrRepo = attributeSimpleRepo();
-            const filter = attrRepo.filterQueryPart([{id: 'id', type: AttributeTypes.SIMPLE}], aql`== ${'123456'}`, 0);
+            const filter = attrRepo.filterQueryPart(
+                [{id: 'id', type: AttributeTypes.SIMPLE, _repo: null}],
+                aql`== ${'123456'}`
+            );
 
             expect(filter.query).toMatch(/^FILTER/);
             expect(filter).toMatchSnapshot();

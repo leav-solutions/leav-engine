@@ -7,20 +7,22 @@ import {IRecordSort} from '../../_types/record';
 import {ILinkValue, IStandardValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {IAttributeTypeRepo} from './attributeTypesRepo';
+import {IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
+    // 'core.infra.attributeTypes'?: IAttributeTypesRepo;
     'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
+    // 'core.infra.attributeTypes': attributeTypesRepo = null,
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null
 }: IDeps = {}): IAttributeTypeRepo {
-    function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
+    function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: AqlQuery): AqlQuery {
         return attributes
             .map(a => a.id)
             .slice(2)
@@ -97,7 +99,7 @@ export default function ({
 
             return query;
         },
-        filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery {
+        filterQueryPart(attributes: IAttributeWithRepo[], queryPart: GeneratedAqlQuery): AqlQuery {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -105,16 +107,18 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
+            const filterLinkedValue = attributes[1]._repo.filterQueryPart([...attributes].splice(1), queryPart, 'l');
             const linkedValue = aql`
                 FIRST(FOR l IN ${linkedLibCollec}
                     FILTER TO_STRING(r.${attributes[0].id}) == l._key
-                RETURN l.${linked.id})
+                    ${filterLinkedValue}
+                RETURN l)
             `;
 
             const query: AqlQuery =
                 linked.format !== AttributeFormats.EXTENDED
-                    ? aql`FILTER ${linkedValue} ${queryPart}`
-                    : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} ${queryPart}`;
+                    ? aql`FILTER ${linkedValue} != null`
+                    : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} ${queryPart} != null`;
 
             return query;
         },
