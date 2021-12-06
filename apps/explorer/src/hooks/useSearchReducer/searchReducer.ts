@@ -70,8 +70,8 @@ const checkSync = (
 
     if (toCheck.sort) {
         sync =
-            state.sort.field === state.view?.current?.sort.field &&
-            state.sort.order === state.view.current?.sort?.order;
+            state.sort.field === state.view?.current?.sort?.field &&
+            state.sort.order === state.view?.current?.sort?.order;
     }
 
     if (toCheck.filters) {
