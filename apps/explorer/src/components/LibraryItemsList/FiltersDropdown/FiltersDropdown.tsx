@@ -80,7 +80,7 @@ function FiltersDropdown({
 
         return {
             type: FilterType.ATTRIBUTE,
-            index: searchState.filters.length, // TODO: sur de ca pr un replace ??
+            index: searchState.filters.length,
             active: true,
             key,
             condition: AttributeConditionFilter[defaultFilterConditionByAttributeFormat(attribute.format)], // FIXME: filter.condition?

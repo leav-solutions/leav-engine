@@ -51,18 +51,20 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
 
     // show through condition if attribute is a link and its zero depth
     const showthroughCondition =
-        filter.type === FilterType.LIBRARY ||
-        ((checkTypeIsLink((filter as IFilterAttribute).attribute?.type) ||
+        ((filter as IFilterAttribute).attribute?.format === AttributeFormat.extended ||
+            filter.type === FilterType.LIBRARY ||
+            checkTypeIsLink((filter as IFilterAttribute).attribute?.type) ||
             (filter as IFilterAttribute).attribute?.type === AttributeType.tree) &&
-            typeof (filter as IFilterAttribute).attribute?.parentAttribute === 'undefined');
+        typeof (filter as IFilterAttribute).attribute?.parentAttribute === 'undefined';
 
     const attributeConditionOptions = getAttributeConditionOptions(t);
 
     const conditionOptionsByType = attributeConditionOptions.filter(
         conditionOption =>
             (conditionOption.value === AttributeConditionFilter.THROUGH && showthroughCondition) ||
-            filter.type === FilterType.LIBRARY ||
-            ((filter as IFilterAttribute).attribute.format &&
+            (filter.type === FilterType.LIBRARY &&
+                allowedTypeOperator[AttributeFormat.text].includes(conditionOption.value)) ||
+            ((filter as IFilterAttribute).attribute?.format &&
                 allowedTypeOperator[(filter as IFilterAttribute).attribute.format]?.includes(conditionOption.value))
     );
 

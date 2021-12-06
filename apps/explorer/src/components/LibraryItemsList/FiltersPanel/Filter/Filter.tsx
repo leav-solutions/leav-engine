@@ -9,7 +9,7 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useCallback, useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
-import {RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
 import moment from 'moment';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
@@ -40,6 +40,7 @@ import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {ILibraryDetailExtendedAttributeParentLinkedTree} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 
 interface IWrapperProps {
     active: boolean;
@@ -247,8 +248,26 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         [t]
     );
 
+    const embeddedFieldsToAttribute = (
+        embeddedFields: GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields[]
+    ): GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] => {
+        return embeddedFields.map(f => ({
+            ...f,
+            type: AttributeType.simple,
+            multiple_values: undefined,
+            linked_tree: undefined
+        }));
+    };
+
     const getAttributes = (): GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] => {
         if (filter.type === FilterType.ATTRIBUTE) {
+            if (
+                filter.condition === ThroughConditionFilter.THROUGH &&
+                (filter as IFilterAttribute).attribute?.format === AttributeFormat.extended
+            ) {
+                return embeddedFieldsToAttribute((filter as IFilterAttribute).attribute.embedded_fields);
+            }
+
             if (
                 filter.condition === ThroughConditionFilter.THROUGH &&
                 typeof (filter as IFilterAttribute).attribute.linkedTree === 'undefined'
@@ -257,7 +276,10 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             }
 
             if (typeof (filter as IFilterAttribute).attribute.parentAttribute !== 'undefined') {
-                return (filter as IFilterAttribute).attribute.parentAttribute?.linkedLibrary?.attributes;
+                return (
+                    (filter as IFilterAttribute).attribute.parentAttribute?.linkedLibrary?.attributes ||
+                    embeddedFieldsToAttribute((filter as IFilterAttribute).attribute.parentAttribute?.embedded_fields)
+                );
             }
 
             if (typeof (filter as IFilterAttribute).parentTreeLibrary !== 'undefined') {
