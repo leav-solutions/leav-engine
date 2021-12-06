@@ -11,7 +11,7 @@ import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFr
 import DetailNavigation from './DetailNavigation';
 
 jest.mock(
-    '../../LibraryItemsList/LibraryItemsListTable/RecordPreview',
+    '../../shared/RecordPreview',
     () =>
         function RecordPreview() {
             return <div>RecordPreview</div>;

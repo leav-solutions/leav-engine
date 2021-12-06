@@ -14,12 +14,12 @@ import React, {useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import styled, {CSSObject} from 'styled-components';
+import styled from 'styled-components';
 import {displayTypeToPreviewSize, getFileUrl, localizedTranslation} from 'utils';
 import themingVar from '../../../../themingVar';
 import {IItem, ISharedSelected, PreviewSize, SharedStateSelectionType} from '../../../../_types/types';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
-import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
+import RecordPreview from '../../../shared/RecordPreview';
 
 const itemPreviewSize = {
     [PreviewSize.small]: '100px',
@@ -47,11 +47,16 @@ const Item = styled(Card)<{$previewSize: string}>`
 const ImageWrapper = styled.div`
     position: relative;
     border-bottom: 1px solid ${themingVar['@divider-color']};
-    height: 100%;
 `;
 
 const ActionsWrapper = styled.div`
     display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
     justify-content: center;
 
     &:hover {
@@ -109,11 +114,6 @@ const SelectionActions = styled(Space)`
         display: inherit;
     }
 `;
-
-interface ICheckboxWrapper {
-    checked: boolean;
-    styled?: CSSObject;
-}
 
 const Actions = styled.div`
     position: absolute;
@@ -259,6 +259,17 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                 onDoubleClick={() => setEditRecordModal(true)}
                 cover={
                     <ImageWrapper>
+                        <RecordPreview
+                            label={item.whoAmI.label || item.whoAmI.id}
+                            image={
+                                item.whoAmI.preview?.[previewSize] ? getFileUrl(item.whoAmI.preview[previewSize]) : ''
+                            }
+                            tile={true}
+                            style={{
+                                width: itemPreviewSize[previewSize],
+                                height: itemPreviewSize[previewSize]
+                            }}
+                        />
                         <ActionsWrapper>
                             {isChecked ? (
                                 <Selection checked>
@@ -290,17 +301,6 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                                 </Actions>
                             )}
                         </ActionsWrapper>
-                        <RecordPreview
-                            label={item.whoAmI.label || item.whoAmI.id}
-                            image={
-                                item.whoAmI.preview?.[previewSize] ? getFileUrl(item.whoAmI.preview[previewSize]) : ''
-                            }
-                            tile={true}
-                            style={{
-                                width: itemPreviewSize[previewSize],
-                                height: itemPreviewSize[previewSize]
-                            }}
-                        />
                     </ImageWrapper>
                 }
             >

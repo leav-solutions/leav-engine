@@ -1,11 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {LoadingOutlined} from '@ant-design/icons';
 import {Skeleton} from 'antd';
 import React, {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {getInvertColor, stringToColor} from '../../../../utils/utils';
-import {PreviewSize} from '../../../../_types/types';
+import {getInvertColor, stringToColor} from '../../../utils/utils';
+import {PreviewSize} from '../../../_types/types';
 
 interface IRecordPreviewProps {
     label: string;
@@ -97,6 +98,7 @@ function RecordPreviewList({label, color, image, size, style}: IRecordPreviewPro
 
     return (
         <GeneratedPreview
+            data-testid="generated-preview"
             className="initial"
             bgColor={bgColor}
             fontColor={fontColor}
@@ -130,7 +132,7 @@ interface IImagePreviewTileProps {
     style?: CSSObject;
 }
 
-const ImagePreviewTile = styled.div<IImagePreviewTileProps>`
+const ImagePreviewWrapper = styled.div<IImagePreviewTileProps>`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -141,23 +143,51 @@ const ImagePreviewTile = styled.div<IImagePreviewTileProps>`
         object-fit: contain;
     }
 `;
-ImagePreviewTile.displayName = 'ImagePreviewTile';
+ImagePreviewWrapper.displayName = 'ImagePreviewTile';
+
+const Image = styled.img<{$loaded: boolean}>`
+    display: ${p => (p.$loaded ? 'block' : 'none')};
+`;
 
 const CustomSkeletonImage = styled(Skeleton.Image)`
-    && {
+    &&& {
         height: 100%;
         width: 100%;
+
+        .ant-skeleton-image-svg {
+            width: 30%;
+            height: 30%;
+        }
     }
 `;
 
+const ImageSpinner = styled(LoadingOutlined)`
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2em;
+`;
+
 function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): JSX.Element {
-    const [imgLoad, setImgLoad] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
+
     if (image) {
         return (
-            <ImagePreviewTile style={{...style}}>
-                {!imgLoad && <CustomSkeletonImage style={{...style}} />}
-                <img src={image} alt="record preview" style={{...style}} onLoad={() => setImgLoad(true)} />
-            </ImagePreviewTile>
+            <ImagePreviewWrapper style={{position: 'relative', ...style}}>
+                {!imageLoaded && (
+                    <>
+                        <CustomSkeletonImage style={{...style}} />
+                        <ImageSpinner spin data-testid="image-loading" />
+                    </>
+                )}
+                <Image
+                    $loaded={imageLoaded}
+                    src={image}
+                    alt="record preview"
+                    style={{...style}}
+                    onLoad={() => setImageLoaded(true)}
+                />
+            </ImagePreviewWrapper>
         );
     }
 
@@ -167,7 +197,13 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
     const fontColor = getInvertColor(bgColor);
 
     return (
-        <GeneratedPreviewTile className="initial" bgColor={bgColor} fontColor={fontColor} style={style}>
+        <GeneratedPreviewTile
+            data-testid="generated-preview"
+            className="initial"
+            bgColor={bgColor}
+            fontColor={fontColor}
+            style={style}
+        >
             {initial}
         </GeneratedPreviewTile>
     );
