@@ -133,7 +133,7 @@
             "small": "petit",
             "medium": "moyen",
             "big": "grand",
-            "tile": "Mosaïque"
+            "tile": "Galerie"
         }
     },
     "items-list-row": {
@@ -284,7 +284,7 @@
         "my-views": "Mes vues",
         "shared-views": "Partagées",
         "type-list": "Liste",
-        "type-cards": "Mosaïque",
+        "type-cards": "Galerie",
         "type-timeline": "Timeline",
         "default": "Vue par défaut",
         "see-more": "Voir plus",
@@ -305,8 +305,7 @@
             "type": "Type",
             "shared": "Partagée",
             "color": "Couleur"
-        },
-        "type-tile": "Vue Tuile"
+        }
     },
     "export": {
         "title": "Exporter",

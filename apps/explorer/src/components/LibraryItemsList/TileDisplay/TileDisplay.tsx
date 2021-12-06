@@ -1,16 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Card, Col, Row, Spin} from 'antd';
+import {Spin} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
-import {IItem, IRecordEdition, PreviewSize} from '../../../_types/types';
+import {IItem, IRecordEdition} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import LibraryItemsModal from '../LibraryItemsListTable/LibraryItemsModal';
 import ItemTileDisplay from './ItemTileDisplay';
-import {displayTypeToPreviewSize} from 'utils';
 
 const LoadingWrapper = styled.div`
     height: 30rem;
@@ -20,17 +19,17 @@ const LoadingWrapper = styled.div`
     align-items: center;
 `;
 
-const Wrapper = styled(Card)`
-    &&& {
-        grid-area: data;
-        height: 100%;
-        overflow-y: scroll;
-        margin-bottom: 0;
-        border-radius: 0.25rem 0.25rem 0 0;
-        border-bottom: none;
-        padding: 0;
-        margin-top: 6px;
-    }
+const Wrapper = styled.div`
+    grid-area: data;
+    height: 100%;
+    overflow-y: scroll;
+    border-radius: 0.25rem 0.25rem 0 0;
+    border-bottom: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: flex-start;
 `;
 
 const Footer = styled.div`
@@ -43,7 +42,6 @@ const Footer = styled.div`
 
 function TileDisplay(): JSX.Element {
     const {state: searchState} = useSearchReducer();
-    const previewSize: PreviewSize = displayTypeToPreviewSize(searchState.display.size);
     const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
         show: false
     });
@@ -56,12 +54,6 @@ function TileDisplay(): JSX.Element {
         setRecordEdition(re => ({...re, item: newItem}));
     };
 
-    const CardSizes = {
-        [PreviewSize.small]: 2,
-        [PreviewSize.medium]: 4,
-        [PreviewSize.big]: 8
-    };
-
     return (
         <>
             <Wrapper>
@@ -70,13 +62,11 @@ function TileDisplay(): JSX.Element {
                         <Spin size="large" />
                     </LoadingWrapper>
                 ) : (
-                    <Row gutter={16}>
+                    <>
                         {searchState.records.map(record => (
-                            <Col key={record.whoAmI.id} span={CardSizes[previewSize]}>
-                                <ItemTileDisplay item={record} />
-                            </Col>
+                            <ItemTileDisplay key={record.whoAmI.id} item={record} />
                         ))}
-                    </Row>
+                    </>
                 )}
             </Wrapper>
 
