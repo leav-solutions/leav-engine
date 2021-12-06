@@ -15,6 +15,8 @@ import Filter from './Filter/Filter';
 import {setDisplaySide} from 'redux/display';
 import {TypeSideItem} from '_types/types';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
+import {getRequestFromFilters} from './getRequestFromFilter';
+import AvailableSoon from 'components/shared/AvailableSoon';
 
 import './Filters.css';
 
@@ -46,7 +48,7 @@ const Header = styled.div`
         }
 
         :last-of-type {
-            display: grid;
+            display: flex;
             align-items: center;
             justify-content: flex-end;
             column-gap: 8px;
@@ -87,6 +89,13 @@ function FiltersPanel(): JSX.Element {
         });
     };
 
+    const disableFilters = () => {
+        searchDispatch({
+            type: SearchActionTypes.SET_FILTERS,
+            filters: searchState.filters.map(f => ({...f, active: false}))
+        });
+    };
+
     const handleHide = () => {
         dispatch(
             setDisplaySide({
@@ -121,15 +130,33 @@ function FiltersPanel(): JSX.Element {
 
     const filtersSorted = searchState.filters.sort((a, b) => a.index - b.index);
 
+    const _handleApplyFilters = () => {
+        searchDispatch({
+            type: SearchActionTypes.SET_QUERY_FILTERS,
+            queryFilters: getRequestFromFilters(searchState.filters)
+        });
+
+        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
+    };
+
+    const allFiltersDisabled = searchState.filters.every(f => f.active === false);
+
     return (
         <Wrapper>
             <Header>
                 <span>{t('filters.filters')}</span>
                 <div>
+                    <Button onClick={_handleApplyFilters}>{t('filters.apply')}</Button>
                     <Dropdown
                         overlay={
                             <Menu>
+                                <Menu.Item disabled={allFiltersDisabled} onClick={disableFilters}>
+                                    {t('filters.disable-filters')}
+                                </Menu.Item>
                                 <Menu.Item onClick={resetFilters}>{t('filters.remove-filters')}</Menu.Item>
+                                <Menu.Item disabled={true}>
+                                    {t('filters.add-condition')} <AvailableSoon />
+                                </Menu.Item>
                             </Menu>
                         }
                     >

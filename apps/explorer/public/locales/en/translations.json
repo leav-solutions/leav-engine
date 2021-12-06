@@ -171,6 +171,7 @@
         "and": "And",
         "or": "Or",
         "attributes": "Attributes",
+        "disable-filters": "Disable filters",
         "trees": "Trees",
         "filters-options": "Filters Options",
         "add-filters": "Add filters",
