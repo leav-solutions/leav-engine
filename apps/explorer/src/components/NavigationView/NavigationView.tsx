@@ -71,7 +71,7 @@ function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
     return (
         <Page>
             <ColumnNavigation treeElements={tree} />
-            <DetailNavigation />
+            {navigation.recordDetail && !navigation.isLoading && <DetailNavigation />}
         </Page>
     );
 }

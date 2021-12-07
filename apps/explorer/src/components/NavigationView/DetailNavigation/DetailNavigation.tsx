@@ -8,7 +8,7 @@ import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
 import {getFileUrl} from '../../../utils';
-import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
+import RecordPreview from '../../shared/RecordPreview';
 
 const Detail = styled.div`
     min-width: 30rem;
@@ -65,11 +65,7 @@ const DetailNavigation = (): JSX.Element => {
                 });
             }
         });
-    }, [detailRef, navigation.isLoading]);
-
-    if (!navigation.recordDetail) {
-        return <></>;
-    }
+    }, [detailRef]);
 
     const recordData = navigation.recordDetail.whoAmI;
 
@@ -89,11 +85,12 @@ const DetailNavigation = (): JSX.Element => {
             </div>
             <PreviewWrapper>
                 <RecordPreview
+                    key={recordData.id}
                     label={recordData.label ? label : recordData.id}
                     color={recordData.color}
                     image={img && getFileUrl(img)}
                     tile
-                    style={{maxHeight: '20rem', maxWidth: '100%', height: 'auto'}}
+                    style={{maxHeight: '20rem', maxWidth: '100%', height: '100%'}}
                 />
             </PreviewWrapper>
             <Content>

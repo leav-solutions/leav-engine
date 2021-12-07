@@ -8,7 +8,7 @@ import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {IItem} from '../../../../_types/types';
 import ItemTileDisplay from './ItemTileDisplay';
 jest.mock(
-    '../../LibraryItemsListTable/RecordPreview',
+    '../../../shared/RecordPreview',
     () =>
         function RecordPreview() {
             return <div>RecordPreview</div>;

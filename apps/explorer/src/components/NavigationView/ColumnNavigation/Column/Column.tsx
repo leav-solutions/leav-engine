@@ -52,7 +52,7 @@ const Column = ({pathPart, treeElements, depth, showLoading, columnActive}: ICol
     }, [treeElements, parent, setItems]);
 
     useEffect(() => {
-        if (ref?.current?.scrollIntoView) {
+        if (ref?.current?.scrollIntoView && columnActive) {
             ref.current?.scrollIntoView({
                 behavior: 'smooth',
                 block: 'end'

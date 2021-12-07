@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import RecordPreview from 'components/LibraryItemsList/LibraryItemsListTable/RecordPreview';
+import RecordPreview from 'components/shared/RecordPreview';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';

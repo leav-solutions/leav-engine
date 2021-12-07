@@ -8,7 +8,7 @@ import {act} from 'react-dom/test-utils';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
-import RecordPreview from '../../LibraryItemsList/LibraryItemsListTable/RecordPreview';
+import RecordPreview from '../RecordPreview';
 import RecordCard from './RecordCard';
 
 describe('RecordCard', () => {
