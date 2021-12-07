@@ -87,11 +87,27 @@ export default (attribute: IAttribute): IActionsListConfig => {
                         is_system: true
                     }
                 ],
+                [ActionsListEvents.GET_VALUE]: []
+            };
+        case AttributeFormats.DATE_RANGE:
+            defaultActions = {
+                [ActionsListEvents.SAVE_VALUE]: [
+                    {
+                        id: 'parseJSON',
+                        name: 'Parse JSON',
+                        is_system: true
+                    },
+                    {
+                        id: 'validateFormat',
+                        name: 'Validate Format',
+                        is_system: true
+                    }
+                ],
                 [ActionsListEvents.GET_VALUE]: [
                     {
-                        id: 'toJSON',
-                        name: 'To JSON',
-                        is_system: true
+                        id: 'formatDateRange',
+                        name: 'Format Date Range',
+                        is_system: false
                     }
                 ]
             };

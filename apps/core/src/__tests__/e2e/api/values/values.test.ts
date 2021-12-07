@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
+import {gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
 
 describe('Values', () => {
     const testLibName = 'values_library_test';
@@ -15,6 +16,7 @@ describe('Values', () => {
     const attrAdvancedName = 'values_attribute_test_adv';
     const attrAdvancedLinkName = 'values_attribute_test_adv_link';
     const attrTreeName = 'values_attribute_test_tree';
+    const attrDateRangeName = 'test_attr_date_range';
 
     let recordId;
     let recordIdBatch;
@@ -112,6 +114,13 @@ describe('Values', () => {
                 ) { id }
             }`);
 
+        await gqlSaveAttribute({
+            id: attrDateRangeName,
+            type: AttributeTypes.SIMPLE,
+            format: AttributeFormats.DATE_RANGE,
+            label: 'Test attr date range'
+        });
+
         // Create library to use in tree
         await makeGraphQlCall(`mutation {
             saveLibrary(library: {id: "${treeLibName}", label: {fr: "Test tree lib"}}) { id }
@@ -148,7 +157,8 @@ describe('Values', () => {
                         "${attrSimpleLinkName}",
                         "${attrAdvancedLinkName}",
                         "${attrSimpleExtendedName}",
-                        "${attrTreeName}"
+                        "${attrTreeName}",
+                        "${attrDateRangeName}"
                     ]
                 }) { id }
             }`);
@@ -436,5 +446,55 @@ describe('Values', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValueBatch.values).toHaveLength(2);
         expect(res.data.data.saveValueBatch.values[1].id_value).toBeTruthy();
+    });
+
+    describe('Date range attribute', () => {
+        test('Save and get date range value', async () => {
+            const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrDateRangeName}",
+                    value: {
+                        value: "{\\"from\\": 1000, \\"to\\": 2000}"
+                    }
+                ) {
+                    id_value
+
+                    ... on Value {
+                        value
+                    }
+                }
+              }`);
+
+            expect(res.status).toBe(200);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.saveValue.value).toEqual({from: 1000, to: 2000});
+        });
+
+        test("Don't save value if invalid (from > to)", async () => {
+            const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrDateRangeName}",
+                    value: {
+                        value: "{\\"from\\": 2000, \\"to\\": 1000}"
+                    }
+                ) {
+                    id_value
+
+                    ... on Value {
+                        value
+                    }
+                }
+              }`);
+
+            expect(res.status).toBe(200);
+
+            expect(res.data.errors).toBeDefined();
+            expect(res.data.errors[0].extensions.fields[attrDateRangeName]).toBeDefined();
+        });
     });
 });

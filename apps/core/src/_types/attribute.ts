@@ -4,9 +4,9 @@
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
 import {IRecord} from './record';
+import {IGetCoreEntitiesParams} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 import {ITreeElement} from './tree';
-import {IGetCoreEntitiesParams} from './shared';
 
 export interface IAttribute extends ICoreEntity {
     system?: boolean;
@@ -82,6 +82,7 @@ export enum AttributeFormats {
     TEXT = 'text',
     NUMERIC = 'numeric',
     DATE = 'date',
+    DATE_RANGE = 'date_range',
     ENCRYPTED = 'encrypted',
     BOOLEAN = 'boolean',
     EXTENDED = 'extended'

@@ -8,6 +8,7 @@
         "FORMAT_ERROR": "Format invalide: {{details}}",
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",
+        "INVALID_DATE_RANGE": "La date de début doit être inférieur à la date de fin",
         "INVALID_FILE_FORMAT": "Format de fichier non valide: {{received}}. Format attendu: {{expected}}",
         "INVALID_FILTER_CONDITION_VALUE" : "La condition d'un filtre n'est pas compatible avec sa valeur associée",
         "INVALID_FILTER_FIELDS": "Les champs d'un filtre ne sont pas valides",
@@ -60,6 +61,7 @@
         "names" : {
             "encrypt": "Encrypter",
             "formatDate": "Formater une Date",
+            "formatDateRange": "Formater les dates d'une période",
             "formatNumber": "Formater un Nombre",
             "maskValue": "Masquer la Valeur",
             "parseJSON": "Convertir JSON en Objet",
@@ -73,6 +75,7 @@
         "descriptions" : {
             "encrypt": "Encrypter la valeur",
             "formatDate": "Convertir un timestamp en format date",
+            "formatDateRange": "Convertir les timestamps en format date",
             "formatNumber": "Formatter un nombre",
             "maskValue": "Masquer une valeur en la remplaçant par des points, ou une chaine de caractères vide",
             "parseJSON": "Transformer un JSON en objet",

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export {default as encryptAction} from './encryptAction';
 export {default as formatDateAction} from './formatDateAction';
+export {default as formatDateRangeAction} from './formatDateRangeAction';
 export {default as formatNumberAction} from './formatNumberAction';
 export {default as maskValueAction} from './maskValueAction';
 export {default as parseJSONAction} from './parseJSONAction';

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as Joi from '@hapi/joi';
+import {IDateRangeValue} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {
     ActionsListIOTypes,
@@ -10,6 +11,7 @@ import {
     IActionsListFunction
 } from '../../_types/actionsList';
 import {AttributeFormats, IAttribute, IEmbeddedAttribute} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 
 interface IDeps {
@@ -69,6 +71,12 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
                         }
 
                         break;
+                    case AttributeFormats.DATE_RANGE:
+                        schema = Joi.object({
+                            from: Joi.date().timestamp('unix').raw().required(),
+                            to: Joi.date().timestamp('unix').raw().required()
+                        });
+                        break;
                 }
 
                 return schema;
@@ -79,8 +87,17 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
 
             const validationRes = formatSchema.validate(value);
 
+            let error;
             if (!!validationRes.error) {
                 throw new ValidationError(actionsListDomain.handleJoiError(ctx.attribute, validationRes.error));
+            }
+
+            // Specific Validation for date range
+            if (ctx.attribute.format === AttributeFormats.DATE_RANGE) {
+                const rangeValue = value as IDateRangeValue;
+                if (Number(rangeValue.from) > Number(rangeValue.to)) {
+                    throw new ValidationError({[ctx.attribute.id]: Errors.INVALID_DATE_RANGE});
+                }
             }
 
             return value;
