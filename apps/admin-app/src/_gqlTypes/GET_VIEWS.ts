@@ -20,7 +20,7 @@ export interface GET_VIEWS_views {
 }
 
 export interface GET_VIEWS {
-    views: GET_VIEWS_views | null;
+    views: GET_VIEWS_views;
 }
 
 export interface GET_VIEWSVariables {

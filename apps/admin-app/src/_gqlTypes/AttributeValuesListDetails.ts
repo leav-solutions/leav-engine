@@ -108,7 +108,7 @@ export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues
 
 export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues {
     record: AttributeValuesListDetails_TreeAttribute_values_list_treeValues_record;
-    ancestors: AttributeValuesListDetails_TreeAttribute_values_list_treeValues_ancestors[] | null;
+    ancestors: AttributeValuesListDetails_TreeAttribute_values_list_treeValues_ancestors[][] | null;
 }
 
 export interface AttributeValuesListDetails_TreeAttribute_values_list {

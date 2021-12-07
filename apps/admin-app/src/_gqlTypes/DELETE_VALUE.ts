@@ -10,10 +10,13 @@
 // GraphQL mutation operation: DELETE_VALUE
 // ====================================================
 
+export interface DELETE_VALUE_deleteValue_attribute {
+    id: string;
+}
+
 export interface DELETE_VALUE_deleteValue {
-    attribute: string | null;
+    attribute: DELETE_VALUE_deleteValue_attribute | null;
     id_value: string | null;
-    value: Any | null;
 }
 
 export interface DELETE_VALUE {

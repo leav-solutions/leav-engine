@@ -10,7 +10,6 @@ export const deleteValueQuery = gql`
                 id
             }
             id_value
-            value
         }
     }
 `;

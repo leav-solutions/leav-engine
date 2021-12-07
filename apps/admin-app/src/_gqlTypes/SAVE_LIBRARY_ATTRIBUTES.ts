@@ -55,6 +55,7 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_StandardAttribut
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_StandardAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_StandardAttribute_permissions_conf | null;
@@ -108,6 +109,7 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_LinkAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_LinkAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_LinkAttribute_permissions_conf | null;
@@ -162,6 +164,7 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_TreeAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     multiple_values: boolean;
     metadata_fields: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_TreeAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_TreeAttribute_permissions_conf | null;
