@@ -7,9 +7,10 @@ import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {getFieldsKeyFromAttribute, localizedTranslation} from '../../../../utils';
-import {AttributeFormat, AttributeType, IAttribute, IField, ISelectedAttribute} from '../../../../_types/types';
+import {IAttribute, IField, ISelectedAttribute} from '../../../../_types/types';
 import AttributesSelectionList from '../../../AttributesSelectionList';
 
 interface IChooseTableColumnsProps {

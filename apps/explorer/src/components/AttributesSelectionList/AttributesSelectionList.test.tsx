@@ -4,8 +4,7 @@
 import {render} from 'enzyme';
 import React from 'react';
 import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
-import {AttributeType} from '../../_gqlTypes/globalTypes';
-import {AttributeFormat} from '../../_types/types';
+import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import AttributesSelectionList from './AttributesSelectionList';
 

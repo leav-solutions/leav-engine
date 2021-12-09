@@ -4,7 +4,8 @@
 import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {isArray} from 'lodash';
 import objectPath from 'object-path';
-import {AttributeFormat, AttributeType, IField, IItem} from '../../_types/types';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {IField, IItem} from '../../_types/types';
 
 const _extractValueFromParent = (field: IField, linkValue: any) => {
     const linkedElement = field.parentAttributeData.type === AttributeType.tree ? linkValue.record : linkValue;

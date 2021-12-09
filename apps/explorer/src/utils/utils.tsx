@@ -4,14 +4,12 @@
 import {gql} from 'graphql-tag';
 import {i18n} from 'i18next';
 import {pick} from 'lodash';
+import {AttributeFormat, AttributeType, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
-import {ViewSizes} from '_gqlTypes/globalTypes';
 import {infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeConditionFilter,
-    AttributeFormat,
-    AttributeType,
     AvailableLanguage,
     ExtendFormat,
     IAttribute,

@@ -4,11 +4,9 @@
 import {
     GET_LIBRARY_DETAIL_EXTENDED,
     GET_LIBRARY_DETAIL_EXTENDEDVariables,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {AttributeFormat, AttributeType, IEmbeddedFields} from '_types/types';
-import {ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {mockLabel} from '__mocks__/common/label';
 
 export const mockGetLibraryDetailExtendedDefaultView: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView = {

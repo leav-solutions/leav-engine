@@ -11,8 +11,8 @@ import {
     GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute,
     GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute
 } from '../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {AttributeFormat} from '../../_gqlTypes/globalTypes';
-import {AttributeType, IAttribute, ISelectedAttribute} from '../../_types/types';
+import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
+import {IAttribute, ISelectedAttribute} from '../../_types/types';
 
 const mockQueryAttribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
     id: 'test',

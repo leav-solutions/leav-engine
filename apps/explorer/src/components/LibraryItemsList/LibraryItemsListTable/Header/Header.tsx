@@ -8,11 +8,10 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {SortOrder} from '_gqlTypes/globalTypes';
+import {AttributeType, SortOrder} from '_gqlTypes/globalTypes';
 import {infosCol} from '../../../../constants/constants';
 import themingVar from '../../../../themingVar';
 import {getSortFieldByAttributeType} from '../../../../utils';
-import {AttributeType} from '../../../../_types/types';
 import ChooseTableColumns from '../../LibraryItemsListTable/ChooseTableColumns';
 
 interface IWrapperProps {

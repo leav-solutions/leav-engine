@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
-import {AttributeType, IField, IFieldTypeTree} from '../../../_types/types';
+import {AttributeType} from '_gqlTypes/globalTypes';
+import {IField, IFieldTypeTree} from '../../../_types/types';
 import recordIdentityFragment from './recordIdentityFragment';
 
 const handleType = (field: IField): string => {
