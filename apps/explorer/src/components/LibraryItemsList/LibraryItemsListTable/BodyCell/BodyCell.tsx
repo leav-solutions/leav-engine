@@ -18,11 +18,10 @@ const CustomBodyCell = styled.div<{id?: string | number}>`
 
 interface IBodyCellProps {
     cell: ReactTableTypeCell<ITableRow>;
-    index: string;
     selected: boolean;
 }
 
-function BodyCell({cell, index, selected}: IBodyCellProps): JSX.Element {
+function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
     const props = cell.getCellProps();
     const record = cell.row.original.record;
 
@@ -74,7 +73,7 @@ function BodyCell({cell, index, selected}: IBodyCellProps): JSX.Element {
             {cell.column.id === selectionColumn ? (
                 <CellSelection record={record} onClick={_handleCellSelected} selected={selected} />
             ) : (
-                <Cell columnName={cell.column.id} data={data} index={index} record={record} />
+                <Cell columnName={cell.column.id} data={data} />
             )}
         </CustomBodyCell>
     );

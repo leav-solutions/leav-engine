@@ -4,11 +4,13 @@
 
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
+    AttributeFormat,
+    AttributeType,
     RecordFilterCondition,
     RecordFilterOperator,
     TreeElementInput,
-    ViewTypes,
-    ViewSizes
+    ViewSizes,
+    ViewTypes
 } from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
@@ -112,23 +114,6 @@ export interface IFilterTree extends IFilter {
 export interface IFilterLibrary extends IFilter {
     library: {id: string; label?: ISystemTranslation | null};
     parentAttribute: IAttribute;
-}
-
-export enum AttributeFormat {
-    text = 'text',
-    numeric = 'numeric',
-    date = 'date',
-    encrypted = 'encrypted',
-    boolean = 'boolean',
-    extended = 'extended'
-}
-
-export enum AttributeType {
-    simple = 'simple',
-    simple_link = 'simple_link',
-    advanced = 'advanced',
-    advanced_link = 'advanced_link',
-    tree = 'tree'
 }
 
 export enum OperatorFilter {
@@ -356,7 +341,8 @@ export interface ILinkedElement {
 
 export interface ITableCell {
     value: any;
-    type?: AttributeType;
+    type: AttributeType;
+    format?: AttributeFormat;
 }
 
 export interface ITableRow {
@@ -399,4 +385,8 @@ export enum WorkspacePanels {
     HOME = 'home',
     LIBRARY = 'library',
     TREE = 'tree'
+}
+export interface IDateRangeValue {
+    from: string;
+    to: string;
 }

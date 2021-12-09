@@ -178,6 +178,12 @@ export const allowedTypeOperator = {
         AttributeConditionFilter.NOT_EQUAL,
         AttributeConditionFilter.GREATER_THAN,
         AttributeConditionFilter.LESS_THAN
+    ],
+    [AttributeFormat.date_range]: [
+        AttributeConditionFilter.EQUAL,
+        AttributeConditionFilter.NOT_EQUAL,
+        AttributeConditionFilter.GREATER_THAN,
+        AttributeConditionFilter.LESS_THAN
     ]
 };
 

@@ -10,14 +10,8 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {allowedTypeOperator, checkTypeIsLink} from 'utils';
-import {
-    AttributeConditionFilter,
-    AttributeFormat,
-    AttributeType,
-    FilterType,
-    IFilterAttribute,
-    IFilterLibrary
-} from '../../../../_types/types';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {AttributeConditionFilter, FilterType, IFilterAttribute, IFilterLibrary} from '../../../../_types/types';
 import FilterDropdownButton from '../FilterDropdownButton';
 import {getAttributeConditionOptions} from '../FiltersOptions';
 
@@ -97,7 +91,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
         return (
             <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
                 <FilterDropdownButton data-testid="filter-condition-dropdown">
-                    {conditionOptionsByType.filter(c => c.value === filter.condition)[0].text}
+                    {conditionOptionsByType.filter(c => c.value === filter.condition)[0]?.text}
                 </FilterDropdownButton>
             </Dropdown>
         );

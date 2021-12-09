@@ -4,15 +4,15 @@
 import {SelectionModeContext} from 'context';
 import React, {useContext, useState} from 'react';
 import {Row} from 'react-table';
+import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import themingVar from '../../../../themingVar';
 import {IItem, SharedStateSelectionType} from '../../../../_types/types';
-import BodyCell from '../BodyCell';
-import {isSelected, isAllSelected} from '../BodyCell/getSelectedCell';
-import {useAppDispatch, useAppSelector} from 'redux/store';
-import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import BodyCell from '../BodyCell';
+import {isAllSelected, isSelected} from '../BodyCell/getSelectedCell';
 
 const CustomBodyRow = styled.div<{selected: boolean}>`
     transition: 100ms ease;
@@ -33,10 +33,9 @@ const CustomBodyRow = styled.div<{selected: boolean}>`
 
 interface IBodyRowProps {
     row: Row<IItem | any>; // react-table typing fail
-    index: string;
 }
 
-function BodyRow({row, index}: IBodyRowProps): JSX.Element {
+function BodyRow({row}: IBodyRowProps): JSX.Element {
     const props = row.getRowProps();
     const selectionMode = useContext(SelectionModeContext);
     const {selectionState} = useAppSelector(state => ({
@@ -96,7 +95,7 @@ function BodyRow({row, index}: IBodyRowProps): JSX.Element {
                 />
             )}
             {row.cells.map(cell => (
-                <BodyCell selected={isRowSelected} cell={cell as any} index={index} key={cell.column.id} />
+                <BodyCell selected={isRowSelected} cell={cell as any} key={cell.column.id} />
             ))}
         </CustomBodyRow>
     );

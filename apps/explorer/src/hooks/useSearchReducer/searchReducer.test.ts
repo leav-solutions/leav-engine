@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RecordFilterCondition, SortOrder} from '_gqlTypes/globalTypes';
-import {AttributeConditionFilter, AttributeType, FilterType} from '_types/types';
+import {AttributeType, RecordFilterCondition, SortOrder} from '_gqlTypes/globalTypes';
+import {AttributeConditionFilter, FilterType} from '_types/types';
 import {mockAttribute} from '__mocks__/common/attribute';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import searchReducer, {initialSearchState, SearchActionTypes} from './searchReducer';

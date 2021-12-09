@@ -13,6 +13,7 @@
 export enum AttributeFormat {
     boolean = 'boolean',
     date = 'date',
+    date_range = 'date_range',
     encrypted = 'encrypted',
     extended = 'extended',
     numeric = 'numeric',

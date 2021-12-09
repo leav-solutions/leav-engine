@@ -376,7 +376,8 @@
             "format_extended": "Extended",
             "format_numeric": "Numeric",
             "format_text": "Text"
-        }
+        },
+        "date_range_value": "From {{from}} to {{to}}"
     },
     "record_summary": {
         "id": "Identifiant",

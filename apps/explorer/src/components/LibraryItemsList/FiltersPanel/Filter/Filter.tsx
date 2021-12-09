@@ -19,12 +19,11 @@ import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
 import {
     AttributeConditionFilter,
-    AttributeFormat,
     FilterType,
     IAttribute,
     IFilter,

@@ -7,7 +7,11 @@ import {Button, Form, Input, Popover, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
-import {InputRefPossibleTypes, IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
+import {
+    InputRefPossibleTypes,
+    IStandardInputProps,
+    StandardValueTypes
+} from 'components/RecordEdition/EditRecord/_types';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import Dimmer from 'components/shared/Dimmer';
@@ -16,7 +20,8 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
-import {AttributeFormat} from '_types/types';
+import {AttributeFormat} from '_gqlTypes/globalTypes';
+import {IDateRangeValue} from '_types/types';
 import {
     IdValue,
     IStandardFieldReducerState,
@@ -28,6 +33,7 @@ import {
 } from '../standardFieldReducer/standardFieldReducer';
 import CheckboxInput from './Inputs/CheckboxInput';
 import DateInput from './Inputs/DateInput';
+import DateRangeInput from './Inputs/DateRangeInput';
 import EncryptedInput from './Inputs/EncryptedInput';
 import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
@@ -55,7 +61,7 @@ const FormWrapper = styled.div<{isEditing: boolean}>`
 const InputWrapper = styled.div<{isEditing: boolean}>`
     position: relative;
 
-    input {
+    && input {
         background: ${themingVar['@default-bg']};
         transition: none;
         border-radius: 0;
@@ -124,8 +130,10 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         border-radius: 5px;
     }
 
-    &.has-value:not(.format-boolean) input:not(:first-child),
-    &.editing:not(.format-boolean) input:not(:only-child) {
+    ${FormWrapper}.first-value &.has-value:not(.format-boolean) input:not(:first-child),
+    ${FormWrapper}.first-value &.editing:not(.format-boolean) input:not(:only-child),
+    ${FormWrapper}.first-value &.editing.format-date_range input,
+    ${FormWrapper}.first-value &.editing.format-date_range .ant-picker-range-separator {
         padding-top: 1em;
     }
 
@@ -179,6 +187,7 @@ const HoverButtons = styled(Space)`
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
     [AttributeFormat.text]: TextInput,
     [AttributeFormat.date]: DateInput,
+    [AttributeFormat.date_range]: DateRangeInput,
     [AttributeFormat.boolean]: CheckboxInput,
     [AttributeFormat.numeric]: NumberInput,
     [AttributeFormat.encrypted]: EncryptedInput,
@@ -209,12 +218,13 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing]);
 
-    const _handleSubmit = async (valueToSave: AnyPrimitive) => {
+    const _handleSubmit = async (valueToSave: StandardValueTypes) => {
         if (valueToSave === '') {
             return _handleDelete();
         }
 
-        onSubmit(fieldValue.idValue, valueToSave);
+        const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
+        onSubmit(fieldValue.idValue, convertedValue);
 
         editRecordDispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
@@ -298,10 +308,23 @@ function StandardFieldValue({
 
     const _getInput = (): JSX.Element => {
         if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
-            const displayedValue =
-                attribute.format === AttributeFormat.encrypted && fieldValue.displayValue
-                    ? '•••••••••'
-                    : String(fieldValue.displayValue);
+            let displayedValue = String(fieldValue.displayValue);
+
+            if (fieldValue.displayValue) {
+                switch (attribute.format) {
+                    case AttributeFormat.date_range:
+                        const dateRangeValue = fieldValue.displayValue as IDateRangeValue;
+                        displayedValue = t('record_edition.date_range_value', {
+                            ...dateRangeValue,
+                            interpolation: {escapeValue: false}
+                        });
+                        break;
+                    case AttributeFormat.encrypted:
+                        displayedValue = '•••••••••';
+                        break;
+                }
+            }
+
             return (
                 <Input
                     key="display"
@@ -396,7 +419,7 @@ function StandardFieldValue({
     return (
         <>
             {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
-            <FormWrapper isEditing={fieldValue.isEditing}>
+            <FormWrapper isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
                 <Form>
                     <FormItem>
                         <Popover placement="topLeft" visible={isErrorVisible} content={errorContent}>

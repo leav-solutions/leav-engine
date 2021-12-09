@@ -12,9 +12,10 @@ import {useTranslation} from 'react-i18next';
 import {ColumnWithLooseAccessor, useFlexLayout, useTable, UseTableColumnOptions} from 'react-table';
 import {useSticky} from 'react-table-sticky';
 import styled from 'styled-components';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {infosCol, selectionColumn} from '../../../constants/constants';
 import themingVar from '../../../themingVar';
-import {AttributeFormat, AttributeType, ITableCell, ITableRow} from '../../../_types/types';
+import {ITableCell, ITableRow} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
@@ -190,7 +191,7 @@ const Table = () => {
                             }
                         }
 
-                        acc[column.accessor as string] = {value, type: column.type};
+                        acc[column.accessor as string] = {value, type: column.type, format: column.format};
 
                         return acc;
                     },
@@ -277,11 +278,11 @@ const Table = () => {
                     ))}
                 </TableHead>
                 <TableBody {...getTableBodyProps()} className="body sticky">
-                    {rows.map((row, index) => {
+                    {rows.map(row => {
                         // Prepare the row for display
                         prepareRow(row);
 
-                        return <BodyRow key={row.id} row={row} index={(index + 1).toString()} />;
+                        return <BodyRow key={row.id} row={row} />;
                     })}
                 </TableBody>
             </CustomTable>

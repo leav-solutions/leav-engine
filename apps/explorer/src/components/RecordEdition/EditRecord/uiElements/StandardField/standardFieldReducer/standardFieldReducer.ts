@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
-import {FormElement} from 'components/RecordEdition/EditRecord/_types';
+import {FormElement, StandardValueTypes} from 'components/RecordEdition/EditRecord/_types';
 import {IRecordPropertyAttribute, IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
@@ -20,9 +20,9 @@ export interface IStandardFieldValue {
     idValue: IdValue;
     index: number;
     value: IRecordPropertyStandard | null;
-    displayValue: AnyPrimitive;
-    editingValue: AnyPrimitive;
-    originRawValue: AnyPrimitive;
+    displayValue: StandardValueTypes;
+    editingValue: StandardValueTypes;
+    originRawValue: StandardValueTypes;
     isEditing: boolean;
     error?: string;
     isErrorDisplayed: boolean;
