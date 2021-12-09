@@ -102,6 +102,7 @@
             "boolean": "Booléen",
             "extended": "Étendu",
             "date": "Date",
+            "date_range": "Période",
             "encrypted": "Crypté",
             "numeric": "Numérique"
         },
