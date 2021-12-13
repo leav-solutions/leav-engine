@@ -10,8 +10,7 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {allowedTypeOperator} from '../../../../utils';
-import {limitTextSize} from 'utils';
+import {limitTextSize, allowedTypeOperator, checkTypeIsLink} from 'utils';
 import {
     AttributeConditionFilter,
     AttributeFormat,
@@ -21,7 +20,6 @@ import {
     IFilterLibrary
 } from '../../../../_types/types';
 import {getAttributeConditionOptions} from '../FiltersOptions';
-import {checkTypeIsLink} from 'utils';
 
 const BooleanWrapper = styled.span`
     padding: 0 1rem;
