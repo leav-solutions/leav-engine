@@ -10,6 +10,7 @@ import {IValue} from '../../_types/value';
 import {mockAttrTreeVersionableSimple} from '../../__tests__/mocks/attribute';
 import {ITreeRepo} from '../tree/treeRepo';
 import attributeTreeRepo from './attributeTreeRepo';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 const mockAttrTreeRepo: Mockify<ITreeRepo> = {
     createTree: null,
@@ -642,14 +643,17 @@ describe('AttributeTreeRepo', () => {
             const mockDbServ = {
                 db: new Database()
             };
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterQueryPart: jest.fn().mockReturnValue(null)
+            };
+
             const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.filterQueryPart(
                 [
-                    {id: 'label', type: AttributeTypes.TREE},
-                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                    {id: 'label', type: AttributeTypes.TREE, _repo: mockRepo as IAttributeTypeRepo},
+                    {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
-                aql`== ${'MyLabel'}`,
-                0
+                aql`== ${'MyLabel'}`
             );
 
             expect(filter.query).toMatch(/^FILTER/);

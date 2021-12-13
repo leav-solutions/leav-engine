@@ -6,14 +6,14 @@ Object {
   "bindVars": Object {
     "@value0": undefined,
     "value1": "label",
-    "value2": "linked",
-    "value3": "MyLabel",
+    "value2": null,
   },
   "query": "FILTER 
                 FIRST(FOR l IN @@value0
                     FILTER TO_STRING(r.@value1) == l._key
-                RETURN l.@value2)
-             == @value3",
+                    @value2
+                RETURN l)
+             != null",
 }
 `;
 

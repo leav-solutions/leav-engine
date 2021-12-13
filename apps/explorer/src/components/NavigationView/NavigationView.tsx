@@ -4,7 +4,7 @@
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import React, {useEffect, useState} from 'react';
-import {setNavigationIsLoading, setNavigationRefetchTreeData} from 'redux/navigation';
+import {setNavigationActiveTree, setNavigationIsLoading, setNavigationRefetchTreeData} from 'redux/navigation';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {
@@ -13,8 +13,8 @@ import {
     IGetTreeContentQueryVar,
     IRecordAndChildren
 } from '../../graphQL/queries/trees/getTreeContentQuery';
-import ColumnNavigation from '../ColumnNavigation';
-import DetailNavigation from '../DetailNavigation';
+import ColumnNavigation from './ColumnNavigation';
+import DetailNavigation from './DetailNavigation';
 
 const Page = styled.div`
     width: auto;
@@ -60,17 +60,19 @@ function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
         dispatch(setNavigationIsLoading(loadingTreeContent));
     }, [dataTreeContent, loadingTreeContent, dispatch]);
 
+    useEffect(() => {
+        dispatch(setNavigationActiveTree(treeId));
+    }, [treeId, dispatch]);
+
     if (errorTreeContent) {
         return <ErrorDisplay message={errorTreeContent.message} />;
     }
 
     return (
-        <div>
-            <Page>
-                <ColumnNavigation treeElements={tree} />
-                <DetailNavigation />
-            </Page>
-        </div>
+        <Page>
+            <ColumnNavigation treeElements={tree} />
+            {navigation.recordDetail && !navigation.isLoading && <DetailNavigation />}
+        </Page>
     );
 }
 

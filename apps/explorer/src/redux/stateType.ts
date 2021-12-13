@@ -2,13 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SortOrder} from '_gqlTypes/globalTypes';
-import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     IAttribute,
     IBaseNotification,
     IField,
     IItem,
-    INavigationPath,
     INotification,
     IQueryFilter,
     ISharedStateSelectionSearch,
@@ -59,7 +58,8 @@ export interface ISelectionState {
 }
 
 export interface INavigationState {
-    path: INavigationPath[];
+    activeTree: string;
+    path: RecordIdentity_whoAmI[];
     isLoading: boolean;
     recordDetail?: RecordIdentity;
     refetchTreeData: boolean;

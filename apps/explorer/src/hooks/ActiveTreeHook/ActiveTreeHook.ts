@@ -10,7 +10,7 @@ export const useActiveTree = (): [IActiveTree | undefined, (newActiveLibrary: IA
 
     const activeTree: IActiveTree | undefined = data?.activeTree;
 
-    const updateActiveLibrary = useCallback(
+    const updateActiveTree = useCallback(
         (newActiveTree: IActiveTree) => {
             client.writeQuery<IGetActiveTree>({
                 query: getActiveTree,
@@ -22,5 +22,5 @@ export const useActiveTree = (): [IActiveTree | undefined, (newActiveLibrary: IA
         [client]
     );
 
-    return [activeTree, updateActiveLibrary];
+    return [activeTree, updateActiveTree];
 };

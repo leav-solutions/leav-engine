@@ -120,7 +120,10 @@ describe('AttributeIndexRepo', () => {
     describe('filterQueryPart', () => {
         test('Should return simple filter', () => {
             const attrRepo = attributeSimpleRepo();
-            const filter = attrRepo.filterQueryPart([{id: 'id', type: AttributeTypes.SIMPLE}], aql`== ${'123456'}`, 0);
+            const filter = attrRepo.filterQueryPart(
+                [{id: 'id', type: AttributeTypes.SIMPLE, _repo: null}],
+                aql`== ${'123456'}`
+            );
 
             expect(filter.query).toMatch(/^FILTER/);
             expect(filter).toMatchSnapshot();

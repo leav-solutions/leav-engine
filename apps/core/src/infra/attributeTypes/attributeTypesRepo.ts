@@ -7,6 +7,11 @@ import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition, IRecordSort} from '../../_types/record';
 import {IValue, IValuesOptions} from '../../_types/value';
 
+// To avoid some cyclic dependencies issues, we have to pass repo along attribute props
+export interface IAttributeWithRepo extends IAttribute {
+    _repo: IAttributeTypeRepo;
+}
+
 export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
     getQueryPart?(value: string | number | boolean, condition: AttributeCondition): GeneratedAqlQuery;
@@ -107,7 +112,11 @@ export interface IAttributeTypeRepo {
     /**
      * Return AQL query part to filter on this attribute. If will be concatenate with other filters and full query
      */
-    filterQueryPart(attributes: IAttribute[], queryPart: GeneratedAqlQuery, index?: number): AqlQuery;
+    filterQueryPart(
+        attributes: IAttributeWithRepo[],
+        queryPart: GeneratedAqlQuery,
+        parentIdentifier?: string
+    ): AqlQuery;
 
     /**
      * Return AQL query part to sort on this attribute
@@ -124,6 +133,7 @@ export interface IAttributeTypeRepo {
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
+export const BASE_QUERY_IDENTIFIER = 'r';
 
 interface IDeps {
     'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;

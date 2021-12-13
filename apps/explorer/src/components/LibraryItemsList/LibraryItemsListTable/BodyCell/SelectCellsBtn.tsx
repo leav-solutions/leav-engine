@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button} from 'antd';
+import {Button, ButtonProps} from 'antd';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import React from 'react';
-import {IRecordIdentityWhoAmI, SharedStateSelectionType} from '_types/types';
-import {setSelection, setSelectionToggleSelected, resetSelection} from 'redux/selection';
+import {resetSelection, setSelection, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch} from 'redux/store';
+import {IRecordIdentityWhoAmI, SharedStateSelectionType} from '_types/types';
 
-interface ISelectCellsBtnProps {
+interface ISelectCellsBtnProps extends ButtonProps {
     record: IRecordIdentityWhoAmI;
     size: SizeType;
     text: string;
-    type: SelectCellsBtnType;
+    selectionType: SelectCellsBtnType;
 }
 
 export enum SelectCellsBtnType {
@@ -20,13 +20,15 @@ export enum SelectCellsBtnType {
     ALL = 'ALL'
 }
 
-function SelectCellsBtn({type, record, size, text}: ISelectCellsBtnProps): JSX.Element {
+function SelectCellsBtn({selectionType, record, size, text, ...btnProps}: ISelectCellsBtnProps): JSX.Element {
     const dispatch = useAppDispatch();
 
-    const _handleClick = () => {
+    const _handleClick = (e: React.SyntheticEvent) => {
+        e.stopPropagation();
+
         const selectionData = {id: record.id, library: record.library.id, label: record.label};
 
-        if (type === SelectCellsBtnType.ONLY) {
+        if (selectionType === SelectCellsBtnType.ONLY) {
             dispatch(resetSelection());
 
             dispatch(
@@ -35,7 +37,7 @@ function SelectCellsBtn({type, record, size, text}: ISelectCellsBtnProps): JSX.E
                     elementSelected: selectionData
                 })
             );
-        } else if (type === SelectCellsBtnType.ALL) {
+        } else if (selectionType === SelectCellsBtnType.ALL) {
             dispatch(
                 setSelection({
                     type: SharedStateSelectionType.search,
@@ -47,7 +49,7 @@ function SelectCellsBtn({type, record, size, text}: ISelectCellsBtnProps): JSX.E
     };
 
     return (
-        <Button aria-label="select-records" size={size} onClick={_handleClick}>
+        <Button {...btnProps} aria-label="select-records" size={size} onClick={_handleClick}>
             {text}
         </Button>
     );

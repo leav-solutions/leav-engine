@@ -1,20 +1,48 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined, ArrowsAltOutlined, DeleteOutlined} from '@ant-design/icons';
-import {Button, Card, message} from 'antd';
+import {ArrowsAltOutlined, CheckOutlined, DeleteOutlined} from '@ant-design/icons';
+import {Button, Card, message, Space} from 'antd';
+import Paragraph from 'antd/lib/typography/Paragraph';
+import SelectCellsBtn, {
+    SelectCellsBtnType
+} from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useContext, useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import styled, {CSSObject} from 'styled-components';
-import {useTranslation} from 'react-i18next';
-import {getFileUrl, localizedTranslation} from 'utils';
+import styled from 'styled-components';
+import {displayTypeToPreviewSize, getFileUrl, localizedTranslation} from 'utils';
 import themingVar from '../../../../themingVar';
-import {IItem, ISharedSelected, SharedStateSelectionType} from '../../../../_types/types';
+import {IItem, ISharedSelected, PreviewSize, SharedStateSelectionType} from '../../../../_types/types';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
-import RecordPreview from '../../LibraryItemsListTable/RecordPreview';
+import RecordPreview from '../../../shared/RecordPreview';
+
+const itemPreviewSize = {
+    [PreviewSize.small]: '100px',
+    [PreviewSize.medium]: '200px',
+    [PreviewSize.big]: '300px'
+};
+
+const Item = styled(Card)<{$previewSize: string}>`
+    && {
+        width: ${p => p.$previewSize};
+        margin: 0.5em;
+        outline: 2px solid transparent;
+
+        & .ant-card-cover {
+            width: ${p => p.$previewSize};
+            height: ${p => p.$previewSize};
+        }
+
+        &:hover {
+            outline-color: ${themingVar['@primary-color']};
+        }
+    }
+`;
 
 const ImageWrapper = styled.div`
     position: relative;
@@ -23,6 +51,12 @@ const ImageWrapper = styled.div`
 
 const ActionsWrapper = styled.div`
     display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
     justify-content: center;
 
     &:hover {
@@ -45,31 +79,16 @@ const ActionsWrapper = styled.div`
     }
 `;
 
-const Selection = styled.div`
+const Selection = styled.div<{checked: boolean}>`
     position: absolute;
     width: 100%;
     height: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-interface ICheckboxWrapper {
-    checked: boolean;
-    styled?: CSSObject;
-}
-
-const CheckboxWrapper = styled.span<ICheckboxWrapper>`
-    height: 100%;
-    width: 100%;
     cursor: pointer;
 
-    background: ${({checked}) => (checked ? 'hsla(0, 0%, 0%, 0.7)' : 'hsla(0, 0%, 0%, 0.1)')};
-
     display: flex;
     align-items: center;
     justify-content: center;
+    background: ${({checked}) => (checked ? 'hsla(0, 0%, 0%, 0.7)' : 'hsla(0, 0%, 0%, 0.1)')};
 
     &:hover {
         background: ${({checked}) => (checked ? 'hsla(0, 0%, 0%, 0.8)' : 'hsla(0, 0%, 0%, 0.3)')};
@@ -85,6 +104,17 @@ const CheckboxWrapper = styled.span<ICheckboxWrapper>`
     }
 `;
 
+const SelectionActions = styled(Space)`
+    && {
+        display: none;
+        position: absolute;
+        top: 1em;
+    }
+    ${Selection}:hover & {
+        display: inherit;
+    }
+`;
+
 const Actions = styled.div`
     position: absolute;
     display: grid;
@@ -92,13 +122,12 @@ const Actions = styled.div`
     opacity: 0;
     width: 100%;
     height: 100%;
+    grid-gap: 1rem;
 
     justify-items: center;
     align-items: center;
     justify-content: center;
-    grid-gap: 1rem;
 
-    padding: 2rem 5rem;
     border-radius: 0.25rem 0.25rem 0 0;
 
     button {
@@ -106,6 +135,24 @@ const Actions = styled.div`
 
         &:hover {
             color: #fff;
+        }
+
+        // Arrange buttons, depending on their position on the grid
+        &:nth-child(1) {
+            justify-self: end;
+            align-self: end;
+        }
+        &:nth-child(2) {
+            justify-self: start;
+            align-self: end;
+        }
+        &:nth-child(3) {
+            justify-self: end;
+            align-self: start;
+        }
+        &:nth-child(4) {
+            justify-self: start;
+            align-self: start;
         }
     }
 `;
@@ -117,8 +164,11 @@ interface IItemTileDisplayProps {
 function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     const {t} = useTranslation();
 
+    const {state: searchState} = useSearchReducer();
     const selectionMode = useContext(SelectionModeContext);
     const [editRecordModal, setEditRecordModal] = useState<boolean>(false);
+    const previewSize: PreviewSize = displayTypeToPreviewSize(searchState.display.size);
+
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection
     }));
@@ -131,6 +181,11 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                 elementSelected.id === item.whoAmI.id && elementSelected.library === item.whoAmI.library.id
         )
     );
+
+    const isAllSelected = selectionMode
+        ? selectionState.searchSelection.type === SharedStateSelectionType.search &&
+          selectionState.searchSelection.allSelected
+        : selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
 
     const selectedToggle = () => {
         setIsSelect(!isSelected);
@@ -186,6 +241,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
         message.warn(t('global.feature_not_available'));
     };
 
+    const isChecked = isSelected || isAllSelected;
     return (
         <>
             {editRecordModal && (
@@ -196,17 +252,46 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                     onClose={_handleClose}
                 />
             )}
-            <Card
+            <Item
+                $previewSize={itemPreviewSize[previewSize]}
+                size="small"
                 onClick={selectedToggle}
                 onDoubleClick={() => setEditRecordModal(true)}
                 cover={
                     <ImageWrapper>
+                        <RecordPreview
+                            label={item.whoAmI.label || item.whoAmI.id}
+                            image={
+                                item.whoAmI.preview?.[previewSize] ? getFileUrl(item.whoAmI.preview[previewSize]) : ''
+                            }
+                            tile={true}
+                            style={{
+                                width: itemPreviewSize[previewSize],
+                                height: itemPreviewSize[previewSize]
+                            }}
+                        />
                         <ActionsWrapper>
-                            {isSelected ? (
-                                <Selection>
-                                    <CheckboxWrapper checked={isSelected}>
-                                        {isSelected && <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />}
-                                    </CheckboxWrapper>
+                            {isChecked ? (
+                                <Selection checked>
+                                    <SelectionActions>
+                                        <SelectCellsBtn
+                                            selectionType={SelectCellsBtnType.ONLY}
+                                            text={t('items-list-row.select-only')}
+                                            record={item.whoAmI}
+                                            size="small"
+                                            style={{color: '#FFF', background: 'transparent'}}
+                                        />
+                                        <SelectCellsBtn
+                                            selectionType={SelectCellsBtnType.ALL}
+                                            text={t('items-list-row.select-all')}
+                                            record={item.whoAmI}
+                                            size="small"
+                                            style={{color: '#FFF', background: 'transparent'}}
+                                        />
+                                    </SelectionActions>
+                                    <div className="checked-icon">
+                                        <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />
+                                    </div>
                                 </Selection>
                             ) : (
                                 <Actions className="actions">
@@ -216,16 +301,20 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                                 </Actions>
                             )}
                         </ActionsWrapper>
-                        <RecordPreview
-                            label={item.whoAmI.label || item.whoAmI.id}
-                            image={item.whoAmI.preview?.medium ? getFileUrl(item.whoAmI.preview.medium) : ''}
-                            tile={true}
-                        />
                     </ImageWrapper>
                 }
             >
-                <Card.Meta title={item.whoAmI.label || item.whoAmI.id} description={item.whoAmI.library?.id} />
-            </Card>
+                <Card.Meta
+                    title={
+                        <Paragraph
+                            ellipsis={{rows: 1, tooltip: true}}
+                            style={{marginBottom: 0, fontSize: previewSize === PreviewSize.small ? '.8em' : '1em'}}
+                        >
+                            {item.whoAmI.label || item.whoAmI.id}
+                        </Paragraph>
+                    }
+                />
+            </Item>
         </>
     );
 }

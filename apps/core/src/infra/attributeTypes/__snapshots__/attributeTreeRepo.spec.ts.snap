@@ -49,14 +49,15 @@ Object {
   "bindVars": Object {
     "@value0": "core_edge_values_links",
     "value1": "label",
-    "value2": "linked",
-    "value3": "MyLabel",
+    "value2": null,
   },
   "query": "FILTER FIRST(
-                FOR v, e IN 1 OUTBOUND r._id
+                FOR rv, re IN 1 OUTBOUND r._id
                 @@value0
-                FILTER e.attribute == @value1 RETURN v.@value2
-            ) == @value3",
+                FILTER re.attribute == @value1
+                @value2
+                RETURN rv
+            ) != null",
 }
 `;
 

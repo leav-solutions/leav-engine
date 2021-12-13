@@ -133,7 +133,7 @@
             "small": "petit",
             "medium": "moyen",
             "big": "grand",
-            "tile": "Mosaïque"
+            "tile": "Galerie"
         }
     },
     "items-list-row": {
@@ -244,34 +244,37 @@
     },
     "navigation": {
         "header": {
-            "nb-selection": "{{nb}} élements sélectionnés dans {{selectionType}}"
+            "nb-selection": "{{nb}} éléments sélectionnés dans {{selectionType}}"
         },
         "list": {
             "header": "Navigation",
             "info": {
-                "tree": "Détail de l'Arbre",
-                "library": "Détail de la bibliothèque",
+                "tree": "Détails de l'Arbre",
+                "library": "Détails de la bibliothèque",
                 "id": "Identifiant",
-                "label": "Label",
-                "no-label": "Pas de label"
+                "label": "Libellé",
+                "no-label": "Pas de libellé"
             }
         },
         "actions": {
-            "sort-asc": "Tri Croissant",
-            "sort-desc": "Tri Décroissant",
-            "move-selected": "Déplacer sélection",
-            "detach-selected": "Détacher sélection",
-            "detach-element": "Détacher l'élement",
-            "add-selected": "Ajouter sélection"
+            "order": "Ordonner",
+            "details": "Détails",
+            "edit": "Éditer",
+            "classified_in": "Chercher dans",
+            "create": "Créer",
+            "detach": "Détacher",
+            "move-selected": "Déplacer la sélection",
+            "detach-selected": "Détacher la sélection",
+            "add-selected": "Ajouter la sélection"
         },
         "notifications": {
-            "success-add": "{{nb}} élements ont pu être ajouté",
-            "error-add": "Une erreur est survenu lors de l'ajout des élements {{elements}}: {{errorMessage}}",
-            "warning-add-no-selection": "Aucun élément sélectionner à ajouter",
-            "success-move": "{{nb}} élements ont pu être déplacés",
-            "error-move": "Une erreur est survenu lors du déplacement des élements {{elements}}: {{errorMessage}}",
-            "success-detach": "{{nb}} élements a pu être détacher",
-            "error-detach": "Une erreur est survenu lors du détachement des élements {{elements}}: {{errorMessage}}"
+            "success-add": "{{nb}} élément(s) ajouté(s)",
+            "error-add": "Une erreur est survenue lors de l'ajout des éléments {{elements}}: {{errorMessage}}",
+            "warning-add-no-selection": "Aucun élément sélectionné à ajouter",
+            "success-move": "{{nb}} élément(s) déplacé(s)",
+            "error-move": "Une erreur est survenue lors du déplacement des éléments {{elements}}: {{errorMessage}}",
+            "success-detach": "{{nb}} élément(s) détaché(s)",
+            "error-detach": "Une erreur est survenue lors du détachement des élements {{elements}}: {{errorMessage}}"
         }
     },
     "notification": {
@@ -285,7 +288,7 @@
         "my-views": "Mes vues",
         "shared-views": "Partagées",
         "type-list": "Liste",
-        "type-cards": "Mosaïque",
+        "type-cards": "Galerie",
         "type-timeline": "Timeline",
         "default": "Vue par défaut",
         "see-more": "Voir plus",
@@ -306,8 +309,7 @@
             "type": "Type",
             "shared": "Partagée",
             "color": "Couleur"
-        },
-        "type-tile": "Vue Tuile"
+        }
     },
     "export": {
         "title": "Exporter",

@@ -12,7 +12,7 @@ describe('RecordSummary', () => {
             render(<RecordSummary record={mockRecord} />);
         });
 
-        expect(screen.getByRole('img', {name: 'record preview'})).toBeInTheDocument();
+        expect(screen.getByAltText('record preview')).toBeInTheDocument();
         expect(screen.getByText(mockRecord.id)).toBeInTheDocument();
         expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
     });

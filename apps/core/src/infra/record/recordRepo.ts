@@ -20,7 +20,7 @@ import {
     Operator,
     TreeCondition
 } from '../../_types/record';
-import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
@@ -120,11 +120,11 @@ export default function ({
         return output.concat(stack.reverse());
     };
 
-    const _findRequest = async (libraryId: string, filter?: IRecordFilterOption, index?: number): Promise<AqlQuery> => {
+    const _findRequest = async (libraryId: string, filter?: IRecordFilterOption): Promise<AqlQuery> => {
         const queryParts = [];
         const coll = dbService.db.collection(libraryId);
 
-        queryParts.push(aql`(FOR r IN ${coll}`);
+        queryParts.push(aql`(FOR ${aql.literal(BASE_QUERY_IDENTIFIER)} IN ${coll}`);
 
         if (typeof filter !== 'undefined') {
             let filterQueryPart: AqlQuery;
@@ -145,13 +145,10 @@ export default function ({
                         ? aql`FILTER POSITION(${records}, r._id)`
                         : aql`FILTER !POSITION(${records}, r._id) && r._id != ${filter.value}`;
             } else {
-                filterQueryPart = attributeTypesRepo
-                    .getTypeRepo(filter.attributes[0])
-                    .filterQueryPart(
-                        filter.attributes,
-                        attributeTypesRepo.getQueryPart(filter.value, filter.condition as AttributeCondition),
-                        index
-                    );
+                filterQueryPart = attributeTypesRepo.getTypeRepo(filter.attributes[0]).filterQueryPart(
+                    filter.attributes.map(attr => ({...attr, _repo: attributeTypesRepo.getTypeRepo(attr)})),
+                    attributeTypesRepo.getQueryPart(filter.value, filter.condition as AttributeCondition)
+                );
             }
 
             queryParts.push(filterQueryPart);
@@ -206,11 +203,11 @@ export default function ({
                         let [f0, f1] = [stack.pop(), stack.pop()].reverse();
 
                         if (_isAttributeFilter(f0) || _isClassifiedFilter(f0)) {
-                            f0 = await _findRequest(libraryId, f0, i);
+                            f0 = await _findRequest(libraryId, f0);
                         }
 
                         if (_isAttributeFilter(f1) || _isClassifiedFilter(f1)) {
-                            f1 = await _findRequest(libraryId, f1, i);
+                            f1 = await _findRequest(libraryId, f1);
                         }
 
                         const res =
@@ -223,7 +220,7 @@ export default function ({
                 }
 
                 if (_isAttributeFilter(stack[0]) || _isClassifiedFilter(stack[0])) {
-                    stack[0] = await _findRequest(libraryId, stack[0], 0);
+                    stack[0] = await _findRequest(libraryId, stack[0]);
                 }
 
                 queryParts = queryParts.concat([].concat.apply([], stack));

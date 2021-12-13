@@ -9,6 +9,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
+import {IAttributeTypeRepo} from './attributeTypesRepo';
 
 describe('AttributeAdvancedLinkRepo', () => {
     const mockAttribute = {
@@ -621,13 +622,16 @@ describe('AttributeAdvancedLinkRepo', () => {
                 db: new Database()
             };
             const attrRepo = attributeAdvancedLinkRepo({'core.infra.db.dbService': mockDbServ});
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterQueryPart: jest.fn().mockReturnValue(null)
+            };
+
             const filter = attrRepo.filterQueryPart(
                 [
-                    {id: 'label', type: AttributeTypes.ADVANCED_LINK},
-                    {id: 'linked', type: AttributeTypes.SIMPLE}
+                    {id: 'label', type: AttributeTypes.ADVANCED_LINK, _repo: mockRepo as IAttributeTypeRepo},
+                    {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
-                aql`== ${'MyLabel'}`,
-                0
+                aql`== ${'MyLabel'}`
             );
 
             expect(filter.query).toMatch(/^FILTER/);

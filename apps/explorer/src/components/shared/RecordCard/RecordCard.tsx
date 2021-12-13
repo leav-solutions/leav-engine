@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Paragraph from 'antd/lib/typography/Paragraph';
-import RecordPreview from 'components/LibraryItemsList/LibraryItemsListTable/RecordPreview';
+import RecordPreview from 'components/shared/RecordPreview';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedTranslation} from 'utils';

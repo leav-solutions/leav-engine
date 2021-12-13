@@ -678,9 +678,8 @@ describe('AttributeStandardRepo', () => {
             };
             const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.filterQueryPart(
-                [{id: 'label', type: AttributeTypes.ADVANCED}],
-                aql`== ${'MyLabel'}`,
-                0
+                [{id: 'label', type: AttributeTypes.ADVANCED, _repo: null}],
+                aql`== ${'MyLabel'}`
             );
 
             expect(filter.query).toMatch(/^FILTER/);
