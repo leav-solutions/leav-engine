@@ -94,7 +94,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
 
     if (showStandardCondition) {
         return (
-            <Dropdown overlay={menu} trigger={['click']}>
+            <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
                 <Button data-testid="filter-condition-dropdown" type={'text'} icon={<DownOutlined />}>
                     <Tooltip
                         mouseEnterDelay={0.5}

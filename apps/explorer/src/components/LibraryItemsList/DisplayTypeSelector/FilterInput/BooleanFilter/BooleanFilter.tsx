@@ -15,7 +15,14 @@ function BooleanFilter({filter, updateFilterValue}: IBooleanFilterProps): JSX.El
         updateFilterValue({...filter.value, value});
     };
 
-    return <Switch data-test-id="filter-input-boolean" checked={!!filter.value.value} onChange={_handleChange} />;
+    return (
+        <Switch
+            disabled={!filter.active}
+            data-test-id="filter-input-boolean"
+            checked={!!filter.value.value}
+            onChange={_handleChange}
+        />
+    );
 }
 
 export default BooleanFilter;

@@ -115,11 +115,6 @@ const HeadInfos = styled.div`
     box-shadow: ${themingVar['@leav-small-shadow']};
     border: ${themingVar['@leav-border']};
     border-radius: 3px;
-
-    & > *:hover {
-        background: ${themingVar['@leav-background-active']};
-        cursor: pointer;
-    }
 `;
 
 const HeadOptions = styled.div`
@@ -237,7 +232,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                 }
             } else if (showTreeCondition) {
                 return (
-                    <Button onClick={() => setShowSelectTreeNodeModal(true)}>
+                    <Button disabled={!props.filter.active} onClick={() => setShowSelectTreeNodeModal(true)}>
                         {props.filter.value.label || t('global.select')}
                     </Button>
                 );
@@ -359,7 +354,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
         const newFilter: IFilterAttribute = {
             type: FilterType.ATTRIBUTE,
-            index: searchState.filters.length,
+            index: filter.index,
             key: parentAttribute?.id,
             value: {
                 value: getDefaultFilterValueByFormat(parentAttribute.format)
@@ -369,7 +364,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             attribute: parentAttribute
         };
 
-        filters.splice(filter.index, 1, {...newFilter, index: filter.index});
+        const filterPos = searchState.filters.findIndex(f => f.index === filter.index);
+        filters.splice(filterPos, 1, newFilter);
 
         searchDispatch({
             type: SearchActionTypes.SET_FILTERS,
@@ -378,6 +374,10 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     };
 
     const getDropdownLabel = (): string => {
+        if (filter.condition === ThroughConditionFilter.THROUGH) {
+            return `${t('global.select')}...`;
+        }
+
         if (filter.type === FilterType.ATTRIBUTE) {
             return (
                 localizedTranslation((filter as IFilterAttribute).attribute?.label, lang) ||
@@ -390,6 +390,29 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         return (
             localizedTranslation((filter as IFilterLibrary).library.label, lang) ||
             (filter as IFilterLibrary).library.id
+        );
+    };
+
+    const getParentLabel = () => {
+        return (
+            localizedTranslation(
+                filter.condition === ThroughConditionFilter.THROUGH
+                    ? (filter as IFilterAttribute).attribute?.label
+                    : (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
+                          (filter as IFilterLibrary).parentAttribute?.label,
+                lang
+            ) ||
+            `${localizedTranslation(
+                filter.condition === ThroughConditionFilter.THROUGH
+                    ? (filter as IFilterLibrary).parentAttribute?.label
+                    : (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute?.label,
+                lang
+            )} > ${localizedTranslation(
+                filter.condition === ThroughConditionFilter.THROUGH
+                    ? (filter as IFilterLibrary)?.library.label
+                    : (filter as IFilterAttribute).parentTreeLibrary?.library.label,
+                lang
+            )} `
         );
     };
 
@@ -407,24 +430,13 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             <Wrapper data-testid="filter" active={filter.active}>
                 <Handle className="filter-handle" {...handleProps} />
                 <Content>
-                    {(!!(filter as IFilterAttribute).attribute?.parentAttribute ||
+                    {(filter.condition === ThroughConditionFilter.THROUGH ||
+                        !!(filter as IFilterAttribute).attribute?.parentAttribute ||
                         (filter as IFilterAttribute).parentTreeLibrary ||
                         filter.type === FilterType.LIBRARY) && (
-                        <Button type="text" size="small" onClick={_handleResetClick}>
+                        <Button disabled={!filter.active} type="text" size="small" onClick={_handleResetClick}>
                             <Typography.Text type="secondary">
-                                {localizedTranslation(
-                                    (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
-                                        (filter as IFilterLibrary).parentAttribute?.label,
-                                    lang
-                                ) ||
-                                    `${localizedTranslation(
-                                        (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute?.label,
-                                        lang
-                                    )} > ${localizedTranslation(
-                                        (filter as IFilterAttribute).parentTreeLibrary?.library.label,
-                                        lang
-                                    )} `}{' '}
-                                <CloseCircleFilled />
+                                {getParentLabel()} <CloseCircleFilled />
                             </Typography.Text>
                         </Button>
                     )}
@@ -440,7 +452,9 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                                                 placement="bottom"
                                                 title={getDropdownLabel()}
                                             >
-                                                <Typography.Text>
+                                                <Typography.Text
+                                                    disabled={filter.condition === ThroughConditionFilter.THROUGH}
+                                                >
                                                     {limitTextSize(getDropdownLabel(), 12)}
                                                 </Typography.Text>
                                             </Tooltip>

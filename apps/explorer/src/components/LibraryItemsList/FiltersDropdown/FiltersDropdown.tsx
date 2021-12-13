@@ -43,6 +43,7 @@ interface IFiltersDropdownProps {
     attributes: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[];
     libraries: ILibraryDetailExtendedAttributeParentLinkedTree['libraries'];
     trees: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[];
+    disabled?: boolean;
     filter?: IFilter; // if replace filter
 }
 
@@ -236,7 +237,13 @@ function FiltersDropdown({
     );
 
     return (
-        <Dropdown visible={visible} onVisibleChange={_handleVisibleChange} overlay={menu} trigger={['click']}>
+        <Dropdown
+            disabled={!!filter && !filter.active}
+            visible={visible}
+            onVisibleChange={_handleVisibleChange}
+            overlay={menu}
+            trigger={['click']}
+        >
             {button}
         </Dropdown>
     );
