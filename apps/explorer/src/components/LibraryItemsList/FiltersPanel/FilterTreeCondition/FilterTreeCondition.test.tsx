@@ -12,12 +12,10 @@ describe('FilterTreeCondition', () => {
     test('should contain select for condition', async () => {
         render(
             <MockSearchContextProvider state={{attributes: [{...mockAttribute, library: 'test'}]}}>
-                {/* <MockStateFilters stateFilters={{filters: [mockFilter]}}> */}
                 <FilterTreeCondition filter={mockFilterTree} />
-                {/* </MockStateFilters> */}
             </MockSearchContextProvider>
         );
-        const selectElement = screen.getByTestId('filter-condition-select');
+        const selectElement = screen.getByTestId('filter-condition-dropdown');
 
         expect(selectElement).toBeInTheDocument();
     });

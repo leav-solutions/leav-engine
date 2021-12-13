@@ -2,49 +2,40 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SelectionModeContext} from 'context';
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {Cell as ReactTableTypeCell} from 'react-table';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {infosCol, selectionColumn} from '../../../../constants/constants';
-import themingVar from '../../../../themingVar';
 import {ITableRow, SharedStateSelectionType} from '../../../../_types/types';
-import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 import Cell from '../Cell';
 import CellSelection from '../Cell/CellSelection';
-import {isSelected, isAllSelected} from './getSelectedCell';
 
-const CustomBodyCell = styled.div<{selected: boolean; id?: string | number}>`
+const CustomBodyCell = styled.div<{id?: string | number}>`
     max-width: ${p => (p.id === selectionColumn ? '35px' : 'auto')};
-    background-color: ${p =>
-        p.selected ? themingVar['@leav-view-panel-label-background-active'] : themingVar['@default-bg']};
 `;
 
 interface IBodyCellProps {
     cell: ReactTableTypeCell<ITableRow>;
     index: string;
+    selected: boolean;
 }
 
-function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
+function BodyCell({cell, index, selected}: IBodyCellProps): JSX.Element {
     const props = cell.getCellProps();
     const record = cell.row.original.record;
 
     const selectionMode = useContext(SelectionModeContext);
-    const [editRecordModal, setEditRecordModal] = useState<boolean>(false);
     const dispatch = useAppDispatch();
-    const {selectionState} = useAppSelector(state => ({
-        selectionState: state.selection,
-        display: state.display
-    }));
 
     if (cell.column.id === infosCol) {
         // define info column row style
         props.style = {
             ...props.style,
             flex: '1 0 auto',
-            width: '250px',
+            maxWidth: '250px',
+            minWidth: '250px',
             zIndex: 'auto'
         };
     }
@@ -59,11 +50,8 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
         format: cell?.value?.format
     };
 
-    const selected = isSelected(selectionState, selectionMode, record.id, record.library.id);
-    const allSelected = isAllSelected(selectionState, selectionMode);
-
     if (!cell.value) {
-        return <CustomBodyCell selected={selected} {...props}></CustomBodyCell>;
+        return <CustomBodyCell {...props}></CustomBodyCell>;
     }
 
     const _handleCellSelected = () => {
@@ -81,35 +69,10 @@ function BodyCell({cell, index}: IBodyCellProps): JSX.Element {
         }
     };
 
-    const _handleDoubleClick = () => {
-        setEditRecordModal(true);
-    };
-
-    const _handleClose = () => {
-        setEditRecordModal(false);
-    };
-
-    const isRowSelected = allSelected || selected;
-
     return (
-        <CustomBodyCell
-            {...props}
-            id={cell.column.id}
-            selected={isRowSelected}
-            onClick={_handleCellSelected}
-            onDoubleClick={_handleDoubleClick}
-            className="body-cell"
-        >
-            {editRecordModal && (
-                <EditRecordModal
-                    open={editRecordModal}
-                    library={record.library.id}
-                    record={record as RecordIdentity_whoAmI}
-                    onClose={_handleClose}
-                />
-            )}
+        <CustomBodyCell {...props} id={cell.column.id} className="body-cell">
             {cell.column.id === selectionColumn ? (
-                <CellSelection record={record} onClick={_handleCellSelected} selected={isRowSelected} />
+                <CellSelection record={record} onClick={_handleCellSelected} selected={selected} />
             ) : (
                 <Cell columnName={cell.column.id} data={data} index={index} record={record} />
             )}

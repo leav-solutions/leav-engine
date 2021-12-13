@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MoreOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu} from 'antd';
+import {MoreOutlined, DownOutlined} from '@ant-design/icons';
+import {Button, Dropdown, Menu, Typography} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
@@ -26,6 +26,7 @@ const Wrapper = styled.div`
     flex-flow: column nowrap;
     border-right: ${themingVar['@divider-color']} 1px solid;
     overflow-y: auto;
+    width: 1000px;
 `;
 
 const Header = styled.div`
@@ -58,17 +59,12 @@ const Header = styled.div`
 `;
 
 const FiltersWrapper = styled.div`
-    padding: 1rem;
     height: calc(100% - 7rem);
     overflow: auto;
 `;
 
 const ListFilters = styled.div`
     display: grid;
-`;
-
-const CustomButton = styled(Button)`
-    background: ${themingVar['@default-bg']};
 `;
 
 function FiltersPanel(): JSX.Element {
@@ -111,15 +107,17 @@ function FiltersPanel(): JSX.Element {
         }
 
         const newFilter = searchState.filters
-            .map(filter => ({
-                ...filter,
-                index:
-                    result.source.index === filter.index
-                        ? result.destination.index
-                        : result.destination.index === filter.index
-                        ? result.source.index
-                        : undefined
-            }))
+            .map(filter => {
+                return {
+                    ...filter,
+                    index:
+                        result.source.index === filter.index
+                            ? result.destination.index
+                            : result.destination.index === filter.index
+                            ? result.source.index
+                            : filter.index
+                };
+            })
             .sort((a, b) => a.index - b.index);
 
         searchDispatch({
@@ -144,24 +142,31 @@ function FiltersPanel(): JSX.Element {
     return (
         <Wrapper>
             <Header>
-                <span>{t('filters.filters')}</span>
+                <Dropdown
+                    overlay={
+                        <Menu>
+                            <Menu.Item disabled={allFiltersDisabled} onClick={disableFilters}>
+                                {t('filters.disable-filters')}
+                            </Menu.Item>
+                            <Menu.Item disabled={!searchState.filters.length} onClick={resetFilters}>
+                                {t('filters.remove-filters')}
+                            </Menu.Item>
+                            <Menu.Item disabled={true}>
+                                {t('filters.add-condition')} <AvailableSoon />
+                            </Menu.Item>
+                        </Menu>
+                    }
+                >
+                    <Button type={'text'}>
+                        {t('filters.filters')}
+                        <DownOutlined style={{marginTop: '5px', marginLeft: '-3px'}} />
+                    </Button>
+                </Dropdown>
                 <div>
-                    <Button onClick={_handleApplyFilters}>{t('filters.apply')}</Button>
-                    <Dropdown
-                        overlay={
-                            <Menu>
-                                <Menu.Item disabled={allFiltersDisabled} onClick={disableFilters}>
-                                    {t('filters.disable-filters')}
-                                </Menu.Item>
-                                <Menu.Item onClick={resetFilters}>{t('filters.remove-filters')}</Menu.Item>
-                                <Menu.Item disabled={true}>
-                                    {t('filters.add-condition')} <AvailableSoon />
-                                </Menu.Item>
-                            </Menu>
-                        }
-                    >
-                        <CustomButton icon={<MoreOutlined />} />
-                    </Dropdown>
+                    <Button disabled={!searchState.filters.length} onClick={_handleApplyFilters}>
+                        {t('filters.apply')}
+                    </Button>
+
                     <Button onClick={handleHide} icon={<IconClosePanel />}></Button>
                 </div>
             </Header>

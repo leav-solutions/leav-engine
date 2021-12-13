@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MoreOutlined, DownOutlined, CloseCircleFilled} from '@ant-design/icons';
-import {Button, Dropdown, Menu, Typography} from 'antd';
+import {Button, Dropdown, Menu, Tooltip, Typography} from 'antd';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -14,7 +14,7 @@ import moment from 'moment';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {localizedTranslation, defaultFilterConditionByAttributeFormat} from 'utils';
+import {localizedTranslation, defaultFilterConditionByAttributeFormat, limitTextSize} from 'utils';
 import {
     AttributeConditionFilter,
     AttributeFormat,
@@ -48,7 +48,7 @@ interface IWrapperProps {
 
 const Wrapper = styled.div<IWrapperProps>`
     background: ${themingVar['@leav-secondary-item-background']};
-    padding: 8px 8px 8px 0;
+    padding: 8px 8px 8px 0px;
     border-radius: 3px;
     display: grid;
     grid-template-columns: 1.375rem auto;
@@ -407,41 +407,45 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             <Wrapper data-testid="filter" active={filter.active}>
                 <Handle className="filter-handle" {...handleProps} />
                 <Content>
+                    {(!!(filter as IFilterAttribute).attribute?.parentAttribute ||
+                        (filter as IFilterAttribute).parentTreeLibrary ||
+                        filter.type === FilterType.LIBRARY) && (
+                        <Button type="text" size="small" onClick={_handleResetClick}>
+                            <Typography.Text type="secondary">
+                                {localizedTranslation(
+                                    (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
+                                        (filter as IFilterLibrary).parentAttribute?.label,
+                                    lang
+                                ) ||
+                                    `${localizedTranslation(
+                                        (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute?.label,
+                                        lang
+                                    )} > ${localizedTranslation(
+                                        (filter as IFilterAttribute).parentTreeLibrary?.library.label,
+                                        lang
+                                    )} `}{' '}
+                                <CloseCircleFilled />
+                            </Typography.Text>
+                        </Button>
+                    )}
                     <Head>
                         <HeadInfos>
                             <div style={{display: 'grid'}}>
-                                {
-                                    // FIXME: clean and add label OR ID
-                                    (!!(filter as IFilterAttribute).attribute?.parentAttribute ||
-                                        (filter as IFilterAttribute).parentTreeLibrary ||
-                                        filter.type === FilterType.LIBRARY) && (
-                                        <Button type="text" size="small" onClick={_handleResetClick}>
-                                            <Typography.Text type="secondary">
-                                                {localizedTranslation(
-                                                    (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
-                                                        (filter as IFilterLibrary).parentAttribute?.label,
-                                                    lang
-                                                ) ||
-                                                    `${localizedTranslation(
-                                                        (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute
-                                                            ?.label,
-                                                        lang
-                                                    )} > ${localizedTranslation(
-                                                        (filter as IFilterAttribute).parentTreeLibrary?.library.label,
-                                                        lang
-                                                    )} `}{' '}
-                                                <CloseCircleFilled />
-                                            </Typography.Text>
-                                        </Button>
-                                    )
-                                }
                                 <FiltersDropdown
                                     libraryId={activeLibrary.id}
-                                    button={{
-                                        label: getDropdownLabel(),
-                                        icon: <DownOutlined />,
-                                        type: 'text'
-                                    }}
+                                    button={
+                                        <Button icon={<DownOutlined />} type={'text'}>
+                                            <Tooltip
+                                                mouseEnterDelay={0.5}
+                                                placement="bottom"
+                                                title={getDropdownLabel()}
+                                            >
+                                                <Typography.Text>
+                                                    {limitTextSize(getDropdownLabel(), 12)}
+                                                </Typography.Text>
+                                            </Tooltip>
+                                        </Button>
+                                    }
                                     filter={filter}
                                     attributes={getAttributes()}
                                     libraries={getLibraries()}

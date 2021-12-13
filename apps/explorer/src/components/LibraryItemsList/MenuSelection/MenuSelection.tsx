@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
-import {Dropdown, Menu} from 'antd';
+import {Dropdown, Menu, Button} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -89,12 +89,11 @@ function MenuSelection(): JSX.Element {
                     </Menu>
                 }
             >
-                <span>
+                <Button type={'text'} icon={<DownOutlined />}>
                     {t('items-list-row.nb-elements', {
                         nbItems: searchState.totalCount
                     })}
-                    <DownOutlined style={{paddingLeft: 6}} />
-                </span>
+                </Button>
             </Dropdown>
         </span>
     );

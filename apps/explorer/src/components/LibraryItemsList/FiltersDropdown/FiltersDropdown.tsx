@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Menu, Dropdown, Button} from 'antd';
+import {Menu, Dropdown, Button, Badge} from 'antd';
 import React, {useState} from 'react';
+import {BranchesOutlined, NumberOutlined, DatabaseOutlined} from '@ant-design/icons';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {useTranslation} from 'react-i18next';
@@ -14,7 +15,7 @@ import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {defaultFilterConditionByAttributeFormat, checkTypeIsLink, localizedTranslation} from 'utils';
+import {defaultFilterConditionByAttributeFormat, checkTypeIsLink, localizedTranslation, limitTextSize} from 'utils';
 import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {
@@ -31,7 +32,6 @@ import {
 } from '_types/types';
 import {useAppDispatch} from 'redux/store';
 import {setDisplaySide} from 'redux/display';
-import {ButtonType} from 'antd/lib/button';
 import {
     ILibraryDetailExtendedAttributeChild,
     ILibraryDetailExtendedAttributeParentLinkedTree
@@ -39,11 +39,7 @@ import {
 
 interface IFiltersDropdownProps {
     libraryId: string;
-    button: {
-        label?: string;
-        type: ButtonType;
-        icon?: JSX.Element;
-    };
+    button: JSX.Element;
     attributes: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[];
     libraries: ILibraryDetailExtendedAttributeParentLinkedTree['libraries'];
     trees: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[];
@@ -80,10 +76,10 @@ function FiltersDropdown({
 
         return {
             type: FilterType.ATTRIBUTE,
-            index: searchState.filters.length,
+            index: Date.now(),
             active: true,
             key,
-            condition: AttributeConditionFilter[defaultFilterConditionByAttributeFormat(attribute.format)], // FIXME: filter.condition?
+            condition: AttributeConditionFilter[defaultFilterConditionByAttributeFormat(attribute.format)],
             attribute: {
                 id: attribute.id,
                 type: attribute.type,
@@ -100,7 +96,7 @@ function FiltersDropdown({
                     .linked_tree,
                 library:
                     (attribute as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute).linked_library
-                        ?.id || libraryId, // FIXME: a test
+                        ?.id || libraryId,
                 embedded_fields: (attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute).embedded_fields,
                 ...(filter?.condition === ThroughConditionFilter.THROUGH
                     ? {parentAttribute: (filter as IFilterAttribute)?.attribute}
@@ -119,7 +115,7 @@ function FiltersDropdown({
 
     const getTreeFilter = (tree: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees): IFilterTree => ({
         type: FilterType.TREE,
-        index: searchState.filters.length,
+        index: Date.now(),
         active: true,
         key: tree.id,
         condition: TreeConditionFilter[TreeConditionFilter.CLASSIFIED_IN],
@@ -133,7 +129,7 @@ function FiltersDropdown({
         attributes: ILibraryDetailExtendedAttributeChild[];
     }): IFilterLibrary => ({
         type: FilterType.LIBRARY,
-        index: searchState.filters.length,
+        index: Date.now(),
         active: true,
         key:
             filter?.condition === ThroughConditionFilter.THROUGH
@@ -152,7 +148,8 @@ function FiltersDropdown({
 
         if (typeof filter !== 'undefined') {
             // replace current filter
-            filters.splice(filter.index, 1, {...newFilter, index: filter.index});
+            const filterPos = searchState.filters.findIndex(f => f.index === filter.index);
+            filters.splice(filterPos, 1, {...newFilter, index: filter.index});
         } else {
             filters.push(newFilter);
         }
@@ -172,13 +169,32 @@ function FiltersDropdown({
 
     const _handleVisibleChange = () => setVisible(!visible);
 
+    const isFilterUsed = (id: string) => {
+        return searchState.filters.some(f => {
+            return (
+                (f as IFilterTree)?.key === id ||
+                (f as IFilterAttribute).attribute?.parentAttribute?.id === id ||
+                (f as IFilterLibrary).parentAttribute?.id === id ||
+                (f as IFilterAttribute).parentTreeLibrary?.parentAttribute?.id === id
+            );
+        });
+    };
+
     const menu = (
         <Menu>
             {trees.length && (
                 <Menu.ItemGroup title={t('filters.trees-group')}>
                     {trees.map(tree => (
-                        <Menu.Item key={tree.id} onClick={() => addFilter(getTreeFilter(tree))}>
-                            {localizedTranslation(tree.label, lang) || tree.id}
+                        <Menu.Item
+                            icon={<BranchesOutlined />}
+                            key={tree.id}
+                            onClick={() => addFilter(getTreeFilter(tree))}
+                        >
+                            {isFilterUsed(tree.id) ? (
+                                <Badge color={'blue'} text={localizedTranslation(tree.label, lang) || tree.id} />
+                            ) : (
+                                localizedTranslation(tree.label, lang) || tree.id
+                            )}
                         </Menu.Item>
                     ))}
                 </Menu.ItemGroup>
@@ -186,8 +202,19 @@ function FiltersDropdown({
             {attributes.length && (
                 <Menu.ItemGroup title={t('filters.attributes-group')}>
                     {attributes.map(attribute => (
-                        <Menu.Item key={attribute.id} onClick={() => addFilter(getAttributeFilter(attribute))}>
-                            {localizedTranslation(attribute.label, lang) || attribute.id}
+                        <Menu.Item
+                            icon={<NumberOutlined />}
+                            key={attribute.id}
+                            onClick={() => addFilter(getAttributeFilter(attribute))}
+                        >
+                            {isFilterUsed(attribute.id) ? (
+                                <Badge
+                                    color={'blue'}
+                                    text={localizedTranslation(attribute.label, lang) || attribute.id}
+                                />
+                            ) : (
+                                localizedTranslation(attribute.label, lang) || attribute.id
+                            )}
                         </Menu.Item>
                     ))}
                 </Menu.ItemGroup>
@@ -195,7 +222,11 @@ function FiltersDropdown({
             {libraries.length && (
                 <Menu.ItemGroup title={t('filters.libraries-group')}>
                     {libraries.map(l => (
-                        <Menu.Item key={l.library.id} onClick={() => addFilter(getLibraryFilter(l.library))}>
+                        <Menu.Item
+                            icon={<DatabaseOutlined />}
+                            key={l.library.id}
+                            onClick={() => addFilter(getLibraryFilter(l.library))}
+                        >
                             {localizedTranslation(l.library.label, lang) || l.library.id}
                         </Menu.Item>
                     ))}
@@ -206,9 +237,7 @@ function FiltersDropdown({
 
     return (
         <Dropdown visible={visible} onVisibleChange={_handleVisibleChange} overlay={menu} trigger={['click']}>
-            <Button type={button.type} icon={button.icon}>
-                {button.label}
-            </Button>
+            {button}
         </Dropdown>
     );
 }

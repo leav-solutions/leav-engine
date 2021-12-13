@@ -141,7 +141,7 @@
         "switch-to-selection-mode": "Passer au mode séléction",
         "edit": "Éditer le record",
         "select-only": "seul",
-        "select-all": "tous"
+        "select-all": "tout"
     },
     "items-menu-dropdown": {
         "select-all": "Tout sélectionner ({{nb}})",

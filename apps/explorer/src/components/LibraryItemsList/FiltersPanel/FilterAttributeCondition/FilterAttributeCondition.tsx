@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Select, Divider} from 'antd';
+import {Dropdown, Menu, Button, Tooltip, Typography} from 'antd';
+import {DownOutlined} from '@ant-design/icons';
 import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/BooleanFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -9,7 +10,8 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {allowedTypeOperator, getAttributeFromKey} from '../../../../utils';
+import {allowedTypeOperator} from '../../../../utils';
+import {limitTextSize} from 'utils';
 import {
     AttributeConditionFilter,
     AttributeFormat,
@@ -20,17 +22,6 @@ import {
 } from '../../../../_types/types';
 import {getAttributeConditionOptions} from '../FiltersOptions';
 import {checkTypeIsLink} from 'utils';
-
-const Wrapper = styled.span`
-    padding: 3px 8px;
-    height: 100%;
-    display: grid;
-    place-items: center;
-
-    .select-filter-condition {
-        text-decoration: underline;
-    }
-`;
 
 const BooleanWrapper = styled.span`
     padding: 0 1rem;
@@ -76,6 +67,7 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
                     condition: AttributeConditionFilter[e]
                 };
             }
+
             return f;
         });
 
@@ -88,25 +80,36 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             (filter.type === FilterType.ATTRIBUTE && format === (filter as IFilterAttribute).attribute.format)
     );
 
+    const menu = (
+        <Menu>
+            {conditionOptionsByType
+                .filter(c => c.value !== AttributeConditionFilter.THROUGH || showthroughCondition)
+                .map(condition => (
+                    <Menu.Item key={condition.value} onClick={() => handleOperatorChange(condition.value)}>
+                        {condition.text}
+                    </Menu.Item>
+                ))}
+        </Menu>
+    );
+
     if (showStandardCondition) {
         return (
-            <Wrapper>
-                <Select
-                    className="select-filter-condition"
-                    bordered={false}
-                    value={filter.condition}
-                    onChange={handleOperatorChange}
-                    data-testid="filter-condition-select"
-                >
-                    {conditionOptionsByType
-                        .filter(c => c.value !== AttributeConditionFilter.THROUGH || showthroughCondition)
-                        .map(condition => (
-                            <Select.Option key={condition.value} value={condition.value}>
-                                <span>{condition.text}</span>
-                            </Select.Option>
-                        ))}
-                </Select>
-            </Wrapper>
+            <Dropdown overlay={menu} trigger={['click']}>
+                <Button data-testid="filter-condition-dropdown" type={'text'} icon={<DownOutlined />}>
+                    <Tooltip
+                        mouseEnterDelay={0.5}
+                        placement="bottom"
+                        title={conditionOptionsByType.filter(c => c.value === filter.condition)[0].text}
+                    >
+                        <Typography.Text>
+                            {limitTextSize(
+                                conditionOptionsByType.filter(c => c.value === filter.condition)[0].text,
+                                12
+                            )}
+                        </Typography.Text>
+                    </Tooltip>
+                </Button>
+            </Dropdown>
         );
     } else {
         switch ((filter as IFilterAttribute).attribute.format) {

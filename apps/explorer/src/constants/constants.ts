@@ -9,7 +9,7 @@ export const infosCol = 'infos';
 
 export const defaultNotificationsTime = 5000;
 
-export const panelSize = '20rem';
+export const panelSize = '22.5rem';
 
 export const defaultSort = {
     field: 'id',

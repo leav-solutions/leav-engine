@@ -1,25 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Select} from 'antd';
+import {Dropdown, Menu, Button, Tooltip, Typography} from 'antd';
+import {DownOutlined} from '@ant-design/icons';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import useSearchReducer from 'hooks/useSearchReducer';
-import {TreeConditionFilter, IFilter, IFilterTree} from '../../../../_types/types';
+import {TreeConditionFilter, IFilterTree} from '../../../../_types/types';
 import {getTreeConditionOptions} from '../FiltersOptions';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-
-const Wrapper = styled.span`
-    padding: 3px 8px;
-    height: 100%;
-    display: grid;
-    place-items: center;
-
-    .select-filter-condition {
-        text-decoration: underline;
-    }
-`;
+import {limitTextSize} from 'utils';
 
 interface IFilterTreeConditionProps {
     filter: IFilterTree;
@@ -46,22 +37,30 @@ const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
         searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
     };
 
+    const menu = (
+        <Menu>
+            {conditionOptions.map(condition => (
+                <Menu.Item key={condition.value} onClick={() => handleOperatorChange(condition.value)}>
+                    {condition.text}
+                </Menu.Item>
+            ))}
+        </Menu>
+    );
+
     return (
-        <Wrapper>
-            <Select
-                className="select-filter-condition"
-                bordered={false}
-                value={filter.condition}
-                onChange={handleOperatorChange}
-                data-testid="filter-condition-select"
-            >
-                {conditionOptions.map(condition => (
-                    <Select.Option key={condition.value} value={condition.value}>
-                        <span>{condition.text}</span>
-                    </Select.Option>
-                ))}
-            </Select>
-        </Wrapper>
+        <Dropdown overlay={menu} trigger={['click']}>
+            <Button data-testid="filter-condition-dropdown" type={'text'} icon={<DownOutlined />}>
+                <Tooltip
+                    mouseEnterDelay={0.5}
+                    placement="bottom"
+                    title={conditionOptions.filter(c => c.value === filter.condition)[0].text}
+                >
+                    <Typography.Text>
+                        {limitTextSize(conditionOptions.filter(c => c.value === filter.condition)[0].text, 12)}
+                    </Typography.Text>
+                </Tooltip>
+            </Button>
+        </Dropdown>
     );
 };
 

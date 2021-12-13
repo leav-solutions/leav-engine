@@ -17,6 +17,10 @@ const Wrapper = styled.div`
 const CustomCheckbox = styled(Checkbox)<{checked: boolean}>`
     && {
         display: ${p => (!p.checked ? 'none' : 'block')};
+
+        .ant-checkbox-checked::after {
+            border: none;
+        }
     }
 
     [role='row']:hover & {

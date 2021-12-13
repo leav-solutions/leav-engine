@@ -10,7 +10,7 @@ import {
     MoreOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Button, Dropdown, Menu, Space, Badge} from 'antd';
+import {Button, Dropdown, Menu, Space, Badge, Typography, Tooltip} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -183,13 +183,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         );
     };
 
-    const CustomBadge = styled(Badge)`
-        float: right;
-
-        .ant-badge-count {
-            background: ${themingVar['@leav-primary-btn-bg-hover']};
-        }
-    `;
+    const DELAY_VIEW_LABEL_TOOLTIP = 0.5;
 
     return (
         <Space size="large">
@@ -200,10 +194,21 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     onClick={_toggleShowView}
                     color={searchState.view.current?.color}
                 >
-                    {limitTextSize(
-                        localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view'),
-                        'medium'
-                    )}
+                    <Tooltip
+                        mouseEnterDelay={DELAY_VIEW_LABEL_TOOLTIP}
+                        placement="bottom"
+                        title={
+                            localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view')
+                        }
+                    >
+                        <Typography.Text>
+                            {limitTextSize(
+                                localizedTranslation(searchState.view.current?.label, lang) ??
+                                    t('select-view.default-view'),
+                                'medium'
+                            )}
+                        </Typography.Text>
+                    </Tooltip>
                 </Button>
                 <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_setView} />
                 <Button
@@ -219,17 +224,14 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     <Button icon={<MoreOutlined />}></Button>
                 </Dropdown>
             </Button.Group>
-            <Badge count={searchState.filters.length}>
+            <Badge dot={!!searchState.filters.length}>
                 <Button.Group>
                     <Button onClick={_toggleShowFilters} icon={<FilterOutlined />}>
                         {t('filters.filters')}
                     </Button>
                     <FiltersDropdown
                         libraryId={activeLibrary.id}
-                        button={{
-                            icon: <MoreOutlined />,
-                            type: 'default'
-                        }}
+                        button={<Button icon={<MoreOutlined />} type={'default'} />}
                         attributes={activeLibrary.attributes}
                         trees={activeLibrary.trees}
                         libraries={[]}

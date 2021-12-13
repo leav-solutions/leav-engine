@@ -28,7 +28,7 @@ function SearchItems(): JSX.Element {
 
     return (
         <Input.Search
-            style={{width: 500}}
+            style={{maxWidth: 500, minWidth: 250}}
             placeholder={t('search.placeholder')}
             value={searchState.fullText}
             onChange={handleChange}
