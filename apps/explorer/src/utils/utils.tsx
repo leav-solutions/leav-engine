@@ -15,7 +15,6 @@ import {
     AvailableLanguage,
     ExtendFormat,
     IAttribute,
-    IEmbeddedFields,
     INotification,
     ISelectedAttribute,
     NotificationPriority,

@@ -6,7 +6,7 @@ import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
-import {ISystemTranslation, ITree} from '../../../_types/types';
+import {ISystemTranslation} from '../../../_types/types';
 import SelectTreeNode from '../SelectTreeNode';
 
 interface ISelectTreeNodeModalProps {

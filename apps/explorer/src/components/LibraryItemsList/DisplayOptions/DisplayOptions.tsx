@@ -7,13 +7,8 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {Button, Dropdown, Menu} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
 import IconViewType from '../../IconViewType/IconViewType';
-
-const CustomButton = styled(Button)`
-    padding: 0.3rem;
-`;
 
 function DisplayOptions(): JSX.Element {
     const {t} = useTranslation();

@@ -17,7 +17,8 @@ import {
     AttributeType,
     FilterType,
     IFilterAttribute,
-    IFilterLibrary
+    IFilterLibrary,
+    ThroughConditionFilter
 } from '../../../../_types/types';
 import {getAttributeConditionOptions} from '../FiltersOptions';
 
@@ -38,13 +39,13 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    // show through condition if attribute is a link and its zero depth
     const showthroughCondition =
         ((filter as IFilterAttribute).attribute?.format === AttributeFormat.extended ||
             filter.type === FilterType.LIBRARY ||
             checkTypeIsLink((filter as IFilterAttribute).attribute?.type) ||
             (filter as IFilterAttribute).attribute?.type === AttributeType.tree) &&
-        typeof (filter as IFilterAttribute).attribute?.parentAttribute === 'undefined';
+        typeof (filter as IFilterAttribute).attribute?.parentAttribute === 'undefined' &&
+        typeof (filter as IFilterAttribute).parentTreeLibrary === 'undefined';
 
     const attributeConditionOptions = getAttributeConditionOptions(t);
 
@@ -83,9 +84,12 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             {conditionOptionsByType
                 .filter(c => c.value !== AttributeConditionFilter.THROUGH || showthroughCondition)
                 .map(condition => (
-                    <Menu.Item key={condition.value} onClick={() => handleOperatorChange(condition.value)}>
-                        {condition.text}
-                    </Menu.Item>
+                    <>
+                        {condition.value === AttributeConditionFilter.THROUGH && <Menu.Divider />}
+                        <Menu.Item key={condition.value} onClick={() => handleOperatorChange(condition.value)}>
+                            {condition.text}
+                        </Menu.Item>
+                    </>
                 ))}
         </Menu>
     );

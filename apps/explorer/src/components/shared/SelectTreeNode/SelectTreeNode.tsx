@@ -8,7 +8,7 @@ import {getTreeContentQuery, IGetTreeContentQuery, IRecordAndChildren} from 'gra
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect, useState} from 'react';
 import {localizedTranslation} from 'utils';
-import {ISystemTranslation, ITree} from '_types/types';
+import {ISystemTranslation} from '_types/types';
 import ErrorDisplay from '../ErrorDisplay';
 import {ITreeNodeWithRecord} from '../SelectTreeNodeModal/SelectTreeNodeModal';
 

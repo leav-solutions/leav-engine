@@ -8,7 +8,6 @@ import {IconEllipsisHorizontal} from 'assets/icons/IconEllipsisHorizontal';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-import themingVar from 'themingVar';
 
 export interface IFloatingMenuActionWithBtn extends IFloatingMenuActionCommon {
     button?: React.ReactNode;

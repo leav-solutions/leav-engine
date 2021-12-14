@@ -5,7 +5,6 @@ import {Dropdown, Menu, Button, Tooltip, Typography} from 'antd';
 import {DownOutlined} from '@ant-design/icons';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {TreeConditionFilter, IFilterTree} from '../../../../_types/types';
 import {getTreeConditionOptions} from '../FiltersOptions';

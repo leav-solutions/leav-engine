@@ -6,7 +6,6 @@ import {Button, Dropdown, Menu} from 'antd';
 import AvailableSoon from 'components/shared/AvailableSoon';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 
 function MenuItemActions(): JSX.Element {
     const {t} = useTranslation();

@@ -11,7 +11,6 @@ import React, {useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {ViewSizes} from '_gqlTypes/globalTypes';
 import {defaultView} from '../../../../constants/constants';
 import addViewMutation, {
     IAddViewMutation,
