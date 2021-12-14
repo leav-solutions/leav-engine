@@ -1,20 +1,27 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MoreOutlined, DownOutlined, CloseCircleFilled} from '@ant-design/icons';
-import {Button, Dropdown, Menu, Tooltip, Typography} from 'antd';
+import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
+import {Button, Dropdown, Menu, Typography} from 'antd';
 import {formatNotUsingCondition} from 'constants/constants';
+import {ILibraryDetailExtendedAttributeParentLinkedTree} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
+import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import moment from 'moment';
 import React, {useCallback, useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
-import {AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
-import moment from 'moment';
 import styled from 'styled-components';
+import {defaultFilterConditionByAttributeFormat, localizedTranslation} from 'utils';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
+} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
+import {AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {localizedTranslation, defaultFilterConditionByAttributeFormat, limitTextSize} from 'utils';
 import {
     AttributeConditionFilter,
     AttributeFormat,
@@ -31,16 +38,10 @@ import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModa
 import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
 import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
 import TextFilter from '../../DisplayTypeSelector/FilterInput/TextFilter';
-import FilterAttributeCondition from '../FilterAttributeCondition';
-import FilterTreeCondition from '../FilterTreeCondition';
 import FiltersDropdown from '../../FiltersDropdown';
-import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import {
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
-} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {ILibraryDetailExtendedAttributeParentLinkedTree} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
-import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import FilterAttributeCondition from '../FilterAttributeCondition';
+import FilterDropdownButton from '../FilterDropdownButton';
+import FilterTreeCondition from '../FilterTreeCondition';
 
 interface IWrapperProps {
     active: boolean;
@@ -51,7 +52,7 @@ const Wrapper = styled.div<IWrapperProps>`
     padding: 8px 8px 8px 0px;
     border-radius: 3px;
     display: grid;
-    grid-template-columns: 1.375rem auto;
+    grid-template-columns: 1.375rem 1fr;
     margin-bottom: 8px;
     border: 2px solid transparent;
 
@@ -91,17 +92,18 @@ const Handle = styled.div`
     }
 `;
 
-const Content = styled.div`
+const Content = styled.div<{hasParent: boolean}>`
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: ${p => (p.hasParent ? '1.25rem 1fr 1fr' : '1fr 1fr')};
     row-gap: 8px;
 `;
 
 const Head = styled.div`
     display: grid;
-    grid-template-columns: auto 1.5rem;
+    grid-template-columns: 1fr 1.5rem;
     align-items: center;
     column-gap: 8px;
+    min-width: 0;
 `;
 
 const HeadInfos = styled.div`
@@ -115,12 +117,14 @@ const HeadInfos = styled.div`
     box-shadow: ${themingVar['@leav-small-shadow']};
     border: ${themingVar['@leav-border']};
     border-radius: 3px;
+
+    min-width: 0;
 `;
 
 const HeadOptions = styled.div`
     display: grid;
     place-items: center;
-    height: 100%;
+    height: 32px;
 
     background: ${themingVar['@default-bg']} 0% 0% no-repeat padding-box;
     box-shadow: ${themingVar['@leav-small-shadow']};
@@ -416,6 +420,13 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         );
     };
 
+    const hasParent = !!(
+        filter.condition === ThroughConditionFilter.THROUGH ||
+        !!(filter as IFilterAttribute).attribute?.parentAttribute ||
+        (filter as IFilterAttribute).parentTreeLibrary ||
+        filter.type === FilterType.LIBRARY
+    );
+
     return (
         <>
             {showSelectTreeNodeModal && (
@@ -429,11 +440,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             )}
             <Wrapper data-testid="filter" active={filter.active}>
                 <Handle className="filter-handle" {...handleProps} />
-                <Content>
-                    {(filter.condition === ThroughConditionFilter.THROUGH ||
-                        !!(filter as IFilterAttribute).attribute?.parentAttribute ||
-                        (filter as IFilterAttribute).parentTreeLibrary ||
-                        filter.type === FilterType.LIBRARY) && (
+                <Content hasParent={hasParent}>
+                    {hasParent && (
                         <Button disabled={!filter.active} type="text" size="small" onClick={_handleResetClick}>
                             <Typography.Text type="secondary">
                                 {getParentLabel()} <CloseCircleFilled />
@@ -442,30 +450,20 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                     )}
                     <Head>
                         <HeadInfos>
-                            <div style={{display: 'grid'}}>
-                                <FiltersDropdown
-                                    libraryId={activeLibrary.id}
-                                    button={
-                                        <Button icon={<DownOutlined />} type={'text'}>
-                                            <Tooltip
-                                                mouseEnterDelay={0.5}
-                                                placement="bottom"
-                                                title={getDropdownLabel()}
-                                            >
-                                                <Typography.Text
-                                                    disabled={filter.condition === ThroughConditionFilter.THROUGH}
-                                                >
-                                                    {limitTextSize(getDropdownLabel(), 12)}
-                                                </Typography.Text>
-                                            </Tooltip>
-                                        </Button>
-                                    }
-                                    filter={filter}
-                                    attributes={getAttributes()}
-                                    libraries={getLibraries()}
-                                    trees={getTrees()}
-                                />
-                            </div>
+                            <FiltersDropdown
+                                libraryId={activeLibrary.id}
+                                button={
+                                    <FilterDropdownButton
+                                        secondary={filter.condition === ThroughConditionFilter.THROUGH}
+                                    >
+                                        {getDropdownLabel()}
+                                    </FilterDropdownButton>
+                                }
+                                filter={filter}
+                                attributes={getAttributes()}
+                                libraries={getLibraries()}
+                                trees={getTrees()}
+                            />
                             {(filter.type === FilterType.ATTRIBUTE || filter.type === FilterType.LIBRARY) && (
                                 <FilterAttributeCondition
                                     filter={filter as IFilterAttribute | IFilterLibrary}

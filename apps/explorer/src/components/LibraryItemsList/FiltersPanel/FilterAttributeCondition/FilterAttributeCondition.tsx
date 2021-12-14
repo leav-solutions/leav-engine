@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Dropdown, Menu, Button, Tooltip, Typography} from 'antd';
-import {DownOutlined} from '@ant-design/icons';
+import {Dropdown, Menu} from 'antd';
 import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/BooleanFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -10,7 +9,7 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {limitTextSize, allowedTypeOperator, checkTypeIsLink} from 'utils';
+import {allowedTypeOperator, checkTypeIsLink} from 'utils';
 import {
     AttributeConditionFilter,
     AttributeFormat,
@@ -19,6 +18,7 @@ import {
     IFilterAttribute,
     IFilterLibrary
 } from '../../../../_types/types';
+import FilterDropdownButton from '../FilterDropdownButton';
 import {getAttributeConditionOptions} from '../FiltersOptions';
 
 const BooleanWrapper = styled.span`
@@ -93,20 +93,9 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
     if (showStandardCondition) {
         return (
             <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
-                <Button data-testid="filter-condition-dropdown" type={'text'} icon={<DownOutlined />}>
-                    <Tooltip
-                        mouseEnterDelay={0.5}
-                        placement="bottom"
-                        title={conditionOptionsByType.filter(c => c.value === filter.condition)[0].text}
-                    >
-                        <Typography.Text>
-                            {limitTextSize(
-                                conditionOptionsByType.filter(c => c.value === filter.condition)[0].text,
-                                12
-                            )}
-                        </Typography.Text>
-                    </Tooltip>
-                </Button>
+                <FilterDropdownButton data-testid="filter-condition-dropdown">
+                    {conditionOptionsByType.filter(c => c.value === filter.condition)[0].text}
+                </FilterDropdownButton>
             </Dropdown>
         );
     } else {
