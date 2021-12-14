@@ -9,8 +9,14 @@ import {
     GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute,
     GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute
 } from '../../../../../../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
-import {AttributeType, ValuesListConfInput} from '../../../../../../_gqlTypes/globalTypes';
-import {ILinkValuesList, ITreeValuesList, IValuesListConf, ValuesList} from '../../../../../../_types/attributes';
+import {AttributeFormat, AttributeType, ValuesListConfInput} from '../../../../../../_gqlTypes/globalTypes';
+import {
+    IDateRangeValue,
+    ILinkValuesList,
+    ITreeValuesList,
+    IValuesListConf,
+    ValuesList
+} from '../../../../../../_types/attributes';
 import LinkValuesList from './LinkValuesList';
 import StandardValuesList from './StandardValuesList';
 import TreeValuesList from './TreeValuesList';
@@ -51,12 +57,19 @@ const reducer = (state: IValuesFormState, action) => {
     return {...state, execSubmit, conf: newConf};
 };
 
-const valuesFieldByType = {
-    [AttributeType.simple]: 'values',
-    [AttributeType.advanced]: 'values',
-    [AttributeType.simple_link]: 'linkValues',
-    [AttributeType.advanced_link]: 'linkValues',
-    [AttributeType.tree]: 'treeValues'
+const _getValuesField = (attribute: GET_ATTRIBUTES_VALUES_LIST_attributes_list): string => {
+    switch (attribute.type) {
+        case AttributeType.simple:
+            return attribute.format === AttributeFormat.date_range ? 'dateRangeValues' : 'values';
+        case AttributeType.advanced:
+            return 'values';
+        case AttributeType.simple_link:
+            return 'linkValues';
+        case AttributeType.advanced_link:
+            return 'linkValues';
+        case AttributeType.tree:
+            return 'treeValues';
+    }
 };
 
 function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Element {
@@ -67,7 +80,7 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
     if (attribute.values_list) {
         initialState.conf = {
             ...attribute.values_list,
-            values: attribute.values_list[valuesFieldByType[attribute.type]]
+            values: attribute.values_list[_getValuesField(attribute)]
         };
     }
 
@@ -83,7 +96,14 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
             switch (attribute.type) {
                 case AttributeType.simple:
                 case AttributeType.advanced:
-                    valuesToSave = (conf?.values || []) as string[];
+                    if (attribute.format === AttributeFormat.date_range) {
+                        valuesToSave = ((conf?.values || []) as IDateRangeValue[]).map(v =>
+                            typeof v === 'object' ? JSON.stringify(v) : v
+                        );
+                    } else {
+                        valuesToSave = (conf?.values || []) as string[];
+                    }
+
                     break;
                 case AttributeType.simple_link:
                 case AttributeType.advanced_link:

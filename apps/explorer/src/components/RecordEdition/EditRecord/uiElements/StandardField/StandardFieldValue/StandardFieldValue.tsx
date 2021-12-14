@@ -15,11 +15,17 @@ import {
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import Dimmer from 'components/shared/Dimmer';
+import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
+import {stringifyDateRangeValue} from 'utils';
+import {
+    GET_FORM_forms_list_elements_elements_attribute_StandardAttribute,
+    GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf,
+    GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf
+} from '_gqlTypes/GET_FORM';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {IDateRangeValue} from '_types/types';
 import {
@@ -47,6 +53,9 @@ interface IStandardFieldValueProps {
     onSubmit: (idValue: IdValue, value: AnyPrimitive) => void;
     onDelete: (idValue: IdValue) => void;
 }
+
+type IStringValuesListConf = GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf;
+type IDateRangeValuesListConf = GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
 
 const ErrorMessage = styled.div`
     color: ${themingVar['@error-color']};
@@ -269,7 +278,7 @@ function StandardFieldValue({
         });
     };
 
-    const _handleValueChange = (value: AnyPrimitive) => {
+    const _handleValueChange = (value: AnyPrimitive | IDateRangeValue) => {
         dispatch({
             type: StandardFieldReducerActionsTypes.CHANGE_VALUE,
             idValue: fieldValue.idValue,
@@ -300,7 +309,7 @@ function StandardFieldValue({
         _handleSubmit(fieldValue.editingValue);
     };
 
-    const _handleValueCopy = (value: AnyPrimitive) => {
+    const _handleValueCopy = (value: AnyPrimitive | IDateRangeValue) => {
         (inputRef as MutableRefObject<Input>)?.current?.focus();
 
         _handleValueChange(value);
@@ -314,10 +323,7 @@ function StandardFieldValue({
                 switch (attribute.format) {
                     case AttributeFormat.date_range:
                         const dateRangeValue = fieldValue.displayValue as IDateRangeValue;
-                        displayedValue = t('record_edition.date_range_value', {
-                            ...dateRangeValue,
-                            interpolation: {escapeValue: false}
-                        });
+                        displayedValue = stringifyDateRangeValue(dateRangeValue, t);
                         break;
                     case AttributeFormat.encrypted:
                         displayedValue = '•••••••••';
@@ -358,31 +364,62 @@ function StandardFieldValue({
     };
 
     const _getFilteredValuesList = (): IValueOfValuesList[] => {
-        const values =
-            isValuesListEnabled && attribute?.values_list?.values
-                ? attribute.values_list.values.filter(val => {
-                      return (
-                          fieldValue.state === StandardFieldValueState.PRISTINE ||
-                          !fieldValue.editingValue ||
-                          attribute.format === AttributeFormat.date ||
-                          val.match(new RegExp(String(fieldValue.editingValue), 'i'))
-                      );
-                  })
-                : [];
+        let values: Array<Pick<IValueOfValuesList, 'value' | 'rawValue'>> = [];
 
-        const hydratedValues = values.map(value => ({
-            value,
+        if (isValuesListEnabled) {
+            if (attribute.format === AttributeFormat.date_range) {
+                const valuesList = (attribute?.values_list as IDateRangeValuesListConf)?.dateRangeValues ?? [];
+
+                values = valuesList
+                    .filter(val => {
+                        return fieldValue.state === StandardFieldValueState.PRISTINE || !fieldValue.editingValue;
+                    })
+                    .map(v => {
+                        const rangeValue = {
+                            from: moment(Number(v.from) * 1000).format('L'),
+                            to: moment(Number(v.to) * 1000).format('L')
+                        };
+                        return {
+                            value: stringifyDateRangeValue(rangeValue, t),
+                            rawValue: {from: v.from, to: v.to}
+                        };
+                    });
+            } else {
+                const valuesList = (attribute?.values_list as IStringValuesListConf)?.values ?? [];
+
+                values = valuesList
+                    .filter(val => {
+                        return (
+                            fieldValue.state === StandardFieldValueState.PRISTINE ||
+                            !fieldValue.editingValue ||
+                            attribute.format === AttributeFormat.date ||
+                            val.match(new RegExp(String(fieldValue.editingValue), 'i'))
+                        );
+                    })
+                    .map(v => ({value: v, rawValue: v}));
+            }
+        }
+
+        const hydratedValues: IValueOfValuesList[] = values.map(value => ({
+            ...value,
             isNewValue: false,
-            canCopy: isValuesListOpen
+            canCopy:
+                isValuesListOpen &&
+                attribute.format !== AttributeFormat.date &&
+                attribute.format !== AttributeFormat.date_range
         }));
 
+        // Display current value on top of values list as "new value". Don't do that for date range attribute as it
+        // doesn't make much sense
         if (
             isValuesListOpen &&
             String(fieldValue.editingValue) &&
-            !attribute.values_list.values.some(v => v === fieldValue.editingValue)
+            attribute.format !== AttributeFormat.date_range &&
+            !((attribute?.values_list as IStringValuesListConf)?.values ?? []).some(v => v === fieldValue.editingValue)
         ) {
             hydratedValues.unshift({
                 value: String(fieldValue.editingValue),
+                rawValue: String(fieldValue.editingValue),
                 isNewValue: true,
                 canCopy: false
             });
@@ -407,7 +444,7 @@ function StandardFieldValue({
 
     const wrapperClasses = `
         ${attribute.format ? `format-${attribute.format}` : ''}
-        ${fieldValue.value ? 'has-value' : ''}
+        ${fieldValue.value?.value ? 'has-value' : ''}
         ${fieldValue.isEditing ? 'editing' : ''}
     `;
 

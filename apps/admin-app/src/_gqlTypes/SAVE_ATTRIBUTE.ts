@@ -50,11 +50,28 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields 
     format: AttributeFormat | null;
 }
 
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list {
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
     values: string[] | null;
 }
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list =
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
 
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     id: string;

@@ -7,6 +7,7 @@ import {IRecord} from './record';
 import {IGetCoreEntitiesParams} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 import {ITreeElement} from './tree';
+import {IDateRangeValue} from './value';
 
 export interface IAttribute extends ICoreEntity {
     system?: boolean;
@@ -62,7 +63,7 @@ export interface IGetCoreAttributesParams extends IGetCoreEntitiesParams {
 
 export interface IValuesListConf {
     enable: boolean;
-    values?: string[] | IRecord[] | ITreeElement[];
+    values?: string[] | IDateRangeValue[] | IRecord[] | ITreeElement[];
     allowFreeEntry?: boolean;
 }
 

@@ -89,6 +89,7 @@ export default (attribute: IAttribute): IActionsListConfig => {
                 ],
                 [ActionsListEvents.GET_VALUE]: []
             };
+            break;
         case AttributeFormats.DATE_RANGE:
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [

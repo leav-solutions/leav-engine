@@ -12,11 +12,28 @@ import {AttributeType, AttributeFormat} from './globalTypes';
 // GraphQL query operation: GET_ATTRIBUTES_VALUES_LIST
 // ====================================================
 
-export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list {
+export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
     values: string[] | null;
 }
+
+export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list =
+    | GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardStringValuesListConf
+    | GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list_StandardDateRangeValuesListConf;
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute {
     id: string;

@@ -9,9 +9,11 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
+import {IDateRangeValue} from '_types/types';
 
 export interface IValueOfValuesList {
     value: string;
+    rawValue: string | IDateRangeValue;
     isNewValue: boolean;
     canCopy: boolean;
 }
@@ -19,8 +21,8 @@ export interface IValueOfValuesList {
 interface IValuesListProps {
     attribute: GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
     valuesList: IValueOfValuesList[];
-    onValueSelect: (value: string) => void;
-    onValueCopy: (value: string) => void;
+    onValueSelect: (value: string | IDateRangeValue) => void;
+    onValueCopy: (value: string | IDateRangeValue) => void;
 }
 const ListItem = styled.div`
     cursor: pointer;
@@ -31,13 +33,15 @@ const ListItem = styled.div`
 
 function ValuesList({attribute, valuesList: values, onValueCopy, onValueSelect}: IValuesListProps): JSX.Element {
     const {t, i18n} = useTranslation();
-    const _handleClick = item => onValueSelect(item.value);
+    const _handleClick = (item: IValueOfValuesList) => {
+        onValueSelect(item.rawValue);
+    };
 
     const renderItem = (item: IValueOfValuesList) => {
         const _handleCopy = (e: SyntheticEvent) => {
             e.stopPropagation();
 
-            onValueCopy(item.value);
+            onValueCopy(item.rawValue);
         };
 
         const valueToDisplay =

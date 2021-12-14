@@ -41,9 +41,20 @@ export const getFormQuery = gql`
 
                             ... on StandardAttribute {
                                 values_list {
-                                    enable
-                                    allowFreeEntry
-                                    values
+                                    ... on StandardStringValuesListConf {
+                                        enable
+                                        allowFreeEntry
+                                        values
+                                    }
+
+                                    ... on StandardDateRangeValuesListConf {
+                                        enable
+                                        allowFreeEntry
+                                        dateRangeValues: values {
+                                            from
+                                            to
+                                        }
+                                    }
                                 }
                             }
 

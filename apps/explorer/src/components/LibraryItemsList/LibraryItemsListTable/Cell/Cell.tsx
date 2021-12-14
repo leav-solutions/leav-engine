@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {infosCol} from '../../../../constants/constants';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {displayTypeToPreviewSize} from '../../../../utils';
+import {displayTypeToPreviewSize, stringifyDateRangeValue} from '../../../../utils';
 import {IDateRangeValue, ITableCell, PreviewSize} from '../../../../_types/types';
 import CellInfos from './CellInfos';
 
@@ -39,7 +39,7 @@ const Cell = ({columnName, data}: ICellProps) => {
         switch (data.format) {
             case AttributeFormat.date_range:
                 const rangeValue = cellValue as IDateRangeValue;
-                return t('record_edition.date_range_value', {...rangeValue, interpolation: {escapeValue: false}});
+                return stringifyDateRangeValue(rangeValue, t);
             default:
                 return cellValue;
         }

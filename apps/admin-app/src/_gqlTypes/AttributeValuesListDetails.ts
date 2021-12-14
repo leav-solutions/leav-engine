@@ -10,11 +10,28 @@
 // GraphQL fragment: AttributeValuesListDetails
 // ====================================================
 
-export interface AttributeValuesListDetails_StandardAttribute_values_list {
+export interface AttributeValuesListDetails_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
     values: string[] | null;
 }
+
+export interface AttributeValuesListDetails_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface AttributeValuesListDetails_StandardAttribute_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | AttributeValuesListDetails_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type AttributeValuesListDetails_StandardAttribute_values_list =
+    | AttributeValuesListDetails_StandardAttribute_values_list_StandardStringValuesListConf
+    | AttributeValuesListDetails_StandardAttribute_values_list_StandardDateRangeValuesListConf;
 
 export interface AttributeValuesListDetails_StandardAttribute {
     values_list: AttributeValuesListDetails_StandardAttribute_values_list | null;

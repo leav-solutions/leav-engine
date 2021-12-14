@@ -4560,6 +4560,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/user-event@npm:13.5.0":
+  version: 13.5.0
+  resolution: "@testing-library/user-event@npm:13.5.0"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+  peerDependencies:
+    "@testing-library/dom": ">=7.21.4"
+  checksum: 6b17fa27cb588f2bc0759fee3b7f2a5b119363e1a59498346be377bb91c071763ce7277a2f6acee80b2e82bd64aa5e3ce72a2a5c8357649ec96900452fa8f094
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -6764,6 +6775,7 @@ __metadata:
     "@rushstack/eslint-patch": 1.0.6
     "@testing-library/jest-dom": 5.11.9
     "@testing-library/react": 11.2.5
+    "@testing-library/user-event": 13.5.0
     "@types/enzyme": 3.1.14
     "@types/history": 4.7.2
     "@types/i18next": 11.9.3

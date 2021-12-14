@@ -470,7 +470,10 @@ describe('Values', () => {
             expect(res.status).toBe(200);
 
             expect(res.data.errors).toBeUndefined();
-            expect(res.data.data.saveValue.value).toEqual({from: 1000, to: 2000});
+            expect(res.data.data.saveValue.value).toEqual({
+                from: '1970-01-01T00:16:40+00:00',
+                to: '1970-01-01T00:33:20+00:00'
+            });
         });
 
         test("Don't save value if invalid (from > to)", async () => {

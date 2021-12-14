@@ -49,7 +49,9 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings, inputRef}: I
         <Input
             key="editing"
             className={`field-wrapper ${editingValue ? 'has-value' : ''}`}
-            value={new Intl.DateTimeFormat(i18n.language).format(new Date(Number(editingValue) * 1000))}
+            value={
+                editingValue ? new Intl.DateTimeFormat(i18n.language).format(new Date(Number(editingValue) * 1000)) : ''
+            }
             onFocus={onFocus}
             disabled={true}
             allowClear

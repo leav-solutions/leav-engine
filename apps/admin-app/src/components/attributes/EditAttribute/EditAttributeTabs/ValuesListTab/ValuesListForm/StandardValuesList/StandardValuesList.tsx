@@ -7,7 +7,8 @@ import {useTranslation} from 'react-i18next';
 import {Button, Icon, Input, List} from 'semantic-ui-react';
 import {GET_ATTRIBUTES_VALUES_LIST_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {ValuesList} from '../../../../../../../_types/attributes';
+import {IDateRangeValue, StandardValuesListType, ValuesList} from '../../../../../../../_types/attributes';
+import DateRangeValue from './DateRangeValue';
 
 interface IStandardValuesListProps {
     values: ValuesList;
@@ -26,11 +27,13 @@ const inputTypeByFormat = {
 
 function StandardValuesList({values: initialValues, onValuesUpdate, attribute}: IStandardValuesListProps): JSX.Element {
     const {t} = useTranslation();
-    const [values, setValues] = useState<string[]>(initialValues as string[]);
+    const [values, setValues] = useState<StandardValuesListType>(initialValues as string[]);
 
-    if (initialValues.length && typeof initialValues[0] === 'object') {
-        return <div className="error">Invalid values</div>;
-    }
+    const _handleDateRangeValueChange = (i: number) => (value: IDateRangeValue) => {
+        const newValues = [...values.slice(0, i), value, ...values.slice(i + 1)];
+        setValues(newValues);
+        _submitValues(newValues);
+    };
 
     const _editValue = (i: number) => (e: ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
@@ -48,32 +51,29 @@ function StandardValuesList({values: initialValues, onValuesUpdate, attribute}: 
     const _deleteValue = (i: number) => () => {
         const newValuesList = [...values.slice(0, i), ...values.slice(i + 1)];
         setValues(newValuesList);
-        onValuesUpdate(newValuesList);
+
+        _submitValues(newValuesList);
     };
+
     const _handleBlur = () => _submitValues(values);
-    const _submitValues = (valuesToSubmit: string[]) => onValuesUpdate(valuesToSubmit);
+
+    const _submitValues = (valuesToSubmit: StandardValuesListType) =>
+        onValuesUpdate(valuesToSubmit.map(v => (typeof v === 'object' ? JSON.stringify(v) : v)));
 
     // Save values when pressing "enter"
     const _handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            onValuesUpdate(values);
+            _submitValues(values);
         }
     };
 
     return (
         <>
-            <Button
-                icon
-                labelPosition="left"
-                size="medium"
-                data-test-id="values-list-add-btn"
-                onClick={_addValue}
-                type="button"
-            >
+            <Button icon labelPosition="left" size="medium" aria-label="add-value" onClick={_addValue} type="button">
                 <Icon name="plus" />
                 {t('attributes.add_value')}
             </Button>
-            <List data-test-id="values-list-wrapper" style={{width: '100%'}}>
+            <List style={{width: '100%'}}>
                 {values.map((val, i) => {
                     let inputValue = val;
 
@@ -82,24 +82,33 @@ function StandardValuesList({values: initialValues, onValuesUpdate, attribute}: 
                         inputValue = dayVal.format('YYYY-MM-DD');
                     }
 
+                    // We add values.length to element key to avoid some issues when deleting first value
                     return (
-                        <List.Item data-test-id="values-list-value" key={`values_${i}`}>
+                        <List.Item aria-label="values-list-value" key={`values_${i}_${values.length}`}>
                             <List.Content>
-                                <Input
-                                    value={inputValue}
-                                    size="small"
-                                    fluid
-                                    type={inputTypeByFormat[attribute.format]}
-                                    onChange={_editValue(i)}
-                                    onBlur={_handleBlur}
-                                    onKeyPress={_handleKeyPress}
-                                    action={{
-                                        icon: 'trash',
-                                        onClick: _deleteValue(i),
-                                        'data-test-id': 'values-list-del-btn',
-                                        type: 'button'
-                                    }}
-                                />
+                                {attribute.format === AttributeFormat.date_range ? (
+                                    <DateRangeValue
+                                        onChange={_handleDateRangeValueChange(i)}
+                                        onDelete={_deleteValue(i)}
+                                        value={inputValue as IDateRangeValue}
+                                    />
+                                ) : (
+                                    <Input
+                                        value={inputValue}
+                                        size="small"
+                                        fluid
+                                        type={inputTypeByFormat[attribute.format]}
+                                        onChange={_editValue(i)}
+                                        onBlur={_handleBlur}
+                                        onKeyPress={_handleKeyPress}
+                                        action={{
+                                            icon: 'trash',
+                                            onClick: _deleteValue(i),
+                                            type: 'button',
+                                            'aria-label': 'delete-value'
+                                        }}
+                                    />
+                                )}
                             </List.Content>
                         </List.Item>
                     );

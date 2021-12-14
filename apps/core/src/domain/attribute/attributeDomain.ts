@@ -2,14 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
-import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
+import {IDateRangeValue} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
+import {AttributeFormats, IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions} from '../../_types/permissions';
@@ -47,7 +48,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.app': appPermissionDomain = null,
@@ -122,7 +123,7 @@ export default function({
             };
 
             const attrProps: IAttribute = attrs.list[0] ?? null;
-            const attrToSave = isExistingAttr
+            const attrToSave: IAttributeForRepo = isExistingAttr
                 ? {
                       ...defaultParams,
                       ...attrProps,
@@ -158,6 +159,16 @@ export default function({
 
             if (Object.keys(validationErrors).length) {
                 throw new ValidationError<IAttribute>(validationErrors);
+            }
+
+            if (attrToSave.format === AttributeFormats.DATE_RANGE && attrToSave.values_list?.values?.length) {
+                attrToSave.values_list.values = (attrToSave.values_list.values as string[]).map(v => {
+                    const valuesObj: IDateRangeValue = JSON.parse(v);
+
+                    // Extract the precise fields we need to make sure
+                    // we don't have something else hanging out (eg. a __typename field)
+                    return {from: valuesObj.from, to: valuesObj.to};
+                });
             }
 
             const attr = isExistingAttr

@@ -8,12 +8,13 @@ import moment from 'moment';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import themingVar from 'themingVar';
+import {stringifyDateRangeValue} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 import {IDateRangeValue} from '_types/types';
 
 function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardInputProps): JSX.Element {
-    const {editingValue} = fieldValue;
-    const {i18n} = useTranslation();
+    const {editingValue, displayValue} = fieldValue;
+    const {t} = useTranslation();
 
     const attribute = state.formElement.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
     const isValuesListEnabled = !!attribute?.values_list?.enable;
@@ -32,6 +33,8 @@ function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStand
 
     // If we have a values list, picker must be on top to keep list readable
     const pickerPosition = isValuesListEnabled ? {points: ['bl', 'tl'], offset: [0, -1]} : null;
+
+    const rangeDisplayValue = displayValue as IDateRangeValue;
 
     return !isValuesListEnabled || isValuesListOpen ? (
         <DatePicker.RangePicker
@@ -54,7 +57,7 @@ function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStand
         <Input
             key="editing"
             className={`field-wrapper ${editingValue ? 'has-value' : ''}`}
-            value={new Intl.DateTimeFormat(i18n.language).format(new Date(Number(editingValue) * 1000))}
+            value={rangeDisplayValue.from && rangeDisplayValue.to ? stringifyDateRangeValue(rangeDisplayValue, t) : ''}
             onFocus={onFocus}
             disabled={true}
             allowClear

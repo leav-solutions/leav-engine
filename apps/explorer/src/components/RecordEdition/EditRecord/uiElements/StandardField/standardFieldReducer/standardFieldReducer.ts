@@ -6,7 +6,7 @@ import {FormElement, StandardValueTypes} from 'components/RecordEdition/EditReco
 import {IRecordPropertyAttribute, IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
-import {IRecordIdentityWhoAmI} from '_types/types';
+import {IDateRangeValue, IRecordIdentityWhoAmI} from '_types/types';
 
 export type IdValue = string | null;
 export const newValueId = '__new__';
@@ -72,7 +72,7 @@ export type StandardFieldReducerAction =
     | {
           type: StandardFieldReducerActionsTypes.CHANGE_VALUE;
           idValue: IdValue;
-          value: AnyPrimitive;
+          value: AnyPrimitive | IDateRangeValue;
       }
     | {
           type: StandardFieldReducerActionsTypes.FOCUS_FIELD;
@@ -220,9 +220,13 @@ const standardFieldReducer = (
             const newState = {...state};
 
             // Delete new value placeholder, replace it with actual new value with proper ID
-            const newValIndex = newState.values[newValueId].index;
+            const newValIndex = newState.values[newValueId]?.index;
             delete newState.values[newValueId];
-            newState.values[action.newValue.id_value] = {...newValueData, index: newValIndex};
+
+            newState.values[action.newValue.id_value] = {
+                ...newValueData,
+                index: newValIndex ?? Object.keys(newState.values).length
+            };
 
             return newState;
         }

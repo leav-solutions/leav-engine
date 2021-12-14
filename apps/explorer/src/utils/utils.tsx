@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from 'graphql-tag';
-import {i18n} from 'i18next';
+import {i18n, TFunction} from 'i18next';
 import {pick} from 'lodash';
 import {AttributeFormat, AttributeType, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
@@ -13,6 +13,7 @@ import {
     AvailableLanguage,
     ExtendFormat,
     IAttribute,
+    IDateRangeValue,
     INotification,
     ISelectedAttribute,
     NotificationPriority,
@@ -370,3 +371,9 @@ export const getTreeRecordKey = (record: RecordIdentity): string => `${record.wh
 
 export const getLibraryLink = (libId: string) => `/library/${libId}`;
 export const getTreeLink = (treeId: string) => `/tree/${treeId}`;
+
+export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): string =>
+    t('record_edition.date_range_value', {
+        ...value,
+        interpolation: {escapeValue: false}
+    });
