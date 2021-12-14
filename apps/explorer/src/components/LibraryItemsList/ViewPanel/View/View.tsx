@@ -23,7 +23,7 @@ import deleteViewMutation, {
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {limitTextSize, localizedTranslation} from '../../../../utils';
+import {localizedTranslation} from '../../../../utils';
 import {IView} from '../../../../_types/types';
 import IconViewType from '../../../IconViewType';
 import {getRequestFromFilters} from '../../FiltersPanel/getRequestFromFilter';
@@ -82,8 +82,6 @@ const CustomButton = styled(Button)`
     }
 `;
 
-const ROWS_DESCRIPTION = 3;
-
 interface IViewProps {
     view: IView;
     onEdit: (viewId: string) => void;
@@ -104,6 +102,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const _changeView = () => {
         searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: view, reload: true, sync: false}});
     };
+
+    const ROWS_DESCRIPTION = 3;
 
     const _handleDelete = async (event: any) => {
         // cancel click view selection
@@ -195,9 +195,9 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
             <Handle className="view-handle" {...handleProps} />
             <Infos>
                 <Title>
-                    <IconViewType type={view.display.type} showDescription={false} />
-                    <Typography.Text strong>
-                        {limitTextSize(localizedTranslation(view.label, lang), 'medium')}
+                    <IconViewType type={view.display.type} />
+                    <Typography.Text ellipsis={{tooltip: true}} style={{padding: '0 .5em', width: 'calc(100% - 1em)'}}>
+                        {localizedTranslation(view.label, lang)}
                     </Typography.Text>
                 </Title>
                 {view.description && (

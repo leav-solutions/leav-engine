@@ -2,13 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
-import {Badge, Input, Spin} from 'antd';
+import {Badge, Input, Spin, Button} from 'antd';
+import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
+import {useAppDispatch} from 'redux/store';
 import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
@@ -30,6 +32,8 @@ import {IView} from '../../../_types/types';
 import {getFiltersFromRequest} from '../FiltersPanel/getFiltersFromRequest';
 import EditView from './EditView';
 import View from './View';
+import {setDisplaySide} from 'redux/display';
+import {TypeSideItem} from '_types/types';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -41,12 +45,31 @@ const Wrapper = styled.div`
 
 const Header = styled.div`
     width: 100%;
-    background-color: ${themingVar['@leav-secondary-bg']};
+    background-color: ${themingVar['@leav-view-panel-background-title']};
     display: grid;
-    align-items: center;
+    grid-template-columns: repeat(2, auto);
+    justify-content: space-between;
     padding: 0.3rem 0.3rem 0.3rem 1rem;
     font-weight: 700;
     border-bottom: 1px solid ${themingVar['@divider-color']};
+
+    & > * {
+        :first-of-type {
+            display: grid;
+            column-gap: 8px;
+            grid-template-columns: repeat(3, auto);
+            align-items: center;
+            justify-items: center;
+        }
+
+        :last-of-type {
+            display: grid;
+            align-items: center;
+            justify-content: flex-end;
+            column-gap: 8px;
+            grid-template-columns: repeat(2, auto);
+        }
+    }
 `;
 
 const SubHeader = styled.div`
@@ -94,13 +117,13 @@ const _sortViewFunction = (referenceOrder: string[]) => (viewA: IView, viewB: IV
 
 function ViewPanel(): JSX.Element {
     const {t} = useTranslation();
+
     const [user] = useUser();
     const [{lang}] = useLang();
-
     const [search, setSearch] = useState('');
-
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [editView, setEditView] = useState<IView | false>(false);
+    const dispatch = useAppDispatch();
 
     const USER_VIEWS_ORDER_KEY = 'user_views_order_' + searchState.library.id;
     const SHARED_VIEWS_ORDER_KEY = 'shared_views_order_' + searchState.library.id;
@@ -241,18 +264,27 @@ function ViewPanel(): JSX.Element {
     const sortedUserViews = userViews.sort(_sortViewFunction(searchState.userViewsOrder));
     const sortedSharedViews = sharedViews.sort(_sortViewFunction(searchState.sharedViewsOrder));
 
+    const handleHide = () => {
+        dispatch(
+            setDisplaySide({
+                visible: false,
+                type: TypeSideItem.view
+            })
+        );
+    };
+
     return (
         <Wrapper>
             {editView && <EditView view={editView} visible={!!editView} onClose={_closeModal} />}
-            <Header>{t('view.list')}</Header>
+            <Header>
+                <span>{t('view.views')}</span>
+                <Button onClick={handleHide} icon={<IconClosePanel />}></Button>
+            </Header>
             <SearchWrapper>
                 <Input.Search placeholder={t('view.search')} onSearch={_handleSearchSubmit} />
             </SearchWrapper>
 
-            <SubHeader>
-                {t('view.shared-views')}
-                <CustomBadge count={sharedViews.length} />
-            </SubHeader>
+            <SubHeader>{t('view.shared-views')}</SubHeader>
 
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId={'shared'}>

@@ -7,13 +7,8 @@ import {SelectionModeContext} from 'context';
 import {Button, Space} from 'antd';
 import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setDisplaySide} from 'redux/display';
-import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
-import {IconOpenPanel} from '../../../assets/icons/IconOpenPanel';
 import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
-import {TypeSideItem} from '../../../_types/types';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
 import MenuItemActions from '../MenuItemActions';
@@ -38,17 +33,6 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
 
     const selectionMode = useContext(SelectionModeContext);
-    const {display} = useAppSelector(state => state);
-    const dispatch = useAppDispatch();
-
-    const handleHide = () => {
-        dispatch(
-            setDisplaySide({
-                visible: !display.side.visible,
-                type: display.side.type || TypeSideItem.filters
-            })
-        );
-    };
 
     const _handleCreateRecord = () => {
         setIsRecordCreationVisible(true);
@@ -58,14 +42,9 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
         setIsRecordCreationVisible(false);
     };
 
-    const panelActive = display.side.visible;
-
     return (
         <Wrapper>
-            <Space size="large">
-                <Button icon={panelActive ? <IconClosePanel /> : <IconOpenPanel />} onClick={handleHide} />
-                {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
-            </Space>
+            {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
 
             <Space size="large">
                 <MenuSelection />

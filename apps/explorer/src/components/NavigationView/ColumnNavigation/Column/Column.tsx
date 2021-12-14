@@ -58,7 +58,7 @@ const Column = ({pathPart, treeElements, depth, showLoading, columnActive}: ICol
                 block: 'end'
             });
         }
-    }, [ref]);
+    }, [ref, columnActive]);
 
     if (showLoading) {
         return (

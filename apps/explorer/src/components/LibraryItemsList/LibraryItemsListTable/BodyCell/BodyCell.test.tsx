@@ -33,7 +33,7 @@ describe('BodyCell', () => {
 
     test('should call cell', async () => {
         await act(async () => {
-            render(<BodyCell cell={mockCell as any} index="0" />);
+            render(<BodyCell cell={mockCell as any} index="0" selected={false} />);
         });
 
         expect(screen.getByText('Cell')).toBeInTheDocument();

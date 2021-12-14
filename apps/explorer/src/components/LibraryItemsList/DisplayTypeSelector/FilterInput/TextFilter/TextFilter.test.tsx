@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterAttribute} from '__mocks__/common/filter';
 import TextFilter from './TextFilter';
 
 describe('FormText', () => {
     test('Should have a TextArea', async () => {
-        render(<TextFilter filter={mockFilter} updateFilterValue={jest.fn()} />);
+        render(<TextFilter filter={mockFilterAttribute} updateFilterValue={jest.fn()} />);
 
         const textElement = await screen.findByTestId('filter-textarea');
 

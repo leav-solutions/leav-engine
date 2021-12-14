@@ -1,28 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Select} from 'antd';
+import {Dropdown, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import useSearchReducer from 'hooks/useSearchReducer';
-import {TreeConditionFilter, IFilter} from '../../../../_types/types';
+import {TreeConditionFilter, IFilterTree} from '../../../../_types/types';
 import {getTreeConditionOptions} from '../FiltersOptions';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-
-const Wrapper = styled.span`
-    padding: 3px 8px;
-    height: 100%;
-    display: grid;
-    place-items: center;
-
-    .select-filter-condition {
-        text-decoration: underline;
-    }
-`;
+import FilterDropdownButton from '../FilterDropdownButton';
 
 interface IFilterTreeConditionProps {
-    filter: IFilter;
+    filter: IFilterTree;
 }
 
 const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
@@ -46,22 +35,22 @@ const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
         searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
     };
 
+    const menu = (
+        <Menu>
+            {conditionOptions.map(condition => (
+                <Menu.Item key={condition.value} onClick={() => handleOperatorChange(condition.value)}>
+                    {condition.text}
+                </Menu.Item>
+            ))}
+        </Menu>
+    );
+
     return (
-        <Wrapper>
-            <Select
-                className="select-filter-condition"
-                bordered={false}
-                value={filter.condition}
-                onChange={handleOperatorChange}
-                data-testid="filter-condition-select"
-            >
-                {conditionOptions.map(condition => (
-                    <Select.Option key={condition.value} value={condition.value}>
-                        <span>{condition.text}</span>
-                    </Select.Option>
-                ))}
-            </Select>
-        </Wrapper>
+        <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
+            <FilterDropdownButton data-testid="filter-condition-dropdown">
+                {conditionOptions.filter(c => c.value === filter.condition)[0].text}
+            </FilterDropdownButton>
+        </Dropdown>
     );
 };
 

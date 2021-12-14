@@ -8,7 +8,6 @@ import {IconEllipsisHorizontal} from 'assets/icons/IconEllipsisHorizontal';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-import themingVar from 'themingVar';
 
 export interface IFloatingMenuActionWithBtn extends IFloatingMenuActionCommon {
     button?: React.ReactNode;
@@ -38,9 +37,6 @@ const FloatingMenuWrapper = styled.div<{overrideStyle?: CSSObject}>`
     z-index: 1000;
     right: 18px;
     top: 15px;
-    border: 1px solid ${themingVar['@divider-color']};
-    border-radius: 3px;
-    background-color: ${themingVar['@default-bg']};
 
     display: flex;
     justify-content: space-around;
@@ -72,6 +68,7 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                 <Tooltip title={action.title} key={action.title}>
                     {(action as IFloatingMenuActionWithBtn).button ?? (
                         <Button
+                            shape="circle"
                             size={(action as IFloatingMenuActionWithIcon).size}
                             icon={(action as IFloatingMenuActionWithIcon).icon}
                             onClick={(action as IFloatingMenuActionWithIcon).onClick}

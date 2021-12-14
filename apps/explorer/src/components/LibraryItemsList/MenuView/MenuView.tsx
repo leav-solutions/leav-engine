@@ -10,7 +10,7 @@ import {
     SaveFilled
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Badge, Button, Dropdown, Menu, Space} from 'antd';
+import {Button, Dropdown, Menu, Space, Badge, Tooltip} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -19,7 +19,6 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
     IAddViewMutation,
@@ -27,10 +26,12 @@ import addViewMutation, {
     IAddViewMutationVariablesView
 } from '../../../graphQL/mutations/views/addViewMutation';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import {limitTextSize, localizedTranslation} from '../../../utils';
+import {localizedTranslation} from '../../../utils';
 import {TypeSideItem} from '../../../_types/types';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
-import FiltersDropdown from './FiltersDropdown';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
+import FiltersDropdown from '../FiltersDropdown';
+import IconViewType from '../../IconViewType/IconViewType';
 
 interface IMenuViewProps {
     activeLibrary: IActiveLibrary;
@@ -160,7 +161,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
 
     const menu = (
         <Menu>
-            <Menu.ItemGroup title="Create view">
+            <Menu.ItemGroup title={t('view.add-view.title')}>
                 <Menu.Item onClick={() => _handleAddView(ViewTypes.list)} icon={<MenuOutlined />}>
                     {t('view.type-list')}
                 </Menu.Item>
@@ -183,16 +184,24 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
     return (
         <Space size="large">
             <Button.Group>
-                <Button
-                    data-testid="dropdown-view-options"
-                    onClick={_toggleShowView}
-                    color={searchState.view.current?.color}
+                <Tooltip
+                    title={localizedTranslation(searchState.view.current?.label, lang) || t('select-view.default-view')}
                 >
-                    {limitTextSize(
-                        localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view'),
-                        'medium'
-                    )}
-                </Button>
+                    <Button
+                        icon={
+                            <IconViewType style={{marginRight: '8px'}} type={searchState.view.current.display.type} />
+                        }
+                        data-testid="dropdown-view-options"
+                        onClick={_toggleShowView}
+                        color={searchState.view.current?.color}
+                        style={{width: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                    >
+                        <>
+                            {localizedTranslation(searchState.view.current?.label, lang) ||
+                                t('select-view.default-view')}
+                        </>
+                    </Button>
+                </Tooltip>
                 <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_setView} />
                 <Button
                     icon={<SaveFilled />}
@@ -203,16 +212,22 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                         !searchState.view.current.owner
                     }
                 />
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={menu} trigger={['click']}>
                     <Button icon={<MoreOutlined />}></Button>
                 </Dropdown>
             </Button.Group>
-            <Badge count={searchState.filters.length}>
+            <Badge dot={!!searchState.filters.length}>
                 <Button.Group>
                     <Button onClick={_toggleShowFilters} icon={<FilterOutlined />}>
                         {t('filters.filters')}
                     </Button>
-                    <FiltersDropdown icon={<MoreOutlined />} type={'default'} activeLibrary={activeLibrary} />
+                    <FiltersDropdown
+                        libraryId={activeLibrary.id}
+                        button={<Button icon={<MoreOutlined />} type={'default'} />}
+                        attributes={activeLibrary.attributes}
+                        trees={activeLibrary.trees}
+                        libraries={[]}
+                    />
                 </Button.Group>
             </Badge>
         </Space>

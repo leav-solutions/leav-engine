@@ -141,7 +141,7 @@
         "switch-to-selection-mode": "Passer au mode séléction",
         "edit": "Éditer le record",
         "select-only": "seul",
-        "select-all": "tous"
+        "select-all": "tout"
     },
     "items-menu-dropdown": {
         "select-all": "Tout sélectionner ({{nb}})",
@@ -151,11 +151,13 @@
     "filters": {
         "trees-group": "Arbres",
         "attributes-group": "Attributs",
+        "libraries-group": "Librairies",
         "filters": "Filtres",
         "contains": "Contient",
         "not-contains": "Ne contient pas",
         "equal": "Est égal",
         "not-equal": "N'est pas égal",
+        "through": "Au travers",
         "begin-with": "Commence par",
         "end-with": "Fini Par",
         "is-empty": "Est Vide",
@@ -177,6 +179,7 @@
         "attributes": "Attributs",
         "filters-options": "Options de Filtres",
         "add-filters": "Ajouter des filtres",
+        "disable-filters": "Désactiver les filtres",
         "remove-filters": "Supprimer les filtres",
         "add-separator": "Ajouter une requête",
         "search-active": "Impossible d'appliquer les filtres tant que la recherche est active",
@@ -184,7 +187,8 @@
         "submit": "Appliquer les filtres",
         "deactivate": "Désactiver",
         "activate": "Activer",
-        "add": "Ajouter"
+        "add": "Ajouter",
+        "add-condition": "Ajouter une condition"
     },
     "filter-item": {
         "no-operator": "Si"
@@ -279,7 +283,7 @@
         "active-tree": "Vous êtes sur l'arbre {{tree}}"
     },
     "view": {
-        "list": "Liste des vues",
+        "views": "Vues",
         "search": "Rechercher une vue",
         "my-views": "Mes vues",
         "shared-views": "Partagées",

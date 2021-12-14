@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterAttribute} from '__mocks__/common/filter';
 import NumericFilter from './NumericFilter';
 
 describe('NumericFilter', () => {
     test('Should have a number input', async () => {
-        const comp = shallow(<NumericFilter filter={mockFilter} updateFilterValue={jest.fn()} />);
+        const comp = shallow(<NumericFilter filter={mockFilterAttribute} updateFilterValue={jest.fn()} />);
 
         expect(comp.find('Input[type="number"]')).toHaveLength(1);
     });

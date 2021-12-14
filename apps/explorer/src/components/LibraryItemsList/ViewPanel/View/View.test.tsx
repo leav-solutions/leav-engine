@@ -9,11 +9,13 @@ import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
 import View from './View';
 import {IView} from '../../../../_types/types';
+import {render} from '@testing-library/react';
+import {screen} from '_tests/testUtils';
 
 describe('View', () => {
     const mockView: IView = {
         id: '0',
-        label: {en: 'My view list 1', fr: 'My view list 1'},
+        label: {en: 'My view 1', fr: 'My view 1'},
         display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
         color: '#50F0C4',
         shared: false,
@@ -26,10 +28,8 @@ describe('View', () => {
     };
 
     test('should show view label', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
+            render(
                 <MockedProviderWithFragments>
                     <MockStore>
                         <View view={mockView} onEdit={jest.fn()} />
@@ -38,6 +38,6 @@ describe('View', () => {
             );
         });
 
-        expect(comp.text()).toContain(mockView.label.en);
+        expect(screen.getByTitle(mockView.label.en)).toBeInTheDocument();
     });
 });

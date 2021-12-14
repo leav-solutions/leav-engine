@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IViewDomain} from 'domain/view/viewDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
@@ -14,6 +15,7 @@ import {ViewTypes, ViewSizes} from '../../_types/views';
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.view'?: IViewDomain;
+    'core.domain.tree'?: ITreeDomain;
     'core.utils'?: IUtils;
 }
 

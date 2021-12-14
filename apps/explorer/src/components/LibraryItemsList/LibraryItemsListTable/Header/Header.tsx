@@ -58,7 +58,7 @@ const DropdownContent = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.7rem 0.3rem;
+    padding: 0.3rem 0.3rem;
 
     word-break: 'keep-all';
     user-select: 'none';

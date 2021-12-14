@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from 'graphql-tag';
 import {i18n} from 'i18next';
-import {isString, pick} from 'lodash';
+import {pick} from 'lodash';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {ViewSizes} from '_gqlTypes/globalTypes';
 import {infosCol} from '../constants/constants';
@@ -15,7 +15,6 @@ import {
     AvailableLanguage,
     ExtendFormat,
     IAttribute,
-    IEmbeddedFields,
     INotification,
     ISelectedAttribute,
     NotificationPriority,
@@ -153,6 +152,14 @@ export const allowedTypeOperator = {
         AttributeConditionFilter.BEGIN_WITH,
         AttributeConditionFilter.END_WITH
     ],
+    [AttributeFormat.extended]: [
+        AttributeConditionFilter.CONTAINS,
+        AttributeConditionFilter.NOT_CONTAINS,
+        AttributeConditionFilter.EQUAL,
+        AttributeConditionFilter.NOT_EQUAL,
+        AttributeConditionFilter.BEGIN_WITH,
+        AttributeConditionFilter.END_WITH
+    ],
     [AttributeFormat.encrypted]: [
         AttributeConditionFilter.CONTAINS,
         AttributeConditionFilter.NOT_CONTAINS,
@@ -177,11 +184,7 @@ export const allowedTypeOperator = {
 };
 
 export const checkTypeIsLink = (type: AttributeType) => {
-    if (type === AttributeType.simple_link || type === AttributeType.advanced_link) {
-        return true;
-    } else {
-        return false;
-    }
+    return type === AttributeType.simple_link || type === AttributeType.advanced_link;
 };
 
 export const displayTypeToPreviewSize = (displayType: ViewSizes) => {
@@ -221,12 +224,7 @@ export const getExtendedFormat = (itemContent: any): ExtendFormat[] => {
 
 export const paginationOptions = [5, 10, 20, 50, 100];
 
-interface ICustomAttribute extends IAttribute {
-    path?: string;
-    embeddedFieldData?: IEmbeddedFields;
-}
-
-export const getFieldsKeyFromAttribute = (attribute: ISelectedAttribute | ICustomAttribute) => {
+export const getFieldsKeyFromAttribute = (attribute: ISelectedAttribute) => {
     if (attribute?.format === AttributeFormat.extended && attribute.path) {
         return `${attribute.path}`;
     } else if (attribute.parentAttributeData) {
@@ -289,32 +287,6 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
     }
 };
 
-type TextSizeLimit = 'small' | 'medium' | 'big' | number;
-
-export const limitTextSize = (text: string, size: TextSizeLimit) => {
-    let numberSize: number;
-    if (isString(size)) {
-        switch (size) {
-            case 'small':
-                numberSize = 8;
-                break;
-            case 'medium':
-                numberSize = 16;
-                break;
-            case 'big':
-                numberSize = 32;
-                break;
-        }
-    } else {
-        numberSize = size;
-    }
-
-    if (text.length > numberSize) {
-        return text.slice(0, numberSize) + '...';
-    } else {
-        return text;
-    }
-};
 export const isAttributeSelected = (path: string, selectedAttributes: ISelectedAttribute[]): boolean =>
     selectedAttributes.findIndex(selectedAttribute => selectedAttribute.path === path) !== -1;
 
@@ -366,7 +338,7 @@ export const getAttributeFromKey = (key: string, library: string, attributes: IA
 export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): AttributeConditionFilter => {
     switch (format) {
         case AttributeFormat.text:
-            return AttributeConditionFilter.CONTAINS;
+            return AttributeConditionFilter.EQUAL;
         case AttributeFormat.boolean:
         case AttributeFormat.date:
         case AttributeFormat.numeric:

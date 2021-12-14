@@ -4,36 +4,35 @@
 import {SettingOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
 import AvailableSoon from 'components/shared/AvailableSoon';
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
-
-const CustomButton = styled(Button)`
-    padding: 0 0.5rem;
-`;
 
 function MenuItemActions(): JSX.Element {
     const {t} = useTranslation();
 
+    const [visible, setVisible] = useState<boolean>(false);
+
     const menu = (
         <Menu>
-            <Menu.Item>
+            <Menu.Item disabled>
                 {t('items_list.table.header-cell-menu.sort-advance')}
                 <AvailableSoon />
             </Menu.Item>
-            <Menu.Item>
+            <Menu.Item disabled>
                 {t('items_list.table.header-cell-menu.regroup')}
                 <AvailableSoon />
             </Menu.Item>
         </Menu>
     );
 
+    const _handleVisibleChange = () => setVisible(!visible);
+
     return (
         <>
-            <Dropdown overlay={menu}>
-                <CustomButton>
+            <Dropdown visible={visible} onVisibleChange={_handleVisibleChange} trigger={['click']} overlay={menu}>
+                <Button>
                     <SettingOutlined />
-                </CustomButton>
+                </Button>
             </Dropdown>
         </>
     );

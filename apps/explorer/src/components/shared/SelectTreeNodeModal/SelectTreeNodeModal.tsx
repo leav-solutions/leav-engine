@@ -6,11 +6,11 @@ import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
-import {ITree} from '../../../_types/types';
+import {ISystemTranslation} from '../../../_types/types';
 import SelectTreeNode from '../SelectTreeNode';
 
 interface ISelectTreeNodeModalProps {
-    tree: Pick<ITree, 'id' | 'label'>;
+    tree: {id: string; label?: ISystemTranslation | null};
     selectedNodeKey?: string;
     visible: boolean;
     onSubmit: (treeNode: ITreeNode) => void;

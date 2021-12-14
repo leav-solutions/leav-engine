@@ -146,6 +146,7 @@
     "filters": {
         "trees-group": "Trees",
         "attributes-group": "Attributes",
+        "libraries-group": "Libraries",
         "filters": "Filters",
         "contains": "Contains",
         "not-contains": "Don't Contain",
@@ -153,6 +154,7 @@
         "not-classified-in": "Not classified in",
         "equal": "Is Equal",
         "not-equal": "Isn't Equal",
+        "through": "Through",
         "begin-with": "Begin With",
         "end-with": "End With",
         "is-empty": "Is Empty",
@@ -169,6 +171,7 @@
         "and": "And",
         "or": "Or",
         "attributes": "Attributes",
+        "disable-filters": "Disable filters",
         "trees": "Trees",
         "filters-options": "Filters Options",
         "add-filters": "Add filters",
@@ -179,7 +182,8 @@
         "submit": "Apply filters",
         "deactivate": "Deactivate",
         "activate": "Activate",
-        "add": "Ajouter"
+        "add": "Add",
+        "add-condition": "Add condition"
     },
     "filter-item": {
         "no-operator": "If"
@@ -274,7 +278,7 @@
         "active-tree": "You are currently on the tree {{tree}}"
     },
     "view": {
-        "list": "List View",
+        "Views": "Views",
         "search": "Search view",
         "my-views": "My views",
         "shared-views": "Shared",

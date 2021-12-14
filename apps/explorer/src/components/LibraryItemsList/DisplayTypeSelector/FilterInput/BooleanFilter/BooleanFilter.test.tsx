@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterAttribute} from '__mocks__/common/filter';
 import BooleanFilter from './BooleanFilter';
 
 beforeEach(() => {
@@ -24,14 +24,14 @@ beforeEach(() => {
 
 describe('BooleanFilter', () => {
     test('Should show switch, checked', async () => {
-        const comp = shallow(<BooleanFilter filter={{...mockFilter}} updateFilterValue={jest.fn()} />);
+        const comp = shallow(<BooleanFilter filter={{...mockFilterAttribute}} updateFilterValue={jest.fn()} />);
 
         expect(comp.find('Switch').prop('checked')).toBe(true);
     });
 
     test('Should show switch, unchecked', async () => {
         const comp = shallow(
-            <BooleanFilter filter={{...mockFilter, value: {value: false}}} updateFilterValue={jest.fn()} />
+            <BooleanFilter filter={{...mockFilterAttribute, value: {value: false}}} updateFilterValue={jest.fn()} />
         );
 
         expect(comp.find('Switch').prop('checked')).toBe(false);

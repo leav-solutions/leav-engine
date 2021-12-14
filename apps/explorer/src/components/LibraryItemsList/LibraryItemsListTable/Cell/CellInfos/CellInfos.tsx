@@ -14,12 +14,14 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {IconCross} from '../../../../../assets/icons/IconCross';
+import {DeleteOutlined} from '@ant-design/icons';
 import themingVar from '../../../../../themingVar';
 import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch, PreviewSize} from '../../../../../_types/types';
 
 const Info = styled.div`
     border-left: 1px solid ${themingVar['@divider-color']};
+    min-width: 150px;
+    max-width: 35px;
 `;
 
 interface ICellInfosProps {
@@ -36,16 +38,16 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
         display: state.display
     }));
 
-    const menuBtnSize: SizeType = 'middle';
+    const menuBtnSize: SizeType = 'large';
 
     const menuActions: FloatingMenuAction[] = [
         {
             title: t('global.edit'),
-            button: <EditRecordBtn record={record} size={menuBtnSize} />
+            button: <EditRecordBtn shape={'circle'} record={record} size={menuBtnSize} />
         },
         {
             title: t('items_list.table.actions-tooltips.remove'),
-            icon: <IconCross />,
+            icon: <DeleteOutlined />,
             size: menuBtnSize,
             onClick: () => message.warn(t('global.feature_not_available'))
         }
@@ -85,11 +87,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
             <Info>
                 <RecordCard record={record} size={previewSize} lang={lang} />
             </Info>
-            {selectMode ? (
-                <FloatingMenu actions={selectActions} size={menuBtnSize} />
-            ) : (
-                <FloatingMenu actions={menuActions} size={menuBtnSize} />
-            )}
+            <FloatingMenu actions={selectMode ? selectActions : menuActions} size={menuBtnSize} />
         </>
     );
 }

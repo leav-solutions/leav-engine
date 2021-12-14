@@ -38,17 +38,17 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                 }}
                 mode="inline"
             >
-                <Menu.Item>
+                <Menu.Item disabled>
                     <CarryOutOutlined />
                     {t('menu.user_menu.tasks')}
                     <AvailableSoon />
                 </Menu.Item>
-                <Menu.Item>
+                <Menu.Item disabled>
                     <DoubleRightOutlined />
                     {t('menu.user_menu.shortcuts')}
                     <AvailableSoon />
                 </Menu.Item>
-                <Menu.Item>
+                <Menu.Item disabled>
                     <ExclamationCircleOutlined />
                     {t('menu.user_menu.events')}
                     <AvailableSoon />

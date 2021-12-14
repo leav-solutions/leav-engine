@@ -5,6 +5,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import BodyRow from './BodyRow';
 
 jest.mock(
@@ -32,6 +33,11 @@ describe('BodyRow', () => {
                 }),
                 column: {
                     id: 'test'
+                },
+                row: {
+                    original: {
+                        record: mockRecordWhoAmI
+                    }
                 }
             }
         ],

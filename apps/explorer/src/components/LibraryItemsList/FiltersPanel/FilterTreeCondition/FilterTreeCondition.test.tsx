@@ -4,7 +4,7 @@
 import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import {mockAttribute} from '__mocks__/common/attribute';
-import {mockFilter} from '__mocks__/common/filter';
+import {mockFilterTree} from '__mocks__/common/filter';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import FilterTreeCondition from './FilterTreeCondition';
 
@@ -12,12 +12,10 @@ describe('FilterTreeCondition', () => {
     test('should contain select for condition', async () => {
         render(
             <MockSearchContextProvider state={{attributes: [{...mockAttribute, library: 'test'}]}}>
-                {/* <MockStateFilters stateFilters={{filters: [mockFilter]}}> */}
-                <FilterTreeCondition filter={mockFilter} />
-                {/* </MockStateFilters> */}
+                <FilterTreeCondition filter={mockFilterTree} />
             </MockSearchContextProvider>
         );
-        const selectElement = screen.getByTestId('filter-condition-select');
+        const selectElement = screen.getByTestId('filter-condition-dropdown');
 
         expect(selectElement).toBeInTheDocument();
     });

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Select} from 'antd';
+import {Dropdown, Menu} from 'antd';
 import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/BooleanFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -9,20 +9,17 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {allowedTypeOperator, getAttributeFromKey} from '../../../../utils';
-import {AttributeConditionFilter, AttributeFormat, IFilter} from '../../../../_types/types';
+import {allowedTypeOperator, checkTypeIsLink} from 'utils';
+import {
+    AttributeConditionFilter,
+    AttributeFormat,
+    AttributeType,
+    FilterType,
+    IFilterAttribute,
+    IFilterLibrary
+} from '../../../../_types/types';
+import FilterDropdownButton from '../FilterDropdownButton';
 import {getAttributeConditionOptions} from '../FiltersOptions';
-
-const Wrapper = styled.span`
-    padding: 3px 8px;
-    height: 100%;
-    display: grid;
-    place-items: center;
-
-    .select-filter-condition {
-        text-decoration: underline;
-    }
-`;
 
 const BooleanWrapper = styled.span`
     padding: 0 1rem;
@@ -32,7 +29,7 @@ const BooleanWrapper = styled.span`
 `;
 
 interface IFilterAttributeConditionProps {
-    filter: IFilter;
+    filter: IFilterAttribute | IFilterLibrary;
     updateFilterValue: (newValue: any) => void;
 }
 
@@ -41,15 +38,23 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const attribute = getAttributeFromKey(filter.key, searchState.library.id, searchState.attributes);
+    const showthroughCondition =
+        ((filter as IFilterAttribute).attribute?.format === AttributeFormat.extended ||
+            filter.type === FilterType.LIBRARY ||
+            checkTypeIsLink((filter as IFilterAttribute).attribute?.type) ||
+            (filter as IFilterAttribute).attribute?.type === AttributeType.tree) &&
+        typeof (filter as IFilterAttribute).attribute?.parentAttribute === 'undefined' &&
+        typeof (filter as IFilterAttribute).parentTreeLibrary === 'undefined';
 
-    if (!attribute) {
-        return <div>error</div>;
-    }
+    const attributeConditionOptions = getAttributeConditionOptions(t);
 
-    const conditionOptions = getAttributeConditionOptions(t);
-    const conditionOptionsByType = conditionOptions.filter(
-        conditionOption => attribute.format && allowedTypeOperator[attribute.format]?.includes(conditionOption.value)
+    const conditionOptionsByType = attributeConditionOptions.filter(
+        conditionOption =>
+            (conditionOption.value === AttributeConditionFilter.THROUGH && showthroughCondition) ||
+            (filter.type === FilterType.LIBRARY &&
+                allowedTypeOperator[AttributeFormat.text].includes(conditionOption.value)) ||
+            ((filter as IFilterAttribute).attribute?.format &&
+                allowedTypeOperator[(filter as IFilterAttribute).attribute.format]?.includes(conditionOption.value))
     );
 
     const handleOperatorChange = (e: any) => {
@@ -60,34 +65,44 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
                     condition: AttributeConditionFilter[e]
                 };
             }
+
             return f;
         });
 
         searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
     };
 
-    const showStandardCondition = !formatNotUsingCondition.find(format => format === filter.attribute.format);
+    const showStandardCondition = !formatNotUsingCondition.find(
+        format =>
+            (filter.type === FilterType.LIBRARY && format === AttributeFormat.text) ||
+            (filter.type === FilterType.ATTRIBUTE && format === (filter as IFilterAttribute).attribute.format)
+    );
+
+    const menu = (
+        <Menu>
+            {conditionOptionsByType
+                .filter(c => c.value !== AttributeConditionFilter.THROUGH || showthroughCondition)
+                .map(condition => (
+                    <>
+                        {condition.value === AttributeConditionFilter.THROUGH && <Menu.Divider />}
+                        <Menu.Item key={condition.value} onClick={() => handleOperatorChange(condition.value)}>
+                            {condition.text}
+                        </Menu.Item>
+                    </>
+                ))}
+        </Menu>
+    );
 
     if (showStandardCondition) {
         return (
-            <Wrapper>
-                <Select
-                    className="select-filter-condition"
-                    bordered={false}
-                    value={filter.condition}
-                    onChange={handleOperatorChange}
-                    data-testid="filter-condition-select"
-                >
-                    {conditionOptionsByType.map(condition => (
-                        <Select.Option key={condition.value} value={condition.value}>
-                            <span>{condition.text}</span>
-                        </Select.Option>
-                    ))}
-                </Select>
-            </Wrapper>
+            <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
+                <FilterDropdownButton data-testid="filter-condition-dropdown">
+                    {conditionOptionsByType.filter(c => c.value === filter.condition)[0].text}
+                </FilterDropdownButton>
+            </Dropdown>
         );
     } else {
-        switch (filter.attribute.format) {
+        switch ((filter as IFilterAttribute).attribute.format) {
             case AttributeFormat.boolean:
                 return (
                     <BooleanWrapper>

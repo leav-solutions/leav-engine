@@ -84,14 +84,34 @@ export interface IFilterSeparatorCommon {
     id: string;
 }
 
+export enum FilterType {
+    ATTRIBUTE = 'ATTRIBUTE',
+    TREE = 'TREE',
+    LIBRARY = 'LIBRARY'
+}
+
 export interface IFilter {
+    type: FilterType;
     index: number; // use to sort the filters
     key: string; // attribute / tree key
     value: {value: boolean | string | number | null; label?: string};
     active: boolean;
-    condition: RecordFilterCondition;
-    attribute?: IAttribute; // Put the attribute in the filter to avoid having to fetch him multiple times
-    tree?: ITree;
+    condition: AttributeConditionFilter | TreeConditionFilter | ThroughConditionFilter;
+}
+
+export interface IFilterAttribute extends IFilter {
+    attribute: IAttribute; // Put the attribute in the filter to avoid having to fetch them multiple times
+    parentTreeLibrary?: IFilterLibrary; // on tree library attribute
+}
+
+export interface IFilterTree extends IFilter {
+    tree: {id: string; label?: ISystemTranslation | null};
+}
+
+// on library's tree
+export interface IFilterLibrary extends IFilter {
+    library: {id: string; label?: ISystemTranslation | null};
+    parentAttribute: IAttribute;
 }
 
 export enum AttributeFormat {
@@ -124,6 +144,7 @@ export enum TreeConditionFilter {
 }
 
 export enum AttributeConditionFilter {
+    THROUGH = 'THROUGH',
     CONTAINS = 'CONTAINS',
     NOT_CONTAINS = 'NOT_CONTAINS',
     EQUAL = 'EQUAL',
@@ -132,6 +153,10 @@ export enum AttributeConditionFilter {
     END_WITH = 'END_WITH',
     GREATER_THAN = 'GREATER_THAN',
     LESS_THAN = 'LESS_THAN'
+}
+
+export enum ThroughConditionFilter {
+    THROUGH = 'THROUGH'
 }
 
 export interface IQueryFilter {
@@ -157,7 +182,7 @@ export interface IAttribute {
     isMultiple: boolean;
     linkedLibrary?: ILibraryDetailExtendedAttributeParentLinkedLibrary;
     linkedTree?: ILibraryDetailExtendedAttributeParentLinkedTree;
-    parentAttributeData?: IParentAttributeData;
+    parentAttribute?: IAttribute;
     embedded_fields?: Array<GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields | null> | null;
 }
 
@@ -254,11 +279,11 @@ export interface IAttributeSelected {
 
 export interface ITree {
     id: string;
-    label: ISystemTranslation;
+    label: ISystemTranslation | null;
     libraries: Array<{
         library: {
             id: string;
-            label: ISystemTranslation;
+            label: ISystemTranslation | null;
         };
     }>;
 }

@@ -11,9 +11,10 @@ import EditRecordModal from '../EditRecordModal';
 interface IEditRecordBtnProps {
     record: IRecordIdentityWhoAmI;
     size: SizeType;
+    shape?: 'circle' | 'round';
 }
 
-function EditRecordBtn({record, size}: IEditRecordBtnProps): JSX.Element {
+function EditRecordBtn({record, size, shape}: IEditRecordBtnProps): JSX.Element {
     const [isModalOpen, setIsModalOpen] = useState<boolean>();
 
     const _handleClick = () => {
@@ -28,6 +29,7 @@ function EditRecordBtn({record, size}: IEditRecordBtnProps): JSX.Element {
         <>
             <Button
                 aria-label="edit-record"
+                shape={shape}
                 icon={<ArrowsAltOutlined size={48} />}
                 size={size}
                 onClick={_handleClick}
