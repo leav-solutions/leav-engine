@@ -16,8 +16,7 @@ import {
     AttributeType,
     FilterType,
     IFilterAttribute,
-    IFilterLibrary,
-    ThroughConditionFilter
+    IFilterLibrary
 } from '../../../../_types/types';
 import FilterDropdownButton from '../FilterDropdownButton';
 import {getAttributeConditionOptions} from '../FiltersOptions';
