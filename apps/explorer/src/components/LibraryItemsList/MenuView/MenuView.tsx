@@ -10,7 +10,7 @@ import {
     SaveFilled
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Button, Dropdown, Menu, Space, Badge, Typography, Tooltip} from 'antd';
+import {Button, Dropdown, Menu, Space, Badge, Tooltip} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -26,7 +26,7 @@ import addViewMutation, {
     IAddViewMutationVariablesView
 } from '../../../graphQL/mutations/views/addViewMutation';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import {limitTextSize, localizedTranslation} from '../../../utils';
+import {localizedTranslation} from '../../../utils';
 import {TypeSideItem} from '../../../_types/types';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
@@ -181,33 +181,27 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         );
     };
 
-    const DELAY_VIEW_LABEL_TOOLTIP = 0.5;
-
     return (
         <Space size="large">
             <Button.Group>
-                <Button
-                    icon={<IconViewType type={searchState.view.current.display.type} />}
-                    data-testid="dropdown-view-options"
-                    onClick={_toggleShowView}
-                    color={searchState.view.current?.color}
+                <Tooltip
+                    title={localizedTranslation(searchState.view.current?.label, lang) || t('select-view.default-view')}
                 >
-                    <Tooltip
-                        mouseEnterDelay={DELAY_VIEW_LABEL_TOOLTIP}
-                        placement="bottom"
-                        title={
-                            localizedTranslation(searchState.view.current?.label, lang) ?? t('select-view.default-view')
+                    <Button
+                        icon={
+                            <IconViewType style={{marginRight: '8px'}} type={searchState.view.current.display.type} />
                         }
+                        data-testid="dropdown-view-options"
+                        onClick={_toggleShowView}
+                        color={searchState.view.current?.color}
+                        style={{width: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                     >
-                        <Typography.Text>
-                            {limitTextSize(
-                                localizedTranslation(searchState.view.current?.label, lang) ??
-                                    t('select-view.default-view'),
-                                'medium'
-                            )}
-                        </Typography.Text>
-                    </Tooltip>
-                </Button>
+                        <>
+                            {localizedTranslation(searchState.view.current?.label, lang) ||
+                                t('select-view.default-view')}
+                        </>
+                    </Button>
+                </Tooltip>
                 <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_setView} />
                 <Button
                     icon={<SaveFilled />}

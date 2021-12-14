@@ -6,17 +6,18 @@ import React from 'react';
 import {ViewTypes} from '_gqlTypes/globalTypes';
 
 interface IIconViewTypeProps {
+    style?: React.CSSProperties;
     type: ViewTypes;
 }
 
-const IconViewType = ({type}: IIconViewTypeProps) => {
+const IconViewType = ({type, style}: IIconViewTypeProps) => {
     switch (type) {
         case ViewTypes.list:
-            return <MenuOutlined />;
+            return <MenuOutlined style={style} />;
         case ViewTypes.cards:
-            return <AppstoreFilled />;
+            return <AppstoreFilled style={style} />;
         case ViewTypes.timeline:
-            return <CalendarOutlined />;
+            return <CalendarOutlined style={style} />;
     }
 };
 

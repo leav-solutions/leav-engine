@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from 'graphql-tag';
 import {i18n} from 'i18next';
-import {isString, pick} from 'lodash';
+import {pick} from 'lodash';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {ViewSizes} from '_gqlTypes/globalTypes';
 import {infosCol} from '../constants/constants';
@@ -284,34 +284,6 @@ export const sortNotificationByPriority = (a: INotification, b: INotification) =
                 default:
                     return 0;
             }
-    }
-};
-
-type TextSizeLimit = 'small' | 'medium' | 'big' | number;
-
-// TODO: to del
-export const limitTextSize = (text: string, size: TextSizeLimit) => {
-    let numberSize: number;
-    if (isString(size)) {
-        switch (size) {
-            case 'small':
-                numberSize = 8;
-                break;
-            case 'medium':
-                numberSize = 16;
-                break;
-            case 'big':
-                numberSize = 32;
-                break;
-        }
-    } else {
-        numberSize = size;
-    }
-
-    if (text.length > numberSize) {
-        return text.slice(0, numberSize) + '...';
-    } else {
-        return text;
     }
 };
 

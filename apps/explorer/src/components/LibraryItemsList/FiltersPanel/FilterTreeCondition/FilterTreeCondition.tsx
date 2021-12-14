@@ -1,15 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Dropdown, Menu, Button, Tooltip, Typography} from 'antd';
-import {DownOutlined} from '@ant-design/icons';
+import {Dropdown, Menu} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {TreeConditionFilter, IFilterTree} from '../../../../_types/types';
 import {getTreeConditionOptions} from '../FiltersOptions';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import {limitTextSize} from 'utils';
+import FilterDropdownButton from '../FilterDropdownButton';
 
 interface IFilterTreeConditionProps {
     filter: IFilterTree;
@@ -48,17 +47,9 @@ const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
 
     return (
         <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
-            <Button data-testid="filter-condition-dropdown" type={'text'} icon={<DownOutlined />}>
-                <Tooltip
-                    mouseEnterDelay={0.5}
-                    placement="bottom"
-                    title={conditionOptions.filter(c => c.value === filter.condition)[0].text}
-                >
-                    <Typography.Text>
-                        {limitTextSize(conditionOptions.filter(c => c.value === filter.condition)[0].text, 12)}
-                    </Typography.Text>
-                </Tooltip>
-            </Button>
+            <FilterDropdownButton data-testid="filter-condition-dropdown">
+                {conditionOptions.filter(c => c.value === filter.condition)[0].text}
+            </FilterDropdownButton>
         </Dropdown>
     );
 };

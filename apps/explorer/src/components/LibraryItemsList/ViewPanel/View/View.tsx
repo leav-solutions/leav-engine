@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EllipsisOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Button, Dropdown, Menu, Typography, Tooltip} from 'antd';
+import {Button, Dropdown, Menu, Typography} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
@@ -23,7 +23,7 @@ import deleteViewMutation, {
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
-import {limitTextSize, localizedTranslation} from '../../../../utils';
+import {localizedTranslation} from '../../../../utils';
 import {IView} from '../../../../_types/types';
 import IconViewType from '../../../IconViewType';
 import {getRequestFromFilters} from '../../FiltersPanel/getRequestFromFilter';
@@ -104,8 +104,6 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     };
 
     const ROWS_DESCRIPTION = 3;
-    const LIMIT_VIEW_LABEL_SIZE = 29;
-    const DELAY_VIEW_LABEL_TOOLTIP = 0.5;
 
     const _handleDelete = async (event: any) => {
         // cancel click view selection
@@ -198,15 +196,9 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
             <Infos>
                 <Title>
                     <IconViewType type={view.display.type} />
-                    <Tooltip
-                        mouseEnterDelay={DELAY_VIEW_LABEL_TOOLTIP}
-                        placement="right"
-                        title={localizedTranslation(view.label, lang)}
-                    >
-                        <Typography.Text strong style={{marginLeft: '8px'}}>
-                            {limitTextSize(localizedTranslation(view.label, lang), LIMIT_VIEW_LABEL_SIZE)}
-                        </Typography.Text>
-                    </Tooltip>
+                    <Typography.Text ellipsis={{tooltip: true}} style={{padding: '0 .5em', width: 'calc(100% - 1em)'}}>
+                        {localizedTranslation(view.label, lang)}
+                    </Typography.Text>
                 </Title>
                 {view.description && (
                     <Description>
