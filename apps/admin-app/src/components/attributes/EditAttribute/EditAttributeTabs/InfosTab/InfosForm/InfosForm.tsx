@@ -140,7 +140,6 @@ function InfosForm({
         values,
         touched
     }: FormikProps<AttributeInfosFormValues>) => {
-        console.log({values});
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
 
