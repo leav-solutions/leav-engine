@@ -1,16 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
 import {SortOrder, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import MockedProviderWithFragments from '../../../../__mocks__/MockedProviderWithFragments';
-import View from './View';
+import {act, render, screen} from '_tests/testUtils';
 import {IView} from '../../../../_types/types';
-import {render} from '@testing-library/react';
-import {screen} from '_tests/testUtils';
+import View from './View';
 
 describe('View', () => {
     const mockView: IView = {
@@ -29,15 +24,9 @@ describe('View', () => {
 
     test('should show view label', async () => {
         await act(async () => {
-            render(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <View view={mockView} onEdit={jest.fn()} />
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
+            render(<View view={mockView} onEdit={jest.fn()} />);
         });
 
-        expect(screen.getByTitle(mockView.label.en)).toBeInTheDocument();
+        expect(screen.getByTestId('view-title')).toBeInTheDocument();
     });
 });

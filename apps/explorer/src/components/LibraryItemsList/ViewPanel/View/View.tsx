@@ -190,14 +190,15 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
     const selected = view.id === searchState.view.current?.id;
 
+    const viewLabel = localizedTranslation(view.label, lang);
     return (
         <Wrapper key={view.id} selected={selected} onClick={_changeView} color={view.color}>
             <Handle className="view-handle" {...handleProps} />
             <Infos>
-                <Title>
+                <Title data-testid="view-title">
                     <IconViewType type={view.display.type} />
                     <Typography.Text ellipsis={{tooltip: true}} style={{padding: '0 .5em', width: 'calc(100% - 1em)'}}>
-                        {localizedTranslation(view.label, lang)}
+                        {viewLabel}
                     </Typography.Text>
                 </Title>
                 {view.description && (
