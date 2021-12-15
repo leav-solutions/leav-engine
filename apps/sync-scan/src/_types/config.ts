@@ -6,7 +6,7 @@ import {Options} from 'amqplib';
 export interface IConfig {
     graphql: IConfigGraphql;
     filesystem: IConfigFilesystem;
-    rmq: IConfigAmqp;
+    amqp: IConfigAmqp;
 }
 
 export interface IConfigGraphql {

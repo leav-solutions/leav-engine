@@ -4,12 +4,12 @@
 import * as amqp from 'amqplib';
 import {EventTypes} from './events';
 
-export interface IRMQConn {
+export interface IAmqpConn {
     connection: amqp.Connection;
     channel: amqp.ConfirmChannel;
 }
 
-export interface IRMQMsg {
+export interface IAmqpMsg {
     event: EventTypes;
     time: number;
     pathAfter: string;

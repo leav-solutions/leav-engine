@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ConfirmChannel, Connection} from 'amqplib';
 import automate from '../../automate';
-import * as events from '../../rmq/events';
+import * as events from '../../amqp/events';
 import * as scan from '../../scan';
-import {IRMQConn} from '../../_types/rmq';
+import {IAmqpConn} from '../../_types/amqp';
 import {database, filesystem} from './scan';
 
-jest.mock('../../rmq/events', () => ({
+jest.mock('../../amqp/events', () => ({
     create: jest.fn(),
     move: jest.fn()
 }));
 
-let rmqConn: IRMQConn;
+let amqpConn: IAmqpConn;
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -33,7 +33,7 @@ beforeAll(async () => {
             close: jest.fn()
         };
 
-        rmqConn = {
+        amqpConn = {
             channel: (mockChannel as unknown) as ConfirmChannel,
             connection: (mockConnection as unknown) as Connection
         };
@@ -46,6 +46,7 @@ describe('unit tests', () => {
     test('scan.getFilePath', async () => {
         try {
             expect.assertions(2);
+
             expect(scan.getFilePath('root/fs', 'root/fs')).toBe('.');
             expect(scan.getFilePath('root/fs/dir', 'root/fs')).toBe('dir');
         } catch (e) {
@@ -56,6 +57,7 @@ describe('unit tests', () => {
     test('scan.getFileLevel', async () => {
         try {
             expect.assertions(2);
+
             expect(scan.getFileLevel('.')).toBe(0);
             expect(scan.getFileLevel('dir')).toBe(1);
         } catch (e) {
@@ -70,7 +72,7 @@ describe('unit tests', () => {
             const create = jest.spyOn(events, 'create');
             const move = jest.spyOn(events, 'move');
 
-            await expect(automate(filesystem, database, rmqConn.channel)).resolves.toStrictEqual(undefined);
+            await expect(automate(filesystem, database, amqpConn.channel)).resolves.toStrictEqual(undefined);
 
             expect(create).toHaveBeenCalledTimes(1);
             expect(move).toHaveBeenCalledTimes(1);
