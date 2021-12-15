@@ -68,6 +68,7 @@
             "toBoolean": "Convertir en Booléen",
             "toJSON": "Convertir Objet en JSON",
             "toNumber": "Convertir en Nombre",
+            "dateRangeToNumber": "Convertir les dates d'une période",
             "toString": "Convertir en String",
             "validateFormat": "Valider le Format",
             "validateRegex": "Valider la RegEx"
@@ -82,7 +83,8 @@
             "toBoolean": "Convertir une valeur en booléen",
             "toJSON": "Convertir une valeur en JSON",
             "toNumber": "Convertir une valeur en nombre",
-            "toString": "Convertir une vqleur en chqîne de caractères",
+            "toString": "Convertir une valeur en chaîne de caractères",
+            "dateRangeToNumber": "Convertir les dates d'une période en Nombre",
             "validateFormat": "Vérifier si la valeur correspond au format de l'attribut",
             "validateRegex": "Vérifier si la valeur est une chaîne de caractères qui correspond à une expression régulière donnée susdit"
         }

@@ -162,13 +162,15 @@ export default function ({
             }
 
             if (attrToSave.format === AttributeFormats.DATE_RANGE && attrToSave.values_list?.values?.length) {
-                attrToSave.values_list.values = (attrToSave.values_list.values as string[]).map(v => {
-                    const valuesObj: IDateRangeValue = JSON.parse(v);
+                attrToSave.values_list.values = (attrToSave.values_list.values as Array<string | IDateRangeValue>).map(
+                    (v): IDateRangeValue<number> => {
+                        const valuesObj: IDateRangeValue = typeof v !== 'object' ? JSON.parse(v) : v;
 
-                    // Extract the precise fields we need to make sure
-                    // we don't have something else hanging out (eg. a __typename field)
-                    return {from: valuesObj.from, to: valuesObj.to};
-                });
+                        // Extract the precise fields we need to make sure
+                        // we don't have something else hanging out (eg. a __typename field)
+                        return {from: Number(valuesObj.from), to: Number(valuesObj.to)};
+                    }
+                );
             }
 
             const attr = isExistingAttr

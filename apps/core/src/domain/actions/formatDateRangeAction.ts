@@ -21,16 +21,16 @@ export default function (): IActionsListFunction {
                 default_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
-        action: (value: ActionsListValueType, params: any): IDateRangeValue => {
-            const dateRangeValue = value as IDateRangeValue;
+        action: (value: ActionsListValueType, params: any): IDateRangeValue<string> => {
+            const dateRangeValue = value as IDateRangeValue<number>;
             if (value === null || !dateRangeValue.from || !dateRangeValue.to) {
                 return null;
             }
 
             const format = params.format || '';
 
-            const numberValFrom = Number(dateRangeValue.from);
-            const numberValTo = Number(dateRangeValue.to);
+            const numberValFrom = dateRangeValue.from;
+            const numberValTo = dateRangeValue.to;
 
             return {
                 from: !isNaN(numberValFrom) ? moment.unix(numberValFrom).format(format) : '',

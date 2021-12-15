@@ -99,6 +99,11 @@ export default (attribute: IAttribute): IActionsListConfig => {
                         is_system: true
                     },
                     {
+                        id: 'dateRangeToNumber',
+                        name: 'dateRangeToNumber',
+                        is_system: true
+                    },
+                    {
                         id: 'validateFormat',
                         name: 'Validate Format',
                         is_system: true

@@ -69,6 +69,7 @@
             "toBoolean": "Convert to Boolean",
             "toJSON": "Convert to JSON",
             "toNumber": "Convert to Number",
+            "dateRangeToNumber": "Convert date range dates",
             "toString": "Convert to String",
             "validateFormat": "Validate Format",
             "validateRegex": "Validate Regex"
@@ -84,6 +85,7 @@
             "toJSON": "Convert value to a JSON string",
             "toNumber": "Convert value to number",
             "toString": "Convert value to string",
+            "dateRangeToNumber": "Convert date range dates to number",
             "validateFormat": "Check if value matches attribute format",
             "validateRegex": "Check if value is a string matching given regex"
         }
