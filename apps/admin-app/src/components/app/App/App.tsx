@@ -87,11 +87,11 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
         const {graphQLErrors, networkError} = err;
         if (graphQLErrors) {
             graphQLErrors.map(({message, locations, path}) =>
-                console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+                console.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
             );
         }
         if (networkError) {
-            console.log(`[Network error]: ${networkError}`);
+            console.error(`[Network error]: ${networkError}`);
             if ((networkError as ServerError).statusCode === 401) {
                 onTokenInvalid('login.error.session_expired');
             }
@@ -113,7 +113,7 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
             onError((err: ErrorResponse) => {
-                console.log({err});
+                console.error({err});
                 _handleApolloError(err);
             }),
             new HttpLink({

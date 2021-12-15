@@ -43,8 +43,8 @@ const mockAmqpService = amqpService({
 });
 
 const logger: Mockify<winston.Winston> = {
-    error: jest.fn((...args) => console.log(args)),
-    warn: jest.fn((...args) => console.log(args))
+    error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    warn: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
 };
 
 describe('FilesManager', () => {

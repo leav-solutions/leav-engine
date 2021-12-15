@@ -4,5 +4,6 @@
 import {getConfig} from './config';
 
 (async () => {
+    // eslint-disable-next-line no-restricted-syntax
     console.log(await getConfig());
 })();

@@ -78,6 +78,13 @@ module.exports = {
         'no-caller': 'error',
         'no-cond-assign': 'error',
         'no-console': 'off',
+        'no-restricted-syntax': [
+            'error',
+            {
+                selector: "CallExpression[callee.object.name='console'][callee.property.name='log']",
+                message: 'Console.log is forbidden'
+            }
+        ],
         'no-debugger': 'error',
         'no-duplicate-case': 'error',
         'no-duplicate-imports': 'error',
