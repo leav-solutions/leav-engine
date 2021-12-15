@@ -2,12 +2,34 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import {generateMsg, send} from '.';
+import {IAmqpMsg} from '_types/amqp';
+import {amqpService} from '.';
 import {getConfig} from '../config';
 import {EventTypes} from '../_types/events';
 
 const _logEvent = (params: {eventType: EventTypes; pathBefore?: string; pathAfter?: string}) => {
     console.info('Event detected', params);
+};
+
+const _getEventMsg = (
+    event: EventTypes,
+    pathBefore: string | null,
+    pathAfter: string | null,
+    inode: number,
+    isDirectory: boolean,
+    rootKey: string,
+    hash?: string
+): IAmqpMsg => {
+    return {
+        event,
+        time: Math.round(Date.now() / 1000),
+        pathAfter,
+        pathBefore,
+        isDirectory,
+        inode,
+        rootKey,
+        hash
+    };
 };
 
 export const create = async (
@@ -19,14 +41,26 @@ export const create = async (
 ) => {
     const cfg = await getConfig();
 
-    await send(cfg.rmq, generateMsg(EventTypes.CREATE, null, path, inode, isDirectory, cfg.rmq.rootKey, hash), channel);
+    await amqpService.publish(
+        cfg.amqp.exchange,
+        cfg.amqp.routingKey,
+        channel,
+        _getEventMsg(EventTypes.CREATE, null, path, inode, isDirectory, cfg.amqp.rootKey, hash)
+    );
+
     _logEvent({eventType: EventTypes.CREATE, pathAfter: path});
 };
 
 export const remove = async (path: string, inode: number, isDirectory: boolean, channel: amqp.ConfirmChannel) => {
     const cfg = await getConfig();
 
-    await send(cfg.rmq, generateMsg(EventTypes.REMOVE, path, null, inode, isDirectory, cfg.rmq.rootKey), channel);
+    await amqpService.publish(
+        cfg.amqp.exchange,
+        cfg.amqp.routingKey,
+        channel,
+        _getEventMsg(EventTypes.REMOVE, path, null, inode, isDirectory, cfg.amqp.rootKey)
+    );
+
     _logEvent({eventType: EventTypes.REMOVE, pathBefore: path});
 };
 
@@ -39,11 +73,13 @@ export const move = async (
 ) => {
     const cfg = await getConfig();
 
-    await send(
-        cfg.rmq,
-        generateMsg(EventTypes.MOVE, pathBefore, pathAfter, inode, isDirectory, cfg.rmq.rootKey),
-        channel
+    await amqpService.publish(
+        cfg.amqp.exchange,
+        cfg.amqp.routingKey,
+        channel,
+        _getEventMsg(EventTypes.MOVE, pathBefore, pathAfter, inode, isDirectory, cfg.amqp.rootKey)
     );
+
     _logEvent({eventType: EventTypes.MOVE, pathBefore, pathAfter});
 };
 
@@ -56,6 +92,12 @@ export const update = async (
 ) => {
     const cfg = await getConfig();
 
-    await send(cfg.rmq, generateMsg(EventTypes.UPDATE, path, path, inode, isDirectory, cfg.rmq.rootKey, hash), channel);
+    await amqpService.publish(
+        cfg.amqp.exchange,
+        cfg.amqp.routingKey,
+        channel,
+        _getEventMsg(EventTypes.UPDATE, path, path, inode, isDirectory, cfg.amqp.rootKey, hash)
+    );
+
     _logEvent({eventType: EventTypes.UPDATE, pathAfter: path, pathBefore: path});
 };
