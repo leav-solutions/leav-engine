@@ -653,7 +653,7 @@ describe('AttributeTreeRepo', () => {
                     {id: 'label', type: AttributeTypes.TREE, _repo: mockRepo as IAttributeTypeRepo},
                     {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
-                aql`== ${'MyLabel'}`
+                () => aql`== ${'MyLabel'}`
             );
 
             expect(filter.query).toMatch(/^FILTER/);

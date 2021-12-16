@@ -7,7 +7,7 @@ import {IRecordSort} from '_types/record';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, GetConditionPartFunc, IAttributeTypeRepo} from './attributeTypesRepo';
 
 const VALUES_COLLECTION = 'core_values';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -268,23 +268,29 @@ export default function ({
         },
         filterQueryPart(
             attributes: IAttribute[],
-            queryPart: GeneratedAqlQuery,
+            getConditionPart: GetConditionPartFunc,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
+            const valueIdentifier = aql.literal(parentIdentifier + 'Val');
             const vIdentifier = aql.literal(parentIdentifier + 'v');
             const eIdentifier = aql.literal(parentIdentifier + 'e');
             const advancedValue = aql`FIRST(
                 FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
                 ${collec}
-                FILTER ${eIdentifier}.attribute == ${attributes[0].id} RETURN ${vIdentifier}.value
+                FILTER ${eIdentifier}.attribute == ${attributes[0].id}
+                RETURN ${vIdentifier}.value
             )`;
 
-            const query =
+            const filterTarget =
                 attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
-                    ? aql`FILTER ${_getExtendedFilterPart(attributes, advancedValue)} ${queryPart}`
-                    : aql`FILTER ${advancedValue} ${queryPart}`;
+                    ? _getExtendedFilterPart(attributes, advancedValue)
+                    : advancedValue;
+
+            const query = aql`
+                LET ${valueIdentifier} = ${filterTarget}
+                FILTER ${getConditionPart(valueIdentifier)}`;
 
             return query;
         },

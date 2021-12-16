@@ -199,7 +199,7 @@ describe('AttributeSimpleLinkRepo', () => {
                     {id: 'label', type: AttributeTypes.SIMPLE_LINK, _repo: mockRepo as IAttributeTypeRepo},
                     {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
-                aql`== ${'MyLabel'}`
+                () => aql`== ${'MyLabel'}`
             );
 
             expect(filter.query).toMatch(/^FILTER/);

@@ -517,7 +517,7 @@ describe('RecordRepo', () => {
 
             const mockAttrRepo: Mockify<IAttributeTypesRepo> = {
                 getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo),
-                getQueryPart: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo)
+                getConditionPart: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo)
             };
 
             const recRepo = recordRepo({

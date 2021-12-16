@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IRecordSort} from '../../_types/record';
 import {ILinkValue, IStandardValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {GetConditionPartFunc, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -99,7 +99,7 @@ export default function ({
 
             return query;
         },
-        filterQueryPart(attributes: IAttributeWithRepo[], queryPart: GeneratedAqlQuery): AqlQuery {
+        filterQueryPart(attributes: IAttributeWithRepo[], getConditionPart: GetConditionPartFunc): AqlQuery {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -107,7 +107,11 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
-            const filterLinkedValue = attributes[1]._repo.filterQueryPart([...attributes].splice(1), queryPart, 'l');
+            const filterLinkedValue = attributes[1]._repo.filterQueryPart(
+                [...attributes].splice(1),
+                getConditionPart,
+                'l'
+            );
             const linkedValue = aql`
                 FIRST(FOR l IN ${linkedLibCollec}
                     FILTER TO_STRING(r.${attributes[0].id}) == l._key
@@ -118,7 +122,7 @@ export default function ({
             const query: AqlQuery =
                 linked.format !== AttributeFormats.EXTENDED
                     ? aql`FILTER ${linkedValue} != null`
-                    : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} ${queryPart} != null`;
+                    : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} ${getConditionPart} != null`;
 
             return query;
         },

@@ -122,10 +122,11 @@ describe('AttributeIndexRepo', () => {
             const attrRepo = attributeSimpleRepo();
             const filter = attrRepo.filterQueryPart(
                 [{id: 'id', type: AttributeTypes.SIMPLE, _repo: null}],
-                aql`== ${'123456'}`
+                () => aql`rVal == ${'123456'}`,
+                'r'
             );
 
-            expect(filter.query).toMatch(/^FILTER/);
+            expect(filter.query).toMatch(/FILTER/);
             expect(filter).toMatchSnapshot();
         });
     });

@@ -8,7 +8,12 @@ import {ILinkValue, IValueEdge} from '_types/value';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {
+    BASE_QUERY_IDENTIFIER,
+    GetConditionPartFunc,
+    IAttributeTypeRepo,
+    IAttributeWithRepo
+} from './attributeTypesRepo';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -215,7 +220,7 @@ export default function ({
         },
         filterQueryPart(
             attributes: IAttributeWithRepo[],
-            queryPart: GeneratedAqlQuery,
+            getConditionPart: GetConditionPartFunc,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
@@ -230,7 +235,7 @@ export default function ({
             const eIdentifier = aql.literal(parentIdentifier + 'e');
             const filterLinkedValue = attributes[1]._repo.filterQueryPart(
                 [...attributes].splice(1),
-                queryPart,
+                getConditionPart,
                 linkIdentifier
             );
             const linkedValue = aql`FIRST(

@@ -53,7 +53,9 @@ Object {
     "value0": "_key",
     "value1": "123456",
   },
-  "query": "FILTER r.@value0 == @value1",
+  "query": "
+                        LET rVal = r.@value0
+                        FILTER rVal == @value1",
 }
 `;
 

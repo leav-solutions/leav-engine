@@ -145,9 +145,14 @@ export default function ({
                         ? aql`FILTER POSITION(${records}, r._id)`
                         : aql`FILTER !POSITION(${records}, r._id) && r._id != ${filter.value}`;
             } else {
-                filterQueryPart = attributeTypesRepo.getTypeRepo(filter.attributes[0]).filterQueryPart(
+                const filterAttribute = filter.attributes[0];
+                filterQueryPart = attributeTypesRepo.getTypeRepo(filterAttribute).filterQueryPart(
                     filter.attributes.map(attr => ({...attr, _repo: attributeTypesRepo.getTypeRepo(attr)})),
-                    attributeTypesRepo.getQueryPart(filter.value, filter.condition as AttributeCondition)
+                    attributeTypesRepo.getConditionPart(
+                        filter.condition as AttributeCondition,
+                        filter.value,
+                        filterAttribute
+                    )
                 );
             }
 

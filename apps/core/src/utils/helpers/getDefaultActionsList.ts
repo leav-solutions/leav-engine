@@ -11,6 +11,23 @@ export default (attribute: IAttribute): IActionsListConfig => {
 
     let defaultActions = {};
     switch (attribute.format) {
+        case AttributeFormats.NUMERIC:
+            defaultActions = {
+                [ActionsListEvents.SAVE_VALUE]: [
+                    {
+                        id: 'toNumber',
+                        name: 'To Number',
+                        is_system: true
+                    },
+                    {
+                        id: 'validateFormat',
+                        name: 'Validate Format',
+                        is_system: true
+                    }
+                ],
+                [ActionsListEvents.GET_VALUE]: []
+            };
+            break;
         case AttributeFormats.DATE:
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [

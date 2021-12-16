@@ -537,30 +537,33 @@ describe('RecordDomain', () => {
                 const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromiseMultiple([
-                        {
-                            list: [
-                                {
-                                    ...mockLibrary,
-                                    id: 'lib1',
-                                    recordIdentityConf: {
-                                        label: 'first_label_attribute'
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            list: [
-                                {
-                                    ...mockLibrary,
-                                    id: 'lib2',
-                                    recordIdentityConf: {
-                                        label: 'second_label_attribute'
-                                    }
-                                }
-                            ]
-                        }
-                    ])
+                    getLibraries: jest.fn().mockImplementation(({params}) => {
+                        return Promise.resolve(
+                            params.filters.id === 'lib1'
+                                ? {
+                                      list: [
+                                          {
+                                              ...mockLibrary,
+                                              id: 'lib1',
+                                              recordIdentityConf: {
+                                                  label: 'first_label_attribute'
+                                              }
+                                          }
+                                      ]
+                                  }
+                                : {
+                                      list: [
+                                          {
+                                              ...mockLibrary,
+                                              id: 'lib2',
+                                              recordIdentityConf: {
+                                                  label: 'second_label_attribute'
+                                              }
+                                          }
+                                      ]
+                                  }
+                        );
+                    })
                 };
 
                 const mockTreeRepo: Mockify<ITreeRepo> = {

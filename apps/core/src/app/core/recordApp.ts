@@ -7,9 +7,9 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
-import {IRecord} from '_types/record';
 import {ITree} from '_types/tree';
 import {PreviewSizes} from '../../_types/filesManager';
+import {AttributeCondition, IRecord, TreeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {IIndexationManagerApp} from './indexationManagerApp';
@@ -120,16 +120,7 @@ export default function ({
                     }
 
                     enum RecordFilterCondition {
-                        EQUAL
-                        NOT_EQUAL
-                        BEGIN_WITH
-                        END_WITH
-                        CONTAINS
-                        NOT_CONTAINS
-                        GREATER_THAN
-                        LESS_THAN
-                        CLASSIFIED_IN
-                        NOT_CLASSIFIED_IN
+                        ${Object.values({...AttributeCondition, ...TreeCondition}).join(' ')}
                     }
 
                     type RecordFilter {
