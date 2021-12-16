@@ -74,11 +74,14 @@ Object {
     "value1": "label",
     "value2": "MyLabel",
   },
-  "query": "FILTER FIRST(
+  "query": "
+                LET rVal = FIRST(
                 FOR rv, re IN 1 OUTBOUND r._id
                 @@value0
-                FILTER re.attribute == @value1 RETURN rv.value
-            ) == @value2",
+                FILTER re.attribute == @value1
+                RETURN rv.value
+            )
+                FILTER rVal == @value2",
 }
 `;
 

@@ -5084,14 +5084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^23.0.0":
-  version: 23.3.14
-  resolution: "@types/jest@npm:23.3.14"
-  checksum: 1d28aa15ea6ddc7ff781f1576173e87d78b1e69f405e642048791561fb48b0a2ffef6b7b900795239406626d0c63785f626e8cb9712cfde5556a3e9eabbc6ba3
-  languageName: node
-  linkType: hard
-
-"@types/jest@npm:^25.1.4, @types/jest@npm:^25.2.2":
+"@types/jest@npm:25, @types/jest@npm:^25.1.4, @types/jest@npm:^25.2.2":
   version: 25.2.3
   resolution: "@types/jest@npm:25.2.3"
   dependencies:
@@ -11078,7 +11071,7 @@ __metadata:
     "@types/hapi": ^18.0.2
     "@types/hapi__joi": ^16.0.12
     "@types/i18next-fs-backend": ^1.0.0
-    "@types/jest": ^23.0.0
+    "@types/jest": 25
     "@types/lodash": ^4.14.109
     "@types/node": ^12.12.6
     "@types/uuid": ^7.0.2

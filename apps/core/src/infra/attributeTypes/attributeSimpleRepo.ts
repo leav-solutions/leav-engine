@@ -9,7 +9,7 @@ import {IStandardValue, IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, GetConditionPartFunc, IAttributeTypeRepo} from './attributeTypesRepo';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -89,15 +89,20 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
         },
         filterQueryPart(
             attributes: IAttribute[],
-            queryPart: GeneratedAqlQuery,
+            getConditionPart: GetConditionPartFunc,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 
-            const query: AqlQuery =
+            const valueIdentifier = aql.literal(parentIdentifier + 'Val');
+            const filterTarget =
                 attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
-                    ? aql`FILTER ${_getExtendedFilterPart(attributes)} ${queryPart}`
-                    : aql`FILTER ${aql.literal(parentIdentifier)}.${attributes[0].id} ${queryPart}`;
+                    ? _getExtendedFilterPart(attributes)
+                    : aql`${aql.literal(parentIdentifier)}.${attributes[0].id}`;
+
+            const query: AqlQuery = aql`
+                        LET ${valueIdentifier} = ${filterTarget}
+                        FILTER ${getConditionPart(valueIdentifier)}`;
 
             return query;
         },

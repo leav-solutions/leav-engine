@@ -31,12 +31,31 @@ export enum AttributeCondition {
     CONTAINS = 'CONTAINS',
     NOT_CONTAINS = 'NOT_CONTAINS',
     GREATER_THAN = 'GREATER_THAN',
-    LESS_THAN = 'LESS_THAN'
+    LESS_THAN = 'LESS_THAN',
+    IS_EMPTY = 'IS_EMPTY',
+    IS_NOT_EMPTY = 'IS_NOT_EMPTY',
+    BETWEEN = 'BETWEEN',
+    TODAY = 'TODAY',
+    YESTERDAY = 'YESTERDAY',
+    TOMORROW = 'TOMORROW',
+    NEXT_MONTH = 'NEXT_MONTH',
+    LAST_MONTH = 'LAST_MONTH',
+    START_ON = 'START_ON',
+    START_BEFORE = 'START_BEFORE',
+    START_AFTER = 'START_AFTER',
+    END_ON = 'END_ON',
+    END_BEFORE = 'END_BEFORE',
+    END_AFTER = 'END_AFTER'
 }
 
 export enum TreeCondition {
     CLASSIFIED_IN = 'CLASSIFIED_IN',
     NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN'
+}
+
+export interface IDateFilterValue {
+    from: number;
+    to: number;
 }
 
 export interface IRecordFilterOption {

@@ -72,6 +72,12 @@ const allowedTypeOperator = {
         AttributeCondition.END_WITH,
         AttributeCondition.CONTAINS,
         AttributeCondition.NOT_CONTAINS,
+        AttributeCondition.START_ON,
+        AttributeCondition.START_BEFORE,
+        AttributeCondition.START_AFTER,
+        AttributeCondition.END_ON,
+        AttributeCondition.END_BEFORE,
+        AttributeCondition.END_AFTER,
         TreeCondition.CLASSIFIED_IN,
         TreeCondition.NOT_CLASSIFIED_IN
     ],
@@ -79,10 +85,27 @@ const allowedTypeOperator = {
         AttributeCondition.EQUAL,
         AttributeCondition.NOT_EQUAL,
         AttributeCondition.GREATER_THAN,
-        AttributeCondition.LESS_THAN
+        AttributeCondition.LESS_THAN,
+        AttributeCondition.START_ON,
+        AttributeCondition.START_BEFORE,
+        AttributeCondition.START_AFTER,
+        AttributeCondition.END_ON,
+        AttributeCondition.END_BEFORE,
+        AttributeCondition.END_AFTER
     ],
     boolean: [AttributeCondition.EQUAL, AttributeCondition.NOT_EQUAL],
-    null: [AttributeCondition.EQUAL, AttributeCondition.NOT_EQUAL]
+    null: [
+        AttributeCondition.EQUAL,
+        AttributeCondition.NOT_EQUAL,
+        AttributeCondition.IS_EMPTY,
+        AttributeCondition.IS_NOT_EMPTY,
+        AttributeCondition.TODAY,
+        AttributeCondition.YESTERDAY,
+        AttributeCondition.TOMORROW,
+        AttributeCondition.LAST_MONTH,
+        AttributeCondition.NEXT_MONTH
+    ],
+    object: [AttributeCondition.BETWEEN]
 };
 
 export interface IRecordDomain {
@@ -355,11 +378,24 @@ export default function ({
         return linkedValuesToDel;
     };
 
+    const _isRelativeDateCondition = (condition: AttributeCondition): boolean => {
+        return (
+            condition === AttributeCondition.TODAY ||
+            condition === AttributeCondition.TOMORROW ||
+            condition === AttributeCondition.YESTERDAY ||
+            condition === AttributeCondition.NEXT_MONTH ||
+            condition === AttributeCondition.LAST_MONTH
+        );
+    };
+
     const _isAttributeFilter = (filter: IRecordFilterLight): boolean => {
         return (
             filter.condition in AttributeCondition &&
             typeof filter.field !== 'undefined' &&
-            typeof filter.value !== 'undefined'
+            (typeof filter.value !== 'undefined' ||
+                filter.condition === AttributeCondition.IS_EMPTY ||
+                filter.condition === AttributeCondition.IS_NOT_EMPTY ||
+                _isRelativeDateCondition(filter.condition as AttributeCondition))
         );
     };
 
@@ -540,21 +576,38 @@ export default function ({
                         },
                         ctx
                     );
-                    let value: any = f.value;
-                    const lastAttr = attributes[attributes.length - 1];
+                    let value: any = f.value ?? null;
+                    const lastAttr: IAttribute = attributes[attributes.length - 1];
 
-                    if (
-                        (value && lastAttr.format === AttributeFormats.NUMERIC) ||
-                        lastAttr.format === AttributeFormats.DATE
-                    ) {
-                        value = Number(f.value);
-                    } else if (value && lastAttr.format === AttributeFormats.BOOLEAN) {
-                        value = f.value === 'true';
+                    if (value !== null) {
+                        if (
+                            lastAttr.format === AttributeFormats.NUMERIC ||
+                            (lastAttr.format === AttributeFormats.DATE &&
+                                f.condition !== AttributeCondition.BETWEEN &&
+                                !_isRelativeDateCondition(filter.condition as AttributeCondition))
+                        ) {
+                            value = Number(f.value);
+                        } else if (lastAttr.format === AttributeFormats.BOOLEAN) {
+                            value = f.value === 'true';
+                        } else if (
+                            lastAttr.format === AttributeFormats.DATE &&
+                            f.condition === AttributeCondition.BETWEEN
+                        ) {
+                            value = JSON.parse(f.value);
+
+                            if (typeof value.from === 'undefined' || typeof value.to === 'undefined') {
+                                throw new ValidationError({condition: Errors.INVALID_FILTER_CONDITION_VALUE});
+                            }
+                        }
                     }
 
                     const valueType = value === null ? 'null' : typeof value;
-                    if (f.condition && !allowedTypeOperator[valueType].includes(f.condition)) {
-                        throw new ValidationError({id: Errors.INVALID_FILTER_CONDITION_VALUE});
+                    if (
+                        (f.condition && !allowedTypeOperator[valueType].includes(f.condition)) ||
+                        (f.condition === AttributeCondition.BETWEEN &&
+                            (typeof value.from === 'undefined' || typeof value.to === 'undefined'))
+                    ) {
+                        throw new ValidationError({condition: Errors.INVALID_FILTER_CONDITION_VALUE});
                     }
 
                     filter = {attributes, value, condition: f.condition};

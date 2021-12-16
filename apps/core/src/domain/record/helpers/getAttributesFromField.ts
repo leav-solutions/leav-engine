@@ -130,7 +130,7 @@ const getAttributesFromField = async (field: string, deps: IDeps, ctx: IQueryInf
 
                     try {
                         const libLabelAttributeProps = await attributeDomain.getAttributeProperties({
-                            id: libProps.recordIdentityConf.label,
+                            id: await _getLabelOrIdAttribute(libProps.id),
                             ctx
                         });
                         attributes.push(libLabelAttributeProps);
