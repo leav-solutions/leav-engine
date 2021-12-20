@@ -235,7 +235,7 @@ export default function ({
 
                 if (
                     !exists ||
-                    (exists && !isEqual(data.old.fullTextAttributes.sort(), data.new.fullTextAttributes.sort()))
+                    (exists && !isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort()))
                 ) {
                     if (exists) {
                         await elasticsearchService.indiceDelete(data.new.id);
