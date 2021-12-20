@@ -13,12 +13,37 @@ export const saveValueBatchQuery = gql`
         saveValueBatch(library: $library, recordId: $recordId, version: $version, values: $values) {
             values {
                 id_value
-                value
-                raw_value
                 modified_at
                 created_at
                 version
-                attribute
+                attribute {
+                    id
+                }
+
+                ... on Value {
+                    value
+                    raw_value
+                }
+
+                ... on LinkValue {
+                    linkValue: value {
+                        ...RecordIdentity
+                    }
+                }
+
+                ... on TreeValue {
+                    treeValue: value {
+                        record {
+                            ...RecordIdentity
+                        }
+
+                        ancestors {
+                            record {
+                                ...RecordIdentity
+                            }
+                        }
+                    }
+                }
             }
             errors {
                 type

@@ -23,6 +23,13 @@ export const getAllowedInputTypes = (attribute: IAttribute): IOAllowedTypes => {
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.BOOLEAN]
             };
             break;
+        case AttributeFormats.DATE_RANGE:
+            inputTypes = {
+                [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
+                [ActionsListEvents.GET_VALUE]: [ActionsListIOTypes.OBJECT],
+                [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.STRING]
+            };
+            break;
         default:
             inputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.STRING],
@@ -52,6 +59,7 @@ export const getAllowedOutputTypes = (attribute: IAttribute): IOAllowedTypes => 
             };
             break;
         case AttributeFormats.EXTENDED:
+        case AttributeFormats.DATE_RANGE:
             outputTypes = {
                 [ActionsListEvents.SAVE_VALUE]: [ActionsListIOTypes.OBJECT],
                 [ActionsListEvents.DELETE_VALUE]: [ActionsListIOTypes.OBJECT]

@@ -12,7 +12,7 @@ import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
 import {ActionsListEvents} from '../../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute, IValuesListConf} from '../../../_types/attribute';
 import {AttributeCondition} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
@@ -68,13 +68,6 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
 
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
-            const attributes = await attributeDomain.getAttributes({
-                ctx: {
-                    userId: '0',
-                    queryId: 'attributeAppGenerateBaseSchema'
-                }
-            });
-
             const baseSchema = {
                 typeDefs: `
                     enum AttributeType {
@@ -219,10 +212,17 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         trees: [String!]
                     }
 
-                    type StandardValuesListConf {
+                    union StandardValuesListConf = StandardStringValuesListConf | StandardDateRangeValuesListConf
+
+                    type StandardStringValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
                         values: [String!]
+                    }
+                    type StandardDateRangeValuesListConf {
+                        enable: Boolean!,
+                        allowFreeEntry: Boolean,
+                        values: [DateRangeValue!]
                     }
 
                     type LinkValuesListConf {
@@ -323,7 +323,14 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                             }
                         }
                     },
-                    StandardAttribute: {...commonResolvers},
+                    StandardAttribute: {
+                        ...commonResolvers,
+                        values_list: (attributeData: IAttribute) => {
+                            return attributeData.values_list
+                                ? {...attributeData.values_list, attributeFormat: attributeData.format}
+                                : null;
+                        }
+                    },
                     LinkAttribute: {
                         ...commonResolvers,
                         linked_library: (attributeData: IAttribute, _, ctx: IQueryInfos): Promise<ILibrary> => {
@@ -402,6 +409,13 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                                     })
                                     .filter(r => r !== null)
                             };
+                        }
+                    },
+                    StandardValuesListConf: {
+                        __resolveType: (obj: IValuesListConf & {attributeFormat: AttributeFormats}) => {
+                            return obj.attributeFormat === AttributeFormats.DATE_RANGE
+                                ? 'StandardDateRangeValuesListConf'
+                                : 'StandardStringValuesListConf';
                         }
                     }
                 }

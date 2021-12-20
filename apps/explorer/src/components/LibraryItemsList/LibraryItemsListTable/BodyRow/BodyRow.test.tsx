@@ -49,7 +49,7 @@ describe('BodyRow', () => {
         await act(async () => {
             comp = mount(
                 <MockStore>
-                    <BodyRow row={mockRow as any} index={'test'} />
+                    <BodyRow row={mockRow as any} />
                 </MockStore>
             );
         });

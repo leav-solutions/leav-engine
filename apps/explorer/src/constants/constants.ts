@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SortOrder, ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
-import {AttributeFormat, IView} from '../_types/types';
+import {AttributeFormat, SortOrder, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
+import {IView} from '../_types/types';
 
 export const selectionColumn = 'selection-column';
 export const infosCol = 'infos';

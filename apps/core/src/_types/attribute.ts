@@ -4,9 +4,10 @@
 import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
 import {IRecord} from './record';
+import {IGetCoreEntitiesParams} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 import {ITreeElement} from './tree';
-import {IGetCoreEntitiesParams} from './shared';
+import {IDateRangeValue} from './value';
 
 export interface IAttribute extends ICoreEntity {
     system?: boolean;
@@ -62,7 +63,7 @@ export interface IGetCoreAttributesParams extends IGetCoreEntitiesParams {
 
 export interface IValuesListConf {
     enable: boolean;
-    values?: string[] | IRecord[] | ITreeElement[];
+    values?: string[] | IDateRangeValue[] | IRecord[] | ITreeElement[];
     allowFreeEntry?: boolean;
 }
 
@@ -82,6 +83,7 @@ export enum AttributeFormats {
     TEXT = 'text',
     NUMERIC = 'numeric',
     DATE = 'date',
+    DATE_RANGE = 'date_range',
     ENCRYPTED = 'encrypted',
     BOOLEAN = 'boolean',
     EXTENDED = 'extended'

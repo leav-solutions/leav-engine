@@ -2,17 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
-import {getEmbeddedFields} from '../attributes/getAttributeWithEmbeddedFields';
+import {AttributeFormat, AttributeType, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {
     AttributeConditionFilter,
-    AttributeFormat,
-    AttributeType,
     ISystemTranslation,
     OperatorFilter,
     OrderSearch,
     TreeConditionFilter
 } from '../../../_types/types';
-import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
+import {getEmbeddedFields} from '../attributes/getAttributeWithEmbeddedFields';
 
 export interface ILibraryDetailExtendedFilter {
     field?: string;

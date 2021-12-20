@@ -383,7 +383,8 @@
             "format_extended": "Étendu",
             "format_numeric": "Numérique",
             "format_text": "Texte"
-        }
+        },
+        "date_range_value": "Du {{from}} au {{to}}"
     },
     "record_summary": {
         "id": "Identifiant",

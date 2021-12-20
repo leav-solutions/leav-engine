@@ -23,7 +23,13 @@ export interface ITreeValuesList {
 export interface IValuesListConf {
     enable: boolean;
     allowFreeEntry?: boolean | null;
-    values?: string[] | ILinkValuesList[] | ITreeValuesList[] | null;
+    values?: ValuesList | null;
 }
 
-export type ValuesList = string[] | ILinkValuesList[] | ITreeValuesList[];
+export type StandardValuesListType = Array<string | IDateRangeValue>;
+export type ValuesList = StandardValuesListType | ILinkValuesList[] | ITreeValuesList[];
+
+export interface IDateRangeValue {
+    from: string;
+    to: string;
+}

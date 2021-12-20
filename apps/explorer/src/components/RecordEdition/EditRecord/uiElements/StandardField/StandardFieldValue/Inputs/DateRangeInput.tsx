@@ -8,34 +8,42 @@ import moment from 'moment';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import themingVar from 'themingVar';
+import {stringifyDateRangeValue} from 'utils';
 import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
+import {IDateRangeValue} from '_types/types';
 
-function DateInput({state, fieldValue, onFocus, onSubmit, settings, inputRef}: IStandardInputProps): JSX.Element {
-    const {editingValue} = fieldValue;
-    const {i18n} = useTranslation();
+function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardInputProps): JSX.Element {
+    const {editingValue, displayValue} = fieldValue;
+    const {t} = useTranslation();
 
     const attribute = state.formElement.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
     const isValuesListEnabled = !!attribute?.values_list?.enable;
     const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
 
-    const _handleDateChange = (selectedDate: moment.Moment) => {
-        const dateToSave = selectedDate ? String(selectedDate.unix()) : null;
+    const _handleDateChange = (selectedDates: [moment.Moment, moment.Moment]) => {
+        const [dateFrom, dateTo] = selectedDates;
+        const dateToSave = selectedDates ? {from: String(dateFrom.unix()), to: String(dateTo.unix())} : null;
         onSubmit(dateToSave);
     };
 
-    const dateValue = editingValue ? moment(Number(editingValue) * 1000) : null;
+    const editingRangeValue = editingValue as IDateRangeValue;
+    const rangeValue: [moment.Moment, moment.Moment] = editingRangeValue
+        ? [moment(Number(editingRangeValue.from) * 1000), moment(Number(editingRangeValue.to) * 1000)]
+        : null;
 
     // If we have a values list, picker must be on top to keep list readable
     const pickerPosition = isValuesListEnabled ? {points: ['bl', 'tl'], offset: [0, -1]} : null;
 
+    const rangeDisplayValue = displayValue as IDateRangeValue;
+
     return !isValuesListEnabled || isValuesListOpen ? (
-        <DatePicker
+        <DatePicker.RangePicker
             className="field-wrapper"
             data-testid="datepicker"
             disabled={state.isReadOnly}
             picker="date"
             onChange={_handleDateChange}
-            value={dateValue}
+            value={rangeValue}
             autoFocus
             defaultOpen
             showTime={!!(settings as IFormDateFieldSettings).withTime}
@@ -49,9 +57,7 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings, inputRef}: I
         <Input
             key="editing"
             className={`field-wrapper ${editingValue ? 'has-value' : ''}`}
-            value={
-                editingValue ? new Intl.DateTimeFormat(i18n.language).format(new Date(Number(editingValue) * 1000)) : ''
-            }
+            value={rangeDisplayValue.from && rangeDisplayValue.to ? stringifyDateRangeValue(rangeDisplayValue, t) : ''}
             onFocus={onFocus}
             disabled={true}
             allowClear
@@ -60,4 +66,4 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings, inputRef}: I
     );
 }
 
-export default DateInput;
+export default DateRangeInput;

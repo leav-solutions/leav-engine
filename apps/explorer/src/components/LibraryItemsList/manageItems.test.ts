@@ -5,7 +5,8 @@
 // This file is released under LGPL V3
 
 import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
-import {AttributeFormat, AttributeType, IField} from '_types/types';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {IField} from '_types/types';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {manageItems} from './manageItems';
 

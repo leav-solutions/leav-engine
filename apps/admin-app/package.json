@@ -58,6 +58,7 @@
     "@rushstack/eslint-patch": "1.0.6",
     "@testing-library/jest-dom": "5.11.9",
     "@testing-library/react": "11.2.5",
+    "@testing-library/user-event": "13.5.0",
     "@types/enzyme": "3.1.14",
     "@types/history": "4.7.2",
     "@types/i18next": "11.9.3",

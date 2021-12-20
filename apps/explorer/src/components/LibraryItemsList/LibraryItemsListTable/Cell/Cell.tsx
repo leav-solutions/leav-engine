@@ -3,13 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Paragraph from 'antd/lib/typography/Paragraph';
 import RecordCard from 'components/shared/RecordCard';
-import React from 'react';
 import useSearchReducer from 'hooks/useSearchReducer';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {infosCol} from '../../../../constants/constants';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {displayTypeToPreviewSize} from '../../../../utils';
-import {AttributeType, IRecordIdentityWhoAmI, ITableCell, PreviewSize} from '../../../../_types/types';
+import {displayTypeToPreviewSize, stringifyDateRangeValue} from '../../../../utils';
+import {IDateRangeValue, ITableCell, PreviewSize} from '../../../../_types/types';
 import CellInfos from './CellInfos';
 
 const SimpleCell = styled.div`
@@ -21,18 +23,27 @@ const RecordCardCellWrapper = styled.div`
 `;
 
 interface ICellProps {
-    record: IRecordIdentityWhoAmI;
     columnName: string;
     data: ITableCell;
-    index: string;
 }
 
-const Cell = ({columnName, data, index, record}: ICellProps) => {
+const Cell = ({columnName, data}: ICellProps) => {
     const {value, type} = data;
     const [{lang}] = useLang();
+    const {t} = useTranslation();
 
     const {state: searchState} = useSearchReducer();
     const previewSize: PreviewSize = displayTypeToPreviewSize(searchState.display.size);
+
+    const _getValueByFormat = (cellValue: any): string => {
+        switch (data.format) {
+            case AttributeFormat.date_range:
+                const rangeValue = cellValue as IDateRangeValue;
+                return stringifyDateRangeValue(rangeValue, t);
+            default:
+                return cellValue;
+        }
+    };
 
     if (!value || (Array.isArray(value) && !value.length)) {
         return <></>;
@@ -49,7 +60,7 @@ const Cell = ({columnName, data, index, record}: ICellProps) => {
                             tooltip: value
                         }}
                     >
-                        {value}
+                        {_getValueByFormat(value)}
                     </Paragraph>
                 </SimpleCell>
             );

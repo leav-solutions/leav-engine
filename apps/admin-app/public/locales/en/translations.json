@@ -102,6 +102,7 @@
             "boolean": "Boolean",
             "extended": "Extended",
             "date": "Date",
+            "date_range": "Period",
             "encrypted": "Encrypted",
             "numeric": "Numeric"
         },
@@ -109,7 +110,9 @@
         "allow_free_entry": "Allow free entry",
         "values": "Values",
         "values_list": "Values list",
-        "add_value": "Add value"
+        "add_value": "Add value",
+        "date_range_from": "From",
+        "date_range_to": "To"
     },
     "trees": {
         "title": "Trees",

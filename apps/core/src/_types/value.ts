@@ -45,6 +45,11 @@ export interface ITreeValue extends IGenericValue {
 
 export type IValue = IStandardValue | ILinkValue | ITreeValue;
 
+export interface IDateRangeValue<T = string | number> {
+    from: T;
+    to: T;
+}
+
 export interface IValuesOptions {
     version?: IValueVersion;
     forceArray?: boolean;

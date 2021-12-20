@@ -31,11 +31,28 @@ export interface GET_FORM_forms_list_elements_dependencyValue {
     value: GET_FORM_forms_list_elements_dependencyValue_value;
 }
 
-export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list {
+export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
     values: string[] | null;
 }
+
+export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list =
+    | GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf
+    | GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
 
 export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribute {
     id: string;

@@ -23,7 +23,7 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
 }
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -144,6 +144,10 @@ export default function({
                         version: ValueVersion,
                         attribute: Attribute,
                         metadata: ValueMetadata
+                    }
+                    type DateRangeValue {
+                        from: String
+                        to: String
                     }
                     input ValueInput {
                         id_value: ID,

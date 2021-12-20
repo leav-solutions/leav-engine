@@ -52,9 +52,20 @@ export const attributeValuesListDetailsFragment = gql`
     fragment AttributeValuesListDetails on Attribute {
         ... on StandardAttribute {
             values_list {
-                enable
-                allowFreeEntry
-                values
+                ... on StandardStringValuesListConf {
+                    enable
+                    allowFreeEntry
+                    values
+                }
+
+                ... on StandardDateRangeValuesListConf {
+                    enable
+                    allowFreeEntry
+                    dateRangeValues: values {
+                        from
+                        to
+                    }
+                }
             }
         }
         ... on LinkAttribute {

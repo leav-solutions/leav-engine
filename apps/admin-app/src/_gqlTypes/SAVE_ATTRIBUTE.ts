@@ -45,15 +45,33 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf {
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields {
     id: string;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list {
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
     values: string[] | null;
 }
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list =
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
 
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     id: string;
@@ -61,7 +79,6 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
-    description: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf | null;
@@ -102,6 +119,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf {
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_metadata_fields {
     id: string;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
@@ -146,7 +164,6 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
-    description: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf | null;
@@ -188,6 +205,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf {
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_metadata_fields {
     id: string;
     label: SystemTranslation | null;
+    description: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
@@ -246,7 +264,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues {
     record: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record;
-    ancestors: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors[] | null;
+    ancestors: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors[][] | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list {
@@ -265,7 +283,6 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute {
     format: AttributeFormat | null;
     system: boolean;
     label: SystemTranslation | null;
-    description: SystemTranslation | null;
     multiple_values: boolean;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf | null;

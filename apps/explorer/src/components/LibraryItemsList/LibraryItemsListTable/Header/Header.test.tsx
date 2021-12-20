@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {SortOrder} from '_gqlTypes/globalTypes';
+import {AttributeType, SortOrder} from '_gqlTypes/globalTypes';
 import {act, render, screen} from '_tests/testUtils';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
-import {AttributeType} from '../../../../_types/types';
 import Header from './Header';
 
 describe('Header', () => {

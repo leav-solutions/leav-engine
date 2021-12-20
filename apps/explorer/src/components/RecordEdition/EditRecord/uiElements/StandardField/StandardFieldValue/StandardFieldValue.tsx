@@ -7,16 +7,27 @@ import {Button, Form, Input, Popover, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
-import {InputRefPossibleTypes, IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
+import {
+    InputRefPossibleTypes,
+    IStandardInputProps,
+    StandardValueTypes
+} from 'components/RecordEdition/EditRecord/_types';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import Dimmer from 'components/shared/Dimmer';
+import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
-import {AttributeFormat} from '_types/types';
+import {stringifyDateRangeValue} from 'utils';
+import {
+    GET_FORM_forms_list_elements_elements_attribute_StandardAttribute,
+    GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf,
+    GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf
+} from '_gqlTypes/GET_FORM';
+import {AttributeFormat} from '_gqlTypes/globalTypes';
+import {IDateRangeValue} from '_types/types';
 import {
     IdValue,
     IStandardFieldReducerState,
@@ -28,6 +39,7 @@ import {
 } from '../standardFieldReducer/standardFieldReducer';
 import CheckboxInput from './Inputs/CheckboxInput';
 import DateInput from './Inputs/DateInput';
+import DateRangeInput from './Inputs/DateRangeInput';
 import EncryptedInput from './Inputs/EncryptedInput';
 import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
@@ -42,6 +54,9 @@ interface IStandardFieldValueProps {
     onDelete: (idValue: IdValue) => void;
 }
 
+type IStringValuesListConf = GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf;
+type IDateRangeValuesListConf = GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
+
 const ErrorMessage = styled.div`
     color: ${themingVar['@error-color']};
     font-weight: bold;
@@ -55,7 +70,7 @@ const FormWrapper = styled.div<{isEditing: boolean}>`
 const InputWrapper = styled.div<{isEditing: boolean}>`
     position: relative;
 
-    input {
+    && input {
         background: ${themingVar['@default-bg']};
         transition: none;
         border-radius: 0;
@@ -124,8 +139,10 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         border-radius: 5px;
     }
 
-    &.has-value:not(.format-boolean) input:not(:first-child),
-    &.editing:not(.format-boolean) input:not(:only-child) {
+    ${FormWrapper}.first-value &.has-value:not(.format-boolean) input:not(:first-child),
+    ${FormWrapper}.first-value &.editing:not(.format-boolean) input:not(:only-child),
+    ${FormWrapper}.first-value &.editing.format-date_range input,
+    ${FormWrapper}.first-value &.editing.format-date_range .ant-picker-range-separator {
         padding-top: 1em;
     }
 
@@ -179,6 +196,7 @@ const HoverButtons = styled(Space)`
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
     [AttributeFormat.text]: TextInput,
     [AttributeFormat.date]: DateInput,
+    [AttributeFormat.date_range]: DateRangeInput,
     [AttributeFormat.boolean]: CheckboxInput,
     [AttributeFormat.numeric]: NumberInput,
     [AttributeFormat.encrypted]: EncryptedInput,
@@ -209,12 +227,13 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing]);
 
-    const _handleSubmit = async (valueToSave: AnyPrimitive) => {
+    const _handleSubmit = async (valueToSave: StandardValueTypes) => {
         if (valueToSave === '') {
             return _handleDelete();
         }
 
-        onSubmit(fieldValue.idValue, valueToSave);
+        const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
+        onSubmit(fieldValue.idValue, convertedValue);
 
         editRecordDispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
@@ -259,7 +278,7 @@ function StandardFieldValue({
         });
     };
 
-    const _handleValueChange = (value: AnyPrimitive) => {
+    const _handleValueChange = (value: AnyPrimitive | IDateRangeValue) => {
         dispatch({
             type: StandardFieldReducerActionsTypes.CHANGE_VALUE,
             idValue: fieldValue.idValue,
@@ -290,7 +309,7 @@ function StandardFieldValue({
         _handleSubmit(fieldValue.editingValue);
     };
 
-    const _handleValueCopy = (value: AnyPrimitive) => {
+    const _handleValueCopy = (value: AnyPrimitive | IDateRangeValue) => {
         (inputRef as MutableRefObject<Input>)?.current?.focus();
 
         _handleValueChange(value);
@@ -298,10 +317,20 @@ function StandardFieldValue({
 
     const _getInput = (): JSX.Element => {
         if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
-            const displayedValue =
-                attribute.format === AttributeFormat.encrypted && fieldValue.displayValue
-                    ? '•••••••••'
-                    : String(fieldValue.displayValue);
+            let displayedValue = String(fieldValue.displayValue);
+
+            if (fieldValue.displayValue) {
+                switch (attribute.format) {
+                    case AttributeFormat.date_range:
+                        const dateRangeValue = fieldValue.displayValue as IDateRangeValue;
+                        displayedValue = stringifyDateRangeValue(dateRangeValue, t);
+                        break;
+                    case AttributeFormat.encrypted:
+                        displayedValue = '•••••••••';
+                        break;
+                }
+            }
+
             return (
                 <Input
                     key="display"
@@ -335,31 +364,62 @@ function StandardFieldValue({
     };
 
     const _getFilteredValuesList = (): IValueOfValuesList[] => {
-        const values =
-            isValuesListEnabled && attribute?.values_list?.values
-                ? attribute.values_list.values.filter(val => {
-                      return (
-                          fieldValue.state === StandardFieldValueState.PRISTINE ||
-                          !fieldValue.editingValue ||
-                          attribute.format === AttributeFormat.date ||
-                          val.match(new RegExp(String(fieldValue.editingValue), 'i'))
-                      );
-                  })
-                : [];
+        let values: Array<Pick<IValueOfValuesList, 'value' | 'rawValue'>> = [];
 
-        const hydratedValues = values.map(value => ({
-            value,
+        if (isValuesListEnabled) {
+            if (attribute.format === AttributeFormat.date_range) {
+                const valuesList = (attribute?.values_list as IDateRangeValuesListConf)?.dateRangeValues ?? [];
+
+                values = valuesList
+                    .filter(val => {
+                        return fieldValue.state === StandardFieldValueState.PRISTINE || !fieldValue.editingValue;
+                    })
+                    .map(v => {
+                        const rangeValue = {
+                            from: moment(Number(v.from) * 1000).format('L'),
+                            to: moment(Number(v.to) * 1000).format('L')
+                        };
+                        return {
+                            value: stringifyDateRangeValue(rangeValue, t),
+                            rawValue: {from: v.from, to: v.to}
+                        };
+                    });
+            } else {
+                const valuesList = (attribute?.values_list as IStringValuesListConf)?.values ?? [];
+
+                values = valuesList
+                    .filter(val => {
+                        return (
+                            fieldValue.state === StandardFieldValueState.PRISTINE ||
+                            !fieldValue.editingValue ||
+                            attribute.format === AttributeFormat.date ||
+                            val.match(new RegExp(String(fieldValue.editingValue), 'i'))
+                        );
+                    })
+                    .map(v => ({value: v, rawValue: v}));
+            }
+        }
+
+        const hydratedValues: IValueOfValuesList[] = values.map(value => ({
+            ...value,
             isNewValue: false,
-            canCopy: isValuesListOpen
+            canCopy:
+                isValuesListOpen &&
+                attribute.format !== AttributeFormat.date &&
+                attribute.format !== AttributeFormat.date_range
         }));
 
+        // Display current value on top of values list as "new value". Don't do that for date range attribute as it
+        // doesn't make much sense
         if (
             isValuesListOpen &&
             String(fieldValue.editingValue) &&
-            !attribute.values_list.values.some(v => v === fieldValue.editingValue)
+            attribute.format !== AttributeFormat.date_range &&
+            !((attribute?.values_list as IStringValuesListConf)?.values ?? []).some(v => v === fieldValue.editingValue)
         ) {
             hydratedValues.unshift({
                 value: String(fieldValue.editingValue),
+                rawValue: String(fieldValue.editingValue),
                 isNewValue: true,
                 canCopy: false
             });
@@ -384,7 +444,7 @@ function StandardFieldValue({
 
     const wrapperClasses = `
         ${attribute.format ? `format-${attribute.format}` : ''}
-        ${fieldValue.value ? 'has-value' : ''}
+        ${fieldValue.value?.value ? 'has-value' : ''}
         ${fieldValue.isEditing ? 'editing' : ''}
     `;
 
@@ -396,7 +456,7 @@ function StandardFieldValue({
     return (
         <>
             {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
-            <FormWrapper isEditing={fieldValue.isEditing}>
+            <FormWrapper isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
                 <Form>
                     <FormItem>
                         <Popover placement="topLeft" visible={isErrorVisible} content={errorContent}>

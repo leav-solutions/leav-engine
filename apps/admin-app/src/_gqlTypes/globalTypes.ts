@@ -20,6 +20,7 @@ export enum ActionIOTypes {
 export enum AttributeFormat {
     boolean = 'boolean',
     date = 'date',
+    date_range = 'date_range',
     encrypted = 'encrypted',
     extended = 'extended',
     numeric = 'numeric',
@@ -90,6 +91,7 @@ export enum PermissionsActions {
     app_edit_library = 'app_edit_library',
     app_edit_permission = 'app_edit_permission',
     app_edit_tree = 'app_edit_tree',
+    app_manage_global_preferences = 'app_manage_global_preferences',
     create_record = 'create_record',
     create_value = 'create_value',
     delete_record = 'delete_record',
@@ -152,6 +154,7 @@ export interface EmbeddedAttributeInput {
     id: string;
     format?: AttributeFormat | null;
     label?: SystemTranslation | null;
+    description?: SystemTranslation | null;
     validation_regex?: string | null;
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
 }
@@ -263,8 +266,8 @@ export interface TreeLibraryInput {
 
 export interface TreeLibrarySettingsInput {
     allowMultiplePositions: boolean;
-    allowedAtRoot: boolean;
     allowedChildren: string[];
+    allowedAtRoot: boolean;
 }
 
 export interface TreeNodePermissionsConfInput {

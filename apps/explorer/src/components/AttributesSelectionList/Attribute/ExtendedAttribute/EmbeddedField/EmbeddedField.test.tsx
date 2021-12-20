@@ -4,7 +4,7 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {AttributeFormat} from '../../../../../_types/types';
+import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {mockAttributeExtended} from '../../../../../__mocks__/common/attribute';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import EmbeddedField from './EmbeddedField';

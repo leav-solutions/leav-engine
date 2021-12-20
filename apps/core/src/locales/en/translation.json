@@ -8,6 +8,7 @@
         "FORMAT_ERROR": "Invalid format: {{details}}",
         "INVALID_ACTION_TYPE": "Last action is invalid: expected action with output types including {{expected}}, received {{received}}",
         "INVALID_ATTRIBUTES": "Invalid attributes: {{attributes}}",
+        "INVALID_DATE_RANGE": "Start date must be less than end date",
         "INVALID_FILE_FORMAT": "Invalid file format: {{received}}. Expected format: {{expected}}",
         "INVALID_FILTER_CONDITION_VALUE" : "Condition/value filter are not compatible: {{libraries}}",
         "INVALID_FILTER_FIELDS": "Invalid filter's fields",
@@ -61,12 +62,14 @@
         "names": {
             "encrypt": "Encrypt",
             "formatDate": "Format Date",
+            "formatDateRange": "Format period dates",
             "formatNumber": "Format Number",
             "maskValue": "Mask Value",
             "parseJSON": "Parse JSON",
             "toBoolean": "Convert to Boolean",
             "toJSON": "Convert to JSON",
             "toNumber": "Convert to Number",
+            "dateRangeToNumber": "Convert date range dates",
             "toString": "Convert to String",
             "validateFormat": "Validate Format",
             "validateRegex": "Validate Regex"
@@ -74,6 +77,7 @@
         "descriptions": {
             "encrypt": "Encrypt value",
             "formatDate": "Convert timestamp to a date",
+            "formatDateRange": "Convert timestamps to dates",
             "formatNumber": "Format a number",
             "maskValue": "Mask any value by replacing with dots or empty string if no value",
             "parseJSON": "Parse a JSON string",
@@ -81,6 +85,7 @@
             "toJSON": "Convert value to a JSON string",
             "toNumber": "Convert value to number",
             "toString": "Convert value to string",
+            "dateRangeToNumber": "Convert date range dates to number",
             "validateFormat": "Check if value matches attribute format",
             "validateRegex": "Check if value is a string matching given regex"
         }

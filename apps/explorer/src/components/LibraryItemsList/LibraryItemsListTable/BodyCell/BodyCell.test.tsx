@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {AttributeType} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
-import {AttributeType} from '../../../../_types/types';
 import BodyCell from './BodyCell';
 
 jest.mock(
@@ -33,7 +33,7 @@ describe('BodyCell', () => {
 
     test('should call cell', async () => {
         await act(async () => {
-            render(<BodyCell cell={mockCell as any} index="0" selected={false} />);
+            render(<BodyCell cell={mockCell as any} selected={false} />);
         });
 
         expect(screen.getByText('Cell')).toBeInTheDocument();

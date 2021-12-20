@@ -16,7 +16,7 @@ import {
     SAVE_VALUE_BATCH_saveValueBatch_values
 } from '_gqlTypes/SAVE_VALUE_BATCH';
 import {Override} from '_types/Override';
-import {IRecordIdentityWhoAmI} from '_types/types';
+import {IDateRangeValue, IRecordIdentityWhoAmI} from '_types/types';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
@@ -103,10 +103,12 @@ export interface IStandardInputProps {
     fieldValue: IStandardFieldValue;
     onFocus: () => void;
     onChange: (value: string) => void;
-    onSubmit: (valueToSave: AnyPrimitive) => void;
+    onSubmit: (valueToSave: StandardValueTypes) => void;
     onPressEnter?: () => void;
     settings: ICommonFieldsSettings;
     inputRef: MutableRefObject<InputRefPossibleTypes>;
 }
 
 export type InputRefPossibleTypes = Input | typeof DatePicker | typeof Checkbox;
+
+export type StandardValueTypes = AnyPrimitive | IDateRangeValue;
