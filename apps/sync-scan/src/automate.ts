@@ -15,7 +15,7 @@ enum Attr {
 
 const HASH_DIFF = 8;
 
-const _extractChildrenDbElems = (database: FullTreeContent, dbEl: FullTreeContent): FullTreeContent => {
+const _extractChildrenDbElems = (database: FullTreeContent, dbEl?: FullTreeContent): FullTreeContent => {
     let toList: FullTreeContent = [];
 
     for (const e of database) {
@@ -152,10 +152,7 @@ export default async (
     dbScan: FullTreeContent,
     channel: amqp.ConfirmChannel
 ): Promise<void> => {
-    let dbEl: FullTreeContent;
-
-    // eslint-disable-next-line prefer-const
-    dbEl = _extractChildrenDbElems(dbScan, dbEl);
+    const dbEl: FullTreeContent = _extractChildrenDbElems(dbScan);
 
     await _process(fsScan, dbEl, 0, channel);
 

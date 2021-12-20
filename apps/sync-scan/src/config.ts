@@ -21,7 +21,7 @@ const checkConfig = (conf: IConfig) => {
                 absolutePath: Joi.string().required()
             })
             .required(),
-        rmq: Joi.object()
+        amqp: Joi.object()
             .keys({
                 connOpt: Joi.object()
                     .keys({
