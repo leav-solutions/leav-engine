@@ -10,7 +10,7 @@ module.exports = {
     filesystem: {
         absolutePath: process.env.FILESYSTEM_ABSOLUTE_PATH
     },
-    rmq: {
+    amqp: {
         connOpt: {
             protocol: process.env.AMQP_PROTOCOL || 'amqp',
             hostname: process.env.AMQP_HOST,

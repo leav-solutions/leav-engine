@@ -13,6 +13,7 @@ import * as utils from './utils';
 import * as Config from './_types/config';
 import {FilesystemContent, IFileContent} from './_types/filesystem';
 import {FullTreeContent} from './_types/queries';
+import {isFileAllowed} from '@leav/utils';
 
 export const getFilePath = (root: string, fsPath: string): string => root.replace(`${fsPath}`, '').slice(1) || '.';
 export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.split('/').length);
@@ -21,21 +22,31 @@ export const filesystem = ({absolutePath}: Config.IConfigFilesystem): Promise<Fi
     new Promise((resolve, reject) => {
         let data = [];
 
-        const absPathExist = fs.existsSync(absolutePath);
-        if (!absPathExist) {
+        if (!fs.existsSync(absolutePath)) {
             return reject('Wrong filesystem absolute path');
         }
+
+        const SEPARATOR_CHARACTERS = ', ';
+        const allowList = process.env.ALLOW_FILES_LIST.split(SEPARATOR_CHARACTERS).filter(p => p);
+        const ignoreList = process.env.IGNORE_FILES_LIST.split(SEPARATOR_CHARACTERS).filter(p => p);
 
         const walker = walk.walk(absolutePath, {followLinks: false});
 
         walker.on('directories', (root: string, directories: FilesystemContent, next: any) => {
-            for (const dir of directories) {
-                dir.path = getFilePath(root, absolutePath);
-                dir.level = getFileLevel(dir.path);
-                dir.trt = false;
-            }
+            const dirs = directories
+                .filter(dir =>
+                    isFileAllowed(process.env.FILESYSTEM_ABSOLUTE_PATH, allowList, ignoreList, root + '/' + dir.name)
+                )
+                .map(dir => {
+                    const path = getFilePath(root, absolutePath);
+                    const level = getFileLevel(path);
+                    const trt = false;
 
-            data = data.concat(directories);
+                    return {...dir, path, level, trt};
+                });
+
+            data = data.concat(dirs);
+
             next();
         });
 
@@ -45,7 +56,10 @@ export const filesystem = ({absolutePath}: Config.IConfigFilesystem): Promise<Fi
             file.level = getFileLevel(file.path);
             file.trt = false;
 
-            data.push(file);
+            if (isFileAllowed(process.env.FILESYSTEM_ABSOLUTE_PATH, allowList, ignoreList, root + '/' + file.name)) {
+                data.push(file);
+            }
+
             next();
         });
 

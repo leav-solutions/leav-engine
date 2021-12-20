@@ -13,7 +13,7 @@ module.exports = {
     filesystem: {
         absolutePath: rootPath.path + '/src/__tests__/_fixtures'
     },
-    rmq: {
+    amqp: {
         connOpt: {
             protocol: 'amqp',
             hostname: 'rabbitmq.leav.localhost',

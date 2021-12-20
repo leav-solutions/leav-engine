@@ -2,6 +2,12 @@ version: "3.4"
 
 ##### Common properties #####
 x-node-image: &node_image node:14-alpine
+x-message-broker-image: &message_broker_image "rabbitmq:3-management-alpine"
+x-traefik-image: &traefik_image "traefik:1.7"
+x-redis-image: &redis_image "redis"
+x-elasticsearch-image: &elastisearch_image "docker.elastic.co/elasticsearch/elasticsearch:7.8.0"
+x-kibana-image: &kibana_image "docker.elastic.co/kibana/kibana:7.8.1" # must match elasticsearch image
+x-arango-image: &arango_image "arangodb:3.7"
 
 x-dir-core: &dir-core /app/apps/core
 x-dir-admin: &dir-admin /app/apps/admin-app
@@ -27,6 +33,12 @@ x-mount_point-scripts: &mount_point-scripts ./scripts:/scripts
 x-mount_point-files: &mount_point-files ../files/:/files
 x-mount_point-previews: &mount_point-previews ../previews/:/results
 
+# Lists of allowed and ignored files
+# Use ", " characters as separators between files
+# You can use glob pattern (https://github.com/isaacs/node-glob#readme)
+x-allow-files-list: &allow-list ""
+x-ignore-files-list: &ignore-list ""
+
 x-env-core: &env-core
   NODE_ENV: development
   ARANGO_URL: http://root:@arangodb:8529
@@ -47,6 +59,15 @@ x-env-react: &env-react
   REACT_APP_AVAILABLE_LANG: fr,en
   SKIP_PREFLIGHT_CHECK: "true"
   TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling # To reduce CPU usage of TSC's file watching
+
+x-env-automate-scan: &env-automate-scan
+  ALLOW_FILES_LIST: *allow-list
+  IGNORE_FILES_LIST: *ignore-list
+
+x-env-sync-scan: &env-sync-scan
+  ALLOW_FILES_LIST: *allow-list
+  IGNORE_FILES_LIST: *ignore-list
+
 ############################
 
 services:
@@ -162,6 +183,7 @@ services:
     image: *node_image
     restart: always
     environment:
+      <<: *env-automate-scan
       <<: *env-amqp
       NODE_ENV: development
       REDIS_HOST: redis
@@ -242,6 +264,7 @@ services:
     labels:
       - traefik.enable=true
     environment:
+      <<: *env-sync-scan
       <<: *env-amqp
       FILESYSTEM_ABSOLUTE_PATH: /files
       GRAPHQL_URI: http://core:4001/graphql
@@ -261,7 +284,7 @@ services:
 
   # Proxy
   traefik:
-    image: traefik:1.7
+    image: *traefik_image
     command: --docker --docker.exposedbydefault=false
     ports:
       - "80:80"
@@ -269,7 +292,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   arangodb:
-    image: arangodb:3.7
+    image: *arango_image
     environment:
       ARANGO_NO_AUTH: 1
     labels:
@@ -281,7 +304,7 @@ services:
       - arango_data:/var/lib/arangodb3
 
   message-broker:
-    image: "rabbitmq:3-management-alpine"
+    image: *message_broker_image
     restart: always
     ports:
       - "4369:4369"
@@ -295,14 +318,14 @@ services:
       - traefik.frontend.rule=Host:rabbitmq.leav.localhost
 
   redis:
-    image: redis
+    image: *redis_image
     labels:
       - traefik.enable=true
       - traefik.backend=redis
       - traefik.port=6379
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    image: *elastisearch_image
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -312,7 +335,7 @@ services:
       - 9200:9200
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.8.1 # must match elasticsearch image
+    image: *kibana_image
     ports:
       - 5611:5601
     volumes:
