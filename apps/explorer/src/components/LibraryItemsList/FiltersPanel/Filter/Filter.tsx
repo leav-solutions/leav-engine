@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu, Typography} from 'antd';
+import DateBetweenFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/DateBetweenFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import {ILibraryDetailExtendedAttributeParentLinkedTree} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
@@ -24,6 +25,7 @@ import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
 import {
     AttributeConditionFilter,
+    AttributeConditionType,
     FilterType,
     IAttribute,
     IFilter,
@@ -38,9 +40,10 @@ import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
 import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
 import TextFilter from '../../DisplayTypeSelector/FilterInput/TextFilter';
 import FiltersDropdown from '../../FiltersDropdown';
-import FilterAttributeCondition from '../FilterAttributeCondition';
 import FilterDropdownButton from '../FilterDropdownButton';
 import FilterTreeCondition from '../FilterTreeCondition';
+import mustHideValue from '../mustHideValue';
+import FilterAttributeCondition from './FilterAttributeCondition';
 
 interface IWrapperProps {
     active: boolean;
@@ -93,7 +96,7 @@ const Handle = styled.div`
 
 const Content = styled.div<{hasParent: boolean}>`
     display: grid;
-    grid-template-rows: ${p => (p.hasParent ? '1.25rem 1fr 1fr' : '1fr 1fr')};
+    grid-template-rows: ${p => (p.hasParent ? 'auto auto 1fr' : 'auto 1fr')};
     row-gap: 8px;
 `;
 
@@ -224,8 +227,18 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             const showTreeCondition = props.filter.condition in TreeConditionFilter;
 
             if (showStandardCondition) {
+                if (mustHideValue(props.filter.condition as AttributeConditionType)) {
+                    return <></>;
+                }
+
                 switch ((props.filter as IFilterAttribute).attribute?.format) {
                     case AttributeFormat.date:
+                        return props.filter.condition === AttributeConditionFilter.BETWEEN ? (
+                            <DateBetweenFilter {...props} />
+                        ) : (
+                            <DateFilter {...props} />
+                        );
+                    case AttributeFormat.date_range:
                         return <DateFilter {...props} />;
                     case AttributeFormat.numeric:
                         return <NumericFilter {...props} />;

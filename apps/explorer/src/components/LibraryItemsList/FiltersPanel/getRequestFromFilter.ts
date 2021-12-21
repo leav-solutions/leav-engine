@@ -12,7 +12,7 @@ import {
 
 export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
     const queryFilters = filters
-        .filter(f => f.active && f.value.value !== null)
+        .filter(f => f.active)
         .reduce((acc, filter) => {
             let queryFilter: IQueryFilter[] = [];
 
@@ -20,7 +20,15 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
                 filter.condition = AttributeConditionFilter.EQUAL;
             }
 
-            if (typeof filter.value.value === 'string' && filter.value.value.match(/\n/g)) {
+            if (filter.value === null) {
+                queryFilter = [
+                    {
+                        field: filter.condition in AttributeConditionFilter ? filter.key : null,
+                        condition: RecordFilterCondition[filter.condition],
+                        treeId: (filter as IFilterTree).tree?.id
+                    }
+                ];
+            } else if (typeof filter.value.value === 'string' && filter.value.value.match(/\n/g)) {
                 const values = filter.value.value.split('\n').filter(Boolean);
 
                 queryFilter.push({operator: RecordFilterOperator.OPEN_BRACKET});
@@ -41,7 +49,10 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
                 queryFilter = [
                     {
                         field: filter.condition in AttributeConditionFilter ? filter.key : null,
-                        value: filter.value.value.toString(),
+                        value:
+                            filter.condition === AttributeConditionFilter.BETWEEN
+                                ? JSON.stringify(filter.value.value)
+                                : filter?.value?.value.toString(),
                         condition: RecordFilterCondition[filter.condition],
                         treeId: (filter as IFilterTree).tree?.id
                     }

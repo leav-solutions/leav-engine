@@ -4,7 +4,7 @@
 import {gqlUnchecked} from 'utils';
 import {AttributeFormat, AttributeType, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {
-    AttributeConditionFilter,
+    AttributeConditionType,
     ISystemTranslation,
     OperatorFilter,
     OrderSearch,
@@ -15,7 +15,7 @@ import {getEmbeddedFields} from '../attributes/getAttributeWithEmbeddedFields';
 export interface ILibraryDetailExtendedFilter {
     field?: string;
     value?: string;
-    condition?: AttributeConditionFilter | TreeConditionFilter;
+    condition?: AttributeConditionType | TreeConditionFilter;
     operator?: OperatorFilter;
 }
 

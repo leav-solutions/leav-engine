@@ -49,6 +49,7 @@ const Cell = ({columnName, data}: ICellProps) => {
         return <></>;
     }
 
+    const displayedValue = _getValueByFormat(value);
     switch (type) {
         case AttributeType.simple:
         case AttributeType.advanced:
@@ -57,10 +58,10 @@ const Cell = ({columnName, data}: ICellProps) => {
                     <Paragraph
                         ellipsis={{
                             rows: 1,
-                            tooltip: value
+                            tooltip: displayedValue
                         }}
                     >
-                        {_getValueByFormat(value)}
+                        {displayedValue}
                     </Paragraph>
                 </SimpleCell>
             );
