@@ -96,9 +96,9 @@ export interface IFilter {
     type: FilterType;
     index: number; // use to sort the filters
     key: string; // attribute / tree key
-    value: {value: boolean | string | number | null; label?: string};
+    value: {value: boolean | string | number | null | IDateRangeValue; label?: string};
     active: boolean;
-    condition: AttributeConditionFilter | TreeConditionFilter | ThroughConditionFilter;
+    condition: AttributeConditionType | TreeConditionFilter | ThroughConditionFilter;
 }
 
 export interface IFilterAttribute extends IFilter {
@@ -128,21 +128,18 @@ export enum TreeConditionFilter {
     NOT_CLASSIFIED_IN = 'NOT_CLASSIFIED_IN'
 }
 
-export enum AttributeConditionFilter {
-    THROUGH = 'THROUGH',
-    CONTAINS = 'CONTAINS',
-    NOT_CONTAINS = 'NOT_CONTAINS',
-    EQUAL = 'EQUAL',
-    NOT_EQUAL = 'NOT_EQUAL',
-    BEGIN_WITH = 'BEGIN_WITH',
-    END_WITH = 'END_WITH',
-    GREATER_THAN = 'GREATER_THAN',
-    LESS_THAN = 'LESS_THAN'
-}
-
 export enum ThroughConditionFilter {
     THROUGH = 'THROUGH'
 }
+
+// We're exporting a const and not an enum to "merge" the enum coming
+// from Graphql types with some condition of our own
+export const AttributeConditionFilter = {
+    ...RecordFilterCondition,
+    ...ThroughConditionFilter
+};
+
+export type AttributeConditionType = ValueOf<typeof AttributeConditionFilter>;
 
 export interface IQueryFilter {
     field?: string;
@@ -390,3 +387,5 @@ export interface IDateRangeValue {
     from: string;
     to: string;
 }
+
+export type ValueOf<T> = T[keyof T];

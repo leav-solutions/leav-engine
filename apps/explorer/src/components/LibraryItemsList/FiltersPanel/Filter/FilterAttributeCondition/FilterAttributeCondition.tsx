@@ -6,14 +6,22 @@ import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/Filte
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React from 'react';
+import React, {Fragment} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {allowedTypeOperator, checkTypeIsLink} from 'utils';
+import {checkTypeIsLink} from 'utils';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {AttributeConditionFilter, FilterType, IFilterAttribute, IFilterLibrary} from '../../../../_types/types';
-import FilterDropdownButton from '../FilterDropdownButton';
-import {getAttributeConditionOptions} from '../FiltersOptions';
+import {
+    AttributeConditionFilter,
+    AttributeConditionType,
+    FilterType,
+    IFilterAttribute,
+    IFilterLibrary
+} from '../../../../../_types/types';
+import FilterDropdownButton from '../../FilterDropdownButton';
+import {getConditionOptionsByType} from '../../FiltersOptions';
+import mustHideValue from '../../mustHideValue';
+import {getDefaultFilterValueByFormat} from '../Filter';
 
 const BooleanWrapper = styled.span`
     padding: 0 1rem;
@@ -40,23 +48,26 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
         typeof (filter as IFilterAttribute).attribute?.parentAttribute === 'undefined' &&
         typeof (filter as IFilterAttribute).parentTreeLibrary === 'undefined';
 
-    const attributeConditionOptions = getAttributeConditionOptions(t);
+    const conditionOptionsByType = getConditionOptionsByType(filter, showthroughCondition, t);
 
-    const conditionOptionsByType = attributeConditionOptions.filter(
-        conditionOption =>
-            (conditionOption.value === AttributeConditionFilter.THROUGH && showthroughCondition) ||
-            (filter.type === FilterType.LIBRARY &&
-                allowedTypeOperator[AttributeFormat.text].includes(conditionOption.value)) ||
-            ((filter as IFilterAttribute).attribute?.format &&
-                allowedTypeOperator[(filter as IFilterAttribute).attribute.format]?.includes(conditionOption.value))
-    );
-
-    const handleOperatorChange = (e: any) => {
+    const _handleConditionChange = (condition: AttributeConditionType) => {
         const newFilters = searchState.filters.map(f => {
             if (f.index === filter.index) {
+                let newValue = {...filter.value};
+
+                if (mustHideValue(condition)) {
+                    newValue = null;
+                } else if (
+                    newValue === null ||
+                    (typeof newValue?.value === 'object' && condition !== AttributeConditionFilter.BETWEEN)
+                ) {
+                    newValue.value = getDefaultFilterValueByFormat((filter as IFilterAttribute).attribute.format);
+                }
+
                 return {
                     ...filter,
-                    condition: AttributeConditionFilter[e]
+                    value: newValue,
+                    condition: AttributeConditionFilter[condition]
                 };
             }
 
@@ -77,21 +88,24 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             {conditionOptionsByType
                 .filter(c => c.value !== AttributeConditionFilter.THROUGH || showthroughCondition)
                 .map(condition => (
-                    <>
+                    <Fragment key={condition.value}>
                         {condition.value === AttributeConditionFilter.THROUGH && <Menu.Divider />}
-                        <Menu.Item key={condition.value} onClick={() => handleOperatorChange(condition.value)}>
-                            {condition.text}
+                        <Menu.Item onClick={() => _handleConditionChange(condition.value)}>
+                            {condition.textByFormat?.[(filter as IFilterAttribute)?.attribute?.format] ??
+                                condition?.text}
                         </Menu.Item>
-                    </>
+                    </Fragment>
                 ))}
         </Menu>
     );
 
     if (showStandardCondition) {
+        const conditionOption = conditionOptionsByType.filter(c => c.value === filter.condition)[0];
         return (
             <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
-                <FilterDropdownButton data-testid="filter-condition-dropdown">
-                    {conditionOptionsByType.filter(c => c.value === filter.condition)[0]?.text}
+                <FilterDropdownButton aria-label="filter-condition">
+                    {conditionOption?.textByFormat?.[(filter as IFilterAttribute)?.attribute?.format] ??
+                        conditionOption?.text}
                 </FilterDropdownButton>
             </Dropdown>
         );

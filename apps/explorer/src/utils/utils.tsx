@@ -10,6 +10,7 @@ import {infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeConditionFilter,
+    AttributeConditionType,
     AvailableLanguage,
     ExtendFormat,
     IAttribute,
@@ -140,52 +141,6 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
     const fallbackLang = i18next.options?.fallbackLng ? (i18next as any).options.fallbackLng[0] : '';
 
     return [userLang, fallbackLang];
-};
-
-export const allowedTypeOperator = {
-    [AttributeFormat.text]: [
-        AttributeConditionFilter.CONTAINS,
-        AttributeConditionFilter.NOT_CONTAINS,
-        AttributeConditionFilter.EQUAL,
-        AttributeConditionFilter.NOT_EQUAL,
-        AttributeConditionFilter.BEGIN_WITH,
-        AttributeConditionFilter.END_WITH
-    ],
-    [AttributeFormat.extended]: [
-        AttributeConditionFilter.CONTAINS,
-        AttributeConditionFilter.NOT_CONTAINS,
-        AttributeConditionFilter.EQUAL,
-        AttributeConditionFilter.NOT_EQUAL,
-        AttributeConditionFilter.BEGIN_WITH,
-        AttributeConditionFilter.END_WITH
-    ],
-    [AttributeFormat.encrypted]: [
-        AttributeConditionFilter.CONTAINS,
-        AttributeConditionFilter.NOT_CONTAINS,
-        AttributeConditionFilter.EQUAL,
-        AttributeConditionFilter.NOT_EQUAL,
-        AttributeConditionFilter.BEGIN_WITH,
-        AttributeConditionFilter.END_WITH
-    ],
-    [AttributeFormat.numeric]: [
-        AttributeConditionFilter.EQUAL,
-        AttributeConditionFilter.NOT_EQUAL,
-        AttributeConditionFilter.GREATER_THAN,
-        AttributeConditionFilter.LESS_THAN
-    ],
-    [AttributeFormat.boolean]: [AttributeConditionFilter.EQUAL, AttributeConditionFilter.NOT_EQUAL],
-    [AttributeFormat.date]: [
-        AttributeConditionFilter.EQUAL,
-        AttributeConditionFilter.NOT_EQUAL,
-        AttributeConditionFilter.GREATER_THAN,
-        AttributeConditionFilter.LESS_THAN
-    ],
-    [AttributeFormat.date_range]: [
-        AttributeConditionFilter.EQUAL,
-        AttributeConditionFilter.NOT_EQUAL,
-        AttributeConditionFilter.GREATER_THAN,
-        AttributeConditionFilter.LESS_THAN
-    ]
 };
 
 export const checkTypeIsLink = (type: AttributeType) => {
@@ -340,7 +295,7 @@ export const getAttributeFromKey = (key: string, library: string, attributes: IA
     }
 };
 
-export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): AttributeConditionFilter => {
+export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): AttributeConditionType => {
     switch (format) {
         case AttributeFormat.text:
             return AttributeConditionFilter.EQUAL;
