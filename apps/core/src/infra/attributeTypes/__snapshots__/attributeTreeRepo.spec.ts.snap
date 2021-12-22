@@ -51,13 +51,11 @@ Object {
     "value1": "label",
     "value2": null,
   },
-  "query": "FILTER FIRST(
+  "query": "FILTER FIRST( 
                 FOR rv, re IN 1 OUTBOUND r._id
                 @@value0
                 FILTER re.attribute == @value1
-                @value2
-                RETURN rv
-            ) != null",
+             @value2 RETURN rv ) != null",
 }
 `;
 

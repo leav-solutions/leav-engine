@@ -7,6 +7,7 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
+import {AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
@@ -621,7 +622,10 @@ describe('AttributeAdvancedLinkRepo', () => {
             const mockDbServ = {
                 db: new Database()
             };
-            const attrRepo = attributeAdvancedLinkRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`== ${'MyLabel'}`
+            });
             const mockRepo: Mockify<IAttributeTypeRepo> = {
                 filterQueryPart: jest.fn().mockReturnValue(null)
             };
@@ -631,7 +635,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     {id: 'label', type: AttributeTypes.ADVANCED_LINK, _repo: mockRepo as IAttributeTypeRepo},
                     {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
-                () => aql`== ${'MyLabel'}`
+                {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
             );
 
             expect(filter.query).toMatch(/^FILTER/);

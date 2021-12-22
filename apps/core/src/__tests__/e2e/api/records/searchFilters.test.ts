@@ -57,7 +57,8 @@ describe('searchFilters', () => {
     const dateAttributeId = 'search_filter_date_attribute_id';
     const booleanAttributeId = 'search_filter_boolean_attribute_id';
     const embeddedAttributeId = 'search_filter_embedded_attribute_id';
-    const linkAttributeId = 'search_filter_link_attribute_id';
+    const simpleLinkAttributeId = 'search_filter_simple_link_attribute_id';
+    const advancedLinkAttributeId = 'search_filter_advanced_link_attribute_id';
     const treeAttributeId = 'search_filter_tree_attribute_id';
     const dateRangeAttributeId = 'search_filter_date_range_attribute_id';
 
@@ -103,9 +104,15 @@ describe('searchFilters', () => {
                 ]
             },
             {
-                id: linkAttributeId,
+                id: simpleLinkAttributeId,
                 type: AttributeTypes.SIMPLE_LINK,
                 label: 'linkAttributeId',
+                linkedLibrary: linkedLibraryId
+            },
+            {
+                id: advancedLinkAttributeId,
+                type: AttributeTypes.ADVANCED_LINK,
+                label: 'advancedLinkAttributeId',
                 linkedLibrary: linkedLibraryId
             },
             {
@@ -139,7 +146,7 @@ describe('searchFilters', () => {
         await gqlSaveLibrary(
             linkedLibraryId,
             'Test lib',
-            attributesToCreate.map(a => a.id).filter(id => id !== linkAttributeId)
+            attributesToCreate.map(a => a.id).filter(id => id !== simpleLinkAttributeId)
         );
 
         await gqlSaveLibrary(
@@ -817,18 +824,17 @@ describe('searchFilters', () => {
             });
         });
 
-        describe('Link attribute', () => {
+        describe('Simple link attribute', () => {
             beforeAll(async () => {
-                await gqlSaveValue(linkAttributeId, libraryId, recordId1, linkedRecordId1);
-                await gqlSaveValue(linkAttributeId, libraryId, recordId2, linkedRecordId2);
-                await gqlSaveValue(linkAttributeId, libraryId, recordId3, linkedRecordId3);
+                await gqlSaveValue(simpleLinkAttributeId, libraryId, recordId1, linkedRecordId1);
+                await gqlSaveValue(simpleLinkAttributeId, libraryId, recordId2, linkedRecordId2);
             });
 
             test('Contains', async () => {
                 const res = await makeGraphQlCall(`{
                     ${libraryGqlQuery}(
                         filters: [{
-                            field: "${linkAttributeId}",
+                            field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.CONTAINS},
                             value: "${linkedRecordId1}"
                         }]) {
@@ -846,7 +852,7 @@ describe('searchFilters', () => {
                 const res = await makeGraphQlCall(`{
                     ${libraryGqlQuery}(
                         filters: [{
-                            field: "${linkAttributeId}",
+                            field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.NOT_CONTAINS},
                             value: "${linkedRecordId1}"
                         }]) {
@@ -856,16 +862,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
                 expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId3);
             });
 
             test('Start with', async () => {
                 const res = await makeGraphQlCall(`{
                     ${libraryGqlQuery}(
                         filters: [{
-                            field: "${linkAttributeId}",
+                            field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.BEGIN_WITH},
                             value: "${linkedRecordId1}"
                         }]) {
@@ -883,7 +888,7 @@ describe('searchFilters', () => {
                 const res = await makeGraphQlCall(`{
                     ${libraryGqlQuery}(
                         filters: [{
-                            field: "${linkAttributeId}",
+                            field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.END_WITH},
                             value: "${linkedRecordId1.slice(-4)}"
                         }]) {
@@ -896,6 +901,155 @@ describe('searchFilters', () => {
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
                 expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
             });
+
+            test('Is empty', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${simpleLinkAttributeId}",
+                            condition: ${AttributeCondition.IS_EMPTY}
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+            });
+
+            test('Is not empty', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${simpleLinkAttributeId}",
+                            condition: ${AttributeCondition.IS_NOT_EMPTY}
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+            });
+        });
+
+        describe('Advanced link attribute', () => {
+            beforeAll(async () => {
+                await gqlSaveValue(advancedLinkAttributeId, libraryId, recordId1, linkedRecordId1);
+                await gqlSaveValue(advancedLinkAttributeId, libraryId, recordId2, linkedRecordId2);
+            });
+
+            test('Contains', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${advancedLinkAttributeId}",
+                            condition: ${AttributeCondition.CONTAINS},
+                            value: "${linkedRecordId1}"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+            });
+
+            test('Do not contains', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${advancedLinkAttributeId}",
+                            condition: ${AttributeCondition.NOT_CONTAINS},
+                            value: "${linkedRecordId1}"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+            });
+
+            test('Start with', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${advancedLinkAttributeId}",
+                            condition: ${AttributeCondition.BEGIN_WITH},
+                            value: "${linkedRecordId1}"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+            });
+
+            test('End with', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${advancedLinkAttributeId}",
+                            condition: ${AttributeCondition.END_WITH},
+                            value: "${linkedRecordId1.slice(-4)}"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+            });
+
+            test('Is empty', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${advancedLinkAttributeId}",
+                            condition: ${AttributeCondition.IS_EMPTY}
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+            });
+
+            test('Is not empty', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${advancedLinkAttributeId}",
+                            condition: ${AttributeCondition.IS_NOT_EMPTY}
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+            });
         });
 
         describe('Tree attribute', () => {
@@ -906,7 +1060,6 @@ describe('searchFilters', () => {
 
                 await gqlSaveValue(treeAttributeId, libraryId, recordId1, `${treeLibraryId}/${treeRecordId1}`);
                 await gqlSaveValue(treeAttributeId, libraryId, recordId2, `${treeLibraryId}/${treeRecordId2}`);
-                await gqlSaveValue(treeAttributeId, libraryId, recordId3, `${treeLibraryId}/${treeRecordId3}`);
             });
 
             test('Contains', async () => {
@@ -941,9 +1094,8 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
                 expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId3);
             });
 
             test('Start with', async () => {
@@ -980,6 +1132,41 @@ describe('searchFilters', () => {
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
                 expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+            });
+
+            test('Is empty', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${treeAttributeId}",
+                            condition: ${AttributeCondition.IS_EMPTY}
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+            });
+
+            test('Is not empty', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${advancedLinkAttributeId}",
+                            condition: ${AttributeCondition.IS_NOT_EMPTY}
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
             });
         });
     });

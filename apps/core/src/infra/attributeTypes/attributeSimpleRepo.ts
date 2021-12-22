@@ -3,19 +3,24 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IQueryInfos} from '_types/queryInfos';
-import {IRecordSort} from '_types/record';
+import {AttributeCondition, IRecordFilterOption, IRecordSort} from '_types/record';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {IStandardValue, IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {BASE_QUERY_IDENTIFIER, GetConditionPartFunc, IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
+import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
+    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
 }
 
-export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IAttributeTypeRepo {
+export default function ({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null
+}: IDeps = {}): IAttributeTypeRepo {
     async function _saveValue(
         library: string,
         recordId: string,
@@ -89,7 +94,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
         },
         filterQueryPart(
             attributes: IAttribute[],
-            getConditionPart: GetConditionPartFunc,
+            filter: IRecordFilterOption,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
@@ -102,7 +107,12 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
 
             const query: AqlQuery = aql`
                         LET ${valueIdentifier} = ${filterTarget}
-                        FILTER ${getConditionPart(valueIdentifier)}`;
+                        FILTER ${getConditionPart(
+                            valueIdentifier,
+                            filter.condition as AttributeCondition,
+                            filter.value,
+                            attributes[0]
+                        )}`;
 
             return query;
         },

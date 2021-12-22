@@ -4,6 +4,7 @@
 import {aql, Database} from 'arangojs';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
+import {AttributeCondition} from '../../_types/record';
 import attributeSimpleRepo from './attributeSimpleRepo';
 
 describe('AttributeIndexRepo', () => {
@@ -119,10 +120,12 @@ describe('AttributeIndexRepo', () => {
 
     describe('filterQueryPart', () => {
         test('Should return simple filter', () => {
-            const attrRepo = attributeSimpleRepo();
+            const attrRepo = attributeSimpleRepo({
+                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`rVal == ${'123456'}`
+            });
             const filter = attrRepo.filterQueryPart(
                 [{id: 'id', type: AttributeTypes.SIMPLE, _repo: null}],
-                () => aql`rVal == ${'123456'}`,
+                {condition: AttributeCondition.EQUAL, value: '123456'},
                 'r'
             );
 

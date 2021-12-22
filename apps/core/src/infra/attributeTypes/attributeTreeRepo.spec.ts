@@ -6,24 +6,11 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
+import {AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {mockAttrTreeVersionableSimple} from '../../__tests__/mocks/attribute';
-import {ITreeRepo} from '../tree/treeRepo';
 import attributeTreeRepo from './attributeTreeRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
-
-const mockAttrTreeRepo: Mockify<ITreeRepo> = {
-    createTree: null,
-    updateTree: null,
-    getTrees: null,
-    deleteTree: null,
-    addElement: null,
-    moveElement: null,
-    deleteElement: null,
-    isElementPresent: null,
-    getTreeContent: null,
-    getElementAncestors: null
-};
 
 describe('AttributeTreeRepo', () => {
     const mockAttribute = {
@@ -647,13 +634,16 @@ describe('AttributeTreeRepo', () => {
                 filterQueryPart: jest.fn().mockReturnValue(null)
             };
 
-            const attrRepo = attributeTreeRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeTreeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`== ${'MyLabel'}`
+            });
             const filter = attrRepo.filterQueryPart(
                 [
                     {id: 'label', type: AttributeTypes.TREE, _repo: mockRepo as IAttributeTypeRepo},
                     {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
-                () => aql`== ${'MyLabel'}`
+                {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
             );
 
             expect(filter.query).toMatch(/^FILTER/);
