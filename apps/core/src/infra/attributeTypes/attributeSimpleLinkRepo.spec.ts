@@ -5,6 +5,7 @@ import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
+import {AttributeCondition} from '../../_types/record';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 
@@ -193,13 +194,16 @@ describe('AttributeSimpleLinkRepo', () => {
                 filterQueryPart: jest.fn().mockReturnValue(null)
             };
 
-            const attrRepo = attributeSimpleLinkRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeSimpleLinkRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`== ${'MyLabel'}`
+            });
             const filter = attrRepo.filterQueryPart(
                 [
                     {id: 'label', type: AttributeTypes.SIMPLE_LINK, _repo: mockRepo as IAttributeTypeRepo},
                     {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
-                () => aql`== ${'MyLabel'}`
+                {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
             );
 
             expect(filter.query).toMatch(/^FILTER/);

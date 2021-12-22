@@ -2,8 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../_types/attribute';
-import {AttributeCondition} from '../../_types/record';
-import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import attributeTypesRepo, {IAttributeTypeRepo} from './attributeTypesRepo';
 
 describe('AttributeTypesRepo', () => {
@@ -39,16 +37,6 @@ describe('AttributeTypesRepo', () => {
                 mockAttrAdvLinkRepo
             );
             expect(attrRepo.getTypeRepo({...mockAttribute, type: AttributeTypes.TREE})).toBe(mockAttrTreeRepo);
-        });
-    });
-    describe('getQueryPart', () => {
-        test('Return AQL with value escaped', async () => {
-            const attrRepo = attributeTypesRepo({});
-            const getQueryPartFunc = attrRepo.getConditionPart(AttributeCondition.CONTAINS, 'my_value', mockAttrSimple);
-
-            const res = getQueryPartFunc('v');
-
-            expect(Object.values(res.bindVars).includes('%my_value%')).toBe(true);
         });
     });
 });

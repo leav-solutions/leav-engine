@@ -5,6 +5,7 @@ import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
+import {AttributeCondition} from '../../_types/record';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
 import attributeAdvancedRepo from './attributeAdvancedRepo';
 
@@ -676,10 +677,13 @@ describe('AttributeStandardRepo', () => {
             const mockDbServ = {
                 db: new Database()
             };
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`rVal == ${'MyLabel'}`
+            });
             const filter = attrRepo.filterQueryPart(
                 [{id: 'label', type: AttributeTypes.ADVANCED, _repo: null}],
-                () => aql`rVal == ${'MyLabel'}`,
+                {condition: AttributeCondition.EQUAL, value: 'MyLabel'},
                 'r'
             );
 

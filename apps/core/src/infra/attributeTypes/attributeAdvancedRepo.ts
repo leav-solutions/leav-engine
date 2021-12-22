@@ -3,11 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IDbUtils} from 'infra/db/dbUtils';
-import {IRecordSort} from '_types/record';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
+import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
-import {BASE_QUERY_IDENTIFIER, GetConditionPartFunc, IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
+import {GetConditionPart} from './helpers/getConditionPart';
 
 const VALUES_COLLECTION = 'core_values';
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -15,11 +16,13 @@ const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
+    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null
 }: IDeps = {}): IAttributeTypeRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], advancedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
@@ -268,7 +271,7 @@ export default function ({
         },
         filterQueryPart(
             attributes: IAttribute[],
-            getConditionPart: GetConditionPartFunc,
+            filter: IRecordFilterOption,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
@@ -290,7 +293,12 @@ export default function ({
 
             const query = aql`
                 LET ${valueIdentifier} = ${filterTarget}
-                FILTER ${getConditionPart(valueIdentifier)}`;
+                FILTER ${getConditionPart(
+                    valueIdentifier,
+                    filter.condition as AttributeCondition,
+                    filter.value,
+                    attributes[0]
+                )}`;
 
             return query;
         },

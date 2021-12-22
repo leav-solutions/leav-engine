@@ -3,24 +3,25 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {IRecordSort} from '../../_types/record';
+import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
 import {ILinkValue, IStandardValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {GetConditionPartFunc, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
-    // 'core.infra.attributeTypes'?: IAttributeTypesRepo;
     'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;
+    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    // 'core.infra.attributeTypes': attributeTypesRepo = null,
-    'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null
+    'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
+    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null
 }: IDeps = {}): IAttributeTypeRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: AqlQuery): AqlQuery {
         return attributes
@@ -99,7 +100,11 @@ export default function ({
 
             return query;
         },
-        filterQueryPart(attributes: IAttributeWithRepo[], getConditionPart: GetConditionPartFunc): AqlQuery {
+        filterQueryPart(
+            attributes: IAttributeWithRepo[],
+            filter: IRecordFilterOption,
+            parentIdentifier = BASE_QUERY_IDENTIFIER
+        ): AqlQuery {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -107,22 +112,44 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
-            const filterLinkedValue = attributes[1]._repo.filterQueryPart(
-                [...attributes].splice(1),
-                getConditionPart,
-                'l'
-            );
-            const linkedValue = aql`
-                FIRST(FOR l IN ${linkedLibCollec}
-                    FILTER TO_STRING(r.${attributes[0].id}) == l._key
-                    ${filterLinkedValue}
-                RETURN l)
-            `;
+            const firstValuePrefix = aql`FIRST(`;
+            const getValuePart = aql`FOR l IN ${linkedLibCollec}
+                FILTER TO_STRING(r.${attributes[0].id}) == l._key`;
+            const getValueReturnPart = aql`RETURN l`;
+            const firstValueSuffix = aql`)`;
 
-            const query: AqlQuery =
-                linked.format !== AttributeFormats.EXTENDED
-                    ? aql`FILTER ${linkedValue} != null`
-                    : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} ${getConditionPart} != null`;
+            let query: AqlQuery;
+            if (
+                filter.condition === AttributeCondition.IS_EMPTY ||
+                filter.condition === AttributeCondition.IS_NOT_EMPTY
+            ) {
+                const linkValIdentifier = aql.literal(`${parentIdentifier}linkVal`);
+                query = aql.join([
+                    aql`LET ${linkValIdentifier} = `,
+                    firstValuePrefix,
+                    getValuePart,
+                    getValueReturnPart,
+                    firstValueSuffix,
+                    aql`FILTER ${getConditionPart(linkValIdentifier, filter.condition, filter.value, attributes[0])}`
+                ]);
+            } else {
+                const filterLinkedValue = attributes[1]
+                    ? attributes[1]._repo.filterQueryPart([...attributes].splice(1), filter, 'l')
+                    : null;
+
+                const linkedValue = aql.join([
+                    firstValuePrefix,
+                    getValuePart,
+                    filterLinkedValue,
+                    getValueReturnPart,
+                    firstValueSuffix
+                ]);
+
+                query =
+                    linked.format !== AttributeFormats.EXTENDED
+                        ? aql`FILTER ${linkedValue} != null`
+                        : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} != null`;
+            }
 
             return query;
         },

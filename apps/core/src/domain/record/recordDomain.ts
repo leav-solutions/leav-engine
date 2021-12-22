@@ -569,6 +569,7 @@ export default function ({
                 if (_isAttributeFilter(f)) {
                     const attributes = await getAttributesFromField(
                         f.field,
+                        f.condition,
                         {
                             'core.domain.attribute': attributeDomain,
                             'core.infra.library': libraryRepo,
@@ -623,6 +624,7 @@ export default function ({
                 fullSort = {
                     attributes: await getAttributesFromField(
                         sort.field,
+                        null,
                         {
                             'core.domain.attribute': attributeDomain,
                             'core.infra.library': libraryRepo,

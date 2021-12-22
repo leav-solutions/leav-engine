@@ -8,6 +8,8 @@ import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
+import {AttributeCondition} from '../../../_types/record';
+import {IRecordFilterLight} from '../recordDomain';
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
@@ -27,7 +29,12 @@ export interface IGetAttributesFromFieldsHelper {
  * @param field
  * @param ctx
  */
-const getAttributesFromField = async (field: string, deps: IDeps, ctx: IQueryInfos): Promise<IAttribute[]> => {
+const getAttributesFromField = async (
+    field: string,
+    condition: IRecordFilterLight['condition'],
+    deps: IDeps,
+    ctx: IQueryInfos
+): Promise<IAttribute[]> => {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.infra.library': libraryRepo = null,
@@ -92,7 +99,10 @@ const getAttributesFromField = async (field: string, deps: IDeps, ctx: IQueryInf
 
             // Calling this function recursively will handle the case where child attribute is a link
             // For example, if we filter on "category.created_by", we'll actually search on category.created_by.label
-            const subChildAttributes = await getAttributesFromField(childAttribute, deps, ctx);
+            const subChildAttributes =
+                condition !== AttributeCondition.IS_EMPTY && condition !== AttributeCondition.IS_NOT_EMPTY
+                    ? await getAttributesFromField(childAttribute, condition, deps, ctx)
+                    : [];
             attributes = [...attributes, ...subChildAttributes];
 
             break;
@@ -170,7 +180,7 @@ const getAttributesFromField = async (field: string, deps: IDeps, ctx: IQueryInf
 
                 // Calling this function recursively will handle the case where child attribute is a link
                 // For example, if we filter on "category.created_by", we'll actually search on category.created_by.label
-                const subChildAttributes = await getAttributesFromField(childAttribute, deps, ctx);
+                const subChildAttributes = await getAttributesFromField(childAttribute, condition, deps, ctx);
                 attributes = [...attributes, ...subChildAttributes];
             }
 

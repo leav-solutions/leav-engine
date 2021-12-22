@@ -8,12 +8,8 @@ Object {
     "value1": "label",
     "value2": null,
   },
-  "query": "FILTER 
-                FIRST(FOR l IN @@value0
-                    FILTER TO_STRING(r.@value1) == l._key
-                    @value2
-                RETURN l)
-             != null",
+  "query": "FILTER FIRST( FOR l IN @@value0
+                FILTER TO_STRING(r.@value1) == l._key @value2 RETURN l ) != null",
 }
 `;
 
