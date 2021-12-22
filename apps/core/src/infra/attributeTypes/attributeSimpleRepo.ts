@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IQueryInfos} from '_types/queryInfos';
-import {AttributeCondition, IRecordFilterOption, IRecordSort} from '_types/record';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
+import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
 import {IStandardValue, IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
@@ -100,16 +100,40 @@ export default function ({
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 
             const valueIdentifier = aql.literal(parentIdentifier + 'Val');
-            const filterTarget =
-                attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
-                    ? _getExtendedFilterPart(attributes)
-                    : aql`${aql.literal(parentIdentifier)}.${attributes[0].id}`;
+            let filterTarget: AqlQuery;
+            let conditionApplied = filter.condition;
+            if (
+                [
+                    AttributeCondition.VALUES_COUNT_EQUAL,
+                    AttributeCondition.VALUES_COUNT_GREATER_THAN,
+                    AttributeCondition.VALUES_COUNT_LOWER_THAN
+                ].includes(filter.condition as AttributeCondition)
+            ) {
+                filterTarget = aql`COUNT(${aql.literal(parentIdentifier)}.${attributes[0].id}) ? 1 : 0`;
+
+                switch (filter.condition) {
+                    case AttributeCondition.VALUES_COUNT_EQUAL:
+                        conditionApplied = AttributeCondition.EQUAL;
+                        break;
+                    case AttributeCondition.VALUES_COUNT_GREATER_THAN:
+                        conditionApplied = AttributeCondition.GREATER_THAN;
+                        break;
+                    case AttributeCondition.VALUES_COUNT_LOWER_THAN:
+                        conditionApplied = AttributeCondition.LESS_THAN;
+                        break;
+                }
+            } else {
+                filterTarget =
+                    attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
+                        ? _getExtendedFilterPart(attributes)
+                        : aql`${aql.literal(parentIdentifier)}.${attributes[0].id}`;
+            }
 
             const query: AqlQuery = aql`
                         LET ${valueIdentifier} = ${filterTarget}
                         FILTER ${getConditionPart(
                             valueIdentifier,
-                            filter.condition as AttributeCondition,
+                            conditionApplied as AttributeCondition,
                             filter.value,
                             attributes[0]
                         )}`;

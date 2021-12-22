@@ -91,7 +91,10 @@ const allowedTypeOperator = {
         AttributeCondition.START_AFTER,
         AttributeCondition.END_ON,
         AttributeCondition.END_BEFORE,
-        AttributeCondition.END_AFTER
+        AttributeCondition.END_AFTER,
+        AttributeCondition.VALUES_COUNT_EQUAL,
+        AttributeCondition.VALUES_COUNT_GREATER_THAN,
+        AttributeCondition.VALUES_COUNT_LOWER_THAN
     ],
     boolean: [AttributeCondition.EQUAL, AttributeCondition.NOT_EQUAL],
     null: [
@@ -388,6 +391,14 @@ export default function ({
         );
     };
 
+    const _isNumericCondition = (condition: AttributeCondition): boolean => {
+        return (
+            condition === AttributeCondition.VALUES_COUNT_EQUAL ||
+            condition === AttributeCondition.VALUES_COUNT_GREATER_THAN ||
+            condition === AttributeCondition.VALUES_COUNT_LOWER_THAN
+        );
+    };
+
     const _isAttributeFilter = (filter: IRecordFilterLight): boolean => {
         return (
             filter.condition in AttributeCondition &&
@@ -585,7 +596,8 @@ export default function ({
                             lastAttr.format === AttributeFormats.NUMERIC ||
                             (lastAttr.format === AttributeFormats.DATE &&
                                 f.condition !== AttributeCondition.BETWEEN &&
-                                !_isRelativeDateCondition(filter.condition as AttributeCondition))
+                                !_isRelativeDateCondition(filter.condition as AttributeCondition)) ||
+                            _isNumericCondition(f.condition as AttributeCondition)
                         ) {
                             value = Number(f.value);
                         } else if (lastAttr.format === AttributeFormats.BOOLEAN) {

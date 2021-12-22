@@ -137,6 +137,14 @@ export interface IAttributeTypeRepo {
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
 export const BASE_QUERY_IDENTIFIER = 'r';
 
+export const isValuesCountCondition = (condition: AttributeCondition): boolean => {
+    return [
+        AttributeCondition.VALUES_COUNT_EQUAL,
+        AttributeCondition.VALUES_COUNT_GREATER_THAN,
+        AttributeCondition.VALUES_COUNT_LOWER_THAN
+    ].includes(condition as AttributeCondition);
+};
+
 interface IDeps {
     'core.infra.attributeTypes.attributeSimple'?: IAttributeTypeRepo;
     'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeTypeRepo;
