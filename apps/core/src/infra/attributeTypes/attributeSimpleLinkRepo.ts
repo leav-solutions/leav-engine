@@ -112,24 +112,55 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
-            const firstValuePrefix = aql`FIRST(`;
-            const getValuePart = aql`FOR l IN ${linkedLibCollec}
+            const retrieveValue = aql`FOR l IN ${linkedLibCollec}
                 FILTER TO_STRING(r.${attributes[0].id}) == l._key`;
-            const getValueReturnPart = aql`RETURN l`;
-            const firstValueSuffix = aql`)`;
+            const returnValue = aql`RETURN l`;
 
             let query: AqlQuery;
+            const linkValIdentifier = aql.literal(`${parentIdentifier}linkVal`);
             if (
+                [
+                    AttributeCondition.VALUES_COUNT_EQUAL,
+                    AttributeCondition.VALUES_COUNT_GREATER_THAN,
+                    AttributeCondition.VALUES_COUNT_LOWER_THAN
+                ].includes(filter.condition as AttributeCondition)
+            ) {
+                let conditionApplied = filter.condition;
+                switch (filter.condition) {
+                    case AttributeCondition.VALUES_COUNT_EQUAL:
+                        conditionApplied = AttributeCondition.EQUAL;
+                        break;
+                    case AttributeCondition.VALUES_COUNT_GREATER_THAN:
+                        conditionApplied = AttributeCondition.GREATER_THAN;
+                        break;
+                    case AttributeCondition.VALUES_COUNT_LOWER_THAN:
+                        conditionApplied = AttributeCondition.LESS_THAN;
+                        break;
+                }
+
+                query = aql.join([
+                    aql`LET ${linkValIdentifier} = `,
+                    aql`COUNT(`,
+                    retrieveValue,
+                    returnValue,
+                    aql`) ? 1 : 0`,
+                    aql`FILTER ${getConditionPart(
+                        linkValIdentifier,
+                        conditionApplied as AttributeCondition,
+                        filter.value,
+                        attributes[0]
+                    )}`
+                ]);
+            } else if (
                 filter.condition === AttributeCondition.IS_EMPTY ||
                 filter.condition === AttributeCondition.IS_NOT_EMPTY
             ) {
-                const linkValIdentifier = aql.literal(`${parentIdentifier}linkVal`);
                 query = aql.join([
                     aql`LET ${linkValIdentifier} = `,
-                    firstValuePrefix,
-                    getValuePart,
-                    getValueReturnPart,
-                    firstValueSuffix,
+                    aql`FIRST(`,
+                    retrieveValue,
+                    returnValue,
+                    aql`)`,
                     aql`FILTER ${getConditionPart(linkValIdentifier, filter.condition, filter.value, attributes[0])}`
                 ]);
             } else {
@@ -137,13 +168,7 @@ export default function ({
                     ? attributes[1]._repo.filterQueryPart([...attributes].splice(1), filter, 'l')
                     : null;
 
-                const linkedValue = aql.join([
-                    firstValuePrefix,
-                    getValuePart,
-                    filterLinkedValue,
-                    getValueReturnPart,
-                    firstValueSuffix
-                ]);
+                const linkedValue = aql.join([aql`FIRST(`, retrieveValue, filterLinkedValue, returnValue, aql`)`]);
 
                 query =
                     linked.format !== AttributeFormats.EXTENDED

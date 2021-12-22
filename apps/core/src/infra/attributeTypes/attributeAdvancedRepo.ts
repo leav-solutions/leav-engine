@@ -279,23 +279,49 @@ export default function ({
             const valueIdentifier = aql.literal(parentIdentifier + 'Val');
             const vIdentifier = aql.literal(parentIdentifier + 'v');
             const eIdentifier = aql.literal(parentIdentifier + 'e');
-            const advancedValue = aql`FIRST(
+
+            let conditionApplied = filter.condition;
+            let filterTarget: GeneratedAqlQuery;
+
+            const retrieveValues = aql`
                 FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
                 ${collec}
                 FILTER ${eIdentifier}.attribute == ${attributes[0].id}
                 RETURN ${vIdentifier}.value
-            )`;
+            `;
 
-            const filterTarget =
-                attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
-                    ? _getExtendedFilterPart(attributes, advancedValue)
-                    : advancedValue;
+            switch (filter.condition) {
+                case AttributeCondition.VALUES_COUNT_EQUAL: {
+                    conditionApplied = AttributeCondition.EQUAL;
+                    filterTarget = aql.join([aql`COUNT(`, retrieveValues, aql`)`]);
+                    break;
+                }
+                case AttributeCondition.VALUES_COUNT_GREATER_THAN: {
+                    conditionApplied = AttributeCondition.GREATER_THAN;
+                    filterTarget = aql.join([aql`COUNT(`, retrieveValues, aql`)`]);
+                    break;
+                }
+                case AttributeCondition.VALUES_COUNT_LOWER_THAN: {
+                    conditionApplied = AttributeCondition.LESS_THAN;
+                    filterTarget = aql.join([aql`COUNT(`, retrieveValues, aql`)`]);
+                    break;
+                }
+                default: {
+                    const advancedValue = aql.join([aql`FIRST(`, retrieveValues, aql`)`]);
+
+                    filterTarget =
+                        attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
+                            ? _getExtendedFilterPart(attributes, advancedValue)
+                            : advancedValue;
+                    break;
+                }
+            }
 
             const query = aql`
                 LET ${valueIdentifier} = ${filterTarget}
                 FILTER ${getConditionPart(
                     valueIdentifier,
-                    filter.condition as AttributeCondition,
+                    conditionApplied as AttributeCondition,
                     filter.value,
                     attributes[0]
                 )}`;

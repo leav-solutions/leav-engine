@@ -52,24 +52,41 @@ describe('searchFilters', () => {
     const libraryDateGqlQuery = 'searchFiltersDateLibraryId';
 
     const textAttributeId = 'search_filter_text_attribute_id';
+    const simpleAttributeId = 'search_filter_simple_attribute_id';
     const textAdvancedAttributeId = 'search_filter_text_advanced_attribute_id';
+    const textAdvancedMultivalAttributeId = 'search_filter_text_advanced_multival_attribute_id';
     const numberAttributeId = 'search_filter_number_attribute_id';
     const dateAttributeId = 'search_filter_date_attribute_id';
     const booleanAttributeId = 'search_filter_boolean_attribute_id';
     const embeddedAttributeId = 'search_filter_embedded_attribute_id';
     const simpleLinkAttributeId = 'search_filter_simple_link_attribute_id';
     const advancedLinkAttributeId = 'search_filter_advanced_link_attribute_id';
+    const advancedLinkMultivalAttributeId = 'search_filter_advanced_link_multival_attribute_id';
     const treeAttributeId = 'search_filter_tree_attribute_id';
+    const treeMultivalAttributeId = 'search_filter_tree_multival_attribute_id';
     const dateRangeAttributeId = 'search_filter_date_range_attribute_id';
 
     beforeAll(async () => {
         const attributesToCreate = [
             {id: textAttributeId, label: 'textAttributeId', type: AttributeTypes.SIMPLE, format: AttributeFormats.TEXT},
             {
+                id: simpleAttributeId,
+                label: 'simpleAttributeId',
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.TEXT
+            },
+            {
                 id: textAdvancedAttributeId,
                 label: 'textAdvancedAttributeId',
                 type: AttributeTypes.ADVANCED,
                 format: AttributeFormats.TEXT
+            },
+            {
+                id: textAdvancedMultivalAttributeId,
+                label: 'textAdvancedMultivalAttributeId',
+                type: AttributeTypes.ADVANCED,
+                format: AttributeFormats.TEXT,
+                multipleValues: true
             },
             {
                 id: numberAttributeId,
@@ -116,10 +133,24 @@ describe('searchFilters', () => {
                 linkedLibrary: linkedLibraryId
             },
             {
+                id: advancedLinkMultivalAttributeId,
+                type: AttributeTypes.ADVANCED_LINK,
+                label: 'advancedLinkMultivalAttributeId',
+                linkedLibrary: linkedLibraryId,
+                multipleValues: true
+            },
+            {
                 id: treeAttributeId,
                 type: AttributeTypes.TREE,
                 label: 'treeAttributeId',
                 linkedTree: treeId
+            },
+            {
+                id: treeMultivalAttributeId,
+                type: AttributeTypes.TREE,
+                label: 'treeMultivalAttributeId',
+                linkedTree: treeId,
+                multipleValues: true
             },
             {
                 id: dateRangeAttributeId,
@@ -146,7 +177,9 @@ describe('searchFilters', () => {
         await gqlSaveLibrary(
             linkedLibraryId,
             'Test lib',
-            attributesToCreate.map(a => a.id).filter(id => id !== simpleLinkAttributeId)
+            attributesToCreate
+                .map(a => a.id)
+                .filter(id => ![simpleLinkAttributeId, advancedLinkAttributeId].includes(id))
         );
 
         await gqlSaveLibrary(
@@ -824,6 +857,136 @@ describe('searchFilters', () => {
             });
         });
 
+        describe('Values count on simple attribute', () => {
+            beforeAll(async () => {
+                await gqlSaveValue(simpleAttributeId, libraryId, recordId1, 'first value');
+                await gqlSaveValue(simpleAttributeId, libraryId, recordId2, 'first value');
+            });
+
+            test('Equal', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${simpleAttributeId}",
+                            condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
+                            value: "1"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+            });
+
+            test('Greater than', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${simpleAttributeId}",
+                            condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
+                            value: "1"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(0);
+            });
+
+            test('Lower than', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${simpleAttributeId}",
+                            condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
+                            value: "2"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(3);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[2].id).toBe(recordId3);
+            });
+        });
+
+        describe('Values count on advanced attribute', () => {
+            beforeAll(async () => {
+                await gqlSaveValue(textAdvancedMultivalAttributeId, libraryId, recordId1, 'first value');
+
+                await gqlSaveValue(textAdvancedMultivalAttributeId, libraryId, recordId2, 'first value');
+                await gqlSaveValue(textAdvancedMultivalAttributeId, libraryId, recordId2, 'second value');
+
+                await gqlSaveValue(textAdvancedMultivalAttributeId, libraryId, recordId3, 'first value');
+                await gqlSaveValue(textAdvancedMultivalAttributeId, libraryId, recordId3, 'second value');
+                await gqlSaveValue(textAdvancedMultivalAttributeId, libraryId, recordId3, 'third value');
+            });
+
+            test('Equal', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${textAdvancedMultivalAttributeId}",
+                            condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
+                            value: "2"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+            });
+
+            test('Greater than', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${textAdvancedMultivalAttributeId}",
+                            condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
+                            value: "2"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+            });
+
+            test('Lower than', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${libraryGqlQuery}(
+                        filters: [{
+                            field: "${textAdvancedMultivalAttributeId}",
+                            condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
+                            value: "2"
+                        }]) {
+                            list {id}
+                        }
+                    }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+            });
+        });
+
         describe('Simple link attribute', () => {
             beforeAll(async () => {
                 await gqlSaveValue(simpleLinkAttributeId, libraryId, recordId1, linkedRecordId1);
@@ -935,6 +1098,64 @@ describe('searchFilters', () => {
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
                 expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
                 expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+            });
+
+            describe('Values count', () => {
+                test('Equal', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${simpleLinkAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
+                                value: "1"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                    expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                });
+
+                test('Greater than', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${simpleLinkAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
+                                value: "1"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(0);
+                });
+
+                test('Lower than', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${simpleLinkAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
+                                value: "2"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(3);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                    expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                    expect(res.data.data[libraryGqlQuery].list[2].id).toBe(recordId3);
+                });
             });
         });
 
@@ -1049,6 +1270,73 @@ describe('searchFilters', () => {
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
                 expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
                 expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+            });
+
+            describe('Values count', () => {
+                beforeAll(async () => {
+                    await gqlSaveValue(advancedLinkMultivalAttributeId, libraryId, recordId1, linkedRecordId1);
+
+                    await gqlSaveValue(advancedLinkMultivalAttributeId, libraryId, recordId2, linkedRecordId1);
+                    await gqlSaveValue(advancedLinkMultivalAttributeId, libraryId, recordId2, linkedRecordId2);
+
+                    await gqlSaveValue(advancedLinkMultivalAttributeId, libraryId, recordId3, linkedRecordId1);
+                    await gqlSaveValue(advancedLinkMultivalAttributeId, libraryId, recordId3, linkedRecordId2);
+                    await gqlSaveValue(advancedLinkMultivalAttributeId, libraryId, recordId3, linkedRecordId3);
+                });
+
+                test('Equal', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${advancedLinkMultivalAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
+                                value: "2"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                });
+
+                test('Greater than', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${advancedLinkMultivalAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
+                                value: "2"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                });
+
+                test('Lower than', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${advancedLinkMultivalAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
+                                value: "2"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                });
             });
         });
 
@@ -1167,6 +1455,103 @@ describe('searchFilters', () => {
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
                 expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
                 expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+            });
+
+            describe('Values count', () => {
+                beforeAll(async () => {
+                    await gqlSaveValue(
+                        treeMultivalAttributeId,
+                        libraryId,
+                        recordId1,
+                        `${treeLibraryId}/${treeRecordId1}`
+                    );
+
+                    await gqlSaveValue(
+                        treeMultivalAttributeId,
+                        libraryId,
+                        recordId2,
+                        `${treeLibraryId}/${treeRecordId1}`
+                    );
+                    await gqlSaveValue(
+                        treeMultivalAttributeId,
+                        libraryId,
+                        recordId2,
+                        `${treeLibraryId}/${treeRecordId2}`
+                    );
+
+                    await gqlSaveValue(
+                        treeMultivalAttributeId,
+                        libraryId,
+                        recordId3,
+                        `${treeLibraryId}/${treeRecordId1}`
+                    );
+                    await gqlSaveValue(
+                        treeMultivalAttributeId,
+                        libraryId,
+                        recordId3,
+                        `${treeLibraryId}/${treeRecordId2}`
+                    );
+                    await gqlSaveValue(
+                        treeMultivalAttributeId,
+                        libraryId,
+                        recordId3,
+                        `${treeLibraryId}/${treeRecordId3}`
+                    );
+                });
+
+                test('Equal', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${treeMultivalAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
+                                value: "2"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                });
+
+                test('Greater than', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${treeMultivalAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
+                                value: "2"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                });
+
+                test('Lower than', async () => {
+                    const res = await makeGraphQlCall(`{
+                        ${libraryGqlQuery}(
+                            filters: [{
+                                field: "${treeMultivalAttributeId}",
+                                condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
+                                value: "2"
+                            }]) {
+                                list {id}
+                            }
+                        }`);
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                });
             });
         });
     });
