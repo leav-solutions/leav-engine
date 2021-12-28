@@ -8,6 +8,8 @@ import {join} from 'path';
 import {getInode, initRedis} from '../redis/redis';
 import {IAmqpParams, IParams, IParamsExtends, IWatcherParams} from '../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
+import {isFileAllowed} from '@leav/utils';
+import {getConfig} from '../';
 
 const inodesTmp: {[i: number]: string} = {};
 const timeoutRefs: {[i: number]: any} = {};
@@ -20,32 +22,34 @@ export const start = async (
     amqpParams?: IAmqpParams
 ) => {
     const verbose = (watchParams && watchParams.verbose) || false;
-
     let ready = false;
     const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
     const delay = (watchParams && watchParams.delay) || 100;
-
     // if absolute path given, we use it here to not display the name of the root folder in message
     const cwd = rootPathProps.charAt(0).indexOf('/') === 0 ? rootPathProps : '.';
 
     const watcher = chokidar.watch(rootPathProps, {
-        ignored: /(^|[\/\\])\../, // ignore dot file
         ignoreInitial: false, // use init for redis
         alwaysStat: true, // always give stats for add and update event
         awaitWriteFinish: watcherConfig, // wait for copy to finish before trigger event
         cwd
     });
 
-    watcher.on('all', async (event: string, path: string, stats: any) =>
-        checkEvent(event, path, stats, {
-            ready,
-            delay,
-            rootPath: rootPathProps,
-            rootKey,
-            verbose,
-            amqp: amqpParams
-        })
-    );
+    watcher.on('all', async (event: string, path: string, stats: any) => {
+        await checkEvent(
+            event,
+            path,
+            {
+                ready,
+                delay,
+                rootPath: rootPathProps,
+                rootKey,
+                verbose,
+                amqp: amqpParams
+            },
+            stats
+        );
+    });
 
     watcher.on('ready', () => {
         ready = true;
@@ -54,41 +58,39 @@ export const start = async (
     return watcher;
 };
 
-export const checkEvent = async (event: string, path: string, stats: any, params: IParamsExtends) => {
+export const checkEvent = async (event: string, path: string, params: IParamsExtends, stats?: any) => {
+    const config = await getConfig();
+    const SEPARATOR_CHARACTERS = ', ';
+
+    const allowList = config.allowFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
+    const ignoreList = config.ignoreFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
+
+    const isAllowed = isFileAllowed(config.rootPath, allowList, ignoreList, config.rootPath + '/' + path);
+
     if (params.ready) {
         const inode = await manageInode(path, stats);
-        const isDirectory = await manageIsDirectory(stats);
+        const isDirectory = manageIsDirectory(stats);
         await checkMove(event, path, isDirectory, inode, params);
-    } else {
-        handleInit(path, stats.ino, params.verbose);
+    } else if (isAllowed) {
+        handleInit(path, stats?.ino, params.verbose);
     }
 };
-export const manageInode = async (path: string, stats: Stats) => {
-    let inode: number;
 
-    if (stats) {
+export const manageInode = async (path: string, stats?: Stats) => {
+    if (!!stats) {
         // Get the inode from the stats (events: add, addDir, Change)
-        inode = stats.ino;
+        return stats.ino;
     } else if (pathsTmp[path]) {
         // Get the inode from array that keep temporary the inode the time,
-        inode = pathsTmp[path];
-    } else {
-        // Get the inode from redis database
-        inode = await getInode(path);
+        return pathsTmp[path];
     }
 
-    return inode;
+    // Get the inode from redis database
+    return getInode(path);
 };
 
-export const manageIsDirectory = async (stats: Stats) => {
-    let isDirectory = false;
-
-    if (stats) {
-        // Get isDirectory from the stats
-        isDirectory = stats.isDirectory();
-    }
-
-    return isDirectory;
+export const manageIsDirectory = (stats?: Stats): boolean => {
+    return (!!stats && stats.isDirectory()) || false;
 };
 
 const checkMove = async (event: string, path: string, isDirectory: boolean, inode: any, params: IParamsExtends) => {
@@ -158,6 +160,9 @@ export const handleEvent = async (
     params: IParams,
     oldPath?: string
 ) => {
+    const config = await getConfig();
+    let hashFile: string | undefined;
+    const SEPARATOR_CHARACTERS = ', ';
     const amqp = {
         rootPath: params.rootPath,
         rootKey: params.rootKey,
@@ -165,31 +170,44 @@ export const handleEvent = async (
         amqp: params.amqp
     };
 
-    let hashFile: string | undefined;
-    switch (event) {
-        case 'addDir':
-            isDirectory = true;
-        case 'add':
-            if (!isDirectory) {
+    const allowList = config.allowFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
+    const ignoreList = config.ignoreFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
+
+    const pathAllowed = isFileAllowed(config.rootPath, allowList, ignoreList, config.rootPath + '/' + path);
+    const oldPathAllowed =
+        typeof oldPath === 'undefined' ||
+        isFileAllowed(config.rootPath, allowList, ignoreList, config.rootPath + '/' + oldPath);
+
+    switch (true) {
+        case (event === 'add' || event === 'addDir') && pathAllowed:
+            if (event !== 'addDir') {
                 hashFile = await _createHashFromFile(join(params.rootPath, path));
             }
+
             await handleCreate(path, inode, amqp, isDirectory, hashFile);
             break;
-        case 'unlinkDir':
-            isDirectory = true;
-        case 'unlink':
-            await handleDelete(path, inode, amqp, isDirectory);
+        case (event === 'unlink' || event === 'unlinkDir') && pathAllowed:
+            await handleDelete(path, inode, amqp, event === 'unlinkDir');
             break;
-        case 'change':
+        case event === 'change' && pathAllowed:
             if (!isDirectory) {
                 hashFile = await _createHashFromFile(join(params.rootPath, path));
             }
+
             await handleUpdate(path, inode, amqp, isDirectory, hashFile);
             break;
-        case 'move':
-            if (oldPath) {
+        case event === 'move' && !!oldPath:
+            console.log('MOOOOVE');
+            if (!oldPathAllowed && pathAllowed) {
+                // hidden to not hidden -> create new
+                await handleCreate(path, inode, amqp, isDirectory, hashFile);
+            } else if (oldPathAllowed && !pathAllowed) {
+                // not hidden to hidden -> del old path
+                await handleDelete(oldPath, inode, amqp, isDirectory);
+            } else if (oldPathAllowed && pathAllowed) {
                 await handleMove(oldPath, path, inode, amqp, isDirectory);
             }
+
             break;
         default:
             console.error('event not managed : ' + event);
@@ -201,6 +219,7 @@ export const handleEvent = async (
 
 // Flag to check if already sending inits to redis
 let working = false;
+
 // Temporary array of the infos to set in redis at init
 const inits: Array<{path: string; inode: number}> = [];
 
@@ -217,30 +236,33 @@ const manageRedisInit = async (verbose: boolean) => {
         // while the array of inits is not empty
         while (inits.length > 0) {
             const init = inits.shift();
+
             if (init) {
                 await initRedis(init.path, init.inode); // set data in redis and wait until finish
+
                 if (verbose) {
                     console.info('init', init.path);
                 }
             }
         }
+
         working = false;
     }
 };
 
 const clearTmp = (path: string, inode: number) => {
     clearTimeout(timeoutRefs[inode]);
+
     delete timeoutRefs[inode];
     delete inodesTmp[inode];
     delete pathsTmp[path];
 };
 
 const _createHashFromFile = async (filePath: string): Promise<string> => {
-    let hashFile: string;
     try {
         const hash = createHash('md5');
 
-        hashFile = await new Promise((resolve, reject) =>
+        return new Promise((resolve, reject) =>
             createReadStream(filePath)
                 .on('error', err => {
                     reject(err);
@@ -248,7 +270,6 @@ const _createHashFromFile = async (filePath: string): Promise<string> => {
                 .on('data', data => hash.update(data))
                 .on('end', () => resolve(hash.digest('hex')))
         );
-        return hashFile;
     } catch (e) {
         console.error(`Can't get hash from file ${filePath}`, e);
         return '';

@@ -3486,9 +3486,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/utils@workspace:libs/utils"
   dependencies:
-    glob: 7.2.0
     jest: 26.6.3
     lodash: 4.17.21
+    minimatch: 3.0.4
     ts-jest: 26
     typescript: 4.1
   languageName: unknown
@@ -15542,20 +15542,6 @@ fsevents@2.1.2:
     once: ^1.3.0
     path-is-absolute: ^1.0.0
   checksum: e28c17017427db9f8cdd1c594d743fc8ff1bfec1cc144536962ec1fd6ced564da63fbef39ce18412e2a3bfe3508e8d9bfa1c73ef329628dc7e23a6a9c2372be4
-  languageName: node
-  linkType: hard
-
-"glob@npm:7.2.0":
-  version: 7.2.0
-  resolution: "glob@npm:7.2.0"
-  dependencies:
-    fs.realpath: ^1.0.0
-    inflight: ^1.0.4
-    inherits: 2
-    minimatch: ^3.0.4
-    once: ^1.3.0
-    path-is-absolute: ^1.0.0
-  checksum: 1171c3d7b1f5a367499e498826cddafc642aa55ef21e810031a287d3199612a889059d7d2c276a04c636c3ac2fd5943896bfc309110b21fafaeb8a1e0a199d6e
   languageName: node
   linkType: hard
 

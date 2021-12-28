@@ -2,6 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
+    allowFilesList: '',
+    ignoreFilesList: '',
     rootPath: '/to_scan',
     rootKey: 'files1',
     redis: {

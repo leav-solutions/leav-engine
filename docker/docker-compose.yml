@@ -257,7 +257,7 @@ services:
       ]
 
   # At creation, we just install deps and exit.
-  # Run "docker-compose run sync-scan yarn start" to make the scan
+  # Run "docker-compose run --rm sync-scan yarn start" to make the scan
   # You need to have a GRAPHQL_TOKEN defined as environment variables (eg. in a .env file)
   sync-scan:
     image: *node_image
