@@ -4,15 +4,12 @@
 import {Channel} from 'amqplib';
 import * as amqp from 'amqplib/callback_api';
 import * as fs from 'fs';
-import {getConfig, startWatch} from '../../setupWatcher/setupWatcher';
+import {startWatch} from '../../setupWatcher/setupWatcher';
+import {getConfig} from '../../';
 
-describe('integration test automate-scan', () => {
+describe('integration test automate-scan', async () => {
     console.info = jest.fn();
-    let config;
-
-    beforeAll(async () => {
-        config = await getConfig();
-    });
+    const config = await getConfig();
 
     test('create a file and check if event send to rabbitmq', async done => {
         // set max timeout in jest test
@@ -190,6 +187,7 @@ describe('integration test automate-scan', () => {
 
 const initRabbitMQ = async (callback: (channel: any, msg: string) => void) => {
     const config = await getConfig();
+
     const amqpConfig = {
         protocol: config.amqp.protocol,
         hostname: config.amqp.hostname,

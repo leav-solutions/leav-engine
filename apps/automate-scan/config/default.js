@@ -2,6 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
+    allowFilesList: process.env.ALLOW_FILES_LIST || '',
+    ignoreFilesList: process.env.IGNORE_FILES_LIST || '',
     rootPath: process.env.ROOT_PATH,
     rootKey: process.env.ROOT_KEY,
     redis: {

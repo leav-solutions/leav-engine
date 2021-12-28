@@ -19,6 +19,8 @@ export interface IWatcherParams {
 }
 
 export interface IConfig {
+    allowFilesList: string;
+    ignoreFilesList: string;
     rootPath: string;
     rootKey?: string;
     redis: {

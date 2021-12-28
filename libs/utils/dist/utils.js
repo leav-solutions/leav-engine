@@ -8,7 +8,7 @@ exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.get
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const lodash_1 = require("lodash");
-const glob_1 = __importDefault(require("glob"));
+const minimatch_1 = __importDefault(require("minimatch"));
 const getGraphqlTypeFromLibraryName = (library) => {
     return lodash_1.flow([lodash_1.camelCase, lodash_1.upperFirst, lodash_1.trimEnd, lodash_1.partialRight(lodash_1.trimEnd, 's')])(library);
 };
@@ -18,15 +18,12 @@ const getGraphqlQueryNameFromLibraryName = (library) => {
 };
 exports.getGraphqlQueryNameFromLibraryName = getGraphqlQueryNameFromLibraryName;
 const isFileAllowed = (fsPath, allowList, ignoreList, filePath) => {
-    const match = (pattern) => {
-        return glob_1.default.sync(`${fsPath}/${pattern}`).includes(filePath);
-    };
     // if allowPatterns is empty it's an implicit allow of all files
     if (!allowList.length) {
         allowList = ['**'];
     }
-    const isAllowed = allowList.some(match);
-    const isIgnored = ignoreList.some(match);
+    const isAllowed = allowList.some(pattern => minimatch_1.default(filePath, `${fsPath}/${pattern}`));
+    const isIgnored = ignoreList.some(pattern => minimatch_1.default(filePath, `${fsPath}/${pattern}`));
     return !isIgnored && isAllowed;
 };
 exports.isFileAllowed = isFileAllowed;
