@@ -168,7 +168,8 @@ describe('test checkEvent', () => {
 
     // FIXME: inodesTmp variable should not reset between the two checkEvent calls
     // Because of that it is interpreted as an del and and add instead of a move
-    // It works well manually
+    // It works well manually.
+    // TODO: add tests on move depending on allow / ignore list
 
     // test('Move a file', async () => {
     //     const params = {

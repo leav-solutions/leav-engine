@@ -7,11 +7,12 @@ import * as fs from 'fs';
 import {startWatch} from '../../setupWatcher/setupWatcher';
 import {getConfig} from '../../';
 
-describe('integration test automate-scan', async () => {
+describe('integration test automate-scan', () => {
     console.info = jest.fn();
-    const config = await getConfig();
 
     test('create a file and check if event send to rabbitmq', async done => {
+        const config = await getConfig();
+
         // set max timeout in jest test
         jest.setTimeout(10000);
 
@@ -41,6 +42,8 @@ describe('integration test automate-scan', async () => {
     });
 
     test('update a file and check if event send to rabbitmq', async done => {
+        const config = await getConfig();
+
         // set max timeout in jest test
         jest.setTimeout(15000);
         const pathTmpFile = config.rootPath + '/file_' + Math.random();
@@ -67,6 +70,8 @@ describe('integration test automate-scan', async () => {
     });
 
     test('delete a file and check if event send to rabbitmq', async done => {
+        const config = await getConfig();
+
         // set max timeout in jest test
         jest.setTimeout(15000);
         const pathTmpFile = config.rootPath + '/file_' + Math.random();
@@ -94,6 +99,8 @@ describe('integration test automate-scan', async () => {
     });
 
     test('rename a file and check if event send to rabbitmq', async done => {
+        const config = await getConfig();
+
         // set max timeout in jest test
         jest.setTimeout(15000);
 
@@ -124,6 +131,8 @@ describe('integration test automate-scan', async () => {
     });
 
     test('move a file and check if event send to rabbitmq', async done => {
+        const config = await getConfig();
+
         // set max timeout in jest test
         jest.setTimeout(15000);
 
@@ -155,6 +164,8 @@ describe('integration test automate-scan', async () => {
     });
 
     test('move and rename a file and check if event send to rabbitmq', async done => {
+        const config = await getConfig();
+
         // set max timeout in jest test
         jest.setTimeout(15000);
         const pathTmpFile = config.rootPath + '/file1_' + Math.random();

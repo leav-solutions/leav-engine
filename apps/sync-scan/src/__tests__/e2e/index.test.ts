@@ -24,6 +24,9 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 beforeAll(async () => {
     try {
         cfg = await getConfig();
+
+        console.log('CONFIG', cfg);
+
         amqpConn = await amqp.init(cfg.amqp);
 
         // As queue is only used in tests to consume messages, it's not created in amqp.init. Thus, we have to do it here

@@ -197,7 +197,6 @@ export const handleEvent = async (
             await handleUpdate(path, inode, amqp, isDirectory, hashFile);
             break;
         case event === 'move' && !!oldPath:
-            console.log('MOOOOVE');
             if (!oldPathAllowed && pathAllowed) {
                 // hidden to not hidden -> create new
                 await handleCreate(path, inode, amqp, isDirectory, hashFile);
