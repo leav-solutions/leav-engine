@@ -45,6 +45,8 @@ x-env-core: &env-core
   DB_NAME: leav_core
   AUTH_KEY: 999999
   APP_ROOT_PATH: *dir-core
+  SERVER_HOST: "0.0.0.0"
+  SERVER_PORT: 4001
 
 x-env-amqp: &env-amqp
   AMQP_HOST: message-broker
@@ -63,10 +65,33 @@ x-env-react: &env-react
 x-env-automate-scan: &env-automate-scan
   ALLOW_FILES_LIST: *allow-list
   IGNORE_FILES_LIST: *ignore-list
+  NODE_ENV: development
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  ROOT_PATH: /files
+  ROOT_KEY: files1
+  APP_ROOT_PATH: *dir-automate_scan
 
 x-env-sync-scan: &env-sync-scan
   ALLOW_FILES_LIST: *allow-list
   IGNORE_FILES_LIST: *ignore-list
+  FILESYSTEM_ABSOLUTE_PATH: /files
+  GRAPHQL_URI: http://core:4001/graphql
+  GRAPHQL_TOKEN: ${GRAPHQL_TOKEN}
+  APP_ROOT_PATH: *dir-sync_scan
+
+x-env-admin-app: &env-admin-app
+  APP_ROOT_PATH: *dir-admin
+
+x-env-explorer: &env-explorer
+  APP_ROOT_PATH: *dir-explorer
+
+x-env-preview-generator: &env-preview-generator
+  NODE_ENV: development
+  INPUT_ROOT_PATH: /files
+  OUTPUT_ROOT_PATH: /results
+  ICC_PATH: /app/apps/preview-generator/profile/
+  APP_ROOT_PATH: *dir-preview_generator
 
 ############################
 
@@ -84,8 +109,6 @@ services:
     environment:
       <<: *env-core
       <<: *env-amqp
-      SERVER_HOST: "0.0.0.0"
-      SERVER_PORT: 4001
     volumes: # We must load every volumes for install
       - *mount_point-repo
       - *mount_point-files
@@ -141,7 +164,7 @@ services:
       - traefik.frontend.rule=Host:admin.leav.localhost
     environment:
       <<: *env-react
-      APP_ROOT_PATH: *dir-admin
+      <<: *env-admin-app
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -165,7 +188,7 @@ services:
       - traefik.frontend.rule=Host:explorer.leav.localhost
     environment:
       <<: *env-react
-      APP_ROOT_PATH: *dir-explorer
+      <<: *env-explorer
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -185,12 +208,6 @@ services:
     environment:
       <<: *env-automate-scan
       <<: *env-amqp
-      NODE_ENV: development
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      ROOT_PATH: /files
-      ROOT_KEY: files1
-      APP_ROOT_PATH: *dir-automate_scan
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -235,11 +252,7 @@ services:
     restart: always
     environment:
       <<: *env-amqp
-      NODE_ENV: development
-      INPUT_ROOT_PATH: /files
-      OUTPUT_ROOT_PATH: /results
-      ICC_PATH: /app/apps/preview-generator/profile/
-      APP_ROOT_PATH: *dir-preview_generator
+      <<: *env-preview-generator
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -266,10 +279,6 @@ services:
     environment:
       <<: *env-sync-scan
       <<: *env-amqp
-      FILESYSTEM_ABSOLUTE_PATH: /files
-      GRAPHQL_URI: http://core:4001/graphql
-      GRAPHQL_TOKEN: ${GRAPHQL_TOKEN}
-      APP_ROOT_PATH: *dir-sync_scan
     depends_on:
       - core
     volumes:
