@@ -35,8 +35,8 @@ export const start = async (
         cwd
     });
 
-    watcher.on('all', async (event: string, path: string, stats: any) => {
-        await checkEvent(
+    watcher.on('all', async (event: string, path: string, stats: any) =>
+        checkEvent(
             event,
             path,
             {
@@ -48,8 +48,8 @@ export const start = async (
                 amqp: amqpParams
             },
             stats
-        );
-    });
+        )
+    );
 
     watcher.on('ready', () => {
         ready = true;
@@ -94,8 +94,6 @@ export const manageIsDirectory = (stats?: Stats): boolean => {
 };
 
 const checkMove = async (event: string, path: string, isDirectory: boolean, inode: any, params: IParamsExtends) => {
-    const amqp = params.amqp || {};
-
     if (inodesTmp[inode] && path !== inodesTmp[inode]) {
         let pathBefore: string;
         let pathAfter: string;
@@ -115,40 +113,45 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
         clearTmp(path, inode);
 
         // delay on move event to keep the order of the event
-        setTimeout(async () => {
-            await handleEvent(
-                'move',
-                pathBefore,
-                isDirectory,
-                inode,
-                {
-                    rootPath: params.rootPath,
-                    rootKey: params.rootKey,
-                    amqp,
-                    verbose: params.verbose
-                },
-                pathAfter
-            );
-        }, params.delay);
+        await new Promise(res =>
+            setTimeout(
+                () =>
+                    res(
+                        handleEvent(
+                            'move',
+                            pathBefore,
+                            isDirectory,
+                            inode,
+                            {
+                                rootPath: params.rootPath,
+                                rootKey: params.rootKey,
+                                amqp: params.amqp || {},
+                                verbose: params.verbose
+                            },
+                            pathAfter
+                        )
+                    ),
+                params.delay
+            )
+        );
     } else {
         inodesTmp[inode] = path;
         pathsTmp[path] = inode;
 
-        await new Promise(
-            resolve =>
-                (timeoutRefs[inode] = setTimeout(
-                    async () =>
-                        resolve(
-                            handleEvent(event, path, isDirectory, inode, {
-                                rootPath: params.rootPath,
-                                rootKey: params.rootKey,
-                                verbose: params.verbose,
-                                amqp: params.amqp
-                            })
-                        ),
-                    params.delay
-                ))
-        );
+        await new Promise(res => {
+            timeoutRefs[inode] = setTimeout(
+                () =>
+                    res(
+                        handleEvent(event, path, isDirectory, inode, {
+                            rootPath: params.rootPath,
+                            rootKey: params.rootKey,
+                            verbose: params.verbose,
+                            amqp: params.amqp
+                        })
+                    ),
+                params.delay
+            );
+        });
     }
 };
 
