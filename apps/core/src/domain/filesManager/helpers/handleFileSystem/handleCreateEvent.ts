@@ -74,6 +74,13 @@ export const handleCreateEvent = async (
 
     // Create the previews
     if (!scanMsg.isDirectory) {
-        await createPreview(record, scanMsg, resources.library, deps.previewVersions, deps.amqpService, deps.config);
+        await createPreview(
+            record.id,
+            scanMsg.pathAfter,
+            resources.library,
+            deps.previewVersions,
+            deps.amqpService,
+            deps.config
+        );
     }
 };
