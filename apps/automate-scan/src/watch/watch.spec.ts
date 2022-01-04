@@ -8,8 +8,9 @@ import {initRedis} from '../redis/redis';
 import {IParamsExtends} from './../types';
 import {checkEvent} from './watch';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
+import {getConfig} from '../';
 
-const file = './test';
+const file = 'test';
 const inode = 123456;
 const rootKey = 'rootKey';
 const stats = {ino: inode};
@@ -32,10 +33,6 @@ jest.mock('fs', () => ({
     }))
 }));
 
-jest.mock('@leav/utils', () => ({
-    isFileAllowed: jest.fn(() => true)
-}));
-
 jest.mock('../redis/redis', () => ({
     initRedis: jest.fn(),
     updateData: jest.fn(),
@@ -50,7 +47,8 @@ jest.mock('../rabbitmq/rabbitmq', () => ({
 jest.mock('../', () => ({
     getConfig: global.__mockPromise({
         allowFilesList: '',
-        ignoreFilesList: ''
+        ignoreFilesList: '',
+        rootPath: '/files'
     })
 }));
 
@@ -166,23 +164,65 @@ describe('test checkEvent', () => {
         expect(handleUpdate).toBeCalled();
     });
 
-    // FIXME: inodesTmp variable should not reset between the two checkEvent calls
-    // Because of that it is interpreted as an del and and add instead of a move
-    // It works well manually.
-    // TODO: add tests on move depending on allow / ignore list
+    test('Move a file', async () => {
+        expect.assertions(1);
 
-    // test('Move a file', async () => {
-    //     const params = {
-    //         verbose: false,
-    //         ready: true,
-    //         timeout: 500,
-    //         rootPath: '/files',
-    //         rootKey
-    //     };
+        const params = {
+            verbose: false,
+            ready: true,
+            rootPath: '/files',
+            rootKey,
+            delay: 1100
+        };
 
-    //     await checkEvent('unlink', file, params, undefined);
-    //     await checkEvent('add', file + 1, params, {...stats, isDirectory: jest.fn(() => false)});
+        // not use await for unlink
+        checkEvent('unlink', file, params, undefined);
+        await checkEvent('add', file + 1, params, {...stats, isDirectory: jest.fn(() => false)});
 
-    //     expect(handleMove).toBeCalled();
-    // });
+        expect(handleMove).toBeCalled();
+    });
+
+    test('Move a file -> hidden to no hidden', async () => {
+        (getConfig as jest.FunctionLike) = global.__mockPromise({
+            allowFilesList: '',
+            ignoreFilesList: file,
+            rootPath: '/files'
+        });
+
+        const params = {
+            verbose: false,
+            ready: true,
+            rootPath: '/files',
+            rootKey,
+            delay: 1100
+        };
+
+        // not use await for unlink
+        checkEvent('unlink', file, params, undefined);
+        await checkEvent('add', file + 1, params, {...stats, isDirectory: jest.fn(() => false)});
+
+        expect(handleCreate).toBeCalled();
+    });
+
+    test('Move a file -> not hidden to hidden', async () => {
+        (getConfig as jest.FunctionLike) = global.__mockPromise({
+            allowFilesList: '',
+            ignoreFilesList: file + 1,
+            rootPath: '/files'
+        });
+
+        const params = {
+            verbose: false,
+            ready: true,
+            rootPath: '/files',
+            rootKey,
+            delay: 1100
+        };
+
+        // not use await for unlink
+        checkEvent('unlink', file, params, undefined);
+        await checkEvent('add', file + 1, params, {...stats, isDirectory: jest.fn(() => false)});
+
+        expect(handleDelete).toBeCalled();
+    });
 });
