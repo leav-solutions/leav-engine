@@ -37,5 +37,5 @@ export const handleUpdateEvent = async (
     await updateRecordFile(recordData, record.id, library, deps, ctx);
 
     // Regenerate Previews
-    await createPreview(record, scanMsg, library, deps.previewVersions, deps.amqpService, deps.config);
+    await createPreview(record.id, scanMsg.pathAfter, library, deps.previewVersions, deps.amqpService, deps.config);
 };

@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as Config from '_types/config';
-import {IRecord} from '_types/record';
 import {IAmqpService} from '../../../infra/amqp/amqpService';
-import {IFileEventData, IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
+import {IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
 
-export const _sendPreviewMessage = async (
+export const sendPreviewMessage = async (
     previewMessage: IPreviewMessage,
     amqpService: IAmqpService,
     config: Config.IConfig
@@ -15,18 +14,18 @@ export const _sendPreviewMessage = async (
     await amqpService.publish(config.amqp.exchange, config.filesManager.routingKeys.previewRequest, msg);
 };
 
-export const getPreviewMsg = (
-    record: IRecord,
-    scanMsg: IFileEventData,
+export const generatePreviewMsg = (
+    recordId: string,
+    pathAfter: string,
     versions: IPreviewVersion[],
     context: any
-): IPreviewMessage | false => {
-    const input = scanMsg.pathAfter;
+): IPreviewMessage => {
+    const input = pathAfter;
 
-    const firstDigit = record.id.toString().substr(0, 1);
-    const secondDigit = record.id.toString().substr(1, 1);
+    const firstDigit = recordId.toString().substr(0, 1);
+    const secondDigit = recordId.toString().substr(1, 1);
 
-    const output = `${firstDigit}/${secondDigit}/${record.id}`;
+    const output = `${firstDigit}/${secondDigit}/${recordId}`;
     const extension = 'png';
     const multiPageFolderName = 'pages';
 
@@ -47,19 +46,15 @@ export const getPreviewMsg = (
 };
 
 export const createPreview = async (
-    record: IRecord,
-    scanMsg: IFileEventData,
-    library: string,
+    recordId: string,
+    pathAfter: string,
+    libraryId: string,
     versions: IPreviewVersion[],
     amqpService: IAmqpService,
     config: Config.IConfig
 ): Promise<void> => {
-    const context: IPreviewResponseContext = {library, recordId: record.id};
+    const context: IPreviewResponseContext = {library: libraryId, recordId};
 
-    const previewMessage = getPreviewMsg(record, scanMsg, versions, context);
-
-    if (previewMessage) {
-        // send preview msg
-        await _sendPreviewMessage(previewMessage, amqpService, config);
-    }
+    const previewMessage = generatePreviewMsg(recordId, pathAfter, versions, context);
+    await sendPreviewMessage(previewMessage, amqpService, config);
 };

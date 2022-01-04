@@ -16,6 +16,9 @@ import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../.
 import {IRecordDomain} from '../record/recordDomain';
 import {handleEventFileSystem} from './helpers/handleFileSystem';
 import {handlePreviewResponse} from './helpers/handlePreviewResponse';
+import {createPreview} from './helpers/handlePreview';
+import {ITreeNode} from '_types/tree';
+import {AttributeCondition, IRecord} from '../../_types/record';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -26,6 +29,12 @@ export interface IFilesManagerDomain {
     init(): Promise<void>;
     getPreviewVersion(): IPreviewVersion[];
     getPreviewAttributesSettings(): IPreviewAttributesSettings;
+    forcePreviewsGeneration(
+        ctx: IQueryInfos,
+        libraryId: string,
+        recordId?: string,
+        failedOnly?: boolean
+    ): Promise<boolean>;
 }
 
 interface IDeps {
@@ -207,6 +216,64 @@ export default function ({
                     [FilesAttributes.PREVIEWS_STATUS]: []
                 }
             );
+        },
+        async forcePreviewsGeneration(
+            ctx: IQueryInfos,
+            libraryId: string,
+            recordId?: string,
+            failedOnly?: boolean
+        ): Promise<boolean> {
+            const getChildren = (nodes: ITreeNode[], records: IRecord[] = []): IRecord[] => {
+                for (const n of nodes) {
+                    records.push(n.record);
+
+                    if (!!n.children) {
+                        records = getChildren(n.children, records);
+                    }
+                }
+
+                return records;
+            };
+
+            let records = (
+                await recordDomain.find({
+                    params: {
+                        library: libraryId,
+                        ...(recordId && {
+                            filters: [{field: 'id', value: recordId, condition: AttributeCondition.EQUAL}]
+                        })
+                    },
+                    ctx
+                })
+            ).list;
+
+            // if recordId is a directory: recreate all previews of subfiles
+            if (records.length === 1 && records[0].is_directory) {
+                const nodes: ITreeNode[] = await treeDomain.getTreeContent({
+                    treeId: 'files_tree',
+                    startingNode: {id: records[0].id, library: libraryId},
+                    ctx
+                });
+
+                records = getChildren(nodes);
+            }
+
+            // del all directories records
+            records = records.filter(r => !r.is_directory);
+
+            for (const r of records) {
+                if (
+                    !failedOnly ||
+                    (failedOnly &&
+                        Object.entries(r.preview_status).some(
+                            p => (p[1] as {status: number; message: string}).status !== 0
+                        ))
+                ) {
+                    await createPreview(recordId, r.file_path, libraryId, systemPreviewVersions, amqpService, config);
+                }
+            }
+
+            return true;
         }
     };
 }
