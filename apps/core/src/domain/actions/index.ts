@@ -14,3 +14,5 @@ export {default as toNumberAction} from './toNumberAction';
 export {default as toStringAction} from './toStringAction';
 export {default as validateFormatAction} from './validateFormatAction';
 export {default as validateRegexAction} from './validateRegexAction';
+export {default as excelAction} from './excelCalculationAction';
+export {default as heritageAction} from './heritageCalculationAction';

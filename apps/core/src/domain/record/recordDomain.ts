@@ -201,7 +201,7 @@ export default function ({
         library: string,
         ctx: IQueryInfos
     ) => {
-        return !isLinkAttribute && value !== null && !!attrProps.actions_list && !!attrProps.actions_list.getValue
+        return /*!isLinkAttribute && value !== null &&*/ !!attrProps.actions_list && !!attrProps.actions_list.getValue
             ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
                   ...ctx,
                   attribute: attrProps,
@@ -279,11 +279,9 @@ export default function ({
         }
 
         const processedValue: IValue =
-            !isLinkAttribute &&
-            val !== null &&
-            attribute.id !== 'id' &&
-            !!attribute.actions_list &&
-            !!attribute.actions_list.getValue
+            /*!isLinkAttribute &&
+            val !== null &&*/
+            attribute.id !== 'id' && !!attribute.actions_list && !!attribute.actions_list.getValue
                 ? await _runActionsList(isLinkAttribute, val, attribute, record, library, ctx)
                 : val;
 
@@ -707,13 +705,42 @@ export default function ({
         },
         async getRecordFieldValue({library, record, attributeId, options, ctx}): Promise<IValue | IValue[] | null> {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
-            const values = await _extractRecordValue(record, attrProps, library, options, ctx);
+            let values = await _extractRecordValue(record, attrProps, library, options, ctx);
+
+            const hasNoValue = values.length === 0;
+            if (hasNoValue) {
+                values = [
+                    {
+                        value: null
+                    }
+                ];
+            }
 
             const forceArray = options?.forceArray ?? false;
 
-            const formattedValues = await Promise.all(
+            let formattedValues = await Promise.all(
                 values.map(v => _formatRecordValue(attrProps, v, record, library, ctx))
             );
+
+            // sort of flatMap cause _formatRecordValue can return multiple values for 1 input val (think heritage)
+            formattedValues = formattedValues.reduce((acc, v) => {
+                if (Array.isArray(v.value)) {
+                    acc = [
+                        ...acc,
+                        ...v.value.map(vpart => ({
+                            value: vpart,
+                            attribute: v.attribute
+                        }))
+                    ];
+                } else {
+                    acc.push(v);
+                }
+                return acc;
+            }, []);
+
+            if (hasNoValue) {
+                formattedValues = formattedValues.filter(v => v.value !== null);
+            }
 
             return attrProps.multiple_values || forceArray ? formattedValues : formattedValues[0] || null;
         },

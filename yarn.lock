@@ -2451,6 +2451,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@handsontable/formulajs@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@handsontable/formulajs@npm:2.0.2"
+  dependencies:
+    bessel: ^1.0.2
+    jstat: ^1.9.2
+  bin:
+    implementation-stats: ./bin/implementation-stats
+  checksum: 43ff8f3d51c4327d9327f0d6e92b761daeae54e3dfa267e57daa66ecf5658ece76b65dd31210bb8f9aa647fe1bca0a04066e6924f69326c695ab0c287c36efef
+  languageName: node
+  linkType: hard
+
 "@hapi/accept@npm:^3.2.4":
   version: 3.2.4
   resolution: "@hapi/accept@npm:3.2.4"
@@ -9092,6 +9104,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bessel@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "bessel@npm:1.0.2"
+  checksum: 1df8c17383c848df05e07bd5d017c58b88cc2cd287e3659ae9b1b937b7cb509c0ad0549402732304fc45e4042568bd51900b23a29cbae89baa6ca8b2a65e443d
+  languageName: node
+  linkType: hard
+
 "bfj@npm:^7.0.2":
   version: 7.0.2
   resolution: "bfj@npm:7.0.2"
@@ -11098,6 +11117,7 @@ __metadata:
     graphql-tools: ^3.0.2
     graphql-type-json: ^0.3.1
     hapi-auth-jwt2: 8.6.0
+    hot-formula-parser: 4.0.0
     i18next: ^19.0.3
     i18next-fs-backend: ^1.0.7
     jest: 25
@@ -16308,6 +16328,16 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
+"hot-formula-parser@npm:4.0.0":
+  version: 4.0.0
+  resolution: "hot-formula-parser@npm:4.0.0"
+  dependencies:
+    "@handsontable/formulajs": ^2.0.2
+    tiny-emitter: ^2.1.0
+  checksum: b1d6fe12ae1ff0d62adce4f78521e8ad5c4416ddb12e3f1b035f8a0ee510678edf04c7aac923fdc919e9dc142fbd004226bf8fcb0651ece06d9c489aa46248de
+  languageName: node
+  linkType: hard
+
 "hpack.js@npm:^2.1.6":
   version: 2.1.6
   resolution: "hpack.js@npm:2.1.6"
@@ -19855,6 +19885,13 @@ fsevents@2.1.2:
     json-schema: 0.2.3
     verror: 1.10.0
   checksum: ee0177b7ef39e6becf18c586d31fabe15d62be88e7867d3aff86466e4a3de9a2cd47b6e597417aebc1cd3c2d43bc662e79ab5eecdadf3ce0643e909432ed6d2c
+  languageName: node
+  linkType: hard
+
+"jstat@npm:^1.9.2":
+  version: 1.9.5
+  resolution: "jstat@npm:1.9.5"
+  checksum: 19a2b25021fe2316cd9ba9fa6a2e8742cf8a7cc6f973eab2ab70cb50be9321736bfc12d0b528db56bd168f395fd97774b7e51c1c3ac7d4d648e7322bdccfb956
   languageName: node
   linkType: hard
 
@@ -29232,6 +29269,13 @@ resolve@^2.0.0-next.3:
   version: 0.3.0
   resolution: "timsort@npm:0.3.0"
   checksum: d8300c3ecf1a3751413de82b04ad283b461ab6fb1041820c825d13b4ae74526e2101ab5fb84c57a0c6e1f4d7f67173b5d8754ed8bb7447c6a9ce1db8562eb82c
+  languageName: node
+  linkType: hard
+
+"tiny-emitter@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "tiny-emitter@npm:2.1.0"
+  checksum: 0055509c72e5fe35d6ab66fa6339342e0f29129e77ed2086e475fdf80be43a8651f2517be76513b46a042c8356396f4da5a35e2e23457252176808d5a892036a
   languageName: node
   linkType: hard
 

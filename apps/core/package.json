@@ -85,6 +85,7 @@
     "graphql-tools": "^3.0.2",
     "graphql-type-json": "^0.3.1",
     "hapi-auth-jwt2": "8.6.0",
+    "hot-formula-parser": "4.0.0",
     "i18next": "^19.0.3",
     "i18next-fs-backend": "^1.0.7",
     "jsonschema": "^1.4.0",
