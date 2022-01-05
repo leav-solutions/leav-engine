@@ -160,9 +160,6 @@ jobs:
         env:
           ALLOW_FILES_LIST: *allow-list
           IGNORE_FILES_LIST: *ignore-list
-          # FILESYSTEM_ABSOLUTE_PATH: /files
-          # GRAPHQL_URI: http://core:4001/graphql
-          # GRAPHQL_TOKEN: ${GRAPHQL_TOKEN}
           APP_ROOT_PATH: .
           NODE_ENV: test
           AMQP_PROTOCOL: 'amqp'
