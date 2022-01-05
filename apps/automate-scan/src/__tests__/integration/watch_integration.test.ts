@@ -11,28 +11,30 @@ describe('integration test automate-scan', () => {
     console.info = jest.fn();
 
     test('create a file and check if event send to rabbitmq', async done => {
+        expect.assertions(2);
+
         const config = await getConfig();
 
         // set max timeout in jest test
         jest.setTimeout(10000);
 
-        const pathTmpFile = config.rootPath + '/file_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
         const watcher = await startWatch();
 
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
         // Wait for the init to finish
-        watcher.on('ready', () => {
-            fs.writeFileSync(pathTmpFile, Math.random());
+        watcher.on('ready', async () => {
+            await fs.promises.writeFile(pathTmpFile, Math.random().toString());
         });
 
-        await initRabbitMQ((channel: Channel, msg: string) => {
+        await initRabbitMQ(async (channel: Channel, msg: string) => {
             watcher.close();
             // Get the message consume
 
             // Delete the file create for the test
-            fs.unlinkSync(pathTmpFile);
+            await fs.promises.unlink(pathTmpFile);
 
             // Test if the message is correct
             expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('CREATE'));
@@ -42,28 +44,30 @@ describe('integration test automate-scan', () => {
     });
 
     test('update a file and check if event send to rabbitmq', async done => {
+        expect.assertions(2);
+
         const config = await getConfig();
 
         // set max timeout in jest test
         jest.setTimeout(15000);
-        const pathTmpFile = config.rootPath + '/file_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
 
-        fs.writeFileSync(pathTmpFile, Math.random());
+        await fs.promises.writeFile(pathTmpFile, Math.random().toString());
 
         const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
         // Wait for the init to finish
-        watcher.on('ready', () => {
-            fs.writeFileSync(pathTmpFile, Math.random());
+        watcher.on('ready', async () => {
+            await fs.promises.writeFile(pathTmpFile, Math.random().toString());
         });
 
-        await initRabbitMQ((channel: Channel, msg: string) => {
+        await initRabbitMQ(async (channel: Channel, msg: string) => {
             watcher.close();
 
             expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('UPDATE'));
-            fs.unlinkSync(pathTmpFile);
+            await fs.promises.unlink(pathTmpFile);
 
             done();
         });
@@ -74,18 +78,18 @@ describe('integration test automate-scan', () => {
 
         // set max timeout in jest test
         jest.setTimeout(15000);
-        const pathTmpFile = config.rootPath + '/file_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
 
-        fs.writeFileSync(pathTmpFile, Math.random());
+        await fs.promises.writeFile(pathTmpFile, Math.random().toString());
 
         const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
         // Wait for the init to finish
-        watcher.on('ready', () => {
+        watcher.on('ready', async () => {
             if (fs.existsSync(pathTmpFile)) {
-                fs.unlinkSync(pathTmpFile);
+                await fs.promises.unlink(pathTmpFile);
             }
         });
 
@@ -99,97 +103,103 @@ describe('integration test automate-scan', () => {
     });
 
     test('rename a file and check if event send to rabbitmq', async done => {
+        expect.assertions(2);
+
         const config = await getConfig();
 
         // set max timeout in jest test
         jest.setTimeout(15000);
 
-        const pathTmpFile = config.rootPath + '/file1_' + Math.random();
-        const newPathTmpFile = config.rootPath + '/file2_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file1_' + Math.random().toString();
+        const newPathTmpFile = config.rootPath + '/file2_' + Math.random().toString();
 
-        fs.writeFileSync(pathTmpFile, Math.random());
+        await fs.promises.writeFile(pathTmpFile, Math.random().toString());
 
         const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
         // Wait for the init to finish
-        watcher.on('ready', () => {
+        watcher.on('ready', async () => {
             if (fs.existsSync(pathTmpFile)) {
-                fs.renameSync(pathTmpFile, newPathTmpFile);
+                await fs.promises.rename(pathTmpFile, newPathTmpFile);
             }
         });
 
-        await initRabbitMQ((channel: Channel, msg: string) => {
+        await initRabbitMQ(async (channel: Channel, msg: string) => {
             watcher.close();
 
             expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-            fs.unlinkSync(newPathTmpFile);
+            await fs.promises.unlink(newPathTmpFile);
 
             done();
         });
     });
 
     test('move a file and check if event send to rabbitmq', async done => {
+        expect.assertions(2);
+
         const config = await getConfig();
 
         // set max timeout in jest test
         jest.setTimeout(15000);
 
-        const fileName = 'file_' + Math.random();
+        const fileName = 'file_' + Math.random().toString();
         const pathTmpFile = config.rootPath + '/' + fileName;
         const newPathTmpFile = config.rootPath + '/1/' + fileName;
 
-        fs.writeFileSync(pathTmpFile, Math.random());
+        await fs.promises.writeFile(pathTmpFile, Math.random().toString());
 
         const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
         // Wait for the init to finish
-        watcher.on('ready', () => {
+        watcher.on('ready', async () => {
             if (fs.existsSync(pathTmpFile)) {
-                fs.renameSync(pathTmpFile, newPathTmpFile);
+                await fs.promises.rename(pathTmpFile, newPathTmpFile);
             }
         });
 
-        await initRabbitMQ((channel: Channel, msg: string) => {
+        await initRabbitMQ(async (channel: Channel, msg: string) => {
             watcher.close();
 
             expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-            fs.unlinkSync(newPathTmpFile);
+            await fs.promises.unlink(newPathTmpFile);
 
             done();
         });
     });
 
     test('move and rename a file and check if event send to rabbitmq', async done => {
+        expect.assertions(2);
+
         const config = await getConfig();
 
         // set max timeout in jest test
         jest.setTimeout(15000);
-        const pathTmpFile = config.rootPath + '/file1_' + Math.random();
-        const newPathTmpFile = config.rootPath + '/1/file2_' + Math.random();
+        const pathTmpFile = config.rootPath + '/file1_' + Math.random().toString();
+        const newPathTmpFile = config.rootPath + '/1/file2_' + Math.random().toString();
 
-        fs.writeFileSync(pathTmpFile, Math.random());
+        await fs.promises.writeFile(pathTmpFile, Math.random().toString());
 
         const watcher = await startWatch();
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
         // Wait for the init to finish
-        watcher.on('ready', () => {
+        watcher.on('ready', async () => {
             if (fs.existsSync(pathTmpFile)) {
-                fs.renameSync(pathTmpFile, newPathTmpFile);
+                await fs.promises.rename(pathTmpFile, newPathTmpFile);
             }
         });
 
-        await initRabbitMQ((channel: Channel, msg: string) => {
+        await initRabbitMQ(async (channel: Channel, msg: string) => {
             watcher.close();
 
             expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
 
-            fs.unlinkSync(newPathTmpFile);
+            await fs.promises.unlink(newPathTmpFile);
 
             done();
         });
