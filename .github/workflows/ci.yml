@@ -158,8 +158,8 @@ jobs:
       - run: cd apps/sync-scan
       - run: yarn run test:e2e
         env:
-          ALLOW_FILES_LIST: *allow-list
-          IGNORE_FILES_LIST: *ignore-list
+          ALLOW_FILES_LIST: ""
+          IGNORE_FILES_LIST: ""
           APP_ROOT_PATH: .
           NODE_ENV: test
           AMQP_PROTOCOL: 'amqp'
