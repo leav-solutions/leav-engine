@@ -16,8 +16,8 @@ import {IAmqpConn} from './_types/amqp';
 
         const amqpConn: IAmqpConn = await amqp.init(cfg.amqp);
 
-        const fsScan: FilesystemContent = await scan.filesystem(cfg.filesystem);
-        const dbScan: FullTreeContent = await scan.database(cfg.graphql);
+        const fsScan: FilesystemContent = await scan.filesystem(cfg);
+        const dbScan: FullTreeContent = await scan.database(cfg);
 
         await automate(fsScan, dbScan, amqpConn.channel);
 

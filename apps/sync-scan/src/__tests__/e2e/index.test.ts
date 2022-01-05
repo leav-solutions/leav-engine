@@ -50,7 +50,7 @@ afterAll(async done => {
 describe('e2e tests', () => {
     test('1 - check filesystem is empty', () => {
         expect.assertions(1);
-        return expect(scan.filesystem(cfg.filesystem)).resolves.toHaveLength(0);
+        return expect(scan.filesystem(cfg)).resolves.toHaveLength(0);
     });
 
     test('2 - filesystem creation', () => {
@@ -86,7 +86,7 @@ describe('e2e tests', () => {
         try {
             expect.assertions(10);
 
-            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
+            const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = [];
 
             await automate(fsc, dbs, amqpConn.channel);
@@ -126,7 +126,7 @@ describe('e2e tests', () => {
             fs.renameSync(`${cfg.filesystem.absolutePath}/dir/sfile`, `${cfg.filesystem.absolutePath}/dir/sf`); // RENAME
             fs.writeFileSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
 
-            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
+            const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = test4Db(inodes);
 
             await automate(fsc, dbs, amqpConn.channel);
@@ -164,7 +164,7 @@ describe('e2e tests', () => {
 
             fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
 
-            const fsc: FilesystemContent = await scan.filesystem(cfg.filesystem);
+            const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = test5Db(inodes);
 
             await automate(fsc, dbs, amqpConn.channel);

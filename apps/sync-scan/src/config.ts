@@ -9,6 +9,8 @@ import {env as appEnv} from './env';
 
 const checkConfig = (conf: IConfig) => {
     const configSchema: Joi.ObjectSchema = Joi.object().keys({
+        allowFilesList: Joi.string().required().allow(''),
+        ignoreFilesList: Joi.string().required().allow(''),
         graphql: Joi.object()
             .keys({
                 uri: Joi.string().required(),

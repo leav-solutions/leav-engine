@@ -2,6 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
+    allowFilesList: process.env.ALLOW_FILES_LIST || '',
+    ignoreFilesList: process.env.IGNORE_FILES_LIST || '',
     graphql: {
         uri: process.env.GRAPHQL_URI,
         token: process.env.GRAPHQL_TOKEN,
