@@ -49,9 +49,11 @@ x-env-core: &env-core
   SERVER_PORT: 4001
 
 x-env-amqp: &env-amqp
+  AMQP_PROTOCOL: 'amqp'
   AMQP_HOST: message-broker
   AMQP_USERNAME: guest
   AMQP_PWD: guest
+  AMQP_PORT: 5672
 
 x-env-react: &env-react
   REACT_APP_CORE_URL: http://core.leav.localhost
