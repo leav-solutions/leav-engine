@@ -138,3 +138,35 @@ jobs:
           AMQP_PWD: guest
           APP_ROOT_PATH: .
           ELASTICSEARCH_URL: "http://localhost:9200"
+
+  e2e-sync-scan:
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - "5672:5672"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: 'yarn'
+      - run: yarn install
+      - run: cd apps/sync-scan
+      - run: yarn run test:e2e
+        env:
+          ALLOW_FILES_LIST: *allow-list
+          IGNORE_FILES_LIST: *ignore-list
+          # FILESYSTEM_ABSOLUTE_PATH: /files
+          # GRAPHQL_URI: http://core:4001/graphql
+          # GRAPHQL_TOKEN: ${GRAPHQL_TOKEN}
+          APP_ROOT_PATH: .
+          NODE_ENV: test
+          AMQP_PROTOCOL: 'amqp'
+          AMQP_HOST: message-broker
+          AMQP_USERNAME: guest
+          AMQP_PWD: guest
+          AMQP_PORT: 5672
