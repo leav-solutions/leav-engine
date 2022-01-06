@@ -32,7 +32,9 @@ beforeAll(async () => {
         await amqpConn.channel.bindQueue(cfg.amqp.queue, cfg.amqp.exchange, cfg.amqp.routingKey);
 
         // Create filesystem directory
-        fs.mkdirSync(cfg.filesystem.absolutePath);
+        if (!fs.existsSync(cfg.filesystem.absolutePath)) {
+            fs.mkdirSync(cfg.filesystem.absolutePath);
+        }
     } catch (e) {
         console.error(e);
     }
