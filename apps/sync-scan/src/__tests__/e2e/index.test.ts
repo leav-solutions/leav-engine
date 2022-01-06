@@ -30,6 +30,11 @@ beforeAll(async () => {
         // As queue is only used in tests to consume messages, it's not created in amqp.init. Thus, we have to do it here
         await amqpConn.channel.assertQueue(cfg.amqp.queue);
         await amqpConn.channel.bindQueue(cfg.amqp.queue, cfg.amqp.exchange, cfg.amqp.routingKey);
+
+        // Create filesystem directory
+        if (!fs.existsSync(cfg.filesystem.absolutePath)) {
+            fs.mkdirSync(cfg.filesystem.absolutePath);
+        }
     } catch (e) {
         console.error(e);
     }
@@ -48,12 +53,7 @@ afterAll(async done => {
 });
 
 describe('e2e tests', () => {
-    test('1 - check filesystem is empty', () => {
-        expect.assertions(1);
-        return expect(scan.filesystem(cfg)).resolves.toHaveLength(0);
-    });
-
-    test('2 - filesystem creation', () => {
+    test('1 - filesystem creation', () => {
         expect.assertions(5);
 
         // Create two directories: dir/sdir from root
@@ -82,7 +82,7 @@ describe('e2e tests', () => {
         ];
     });
 
-    test('3 - initialization/creation events', async done => {
+    test('2 - initialization/creation events', async done => {
         try {
             expect.assertions(10);
 
@@ -118,7 +118,7 @@ describe('e2e tests', () => {
         }
     });
 
-    test('4 - move/rename/edit events', async done => {
+    test('3 - move/rename/edit events', async done => {
         try {
             expect.assertions(10);
 
@@ -158,7 +158,7 @@ describe('e2e tests', () => {
         }
     });
 
-    test('5 - delete events', async done => {
+    test('4 - delete events', async done => {
         try {
             expect.assertions(10);
 
