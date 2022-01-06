@@ -172,6 +172,7 @@ jobs:
           stack-version: 7.8.0
       - run: yarn install
       - run: cd apps/sync-scan
+      - run: ls -la
       - run: yarn run test:e2e
         env:
           ALLOW_FILES_LIST: ""
