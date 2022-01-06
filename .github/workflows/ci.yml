@@ -144,12 +144,6 @@ jobs:
   e2e-sync-scan:
     runs-on: ubuntu-latest
     services:
-      arangodb:
-        image: arangodb:3.7
-        env:
-          ARANGO_NO_AUTH: 1
-        ports:
-          - "8529:8529"
       rabbitmq:
         image: rabbitmq:3-management-alpine
         ports:
@@ -162,24 +156,12 @@ jobs:
         with:
           node-version: 14.x
           cache: 'yarn'
-      - name: Configure sysctl limits for ElasticSearch
-        run: |
-          sudo swapoff -a
-          sudo sysctl -w vm.swappiness=1
-          sudo sysctl -w fs.file-max=262144
-          sudo sysctl -w vm.max_map_count=262144
-      - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@master
-        with:
-          stack-version: 7.8.0
       - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/sync-scan
         run: yarn run test:e2e
         env:
           NODE_ENV: test
-          ARANGO_URL: 'http://root:@localhost:8529'
-          AUTH_KEY: 123456789
           ALLOW_FILES_LIST: ""
           IGNORE_FILES_LIST: ""
           APP_ROOT_PATH: .
@@ -187,4 +169,3 @@ jobs:
           AMQP_PORT: 5672
           AMQP_USERNAME: guest
           AMQP_PWD: guest
-          ELASTICSEARCH_URL: "http://localhost:9200"
