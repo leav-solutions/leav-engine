@@ -177,12 +177,14 @@ jobs:
         working-directory: ./apps/sync-scan
         run: yarn run test:e2e
         env:
+          NODE_ENV: test
+          ARANGO_URL: 'http://root:@localhost:8529'
+          AUTH_KEY: 123456789
           ALLOW_FILES_LIST: ""
           IGNORE_FILES_LIST: ""
           APP_ROOT_PATH: .
-          NODE_ENV: test
-          AMQP_PROTOCOL: 'amqp'
-          AMQP_HOST: message-broker
+          AMQP_HOST: localhost
+          AMQP_PORT: 5672
           AMQP_USERNAME: guest
           AMQP_PWD: guest
-          AMQP_PORT: 5672
+          ELASTICSEARCH_URL: "http://localhost:9200"
