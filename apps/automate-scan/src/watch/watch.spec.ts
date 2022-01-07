@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// import {createHash} from 'crypto';
-// import {createReadStream} from 'fs';
 import {sendToRabbitMQ} from '../rabbitmq/rabbitmq';
 import {initRedis} from '../redis/redis';
 import {IParamsExtends} from './../types';

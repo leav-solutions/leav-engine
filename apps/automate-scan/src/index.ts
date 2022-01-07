@@ -16,6 +16,7 @@ process.on('uncaughtException', err => {
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
 });
 
 // handle CTRL + C
@@ -26,4 +27,7 @@ process.on('SIGINT', () => {
 
 (async () => {
     await startWatch();
-})().catch(e => console.error(e));
+})().catch(e => {
+    console.error(e);
+    process.exit(1);
+});

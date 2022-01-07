@@ -15,6 +15,9 @@ const inodesTmp: {[i: number]: string} = {};
 const timeoutRefs: {[i: number]: any} = {};
 const pathsTmp: {[i: string]: any} = {};
 
+const SEPARATOR_CHARACTERS = ', ';
+const getSplittedListFiles = (list: string): string[] => list.split(SEPARATOR_CHARACTERS).filter(p => p);
+
 export const start = async (
     rootPathProps: string,
     rootKey: string,
@@ -60,10 +63,9 @@ export const start = async (
 
 export const checkEvent = async (event: string, path: string, params: IParamsExtends, stats?: any) => {
     const config = await getConfig();
-    const SEPARATOR_CHARACTERS = ', ';
 
-    const allowList = config.allowFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
-    const ignoreList = config.ignoreFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
+    const allowList = getSplittedListFiles(config.allowFilesList);
+    const ignoreList = getSplittedListFiles(config.ignoreFilesList);
 
     const isAllowed = isFileAllowed(config.rootPath, allowList, ignoreList, config.rootPath + '/' + path);
 
@@ -112,7 +114,8 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
         // cancel other event
         clearTmp(path, inode);
 
-        // delay on move event to keep the order of the event
+        // delay this event to keep the order of events
+        // because all events are delayed below
         await new Promise(res =>
             setTimeout(
                 () =>
@@ -138,6 +141,8 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
         inodesTmp[inode] = path;
         pathsTmp[path] = inode;
 
+        // wait the time of params.delay in case it is
+        // a move event (unlink + an add event)
         await new Promise(res => {
             timeoutRefs[inode] = setTimeout(
                 () =>
@@ -165,7 +170,6 @@ export const handleEvent = async (
 ) => {
     const config = await getConfig();
     let hashFile: string | undefined;
-    const SEPARATOR_CHARACTERS = ', ';
     const amqp = {
         rootPath: params.rootPath,
         rootKey: params.rootKey,
@@ -173,41 +177,54 @@ export const handleEvent = async (
         amqp: params.amqp
     };
 
-    const allowList = config.allowFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
-    const ignoreList = config.ignoreFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
+    const allowList = getSplittedListFiles(config.allowFilesList);
+    const ignoreList = getSplittedListFiles(config.ignoreFilesList);
 
     const pathAllowed = isFileAllowed(config.rootPath, allowList, ignoreList, config.rootPath + '/' + path);
     const oldPathAllowed =
         typeof oldPath === 'undefined' ||
         isFileAllowed(config.rootPath, allowList, ignoreList, config.rootPath + '/' + oldPath);
 
-    switch (true) {
-        case (event === 'add' || event === 'addDir') && pathAllowed:
-            if (event !== 'addDir') {
-                hashFile = await _createHashFromFile(join(params.rootPath, path));
-            }
+    switch (event) {
+        case 'addDir':
+        case 'add':
+            if (pathAllowed) {
+                if (event !== 'addDir') {
+                    hashFile = await _createHashFromFile(join(params.rootPath, path));
+                }
 
-            await handleCreate(path, inode, amqp, isDirectory, hashFile);
-            break;
-        case (event === 'unlink' || event === 'unlinkDir') && pathAllowed:
-            await handleDelete(path, inode, amqp, event === 'unlinkDir');
-            break;
-        case event === 'change' && pathAllowed:
-            if (!isDirectory) {
-                hashFile = await _createHashFromFile(join(params.rootPath, path));
-            }
-
-            await handleUpdate(path, inode, amqp, isDirectory, hashFile);
-            break;
-        case event === 'move' && !!oldPath:
-            if (!oldPathAllowed && pathAllowed) {
-                // hidden to not hidden -> create new
                 await handleCreate(path, inode, amqp, isDirectory, hashFile);
-            } else if (oldPathAllowed && !pathAllowed) {
-                // not hidden to hidden -> del old path
-                await handleDelete(oldPath, inode, amqp, isDirectory);
-            } else if (oldPathAllowed && pathAllowed) {
-                await handleMove(oldPath, path, inode, amqp, isDirectory);
+            }
+
+            break;
+        case 'unlink':
+        case 'unlinkDir':
+            if (pathAllowed) {
+                await handleDelete(path, inode, amqp, event === 'unlinkDir');
+            }
+
+            break;
+        case 'change':
+            if (pathAllowed) {
+                if (!isDirectory) {
+                    hashFile = await _createHashFromFile(join(params.rootPath, path));
+                }
+
+                await handleUpdate(path, inode, amqp, isDirectory, hashFile);
+            }
+
+            break;
+        case 'move':
+            if (!!oldPath) {
+                if (!oldPathAllowed && pathAllowed) {
+                    // hidden to not hidden -> create new
+                    await handleCreate(path, inode, amqp, isDirectory, hashFile);
+                } else if (oldPathAllowed && !pathAllowed) {
+                    // not hidden to hidden -> del old path
+                    await handleDelete(oldPath, inode, amqp, isDirectory);
+                } else if (oldPathAllowed && pathAllowed) {
+                    await handleMove(oldPath, path, inode, amqp, isDirectory);
+                }
             }
 
             break;
