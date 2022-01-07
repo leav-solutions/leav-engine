@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {DeleteOutlined} from '@ant-design/icons';
 import {message} from 'antd';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import SelectCellsBtn, {
@@ -14,14 +15,12 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {DeleteOutlined} from '@ant-design/icons';
 import themingVar from '../../../../../themingVar';
 import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch, PreviewSize} from '../../../../../_types/types';
 
 const Info = styled.div`
     border-left: 1px solid ${themingVar['@divider-color']};
     min-width: 150px;
-    max-width: 35px;
 `;
 
 interface ICellInfosProps {
@@ -38,7 +37,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
         display: state.display
     }));
 
-    const menuBtnSize: SizeType = 'large';
+    const menuBtnSize: SizeType = 'middle';
 
     const menuActions: FloatingMenuAction[] = [
         {

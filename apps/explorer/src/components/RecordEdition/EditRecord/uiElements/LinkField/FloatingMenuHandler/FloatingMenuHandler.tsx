@@ -35,7 +35,7 @@ function FloatingMenuHandler({
     const menuActions: FloatingMenuAction[] = [
         {
             title: t('global.edit'),
-            button: <EditRecordBtn record={record} size="small" />
+            button: <EditRecordBtn record={record} shape="circle" />
         },
         {
             title: t('record_edition.value_details'),

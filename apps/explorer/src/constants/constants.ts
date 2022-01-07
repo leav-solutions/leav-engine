@@ -33,3 +33,5 @@ export const defaultView: IView = {
 };
 
 export const formatNotUsingCondition = [AttributeFormat.boolean];
+
+export const defaultLinkAttributeFilterFormat = AttributeFormat.text;

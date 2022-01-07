@@ -1,12 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ArrowsAltOutlined, CheckOutlined, DeleteOutlined} from '@ant-design/icons';
-import {Button, Card, message, Space} from 'antd';
+import {CheckCircleFilled, CheckOutlined, DeleteOutlined} from '@ant-design/icons';
+import {Button, Card, message, Space, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import SelectCellsBtn, {
     SelectCellsBtnType
 } from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
+import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -17,7 +18,13 @@ import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {displayTypeToPreviewSize, getFileUrl, localizedTranslation} from 'utils';
 import themingVar from '../../../../themingVar';
-import {IItem, ISharedSelected, PreviewSize, SharedStateSelectionType} from '../../../../_types/types';
+import {
+    IItem,
+    ISharedSelected,
+    ISharedStateSelectionSearch,
+    PreviewSize,
+    SharedStateSelectionType
+} from '../../../../_types/types';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 import RecordPreview from '../../../shared/RecordPreview';
 
@@ -26,6 +33,12 @@ const itemPreviewSize = {
     [PreviewSize.medium]: '200px',
     [PreviewSize.big]: '300px'
 };
+
+const buttonsColor = '#333333';
+
+// Using 8 digit hexadecimal notation to add transparency
+const hoverBackgroundColor = `${themingVar['@leav-background-active']}AA`;
+const selectedBackgroundColor = `${themingVar['@leav-background-active']}DF`;
 
 const Item = styled(Card)<{$previewSize: string}>`
     && {
@@ -63,7 +76,7 @@ const ActionsWrapper = styled.div`
         .actions {
             animation: show-actions 300ms ease;
             opacity: 1;
-            background: hsla(0, 0%, 0%, 0.5);
+            background: ${hoverBackgroundColor};
         }
     }
 
@@ -74,7 +87,7 @@ const ActionsWrapper = styled.div`
         }
         to {
             opacity: 1;
-            background: hsla(0, 0%, 0%, 0.5);
+            background: ${hoverBackgroundColor};
         }
     }
 `;
@@ -88,19 +101,10 @@ const Selection = styled.div<{checked: boolean}>`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: ${({checked}) => (checked ? 'hsla(0, 0%, 0%, 0.7)' : 'hsla(0, 0%, 0%, 0.1)')};
+    background: ${p => (p.checked ? selectedBackgroundColor : 'none')};
 
     &:hover {
-        background: ${({checked}) => (checked ? 'hsla(0, 0%, 0%, 0.8)' : 'hsla(0, 0%, 0%, 0.3)')};
-    }
-
-    @keyframes show {
-        from {
-            background: hsla(0, 0%, 0%, 0.1);
-        }
-        to {
-            background: hsla(0, 0%, 0%, 0.5);
-        }
+        background: ${p => (p.checked ? selectedBackgroundColor : hoverBackgroundColor)};
     }
 `;
 
@@ -112,6 +116,10 @@ const SelectionActions = styled(Space)`
     }
     ${Selection}:hover & {
         display: inherit;
+    }
+    button {
+        color: ${buttonsColor};
+        border-color: ${buttonsColor};
     }
 `;
 
@@ -131,11 +139,8 @@ const Actions = styled.div`
     border-radius: 0.25rem 0.25rem 0 0;
 
     button {
-        color: #fff;
-
-        &:hover {
-            color: #fff;
-        }
+        color: ${buttonsColor};
+        border-color: ${buttonsColor}66;
 
         // Arrange buttons, depending on their position on the grid
         &:nth-child(1) {
@@ -155,6 +160,11 @@ const Actions = styled.div`
             align-self: start;
         }
     }
+`;
+
+const CheckedIconWrapper = styled.div`
+    font-size: 3em;
+    color: ${themingVar['@primary-color']};
 `;
 
 interface IItemTileDisplayProps {
@@ -242,6 +252,11 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     };
 
     const isChecked = isSelected || isAllSelected;
+
+    const selectMode =
+        selectionState.selection.selected.length ||
+        (selectionState.selection as ISharedStateSelectionSearch).allSelected;
+
     return (
         <>
             {editRecordModal && (
@@ -271,33 +286,46 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                             }}
                         />
                         <ActionsWrapper>
-                            {isChecked ? (
-                                <Selection checked>
+                            {isChecked || selectMode ? (
+                                <Selection checked={isChecked}>
                                     <SelectionActions>
                                         <SelectCellsBtn
                                             selectionType={SelectCellsBtnType.ONLY}
                                             text={t('items-list-row.select-only')}
                                             record={item.whoAmI}
                                             size="small"
-                                            style={{color: '#FFF', background: 'transparent'}}
+                                            ghost
                                         />
                                         <SelectCellsBtn
                                             selectionType={SelectCellsBtnType.ALL}
                                             text={t('items-list-row.select-all')}
                                             record={item.whoAmI}
                                             size="small"
-                                            style={{color: '#FFF', background: 'transparent'}}
+                                            ghost
                                         />
                                     </SelectionActions>
-                                    <div className="checked-icon">
-                                        <CheckOutlined style={{fontSize: '64px', color: '#FFF'}} />
-                                    </div>
+                                    {isChecked && (
+                                        <CheckedIconWrapper className="checked-icon">
+                                            <CheckCircleFilled />
+                                        </CheckedIconWrapper>
+                                    )}
                                 </Selection>
                             ) : (
                                 <Actions className="actions">
-                                    <Button shape="circle" ghost icon={<CheckOutlined />} onClick={_handleSelect} />
-                                    <Button shape="circle" icon={<ArrowsAltOutlined />} ghost onClick={_handleEdit} />
-                                    <Button shape="circle" ghost icon={<DeleteOutlined />} onClick={_handleDelete} />
+                                    <Tooltip title={t('global.select')} key="select">
+                                        <Button shape="circle" ghost icon={<CheckOutlined />} onClick={_handleSelect} />
+                                    </Tooltip>
+                                    <Tooltip title={t('global.edit')} key="edit">
+                                        <EditRecordBtn shape={'circle'} ghost record={item.whoAmI} />
+                                    </Tooltip>
+                                    <Tooltip title={t('global.delete')} key="delete">
+                                        <Button
+                                            shape="circle"
+                                            ghost
+                                            icon={<DeleteOutlined />}
+                                            onClick={_handleDelete}
+                                        />
+                                    </Tooltip>
                                 </Actions>
                             )}
                         </ActionsWrapper>

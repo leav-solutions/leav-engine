@@ -130,9 +130,9 @@
             }
         },
         "display": {
-            "small": "petit",
-            "medium": "moyen",
-            "big": "grand",
+            "small": "Petit",
+            "medium": "Moyen",
+            "big": "Grand",
             "tile": "Galerie"
         }
     },
@@ -151,7 +151,7 @@
     "filters": {
         "trees-group": "Arbres",
         "attributes-group": "Attributs",
-        "libraries-group": "Librairies",
+        "libraries-group": "Bibliothèques",
         "filters": "Filtres",
         "contains": "Contient",
         "not-contains": "Ne contient pas",

@@ -48,11 +48,17 @@ export interface GET_VIEW_view_created_by {
     whoAmI: GET_VIEW_view_created_by_whoAmI;
 }
 
+export interface GET_VIEW_view_filters_tree {
+    id: string;
+    label: any | null;
+}
+
 export interface GET_VIEW_view_filters {
     field: string | null;
     value: string | null;
     condition: RecordFilterCondition | null;
     operator: RecordFilterOperator | null;
+    tree: GET_VIEW_view_filters_tree | null;
 }
 
 export interface GET_VIEW_view_sort {

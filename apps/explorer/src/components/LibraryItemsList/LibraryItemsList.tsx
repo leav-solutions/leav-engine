@@ -39,7 +39,14 @@ import {
 import {getViewByIdQuery} from '../../graphQL/queries/views/getViewById';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {useUser} from '../../hooks/UserHook/UserHook';
-import {IAttribute, IField, IParentAttributeData, IView, SharedStateSelectionType} from '../../_types/types';
+import {
+    IAttribute,
+    IField,
+    IParentAttributeData,
+    IQueryFilter,
+    IView,
+    SharedStateSelectionType
+} from '../../_types/types';
 import DisplayTypeSelector from './DisplayTypeSelector';
 import {getFiltersFromRequest} from './FiltersPanel/getFiltersFromRequest';
 import {getRequestFromFilters} from './FiltersPanel/getRequestFromFilter';
@@ -220,11 +227,15 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
 
     const [getSelectedView] = useLazyQuery<GET_VIEW, GET_VIEWVariables>(getViewByIdQuery, {
         onCompleted: data => {
+            const viewFilters: IQueryFilter[] = data.view.filters.map(f => ({
+                ...f,
+                treeId: f.tree?.id
+            }));
             const v: IView = {
                 ...(_.omit(data.view, ['created_by', '__typename']) as GET_VIEW_view),
                 owner: data.view.created_by.id === user?.userId,
                 filters: Array.isArray(data.view.filters)
-                    ? getFiltersFromRequest(data.view.filters, searchState.library.id, searchState.attributes)
+                    ? getFiltersFromRequest(viewFilters, searchState.library.id, searchState.attributes)
                     : [],
                 sort: _.omit(data.view.sort, ['__typename']) as GET_VIEW_view_sort,
                 display: _.omit(data.view.display, ['__typename']) as GET_VIEW_view_display,

@@ -1,41 +1,53 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Menu, Dropdown, Badge} from 'antd';
-import React, {useState} from 'react';
-import {BranchesOutlined, NumberOutlined, DatabaseOutlined} from '@ant-design/icons';
-import {useLang} from '../../../hooks/LangHook/LangHook';
+import {BranchesOutlined, DatabaseOutlined, NumberOutlined} from '@ant-design/icons';
+import {Badge, Dropdown, Input, Menu} from 'antd';
+import {defaultLinkAttributeFilterFormat} from 'constants/constants';
+import {
+    ILibraryDetailExtendedAttributeChild,
+    ILibraryDetailExtendedAttributeParentLinkedTree,
+    ILibraryDetailExtendedAttributeParentLinkedTreeLibrary
+} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {setDisplaySide} from 'redux/display';
+import {useAppDispatch} from 'redux/store';
+import styled from 'styled-components';
+import {checkTypeIsLink, defaultFilterConditionByAttributeFormat, localizedTranslation} from 'utils';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {defaultFilterConditionByAttributeFormat, checkTypeIsLink, localizedTranslation} from 'utils';
-import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter';
-import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import {AttributeType} from '_gqlTypes/globalTypes';
 import {
-    IFilter,
-    TypeSideItem,
-    TreeConditionFilter,
-    ThroughConditionFilter,
     AttributeConditionFilter,
-    IFilterTree,
     FilterType,
+    IFilter,
     IFilterAttribute,
     IFilterLibrary,
-    ISystemTranslation
+    IFilterTree,
+    ISystemTranslation,
+    ThroughConditionFilter,
+    TreeConditionFilter,
+    TypeSideItem
 } from '_types/types';
-import {useAppDispatch} from 'redux/store';
-import {setDisplaySide} from 'redux/display';
-import {
-    ILibraryDetailExtendedAttributeChild,
-    ILibraryDetailExtendedAttributeParentLinkedTree
-} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
+import {useLang} from '../../../hooks/LangHook/LangHook';
+import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter';
+
+const ElementsListWrapper = styled(Menu.ItemGroup)`
+    max-height: 75vh;
+    overflow-y: auto;
+
+    .ant-dropdown-menu-item-group-title {
+        display: none;
+    }
+`;
 
 interface IFiltersDropdownProps {
     libraryId: string;
@@ -59,6 +71,7 @@ function FiltersDropdown({
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [{lang}] = useLang();
     const [visible, setVisible] = useState<boolean>(false);
+    const [search, setSearch] = useState<string>();
 
     const dispatch = useAppDispatch();
 
@@ -89,7 +102,7 @@ function FiltersDropdown({
                 type: attribute.type,
                 format:
                     checkTypeIsLink(attribute.type) || attribute.type === AttributeType.tree
-                        ? AttributeFormat.text
+                        ? defaultLinkAttributeFilterFormat
                         : attribute.format,
                 label: attribute.label,
                 isLink: checkTypeIsLink(attribute.type),
@@ -155,12 +168,14 @@ function FiltersDropdown({
             index: Date.now(),
             active: true,
             key,
-            condition: AttributeConditionFilter[defaultFilterConditionByAttributeFormat(AttributeFormat.text)],
+            condition:
+                AttributeConditionFilter[defaultFilterConditionByAttributeFormat(defaultLinkAttributeFilterFormat)],
             library: {id: library.id, label: library.label},
-            value: {value: getDefaultFilterValueByFormat(AttributeFormat.text)},
-            ...(filter?.condition === ThroughConditionFilter.THROUGH
-                ? {parentAttribute: (filter as IFilterAttribute).attribute}
-                : {parentAttribute: (filter as IFilterLibrary).parentAttribute})
+            value: {value: getDefaultFilterValueByFormat(defaultLinkAttributeFilterFormat)},
+            parentAttribute:
+                filter?.condition === ThroughConditionFilter.THROUGH
+                    ? (filter as IFilterAttribute).attribute ?? (filter as IFilterLibrary).parentAttribute
+                    : (filter as IFilterLibrary).parentAttribute
         };
     };
 
@@ -190,6 +205,33 @@ function FiltersDropdown({
 
     const _handleVisibleChange = () => setVisible(!visible);
 
+    const _handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value);
+    };
+
+    const _translateLabel = function <
+        T extends
+            | GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes
+            | GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
+            | ILibraryDetailExtendedAttributeParentLinkedTreeLibrary
+    >(el: T) {
+        return {
+            ...el,
+            localizedLabel: localizedTranslation(el.label, lang) || el.id
+        };
+    };
+
+    const _filterBySearch = function (el: {id: string; localizedLabel: string}): boolean {
+        const searchRegEx = new RegExp(`${search}`, 'i');
+        return !search || !!el.id.match(searchRegEx) || !!el.localizedLabel.match(searchRegEx);
+    };
+
+    const filteredTrees = trees.map(_translateLabel).filter(_filterBySearch);
+    const filteredAttributes = attributes.map(_translateLabel).filter(_filterBySearch);
+    const filteredLibraries = libraries
+        .map(lib => ({...lib, library: _translateLabel(lib.library)}))
+        .filter(lib => _filterBySearch(lib.library));
+
     // to verify if a filter is used, we have to get the filter attribute/tree base id
     // and check if one of those is used in the list of filters depending on the filter type
     const isFilterUsed = (id: string) => {
@@ -205,56 +247,59 @@ function FiltersDropdown({
 
     const menu = (
         <Menu>
-            {trees.length && (
-                <Menu.ItemGroup title={t('filters.trees-group')}>
-                    {trees.map(tree => (
-                        <Menu.Item
-                            icon={<BranchesOutlined />}
-                            key={tree.id}
-                            onClick={() => addFilter(getTreeFilter(tree))}
-                        >
-                            {isFilterUsed(tree.id) ? (
-                                <Badge color={'blue'} text={localizedTranslation(tree.label, lang) || tree.id} />
-                            ) : (
-                                localizedTranslation(tree.label, lang) || tree.id
-                            )}
-                        </Menu.Item>
-                    ))}
-                </Menu.ItemGroup>
-            )}
-            {attributes.length && (
-                <Menu.ItemGroup title={t('filters.attributes-group')}>
-                    {attributes.map(attribute => (
-                        <Menu.Item
-                            icon={<NumberOutlined />}
-                            key={attribute.id}
-                            onClick={() => addFilter(getAttributeFilter(attribute))}
-                        >
-                            {isFilterUsed(attribute.id) ? (
-                                <Badge
-                                    color={'blue'}
-                                    text={localizedTranslation(attribute.label, lang) || attribute.id}
-                                />
-                            ) : (
-                                localizedTranslation(attribute.label, lang) || attribute.id
-                            )}
-                        </Menu.Item>
-                    ))}
-                </Menu.ItemGroup>
-            )}
-            {libraries.length && (
-                <Menu.ItemGroup title={t('filters.libraries-group')}>
-                    {libraries.map(l => (
-                        <Menu.Item
-                            icon={<DatabaseOutlined />}
-                            key={l.library.id}
-                            onClick={() => addFilter(getLibraryFilter(l.library))}
-                        >
-                            {localizedTranslation(l.library.label, lang) || l.library.id}
-                        </Menu.Item>
-                    ))}
-                </Menu.ItemGroup>
-            )}
+            <Menu.Item>
+                <Input.Search placeholder={t('global.search')} onChange={_handleSearchChange} />
+            </Menu.Item>
+            <Menu.Divider />
+            <ElementsListWrapper>
+                {filteredTrees.length && (
+                    <Menu.ItemGroup title={t('filters.trees-group')}>
+                        {filteredTrees.map(tree => (
+                            <Menu.Item
+                                icon={<BranchesOutlined />}
+                                key={tree.id}
+                                onClick={() => addFilter(getTreeFilter(tree))}
+                            >
+                                {isFilterUsed(tree.id) ? (
+                                    <Badge color={'blue'} text={tree.localizedLabel} />
+                                ) : (
+                                    tree.localizedLabel
+                                )}
+                            </Menu.Item>
+                        ))}
+                    </Menu.ItemGroup>
+                )}
+                {filteredAttributes.length && (
+                    <Menu.ItemGroup title={t('filters.attributes-group')}>
+                        {filteredAttributes.map(attribute => (
+                            <Menu.Item
+                                icon={<NumberOutlined />}
+                                key={attribute.id}
+                                onClick={() => addFilter(getAttributeFilter(attribute))}
+                            >
+                                {isFilterUsed(attribute.id) ? (
+                                    <Badge color={'blue'} text={attribute.localizedLabel} />
+                                ) : (
+                                    attribute.localizedLabel
+                                )}
+                            </Menu.Item>
+                        ))}
+                    </Menu.ItemGroup>
+                )}
+                {filteredLibraries.length && (
+                    <Menu.ItemGroup title={t('filters.libraries-group')}>
+                        {filteredLibraries.map(l => (
+                            <Menu.Item
+                                icon={<DatabaseOutlined />}
+                                key={l.library.id}
+                                onClick={() => addFilter(getLibraryFilter(l.library))}
+                            >
+                                {l.library.localizedLabel}
+                            </Menu.Item>
+                        ))}
+                    </Menu.ItemGroup>
+                )}
+            </ElementsListWrapper>
         </Menu>
     );
 

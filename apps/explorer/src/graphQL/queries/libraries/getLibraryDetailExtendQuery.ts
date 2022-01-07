@@ -54,12 +54,14 @@ export interface ILibraryDetailExtendedAttributeParentLinkedTree {
     id: string;
     label: ISystemTranslation;
     libraries: Array<{
-        library: {
-            id: string;
-            label: ISystemTranslation;
-            attributes: ILibraryDetailExtendedAttributeChild[];
-        };
+        library: ILibraryDetailExtendedAttributeParentLinkedTreeLibrary;
     }>;
+}
+
+export interface ILibraryDetailExtendedAttributeParentLinkedTreeLibrary {
+    id: string;
+    label: ISystemTranslation;
+    attributes: ILibraryDetailExtendedAttributeChild[];
 }
 
 interface ILibraryDetailExtendedAttribute {

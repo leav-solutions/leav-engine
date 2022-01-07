@@ -35,13 +35,12 @@ export interface IFloatingMenuProps {
 const FloatingMenuWrapper = styled.div<{overrideStyle?: CSSObject}>`
     position: absolute;
     z-index: 1000;
-    right: 18px;
-    top: 15px;
+    right: 0;
+    top: 0;
 
     display: flex;
     justify-content: space-around;
     padding: 0.5rem;
-    transform: scale(0.7) translate(48px, -28px);
 
     & > * {
         margin: 0 0.2rem;
@@ -90,7 +89,12 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                             </Menu>
                         }
                     >
-                        <Button size={size} icon={<IconEllipsisHorizontal />} title={t('floating_menu.more_actions')} />
+                        <Button
+                            size={size}
+                            icon={<IconEllipsisHorizontal />}
+                            title={t('floating_menu.more_actions')}
+                            shape="circle"
+                        />
                     </Dropdown>
                 </Tooltip>
             )}

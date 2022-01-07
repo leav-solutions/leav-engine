@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu, Typography} from 'antd';
+import {Button, Dropdown, Menu} from 'antd';
 import DateBetweenFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/DateBetweenFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import {ILibraryDetailExtendedAttributeParentLinkedTree} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
@@ -134,6 +134,23 @@ const HeadOptions = styled.div`
     border-radius: 3px;
 `;
 
+const ParentLabel = styled.div`
+    display: flex;
+    align-content: flex-start;
+`;
+
+const ClearParentButton = styled(Button)`
+    && {
+        border: none;
+        color: ${themingVar['@leav-secondary-font-color']};
+
+        :hover {
+            border: none;
+            color: ${themingVar['@leav-secondary-font-color']};
+        }
+    }
+`;
+
 interface IFilterProps {
     filter: IFilter;
     handleProps: DraggableProvidedDragHandleProps;
@@ -220,6 +237,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         (props: ISwitchFormType) => {
             const showStandardCondition =
                 props.filter.condition in AttributeConditionFilter &&
+                !(props.filter.condition in TreeConditionFilter) &&
                 !formatNotUsingCondition.find(
                     format => format === (props.filter as IFilterAttribute).attribute?.format
                 );
@@ -262,12 +280,14 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const embeddedFieldsToAttribute = (
         embeddedFields: GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields[]
     ): GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] => {
-        return embeddedFields.map(f => ({
-            ...f,
-            type: AttributeType.simple,
-            multiple_values: undefined,
-            linked_tree: undefined
-        }));
+        return embeddedFields
+            ? embeddedFields.map(f => ({
+                  ...f,
+                  type: AttributeType.simple,
+                  multiple_values: undefined,
+                  linked_tree: undefined
+              }))
+            : [];
     };
 
     const getAttributes = (): GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] => {
@@ -365,7 +385,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             typeof (filter as IFilterAttribute).parentTreeLibrary !== 'undefined'
                 ? (filter as IFilterAttribute).parentTreeLibrary.parentAttribute
                 : filter.type === FilterType.ATTRIBUTE
-                ? (filter as IFilterAttribute).attribute.parentAttribute
+                ? (filter as IFilterAttribute).attribute.parentAttribute ?? (filter as IFilterAttribute).attribute
                 : (filter as IFilterLibrary).parentAttribute;
 
         const newFilter: IFilterAttribute = {
@@ -454,11 +474,17 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                 <Handle className="filter-handle" {...handleProps} />
                 <Content hasParent={hasParent}>
                     {hasParent && (
-                        <Button disabled={!filter.active} type="text" size="small" onClick={_handleResetClick}>
-                            <Typography.Text type="secondary">
-                                {getParentLabel()} <CloseCircleFilled />
-                            </Typography.Text>
-                        </Button>
+                        <ParentLabel>
+                            <span>{t('filters.through')}:&nbsp;</span>
+                            <span>{getParentLabel()}</span>
+                            <ClearParentButton
+                                disabled={!filter.active}
+                                size="small"
+                                onClick={_handleResetClick}
+                                shape="circle"
+                                icon={<CloseCircleFilled />}
+                            />
+                        </ParentLabel>
                     )}
                     <Head>
                         <HeadInfos>
