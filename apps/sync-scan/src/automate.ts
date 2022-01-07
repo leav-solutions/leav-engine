@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import * as events from './rmq/events';
+import * as events from './amqp/events';
 import {FilesystemContent, IFileContent} from './_types/filesystem';
 import {FullTreeContent} from './_types/queries';
 
@@ -13,7 +13,9 @@ enum Attr {
     PATH = 4
 }
 
-const _extractChildrenDbElems = (database: FullTreeContent, dbEl: FullTreeContent): FullTreeContent => {
+const HASH_DIFF = 8;
+
+const _extractChildrenDbElems = (database: FullTreeContent, dbEl?: FullTreeContent): FullTreeContent => {
     let toList: FullTreeContent = [];
 
     for (const e of database) {
@@ -34,7 +36,7 @@ const _extractChildrenDbElems = (database: FullTreeContent, dbEl: FullTreeConten
 };
 
 const _getEventTypeAndDbElIdx = (fc: IFileContent, dbEl: FullTreeContent) => {
-    let match = Attr.NOTHING;
+    let match: Attr | number = Attr.NOTHING;
     const dbElIdx = [];
 
     for (const [i, e] of dbEl.entries()) {
@@ -56,7 +58,7 @@ const _getEventTypeAndDbElIdx = (fc: IFileContent, dbEl: FullTreeContent) => {
 
         // if hashs are differents, it's a move and not an ignore event
         if (match === Attr.INODE + Attr.NAME + Attr.PATH && dbEl[dbElIdx[dbElIdx.length - 1]].record.hash !== fc.hash) {
-            match = 8;
+            match = HASH_DIFF;
         }
     }
 
@@ -75,7 +77,7 @@ const _delUntrtDbEl = async (dbEl: FullTreeContent, channel: amqp.ConfirmChannel
 };
 
 const _trtFile = async (
-    match: Attr,
+    match: Attr | number,
     dbElIdx: number[],
     dbEl: FullTreeContent,
     fc: IFileContent,
@@ -98,7 +100,7 @@ const _trtFile = async (
             break;
         case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
             break;
-        case 8: // hash changed
+        case HASH_DIFF: // hash changed
             await events.update(
                 fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
                 fc.ino,
@@ -150,10 +152,7 @@ export default async (
     dbScan: FullTreeContent,
     channel: amqp.ConfirmChannel
 ): Promise<void> => {
-    let dbEl: FullTreeContent;
-
-    // eslint-disable-next-line prefer-const
-    dbEl = _extractChildrenDbElems(dbScan, dbEl);
+    const dbEl: FullTreeContent = _extractChildrenDbElems(dbScan);
 
     await _process(fsScan, dbEl, 0, channel);
 

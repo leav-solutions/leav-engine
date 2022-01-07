@@ -10,42 +10,54 @@ import gql from 'graphql-tag';
 import fetch from 'node-fetch';
 import walk from 'walk';
 import * as utils from './utils';
-import * as Config from './_types/config';
+import {IConfig} from './_types/config';
 import {FilesystemContent, IFileContent} from './_types/filesystem';
 import {FullTreeContent} from './_types/queries';
+import {isFileAllowed} from '@leav/utils';
 
 export const getFilePath = (root: string, fsPath: string): string => root.replace(`${fsPath}`, '').slice(1) || '.';
 export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.split('/').length);
 
-export const filesystem = ({absolutePath}: Config.IConfigFilesystem): Promise<FilesystemContent> =>
+export const filesystem = ({filesystem: fsys, allowFilesList, ignoreFilesList}: IConfig): Promise<FilesystemContent> =>
     new Promise((resolve, reject) => {
         let data = [];
 
-        const absPathExist = fs.existsSync(absolutePath);
-        if (!absPathExist) {
+        if (!fs.existsSync(fsys.absolutePath)) {
             return reject('Wrong filesystem absolute path');
         }
 
-        const walker = walk.walk(absolutePath, {followLinks: false});
+        const SEPARATOR_CHARACTERS = ', ';
+        const allowList = allowFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
+        const ignoreList = ignoreFilesList.split(SEPARATOR_CHARACTERS).filter(p => p);
+
+        const walker = walk.walk(fsys.absolutePath, {followLinks: false});
 
         walker.on('directories', (root: string, directories: FilesystemContent, next: any) => {
-            for (const dir of directories) {
-                dir.path = getFilePath(root, absolutePath);
-                dir.level = getFileLevel(dir.path);
-                dir.trt = false;
-            }
+            const dirs = directories
+                .filter(dir => isFileAllowed(fsys.absolutePath, allowList, ignoreList, root + '/' + dir.name))
+                .map(dir => {
+                    const path = getFilePath(root, fsys.absolutePath);
+                    const level = getFileLevel(path);
+                    const trt = false;
 
-            data = data.concat(directories);
+                    return {...dir, path, level, trt};
+                });
+
+            data = data.concat(dirs);
+
             next();
         });
 
         walker.on('file', async (root: string, file: IFileContent, next: any) => {
             file.hash = await utils.createHashFromFile(root + '/' + file.name);
-            file.path = getFilePath(root, absolutePath);
+            file.path = getFilePath(root, fsys.absolutePath);
             file.level = getFileLevel(file.path);
             file.trt = false;
 
-            data.push(file);
+            if (isFileAllowed(fsys.absolutePath, allowList, ignoreList, root + '/' + file.name)) {
+                data.push(file);
+            }
+
             next();
         });
 
@@ -54,13 +66,13 @@ export const filesystem = ({absolutePath}: Config.IConfigFilesystem): Promise<Fi
         });
     });
 
-export const database = async ({uri, token, treeId}: Config.IConfigGraphql): Promise<FullTreeContent> => {
-    const httpLink: ApolloLink = createHttpLink({uri, fetch: fetch as any});
+export const database = async ({graphql}: IConfig): Promise<FullTreeContent> => {
+    const httpLink: ApolloLink = createHttpLink({uri: graphql.uri, fetch: fetch as any});
 
     const authLink: ApolloLink = new ApolloLink((operation, forward) => {
         operation.setContext({
             headers: {
-                authorization: token
+                authorization: graphql.token
             }
         });
 
@@ -80,7 +92,7 @@ export const database = async ({uri, token, treeId}: Config.IConfigGraphql): Pro
 
     const result: ApolloQueryResult<any> = await client.query({
         query: getFullTreeContent,
-        variables: {treeId}
+        variables: {treeId: graphql.treeId}
     });
 
     return result.data.fullTreeContent;

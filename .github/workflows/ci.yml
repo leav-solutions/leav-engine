@@ -81,8 +81,9 @@ jobs:
         with:
           stack-version: 7.8.0
       - run: yarn install
-      - run: cd apps/core
-      - run: yarn run test:e2e:api
+      - name: Run e2e tests
+        working-directory: ./apps/core
+        run: yarn run test:e2e:api
         env:
           NODE_ENV: test
           ARANGO_URL: 'http://root:@localhost:8529'
@@ -126,8 +127,9 @@ jobs:
         with:
           stack-version: 7.8.0
       - run: yarn install
-      - run: cd apps/core
-      - run: yarn run test:e2e:indexationManager
+      - name: Run e2e tests
+        working-directory: ./apps/core
+        run: yarn run test:e2e:indexationManager
         env:
           NODE_ENV: test
           ARANGO_URL: 'http://root:@localhost:8529'
@@ -138,3 +140,32 @@ jobs:
           AMQP_PWD: guest
           APP_ROOT_PATH: .
           ELASTICSEARCH_URL: "http://localhost:9200"
+
+  e2e-sync-scan:
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - "5672:5672"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: 'yarn'
+      - run: yarn install
+      - name: Run e2e tests
+        working-directory: ./apps/sync-scan
+        run: yarn run test:e2e
+        env:
+          NODE_ENV: test
+          ALLOW_FILES_LIST: ""
+          IGNORE_FILES_LIST: ""
+          APP_ROOT_PATH: .
+          AMQP_HOST: localhost
+          AMQP_PORT: 5672
+          AMQP_USERNAME: guest
+          AMQP_PWD: guest

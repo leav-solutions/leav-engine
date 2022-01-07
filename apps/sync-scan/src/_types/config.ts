@@ -4,9 +4,11 @@
 import {Options} from 'amqplib';
 
 export interface IConfig {
+    allowFilesList: string;
+    ignoreFilesList: string;
     graphql: IConfigGraphql;
     filesystem: IConfigFilesystem;
-    rmq: IConfigAmqp;
+    amqp: IConfigAmqp;
 }
 
 export interface IConfigGraphql {

@@ -18,7 +18,6 @@
     AMQP_PWD: guest
     APP_ROOT_PATH: .
 
-
 .node-image: &node-image node:14-alpine
 .arangodb-image: &arangodb-image arangodb:3.7
 .rabbitmq-image: &rabbitmq-image rabbitmq:3-management-alpine
@@ -94,3 +93,19 @@ e2eIndexationManager:
     script:
         - cd apps/core/
         - yarn run test:e2e:indexationManager
+
+e2eSyncScan:
+    stage: test
+    services:
+        - *arangodb-image
+        - *rabbitmq-image
+        - name: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+          alias: elasticsearch
+          command: [ "bin/elasticsearch", "-Expack.security.enabled=false", "-Ediscovery.type=single-node" ]
+    variables:
+        <<: *common-core-envs
+        ES_JAVA_OPTS: -Xms512m -Xmx512m # For ElasticSearch
+    <<: *before-script-common
+    script:
+        - cd apps/sync-scan/
+        - yarn run test:e2e
