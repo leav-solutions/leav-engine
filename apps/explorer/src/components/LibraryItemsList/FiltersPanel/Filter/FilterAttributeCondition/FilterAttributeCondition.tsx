@@ -46,7 +46,8 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             checkTypeIsLink((filter as IFilterAttribute).attribute?.type) ||
             (filter as IFilterAttribute).attribute?.type === AttributeType.tree) &&
         typeof (filter as IFilterAttribute).attribute?.parentAttribute === 'undefined' &&
-        typeof (filter as IFilterAttribute).parentTreeLibrary === 'undefined';
+        typeof (filter as IFilterAttribute).parentTreeLibrary === 'undefined' &&
+        filter.condition !== AttributeConditionFilter.THROUGH;
 
     const conditionOptionsByType = getConditionOptionsByType(filter, showthroughCondition, t);
 
@@ -102,7 +103,11 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
     if (showStandardCondition) {
         const conditionOption = conditionOptionsByType.filter(c => c.value === filter.condition)[0];
         return (
-            <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
+            <Dropdown
+                disabled={!filter.active || filter.condition === AttributeConditionFilter.THROUGH}
+                overlay={menu}
+                trigger={['click']}
+            >
                 <FilterDropdownButton aria-label="filter-condition">
                     {conditionOption?.textByFormat?.[(filter as IFilterAttribute)?.attribute?.format] ??
                         conditionOption?.text}

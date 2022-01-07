@@ -18,14 +18,19 @@ jest.mock('components/shared/RecordSummary', () => {
 });
 
 describe('EditRecordSidebar', () => {
-    const mockReducer = {state: {record: mockRecord, activeValue: null}, dispatch: jest.fn()};
+    const mockReducer = {state: {record: mockRecord, activeValue: null, sidebarCollapsed: false}, dispatch: jest.fn()};
     const mockReducerWithValue = {
-        state: {record: mockRecord, activeValue: mockRecordPropertyWithAttribute},
+        state: {
+            ...mockReducer.state,
+            record: mockRecord,
+            activeValue: mockRecordPropertyWithAttribute
+        },
         dispatch: jest.fn()
     };
 
     const mockReducerWithValueSimple = {
         state: {
+            ...mockReducer.state,
             record: mockRecord,
             activeValue: {
                 ...mockRecordPropertyWithAttribute,

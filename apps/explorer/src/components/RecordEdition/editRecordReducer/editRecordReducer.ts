@@ -13,22 +13,29 @@ export interface IRecordPropertyWithAttribute {
 export interface IEditRecordReducerState {
     record: RecordIdentity_whoAmI;
     activeValue: IRecordPropertyWithAttribute;
+    sidebarCollapsed: boolean;
 }
 
 export enum EditRecordReducerActionsTypes {
+    TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR',
     SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE'
 }
 
-export interface IEditRecordReducerActions {
-    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE;
-    value: IRecordPropertyWithAttribute;
-}
+export type IEditRecordReducerActions =
+    | {
+          type: EditRecordReducerActionsTypes.TOGGLE_SIDEBAR;
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE;
+          value: IRecordPropertyWithAttribute;
+      };
 
 export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void;
 
 export const initialState: IEditRecordReducerState = {
     record: null,
-    activeValue: null
+    activeValue: null,
+    sidebarCollapsed: true
 };
 
 const editRecordReducer = (
@@ -36,6 +43,8 @@ const editRecordReducer = (
     action: IEditRecordReducerActions
 ): IEditRecordReducerState => {
     switch (action.type) {
+        case EditRecordReducerActionsTypes.TOGGLE_SIDEBAR:
+            return {...state, sidebarCollapsed: !state.sidebarCollapsed};
         case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
             return {...state, activeValue: action.value};
         default:

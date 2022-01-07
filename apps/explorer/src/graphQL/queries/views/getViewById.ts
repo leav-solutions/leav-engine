@@ -26,6 +26,10 @@ export const getViewByIdQuery = gql`
                 value
                 condition
                 operator
+                tree {
+                    id
+                    label
+                }
             }
             sort {
                 field

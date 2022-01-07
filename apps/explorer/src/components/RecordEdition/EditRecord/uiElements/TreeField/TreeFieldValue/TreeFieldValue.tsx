@@ -45,7 +45,7 @@ function TreeFieldValue({value, attribute, onDelete, isReadOnly}: ITreeFieldValu
     const valueMenuActions: FloatingMenuAction[] = [
         {
             title: t('record_edition.edit_record'),
-            button: <EditRecordBtn record={value.treeValue.record.whoAmI} size="small" />
+            button: <EditRecordBtn record={value.treeValue.record.whoAmI} />
         },
         {
             title: t('record_edition.value_details'),

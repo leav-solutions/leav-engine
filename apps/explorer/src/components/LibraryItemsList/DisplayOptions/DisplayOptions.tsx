@@ -1,14 +1,24 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DownOutlined, MenuOutlined, AppstoreFilled} from '@ant-design/icons';
+import {AppstoreFilled, DownOutlined, MenuOutlined} from '@ant-design/icons';
+import {Button, Dropdown, Menu} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import {Button, Dropdown, Menu} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
+import styled from 'styled-components';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import IconViewType from '../../IconViewType/IconViewType';
+
+const MenuWrapper = styled(Menu)`
+    min-width: 11em;
+`;
+
+const DisplaySizeWrapper = styled(Menu.Item)`
+    display: flex;
+    justify-content: space-between;
+`;
 
 function DisplayOptions(): JSX.Element {
     const {t} = useTranslation();
@@ -51,9 +61,10 @@ function DisplayOptions(): JSX.Element {
             visible={visible}
             onVisibleChange={_handleVisibleChange}
             trigger={['click']}
+            placement="bottomRight"
             overlay={
-                <Menu>
-                    <Menu.Item>
+                <MenuWrapper>
+                    <DisplaySizeWrapper>
                         <Button
                             shape="circle"
                             disabled={searchState.display.size === ViewSizes.SMALL}
@@ -71,7 +82,7 @@ function DisplayOptions(): JSX.Element {
                         >
                             +
                         </Button>
-                    </Menu.Item>
+                    </DisplaySizeWrapper>
                     <Menu.Divider />
                     <Menu.Item onClick={() => _handleChangeType(ViewTypes.list)} icon={<MenuOutlined />}>
                         {t('view.type-list')}
@@ -79,7 +90,7 @@ function DisplayOptions(): JSX.Element {
                     <Menu.Item onClick={() => _handleChangeType(ViewTypes.cards)} icon={<AppstoreFilled />}>
                         {t('view.type-cards')}
                     </Menu.Item>
-                </Menu>
+                </MenuWrapper>
             }
         >
             <Button>

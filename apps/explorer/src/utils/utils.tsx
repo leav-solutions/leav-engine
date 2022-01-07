@@ -6,7 +6,7 @@ import {i18n, TFunction} from 'i18next';
 import {pick} from 'lodash';
 import {AttributeFormat, AttributeType, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
-import {infosCol} from '../constants/constants';
+import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeConditionFilter,
@@ -280,15 +280,28 @@ export const getAttributeFromKey = (key: string, library: string, attributes: IA
         return rootAttribute;
     }
 
-    if (rootAttribute.type === AttributeType.simple_link || rootAttribute.type === AttributeType.advanced_link) {
-        const linkedAttribute = attributes.find(
-            attr => attr.library === rootAttribute?.linkedLibrary?.id && attr.id === splitKey[0]
-        );
+    if (checkTypeIsLink(rootAttribute.type)) {
+        if (splitKey[1]) {
+            const linkedAttribute = attributes.find(
+                attr => attr.library === rootAttribute?.linkedLibrary?.id && attr.id === splitKey[1]
+            );
 
-        return linkedAttribute;
+            return {...linkedAttribute, parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat}};
+        }
+
+        return rootAttribute;
     }
 
     if (rootAttribute.type === AttributeType.tree) {
+        const [, libraryId, linkedTreeAttribute] = splitKey;
+
+        if (!libraryId && !linkedTreeAttribute) {
+            // Only root attribute => search on tree
+            return {...rootAttribute, format: defaultLinkAttributeFilterFormat};
+        } else if (libraryId && !linkedTreeAttribute) {
+            return rootAttribute;
+        }
+
         const linkedAttribute = attributes.find(attr => attr.library === splitKey[1] && attr.id === splitKey[2]);
 
         return linkedAttribute;
@@ -297,14 +310,17 @@ export const getAttributeFromKey = (key: string, library: string, attributes: IA
 
 export const defaultFilterConditionByAttributeFormat = (format: AttributeFormat): AttributeConditionType => {
     switch (format) {
-        case AttributeFormat.text:
-            return AttributeConditionFilter.EQUAL;
         case AttributeFormat.boolean:
         case AttributeFormat.date:
         case AttributeFormat.numeric:
-        default:
-            // default is equal because it is actually accept for all AttributeFormat
             return AttributeConditionFilter.EQUAL;
+        case AttributeFormat.encrypted:
+            return AttributeConditionFilter.IS_EMPTY;
+        case AttributeFormat.text:
+        case AttributeFormat.date_range:
+        case AttributeFormat.extended:
+        default:
+            return AttributeConditionFilter.CONTAINS;
     }
 };
 

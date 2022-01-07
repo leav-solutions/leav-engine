@@ -38,6 +38,7 @@ import {
     SubmitValueFunc
 } from '../EditRecord/_types';
 import editRecordReducer from '../editRecordReducer';
+import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext from './creationErrorContext';
@@ -103,10 +104,10 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
 
     const [state, dispatch] = useReducer(editRecordReducer, {
         record,
-        activeValue: null
+        activeValue: null,
+        sidebarCollapsed: false
     });
 
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
     const {saveValues, loading: saveValuesLoading} = useSaveValueBatchMutation();
     const {deleteValue} = useDeleteValueMutation(record);
     const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordMutation, {
@@ -288,7 +289,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
         };
     };
 
-    const _handleToggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+    const _handleToggleSidebar = () => dispatch({type: EditRecordReducerActionsTypes.TOGGLE_SIDEBAR});
 
     const title = record ? (
         <RecordCard record={record} size={PreviewSize.small} withLibrary={false} withPreview={false} />
@@ -333,7 +334,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
             >
                 <EditRecordReducerContext.Provider value={{state, dispatch}}>
                     <CreationErrorContext.Provider value={creationErrors}>
-                        <Container isSidebarCollapsed={isSidebarCollapsed}>
+                        <Container isSidebarCollapsed={state.sidebarCollapsed}>
                             <Title>{title}</Title>
                             <Content className="content">
                                 <EditRecord
@@ -345,7 +346,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                             </Content>
                             <Sidebar className="sidebar">
                                 <ToggleExpand onClick={_handleToggleSidebar}>
-                                    {isSidebarCollapsed ? <IconClosePanel /> : <IconOpenPanel />}
+                                    {state.sidebarCollapsed ? <IconClosePanel /> : <IconOpenPanel />}
                                 </ToggleExpand>
                                 <EditRecordSidebar />
                             </Sidebar>

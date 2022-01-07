@@ -46,7 +46,7 @@ const {Panel} = Collapse;
 function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
-    const {dispatch} = useEditRecordReducer();
+    const {state, dispatch} = useEditRecordReducer();
 
     const _handleClose = () => dispatch({type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE, value: null});
 
@@ -78,7 +78,7 @@ function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
 
     return (
         <>
-            <CloseButton onClick={_handleClose} />
+            {!state.sidebarCollapsed && <CloseButton onClick={_handleClose} />}
             <AttributeTitle>{localizedTranslation(attribute.label, lang)}</AttributeTitle>
             <AttributeDescription>{localizedTranslation(attribute.description, lang)}</AttributeDescription>
             <Divider style={{margin: '.5em 0'}} />

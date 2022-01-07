@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
-import {Button, Popconfirm} from 'antd';
+import {Button, ButtonProps, Popconfirm} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 
-interface IDeleteValueBtnProps {
+interface IDeleteValueBtnProps extends ButtonProps {
     onDelete: () => void;
 }
 
-function DeleteValueBtn({onDelete}: IDeleteValueBtnProps): JSX.Element {
+function DeleteValueBtn({onDelete, ...buttonProps}: IDeleteValueBtnProps): JSX.Element {
     const {t} = useTranslation();
 
     const _handleDelete = () => onDelete();
@@ -25,7 +25,8 @@ function DeleteValueBtn({onDelete}: IDeleteValueBtnProps): JSX.Element {
             cancelText={t('global.cancel')}
         >
             <Button
-                size="small"
+                shape="circle"
+                {...buttonProps}
                 icon={<DeleteOutlined />}
                 style={{background: '#FFF'}}
                 danger

@@ -15,6 +15,7 @@ import {
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import Dimmer from 'components/shared/Dimmer';
+import FloatingMenu, {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -150,7 +151,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         padding: 9px 0;
     }
 
-    &:not(:hover) .hover-buttons {
+    &:not(:hover) .floating-menu {
         display: none;
     }
 `;
@@ -453,6 +454,20 @@ function StandardFieldValue({
 
     const valuesList = _getFilteredValuesList();
 
+    const valueActions: FloatingMenuAction[] = [
+        {
+            title: t('record_edition.value_details'),
+            button: <ValueDetailsBtn value={fieldValue.value} attribute={attribute} shape="circle" />
+        }
+    ];
+
+    if (canDeleteValue && !fieldValue.isEditing && fieldValue.displayValue) {
+        valueActions.push({
+            title: t('global.delete'),
+            button: <DeleteValueBtn onDelete={_handleDelete} shape="circle" />
+        });
+    }
+
     return (
         <>
             {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
@@ -471,12 +486,7 @@ function StandardFieldValue({
                                     </label>
                                 )}
                                 {_getInput()}
-                                <HoverButtons>
-                                    <ValueDetailsBtn value={fieldValue.value} attribute={attribute} />
-                                    {canDeleteValue && !fieldValue.isEditing && fieldValue.displayValue && (
-                                        <DeleteValueBtn onDelete={_handleDelete} />
-                                    )}
-                                </HoverButtons>
+                                <FloatingMenu actions={valueActions} />
                             </InputWrapper>
                         </Popover>
                         <ActionsWrapper ref={actionsWrapperRef}>

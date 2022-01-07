@@ -89,8 +89,7 @@ function LibrariesList(): JSX.Element {
                     {
                         title: t('import.title'),
                         icon: <CloudUploadOutlined size={20} />,
-                        onClick: () => setImportActiveLibrary(item.id),
-                        size: 'small'
+                        onClick: () => setImportActiveLibrary(item.id)
                     }
                 ];
 

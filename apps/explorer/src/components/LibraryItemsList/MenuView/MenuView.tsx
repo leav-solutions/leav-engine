@@ -6,11 +6,12 @@ import {
     FilterOutlined,
     MenuOutlined,
     MoreOutlined,
+    PlusOutlined,
     RollbackOutlined,
     SaveFilled
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Button, Dropdown, Menu, Space, Badge, Tooltip} from 'antd';
+import {Badge, Button, Dropdown, Menu, Space, Tooltip} from 'antd';
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -19,6 +20,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
+import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
     IAddViewMutation,
@@ -28,10 +30,9 @@ import addViewMutation, {
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../utils';
 import {TypeSideItem} from '../../../_types/types';
-import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
-import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
-import FiltersDropdown from '../FiltersDropdown';
 import IconViewType from '../../IconViewType/IconViewType';
+import FiltersDropdown from '../FiltersDropdown';
+import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 
 interface IMenuViewProps {
     activeLibrary: IActiveLibrary;
@@ -223,7 +224,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     </Button>
                     <FiltersDropdown
                         libraryId={activeLibrary.id}
-                        button={<Button icon={<MoreOutlined />} type={'default'} />}
+                        button={<Button icon={<PlusOutlined />} type={'default'} />}
                         attributes={activeLibrary.attributes}
                         trees={activeLibrary.trees}
                         libraries={[]}
