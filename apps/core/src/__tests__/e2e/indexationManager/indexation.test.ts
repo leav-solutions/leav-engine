@@ -36,7 +36,12 @@ describe('Indexation', () => {
         expect.assertions(5);
 
         setTimeout(async () => {
-            const res = await makeGraphQlCall(`{ ${libNameQuery}(searchQuery: "admin") { totalCount list {id} } }`);
+            const res = await makeGraphQlCall(`{
+                ${libNameQuery}(searchQuery: "admin",sort: {field: "id", order: asc}) {
+                    totalCount
+                    list {id}
+                }
+            }`);
 
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
@@ -52,9 +57,15 @@ describe('Indexation', () => {
         expect.assertions(4);
 
         setTimeout(async () => {
-            const res = await makeGraphQlCall(
-                `{ ${libNameQuery}(searchQuery: "admni", pagination: { limit: 1, offset: 0}) { totalCount list {id} } }`
-            );
+            const res = await makeGraphQlCall(`{
+                ${libNameQuery}(
+                    searchQuery: "admni",
+                    pagination: { limit: 1, offset: 0},
+                    sort: {field: "id", order: asc}
+                ) {
+                        totalCount list {id}
+                }
+            }`);
 
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
