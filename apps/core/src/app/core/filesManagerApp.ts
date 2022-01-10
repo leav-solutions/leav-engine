@@ -31,7 +31,7 @@ export default function ({'core.domain.filesManager': filesManager}: IDeps): IFi
                             {libraryId, recordId, failedOnly},
                             ctx
                         ): Promise<boolean> {
-                            return filesManager.forcePreviewsGeneration(ctx, libraryId, recordId, failedOnly);
+                            return filesManager.forcePreviewsGeneration({ctx, libraryId, recordId, failedOnly});
                         }
                     }
                 }

@@ -25,16 +25,18 @@ interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS_STATUS]: IEmbeddedAttribute[];
 }
 
+interface IForcePreviewsGenerationParams {
+    ctx: IQueryInfos;
+    libraryId: string;
+    failedOnly?: boolean;
+    recordId?: string;
+}
+
 export interface IFilesManagerDomain {
     init(): Promise<void>;
     getPreviewVersion(): IPreviewVersion[];
     getPreviewAttributesSettings(): IPreviewAttributesSettings;
-    forcePreviewsGeneration(
-        ctx: IQueryInfos,
-        libraryId: string,
-        recordId?: string,
-        failedOnly?: boolean
-    ): Promise<boolean>;
+    forcePreviewsGeneration(params: IForcePreviewsGenerationParams): Promise<boolean>;
 }
 
 interface IDeps {
@@ -217,12 +219,12 @@ export default function ({
                 }
             );
         },
-        async forcePreviewsGeneration(
-            ctx: IQueryInfos,
-            libraryId: string,
-            recordId?: string,
-            failedOnly?: boolean
-        ): Promise<boolean> {
+        async forcePreviewsGeneration({
+            ctx,
+            libraryId,
+            failedOnly,
+            recordId
+        }: IForcePreviewsGenerationParams): Promise<boolean> {
             const getChildren = (nodes: ITreeNode[], records: IRecord[] = []): IRecord[] => {
                 for (const n of nodes) {
                     records.push(n.record);
@@ -269,7 +271,7 @@ export default function ({
                             p => (p[1] as {status: number; message: string}).status !== 0
                         ))
                 ) {
-                    await createPreview(recordId, r.file_path, libraryId, systemPreviewVersions, amqpService, config);
+                    await createPreview(r.id, r.file_path, libraryId, systemPreviewVersions, amqpService, config);
                 }
             }
 
