@@ -250,7 +250,7 @@ export default function ({
             ).list;
 
             // if recordId is a directory: recreate all previews of subfiles
-            if (records.length === 1 && records[0].is_directory) {
+            if (records.length === 1 && records[0][FilesAttributes.IS_DIRECTORY]) {
                 const nodes: ITreeNode[] = await treeDomain.getTreeContent({
                     treeId: 'files_tree',
                     startingNode: {id: records[0].id, library: libraryId},
@@ -261,17 +261,24 @@ export default function ({
             }
 
             // del all directories records
-            records = records.filter(r => !r.is_directory);
+            records = records.filter(r => !r[FilesAttributes.IS_DIRECTORY]);
 
             for (const r of records) {
                 if (
                     !failedOnly ||
                     (failedOnly &&
-                        Object.entries(r.preview_status).some(
+                        Object.entries(r[FilesAttributes.PREVIEWS_STATUS]).some(
                             p => (p[1] as {status: number; message: string}).status !== 0
                         ))
                 ) {
-                    await createPreview(r.id, r.file_path, libraryId, systemPreviewVersions, amqpService, config);
+                    await createPreview(
+                        r.id,
+                        `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
+                        libraryId,
+                        systemPreviewVersions,
+                        amqpService,
+                        config
+                    );
                 }
             }
 

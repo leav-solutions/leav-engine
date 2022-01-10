@@ -107,7 +107,7 @@ describe('FilesManager', () => {
             find: global.__mockPromise({
                 cursor: {},
                 totalCount: 1,
-                list: [{id: 'id', is_directory: false, file_path: 'file_path'}]
+                list: [{id: 'id', is_directory: false, file_path: 'file_path', file_name: 'file_name'}]
             })
         };
 
@@ -124,7 +124,7 @@ describe('FilesManager', () => {
 
         expect(createPreview).toBeCalledWith(
             'id',
-            'file_path',
+            'file_path/file_name',
             'libraryId',
             systemPreviewVersions,
             mockAmqpService,
@@ -137,14 +137,14 @@ describe('FilesManager', () => {
             find: global.__mockPromise({
                 cursor: {},
                 totalCount: 1,
-                list: [{id: 'id', is_directory: true, file_path: 'dir_path'}]
+                list: [{id: 'id', is_directory: true, file_path: 'dir_path', file_name: 'file_name'}]
             })
         };
 
         const mockTreeDomain: Mockify<ITreeDomain> = {
             getTreeContent: global.__mockPromise([
-                {record: {id: 'file1', is_directory: false, file_path: 'file_path_1'}},
-                {record: {id: 'file2', is_directory: false, file_path: 'file_path_2'}}
+                {record: {id: 'file1', is_directory: false, file_path: 'file_path_1', file_name: 'file_name_1'}},
+                {record: {id: 'file2', is_directory: false, file_path: 'file_path_2', file_name: 'file_name_2'}}
             ])
         };
 
@@ -163,7 +163,7 @@ describe('FilesManager', () => {
         expect(createPreview).toHaveBeenNthCalledWith(
             1,
             'file1',
-            'file_path_1',
+            'file_path_1/file_name_1',
             'libraryId',
             systemPreviewVersions,
             mockAmqpService,
@@ -173,7 +173,7 @@ describe('FilesManager', () => {
         expect(createPreview).toHaveBeenNthCalledWith(
             2,
             'file2',
-            'file_path_2',
+            'file_path_2/file_name_2',
             'libraryId',
             systemPreviewVersions,
             mockAmqpService,
@@ -187,9 +187,9 @@ describe('FilesManager', () => {
                 cursor: {},
                 totalCount: 1,
                 list: [
-                    {id: 'id', is_directory: true, file_path: 'dir_path'},
-                    {id: 'file1', is_directory: false, file_path: 'file_path_1'},
-                    {id: 'file2', is_directory: false, file_path: 'file_path_2'}
+                    {id: 'id', is_directory: true, file_path: 'dir_path', file_name: 'file_name'},
+                    {id: 'file1', is_directory: false, file_path: 'file_path_1', file_name: 'file_name_1'},
+                    {id: 'file2', is_directory: false, file_path: 'file_path_2', file_name: 'file_name_2'}
                 ]
             })
         };
@@ -208,7 +208,7 @@ describe('FilesManager', () => {
         expect(createPreview).toHaveBeenNthCalledWith(
             1,
             'file1',
-            'file_path_1',
+            'file_path_1/file_name_1',
             'libraryId',
             systemPreviewVersions,
             mockAmqpService,
@@ -218,7 +218,7 @@ describe('FilesManager', () => {
         expect(createPreview).toHaveBeenNthCalledWith(
             2,
             'file2',
-            'file_path_2',
+            'file_path_2/file_name_2',
             'libraryId',
             systemPreviewVersions,
             mockAmqpService,
@@ -236,13 +236,15 @@ describe('FilesManager', () => {
                         id: 'file1',
                         is_directory: false,
                         file_path: 'file_path_1',
-                        preview_status: [{status: 0, message: 'msg'}]
+                        file_name: 'file_name_1',
+                        previews_status: [{status: 0, message: 'msg'}]
                     },
                     {
                         id: 'file2',
                         is_directory: false,
                         file_path: 'file_path_2',
-                        preview_status: [
+                        file_name: 'file_name_2',
+                        previews_status: [
                             {status: -1, message: 'msg'},
                             {status: 0, message: 'msg'}
                         ]
@@ -264,7 +266,7 @@ describe('FilesManager', () => {
 
         expect(createPreview).toHaveBeenCalledWith(
             'file2',
-            'file_path_2',
+            'file_path_2/file_name_2',
             'libraryId',
             systemPreviewVersions,
             mockAmqpService,
