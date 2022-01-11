@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
@@ -682,6 +683,10 @@ describe('treeDomain', () => {
             getAttributes: global.__mockPromise([{id: 'modified_at'}, {id: 'created_at'}])
         };
 
+        const mockTreePermissionDomain: Mockify<ITreePermissionDomain> = {
+            getTreePermission: global.__mockPromise(true)
+        };
+
         test('Should return tree content', async () => {
             const treeContentData = [
                 {
@@ -746,7 +751,8 @@ describe('treeDomain', () => {
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.domain.attribute': mockAttributesDomain as IAttributeDomain
+                'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain
             });
 
             const treeContent = await domain.getTreeContent({treeId: 'test_tree', ctx});
@@ -771,12 +777,33 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.attribute': mockAttributesDomain as IAttributeDomain
+                'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain
             });
 
-            const rej = await expect(domain.getTreeContent({treeId: 'test_tree', ctx})).rejects.toThrow(
-                ValidationError
-            );
+            await expect(domain.getTreeContent({treeId: 'test_tree', ctx})).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if tree is not accessible', async () => {
+            const treeContentData = [];
+
+            const treeRepo: Mockify<ITreeRepo> = {
+                getTreeContent: global.__mockPromise(treeContentData),
+                getTrees: global.__mockPromise({list: [{id: 'test_tree'}], totalCount: 1})
+            };
+
+            const mockTreePermissionDomainForbidden: Mockify<ITreePermissionDomain> = {
+                getTreePermission: global.__mockPromise(false)
+            };
+
+            const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
+                'core.domain.permission.tree': mockTreePermissionDomainForbidden as ITreePermissionDomain
+            });
+
+            await expect(domain.getTreeContent({treeId: 'test_tree', ctx})).rejects.toThrow(PermissionError);
         });
     });
 

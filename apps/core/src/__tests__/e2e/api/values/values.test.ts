@@ -226,6 +226,11 @@ describe('Values', () => {
                     value: {value: "TEST VAL"}
                 ) {
                     id_value
+                    attribute {
+                        permissions {
+                            edit_value
+                        }
+                    }
 
                     ... on Value {
                         value
@@ -237,6 +242,7 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue.id_value).toBeNull();
+        expect(res.data.data.saveValue.attribute?.permissions.edit_value).toBeDefined();
         expect(res.data.data.saveValue.value).toBe('TEST VAL');
     });
 

@@ -4,6 +4,7 @@
 /* eslint-disable jsdoc/check-indentation */
 
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {omit} from 'lodash';
@@ -13,7 +14,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
-import {AppPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions, TreePermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -31,7 +32,7 @@ export interface ITreeDomain {
         element: ITreeElement;
         ctx: IQueryInfos;
     }): Promise<boolean>;
-    saveTree(tree: ITree, ctx: IQueryInfos): Promise<ITree>;
+    saveTree(tree: Partial<ITree>, ctx: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, ctx: IQueryInfos): Promise<ITree>;
     getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
     getTreeProperties(treeId: string, ctx: IQueryInfos): Promise<ITree>;
@@ -165,6 +166,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
     'core.infra.tree'?: ITreeRepo;
@@ -175,6 +177,7 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.app': appPermissionDomain = null,
+    'core.domain.permission.tree': treePermissionDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
     'core.infra.tree': treeRepo = null,
@@ -206,13 +209,13 @@ export default function ({
     }
 
     const _isForbiddenAsChild = (treeProps: ITree, parent: ITreeElement, element: ITreeElement): boolean =>
-        (parent === null && !treeProps.libraries[element.library].allowedAtRoot) ||
+        (parent === null && !treeProps.libraries?.[element.library]?.allowedAtRoot) ||
         (parent !== null &&
-            !treeProps.libraries[parent.library].allowedChildren.includes('__all__') &&
-            !treeProps.libraries[parent.library].allowedChildren.includes(element.library));
+            !treeProps.libraries?.[parent.library]?.allowedChildren.includes('__all__') &&
+            !treeProps.libraries?.[parent.library]?.allowedChildren.includes(element.library));
 
     return {
-        async saveTree(treeData: ITree, ctx: IQueryInfos): Promise<ITree> {
+        async saveTree(treeData: Partial<ITree>, ctx: IQueryInfos): Promise<ITree> {
             // Check is existing tree
             const isExistingTree = await _isExistingTree(treeData.id, ctx);
 
@@ -429,6 +432,17 @@ export default function ({
             const errors: any = {};
             if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
+            }
+
+            const isTreeAccessible = await treePermissionDomain.getTreePermission({
+                treeId,
+                action: TreePermissionsActions.ACCESS_TREE,
+                userId: ctx.userId,
+                ctx
+            });
+
+            if (!isTreeAccessible) {
+                throw new PermissionError(TreePermissionsActions.ACCESS_TREE);
             }
 
             if (Object.keys(errors).length) {

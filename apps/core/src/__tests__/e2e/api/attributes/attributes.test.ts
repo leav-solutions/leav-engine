@@ -41,12 +41,16 @@ describe('Attributes', () => {
                       name
                     }
                 }
+                permissions {
+                    access_attribute
+                }
             }
         }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.saveAttribute.id).toBe(testAttrName);
         expect(res.data.data.saveAttribute.actions_list.saveValue).toBeTruthy();
+        expect(res.data.data.saveAttribute.permissions.access_attribute).toBeDefined();
         expect(res.data.errors).toBeUndefined();
 
         // Check if new attribute is in attributes list
