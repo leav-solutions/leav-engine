@@ -9,6 +9,7 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
 import {systemPreviewVersions} from '../../domain/filesManager/filesManagerDomain';
+import {RecordPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord, TreeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
@@ -28,7 +29,7 @@ interface IDeps {
     'core.app.core.indexationManager'?: IIndexationManagerApp;
 }
 
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
@@ -42,6 +43,12 @@ export default function ({
 
             const baseSchema = {
                 typeDefs: `
+                    type RecordPermissions {
+                        ${Object.values(RecordPermissionsActions)
+                            .map(action => `${action}: Boolean!`)
+                            .join(' ')}
+                    }
+
                     interface Record {
                         id: ID!,
                         library: Library!,
@@ -58,7 +65,8 @@ export default function ({
                                 });
                                 return `${a}: ${await attributeApp.getGraphQLFormat(attrProps)}`;
                             })
-                        )}
+                        )},
+                        permissions: RecordPermissions!
                     }
 
                     type RecordIdentity {

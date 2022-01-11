@@ -20,11 +20,15 @@ describe('Trees', () => {
                 }
             ) {
                 id
+                permissions {
+                    access_tree
+                }
             }
         }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.saveTree.id).toBe(testTreeName);
+        expect(res.data.data.saveTree.permissions.access_tree).toBeDefined();
         expect(res.data.errors).toBeUndefined();
 
         // Create another one for tests
@@ -207,6 +211,9 @@ describe('Trees', () => {
                         }
                     }
                 }
+                permissions {
+                    access_tree
+                }
             }
         }
         `);
@@ -216,6 +223,7 @@ describe('Trees', () => {
         expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
         expect(restreeContent.data.data.treeContent).toHaveLength(3);
         expect(restreeContent.data.data.treeContent[0].record.library.id).toBeTruthy();
+        expect(restreeContent.data.data.treeContent[0].permissions.access_tree).toBeDefined();
         expect(restreeContent.data.data.treeContent[0].order).toBe(0);
         expect(restreeContent.data.data.treeContent[1].order).toBe(1);
         expect(restreeContent.data.data.treeContent[0].record.id).toBe(recordId3);

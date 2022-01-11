@@ -15,6 +15,7 @@ export enum PermissionTypes {
 }
 
 export enum LibraryPermissionsActions {
+    ACCESS_LIBRARY = 'access_library',
     ACCESS_RECORD = 'access_record',
     CREATE_RECORD = 'create_record',
     EDIT_RECORD = 'edit_record',

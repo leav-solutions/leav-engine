@@ -90,7 +90,8 @@
         }
     },
     "permissions": {
-        "access_record": "Accéder",
+        "access_library": "Accéder à la bibliothèque",
+        "access_record": "Accéder aux éléments",
         "create_record": "Créer",
         "edit_record": "Éditer",
         "delete_record": "Supprimer",

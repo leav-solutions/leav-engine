@@ -58,7 +58,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
         const {action, userId, treeId, permConf, treeElement, ctx} = params;
         const {id: recordId, library} = treeElement;
 
-        if (!permConf[library]) {
+        if (!permConf?.[library]) {
             return treeLibraryPermissionDomain.getTreeLibraryPermission({
                 action,
                 treeId,
@@ -121,16 +121,6 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
         async getTreeNodePermission({action, userId, node, treeId, ctx}): Promise<boolean> {
             // Retrieve permissions conf for this node library
             const treeData = await treeDomain.getTreeProperties(treeId, ctx);
-
-            // Tree has no permissions conf defined, check global tree permission
-            if (!treeData.permissions_conf) {
-                return treePermissionDomain.getTreePermission({
-                    action: (action as unknown) as TreePermissionsActions,
-                    userId,
-                    treeId,
-                    ctx
-                });
-            }
 
             // Retrieve permissions for this element, based on tree permissions conf
             const elemPerm = await _getPermByTreeNode({

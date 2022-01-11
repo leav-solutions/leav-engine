@@ -6,7 +6,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {PermissionsRelations, TreeNodePermissionsActions} from '../../_types/permissions';
-import {ITree, ITreeElement, ITreeNode, TreePaths} from '../../_types/tree';
+import {ITree, ITreeElement, TreePaths} from '../../_types/tree';
 import {mockAttrTree} from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
@@ -21,6 +21,8 @@ describe('treeNodePermissionDomain', () => {
         userId: '1',
         queryId: 'recordPermissionDomainTest'
     };
+
+    afterEach(() => jest.clearAllMocks());
 
     describe('getTreeNodePermission', () => {
         const treeNode: ITreeElement = {
@@ -112,7 +114,7 @@ describe('treeNodePermissionDomain', () => {
             })
         };
 
-        test('Should return global tree permission if no permissions conf defined', async () => {
+        test('Should return global tree library permission if no permissions conf defined', async () => {
             const mockTreePermDomain: Mockify<ITreePermissionDomain> = {
                 getTreePermission: global.__mockPromise(false)
             };
@@ -136,8 +138,8 @@ describe('treeNodePermissionDomain', () => {
                 ctx
             });
 
-            expect(mockTreeLibPermissionDomain.getTreeLibraryPermission).not.toBeCalled();
-            expect(perm).toBe(false);
+            expect(mockTreeLibPermissionDomain.getTreeLibraryPermission).toBeCalled();
+            expect(perm).toBe(true);
         });
 
         test('Should return permission defined on element', async () => {

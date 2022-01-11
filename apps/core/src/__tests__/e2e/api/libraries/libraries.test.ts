@@ -14,7 +14,14 @@ describe('Libraries', () => {
 
     test('Create library', async () => {
         const res = await makeGraphQlCall(`mutation {
-                saveLibrary(library: {id: "libraries_test", label: {fr: "Test lib"}}) { id attributes {id type} fullTextAttributes { id type }}
+                saveLibrary(library: {id: "libraries_test", label: {fr: "Test lib"}}) {
+                    id
+                    attributes {id type}
+                    fullTextAttributes { id type }
+                    permissions {
+                        access_library
+                    }
+                }
             }`);
 
         expect(res.status).toBe(200);
@@ -23,13 +30,15 @@ describe('Libraries', () => {
         expect(res.data.data.saveLibrary.attributes[0].type).toBeDefined();
         expect(res.data.data.saveLibrary.fullTextAttributes.length).toBeGreaterThanOrEqual(1);
         expect(res.data.data.saveLibrary.fullTextAttributes[0].type).toBeDefined();
+        expect(res.data.data.saveLibrary.permissions.access_library).toBeDefined();
         expect(res.data.errors).toBeUndefined();
 
         // Check if new lib is in libraries list
-        const libsRes = await makeGraphQlCall('{ libraries { list { id } } }');
+        const libsRes = await makeGraphQlCall('{ libraries { list { id permissions {access_library}} } }');
 
         expect(libsRes.status).toBe(200);
         expect(libsRes.data.data.libraries.list.filter(lib => lib.id === 'libraries_test').length).toBe(1);
+        expect(libsRes.data.data.libraries.list[0].permissions.access_library).toBeDefined();
     });
 
     test('Schema regeneration after library creation', async () => {
