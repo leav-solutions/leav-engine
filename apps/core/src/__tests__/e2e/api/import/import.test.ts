@@ -32,7 +32,7 @@ describe('Import', () => {
             id: 'simple_link',
             type: AttributeTypes.SIMPLE_LINK,
             label: 'simple_link',
-            linkedLibrary: 'users'
+            linkedLibrary: testLibName
         });
 
         await gqlSaveAttribute({
@@ -65,18 +65,18 @@ describe('Import', () => {
         expect.assertions(6);
 
         const res = await makeGraphQlCall(
-            `{ ${testLibNameQuery} { totalCount list { simple simple_link { login } advanced_link { login }} } }`
+            `{ ${testLibNameQuery} { totalCount list { simple simple_link { simple } advanced_link { login }} } }`
         );
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
 
-        expect(res.data.data[testLibNameQuery].list.length).toBe(1);
+        expect(res.data.data[testLibNameQuery].list.length).toBe(2);
 
         const record = res.data.data[testLibNameQuery].list[0];
 
-        expect(record.simple).toBe('one');
-        expect(record.simple_link.login).toBe('admin');
+        expect(record.simple).toBe('simple');
+        expect(record.simple_link.simple).toBe('solo');
         expect(record.advanced_link.login).toBe('admin');
     });
 
