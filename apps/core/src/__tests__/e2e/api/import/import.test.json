@@ -8,19 +8,21 @@
           "attribute": "simple",
           "values": [
             {
-              "value": "one"
+              "value": "simple"
             }
           ],
           "action": "add"
-        },
+        }
+      ],
+      "links": [
         {
           "attribute": "simple_link",
           "values": [
             {
               "value": [
                 {
-                  "attribute": "login",
-                  "value": "admin"
+                  "attribute": "simple",
+                  "value": "solo"
                 }
               ]
             }
@@ -35,6 +37,21 @@
             }
           ],
           "action": "replace"
+        }
+      ]
+    },
+    {
+      "library": "test_import",
+      "matches": [],
+      "data": [
+        {
+          "attribute": "simple",
+          "values": [
+            {
+              "value": "solo"
+            }
+          ],
+          "action": "add"
         }
       ],
       "links": []

@@ -12,7 +12,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
 import ValidationError from '../../errors/ValidationError';
-import fs from 'fs';
+import fs, {linkSync} from 'fs';
 import {validate} from 'jsonschema';
 import {ITreeElement} from '../../_types/tree';
 import path from 'path';
@@ -248,22 +248,45 @@ export default function ({
 
             validate(data, JSON.parse(schema.toString()), {throwAll: true});
 
-            // elements
-            for (const e of data.elements) {
-                await validateHelper.validateLibrary(e.library, ctx);
+            const linksElements: Array<{library: string; recordIds: string[]; links: IData[]}> = [];
 
-                let recordIds = await _getMatchRecords(e.library, e.matches, ctx);
+            // elements data
+            await Promise.all(
+                data.elements.map(
+                    e =>
+                        new Promise(async resolve => {
+                            await validateHelper.validateLibrary(e.library, ctx);
 
-                recordIds = recordIds.length ? recordIds : [(await recordDomain.createRecord(e.library, ctx)).id];
+                            let recordIds = await _getMatchRecords(e.library, e.matches, ctx);
 
-                for (const d of e.data) {
-                    await _treatElement(e.library, d, recordIds, ctx);
-                }
+                            recordIds = recordIds.length
+                                ? recordIds
+                                : [(await recordDomain.createRecord(e.library, ctx)).id];
 
-                for (const l of e.links) {
-                    await _treatElement(e.library, l, recordIds, ctx);
-                }
-            }
+                            for (const d of e.data) {
+                                await _treatElement(e.library, d, recordIds, ctx);
+                            }
+
+                            linksElements.push({library: e.library, recordIds, links: e.links});
+
+                            resolve(true);
+                        })
+                )
+            );
+
+            // elements links
+            await Promise.all(
+                linksElements.map(
+                    le =>
+                        new Promise(async resolve => {
+                            for (const link of le.links) {
+                                await _treatElement(le.library, link, le.recordIds, ctx);
+                            }
+
+                            resolve(true);
+                        })
+                )
+            );
 
             // trees
             for (const t of data.trees) {
