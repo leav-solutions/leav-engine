@@ -108,6 +108,9 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                 linkedTrees {
                     id
                     label
+                    permissions {
+                        access_tree
+                    }
                 }
                 attributes {
                     type
@@ -212,6 +215,13 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                         name
                         value
                     }
+                }
+                permissions {
+                    access_library
+                    access_record
+                    create_record
+                    edit_record
+                    delete_record
                 }
             }
         }

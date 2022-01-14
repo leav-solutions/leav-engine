@@ -13,5 +13,9 @@ export const mockTree: GET_TREE_LIST_QUERY_trees_list = {
                 label: {fr: 'library-label', en: 'library-label'}
             }
         }
-    ]
+    ],
+    permissions: {
+        access_tree: true,
+        edit_children: true
+    }
 };

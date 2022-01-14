@@ -11,6 +11,7 @@ import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
+import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
@@ -31,6 +32,8 @@ interface ICellInfosProps {
 
 function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
     const {t} = useTranslation();
+    const [activeLibrary] = useActiveLibrary();
+    const canDeleteRecord = activeLibrary.permissions.delete_record;
 
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
@@ -43,14 +46,17 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
         {
             title: t('global.edit'),
             button: <EditRecordBtn shape={'circle'} record={record} size={menuBtnSize} />
-        },
-        {
+        }
+    ];
+
+    if (canDeleteRecord) {
+        menuActions.push({
             title: t('items_list.table.actions-tooltips.remove'),
             icon: <DeleteOutlined />,
             size: menuBtnSize,
             onClick: () => message.warn(t('global.feature_not_available'))
-        }
-    ];
+        });
+    }
 
     const selectActions: FloatingMenuAction[] = [
         {

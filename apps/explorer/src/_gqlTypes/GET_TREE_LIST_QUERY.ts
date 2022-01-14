@@ -19,10 +19,16 @@ export interface GET_TREE_LIST_QUERY_trees_list_libraries {
     library: GET_TREE_LIST_QUERY_trees_list_libraries_library;
 }
 
+export interface GET_TREE_LIST_QUERY_trees_list_permissions {
+    access_tree: boolean;
+    edit_children: boolean;
+}
+
 export interface GET_TREE_LIST_QUERY_trees_list {
     id: string;
     label: any | null;
     libraries: GET_TREE_LIST_QUERY_trees_list_libraries[];
+    permissions: GET_TREE_LIST_QUERY_trees_list_permissions;
 }
 
 export interface GET_TREE_LIST_QUERY_trees {

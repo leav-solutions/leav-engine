@@ -11,7 +11,7 @@ import {
     getTreeContentQuery,
     IGetTreeContentQuery,
     IGetTreeContentQueryVar,
-    IRecordAndChildren
+    ITreeContentRecordAndChildren
 } from '../../graphQL/queries/trees/getTreeContentQuery';
 import ColumnNavigation from './ColumnNavigation';
 import DetailNavigation from './DetailNavigation';
@@ -32,7 +32,7 @@ interface INavigationViewProps {
 function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
     const navigation = useAppSelector(state => state.navigation);
     const dispatch = useAppDispatch();
-    const [tree, setTree] = useState<IRecordAndChildren[]>([]);
+    const [treeContent, setTreeContent] = useState<ITreeContentRecordAndChildren[]>([]);
 
     const depth = navigation.path.length + 1; // add 1 to depth to count children
 
@@ -55,7 +55,7 @@ function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
 
     useEffect(() => {
         if (!loadingTreeContent && dataTreeContent) {
-            setTree(dataTreeContent.treeContent);
+            setTreeContent(dataTreeContent.treeContent);
         }
         dispatch(setNavigationIsLoading(loadingTreeContent));
     }, [dataTreeContent, loadingTreeContent, dispatch]);
@@ -70,7 +70,7 @@ function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
 
     return (
         <Page>
-            <ColumnNavigation treeElements={tree} />
+            <ColumnNavigation treeElements={{record: null, children: treeContent, permissions: null}} />
             {navigation.recordDetail && !navigation.isLoading && <DetailNavigation />}
         </Page>
     );

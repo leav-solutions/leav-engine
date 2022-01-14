@@ -7,22 +7,27 @@
 // This file was automatically generated and should not be edited.
 
 import {
-    AttributeType,
     AttributeFormat,
-    ViewSizes,
-    ViewTypes,
+    AttributeType,
     RecordFilterCondition,
     RecordFilterOperator,
-    SortOrder
+    SortOrder,
+    ViewSizes,
+    ViewTypes
 } from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARY_DETAIL_EXTENDED
 // ====================================================
 
+export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees_permissions {
+    access_tree: boolean;
+}
+
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees {
     id: string;
     label: any | null;
+    permissions: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees_permissions;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_StandardAttribute {
@@ -168,6 +173,13 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView_settings
     name: string;
     value: any | null;
 }
+export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions {
+    access_library: boolean;
+    access_record: boolean;
+    create_record: boolean;
+    edit_record: boolean;
+    delete_record: boolean;
+}
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView {
     id: string;
@@ -188,6 +200,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list {
     linkedTrees: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[] | null;
     attributes: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] | null;
     gqlNames: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_gqlNames;
+    permissions: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions | null;
     defaultView: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView | null;
 }
 

@@ -10,6 +10,7 @@ import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
+import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
@@ -18,7 +19,6 @@ import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {getLibraryLink, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {getLibrariesListQuery} from '../../../graphQL/queries/libraries/getLibrariesListQuery';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import {IBaseNotification, NotificationType} from '../../../_types/types';
 import ErrorDisplay from '../../shared/ErrorDisplay';
@@ -47,7 +47,7 @@ function LibrariesList(): JSX.Element {
     const dispatch = useAppDispatch();
     const [importActiveLibrary, setImportActiveLibrary] = useState<string>();
 
-    const librariesListQuery = useQuery(getLibrariesListQuery);
+    const librariesListQuery = useGetLibrariesListQuery();
     const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_LIBRARIES_KEY]}
     });

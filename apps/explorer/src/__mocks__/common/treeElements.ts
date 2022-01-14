@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {INavigationPath} from '_types/types';
-import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
+import {ITreeContentRecordAndChildren, ITreeNodePermissions} from '../../graphQL/queries/trees/getTreeContentQuery';
 import {mockPreviews} from './record';
 
 export const mockTreeRecord: RecordIdentity = {
@@ -48,14 +48,22 @@ export const mockTreeRecordChild: RecordIdentity = {
     }
 };
 
-export const mockTreeElement: IRecordAndChildren = {
+export const mockTreeNodePermissions: ITreeNodePermissions & {__typename: string} = {
+    access_tree: true,
+    edit_children: true,
+    detach: true,
+    __typename: 'TreePermissions'
+};
+
+export const mockTreeElement: ITreeContentRecordAndChildren = {
     record: {
         ...mockTreeRecord
     },
-    children: [{record: mockTreeRecordChild}]
+    children: [{record: mockTreeRecordChild, permissions: mockTreeNodePermissions}],
+    permissions: mockTreeNodePermissions
 };
 
-export const mockTreeElements: IRecordAndChildren[] = [mockTreeElement];
+export const mockTreeElements: ITreeContentRecordAndChildren[] = [mockTreeElement];
 
 export const mockNavigationPath: INavigationPath = {
     id: 'id',

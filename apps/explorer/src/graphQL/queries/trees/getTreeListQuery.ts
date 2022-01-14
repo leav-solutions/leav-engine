@@ -15,6 +15,10 @@ export const getTreeListQuery = gql`
                         label
                     }
                 }
+                permissions {
+                    access_tree
+                    edit_children
+                }
             }
         }
     }

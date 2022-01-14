@@ -7,6 +7,10 @@ export interface IActiveTree {
     id: string;
     libraries: Array<{id: string}>;
     label: string;
+    permissions: {
+        access_tree: boolean;
+        edit_children: boolean;
+    };
 }
 
 export interface IGetActiveTree {
@@ -21,6 +25,10 @@ export const getActiveTree = gql`
                 id @client
             }
             label @client
+            permissions @client {
+                access_tree @client
+                edit_children @client
+            }
         }
     }
 `;

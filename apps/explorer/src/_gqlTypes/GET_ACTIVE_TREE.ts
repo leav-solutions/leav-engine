@@ -14,10 +14,16 @@ export interface GET_ACTIVE_TREE_activeTree_libraries {
     id: string | null;
 }
 
+export interface GET_ACTIVE_TREE_activeTree_permissions {
+    access_tree: boolean;
+    edit_children: boolean;
+}
+
 export interface GET_ACTIVE_TREE_activeTree {
     id: string;
     libraries: GET_ACTIVE_TREE_activeTree_libraries[];
     label: string;
+    permissions: GET_ACTIVE_TREE_activeTree_permissions;
 }
 
 export interface GET_ACTIVE_TREE {

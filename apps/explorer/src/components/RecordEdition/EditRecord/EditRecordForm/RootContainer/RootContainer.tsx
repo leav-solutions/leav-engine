@@ -16,7 +16,7 @@ import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute} from '_gq
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import EditRecordSkeleton from '../../EditRecordSkeleton';
-import {useFormElementsByContainerContext} from '../../hooks/useFormElementsByContainerContext';
+import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {formComponents} from '../../uiElements';
 import {DeleteValueFunc, FormElement, SubmitValueFunc} from '../../_types';
 
@@ -27,7 +27,7 @@ interface IRootContainerProps {
 }
 
 function RootContainer({record, onValueSubmit, onValueDelete}: IRootContainerProps): JSX.Element {
-    const formElements = useFormElementsByContainerContext();
+    const {elements: formElements} = useRecordEditionContext();
 
     const rootElement: FormElement<{}> = {
         id: '__root',

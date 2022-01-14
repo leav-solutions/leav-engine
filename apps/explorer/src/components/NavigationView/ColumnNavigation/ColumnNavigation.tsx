@@ -3,20 +3,20 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useEffect, useState} from 'react';
 import {useAppSelector} from 'redux/store';
-import {IRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
+import {ITreeContentRecordAndChildren} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import Column from './Column';
 
 interface IColumnNavigationProps {
-    treeElements: IRecordAndChildren[];
+    treeElements: ITreeContentRecordAndChildren;
 }
 
 function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
     const navigation = useAppSelector(state => state.navigation);
 
-    const [items, setItems] = useState(treeElements);
+    const [items, setItems] = useState<ITreeContentRecordAndChildren[]>(treeElements.children);
 
     useEffect(() => {
-        setItems(treeElements);
+        setItems(treeElements.children);
     }, [setItems, treeElements]);
 
     const currentColumnActive = !navigation.recordDetail && navigation.path.length === 0;
@@ -32,11 +32,11 @@ function ColumnNavigation({treeElements}: IColumnNavigationProps): JSX.Element {
             />
             {navigation.path.map(
                 (pathPart, index) =>
-                    treeElements.length && (
+                    treeElements.children.length && (
                         <Column
-                            key={pathPart.id}
+                            key={pathPart.record.id}
                             pathPart={pathPart}
-                            treeElements={treeElements}
+                            treeElements={treeElements.children}
                             depth={index + 1}
                             showLoading={navigation.isLoading && index === navigation.path.length - 1}
                             columnActive={!navigation.recordDetail && index === navigation.path.length - 1}

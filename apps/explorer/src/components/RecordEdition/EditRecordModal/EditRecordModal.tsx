@@ -7,8 +7,12 @@ import Modal from 'antd/lib/modal/Modal';
 import {IconClosePanel} from 'assets/icons/IconClosePanel';
 import {IconOpenPanel} from 'assets/icons/IconOpenPanel';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
+import Loading from 'components/shared/Loading';
 import RecordCard from 'components/shared/RecordCard';
 import createRecordMutation from 'graphQL/mutations/records/createRecordMutation';
+import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
 import React, {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addNotification} from 'redux/notifications';
@@ -101,12 +105,18 @@ const ToggleExpand = styled.div`
 
 function EditRecordModal({open, record, library, onClose, afterCreate: afterSave}: IEditRecordModalProps): JSX.Element {
     const {t} = useTranslation();
+    const isCreationMode = !record;
 
     const [state, dispatch] = useReducer(editRecordReducer, {
         record,
         activeValue: null,
         sidebarCollapsed: false
     });
+
+    const {loading: permissionsLoading, canEdit, isReadOnly} = useCanEditRecord(
+        {...record?.library, id: library},
+        record?.id
+    );
 
     const {saveValues, loading: saveValuesLoading} = useSaveValueBatchMutation();
     const {deleteValue} = useDeleteValueMutation(record);
@@ -118,7 +128,6 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
     }>({});
 
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
-    const isCreationMode = !record;
     const hasPendingValues = !!Object.keys(pendingValues).length;
 
     const _handleValueSubmit: SubmitValueFunc = async values => {
@@ -309,7 +318,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 aria-label={t('global.submit')}
                 key="submit"
                 onClick={_handleRecordSubmit}
-                disabled={!hasPendingValues}
+                disabled={!hasPendingValues || permissionsLoading}
                 loading={saveValuesLoading}
             >
                 {t('global.submit')}
@@ -332,27 +341,43 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
                 footer={footerButtons}
             >
-                <EditRecordReducerContext.Provider value={{state, dispatch}}>
-                    <CreationErrorContext.Provider value={creationErrors}>
-                        <Container isSidebarCollapsed={state.sidebarCollapsed}>
-                            <Title>{title}</Title>
-                            <Content className="content">
-                                <EditRecord
-                                    record={record}
-                                    library={library}
-                                    onValueSubmit={_handleValueSubmit}
-                                    onValueDelete={_handleDeleteValue}
-                                />
-                            </Content>
-                            <Sidebar className="sidebar">
-                                <ToggleExpand onClick={_handleToggleSidebar}>
-                                    {state.sidebarCollapsed ? <IconClosePanel /> : <IconOpenPanel />}
-                                </ToggleExpand>
-                                <EditRecordSidebar />
-                            </Sidebar>
-                        </Container>
-                    </CreationErrorContext.Provider>
-                </EditRecordReducerContext.Provider>
+                {permissionsLoading ? (
+                    <Loading />
+                ) : (
+                    <EditRecordReducerContext.Provider value={{state, dispatch}}>
+                        <CreationErrorContext.Provider value={creationErrors}>
+                            <Container isSidebarCollapsed={state.sidebarCollapsed}>
+                                <Title>{title}</Title>
+                                <Content className="content">
+                                    {canEdit ? (
+                                        <EditRecord
+                                            record={record}
+                                            library={library}
+                                            onValueSubmit={_handleValueSubmit}
+                                            onValueDelete={_handleDeleteValue}
+                                            readonly={isReadOnly}
+                                        />
+                                    ) : (
+                                        <ErrorDisplay
+                                            type={ErrorDisplayTypes.PERMISSION_ERROR}
+                                            showActionButton={false}
+                                        />
+                                    )}
+                                </Content>
+                                <Sidebar className="sidebar">
+                                    {canEdit && (
+                                        <>
+                                            <ToggleExpand onClick={_handleToggleSidebar}>
+                                                {state.sidebarCollapsed ? <IconClosePanel /> : <IconOpenPanel />}
+                                            </ToggleExpand>
+                                            <EditRecordSidebar />{' '}
+                                        </>
+                                    )}
+                                </Sidebar>
+                            </Container>
+                        </CreationErrorContext.Provider>
+                    </EditRecordReducerContext.Provider>
+                )}
             </Modal>
         </div>
     ) : (

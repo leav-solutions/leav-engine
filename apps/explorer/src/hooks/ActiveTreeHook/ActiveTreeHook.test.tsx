@@ -12,7 +12,11 @@ describe('ActiveTreeHook', () => {
     const mockActiveTree: IActiveTree = {
         id: 'test',
         libraries: [{id: 'test'}],
-        label: 'string'
+        label: 'string',
+        permissions: {
+            access_tree: true,
+            edit_children: true
+        }
     };
 
     test('should get undefined if no activeTree set', async () => {

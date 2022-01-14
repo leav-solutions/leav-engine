@@ -4,6 +4,7 @@
 import {
     GET_LIBRARY_DETAIL_EXTENDED,
     GET_LIBRARY_DETAIL_EXTENDEDVariables,
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {AttributeFormat, AttributeType, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
@@ -21,7 +22,7 @@ export const mockGetLibraryDetailExtendedDefaultView: GET_LIBRARY_DETAIL_EXTENDE
     settings: null
 };
 
-export const mockGetLibraryDetailExtendedElement = {
+export const mockGetLibraryDetailExtendedElement: GET_LIBRARY_DETAIL_EXTENDED_libraries_list = {
     id: 'test',
     system: true,
     label: {
@@ -45,6 +46,13 @@ export const mockGetLibraryDetailExtendedElement = {
         filter: 'FileFilter',
         searchableFields: 'FileSearchableFields',
         type: 'type'
+    },
+    permissions: {
+        access_library: true,
+        access_record: true,
+        create_record: true,
+        delete_record: true,
+        edit_record: true
     },
     defaultView: mockGetLibraryDetailExtendedDefaultView,
     linkedTrees: []

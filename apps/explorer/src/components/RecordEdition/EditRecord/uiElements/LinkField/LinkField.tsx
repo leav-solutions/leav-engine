@@ -19,6 +19,7 @@ import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute} from '_gq
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {IRecordIdentityWhoAmI, PreviewSize} from '_types/types';
+import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
 import NoValue from '../../shared/NoValue';
 import {APICallStatus, IFormElementProps} from '../../_types';
@@ -85,6 +86,7 @@ function LinkField({
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
+    const {readOnly: isRecordReadOnly} = useRecordEditionContext();
 
     const attribute = element.attribute as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute;
 
@@ -145,7 +147,7 @@ function LinkField({
         }
     };
 
-    const isReadOnly = element.attribute?.system;
+    const isReadOnly = element.attribute?.system || isRecordReadOnly || !attribute.permissions.edit_value;
 
     const settings = element.settings as IFormLinkFieldSettings;
 

@@ -16,6 +16,14 @@ export interface GET_ACTIVE_LIBRARY_activeLib_gql {
     type: string;
 }
 
+export interface GET_ACTIVE_LIBRARY_activeLib_permissions {
+    access_library: boolean;
+    access_record: boolean;
+    create_record: boolean;
+    edit_record: boolean;
+    delete_record: boolean;
+}
+
 export interface GET_ACTIVE_LIBRARY_activeLib {
     id: string;
     name: string;
@@ -23,6 +31,7 @@ export interface GET_ACTIVE_LIBRARY_activeLib {
     attributes: (any | null)[];
     gql: GET_ACTIVE_LIBRARY_activeLib_gql;
     trees: (string | null)[];
+    permissions: GET_ACTIVE_LIBRARY_activeLib_permissions;
 }
 
 export interface GET_ACTIVE_LIBRARY {

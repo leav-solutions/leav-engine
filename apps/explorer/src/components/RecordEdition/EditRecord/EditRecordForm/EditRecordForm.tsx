@@ -15,19 +15,19 @@ import {IRecordIdentityWhoAmI} from '_types/types';
 import EditRecordSkeleton from '../EditRecordSkeleton';
 import convertDependenciesRecordValues from '../helpers/convertDependenciesRecordValues';
 import extractFormElements from '../helpers/extractFormElements';
-import {FormElementsByContainerContext} from '../hooks/useFormElementsByContainerContext';
+import {RecordEditionContext} from '../hooks/useRecordEditionContext';
 import {DeleteValueFunc, SubmitValueFunc} from '../_types';
 import RootContainer from './RootContainer';
 
 interface IEditRecordFormProps {
     form: GET_FORM_forms_list;
     record: IRecordIdentityWhoAmI | null;
-    library: string;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
+    readonly: boolean;
 }
 
-function EditRecordForm({form, record, library, onValueSubmit, onValueDelete}: IEditRecordFormProps): JSX.Element {
+function EditRecordForm({form, record, onValueSubmit, onValueDelete, readonly}: IEditRecordFormProps): JSX.Element {
     const depAttributes = form.dependencyAttributes.map(dependencyAttribute => dependencyAttribute.id);
     const dependenciesValuesQuery = record
         ? getRecordDependenciesValuesQuery(record?.library?.gqlNames?.query, depAttributes)
@@ -55,9 +55,9 @@ function EditRecordForm({form, record, library, onValueSubmit, onValueDelete}: I
     const elementsByContainer = extractFormElements(form, dependenciesValues);
 
     return (
-        <FormElementsByContainerContext.Provider value={elementsByContainer}>
+        <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly}}>
             <RootContainer record={record} onValueSubmit={onValueSubmit} onValueDelete={onValueDelete} />
-        </FormElementsByContainerContext.Provider>
+        </RecordEditionContext.Provider>
     );
 }
 

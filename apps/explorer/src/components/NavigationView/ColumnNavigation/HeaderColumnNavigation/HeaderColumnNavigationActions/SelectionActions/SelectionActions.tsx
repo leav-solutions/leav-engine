@@ -7,7 +7,7 @@ import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMutation';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
-import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
+import {getTreeContentQuery, ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -18,7 +18,6 @@ import {useAppDispatch, useAppSelector} from 'redux/store';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '_gqlTypes/MOVE_TREE_ELEMENT';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
 import {INotification, NotificationChannel, NotificationType, SharedStateSelectionType} from '_types/types';
 
@@ -28,7 +27,7 @@ interface IMessages {
 }
 
 interface ISelectionActionsProps {
-    parent: RecordIdentity_whoAmI;
+    parent: ITreeContentRecordAndChildren;
     depth: number;
 }
 
@@ -88,10 +87,10 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                 errors: {}
             };
 
-            const parentElement = parent?.id
+            const parentElement = parent?.record.id
                 ? {
-                      id: parent.id,
-                      library: parent.library.id
+                      id: parent.record.id,
+                      library: parent.record.whoAmI.library.id
                   }
                 : null;
 
@@ -152,10 +151,10 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             errors: {}
         };
 
-        const parentTo = parent?.id
+        const parentTo = parent?.record.id
             ? {
-                  id: parent.id,
-                  library: parent.library.id
+                  id: parent.record.id,
+                  library: parent.record.whoAmI.library.id
               }
             : null;
 
@@ -260,13 +259,15 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
     const columnIsParent =
         selectionState.selection.type === SharedStateSelectionType.navigation &&
-        selectionState.selection.parent?.id === parent?.id &&
-        selectionState.selection.parent?.library === parent?.library.id;
+        selectionState.selection.parent?.id === parent?.record.id &&
+        selectionState.selection.parent?.library === parent?.record.whoAmI.library.id;
+
+    const canEditChildren = parent ? parent.permissions.edit_children : activeTree.permissions.edit_children;
 
     if (selectionState.selection.selected.length) {
         return (
             <>
-                {!columnIsParent && (
+                {!columnIsParent && canEditChildren && (
                     <StandardBtn
                         icon={<PlusOutlined />}
                         onClick={handleAddElements}
@@ -275,7 +276,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                     />
                 )}
 
-                {searchIsNavigation && !columnIsParent && (
+                {searchIsNavigation && canEditChildren && !columnIsParent && (
                     <StandardBtn
                         onClick={handleMoveEnd}
                         icon={<ArrowDownOutlined />}

@@ -13,9 +13,12 @@ import {
 } from '__mocks__/common/form';
 import Container from './Container';
 
-jest.mock('../../hooks/useFormElementsByContainerContext', () => ({
-    useFormElementsByContainerContext: () => ({
-        container: [mockFormElementContainer, mockFormElementInput, mockFormElementTabs, mockFormElementTextBlock]
+jest.mock('../../hooks/useRecordEditionContext', () => ({
+    useRecordEditionContext: () => ({
+        elements: {
+            container: [mockFormElementContainer, mockFormElementInput, mockFormElementTabs, mockFormElementTextBlock]
+        },
+        readonly: false
     })
 }));
 

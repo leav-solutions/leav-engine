@@ -12,7 +12,7 @@ import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {localizedTranslation} from 'utils';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
-import {IRecordAndChildren} from '../../../../../graphQL/queries/trees/getTreeContentQuery';
+import {ITreeContentRecordAndChildren} from '../../../../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../../../../themingVar';
 import {
     IRecordIdentityWhoAmI,
@@ -77,7 +77,7 @@ const CheckboxWrapper = styled.div<ICheckboxWrapperProps>`
 
 interface IActiveCellNavigationProps {
     isActive: boolean;
-    treeElement: IRecordAndChildren;
+    treeElement: ITreeContentRecordAndChildren;
     depth: number;
 }
 
@@ -92,21 +92,21 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
 
     const parentElement = navigation.path[depth - 1];
     const parent: TreeElementInput = {
-        id: parentElement?.id,
-        library: parentElement?.library.id
+        id: parentElement?.record.id,
+        library: parentElement?.record.whoAmI.library.id
     };
 
     const recordLabel = treeElement.record.whoAmI.label;
 
     const addPath = () => {
-        const newPath = [...navigation.path.slice(0, depth), treeElement.record.whoAmI];
+        const newPath = [...navigation.path.slice(0, depth), treeElement];
 
         dispatch(setNavigationPath(newPath));
 
         if (treeElement.children?.length) {
             dispatch(resetNavigationRecordDetail());
         } else {
-            dispatch(setNavigationRecordDetail(treeElement.record));
+            dispatch(setNavigationRecordDetail(treeElement));
         }
     };
 
@@ -172,7 +172,8 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
 
     const isInPath = navigation.path.some(
         pathPart =>
-            pathPart.id === treeElement.record.whoAmI.id && pathPart.library.id === treeElement.record.whoAmI.library.id
+            pathPart.record.id === treeElement.record.id &&
+            pathPart.record.whoAmI.library.id === treeElement.record.whoAmI.library.id
     );
 
     const isChecked = selectionState.selection.selected.some(

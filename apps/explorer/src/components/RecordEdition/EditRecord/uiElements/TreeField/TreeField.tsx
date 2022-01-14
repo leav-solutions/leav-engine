@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
 import NoValue from '../../shared/NoValue';
 import {APICallStatus, IFormElementProps} from '../../_types';
@@ -60,6 +61,7 @@ function TreeField({
     onValueDelete
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const attribute = element.attribute as GET_FORM_forms_list_elements_elements_attribute_TreeAttribute;
+    const {readOnly: isRecordReadOnly} = useRecordEditionContext();
 
     const [fieldValues, setFieldValues] = useState<IRecordPropertyTree[]>(
         (recordValues[element.settings.attribute] as IRecordPropertyTree[]) ?? []
@@ -74,7 +76,7 @@ function TreeField({
 
     const [errorMessage, setErrorMessage] = useState<string | string[]>();
     const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
-    const isReadOnly = element.attribute?.system;
+    const isReadOnly = element.attribute?.system || isRecordReadOnly || !attribute.permissions.edit_value;
 
     const data = fieldValues.map(val => ({
         ...val,

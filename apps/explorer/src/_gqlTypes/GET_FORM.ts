@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FormElementTypes, AttributeType, AttributeFormat} from './globalTypes';
+import {AttributePermissionsRecord, FormElementTypes, AttributeType, AttributeFormat} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_FORM
@@ -29,6 +29,11 @@ export interface GET_FORM_forms_list_elements_dependencyValue_value {
 export interface GET_FORM_forms_list_elements_dependencyValue {
     attribute: string;
     value: GET_FORM_forms_list_elements_dependencyValue_value;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_permissions {
+    access_attribute: boolean;
+    edit_value: boolean;
 }
 
 export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf {
@@ -62,7 +67,17 @@ export interface GET_FORM_forms_list_elements_elements_attribute_StandardAttribu
     format: AttributeFormat | null;
     system: boolean;
     multiple_values: boolean;
+    /**
+     * Permissions for this attribute.
+     * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
+     */
+    permissions: GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_permissions;
     values_list: GET_FORM_forms_list_elements_elements_attribute_StandardAttribute_values_list | null;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_permissions {
+    access_attribute: boolean;
+    edit_value: boolean;
 }
 
 export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library_gqlNames {
@@ -123,8 +138,18 @@ export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute {
     format: AttributeFormat | null;
     system: boolean;
     multiple_values: boolean;
+    /**
+     * Permissions for this attribute.
+     * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
+     */
+    permissions: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_permissions;
     linked_library: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library | null;
     linkValuesList: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList | null;
+}
+
+export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_permissions {
+    access_attribute: boolean;
+    edit_value: boolean;
 }
 
 export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_linked_tree {
@@ -221,6 +246,11 @@ export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute {
     format: AttributeFormat | null;
     system: boolean;
     multiple_values: boolean;
+    /**
+     * Permissions for this attribute.
+     * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
+     */
+    permissions: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_permissions;
     linked_tree: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_linked_tree | null;
     treeValuesList: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList | null;
 }
@@ -267,4 +297,5 @@ export interface GET_FORM {
 export interface GET_FORMVariables {
     library: string;
     formId: string;
+    record?: AttributePermissionsRecord | null;
 }

@@ -22,7 +22,8 @@ describe('EditRecord', () => {
                     query: getFormQuery,
                     variables: {
                         library: mockRecordWhoAmI.library.id,
-                        formId: 'edition'
+                        formId: 'edition',
+                        record: {id: '123456', library: mockRecordWhoAmI.library.id}
                     }
                 },
                 result: {
@@ -48,6 +49,7 @@ describe('EditRecord', () => {
                 library={mockRecordWhoAmI.library.id}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}
+                readonly={false}
             />,
             {
                 apolloMocks: mocks
