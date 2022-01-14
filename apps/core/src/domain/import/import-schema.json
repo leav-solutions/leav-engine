@@ -21,13 +21,6 @@
         "value"
       ]
     },
-    "matches": {
-      "description": "List of matches to find an element",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/match"
-      }
-    },
     "value": {
       "description": "Single value object to process, either textual value or list of matches to find an element",
       "type": "object",
@@ -38,9 +31,19 @@
               "type": "string"
             },
             {
-              "$ref": "#/definitions/matches"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/match"
+              }
             }
           ]
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Metadata values on linked attributes",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "required": [
@@ -55,18 +58,18 @@
           "type": "string",
           "description": "Attribute key"
         },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/value"
+          }
+        },
         "action": {
           "type": "string",
           "enum": [
             "add",
             "replace"
           ]
-        },
-        "values": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/value"
-          }
         }
       },
       "required": [
@@ -84,7 +87,10 @@
           "description": "Library key"
         },
         "matches": {
-          "$ref": "#/definitions/matches"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/match"
+          }
         },
         "data": {
           "type": "array",
@@ -121,7 +127,10 @@
           "description": "Tree key"
         },
         "matches": {
-          "$ref": "#/definitions/matches"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/match"
+          }
         },
         "parent": {
           "type": "object",
@@ -131,7 +140,10 @@
               "description": "Library key"
             },
             "matches": {
-              "$ref": "#/definitions/matches"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/match"
+              }
             }
           },
           "required": [

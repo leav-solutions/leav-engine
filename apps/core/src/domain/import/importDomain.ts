@@ -63,16 +63,15 @@ export default function ({
                 ctx
             });
 
-            // TODO: Add error handling : record not found?
-
-            value.value = recordsList.list[0].id;
+            value.value = recordsList.list[0]?.id;
         }
 
+        // FIXME: value.value undefined
         await valueDomain.saveValue({
             library,
             recordId,
             attribute: attribute.id,
-            value: {value: value.value, id_value: valueId, version: value.version, metadata: value.metadata},
+            value: {value: value.value, id_value: valueId, metadata: value.metadata, version: value.version},
             ctx
         });
     };
@@ -251,42 +250,26 @@ export default function ({
             const linksElements: Array<{library: string; recordIds: string[]; links: IData[]}> = [];
 
             // elements data
-            await Promise.all(
-                data.elements.map(
-                    e =>
-                        new Promise(async resolve => {
-                            await validateHelper.validateLibrary(e.library, ctx);
+            for (const e of data.elements) {
+                await validateHelper.validateLibrary(e.library, ctx);
 
-                            let recordIds = await _getMatchRecords(e.library, e.matches, ctx);
+                let recordIds = await _getMatchRecords(e.library, e.matches, ctx);
 
-                            recordIds = recordIds.length
-                                ? recordIds
-                                : [(await recordDomain.createRecord(e.library, ctx)).id];
+                recordIds = recordIds.length ? recordIds : [(await recordDomain.createRecord(e.library, ctx)).id];
 
-                            for (const d of e.data) {
-                                await _treatElement(e.library, d, recordIds, ctx);
-                            }
+                for (const d of e.data) {
+                    await _treatElement(e.library, d, recordIds, ctx);
+                }
 
-                            linksElements.push({library: e.library, recordIds, links: e.links});
-
-                            resolve(true);
-                        })
-                )
-            );
+                linksElements.push({library: e.library, recordIds, links: e.links});
+            }
 
             // elements links
-            await Promise.all(
-                linksElements.map(
-                    le =>
-                        new Promise(async resolve => {
-                            for (const link of le.links) {
-                                await _treatElement(le.library, link, le.recordIds, ctx);
-                            }
-
-                            resolve(true);
-                        })
-                )
-            );
+            for (const le of linksElements) {
+                for (const link of le.links) {
+                    await _treatElement(le.library, link, le.recordIds, ctx);
+                }
+            }
 
             // trees
             for (const t of data.trees) {

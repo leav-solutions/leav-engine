@@ -33,7 +33,10 @@
           "attribute": "advanced_link",
           "values": [
             {
-              "value": "1"
+              "value": "1",
+              "metadata": {
+                "simple": "meta_value"
+              }
             }
           ],
           "action": "replace"
