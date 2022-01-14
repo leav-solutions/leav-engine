@@ -39,7 +39,8 @@ describe('Import', () => {
             id: 'advanced_link',
             type: AttributeTypes.ADVANCED_LINK,
             label: 'advanced_link',
-            linkedLibrary: 'users'
+            linkedLibrary: 'users',
+            metadataFields: ['simple']
         });
 
         await gqlSaveLibrary(testLibName, testLibName);
@@ -62,10 +63,10 @@ describe('Import', () => {
     });
 
     test('check record creation: simple, simple_link and advanced_link', async () => {
-        expect.assertions(6);
+        expect.assertions(7);
 
         const res = await makeGraphQlCall(
-            `{ ${testLibNameQuery} { totalCount list { simple simple_link { simple } advanced_link { login }} } }`
+            `{ ${testLibNameQuery} { totalCount list { simple simple_link { simple } advanced_link {login} property(attribute: "advanced_link") { metadata } } } }`
         );
 
         expect(res.data.errors).toBeUndefined();
@@ -78,6 +79,11 @@ describe('Import', () => {
         expect(record.simple).toBe('simple');
         expect(record.simple_link.simple).toBe('solo');
         expect(record.advanced_link.login).toBe('admin');
+        expect(record.property[0].metadata).toEqual(
+            expect.objectContaining({
+                simple: 'meta_value'
+            })
+        );
     });
 
     test('check tree', async () => {
