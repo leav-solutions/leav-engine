@@ -107,6 +107,10 @@ export const mockFormAttribute: GET_FORM_forms_list_elements_elements_attribute 
         enable: false,
         allowFreeEntry: false,
         values: []
+    },
+    permissions: {
+        access_attribute: true,
+        edit_value: true
     }
 };
 

@@ -18,9 +18,10 @@ interface IEditRecordProps {
     library: string;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
+    readonly: boolean;
 }
 
-function EditRecord({record, library, onValueSubmit, onValueDelete}: IEditRecordProps): JSX.Element {
+function EditRecord({record, library, onValueSubmit, onValueDelete, readonly}: IEditRecordProps): JSX.Element {
     const formId = record ? 'edition' : 'creation';
     const {t} = useTranslation();
 
@@ -30,7 +31,8 @@ function EditRecord({record, library, onValueSubmit, onValueDelete}: IEditRecord
     const {loading, error, data} = useQuery<GET_FORM, GET_FORMVariables>(getFormQuery, {
         variables: {
             library,
-            formId
+            formId,
+            record: record?.id ? {id: record.id, library} : null
         }
     });
 
@@ -45,10 +47,10 @@ function EditRecord({record, library, onValueSubmit, onValueDelete}: IEditRecord
     return (
         <EditRecordForm
             record={record}
-            library={library}
             form={data.forms.list[0]}
             onValueSubmit={onValueSubmit}
             onValueDelete={onValueDelete}
+            readonly={readonly}
         />
     );
 }

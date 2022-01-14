@@ -177,6 +177,13 @@ function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): 
                             }
                         }
                     }
+                },
+                Tree: {
+                    fields: {
+                        permissions: {
+                            merge: true
+                        }
+                    }
                 }
             },
             possibleTypes

@@ -46,6 +46,13 @@ describe('Home', () => {
                                     type: 'string',
                                     format: 'string',
                                     label: {}
+                                },
+                                permissions: {
+                                    access_library: true,
+                                    access_record: true,
+                                    edit_record: true,
+                                    create_record: true,
+                                    delete_record: true
                                 }
                             },
                             {
@@ -65,6 +72,13 @@ describe('Home', () => {
                                     type: 'string',
                                     format: 'string',
                                     label: {}
+                                },
+                                permissions: {
+                                    access_library: true,
+                                    access_record: true,
+                                    edit_record: true,
+                                    create_record: true,
+                                    delete_record: true
                                 }
                             }
                         ]
@@ -105,7 +119,12 @@ describe('Home', () => {
                                             label: {fr: 'labelLib', en: 'labelLib'}
                                         }
                                     }
-                                ]
+                                ],
+                                permissions: {
+                                    access_tree: true,
+                                    detach: true,
+                                    edit_children: true
+                                }
                             },
                             {
                                 id: 'idTree2',
@@ -117,7 +136,12 @@ describe('Home', () => {
                                             label: {fr: 'labelLib', en: 'labelLib'}
                                         }
                                     }
-                                ]
+                                ],
+                                permissions: {
+                                    access_tree: true,
+                                    detach: true,
+                                    edit_children: true
+                                }
                             }
                         ]
                     }

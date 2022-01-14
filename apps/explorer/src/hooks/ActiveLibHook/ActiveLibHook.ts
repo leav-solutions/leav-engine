@@ -19,7 +19,14 @@ export const initialActiveLibrary = {
         type: ''
     },
     attributes: [],
-    trees: []
+    trees: [],
+    permissions: {
+        access_library: true,
+        access_record: true,
+        create_record: true,
+        edit_record: true,
+        delete_record: true
+    }
 };
 
 export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibrary: IActiveLibrary) => void] => {
@@ -32,7 +39,10 @@ export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibra
             client.writeQuery({
                 query: getActiveLibrary,
                 data: {
-                    activeLib: newActiveLibrary
+                    activeLib: {
+                        ...newActiveLibrary,
+                        trees: newActiveLibrary.trees.filter(tree => tree.permissions.access_tree)
+                    }
                 }
             });
         },

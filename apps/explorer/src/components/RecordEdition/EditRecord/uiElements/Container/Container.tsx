@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Col, Row} from 'antd';
 import React from 'react';
-import {useFormElementsByContainerContext} from '../../hooks/useFormElementsByContainerContext';
+import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {IFormElementProps} from '../../_types';
 
 function Container({element, record, recordValues, onValueSubmit, onValueDelete}: IFormElementProps<{}>): JSX.Element {
-    const formElements = useFormElementsByContainerContext();
+    const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
 
     return (

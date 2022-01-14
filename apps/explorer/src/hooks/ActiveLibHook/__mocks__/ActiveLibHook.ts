@@ -14,7 +14,14 @@ export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibra
             query: 'TestLib',
             type: 'testLib'
         },
-        trees: []
+        trees: [],
+        permissions: {
+            access_library: true,
+            access_record: true,
+            create_record: true,
+            edit_record: true,
+            delete_record: true
+        }
     };
 
     const updateActiveLibrary = jest.fn();

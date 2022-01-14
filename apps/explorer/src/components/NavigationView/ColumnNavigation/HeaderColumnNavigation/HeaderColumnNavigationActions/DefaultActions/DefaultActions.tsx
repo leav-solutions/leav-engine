@@ -19,6 +19,7 @@ import SearchModal from 'components/SearchModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
+import {ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useState} from 'react';
@@ -36,7 +37,7 @@ import {INotification, ISharedStateSelectionSearch, NotificationChannel, Notific
 
 interface IDefaultActionsProps {
     isDetail: boolean;
-    parent?: RecordIdentity_whoAmI;
+    parent?: ITreeContentRecordAndChildren;
     activeTree: IActiveTree;
 }
 
@@ -76,10 +77,10 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 errors: {}
             };
 
-            const parentElement = parent?.id
+            const parentElement = parent?.record.id
                 ? {
-                      id: parent.id,
-                      library: parent.library.id
+                      id: parent.record.id,
+                      library: parent.record.whoAmI.library.id
                   }
                 : null;
 
@@ -153,7 +154,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
     };
 
     const _handleClickDetails = () => {
-        dispatch(setNavigationRecordDetail({id: parent.id, whoAmI: parent}));
+        dispatch(setNavigationRecordDetail(parent));
     };
 
     const _handleAfterCreateRecord = async (newRecord: RecordIdentity_whoAmI) => {
@@ -168,8 +169,8 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                     },
                     parent: parent
                         ? {
-                              id: parent.id,
-                              library: parent.library.id
+                              id: parent.record.id,
+                              library: parent.record.whoAmI.library.id
                           }
                         : null
                 }
@@ -217,11 +218,11 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
 
     const _handleClickDetach = async () => {
         const element = {
-            id: parent.id,
-            library: parent.library.id
+            id: parent.record.id,
+            library: parent.record.whoAmI.library.id
         };
 
-        const label = parent.label;
+        const label = parent.record.whoAmI.label;
 
         let notification: INotification;
         try {
@@ -257,6 +258,10 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
     const _handleClickOrder = () => message.warn(t('global.feature_not_available'));
 
     const availableLibraries = treeLibraries?.trees.list[0].libraries ?? [];
+
+    const canEditChildren = parent ? parent.permissions.edit_children : activeTree.permissions.edit_children;
+    const canDetach = !!parent && parent.permissions.detach;
+
     return (
         <>
             {searchModalVisible && (
@@ -270,8 +275,8 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
             {editRecordModalVisible && (
                 <EditRecordModal
                     open={editRecordModalVisible}
-                    library={parent.library.id}
-                    record={parent}
+                    library={parent.record.whoAmI.library.id}
+                    record={parent.record.whoAmI}
                     onClose={_handleCloseEditRecordModal}
                 />
             )}
@@ -286,53 +291,59 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
             )}
             {!selectionStat.selection.selected.length && (
                 <>
-                    {availableLibraries.length > 1 ? (
+                    {canEditChildren && (
                         <>
-                            <Dropdown
-                                overlay={
-                                    <Menu>
-                                        {treeLibraries?.trees.list[0].libraries.map(library => (
-                                            <Menu.Item
-                                                key={library.library.id}
-                                                onClick={() => showSearch(library.library.id)}
-                                            >
-                                                {localizedTranslation(library.library.label, lang)}
-                                            </Menu.Item>
-                                        ))}
-                                    </Menu>
-                                }
-                            >
-                                <StandardBtn icon={<PlusCircleOutlined />} />
-                            </Dropdown>
-                            <Dropdown
-                                overlay={
-                                    <Menu>
-                                        {treeLibraries?.trees.list[0].libraries.map(library => (
-                                            <Menu.Item
-                                                key={library.library.id}
-                                                onClick={_handleOpenCreateRecordModal(library.library.id)}
-                                            >
-                                                {localizedTranslation(library.library.label, lang)}
-                                            </Menu.Item>
-                                        ))}
-                                    </Menu>
-                                }
-                            >
-                                <StandardBtn icon={<PlusOutlined />} />
-                            </Dropdown>
-                        </>
-                    ) : (
-                        <>
-                            <StandardBtn
-                                icon={<PlusCircleOutlined />}
-                                aria-label="add-by-search"
-                                onClick={() => showSearch(availableLibraries[0]?.library.id ?? null)}
-                            />
-                            <StandardBtn
-                                icon={<PlusOutlined />}
-                                aria-label="add-by-creation"
-                                onClick={_handleOpenCreateRecordModal(availableLibraries[0]?.library.id ?? null)}
-                            />
+                            {availableLibraries.length > 1 ? (
+                                <>
+                                    <Dropdown // Add by search
+                                        overlay={
+                                            <Menu>
+                                                {treeLibraries?.trees.list[0].libraries.map(library => (
+                                                    <Menu.Item
+                                                        key={library.library.id}
+                                                        onClick={() => showSearch(library.library.id)}
+                                                    >
+                                                        {localizedTranslation(library.library.label, lang)}
+                                                    </Menu.Item>
+                                                ))}
+                                            </Menu>
+                                        }
+                                    >
+                                        <StandardBtn icon={<PlusCircleOutlined />} />
+                                    </Dropdown>
+                                    <Dropdown // Add by creation
+                                        overlay={
+                                            <Menu>
+                                                {treeLibraries?.trees.list[0].libraries.map(library => (
+                                                    <Menu.Item
+                                                        key={library.library.id}
+                                                        onClick={_handleOpenCreateRecordModal(library.library.id)}
+                                                    >
+                                                        {localizedTranslation(library.library.label, lang)}
+                                                    </Menu.Item>
+                                                ))}
+                                            </Menu>
+                                        }
+                                    >
+                                        <StandardBtn icon={<PlusOutlined />} />
+                                    </Dropdown>
+                                </>
+                            ) : (
+                                <>
+                                    <StandardBtn
+                                        icon={<PlusCircleOutlined />}
+                                        aria-label="add-by-search"
+                                        onClick={() => showSearch(availableLibraries[0]?.library.id ?? null)}
+                                    />
+                                    <StandardBtn
+                                        icon={<PlusOutlined />}
+                                        aria-label="add-by-creation"
+                                        onClick={_handleOpenCreateRecordModal(
+                                            availableLibraries[0]?.library.id ?? null
+                                        )}
+                                    />
+                                </>
+                            )}
                         </>
                     )}
 
@@ -359,14 +370,18 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                                     <Menu.Item icon={<SearchOutlined />} onClick={_handleClickClassifiedIn}>
                                         {t('navigation.actions.classified_in')}
                                     </Menu.Item>
-                                    <Menu.Divider />
-                                    <Menu.Item icon={<OrderedListOutlined />} onClick={_handleClickOrder}>
-                                        {t('navigation.actions.order')}
-                                    </Menu.Item>
-                                    {!!parent && (
-                                        <Menu.Item icon={<DeleteOutlined />} onClick={_handleClickDetach}>
-                                            {t('navigation.actions.detach')}
-                                        </Menu.Item>
+                                    {canEditChildren && (
+                                        <>
+                                            <Menu.Divider />
+                                            <Menu.Item icon={<OrderedListOutlined />} onClick={_handleClickOrder}>
+                                                {t('navigation.actions.order')}
+                                            </Menu.Item>
+                                            {canDetach && (
+                                                <Menu.Item icon={<DeleteOutlined />} onClick={_handleClickDetach}>
+                                                    {t('navigation.actions.detach')}
+                                                </Menu.Item>
+                                            )}
+                                        </>
                                     )}
                                 </Menu>
                             }

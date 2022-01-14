@@ -6,16 +6,15 @@ import {useMutation, useQuery} from '@apollo/client';
 import {PageHeader, Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
-import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
+import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import {default as React, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import {getTreeLink, localizedTranslation} from 'utils';
-import {GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables} from '_gqlTypes/GET_TREE_LIST_QUERY';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import {IBaseNotification, NotificationType} from '../../../_types/types';
@@ -37,7 +36,7 @@ function TreeList(): JSX.Element {
 
     const dispatch = useAppDispatch();
 
-    const treeListQuery = useQuery<GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables>(getTreeListQuery);
+    const treeListQuery = useGetTreesListQuery();
     const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_TREES_KEY]}
     });

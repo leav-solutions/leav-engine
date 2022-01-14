@@ -10,6 +10,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import standardFieldReducer, {
@@ -34,6 +35,7 @@ function StandardField({
     onValueDelete
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
+    const {readOnly: isRecordReadOnly} = useRecordEditionContext();
 
     const fieldValues = (recordValues[element.settings.attribute] as IRecordPropertyStandard[]) ?? [];
     const isMultipleValues = element.attribute.multiple_values;
@@ -67,7 +69,7 @@ function StandardField({
         attribute,
         record,
         formElement: element,
-        isReadOnly: attribute?.system,
+        isReadOnly: attribute?.system || isRecordReadOnly || !attribute.permissions.edit_value,
         values: initialValues
     };
 

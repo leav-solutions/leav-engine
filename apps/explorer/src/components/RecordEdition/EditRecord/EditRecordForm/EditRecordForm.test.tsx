@@ -50,9 +50,9 @@ describe('EditRecordForm', () => {
                 <EditRecordForm
                     form={mockForm}
                     record={mockRecordWhoAmI}
-                    library="test_lib"
                     onValueDelete={jest.fn()}
                     onValueSubmit={jest.fn()}
+                    readonly={false}
                 />
             </MockedProviderWithFragments>
         );
@@ -100,9 +100,9 @@ describe('EditRecordForm', () => {
                 <EditRecordForm
                     form={mockFormWithDeps}
                     record={mockRecordWhoAmI}
-                    library="test_lib"
                     onValueDelete={jest.fn()}
                     onValueSubmit={jest.fn()}
+                    readonly={false}
                 />
             </MockedProviderWithFragments>
         );

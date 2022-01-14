@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IUseCanEditRecordHook} from 'hooks/useCanEditRecord/useCanEditRecord';
 import React from 'react';
-import {act, fireEvent, render, screen} from '_tests/testUtils';
+import {act, fireEvent, render, screen, waitForElement} from '_tests/testUtils';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import EditRecordModal from './EditRecordModal';
 
@@ -11,6 +12,10 @@ jest.mock('../EditRecord', () => {
         return <div>EditRecord</div>;
     };
 });
+
+jest.mock('hooks/useCanEditRecord/useCanEditRecord', () => ({
+    useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false})
+}));
 
 describe('EditRecordModal', () => {
     test('Display modal', async () => {
@@ -60,6 +65,8 @@ describe('EditRecordModal', () => {
                     <EditRecordModal library={mockRecordWhoAmI.library.id} record={null} open onClose={_handleClose} />
                 );
             });
+
+            await waitForElement(() => screen.getByText('EditRecord'));
 
             expect(screen.getByText(/new_record/)).toBeVisible();
             expect(screen.getByText('EditRecord')).toBeVisible();

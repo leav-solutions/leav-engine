@@ -393,3 +393,7 @@ export interface IDateRangeValue {
 }
 
 export type ValueOf<T> = T[keyof T];
+
+export interface IPermissions {
+    [key: string]: boolean;
+}

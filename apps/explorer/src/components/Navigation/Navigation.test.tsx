@@ -4,15 +4,17 @@
 import {MockedResponse} from '@apollo/client/testing';
 import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import React from 'react';
-import {act, render, screen, within} from '_tests/testUtils';
+import {act, render, screen, waitForElement, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
 import {mockInitialState} from '__mocks__/common/mockRedux/mockInitialState';
 import {mockRecord} from '__mocks__/common/record';
+import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import Navigation from './Navigation';
 
 jest.mock('react-router-dom', () => ({
-    useParams: jest.fn(() => ({treeId: 'TreeId'}))
+    useParams: jest.fn(() => ({treeId: 'TreeId'})),
+    useHistory: jest.fn()
 }));
 
 jest.mock('../../hooks/ActiveTreeHook/ActiveTreeHook', () => ({
@@ -20,7 +22,8 @@ jest.mock('../../hooks/ActiveTreeHook/ActiveTreeHook', () => ({
         {
             id: 'my_tree',
             libraries: ['my_lib'],
-            label: 'My Tree Label'
+            label: 'My Tree Label',
+            permissions: {...mockTreeNodePermissions}
         },
         jest.fn()
     ]
@@ -65,7 +68,8 @@ describe('Navigation', () => {
                                         __typename: 'Library'
                                     }
                                 }
-                            ]
+                            ],
+                            permissions: mockTreeNodePermissions
                         }
                     ]
                 }
@@ -91,7 +95,8 @@ describe('Navigation', () => {
                                 __typename: 'RecordLib',
                                 whoAmI: {...mockRecordWithTypenames, id: '11', label: 'child-1-1'}
                             },
-                            children: []
+                            children: [],
+                            permissions: mockTreeNodePermissions
                         },
                         {
                             __typename: 'TreeNode',
@@ -100,9 +105,11 @@ describe('Navigation', () => {
                                 __typename: 'RecordLib',
                                 whoAmI: {...mockRecordWithTypenames, id: '12', label: 'child-1-2'}
                             },
-                            children: []
+                            children: [],
+                            permissions: mockTreeNodePermissions
                         }
-                    ]
+                    ],
+                    permissions: mockTreeNodePermissions
                 },
                 {
                     __typename: 'TreeNode',
@@ -119,7 +126,8 @@ describe('Navigation', () => {
                                 __typename: 'RecordLib',
                                 whoAmI: {...mockRecordWithTypenames, id: '21', label: 'child-2-1'}
                             },
-                            children: []
+                            children: [],
+                            permissions: mockTreeNodePermissions
                         },
                         {
                             __typename: 'TreeNode',
@@ -128,9 +136,11 @@ describe('Navigation', () => {
                                 __typename: 'RecordLib',
                                 whoAmI: {...mockRecordWithTypenames, id: '22', label: 'child-2-2'}
                             },
-                            children: []
+                            children: [],
+                            permissions: mockTreeNodePermissions
                         }
-                    ]
+                    ],
+                    permissions: mockTreeNodePermissions
                 }
             ]
         }
@@ -146,7 +156,8 @@ describe('Navigation', () => {
                         __typename: 'RecordLib',
                         whoAmI: {...mockRecordWithTypenames, id: '1', label: 'first-child'}
                     },
-                    children: []
+                    children: [],
+                    permissions: mockTreeNodePermissions
                 }
             ]
         }
@@ -189,6 +200,8 @@ describe('Navigation', () => {
             render(<Navigation tree="my_tree" />, renderOptions);
         });
 
+        await waitForElement(() => screen.getAllByTestId('navigation-column'));
+
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];
 
@@ -206,12 +219,19 @@ describe('Navigation', () => {
                     navigation: {
                         ...mockInitialState.navigation,
                         activeTree: 'my_tree',
-                        path: [{...mockRecordWithTypenames, id: '1', label: 'first-child'}],
+                        path: [
+                            {
+                                record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
+                                permissions: mockTreeNodePermissions,
+                                children: []
+                            }
+                        ],
                         isLoading: false
                     }
                 }
             });
         });
+        await waitForElement(() => screen.getAllByTestId('navigation-column'));
 
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(2);
 
@@ -255,9 +275,19 @@ describe('Navigation', () => {
                     navigation: {
                         ...mockInitialState.navigation,
                         activeTree: 'my_tree',
-                        path: [{...mockRecordWithTypenames, id: '1', label: 'first-child'}],
+                        path: [
+                            {
+                                record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
+                                permissions: mockTreeNodePermissions,
+                                children: []
+                            }
+                        ],
                         isLoading: false,
-                        recordDetail: {id: '1', whoAmI: {...mockRecordWithTypenames, id: '1', label: 'first-child'}}
+                        recordDetail: {
+                            record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
+                            permissions: mockTreeNodePermissions,
+                            children: []
+                        }
                     }
                 }
             });
@@ -272,6 +302,7 @@ describe('Navigation', () => {
             render(<Navigation tree="my_tree" />, renderOptions);
         });
 
+        await waitForElement(() => screen.getAllByTestId('navigation-column'));
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];
 
@@ -302,6 +333,8 @@ describe('Navigation', () => {
             });
         });
 
+        await waitForElement(() => screen.getAllByTestId('navigation-column'));
+
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];
 
@@ -319,7 +352,13 @@ describe('Navigation', () => {
                     navigation: {
                         ...mockInitialState.navigation,
                         activeTree: 'my_tree',
-                        path: [{...mockRecordWithTypenames, id: '1', label: 'first-child'}],
+                        path: [
+                            {
+                                record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
+                                permissions: mockTreeNodePermissions,
+                                children: []
+                            }
+                        ],
                         isLoading: false
                     },
                     selection: {
@@ -340,6 +379,7 @@ describe('Navigation', () => {
             });
         });
 
+        await waitForElement(() => screen.getAllByTestId('navigation-column'));
         const childColHeader = screen.getAllByRole('banner')[1];
 
         expect(within(childColHeader).getByText('1')).toBeInTheDocument(); // Selection count
@@ -358,7 +398,13 @@ describe('Navigation', () => {
                     navigation: {
                         ...mockInitialState.navigation,
                         activeTree: 'my_tree',
-                        path: [{...mockRecordWithTypenames, id: '1', label: 'first-child'}],
+                        path: [
+                            {
+                                record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
+                                permissions: mockTreeNodePermissions,
+                                children: []
+                            }
+                        ],
                         isLoading: false
                     },
                     selection: {
@@ -379,6 +425,7 @@ describe('Navigation', () => {
             });
         });
 
+        await waitForElement(() => screen.getAllByTestId('navigation-column'));
         const childColHeader = screen.getAllByRole('banner')[1];
 
         expect(within(childColHeader).getByText('1')).toBeInTheDocument(); // Selection count

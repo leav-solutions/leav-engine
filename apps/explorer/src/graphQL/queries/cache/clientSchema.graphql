@@ -4,19 +4,34 @@ type ActiveLibraryGqlNames {
     type: String!
 }
 
+type ActiveLibraryPermissions {
+    access_library: Boolean!,
+    access_record: Boolean!,
+    create_record: Boolean!,
+    edit_record: Boolean!,
+    delete_record: Boolean!
+}
+
 type ActiveLibrary {
     id: String!,
     name: String!,
     filter: String!,
     attributes: [Any]!,
     gql: ActiveLibraryGqlNames!,
-    trees: [String]!
+    trees: [String]!,
+    permissions: ActiveLibraryPermissions!
+}
+
+type ActiveTreePermissions {
+    access_tree: Boolean!,
+    edit_children: Boolean!,
 }
 
 type ActiveTree {
     id: String!,
     libraries: [ActiveTreeLibraries!]!,
-    label: String!
+    label: String!,
+    permissions: ActiveTreePermissions!
 }
 
 type ActiveTreeLibraries {

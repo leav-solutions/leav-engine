@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useMutation, useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import {SelectionModeContext} from 'context';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
@@ -107,6 +108,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
     const SELECTED_VIEW_KEY = 'selected_view_' + library.id;
 
+    const hasAccess = library.permissions.access_library;
     const attributesFromQuery: IAttribute[] = library.attributes.reduce((acc: IAttribute[], attribute) => {
         if (
             (attribute.format === null ||
@@ -205,6 +207,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         fetchPolicy: 'no-cache',
         variables: {keys: [SELECTED_VIEW_KEY]},
+        skip: !hasAccess,
         onCompleted: d => {
             const viewId = d.userData?.data[SELECTED_VIEW_KEY] || libraryDefaultView.id;
 
@@ -277,7 +280,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     });
 
     useEffect(() => {
-        if (!searchState.view.reload) {
+        if (!searchState.view.reload || !hasAccess) {
             return;
         }
 
@@ -392,10 +395,15 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         searchState.sort,
         lang,
         searchDispatch,
-        library
+        library,
+        hasAccess
     ]);
 
     useEffect(() => {
+        if (!hasAccess) {
+            return;
+        }
+
         if (searchState.loading) {
             getRecords({
                 variables: {
@@ -416,11 +424,16 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         searchState.sort,
         searchState.loading,
         library.gqlNames.query,
-        getRecords
+        getRecords,
+        hasAccess
     ]);
 
     if (getRecordsError) {
         return <ErrorDisplay message={getRecordsError.message} />;
+    }
+
+    if (!hasAccess) {
+        return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} />;
     }
 
     // if some elements are selected and the selection type is search, show the selection Menu

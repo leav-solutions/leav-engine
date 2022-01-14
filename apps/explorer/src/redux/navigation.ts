@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {INavigationState} from './stateType';
 
 export const navigationInitialState: INavigationState = {
@@ -22,13 +22,13 @@ const navigationSlice = createSlice({
                 state.path = [];
             }
         },
-        setNavigationPath: (state, action: PayloadAction<RecordIdentity_whoAmI[]>) => {
+        setNavigationPath: (state, action: PayloadAction<ITreeContentRecordAndChildren[]>) => {
             state.path = action.payload;
         },
         setNavigationIsLoading: (state, action: PayloadAction<boolean>) => {
             state.isLoading = action.payload;
         },
-        setNavigationRecordDetail: (state, action: PayloadAction<RecordIdentity>) => {
+        setNavigationRecordDetail: (state, action: PayloadAction<ITreeContentRecordAndChildren>) => {
             state.recordDetail = action.payload;
         },
         resetNavigationRecordDetail: state => {

@@ -3,17 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 
-export const getLibrariesListQuery = gql`
-    query GET_LIBRARIES_LIST {
-        libraries {
+export const getLibraryPermissionsQuery = gql`
+    query GET_LIBRARY_PERMISSIONS($libraryId: ID!) {
+        libraries(filters: {id: $libraryId}) {
             list {
-                id
-                label
-                gqlNames {
-                    query
-                    filter
-                    searchableFields
-                }
                 permissions {
                     access_library
                     access_record

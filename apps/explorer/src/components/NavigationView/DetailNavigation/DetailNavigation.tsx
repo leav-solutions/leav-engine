@@ -67,11 +67,11 @@ const DetailNavigation = (): JSX.Element => {
         });
     }, [detailRef]);
 
-    const recordData = navigation.recordDetail.whoAmI;
+    const recordData = navigation.recordDetail.record;
 
-    const label = recordData.label ? recordData.label : t('navigation.list.info.no-label');
+    const label = recordData.whoAmI.label ? recordData.whoAmI.label : t('navigation.list.info.no-label');
 
-    const img = recordData.preview?.big;
+    const img = recordData.whoAmI.preview?.big;
 
     return (
         <Detail ref={detailRef} data-testid="details-column">
@@ -80,14 +80,18 @@ const DetailNavigation = (): JSX.Element => {
                     depth={navigation.path.length}
                     isActive={true}
                     isDetail={true}
-                    treeElement={{record: navigation.recordDetail, children: []}}
+                    treeElement={{
+                        record: recordData,
+                        children: [],
+                        permissions: navigation.recordDetail.permissions
+                    }}
                 />
             </div>
             <PreviewWrapper>
                 <RecordPreview
                     key={recordData.id}
-                    label={recordData.label ? label : recordData.id}
-                    color={recordData.color}
+                    label={recordData.whoAmI.label ? label : recordData.id}
+                    color={recordData.whoAmI.color}
                     image={img && getFileUrl(img)}
                     tile
                     style={{maxHeight: '20rem', maxWidth: '100%', height: '100%'}}

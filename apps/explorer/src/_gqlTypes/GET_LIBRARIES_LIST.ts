@@ -16,10 +16,19 @@ export interface GET_LIBRARIES_LIST_libraries_list_gqlNames {
     searchableFields: string;
 }
 
+export interface GET_LIBRARIES_LIST_libraries_list_permissions {
+    access_library: boolean;
+    access_record: boolean;
+    create_record: boolean;
+    edit_record: boolean;
+    delete_record: boolean;
+}
+
 export interface GET_LIBRARIES_LIST_libraries_list {
     id: string;
     label: any | null;
     gqlNames: GET_LIBRARIES_LIST_libraries_list_gqlNames;
+    permissions: GET_LIBRARIES_LIST_libraries_list_permissions | null;
 }
 
 export interface GET_LIBRARIES_LIST_libraries {

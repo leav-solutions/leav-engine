@@ -6,7 +6,7 @@ import recordIdentityFragment from '../records/recordIdentityFragment';
 
 export const getFormQuery = gql`
     ${recordIdentityFragment}
-    query GET_FORM($library: ID!, $formId: ID!) {
+    query GET_FORM($library: ID!, $formId: ID!, $record: AttributePermissionsRecord) {
         forms(filters: {library: $library, id: $formId}) {
             list {
                 id
@@ -38,6 +38,10 @@ export const getFormQuery = gql`
                             format
                             system
                             multiple_values
+                            permissions(record: $record) {
+                                access_attribute
+                                edit_value
+                            }
 
                             ... on StandardAttribute {
                                 values_list {
