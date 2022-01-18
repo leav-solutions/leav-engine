@@ -55,6 +55,14 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             label: null,
             color: null,
             preview: null
+        },
+        permissions: {
+            admin_library: true,
+            access_library: true,
+            access_record: true,
+            create_record: true,
+            edit_record: true,
+            delete_record: true
         }
     };
 

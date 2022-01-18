@@ -12,7 +12,6 @@ import SettingsEdition from './SettingsEdition';
 
 function FormLayout(): JSX.Element {
     const {state, dispatch} = useFormBuilderReducer();
-    const {openSettings, elementInSettings} = state;
 
     const rootContainer: IFormElement = {
         id: defaultContainerId,

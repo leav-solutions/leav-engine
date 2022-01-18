@@ -36,5 +36,14 @@ export const mockLibrary = {
             versions_conf: null,
             __typename: 'Attribute'
         }
-    ]
+    ],
+    permissions: {
+        __typename: 'LibraryPermissions',
+        admin_library: true,
+        access_library: true,
+        access_record: true,
+        create_record: true,
+        edit_record: true,
+        delete_record: true
+    }
 };

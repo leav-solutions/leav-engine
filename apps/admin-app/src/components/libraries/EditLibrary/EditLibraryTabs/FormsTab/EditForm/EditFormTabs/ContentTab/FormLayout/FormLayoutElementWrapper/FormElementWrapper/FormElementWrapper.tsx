@@ -11,6 +11,7 @@ import {getAttributesQuery} from '../../../../../../../../../../../queries/attri
 import {localizedLabel} from '../../../../../../../../../../../utils';
 import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import Loading from '../../../../../../../../../../shared/Loading';
+import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {FormBuilderActionTypes, IFormBuilderStateAndDispatch} from '../../../formBuilderReducer/formBuilderReducer';
 import {DraggableElementTypes, IFormBuilderDragObject, IFormElement, IFormElementPos} from '../../../_types';
 
@@ -47,11 +48,11 @@ const ElementHandle = styled.div`
     cursor: move;
 `;
 
-const UiElementWrapper = styled.div<{isHerited: boolean}>`
+const UiElementWrapper = styled.div<{isHerited: boolean; isReadOnly: boolean}>`
     width: 100%;
     text-align: left;
     padding: 0.5em;
-    border-left: ${props => (props.isHerited ? 'none' : '1px solid #aaa')};
+    border-left: ${props => (props.isHerited || props.isReadOnly ? 'none' : '1px solid #aaa')};
     display: flex;
 
     & > div {
@@ -62,6 +63,7 @@ const UiElementWrapper = styled.div<{isHerited: boolean}>`
 function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProps): JSX.Element {
     const {lang} = useLang();
     const dropRef = useRef<HTMLDivElement>(null);
+    const {readonly} = useEditFormContext();
 
     // Load attribute data
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
@@ -84,7 +86,7 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
         collect: monitor => ({
             isOver: !!monitor.isOver() && element.uiElement.canDrop(monitor.getItem())
         }),
-        canDrop: dragItem => element.uiElement.canDrop(dragItem.element),
+        canDrop: dragItem => element.uiElement.canDrop(dragItem.element) && !readonly,
         hover: (item, monitor) => {
             const isOverCurrent = monitor.isOver({shallow: true});
             if (item.element.id === element.id || !isOverCurrent) {
@@ -164,6 +166,7 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
         collect: monitor => ({
             isDragging: !!monitor.isDragging()
         }),
+        canDrag: !readonly,
         end: (dropResult, monitor) => {
             if (!monitor.didDrop()) {
                 // Move element back to its origin
@@ -224,12 +227,12 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
                     }
                 </HoverBtnGroup>
             )}
-            {!element.herited && (
+            {!element.herited && !readonly && (
                 <ElementHandle ref={drag}>
                     <Icon name="bars" fitted />
                 </ElementHandle>
             )}
-            <UiElementWrapper isHerited={!!element.herited}>
+            <UiElementWrapper isHerited={!!element.herited} isReadOnly={readonly}>
                 <element.uiElement.component.type
                     elementData={element}
                     settings={fieldSettings}

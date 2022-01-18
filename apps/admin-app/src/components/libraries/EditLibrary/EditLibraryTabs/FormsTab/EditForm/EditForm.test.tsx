@@ -42,7 +42,7 @@ describe('EditForm', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <EditForm formId="test_form" libraryId="test_lib" />
+                    <EditForm formId="test_form" libraryId="test_lib" readonly={false} />
                 </MockedProviderWithFragments>
             );
         });
@@ -74,7 +74,7 @@ describe('EditForm', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
-                    <EditForm formId="test_form" libraryId="test_lib" />
+                    <EditForm formId="test_form" libraryId="test_lib" readonly={false} />
                 </MockedProviderWithFragments>
             );
         });
@@ -123,7 +123,7 @@ describe('EditForm', () => {
         await act(async () => {
             comp = mount(
                 <MockedProviderWithFragments mocks={mocks}>
-                    <EditForm formId={null} libraryId="test_lib" />
+                    <EditForm formId={null} libraryId="test_lib" readonly={false} />
                 </MockedProviderWithFragments>
             );
         });

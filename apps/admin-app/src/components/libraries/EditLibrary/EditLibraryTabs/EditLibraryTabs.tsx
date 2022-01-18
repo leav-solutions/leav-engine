@@ -5,9 +5,7 @@ import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
-import useUserData from '../../../../hooks/useUserData';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
-import {PermissionsActions} from '../../../../_gqlTypes/globalTypes';
 import AttributesTab from './AttributesTab';
 import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';
@@ -24,7 +22,6 @@ interface IEditLibraryTabsProps {
 /* tslint:disable-next-line:variable-name */
 const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTabsProps): JSX.Element => {
     const {t} = useTranslation();
-    const {permissions} = useUserData();
     const isCreationMode = library === null;
 
     const label = isCreationMode ? t('libraries.new') : library!.label?.fr || library!.label?.en || library!.id;
@@ -59,26 +56,26 @@ const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTab
             render: () => {
                 return (
                     <Tab.Pane key="attributes" className="grow">
-                        <AttributesTab library={library} readOnly={readOnly} />
+                        <AttributesTab library={library} readonly={readOnly} />
                     </Tab.Pane>
                 );
             }
         },
         {
             key: 'forms',
-            mustBeDisplayed: !isCreationMode && permissions[PermissionsActions.app_access_forms],
+            mustBeDisplayed: !isCreationMode,
             menuItem: t('forms.title'),
             render: () => {
                 return (
                     <Tab.Pane key="forms" className="height100" style={{padding: '0', border: '0px none'}}>
-                        <FormsTab libraryId={library!.id} history={history} />
+                        <FormsTab libraryId={library!.id} readonly={readOnly} />
                     </Tab.Pane>
                 );
             }
         },
         {
             key: 'navigator',
-            mustBeDisplayed: !isCreationMode,
+            mustBeDisplayed: !isCreationMode && library.permissions.access_library,
             menuItem: t('navigator.title'),
             render: () => {
                 return (

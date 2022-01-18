@@ -9,7 +9,8 @@ import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutat
 import {SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {mockFormFull} from '../../../../../../../../__mocks__/forms';
 import MockedProviderWithFragments from '../../../../../../../../__mocks__/MockedProviderWithFragments';
-import {formData, formDataWithTypename} from '../ContentTab/formBuilderReducer/_fixtures/fixtures';
+import {EditFormContext} from '../../hooks/useEditFormContext';
+import {formDataWithTypename} from '../ContentTab/formBuilderReducer/_fixtures/fixtures';
 import InfosTab from './InfosTab';
 
 jest.mock('./InfosForm', () => {
@@ -34,7 +35,7 @@ describe('InfosTab', () => {
     };
 
     test('Render form', async () => {
-        const comp = shallow(<InfosTab library="ubs" form={formData} />);
+        const comp = shallow(<InfosTab />);
 
         expect(comp.find('InfosForm')).toHaveLength(1);
     });
@@ -59,7 +60,9 @@ describe('InfosTab', () => {
         ];
         const comp = mount(
             <MockedProviderWithFragments mocks={mocks} addTypename>
-                <InfosTab library="test_lib" form={mockFormFull} readonly={false} />
+                <EditFormContext.Provider value={{form: mockFormFull, library: 'test_lib', readonly: false}}>
+                    <InfosTab />
+                </EditFormContext.Provider>
             </MockedProviderWithFragments>
         );
         const submitFunc: any = comp.find('InfosForm').prop('onSubmit');

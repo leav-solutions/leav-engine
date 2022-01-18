@@ -99,6 +99,7 @@ export type SettingsOnChangeFunc = (name: string, value: string | boolean) => vo
 
 export interface ISettingsFieldCommonProps {
     onChange: SettingsOnChangeFunc;
+    disabled: boolean;
     fieldName: string;
 }
 

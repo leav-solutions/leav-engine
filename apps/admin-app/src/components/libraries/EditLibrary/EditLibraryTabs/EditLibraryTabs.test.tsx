@@ -4,8 +4,8 @@
 import {shallow} from 'enzyme';
 import {History, Location} from 'history';
 import React from 'react';
+import {mockLibrary} from '__mocks__/libraries';
 import EditLibraryTabs from '.';
-import useUserData from '../../../../hooks/useUserData';
 import {
     GET_LIB_BY_ID_libraries_list,
     GET_LIB_BY_ID_libraries_list_attributes
@@ -43,6 +43,7 @@ describe('EditLibraryForm', () => {
     ];
 
     const library: Mockify<GET_LIB_BY_ID_libraries_list> = {
+        ...mockLibrary,
         id: 'test',
         label: {fr: 'Test', en: null},
         system: false,
@@ -107,28 +108,5 @@ describe('EditLibraryForm', () => {
         const panes: any[] = comp.find('Tab').prop('panes');
 
         expect(panes.findIndex(p => p.key === tabName)).toBe(activeIndex);
-    });
-
-    test('If not allowed, do not display forms tab', async () => {
-        (useUserData as jest.Mock).mockImplementation(() => ({
-            id: 1,
-            name: 'Test',
-            permissions: {app_access_forms: false}
-        }));
-
-        const comp = shallow(
-            <EditLibraryTabs
-                library={library as GET_LIB_BY_ID_libraries_list}
-                readOnly={false}
-                history={mockHistory as History}
-            />
-        );
-
-        const panes = comp.find('Tab').prop('panes');
-
-        expect(Array.isArray(panes)).toBe(true);
-        if (Array.isArray(panes)) {
-            expect(panes.filter(p => p.key === 'forms')).toHaveLength(0);
-        }
     });
 });

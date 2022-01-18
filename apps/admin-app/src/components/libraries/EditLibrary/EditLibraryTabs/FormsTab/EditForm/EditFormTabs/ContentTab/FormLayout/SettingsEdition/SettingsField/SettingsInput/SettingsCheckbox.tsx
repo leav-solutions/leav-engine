@@ -6,7 +6,7 @@ import {Checkbox} from 'semantic-ui-react';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {ISettingsFieldCommonProps} from '../../../../_types';
 
-function SettingsCheckbox({onChange, fieldName}: ISettingsFieldCommonProps): JSX.Element {
+function SettingsCheckbox({onChange, fieldName, disabled}: ISettingsFieldCommonProps): JSX.Element {
     const {
         state: {elementInSettings}
     } = useFormBuilderReducer();
@@ -18,6 +18,7 @@ function SettingsCheckbox({onChange, fieldName}: ISettingsFieldCommonProps): JSX
             toggle
             name={fieldName}
             onChange={_handleChange}
+            disabled={disabled}
             checked={!!elementInSettings?.settings?.[fieldName]}
         />
     );
