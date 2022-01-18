@@ -32,8 +32,6 @@ describe('AttributePermissions', () => {
                         actions: [
                             {name: access_attribute, allowed: true},
                             {name: edit_value, allowed: false},
-                            {name: create_value, allowed: true},
-                            {name: delete_value, allowed: false}
                         ]
                     }
                 ) {
@@ -57,9 +55,7 @@ describe('AttributePermissions', () => {
                     usersGroup: "${allUsersTreeElemId}",
                     actions: [
                         access_attribute,
-                        edit_value,
-                        create_value,
-                        delete_value,
+                        edit_value
                     ]
                 ) {
                     name
@@ -70,9 +66,7 @@ describe('AttributePermissions', () => {
             expect(resGetAttrPerm.status).toBe(200);
             expect(resGetAttrPerm.data.data.permissions).toEqual([
                 {name: 'access_attribute', allowed: true},
-                {name: 'edit_value', allowed: false},
-                {name: 'create_value', allowed: true},
-                {name: 'delete_value', allowed: false}
+                {name: 'edit_value', allowed: false}
             ]);
             expect(resGetAttrPerm.data.errors).toBeUndefined();
 
@@ -81,9 +75,7 @@ describe('AttributePermissions', () => {
                     type: attribute,
                     actions: [
                         access_attribute,
-                        edit_value,
-                        create_value,
-                        delete_value
+                        edit_value
                     ],
                     applyTo: "${permAttrName}"
                 ) {
@@ -95,9 +87,7 @@ describe('AttributePermissions', () => {
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toEqual([
                 {name: 'access_attribute', allowed: true},
-                {name: 'edit_value', allowed: false},
-                {name: 'create_value', allowed: true},
-                {name: 'delete_value', allowed: false}
+                {name: 'edit_value', allowed: false}
             ]);
             expect(resIsAllowed.data.errors).toBeUndefined();
         });

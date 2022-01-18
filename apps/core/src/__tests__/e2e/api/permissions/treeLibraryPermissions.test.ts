@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlAddUserToGroup, gqlGetAllUsersGroupId, gqlSaveLibrary, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {gqlAddUserToGroup, gqlGetAllUsersGroupId, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 
 describe('TreeLibraryPermissions', () => {
     const permTreeName = 'tree_library_permissions_test_tree';
@@ -17,7 +17,10 @@ describe('TreeLibraryPermissions', () => {
                 tree: {
                     id: "${permTreeName}",
                     label: {fr: "Test tree"},
-                    libraries: [{library: "${treeLibId}", settings: {allowMultiplePositions: true, allowedAtRoot: true,  allowedChildren: ["__all__"]}}]
+                    libraries: [{
+                        library: "${treeLibId}",
+                        settings: {allowMultiplePositions: true, allowedAtRoot: true,  allowedChildren: ["__all__"]}
+                    }]
                 }
             ) {
                 id
@@ -38,7 +41,7 @@ describe('TreeLibraryPermissions', () => {
                         usersGroup: "${allUsersTreeElemId}",
                         actions: [
                             {name: access_tree, allowed: true},
-                            {name: edit_tree, allowed: false},
+                            {name: detach, allowed: false},
                             {name: edit_children, allowed: true}
                         ]
                     }
@@ -63,7 +66,7 @@ describe('TreeLibraryPermissions', () => {
                     usersGroup: "${allUsersTreeElemId}",
                     actions: [
                         access_tree,
-                        edit_tree,
+                        detach,
                         edit_children
                     ]
                 ) {
@@ -75,7 +78,7 @@ describe('TreeLibraryPermissions', () => {
             expect(resGetTreePerm.status).toBe(200);
             expect(resGetTreePerm.data.data.permissions).toEqual([
                 {name: 'access_tree', allowed: true},
-                {name: 'edit_tree', allowed: false},
+                {name: 'detach', allowed: false},
                 {name: 'edit_children', allowed: true}
             ]);
             expect(resGetTreePerm.data.errors).toBeUndefined();
@@ -85,7 +88,7 @@ describe('TreeLibraryPermissions', () => {
                     type: tree_library,
                     actions: [
                         access_tree,
-                        edit_tree,
+                        detach,
                         edit_children,
                     ],
                     applyTo: "${permTreeName}/${treeLibId}"
@@ -98,7 +101,7 @@ describe('TreeLibraryPermissions', () => {
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toEqual([
                 {name: 'access_tree', allowed: true},
-                {name: 'edit_tree', allowed: false},
+                {name: 'detach', allowed: false},
                 {name: 'edit_children', allowed: true}
             ]);
             expect(resIsAllowed.data.errors).toBeUndefined();

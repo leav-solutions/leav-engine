@@ -115,9 +115,7 @@ describe('Permissions', () => {
                         },
                         actions: [
                             {name: access_attribute, allowed: true},
-                            {name: create_value, allowed: false},
                             {name: edit_value, allowed: false},
-                            {name: delete_value, allowed: false}
                         ]
                     }
                 ) {

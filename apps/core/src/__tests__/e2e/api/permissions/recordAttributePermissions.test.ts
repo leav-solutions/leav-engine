@@ -81,9 +81,7 @@ describe('RecordAttributePermissions', () => {
                     },
                     actions: [
                         access_attribute,
-                        edit_value,
-                        create_value,
-                        delete_value
+                        edit_value
                     ]
                 ) {
                     name
@@ -94,9 +92,7 @@ describe('RecordAttributePermissions', () => {
             expect(resGetAttrPerm.status).toBe(200);
             expect(resGetAttrPerm.data.data.permissions).toEqual([
                 {name: 'access_attribute', allowed: true},
-                {name: 'edit_value', allowed: false},
-                {name: 'create_value', allowed: null},
-                {name: 'delete_value', allowed: null}
+                {name: 'edit_value', allowed: false}
             ]);
             expect(resGetAttrPerm.data.errors).toBeUndefined();
         });
@@ -193,7 +189,7 @@ describe('RecordAttributePermissions', () => {
                         applyTo: "${permAttrName}",
                         usersGroup: "${userGroupId1}",
                         actions: [
-                            {name: create_value, allowed: false},
+                            {name: edit_value, allowed: false},
                         ]
                     }
                 ) { type }
@@ -203,7 +199,7 @@ describe('RecordAttributePermissions', () => {
                 p: heritedPermissions(
                     type: record_attribute,
                     applyTo: "${permAttrName}",
-                    actions: [create_value]
+                    actions: [edit_value]
                     userGroupId: "${userGroupId1}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
@@ -215,7 +211,7 @@ describe('RecordAttributePermissions', () => {
             `);
 
             expect(permHeritAttr.status).toBe(200);
-            expect(permHeritAttr.data.data.p[0].name).toBe('create_value');
+            expect(permHeritAttr.data.data.p[0].name).toBe('edit_value');
             expect(permHeritAttr.data.data.p[0].allowed).toBe(false);
         });
     });

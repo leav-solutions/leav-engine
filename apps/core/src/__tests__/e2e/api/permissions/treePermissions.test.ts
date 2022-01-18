@@ -25,7 +25,7 @@ describe('TreePermissions', () => {
                         usersGroup: "${allUsersTreeElemId}",
                         actions: [
                             {name: access_tree, allowed: true},
-                            {name: edit_tree, allowed: false},
+                            {name: detach, allowed: false},
                             {name: edit_children, allowed: true}
                         ]
                     }
@@ -50,7 +50,7 @@ describe('TreePermissions', () => {
                     usersGroup: "${allUsersTreeElemId}",
                     actions: [
                         access_tree,
-                        edit_tree,
+                        detach,
                         edit_children
                     ]
                 ) {
@@ -62,7 +62,7 @@ describe('TreePermissions', () => {
             expect(resGetTreePerm.status).toBe(200);
             expect(resGetTreePerm.data.data.permissions).toEqual([
                 {name: 'access_tree', allowed: true},
-                {name: 'edit_tree', allowed: false},
+                {name: 'detach', allowed: false},
                 {name: 'edit_children', allowed: true}
             ]);
             expect(resGetTreePerm.data.errors).toBeUndefined();
@@ -72,7 +72,7 @@ describe('TreePermissions', () => {
                     type: tree,
                     actions: [
                         access_tree,
-                        edit_tree,
+                        detach,
                         edit_children,
                     ],
                     applyTo: "${permTreeName}"
@@ -85,7 +85,7 @@ describe('TreePermissions', () => {
             expect(resIsAllowed.status).toBe(200);
             expect(resIsAllowed.data.data.isAllowed).toEqual([
                 {name: 'access_tree', allowed: true},
-                {name: 'edit_tree', allowed: false},
+                {name: 'detach', allowed: false},
                 {name: 'edit_children', allowed: true}
             ]);
             expect(resIsAllowed.data.errors).toBeUndefined();
