@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {difference} from 'lodash';
 import {IUtils} from 'utils/utils';
@@ -15,7 +14,7 @@ import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {FormElementTypes, IForm, IFormFilterOptions, IFormStrict} from '../../_types/forms';
 import {IList, SortOrder} from '../../_types/list';
-import {AppPermissionsActions} from '../../_types/permissions';
+import {LibraryPermissionsActions} from '../../_types/permissions';
 import {validateLibrary} from './helpers/validateLibrary';
 
 export interface IFormDomain {
@@ -36,8 +35,7 @@ export interface IFormDomain {
 interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission'?: IPermissionDomain;
-    'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.infra.form'?: IFormRepo;
     'core.utils'?: IUtils;
 }
@@ -45,8 +43,7 @@ interface IDeps {
 export default function (deps: IDeps = {}): IFormDomain {
     const {
         'core.domain.attribute': attributeDomain = null,
-        'core.domain.permission': permissionDomain = null,
-        'core.domain.permission.app': appPermissionDomain = null,
+        'core.domain.permission.library': libraryPermissionDomain = null,
         'core.infra.form': formRepo = null,
         'core.utils': utils = null
     } = deps;
@@ -108,8 +105,15 @@ export default function (deps: IDeps = {}): IFormDomain {
                 : {...defaultParams, ...form};
 
             // Check permissions
-            const permToCheck = existingForm ? AppPermissionsActions.EDIT_FORM : AppPermissionsActions.CREATE_FORM;
-            if (!(await appPermissionDomain.getAppPermission({action: permToCheck, userId: ctx.userId, ctx}))) {
+            const permToCheck = LibraryPermissionsActions.ADMIN_LIBRARY;
+            if (
+                !(await libraryPermissionDomain.getLibraryPermission({
+                    libraryId: form.library,
+                    action: permToCheck,
+                    userId: ctx.userId,
+                    ctx
+                }))
+            ) {
                 throw new PermissionError(permToCheck);
             }
 
@@ -158,8 +162,15 @@ export default function (deps: IDeps = {}): IFormDomain {
         },
         async deleteForm({library, id, ctx}): Promise<IForm> {
             // Check permissions
-            const permToCheck = AppPermissionsActions.DELETE_FORM;
-            if (!(await appPermissionDomain.getAppPermission({action: permToCheck, userId: ctx.userId, ctx}))) {
+            const permToCheck = LibraryPermissionsActions.ADMIN_LIBRARY;
+            if (
+                !(await libraryPermissionDomain.getLibraryPermission({
+                    action: permToCheck,
+                    libraryId: library,
+                    userId: ctx.userId,
+                    ctx
+                }))
+            ) {
                 throw new PermissionError(permToCheck);
             }
 

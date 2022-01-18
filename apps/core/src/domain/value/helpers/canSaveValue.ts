@@ -37,9 +37,7 @@ const _canSaveMetadata = async (
     ctx: IQueryInfos,
     deps: {recordAttributePermissionDomain: IRecordAttributePermissionDomain}
 ): Promise<{canSave: boolean; fields?: ErrorFieldDetail<IValue>; reason?: RecordAttributePermissionsActions}> => {
-    const permToCheck = valueExists
-        ? RecordAttributePermissionsActions.EDIT_VALUE
-        : RecordAttributePermissionsActions.CREATE_VALUE;
+    const permToCheck = RecordAttributePermissionsActions.EDIT_VALUE;
     const errors: string[] = await Object.keys(value.metadata).reduce(async (allErrorsProm, field) => {
         const allErrors = await allErrorsProm;
 
@@ -87,12 +85,7 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
         return {canSave: false, reason: RecordPermissionsActions.EDIT_RECORD};
     }
 
-    const permToCheck =
-        !keepEmpty && !value.value
-            ? RecordAttributePermissionsActions.DELETE_VALUE
-            : valueExists
-            ? RecordAttributePermissionsActions.EDIT_VALUE
-            : RecordAttributePermissionsActions.CREATE_VALUE;
+    const permToCheck = RecordAttributePermissionsActions.EDIT_VALUE;
 
     const isAllowed = await deps.recordAttributePermissionDomain.getRecordAttributePermission(
         permToCheck,

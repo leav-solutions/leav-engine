@@ -16,6 +16,7 @@ export enum PermissionTypes {
 
 export enum LibraryPermissionsActions {
     ACCESS_LIBRARY = 'access_library',
+    ADMIN_LIBRARY = 'admin_library',
     ACCESS_RECORD = 'access_record',
     CREATE_RECORD = 'create_record',
     EDIT_RECORD = 'edit_record',
@@ -31,27 +32,22 @@ export enum RecordPermissionsActions {
 
 export enum RecordAttributePermissionsActions {
     ACCESS_ATTRIBUTE = 'access_attribute',
-    CREATE_VALUE = 'create_value',
-    EDIT_VALUE = 'edit_value',
-    DELETE_VALUE = 'delete_value'
+    EDIT_VALUE = 'edit_value'
 }
 
 export enum AttributePermissionsActions {
     ACCESS_ATTRIBUTE = 'access_attribute',
-    CREATE_VALUE = 'create_value',
-    EDIT_VALUE = 'edit_value',
-    DELETE_VALUE = 'delete_value'
+    EDIT_VALUE = 'edit_value'
 }
 
 export enum TreePermissionsActions {
     ACCESS_TREE = 'access_tree',
-    EDIT_TREE = 'edit_tree',
     EDIT_CHILDREN = 'edit_children'
 }
 
 export enum TreeNodePermissionsActions {
     ACCESS_TREE = 'access_tree',
-    EDIT_TREE = 'edit_tree',
+    DETACH = 'detach',
     EDIT_CHILDREN = 'edit_children'
 }
 
@@ -68,13 +64,8 @@ export enum AppPermissionsActions {
     CREATE_TREE = 'app_create_tree',
     EDIT_TREE = 'app_edit_tree',
     DELETE_TREE = 'app_delete_tree',
-    ACCESS_FORMS = 'app_access_forms',
-    CREATE_FORM = 'app_create_form',
-    EDIT_FORM = 'app_edit_form',
-    DELETE_FORM = 'app_delete_form',
     ACCESS_PERMISSIONS = 'app_access_permissions',
     EDIT_PERMISSION = 'app_edit_permission',
-    ACCESS_NAVIGATOR = 'app_access_navigator',
     MANAGE_GLOBAL_PREFERENCES = 'app_manage_global_preferences'
 }
 
