@@ -8,6 +8,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
+import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {
@@ -28,6 +29,7 @@ interface ISettingsFieldProps {
 
 function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
     const {t} = useTranslation();
+    const {readonly} = useEditFormContext();
     const {
         state: {elementInSettings, library},
         dispatch
@@ -64,6 +66,7 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
     let comp: JSX.Element;
     const compProps: ISettingsFieldCommonProps = {
         onChange: _handleChange,
+        disabled: readonly,
         fieldName: settingsField.name,
         ...(settingsField.getInputSettings ? settingsField.getInputSettings(attributeProps) : null)
     };

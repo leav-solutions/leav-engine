@@ -124,6 +124,7 @@ function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.El
                         name="dependencyAttributes"
                         value={dependencyAttributes}
                         onChange={_handleChange}
+                        disabled={readonly}
                     />
                 </FormFieldWrapper>
                 {!readonly && (

@@ -231,6 +231,15 @@ export interface GET_LIB_BY_ID_libraries_list_gqlNames {
     searchableFields: string;
 }
 
+export interface GET_LIB_BY_ID_libraries_list_permissions {
+    admin_library: boolean;
+    access_library: boolean;
+    access_record: boolean;
+    create_record: boolean;
+    edit_record: boolean;
+    delete_record: boolean;
+}
+
 export interface GET_LIB_BY_ID_libraries_list {
     id: string;
     system: boolean | null;
@@ -242,6 +251,7 @@ export interface GET_LIB_BY_ID_libraries_list {
     recordIdentityConf: GET_LIB_BY_ID_libraries_list_recordIdentityConf | null;
     defaultView: GET_LIB_BY_ID_libraries_list_defaultView | null;
     gqlNames: GET_LIB_BY_ID_libraries_list_gqlNames;
+    permissions: GET_LIB_BY_ID_libraries_list_permissions | null;
 }
 
 export interface GET_LIB_BY_ID_libraries {

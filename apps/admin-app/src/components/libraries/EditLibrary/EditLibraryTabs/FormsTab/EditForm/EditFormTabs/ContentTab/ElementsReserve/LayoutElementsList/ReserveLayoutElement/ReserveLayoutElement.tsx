@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {v4 as uuidv4} from 'uuid';
 import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
+import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {DraggableElementTypes, IFormBuilderDragObject, IFormElement, IUIElement} from '../../../_types';
@@ -25,6 +26,7 @@ const Wrapper = styled.div<{isDragging: boolean}>`
 function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Element {
     const {dispatch} = useFormBuilderReducer();
     const {t} = useTranslation();
+    const {readonly} = useEditFormContext();
 
     const formElement = {
         id: uuidv4(),
@@ -47,7 +49,8 @@ function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Elemen
         collect: monitor => ({
             isDragging: !!monitor.isDragging()
         }),
-        end: (dropResult, monitor) => {
+        canDrag: !readonly,
+        end: (_, monitor) => {
             if (monitor.didDrop()) {
                 // Item has already been added, don't do anything
                 if (typeof monitor.getItem().dropAtPos !== 'undefined') {

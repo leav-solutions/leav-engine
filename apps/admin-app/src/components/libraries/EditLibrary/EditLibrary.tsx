@@ -5,10 +5,8 @@ import {useQuery} from '@apollo/react-hooks';
 import {History, Location} from 'history';
 import React from 'react';
 import useLang from '../../../hooks/useLang';
-import useUserData from '../../../hooks/useUserData';
 import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables, GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
-import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
 
@@ -21,12 +19,11 @@ interface IEditLibraryProps {
 const EditLibrary = ({match, history, location}: IEditLibraryProps): JSX.Element => {
     const libraryId = match.params.id;
     const {lang} = useLang();
-    const userData = useUserData();
-    const readOnly = !userData.permissions[PermissionsActions.app_edit_library];
 
     const {loading, error, data} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
         variables: {id: libraryId, lang}
     });
+    const readOnly = !data?.libraries?.list[0]?.permissions.admin_library;
 
     const _getEditLibraryTabs = (libToEdit: GET_LIB_BY_ID_libraries_list | null) => {
         return <EditLibraryTabs library={libToEdit} readOnly={readOnly} history={history} location={location} />;

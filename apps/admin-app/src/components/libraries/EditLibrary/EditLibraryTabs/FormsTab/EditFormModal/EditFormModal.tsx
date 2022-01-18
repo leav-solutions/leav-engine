@@ -11,9 +11,10 @@ interface IEditFormModalProps {
     onClose: () => void;
     formId: string | null;
     libraryId: string;
+    readonly: boolean;
 }
 
-function EditFormModal({open, onClose, formId, libraryId}: IEditFormModalProps): JSX.Element {
+function EditFormModal({open, onClose, formId, libraryId, readonly}: IEditFormModalProps): JSX.Element {
     const {t} = useTranslation();
 
     return (
@@ -29,7 +30,7 @@ function EditFormModal({open, onClose, formId, libraryId}: IEditFormModalProps):
             onClose={onClose}
         >
             <Modal.Content scrolling>
-                <EditForm formId={formId} libraryId={libraryId} />
+                <EditForm formId={formId} libraryId={libraryId} readonly={readonly} />
             </Modal.Content>
             <Modal.Actions>
                 <Button className="close-button" onClick={onClose} negative>

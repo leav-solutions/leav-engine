@@ -18,7 +18,7 @@ describe('AttributesTab', () => {
         const comp = create(
             <MockedProvider>
                 <MockedLangContextProvider>
-                    <AttributesTab library={lib as GET_LIB_BY_ID_libraries_list} readOnly={false} />
+                    <AttributesTab library={lib as GET_LIB_BY_ID_libraries_list} readonly={false} />
                 </MockedLangContextProvider>
             </MockedProvider>
         );

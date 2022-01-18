@@ -9,6 +9,7 @@ import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType, FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
+import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {defaultContainerId, FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {formElements} from '../../../uiElements';
@@ -28,6 +29,7 @@ const Wrapper = styled.div<{isDragging: boolean}>`
 function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
     const {dispatch} = useFormBuilderReducer();
     const {lang} = useLang();
+    const {readonly} = useEditFormContext();
 
     const attrLabel = localizedLabel(attribute.label, lang);
 
@@ -84,6 +86,7 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
         collect: monitor => ({
             isDragging: !!monitor.isDragging()
         }),
+        canDrag: !readonly,
         end: (dropResult, monitor) => {
             if (monitor.didDrop()) {
                 // Item has already been added, don't do anything

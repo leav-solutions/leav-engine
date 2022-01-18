@@ -147,6 +147,14 @@ const library: GET_LIB_BY_ID_libraries_list = {
         list: 'ProduitList',
         filter: 'ProduitFilter',
         searchableFields: 'ProduitSearchableFields'
+    },
+    permissions: {
+        admin_library: true,
+        access_library: true,
+        access_record: true,
+        create_record: true,
+        edit_record: true,
+        delete_record: true
     }
 };
 

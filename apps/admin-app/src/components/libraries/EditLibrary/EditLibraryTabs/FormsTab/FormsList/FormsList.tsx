@@ -8,7 +8,6 @@ import useLang from '../../../../../../hooks/useLang';
 import useUserData from '../../../../../../hooks/useUserData';
 import {localizedLabel} from '../../../../../../utils';
 import {GET_FORMS_LIST_forms_list} from '../../../../../../_gqlTypes/GET_FORMS_LIST';
-import {PermissionsActions} from '../../../../../../_gqlTypes/globalTypes';
 import {IFormFilterOptions} from '../../../../../../_types/forms';
 import ConfirmedButton from '../../../../../shared/ConfirmedButton';
 import DeleteButton from '../../../../../shared/DeleteButton';
@@ -56,20 +55,12 @@ function FormsList({
     return (
         <>
             <Grid>
-                {permissions[PermissionsActions.app_create_form] && (
-                    <Grid.Column floated="right" width={4} textAlign="right" verticalAlign="middle">
-                        <Button
-                            icon
-                            labelPosition="left"
-                            size="medium"
-                            onClick={onCreate}
-                            data-test-id="create-form-btn"
-                        >
-                            <Icon name="plus" />
-                            {t('forms.new')}
-                        </Button>
-                    </Grid.Column>
-                )}
+                <Grid.Column floated="right" width={4} textAlign="right" verticalAlign="middle">
+                    <Button icon labelPosition="left" size="medium" onClick={onCreate} data-test-id="create-form-btn">
+                        <Icon name="plus" />
+                        {t('forms.new')}
+                    </Button>
+                </Grid.Column>
             </Grid>
             <Table selectable striped>
                 <Table.Header>

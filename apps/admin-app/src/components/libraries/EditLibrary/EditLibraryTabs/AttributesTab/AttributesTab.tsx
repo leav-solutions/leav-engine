@@ -19,11 +19,10 @@ import UnlinkLibAttribute from '../../../UnlinkLibAttribute';
 
 interface IAttributesTabProps {
     library: GET_LIB_BY_ID_libraries_list | null;
-    readOnly: boolean;
+    readonly: boolean;
 }
 
-/* tslint:disable-next-line:variable-name */
-const AttributesTab = ({library, readOnly}: IAttributesTabProps): JSX.Element | null => {
+const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | null => {
     const {t} = useTranslation();
     const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);
     const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
@@ -86,14 +85,14 @@ const AttributesTab = ({library, readOnly}: IAttributesTabProps): JSX.Element | 
                     return (
                         library && (
                             <div>
-                                {!readOnly && (
+                                {!readonly && (
                                     <Button icon labelPosition="left" size="medium" onClick={_openNewAttrModal}>
                                         <Icon name="plus" />
                                         {t('attributes.new')}
                                     </Button>
                                 )}
 
-                                {!readOnly && (
+                                {!readonly && (
                                     <Button icon labelPosition="left" size="medium" onClick={_openAddExistingAttrModal}>
                                         <Icon name="plus" />
                                         {t('libraries.link_existing_attribute')}
@@ -106,7 +105,7 @@ const AttributesTab = ({library, readOnly}: IAttributesTabProps): JSX.Element | 
                                     onRowClick={onRowClick}
                                     withFilters={false}
                                     actions={
-                                        !readOnly ? (
+                                        !readonly ? (
                                             <UnlinkLibAttribute
                                                 library={library}
                                                 key="unlink_attr_btn"
@@ -118,7 +117,7 @@ const AttributesTab = ({library, readOnly}: IAttributesTabProps): JSX.Element | 
                                     }
                                 />
 
-                                {!readOnly && (
+                                {!readonly && (
                                     <Modal size="large" open={showNewAttrModal} onClose={_closeNewAttrModal} centered>
                                         <Modal.Header>{t('attributes.new')}</Modal.Header>
                                         <Modal.Content>

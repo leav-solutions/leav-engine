@@ -7,13 +7,15 @@ import {getFormQuery} from '../../../../../../queries/forms/getFormQuery';
 import {GET_FORM, GET_FORMVariables} from '../../../../../../_gqlTypes/GET_FORM';
 import Loading from '../../../../../shared/Loading';
 import EditFormTabs from './EditFormTabs';
+import {EditFormContext} from './hooks/useEditFormContext';
 
 interface IEditFormProps {
     formId: string | null;
     libraryId: string;
+    readonly: boolean;
 }
 
-function EditForm({formId, libraryId}: IEditFormProps): JSX.Element {
+function EditForm({formId, libraryId, readonly}: IEditFormProps): JSX.Element {
     const {loading, error, data} = useQuery<GET_FORM, GET_FORMVariables>(getFormQuery, {
         variables: {
             library: libraryId,
@@ -34,7 +36,11 @@ function EditForm({formId, libraryId}: IEditFormProps): JSX.Element {
         return <div>Cannot retrieve form</div>;
     }
 
-    return <EditFormTabs form={!!formId ? data!.forms!.list[0] : null} library={libraryId} />;
+    return (
+        <EditFormContext.Provider value={{form: !!formId ? data!.forms!.list[0] : null, library: libraryId, readonly}}>
+            <EditFormTabs />
+        </EditFormContext.Provider>
+    );
 }
 
 export default EditForm;

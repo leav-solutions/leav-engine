@@ -45,7 +45,7 @@ describe('FormsTab', () => {
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={mocks}>
-                    <FormsTab libraryId="my_lib" />
+                    <FormsTab libraryId="my_lib" readonly={false} />
                 </MockedProvider>
             );
         });
@@ -79,7 +79,7 @@ describe('FormsTab', () => {
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={errorMock}>
-                    <FormsTab libraryId="my_lib" />
+                    <FormsTab libraryId="my_lib" readonly={false} />
                 </MockedProvider>
             );
         });
@@ -139,7 +139,7 @@ describe('FormsTab', () => {
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={mocksWithCount}>
-                    <FormsTab libraryId="my_lib" />
+                    <FormsTab libraryId="my_lib" readonly={false} />
                 </MockedProvider>
             );
         });
@@ -168,7 +168,7 @@ describe('FormsTab', () => {
             await act(async () => {
                 comp = mount(
                     <MockedProvider mocks={mocks}>
-                        <FormsTab libraryId="my_lib" />
+                        <FormsTab libraryId="my_lib" readonly={false} />
                     </MockedProvider>
                 );
             });
@@ -242,7 +242,7 @@ describe('FormsTab', () => {
         await act(async () => {
             comp = mount(
                 <MockedProvider mocks={mocksWithDelete}>
-                    <FormsTab libraryId="my_lib" />
+                    <FormsTab libraryId="my_lib" readonly={false} />
                 </MockedProvider>
             );
         });

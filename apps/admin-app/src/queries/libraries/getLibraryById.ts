@@ -47,6 +47,14 @@ export const getLibByIdQuery = gql`
                     filter
                     searchableFields
                 }
+                permissions {
+                    admin_library
+                    access_library
+                    access_record
+                    create_record
+                    edit_record
+                    delete_record
+                }
             }
         }
     }
