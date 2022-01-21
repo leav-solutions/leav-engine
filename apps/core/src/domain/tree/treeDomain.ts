@@ -4,6 +4,7 @@
 /* eslint-disable jsdoc/check-indentation */
 
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
 import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -14,7 +15,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
-import {AppPermissionsActions, TreePermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions, TreeNodePermissionsActions, TreePermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -167,6 +168,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission.app'?: IAppPermissionDomain;
     'core.domain.permission.tree'?: ITreePermissionDomain;
+    'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
     'core.infra.tree'?: ITreeRepo;
@@ -178,6 +180,7 @@ export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.app': appPermissionDomain = null,
     'core.domain.permission.tree': treePermissionDomain = null,
+    'core.domain.permission.treeNode': treeNodePermissionDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
     'core.infra.tree': treeRepo = null,
@@ -381,6 +384,53 @@ export default function ({
                 errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
+            // Check permissions on source
+            const parents = await this.getElementAncestors({treeId, element, ctx});
+            let canEditSourceChildren: boolean;
+            if (parents.length > 1) {
+                canEditSourceChildren = (
+                    await Promise.all(
+                        parents.map(ancestorBranch => {
+                            const parent = ancestorBranch.splice(-2, 1)[0];
+                            return treeNodePermissionDomain.getTreeNodePermission({
+                                treeId,
+                                action: TreeNodePermissionsActions.EDIT_CHILDREN,
+                                node: {id: parent.record.id, library: parent.record.library},
+                                userId: ctx.userId,
+                                ctx
+                            });
+                        })
+                    )
+                ).reduce((isAllowed, ancestorBranchPermission): boolean => isAllowed || ancestorBranchPermission);
+            } else {
+                canEditSourceChildren = await treePermissionDomain.getTreePermission({
+                    treeId,
+                    action: TreePermissionsActions.EDIT_CHILDREN,
+                    userId: ctx.userId,
+                    ctx
+                });
+            }
+
+            // Check permissions on destination
+            const canEditDestinationChildren = parentTo
+                ? treeNodePermissionDomain.getTreeNodePermission({
+                      treeId,
+                      action: TreeNodePermissionsActions.EDIT_CHILDREN,
+                      node: parentTo,
+                      userId: ctx.userId,
+                      ctx
+                  })
+                : treePermissionDomain.getTreePermission({
+                      treeId,
+                      action: TreePermissionsActions.EDIT_CHILDREN,
+                      userId: ctx.userId,
+                      ctx
+                  });
+
+            if (!canEditSourceChildren || !canEditDestinationChildren) {
+                throw new PermissionError(TreePermissionsActions.EDIT_CHILDREN);
+            }
+
             // check allow as children setting
             if (treeExists && elementExists && _isForbiddenAsChild(treeProps, parentTo, element)) {
                 errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
@@ -424,6 +474,18 @@ export default function ({
 
             if (!!Object.keys(errors).length) {
                 throw new ValidationError(errors);
+            }
+
+            const canDetach = await treeNodePermissionDomain.getTreeNodePermission({
+                treeId,
+                action: TreeNodePermissionsActions.DETACH,
+                node: element,
+                userId: ctx.userId,
+                ctx
+            });
+
+            if (!canDetach) {
+                throw new PermissionError(TreeNodePermissionsActions.DETACH);
             }
 
             return treeRepo.deleteElement({treeId, element, deleteChildren, ctx});

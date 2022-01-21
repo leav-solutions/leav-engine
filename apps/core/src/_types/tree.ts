@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ITreeNodePermissionsConf} from './permissions';
 import {IRecord} from './record';
-import {IKeyValue, IGetCoreEntitiesParams} from './shared';
+import {IGetCoreEntitiesParams, IKeyValue} from './shared';
 
 export interface ITreeLibrarySettings {
     allowMultiplePositions: boolean;
@@ -39,6 +39,10 @@ export interface ITreeNode {
     ancestors?: TreePaths;
     children?: ITreeNode[];
     linkedRecords?: IRecord[];
+}
+
+export interface ITreeNodeWithTreeId extends ITreeNode {
+    treeId: string;
 }
 
 export type TreePaths = ITreeNode[][];
