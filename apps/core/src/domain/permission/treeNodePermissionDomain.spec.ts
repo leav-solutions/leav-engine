@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {PermissionsRelations, TreeNodePermissionsActions} from '../../_types/permissions';
@@ -30,8 +30,8 @@ describe('treeNodePermissionDomain', () => {
             library: 'lib1'
         };
 
-        const mockTreeDomainNoPerm: Mockify<ITreeDomain> = {
-            getTreeProperties: global.__mockPromise({...mockTree, permissions_conf: null})
+        const mockTreeRepoNoPerm: Mockify<ITreeRepo> = {
+            getTrees: global.__mockPromise({list: [{...mockTree, permissions_conf: null}]})
         };
 
         const mockTreeLibPermissionDomain: Mockify<ITreeLibraryPermissionDomain> = {
@@ -69,8 +69,8 @@ describe('treeNodePermissionDomain', () => {
             ]
         ];
 
-        const mockTreeDomainWithPerm: Mockify<ITreeDomain> = {
-            getTreeProperties: global.__mockPromise(treeWithPerms),
+        const mockTreeRepoWithPerm: Mockify<ITreeRepo> = {
+            getTrees: global.__mockPromise({list: [treeWithPerms]}),
             getElementAncestors: global.__mockPromise(mockAncestors)
         };
 
@@ -124,7 +124,7 @@ describe('treeNodePermissionDomain', () => {
             };
 
             const domain = treeNodePermissionDomain({
-                'core.domain.tree': mockTreeDomainNoPerm as ITreeDomain,
+                'core.infra.tree': mockTreeRepoNoPerm as ITreeRepo,
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPerm as IDefaultPermissionHelper
@@ -149,7 +149,7 @@ describe('treeNodePermissionDomain', () => {
 
             const domain = treeNodePermissionDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.tree': mockTreeDomainWithPerm as ITreeDomain,
+                'core.infra.tree': mockTreeRepoWithPerm as ITreeRepo,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
@@ -182,7 +182,7 @@ describe('treeNodePermissionDomain', () => {
 
             const domain = treeNodePermissionDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.tree': mockTreeDomainWithPerm as ITreeDomain,
+                'core.infra.tree': mockTreeRepoWithPerm as ITreeRepo,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
@@ -215,7 +215,7 @@ describe('treeNodePermissionDomain', () => {
 
             const domain = treeNodePermissionDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.tree': mockTreeDomainWithPerm as ITreeDomain,
+                'core.infra.tree': mockTreeRepoWithPerm as ITreeRepo,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomainNoPerm as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
@@ -244,7 +244,7 @@ describe('treeNodePermissionDomain', () => {
 
             const domain = treeNodePermissionDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.tree': mockTreeDomainWithPerm as ITreeDomain,
+                'core.infra.tree': mockTreeRepoWithPerm as ITreeRepo,
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomainNoPerm as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,

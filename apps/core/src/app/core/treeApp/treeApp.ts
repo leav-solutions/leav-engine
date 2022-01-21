@@ -14,7 +14,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
 import {IRecord} from '../../../_types/record';
-import {ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../../_types/tree';
+import {ITree, ITreeElement, ITreeNode, ITreeNodeWithTreeId, TreeBehavior, TreePaths} from '../../../_types/tree';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {ISaveTreeMutationArgs, ITreeLibraryForGraphQL, ITreePermissionsConfForGraphQL, ITreesQueryArgs} from './_types';
@@ -67,6 +67,30 @@ export default function ({
         const attribute = parent.attribute ?? _findParentAttribute(info.path);
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
         return attributeProps.linked_tree;
+    };
+
+    const _filterTreeContentReduce = (ctx: IQueryInfos, treeId: string) => async (
+        visibleNodesProm: Promise<ITreeNodeWithTreeId[]>,
+        treeNode: ITreeNode
+    ): Promise<ITreeNodeWithTreeId[]> => {
+        const visibleNodes = await visibleNodesProm;
+        const isVisible = await permissionDomain.isAllowed({
+            type: PermissionTypes.TREE_NODE,
+            applyTo: treeId,
+            action: TreeNodePermissionsActions.ACCESS_TREE,
+            target: {
+                recordId: treeNode.record.id,
+                libraryId: treeNode.record.library
+            },
+            userId: ctx.userId,
+            ctx
+        });
+
+        if (isVisible) {
+            visibleNodes.push({...treeNode, treeId});
+        }
+
+        return visibleNodes;
     };
 
     return {
@@ -237,10 +261,11 @@ export default function ({
                             ctx: IQueryInfos
                         ): Promise<ITreeNode[]> {
                             ctx.treeId = treeId;
-                            const res = await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx});
 
-                            // Add treeId as it might be useful for nested resolvers
-                            return res.map(r => ({...r, treeId}));
+                            return (await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx})).reduce(
+                                _filterTreeContentReduce(ctx, treeId),
+                                Promise.resolve([])
+                            );
                         },
                         async fullTreeContent(_, {treeId}: {treeId: string}, ctx): Promise<ITreeNode[]> {
                             return treeDomain.getTreeContent({treeId, ctx});
@@ -358,18 +383,23 @@ export default function ({
                             ctx: IQueryInfos,
                             info: GraphQLResolveInfo
                         ): Promise<ITreeNode[]> => {
-                            const element = {
-                                id: parent.record.id,
-                                library: parent.record.library
-                            };
-
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
+                            let children = [];
 
-                            const children = await treeDomain.getElementChildren({treeId, element, ctx});
+                            if (typeof parent.children !== 'undefined') {
+                                children = parent.children;
+                            } else {
+                                const element = {
+                                    id: parent.record.id,
+                                    library: parent.record.library
+                                };
+
+                                children = await treeDomain.getElementChildren({treeId, element, ctx});
+                            }
 
                             // Add treeId as it might be useful for nested resolvers
-                            return children.map(n => ({...n, treeId}));
+                            return children.reduce(_filterTreeContentReduce(ctx, treeId), Promise.resolve([]));
                         },
                         ancestors: async (
                             parent: ITreeNode & {treeId?: string},
@@ -416,6 +446,10 @@ export default function ({
                             ctx: IQueryInfos,
                             infos: GraphQLResolveInfo
                         ): Promise<IKeyValue<boolean>> => {
+                            if (!treeNode.treeId) {
+                                return null;
+                            }
+
                             const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
 
                             return requestedActions.reduce(async (allPermsProm, action) => {
