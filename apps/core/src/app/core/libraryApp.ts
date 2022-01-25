@@ -15,7 +15,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITree} from '_types/tree';
-import {IValue, IValueVersion} from '_types/value';
+import {IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
@@ -42,7 +42,7 @@ interface IDeps {
     'core.app.core'?: ICoreApp;
 }
 
-export default function ({
+export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -337,7 +337,7 @@ export default function ({
                         rec.library ? libraryDomain.getLibraryProperties(rec.library, ctx) : null,
                     whoAmI: recordDomain.getRecordIdentity,
                     property: async (parent, {attribute}, ctx) => {
-                        const res = await recordDomain.getRecordFieldValue({
+                        return recordDomain.getRecordFieldValue({
                             library: lib.id,
                             record: parent,
                             attributeId: attribute,
@@ -346,17 +346,6 @@ export default function ({
                                 forceArray: true
                             },
                             ctx
-                        });
-
-                        // We add attribute ID on value as it might be useful for nested resolvers (like tree ancestors)
-                        // It will be automatically filtered out from response as it's not in the schema
-                        return (res as IValue[]).map(v => {
-                            return typeof v.value === 'object' && v.value !== null
-                                ? {
-                                      ...v,
-                                      value: {...v.value, attribute}
-                                  }
-                                : v;
                         });
                     },
                     permissions: (

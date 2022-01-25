@@ -7,7 +7,6 @@ import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {omit} from 'lodash';
-import {isNumber} from 'util';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
@@ -32,7 +31,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function ({
+export default function({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -49,8 +48,8 @@ export default function ({
      * @return string
      */
     const _findParentAttribute = (path): string => {
-        const restrictedKeys = ['ancestors', 'children', 'value'];
-        if (!restrictedKeys.includes(path.key) && !isNumber(path.key)) {
+        const restrictedKeys = ['ancestors', 'children', 'value', 'treeValue'];
+        if (!restrictedKeys.includes(path.key) && typeof path.key !== 'number') {
             return path.key;
         }
 

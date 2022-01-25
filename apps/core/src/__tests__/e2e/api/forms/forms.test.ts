@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {makeGraphQlCall} from '../e2eUtils';
+import {FORM_ROOT_CONTAINER_ID} from '@leav/utils';
+import {gqlCreateRecord, makeGraphQlCall} from '../e2eUtils';
 
 describe('Forms', () => {
     const libraryId = 'forms_test_library';
@@ -9,6 +10,7 @@ describe('Forms', () => {
     const fieldAttributeId = 'forms_test_attribute';
     const formName = 'test_form';
     const formName2 = 'test_other_form';
+    let recordId;
 
     beforeAll(async () => {
         // Create libraries
@@ -32,6 +34,8 @@ describe('Forms', () => {
                 id
             }
         }`);
+
+        recordId = await gqlCreateRecord(libraryId);
     });
 
     test('Create and update form', async () => {
@@ -46,7 +50,7 @@ describe('Forms', () => {
                             elements: [
                                 {
                                     id: "some_container"
-                                    containerId: "__root"
+                                    containerId: "${FORM_ROOT_CONTAINER_ID}"
                                     order: 0
                                     type: layout
                                     uiElementType: "fields_container"
@@ -98,7 +102,7 @@ describe('Forms', () => {
                             elements: [
                                 {
                                     id: "some_container"
-                                    containerId: "__root"
+                                    containerId: "${FORM_ROOT_CONTAINER_ID}"
                                     order: 0
                                     type: layout
                                     uiElementType: "fields_container"
@@ -205,7 +209,7 @@ describe('Forms', () => {
                             elements: [
                                 {
                                     id: "some_container"
-                                    containerId: "__root"
+                                    containerId: "${FORM_ROOT_CONTAINER_ID}"
                                     order: 0
                                     type: layout
                                     uiElementType: "fields_container"
@@ -261,5 +265,81 @@ describe('Forms', () => {
         expect(res.data.data.forms.list[0].id).toBe(formName2);
         expect(res.data.data.forms.list[0].elements).toBeDefined();
         expect(res.data.data.forms.list[0].elements.length).toBeGreaterThanOrEqual(1);
+    });
+
+    test('Get form by record', async () => {
+        await makeGraphQlCall(`mutation {
+            saveForm(
+                form: {
+                    id: "${formName}_for_record_form"
+                    library: "${libraryId}"
+                    label: { fr: "Formulaire édition" }
+                    elements: [
+                        {
+                            elements: [
+                                {
+                                    id: "some_container"
+                                    containerId: "${FORM_ROOT_CONTAINER_ID}"
+                                    order: 0
+                                    type: layout
+                                    uiElementType: "fields_container"
+                                    settings: []
+                                },
+                                {
+                                    id: "123456"
+                                    containerId: "some_container"
+                                    order: 0
+                                    uiElementType: "input"
+                                    type: field
+                                    settings: [
+                                        {
+                                            key: "attribute"
+                                            value: "${fieldAttributeId}"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ) {
+                id
+                label
+                elements {
+                    elements {
+                        id
+                    }
+                }
+            }
+        }`);
+
+        const res = await makeGraphQlCall(`{
+            recordForm(recordId: "${recordId}", libraryId: "${libraryId}", formId: "${formName}_for_record_form") {
+                id
+                label
+                library { id label }
+                system
+                elements {
+                    id
+                    containerId
+                    order
+                    uiElementType
+                    settings { key value }
+                    values {
+                        id_value
+
+                        ...on Value {
+                          value
+                          raw_value
+                        }
+                    }
+                }
+            }
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.recordForm.id).toBe(`${formName}_for_record_form`);
+        expect(res.data.data.recordForm.elements.length).toBe(2);
     });
 });
