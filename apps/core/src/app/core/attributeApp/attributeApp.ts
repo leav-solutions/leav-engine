@@ -81,12 +81,14 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
             return requestedActions.reduce(async (allPermsProm, action) => {
                 const allPerms = await allPermsProm;
 
+                const hasRecordInformations = record?.id && record?.library;
+
                 const isAllowed = await permissionDomain.isAllowed({
-                    type: record ? PermissionTypes.RECORD_ATTRIBUTE : PermissionTypes.ATTRIBUTE,
-                    applyTo: record ? record.library : attributeData.id,
+                    type: hasRecordInformations ? PermissionTypes.RECORD_ATTRIBUTE : PermissionTypes.ATTRIBUTE,
+                    applyTo: hasRecordInformations ? record.library : attributeData.id,
                     action: action as AttributePermissionsActions,
                     userId: ctx.userId,
-                    target: record
+                    target: hasRecordInformations
                         ? {
                               recordId: record.id,
                               attributeId: attributeData.id
@@ -149,7 +151,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     }
 
                     input AttributePermissionsRecord {
-                        id: String!,
+                        id: String,
                         library: String!
                     }
 
@@ -404,28 +406,33 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                             // Here, values is a list of "[id_record]/[id_library]". Return tree node instead
                             return {
                                 ...attributeData.values_list,
-                                values: (attributeData.values_list.values as string[])
-                                    .map(async treeElem => {
-                                        const [library, id] = treeElem.split('/');
-                                        const record = await recordDomain.find({
-                                            params: {
-                                                library,
-                                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: id}]
-                                            },
-                                            ctx
-                                        });
-                                        const isInTree = await treeDomain.isElementPresent({
-                                            treeId: attributeData.linked_tree,
-                                            element: {
-                                                library,
-                                                id
-                                            },
-                                            ctx
-                                        });
-                                        const ret = record.list.length && isInTree ? {record: record.list[0]} : null;
-                                        return ret;
-                                    })
-                                    .filter(r => r !== null)
+                                values: (
+                                    await Promise.all(
+                                        (attributeData.values_list.values as string[]).map(async treeElem => {
+                                            const [library, id] = treeElem.split('/');
+                                            const record = await recordDomain.find({
+                                                params: {
+                                                    library,
+                                                    filters: [
+                                                        {field: 'id', condition: AttributeCondition.EQUAL, value: id}
+                                                    ]
+                                                },
+                                                ctx
+                                            });
+                                            const isInTree = await treeDomain.isElementPresent({
+                                                treeId: attributeData.linked_tree,
+                                                element: {
+                                                    library,
+                                                    id
+                                                },
+                                                ctx
+                                            });
+                                            const ret =
+                                                record.list.length && isInTree ? {record: record.list[0]} : null;
+                                            return ret;
+                                        })
+                                    )
+                                ).filter(r => r !== null)
                             };
                         }
                     },

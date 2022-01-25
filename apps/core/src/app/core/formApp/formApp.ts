@@ -6,7 +6,7 @@ import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
-import {IForm, IFormDependentElements, IFormElement} from '_types/forms';
+import {IForm, IFormDependentElements, IFormElement, IRecordForm} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
@@ -17,6 +17,7 @@ import {
     IFormElementForGraphQL,
     IFormForGraphql,
     IGetFormArgs,
+    IGetRecordFormArgs,
     ISaveFormArgs
 } from './_types';
 
@@ -37,26 +38,6 @@ export default function ({
     'core.domain.library': libraryDomain = null,
     'core.utils': utils = null
 }: IDeps = {}) {
-    /** Functions to convert form to GraphQL format */
-    const _convertFormToGraphql = (form: IForm): IFormForGraphql => {
-        return {
-            ...form,
-            elements: Array.isArray(form.elements) ? form.elements.map(_convertElementsForGraphql) : []
-        };
-    };
-
-    const _convertElementsForGraphql = (elementsWithDep: IFormDependentElements): IFormDependentElementsForGraphQL => {
-        return {
-            ...elementsWithDep,
-            elements: elementsWithDep.elements.map(_convertElementSettingsToArray)
-        };
-    };
-
-    const _convertElementSettingsToArray = (element: IFormElement): IFormElementForGraphQL => ({
-        ...element,
-        settings: utils.objToNameValArray(element.settings, 'key')
-    });
-
     /** Functions to convert form from GraphQL format to IForm*/
     const _convertFormFromGraphql = (form: IFormForGraphql): IForm => {
         const formattedForm: IForm = {...form};
@@ -80,6 +61,42 @@ export default function ({
         settings: utils.nameValArrayToObj(element.settings, 'key')
     });
 
+    const commonFormElementResolvers = {
+        attribute: (formElement: IFormElement, _, ctx: IQueryInfos): Promise<IAttribute> => {
+            const attributeId = formElement?.settings?.attribute;
+
+            if (!attributeId) {
+                return null;
+            }
+
+            return attributeDomain.getAttributeProperties({id: attributeId, ctx});
+        },
+        settings: (formElement: IFormElement, _, ctx: IQueryInfos) => {
+            return Object.keys(formElement.settings ?? {}).map(async settingsKey => {
+                const settingsValue =
+                    settingsKey !== 'columns'
+                        ? formElement.settings[settingsKey]
+                        : await Promise.all(
+                              formElement.settings[settingsKey].map(async columnId => {
+                                  const columnAttributeProps = await attributeDomain.getAttributeProperties({
+                                      id: columnId,
+                                      ctx
+                                  });
+                                  return {
+                                      id: columnAttributeProps.id,
+                                      label: columnAttributeProps.label
+                                  };
+                              })
+                          );
+
+                return {
+                    key: settingsKey,
+                    value: settingsValue
+                };
+            });
+        }
+    };
+
     return {
         getGraphQLSchema(): IAppGraphQLSchema {
             return {
@@ -96,6 +113,15 @@ export default function ({
                         label(lang: [AvailableLanguage!]): SystemTranslation,
                         dependencyAttributes: [Attribute!],
                         elements: [FormElementsByDeps!]!
+                    }
+
+                    type RecordForm {
+                        id: ID!,
+                        recordId: ID,
+                        library: Library!,
+                        system: Boolean!,
+                        label(lang: [AvailableLanguage!]): SystemTranslation,
+                        elements: [FormElementWithValues!]!
                     }
 
                     input FormInput {
@@ -146,6 +172,17 @@ export default function ({
                         settings: [FormElementSettings!]!
                     }
 
+                    type FormElementWithValues {
+                        id: ID!,
+                        containerId: ID!,
+                        order: Int!,
+                        uiElementType: String!,
+                        type: FormElementTypes!,
+                        attribute: Attribute,
+                        settings: [FormElementSettings!]!
+                        values: [GenericValue!]
+                    }
+
                     input FormElementInput {
                         id: ID!,
                         containerId: ID!,
@@ -159,6 +196,7 @@ export default function ({
                         totalCount: Int!,
                         list: [Form!]!
                     }
+
 
                     input FormFiltersInput {
                         library: ID!,
@@ -184,6 +222,14 @@ export default function ({
                             pagination: Pagination,
                             sort: SortForms
                         ): FormsList
+
+                        # Returns form specific to a record.
+                        # Only relevant elements are present, dependencies and permissions are already applied
+                        recordForm(
+                            recordId: String,
+                            libraryId: String!,
+                            formId: String!
+                        ): RecordForm
                     }
 
                     extend type Mutation {
@@ -197,8 +243,8 @@ export default function ({
                             _,
                             {filters, pagination, sort}: IGetFormArgs,
                             ctx: IQueryInfos
-                        ): Promise<IList<IFormForGraphql>> {
-                            const forms = await formDomain.getFormsByLib({
+                        ): Promise<IList<IForm>> {
+                            return formDomain.getFormsByLib({
                                 library: filters.library,
                                 params: {
                                     filters,
@@ -208,22 +254,20 @@ export default function ({
                                 },
                                 ctx
                             });
-
-                            // Convert elements settings to GraphQL format
-                            const formattedForms = {
-                                ...forms,
-                                list: forms.list.map(_convertFormToGraphql)
-                            };
-
-                            return formattedForms;
+                        },
+                        async recordForm(
+                            _,
+                            {recordId, libraryId, formId}: IGetRecordFormArgs,
+                            ctx: IQueryInfos
+                        ): Promise<IRecordForm> {
+                            return formDomain.getRecordForm({recordId, libraryId, formId, ctx});
                         }
                     },
                     Mutation: {
-                        async saveForm(_, {form}: ISaveFormArgs, ctx: IQueryInfos): Promise<IFormForGraphql> {
+                        async saveForm(_, {form}: ISaveFormArgs, ctx: IQueryInfos): Promise<IForm> {
                             const formattedForm = _convertFormFromGraphql(form);
 
-                            const savedForm = await formDomain.saveForm({form: formattedForm, ctx});
-                            return _convertFormToGraphql(savedForm);
+                            return formDomain.saveForm({form: formattedForm, ctx});
                         },
                         async deleteForm(_, {library, id}: IDeleteFormArgs, ctx: IQueryInfos) {
                             return formDomain.deleteForm({library, id, ctx});
@@ -240,41 +284,12 @@ export default function ({
                             );
                         }
                     },
-                    FormElement: {
-                        attribute: (formElement: IFormElementForGraphQL, _, ctx: IQueryInfos): Promise<IAttribute> => {
-                            const attributeSettings = formElement.settings.filter(
-                                setting => setting.key === 'attribute'
-                            )[0];
-                            const attributeId = attributeSettings?.value;
-
-                            if (!attributeId) {
-                                return null;
-                            }
-
-                            return attributeDomain.getAttributeProperties({id: attributeId, ctx});
-                        },
-                        settings: (formElement: IFormElementForGraphQL, _, ctx: IQueryInfos) => {
-                            // Return attributes ID and label for columns
-                            return formElement.settings.map(async s => {
-                                if (s.key !== 'columns') {
-                                    return s;
-                                }
-
-                                return {
-                                    ...s,
-                                    value: await Promise.all(
-                                        s.value.map(async columnId => {
-                                            const columnAttributeProps = await attributeDomain.getAttributeProperties({
-                                                id: columnId,
-                                                ctx
-                                            });
-                                            return {id: columnAttributeProps.id, label: columnAttributeProps.label};
-                                        })
-                                    )
-                                };
-                            });
-                        }
-                    }
+                    RecordForm: {
+                        library: (form: IForm, _, ctx: IQueryInfos): Promise<ILibrary> =>
+                            libraryDomain.getLibraryProperties(form.library, ctx)
+                    },
+                    FormElement: commonFormElementResolvers,
+                    FormElementWithValues: commonFormElementResolvers
                 }
             };
         }

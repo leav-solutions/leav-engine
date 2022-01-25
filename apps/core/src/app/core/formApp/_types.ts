@@ -16,6 +16,12 @@ export interface IGetFormArgs {
     sort: ISortParams;
 }
 
+export interface IGetRecordFormArgs {
+    recordId: string;
+    libraryId: string;
+    formId: string;
+}
+
 export interface ISaveFormArgs {
     form: IFormForGraphql;
 }

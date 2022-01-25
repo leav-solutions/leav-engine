@@ -1,20 +1,39 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {difference} from 'lodash';
+import omit from 'lodash/omit';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {FormElementTypes, IForm, IFormFilterOptions, IFormStrict} from '../../_types/forms';
+import {
+    FormElementTypes,
+    IForm,
+    IFormElementWithValues,
+    IFormElementWithValuesAndChildren,
+    IFormFilterOptions,
+    IFormStrict,
+    IRecordForm
+} from '../../_types/forms';
 import {IList, SortOrder} from '../../_types/list';
-import {LibraryPermissionsActions} from '../../_types/permissions';
+import {
+    AttributePermissionsActions,
+    LibraryPermissionsActions,
+    RecordAttributePermissionsActions
+} from '../../_types/permissions';
+import {getElementValues} from './helpers/getElementValues';
+import {mustIncludeElement} from './helpers/mustIncludeElement';
 import {validateLibrary} from './helpers/validateLibrary';
 
 export interface IFormDomain {
@@ -27,6 +46,12 @@ export interface IFormDomain {
         params?: IGetCoreEntitiesParams;
         ctx: IQueryInfos;
     }): Promise<IList<IForm>>;
+    getRecordForm(params: {
+        recordId: string;
+        libraryId: string;
+        formId: string;
+        ctx: IQueryInfos;
+    }): Promise<IRecordForm>;
     getFormProperties({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
     saveForm({form, ctx}: {form: IForm; ctx: IQueryInfos}): Promise<IForm>;
     deleteForm({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
@@ -35,7 +60,10 @@ export interface IFormDomain {
 interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.record'?: IRecordDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
+    'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
+    'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.infra.form'?: IFormRepo;
     'core.utils'?: IUtils;
 }
@@ -44,9 +72,28 @@ export default function (deps: IDeps = {}): IFormDomain {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.permission.library': libraryPermissionDomain = null,
+        'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
+        'core.domain.permission.attribute': attributePermissionDomain = null,
         'core.infra.form': formRepo = null,
         'core.utils': utils = null
     } = deps;
+
+    const _canAccessAttribute = (attribute: string, libraryId: string, recordId: string, ctx: IQueryInfos) => {
+        return recordId && libraryId
+            ? recordAttributePermissionDomain.getRecordAttributePermission(
+                  RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
+                  ctx.userId,
+                  attribute,
+                  libraryId,
+                  recordId,
+                  ctx
+              )
+            : attributePermissionDomain.getAttributePermission({
+                  action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
+                  attributeId: attribute,
+                  ctx
+              });
+    };
 
     return {
         async getFormsByLib({library, params, ctx}): Promise<IList<IForm>> {
@@ -60,6 +107,135 @@ export default function (deps: IDeps = {}): IFormDomain {
             }
 
             return formRepo.getForms({params: initializedParams, ctx});
+        },
+        async getRecordForm({recordId, libraryId, formId, ctx}): Promise<IRecordForm> {
+            const formProps = await this.getFormProperties({library: libraryId, id: formId, ctx});
+            const flatElementsList: IFormElementWithValuesAndChildren[] = [];
+
+            // Retrieve all relevant atributs in a hash map. It will be used later on to filters out empty containers
+            const elementsHashMap: {[id: string]: IFormElementWithValuesAndChildren} = await formProps.elements.reduce(
+                async (allElemsProm: Promise<{[id: string]: IFormElementWithValuesAndChildren}>, elementsWithDeps) => {
+                    const allElems = await allElemsProm;
+
+                    // Check if elements must be included based on dependencies
+                    if (!(await mustIncludeElement(elementsWithDeps, recordId, libraryId, deps, ctx))) {
+                        return allElems;
+                    }
+
+                    // Retrieve all visible form elements (based on permissions), with their values
+                    for (const depElement of elementsWithDeps.elements) {
+                        const _isElementVisible =
+                            depElement.uiElementType === FormElementTypes.layout ||
+                            !depElement.settings?.attribute ||
+                            (await _canAccessAttribute(depElement.settings.attribute, libraryId, recordId, ctx));
+
+                        if (_isElementVisible) {
+                            const depElementWithValues: IFormElementWithValuesAndChildren = {
+                                ...depElement,
+                                values: await getElementValues(depElement, recordId, libraryId, deps, ctx),
+                                children: []
+                            };
+
+                            // Add elements to the flat list as well, as we'll to run through all elements easily
+                            // to filters out empty containers
+                            flatElementsList.push(depElementWithValues);
+                            allElems[depElement.id] = depElementWithValues;
+
+                            // Tabs are not real container, it's only in element's settings.
+                            // We need to add it to hash map to be able to clear out empty tabs
+                            if (depElement.uiElementType === FormUIElementTypes.TABS && depElement.settings.tabs) {
+                                for (const [i, tab] of depElement.settings.tabs.entries()) {
+                                    const tabContainer = {
+                                        id: `${depElement.id}/${tab.id}`,
+                                        type: FormElementTypes.layout,
+                                        uiElementType: FormUIElementTypes.TAB_FIELDS_CONTAINER,
+                                        children: [],
+                                        values: null,
+                                        order: i,
+                                        containerId: depElement.id
+                                    };
+                                    flatElementsList.push(tabContainer);
+                                    allElems[tabContainer.id] = tabContainer;
+                                }
+                            }
+                        }
+                    }
+
+                    return allElems;
+                },
+                Promise.resolve({})
+            );
+
+            // Convert hash map to tree structure in order to filter out empty containers
+            const elementsTree = [];
+            for (const element of flatElementsList) {
+                if (element.containerId !== FORM_ROOT_CONTAINER_ID) {
+                    elementsHashMap[element.containerId]?.children.push(elementsHashMap[element.id]);
+                } else {
+                    elementsTree.push(elementsHashMap[element.id]);
+                }
+            }
+
+            /**
+             * Recursively filters out all empty containers:
+             * if a container has children somewhere, keep it otherwise discard it.
+             * If a form has no visible field at all, nothing will be returned, including all other layout elements
+             */
+            const _filterEmptyContainers = (
+                elements: IFormElementWithValuesAndChildren[]
+            ): {children: IFormElementWithValues[]; hasFields: boolean} => {
+                let elementsToKeep: IFormElementWithValuesAndChildren[] = [];
+                let hasFields = false; // Used to inform caller about presence of a field
+
+                // All elements here are brother in the form.
+                // We check if each element is a field or a field somewhere in its descendants
+                for (const elem of elements) {
+                    let _childrenToKeep = [];
+
+                    // We have children, let's check descendants.
+                    if (
+                        elem.uiElementType === FormUIElementTypes.FIELDS_CONTAINER ||
+                        elem.uiElementType === FormUIElementTypes.TAB_FIELDS_CONTAINER ||
+                        elem.uiElementType === FormUIElementTypes.TABS
+                    ) {
+                        const {hasFields: childHasFields, children} = _filterEmptyContainers(elem.children);
+                        if (childHasFields) {
+                            if (elem.uiElementType === FormUIElementTypes.TABS) {
+                                // If element is a tab => update settings
+                                elem.settings.tabs = (elem.settings ?? {}).tabs.filter(tab =>
+                                    children.some(c => c.id === `${elem.id}/${tab.id}`)
+                                );
+                            }
+
+                            // If element has children we must keep element itself and its children
+                            _childrenToKeep = [
+                                omit(elem, ['children']),
+                                ...children.filter(c => c.uiElementType !== FormUIElementTypes.TAB_FIELDS_CONTAINER)
+                            ];
+                        }
+                        hasFields = hasFields || childHasFields;
+                    } else {
+                        _childrenToKeep = [omit(elem, ['children'])];
+
+                        if (elem.type === FormElementTypes.field) {
+                            hasFields = true;
+                        }
+                    }
+
+                    elementsToKeep = [...elementsToKeep, ..._childrenToKeep];
+                }
+
+                return {children: elementsToKeep, hasFields};
+            };
+
+            const formElements = _filterEmptyContainers(elementsTree).children;
+            return {
+                id: formId,
+                recordId,
+                system: formProps.system,
+                library: libraryId,
+                elements: formElements
+            };
         },
         async getFormProperties({library, id, ctx}): Promise<IForm> {
             const filters = {id, library};

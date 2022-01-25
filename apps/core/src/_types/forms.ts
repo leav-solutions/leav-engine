@@ -3,12 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IKeyValue} from './shared';
 import {ITreeElement} from './tree';
+import {IValue} from './value';
 
 export interface IForm extends ICoreEntity {
     library: string;
     system?: boolean;
     dependencyAttributes?: string[];
     elements?: IFormDependentElements[];
+}
+
+export interface IRecordForm {
+    id: string;
+    library: string;
+    system: boolean;
+    recordId: string;
+    elements: IFormElementWithValues[];
 }
 
 export enum FormElementTypes {
@@ -36,6 +45,14 @@ export interface IFormElement {
     containerId: string;
     settings?: IKeyValue<any>;
 }
+
+export interface IFormElementWithValues extends IFormElement {
+    values?: IValue[];
+}
+
+export type IFormElementWithValuesAndChildren = IFormElementWithValues & {
+    children: IFormElementWithValuesAndChildren[];
+};
 
 /**
  * Accepted fields to filter attributes list
