@@ -7,10 +7,10 @@ import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecord
 import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
-import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
+import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 
 interface IValueDetailsBtnProps extends Omit<ButtonProps, 'value'> {
-    attribute: GET_FORM_forms_list_elements_elements_attribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute;
     value: RecordProperty;
 }
 

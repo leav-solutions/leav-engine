@@ -13,11 +13,11 @@ import {
 } from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/GET_FORM';
 import {SortOrder} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/RECORD_FORM';
 
 interface IQuickSearchProps {
-    library: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library;
+    library: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library;
     onResult: (elements: IGetRecordsFromLibraryQueryElement[], totalCount: number) => void;
     onClear: () => void;
     pagination?: {limit: number; offset: number};

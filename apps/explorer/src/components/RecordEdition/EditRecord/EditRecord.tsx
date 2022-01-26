@@ -2,16 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {getFormQuery} from 'graphQL/queries/forms/getFormQuery';
+import {getRecordFormQuery} from 'graphQL/queries/forms/getRecordFormQuery';
 import useRecordsConsultationHistory from 'hooks/useRecordsConsultationHistory';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {GET_FORM, GET_FORMVariables} from '_gqlTypes/GET_FORM';
+import {FormElementTypes} from '_gqlTypes/globalTypes';
+import {RECORD_FORM, RECORD_FORMVariables} from '_gqlTypes/RECORD_FORM';
 import {IRecordIdentityWhoAmI} from '_types/types';
-import EditRecordForm from './EditRecordForm';
 import EditRecordSkeleton from './EditRecordSkeleton';
-import {DeleteValueFunc, SubmitValueFunc} from './_types';
+import extractFormElements from './helpers/extractFormElements';
+import {RecordEditionContext} from './hooks/useRecordEditionContext';
+import {formComponents} from './uiElements';
+import {DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
 
 interface IEditRecordProps {
     record: IRecordIdentityWhoAmI | null;
@@ -27,12 +31,12 @@ function EditRecord({record, library, onValueSubmit, onValueDelete, readonly}: I
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
-    // Get Form
-    const {loading, error, data} = useQuery<GET_FORM, GET_FORMVariables>(getFormQuery, {
+    const {loading, data, error} = useQuery<RECORD_FORM, RECORD_FORMVariables>(getRecordFormQuery, {
+        fetchPolicy: 'network-only',
         variables: {
-            library,
-            formId,
-            record: record?.id ? {id: record.id, library} : null
+            libraryId: library,
+            recordId: record?.id,
+            formId
         }
     });
 
@@ -40,18 +44,35 @@ function EditRecord({record, library, onValueSubmit, onValueDelete, readonly}: I
         return <EditRecordSkeleton rows={5} />;
     }
 
-    if (error || !data?.forms?.list?.length) {
-        return <ErrorDisplay message={error?.message ?? t('record_edition.no_form_error')} />;
+    if (error) {
+        const message =
+            Object.values(error.graphQLErrors[0]?.extensions?.exception?.fields ?? {}).join('\n') ?? error?.message;
+        return <ErrorDisplay message={message ?? t('record_edition.no_form_error')} />;
     }
 
+    const form = data.recordForm;
+    const elementsByContainer = extractFormElements(form);
+
+    const rootElement: FormElement<{}> = {
+        id: FORM_ROOT_CONTAINER_ID,
+        containerId: null,
+        type: FormElementTypes.layout,
+        uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
+        settings: {},
+        attribute: null,
+        values: null,
+        uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
+    };
+
     return (
-        <EditRecordForm
-            record={record}
-            form={data.forms.list[0]}
-            onValueSubmit={onValueSubmit}
-            onValueDelete={onValueDelete}
-            readonly={readonly}
-        />
+        <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly}}>
+            <rootElement.uiElement
+                element={rootElement}
+                record={record}
+                onValueSubmit={onValueSubmit}
+                onValueDelete={onValueDelete}
+            />
+        </RecordEditionContext.Provider>
     );
 }
 

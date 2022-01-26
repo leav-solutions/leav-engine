@@ -1,42 +1,33 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getFormQuery} from 'graphQL/queries/forms/getFormQuery';
+import {getRecordFormQuery} from 'graphQL/queries/forms/getRecordFormQuery';
 import React from 'react';
 import {act, render, screen, waitForElement} from '_tests/testUtils';
-import {mockForm} from '__mocks__/common/form';
+import {mockRecordForm} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import EditRecord from './EditRecord';
-
-jest.mock('./EditRecordForm', () => {
-    return function EditRecordForm() {
-        return <div>EditRecordForm</div>;
-    };
-});
 
 describe('EditRecord', () => {
     test('Render form after loading', async () => {
         const mocks = [
             {
                 request: {
-                    query: getFormQuery,
+                    query: getRecordFormQuery,
                     variables: {
-                        library: mockRecordWhoAmI.library.id,
+                        libraryId: mockRecordWhoAmI.library.id,
                         formId: 'edition',
-                        record: {id: '123456', library: mockRecordWhoAmI.library.id}
+                        recordId: '123456'
                     }
                 },
                 result: {
                     data: {
-                        forms: {
-                            __typename: 'FormList',
-                            totalCount: 0,
-                            list: [
-                                {
-                                    __typename: 'Form',
-                                    ...mockForm
-                                }
-                            ]
+                        recordForm: {
+                            __typename: 'RecordForm',
+                            id: mockRecordForm.id,
+                            library: mockRecordForm.library,
+                            system: false,
+                            elements: mockRecordForm.elements
                         }
                     }
                 }
@@ -60,8 +51,8 @@ describe('EditRecord', () => {
             expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);
         });
 
-        await waitForElement(() => screen.getByText('EditRecordForm'));
+        await waitForElement(() => screen.getByTestId('container-child-element'));
 
-        expect(screen.getByText('EditRecordForm')).toBeInTheDocument();
+        expect(screen.getByTestId('container-child-element')).toBeInTheDocument();
     });
 });

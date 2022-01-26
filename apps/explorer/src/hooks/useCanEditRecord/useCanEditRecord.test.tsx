@@ -53,7 +53,7 @@ describe('ActiveTreeHook', () => {
         expect(screen.getByTestId('elem')).toHaveTextContent('CAN_EDIT');
     });
 
-    test.only('If record is not editable, return false', async () => {
+    test('If record is not editable, return false', async () => {
         const mocks: MockedResponse[] = [
             {
                 request: {

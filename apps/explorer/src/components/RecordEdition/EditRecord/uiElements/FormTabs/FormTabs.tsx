@@ -22,13 +22,7 @@ const StyledTabs = styled(Tabs)`
     }
 `;
 
-function FormTabs({
-    element,
-    record,
-    recordValues,
-    onValueSubmit,
-    onValueDelete
-}: IFormElementProps<IFormTabsSettings>): JSX.Element {
+function FormTabs({element, record, onValueSubmit, onValueDelete}: IFormElementProps<IFormTabsSettings>): JSX.Element {
     const [{lang}] = useLang();
     const tabPosition = element.settings.direction === TabsDirection.VERTICAL ? 'left' : 'top';
 
@@ -42,7 +36,8 @@ function FormTabs({
                     attribute: null,
                     type: FormElementTypes.layout,
                     uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER],
-                    uiElementType: FormUIElementTypes.FIELDS_CONTAINER
+                    uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
+                    values: null
                 };
 
                 return (
@@ -50,7 +45,6 @@ function FormTabs({
                         <tabContainer.uiElement
                             element={tabContainer}
                             record={record}
-                            recordValues={recordValues}
                             onValueSubmit={onValueSubmit}
                             onValueDelete={onValueDelete}
                         />

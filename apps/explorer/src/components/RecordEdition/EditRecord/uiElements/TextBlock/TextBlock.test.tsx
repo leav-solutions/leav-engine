@@ -13,7 +13,6 @@ describe('TextBlock', () => {
             <TextBlock
                 element={mockFormElementTextBlock}
                 record={mockRecordWhoAmI}
-                recordValues={{}}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}
             />

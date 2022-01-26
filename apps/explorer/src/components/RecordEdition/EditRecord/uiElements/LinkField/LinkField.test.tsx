@@ -7,17 +7,17 @@ import {
     initialState
 } from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {IRecordPropertyLink} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
+import {IUseGetRecordColumnsValuesQueryHook} from 'hooks/useGetRecordColumnsValuesQuery/useGetRecordColumnsValuesQuery';
 import React from 'react';
-import {
-    GET_FORM_forms_list_elements_elements_attribute_LinkAttribute,
-    GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI
-} from '_gqlTypes/GET_FORM';
 import {SortOrder} from '_gqlTypes/globalTypes';
+import {
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI
+} from '_gqlTypes/RECORD_FORM';
 import {act, render, screen, within} from '_tests/testUtils';
 import {mockAttributeLink} from '__mocks__/common/attribute';
-import {mockFormElementLink} from '__mocks__/common/form';
+import {mockFormElementLink, mockLinkValue} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
 import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
@@ -32,7 +32,19 @@ jest.mock('components/SearchModal', () => {
     };
 });
 
-type ValueListWhoAmI = GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI;
+jest.mock('hooks/useGetRecordColumnsValuesQuery/useGetRecordColumnsValuesQuery', () => ({
+    useGetRecordColumnsValuesQuery: (): Partial<IUseGetRecordColumnsValuesQueryHook> => ({
+        loading: false,
+        data: {
+            [mockRecordWhoAmI.id]: {
+                _id: null,
+                col1: [{value: 'col1 value'}],
+                col2: [{value: 'col2 value'}]
+            }
+        },
+        refetch: jest.fn()
+    })
+}));
 
 describe('LinkField', () => {
     const mockEditRecordDispatch = jest.fn();
@@ -74,24 +86,6 @@ describe('LinkField', () => {
     const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
 
-    const value: IRecordPropertyLink = {
-        linkValue: {
-            id: '123456',
-            whoAmI: {
-                ...mockRecordWhoAmI
-            }
-        },
-        created_at: 123456789,
-        modified_at: 123456789,
-        created_by: mockModifier,
-        modified_by: mockModifier,
-        id_value: null
-    };
-
-    const recordValues = {
-        test_attribute: [value]
-    };
-
     beforeEach(() => jest.clearAllMocks());
 
     test('Display list of values', async () => {
@@ -100,7 +94,6 @@ describe('LinkField', () => {
                 <LinkField
                     element={mockFormElementLink}
                     record={mockRecordWhoAmI}
-                    recordValues={recordValues}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -130,26 +123,22 @@ describe('LinkField', () => {
             }
         };
 
-        const recordValuesWithColumns = {
-            ...recordValues,
-            test_attribute: [
-                {
-                    ...value,
-                    linkValue: {
-                        ...value.linkValue,
-                        col1: 'col1 value',
-                        col2: 'col2 value'
-                    }
+        const recordValuesWithColumns = [
+            {
+                ...mockLinkValue,
+                linkValue: {
+                    ...mockLinkValue.linkValue,
+                    col1: 'col1 value',
+                    col2: 'col2 value'
                 }
-            ]
-        };
+            }
+        ];
 
         await act(async () => {
             render(
                 <LinkField
-                    element={mockFormElementLinkWithColumns}
+                    element={{...mockFormElementLinkWithColumns, values: recordValuesWithColumns}}
                     record={mockRecordWhoAmI}
-                    recordValues={recordValuesWithColumns}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -166,9 +155,8 @@ describe('LinkField', () => {
         await act(async () => {
             render(
                 <LinkField
-                    element={mockFormElementLink}
+                    element={{...mockFormElementLink, values: []}}
                     record={mockRecordWhoAmI}
-                    recordValues={{test_attribute: []}}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -183,9 +171,12 @@ describe('LinkField', () => {
         await act(async () => {
             render(
                 <LinkField
-                    element={{...mockFormElementLink, attribute: {...mockFormElementLink.attribute, system: true}}}
+                    element={{
+                        ...mockFormElementLink,
+                        attribute: {...mockFormElementLink.attribute, system: true},
+                        values: []
+                    }}
                     record={mockRecordWhoAmI}
-                    recordValues={{test_attribute: []}}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -201,7 +192,6 @@ describe('LinkField', () => {
                 <LinkField
                     element={mockFormElementLink}
                     record={mockRecordWhoAmI}
-                    recordValues={recordValues}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -228,7 +218,6 @@ describe('LinkField', () => {
                 <LinkField
                     element={mockFormElementLinkMultivalue}
                     record={mockRecordWhoAmI}
-                    recordValues={recordValues}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -252,7 +241,6 @@ describe('LinkField', () => {
                 <LinkField
                     element={mockFormElementLinkNoMultivalue}
                     record={mockRecordWhoAmI}
-                    recordValues={recordValues}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -268,7 +256,6 @@ describe('LinkField', () => {
                 <LinkField
                     element={mockFormElementLink}
                     record={mockRecordWhoAmI}
-                    recordValues={recordValues}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -296,7 +283,7 @@ describe('LinkField', () => {
                         {
                             id: '123456',
                             whoAmI: {
-                                ...(mockRecordWhoAmI as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI)
+                                ...(mockRecordWhoAmI as RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI)
                             }
                         }
                     ]
@@ -311,7 +298,7 @@ describe('LinkField', () => {
                 linkValuesList: {
                     enable: true,
                     allowFreeEntry: false,
-                    values: (mockFormElementLinkMultivalue.attribute as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute)
+                    values: (mockFormElementLinkMultivalue.attribute as RECORD_FORM_recordForm_elements_attribute_LinkAttribute)
                         .linkValuesList.values
                 }
             }
@@ -323,7 +310,6 @@ describe('LinkField', () => {
                     <LinkField
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
-                        recordValues={recordValues}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -364,14 +350,14 @@ describe('LinkField', () => {
                             {
                                 id: '123456',
                                 whoAmI: {
-                                    ...(mockRecordWhoAmI as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI),
+                                    ...(mockRecordWhoAmI as RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI),
                                     label: 'valueA'
                                 }
                             },
                             {
                                 id: '123457',
                                 whoAmI: {
-                                    ...(mockRecordWhoAmI as GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI),
+                                    ...(mockRecordWhoAmI as RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI),
                                     label: 'valueB'
                                 }
                             }
@@ -384,7 +370,6 @@ describe('LinkField', () => {
                     <LinkField
                         element={mockFormElementLinkValuesList}
                         record={mockRecordWhoAmI}
-                        recordValues={recordValues}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -436,7 +421,6 @@ describe('LinkField', () => {
                     <LinkField
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
-                        recordValues={recordValues}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -463,7 +447,6 @@ describe('LinkField', () => {
                     <LinkField
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
-                        recordValues={recordValues}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -486,7 +469,6 @@ describe('LinkField', () => {
                     <LinkField
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
-                        recordValues={recordValues}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -534,7 +516,6 @@ describe('LinkField', () => {
                     <LinkField
                         element={mockFormElementLinkMultivalueNoFreeEntry}
                         record={mockRecordWhoAmI}
-                        recordValues={recordValues}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -617,7 +598,6 @@ describe('LinkField', () => {
                     <LinkField
                         element={mockFormElementLinkMultivalue}
                         record={mockRecordWhoAmI}
-                        recordValues={recordValues}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />,

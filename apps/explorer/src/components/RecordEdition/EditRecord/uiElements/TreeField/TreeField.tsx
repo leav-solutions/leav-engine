@@ -11,7 +11,10 @@ import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQu
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
+import {
+    RECORD_FORM_recordForm_elements_attribute_TreeAttribute,
+    RECORD_FORM_recordForm_elements_values_TreeValue
+} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
@@ -55,22 +58,20 @@ const FooterWrapper = styled.div`
 
 function TreeField({
     element,
-    recordValues,
     record,
     onValueSubmit,
     onValueDelete
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
-    const attribute = element.attribute as GET_FORM_forms_list_elements_elements_attribute_TreeAttribute;
+    const attribute = element.attribute as RECORD_FORM_recordForm_elements_attribute_TreeAttribute;
     const {readOnly: isRecordReadOnly} = useRecordEditionContext();
+    const recordValues = (element.values as RECORD_FORM_recordForm_elements_values_TreeValue[]) ?? [];
 
-    const [fieldValues, setFieldValues] = useState<IRecordPropertyTree[]>(
-        (recordValues[element.settings.attribute] as IRecordPropertyTree[]) ?? []
-    );
+    const [fieldValues, setFieldValues] = useState<RECORD_FORM_recordForm_elements_values_TreeValue[]>(recordValues);
 
     useEffect(() => {
         if (record) {
             // Update values only for existing record. On creation, we handle everything here
-            setFieldValues((recordValues[element.settings.attribute] as IRecordPropertyTree[]) ?? []);
+            setFieldValues(recordValues ?? []);
         }
     }, [recordValues, element.settings.attribute, record]);
 

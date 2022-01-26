@@ -8,13 +8,13 @@ import moment from 'moment';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import themingVar from 'themingVar';
-import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
+import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 
 function DateInput({state, fieldValue, onFocus, onSubmit, settings, inputRef}: IStandardInputProps): JSX.Element {
     const {editingValue} = fieldValue;
     const {i18n} = useTranslation();
 
-    const attribute = state.formElement.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
+    const attribute = state.formElement.attribute as RECORD_FORM_recordForm_elements_attribute_StandardAttribute;
     const isValuesListEnabled = !!attribute?.values_list?.enable;
     const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
 
