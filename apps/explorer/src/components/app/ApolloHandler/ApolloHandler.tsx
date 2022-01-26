@@ -138,7 +138,7 @@ function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): 
                 }
 
                 const idValue = responseObject._id || responseObject.id;
-                return String(idValue);
+                return `${responseObject.__typename}:${String(idValue)}`;
             },
             typePolicies: {
                 EmbeddedAttribute: {
@@ -184,6 +184,12 @@ function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): 
                             merge: true
                         }
                     }
+                },
+                RecordForm: {
+                    keyFields: ['id', 'recordId', 'library', ['id']]
+                },
+                FormElementWithValues: {
+                    keyFields: false
                 }
             },
             possibleTypes

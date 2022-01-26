@@ -9,7 +9,7 @@ import {
 import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
-import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
+import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {render, screen} from '_tests/testUtils';
 import {mockFormAttribute} from '__mocks__/common/attribute';
 import ValueDetailsBtn from './ValueDetailsBtn';
@@ -31,7 +31,7 @@ describe('ValueDetailsBtn', () => {
         id_value: null
     };
 
-    const mockAttribute: GET_FORM_forms_list_elements_elements_attribute_StandardAttribute = {
+    const mockAttribute: RECORD_FORM_recordForm_elements_attribute_StandardAttribute = {
         ...mockFormAttribute,
         label: {
             fr: 'my attribute label'

@@ -7,15 +7,13 @@ import {
     initialState
 } from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
-import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
+import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
 import {act, render, screen, waitForElement, within} from '_tests/testUtils';
 import {mockAttributeTree} from '__mocks__/common/attribute';
-import {mockFormElementTree} from '__mocks__/common/form';
+import {mockFormElementTree, mockTreeValueA} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
-import {mockModifier} from '__mocks__/common/value';
 import TreeField from '.';
 import {APICallStatus, DeleteValueFunc, ISubmitMultipleResult, SubmitValueFunc} from '../../_types';
 
@@ -41,106 +39,11 @@ describe('TreeField', () => {
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
-    const mockRecord = {
-        id: '123456',
-        whoAmI: {
-            ...mockRecordWhoAmI,
-            id: '123456',
-            label: 'Record label A',
-            library: {
-                ...mockRecordWhoAmI.library,
-                id: 'linked_lib',
-                label: {en: 'Linked lib'}
-            }
-        }
-    };
-
-    const mockRecord2 = {
-        id: '123458',
-        whoAmI: {
-            ...mockRecordWhoAmI,
-            id: '123458',
-            label: 'Record label B',
-            library: {
-                ...mockRecordWhoAmI.library,
-                id: 'linked_lib',
-                label: {en: 'Linked lib'}
-            }
-        }
-    };
-
-    const mockRecordAncestor = {
-        id: '123457',
-        whoAmI: {
-            ...mockRecordWhoAmI,
-            id: '123457',
-            label: 'Record label ancestor',
-            library: {
-                ...mockRecordWhoAmI.library,
-                id: 'linked_lib',
-                label: {en: 'Linked lib'}
-            }
-        }
-    };
-
-    const mockRecordAncestor2 = {
-        id: '223457',
-        whoAmI: {
-            ...mockRecordWhoAmI,
-            id: '223457',
-            label: 'Record label other ancestor',
-            library: {
-                ...mockRecordWhoAmI.library,
-                id: 'linked_lib',
-                label: {en: 'Linked lib'}
-            }
-        }
-    };
-
-    const valueA: IRecordPropertyTree = {
-        treeValue: {
-            record: mockRecord,
-            ancestors: [
-                [
-                    {
-                        record: mockRecordAncestor
-                    },
-                    {
-                        record: mockRecord
-                    }
-                ]
-            ]
-        },
-        created_at: 123456789,
-        modified_at: 123456789,
-        created_by: mockModifier,
-        modified_by: mockModifier,
-        id_value: '123456'
-    };
-
-    const valueB: IRecordPropertyTree = {
-        ...valueA,
-        treeValue: {
-            record: mockRecord2,
-            ancestors: [
-                [
-                    {
-                        record: mockRecordAncestor
-                    },
-                    {
-                        record: mockRecord2
-                    }
-                ]
-            ]
-        },
-        id_value: '987654'
-    };
-
     const mockSubmitRes: ISubmitMultipleResult = {
         status: APICallStatus.SUCCESS,
         values: [
             {
-                ...valueA,
+                ...mockTreeValueA,
                 id_value: '987654',
                 version: null,
                 attribute: {...mockAttributeTree, system: false}
@@ -150,17 +53,12 @@ describe('TreeField', () => {
     const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
 
-    const recordValues = {
-        test: [valueA, valueB]
-    };
-
     beforeEach(() => jest.clearAllMocks());
 
     test('If no values, display "add values" button', async () => {
         render(
             <TreeField
-                recordValues={{test: []}}
-                element={mockFormElementTree}
+                element={{...mockFormElementTree, values: []}}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -174,7 +72,6 @@ describe('TreeField', () => {
         await act(async () => {
             render(
                 <TreeField
-                    recordValues={recordValues}
                     element={{
                         ...mockFormElementTree,
                         attribute: {...mockFormElementTree.attribute, multiple_values: true}
@@ -199,7 +96,6 @@ describe('TreeField', () => {
     test('If not multiple values, cannot add a new value', async () => {
         render(
             <TreeField
-                recordValues={recordValues}
                 element={{
                     ...mockFormElementTree,
                     attribute: {...mockFormElementTree.attribute, multiple_values: false}
@@ -216,7 +112,6 @@ describe('TreeField', () => {
     test('Can delete existing value', async () => {
         render(
             <TreeField
-                recordValues={recordValues}
                 element={mockFormElementTree}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
@@ -230,7 +125,6 @@ describe('TreeField', () => {
     test('Can edit linked node', async () => {
         render(
             <TreeField
-                recordValues={recordValues}
                 element={mockFormElementTree}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
@@ -244,7 +138,6 @@ describe('TreeField', () => {
     test('Can display value details', async () => {
         render(
             <TreeField
-                recordValues={recordValues}
                 element={mockFormElementTree}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
@@ -265,7 +158,7 @@ describe('TreeField', () => {
             ...mockTreeRecord,
             whoAmI: {...mockTreeRecord.whoAmI, label: 'Record from value'}
         };
-        const mockAttribute: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute = {
+        const mockAttribute: RECORD_FORM_recordForm_elements_attribute_TreeAttribute = {
             ...mockFormElementTree.attribute,
             linked_tree: {
                 id: 'some_tree',
@@ -287,7 +180,6 @@ describe('TreeField', () => {
         await act(async () => {
             render(
                 <TreeField
-                    recordValues={recordValues}
                     element={{
                         ...mockFormElementTree,
                         attribute: {...mockAttribute}

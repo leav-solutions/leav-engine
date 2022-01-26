@@ -13,13 +13,13 @@ import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {getTreeRecordKey, localizedTranslation} from 'utils';
 import {
-    GET_FORM_forms_list_elements_elements_attribute_TreeAttribute,
-    GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values
-} from '_gqlTypes/GET_FORM';
+    RECORD_FORM_recordForm_elements_attribute_TreeAttribute,
+    RECORD_FORM_recordForm_elements_values_TreeValue_treeValue
+} from '_gqlTypes/RECORD_FORM';
 import PathsList from '../PathsList';
 
 interface IValuesAddProps {
-    attribute: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute_TreeAttribute;
     onAdd: (values: ITreeNodeWithRecord[]) => void;
     onClose: () => void;
 }
@@ -49,7 +49,7 @@ const BreadcrumbWrapper = styled.div`
     }
 `;
 
-type ValueFromList = GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values;
+type ValueFromList = RECORD_FORM_recordForm_elements_values_TreeValue_treeValue;
 
 function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const {t} = useTranslation();

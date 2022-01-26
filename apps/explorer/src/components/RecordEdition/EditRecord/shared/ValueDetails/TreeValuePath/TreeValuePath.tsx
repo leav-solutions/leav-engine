@@ -8,10 +8,10 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
-import {GET_FORM_forms_list_elements_elements_attribute_TreeAttribute} from '_gqlTypes/GET_FORM';
+import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
 
 interface ITreeValuePathProps {
-    attribute: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute_TreeAttribute;
     value: IRecordPropertyTree;
 }
 

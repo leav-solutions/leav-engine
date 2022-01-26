@@ -10,8 +10,8 @@ import {
 import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
-import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {mockFormAttribute} from '__mocks__/common/attribute';
 import {mockFormElementInput} from '__mocks__/common/form';
@@ -63,28 +63,12 @@ describe('StandardField', () => {
     const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
 
-    const recordValues = {
-        test_attribute: [
-            {
-                value: 'My value formatted',
-                raw_value: 'my_raw_value',
-                created_at: 123456789,
-                modified_at: 123456789,
-                created_by: mockModifier,
-                modified_by: mockModifier,
-                id_value: null,
-                attribute: mockAttribute
-            }
-        ]
-    };
-
     beforeEach(() => jest.clearAllMocks());
 
     test('Render text field, type value and submit', async () => {
         render(
             <StandardField
                 element={mockFormElementInput}
-                recordValues={recordValues}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -121,7 +105,6 @@ describe('StandardField', () => {
         render(
             <StandardField
                 element={mockFormElementInput}
-                recordValues={recordValues}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -141,7 +124,6 @@ describe('StandardField', () => {
             render(
                 <StandardField
                     element={mockFormElementInput}
-                    recordValues={recordValues}
                     record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
@@ -176,7 +158,6 @@ describe('StandardField', () => {
             render(
                 <StandardField
                     element={mockFormElementInput}
-                    recordValues={recordValues}
                     record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
@@ -197,24 +178,9 @@ describe('StandardField', () => {
     });
 
     test('Disable system attribute', async () => {
-        const recordValuesSystem = {
-            test_attribute: [
-                {
-                    value: 'My value formatted',
-                    raw_value: 'my_raw_value',
-                    created_at: 123456789,
-                    modified_at: 123456789,
-                    created_by: mockModifier,
-                    modified_by: mockModifier,
-                    id_value: null
-                }
-            ]
-        };
-
         render(
             <StandardField
                 element={{...mockFormElementInput, attribute: {...mockFormAttribute, system: true}}}
-                recordValues={recordValuesSystem}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -227,23 +193,24 @@ describe('StandardField', () => {
     });
 
     test('Render date field', async () => {
-        const recordValuesDate = {
-            test_attribute: [
-                {
-                    value: '2021-03-19T17:24:00',
-                    raw_value: '1616174663',
-                    created_at: 123456789,
-                    modified_at: 123456789,
-                    created_by: mockModifier,
-                    modified_by: mockModifier,
-                    id_value: null
-                }
-            ]
-        };
+        const recordValuesDate = [
+            {
+                value: '2021-03-19T17:24:00',
+                raw_value: '1616174663',
+                created_at: 123456789,
+                modified_at: 123456789,
+                created_by: mockModifier,
+                modified_by: mockModifier,
+                id_value: null
+            }
+        ];
         render(
             <StandardField
-                element={{...mockFormElementInput, attribute: {...mockFormAttribute, format: AttributeFormat.date}}}
-                recordValues={recordValuesDate}
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, format: AttributeFormat.date},
+                    values: recordValuesDate
+                }}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -263,24 +230,25 @@ describe('StandardField', () => {
     });
 
     test('Render checkbox', async () => {
-        const recordValuesBoolean = {
-            test_attribute: [
-                {
-                    value: 'true',
-                    raw_value: 'true',
-                    created_at: 123456789,
-                    modified_at: 123456789,
-                    created_by: mockModifier,
-                    modified_by: mockModifier,
-                    id_value: null
-                }
-            ]
-        };
+        const recordValuesBoolean = [
+            {
+                value: 'true',
+                raw_value: 'true',
+                created_at: 123456789,
+                modified_at: 123456789,
+                created_by: mockModifier,
+                modified_by: mockModifier,
+                id_value: null
+            }
+        ];
 
         render(
             <StandardField
-                element={{...mockFormElementInput, attribute: {...mockFormAttribute, format: AttributeFormat.boolean}}}
-                recordValues={recordValuesBoolean}
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, format: AttributeFormat.boolean},
+                    values: recordValuesBoolean
+                }}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -296,26 +264,24 @@ describe('StandardField', () => {
     });
 
     test('Render encrypted field', async () => {
-        const recordValuesEncrypted = {
-            test_attribute: [
-                {
-                    value: 'my_hashed_pwd',
-                    raw_value: 'my_hashed_pwd',
-                    created_at: 123456789,
-                    modified_at: 123456789,
-                    created_by: mockModifier,
-                    modified_by: mockModifier,
-                    id_value: null
-                }
-            ]
-        };
+        const recordValuesEncrypted = [
+            {
+                value: 'my_hashed_pwd',
+                raw_value: 'my_hashed_pwd',
+                created_at: 123456789,
+                modified_at: 123456789,
+                created_by: mockModifier,
+                modified_by: mockModifier,
+                id_value: null
+            }
+        ];
         render(
             <StandardField
                 element={{
                     ...mockFormElementInput,
-                    attribute: {...mockFormAttribute, format: AttributeFormat.encrypted}
+                    attribute: {...mockFormAttribute, format: AttributeFormat.encrypted},
+                    values: recordValuesEncrypted
                 }}
-                recordValues={recordValuesEncrypted}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -335,24 +301,25 @@ describe('StandardField', () => {
     });
 
     test('Render numeric input', async () => {
-        const recordValuesNumeric = {
-            test_attribute: [
-                {
-                    value: '123456',
-                    raw_value: '123456',
-                    id_value: null,
-                    created_at: 123456789,
-                    modified_at: 123456789,
-                    created_by: mockModifier,
-                    modified_by: mockModifier
-                }
-            ]
-        };
+        const recordValuesNumeric = [
+            {
+                value: '123456',
+                raw_value: '123456',
+                id_value: null,
+                created_at: 123456789,
+                modified_at: 123456789,
+                created_by: mockModifier,
+                modified_by: mockModifier
+            }
+        ];
 
         render(
             <StandardField
-                element={{...mockFormElementInput, attribute: {...mockFormAttribute, format: AttributeFormat.numeric}}}
-                recordValues={recordValuesNumeric}
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, format: AttributeFormat.numeric},
+                    values: recordValuesNumeric
+                }}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -376,7 +343,6 @@ describe('StandardField', () => {
         render(
             <StandardField
                 element={mockFormElementInput}
-                recordValues={recordValues}
                 record={mockRecordWhoAmI}
                 onValueSubmit={onSubmitFail}
                 onValueDelete={mockHandleDelete}
@@ -396,7 +362,6 @@ describe('StandardField', () => {
         render(
             <StandardField
                 element={mockFormElementInput}
-                recordValues={recordValues}
                 record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
@@ -440,20 +405,17 @@ describe('StandardField', () => {
             attribute: {
                 ...mockFormElementWithValuesList.attribute,
                 values_list: {
-                    ...(mockFormElementWithValuesList.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute)
+                    ...(mockFormElementWithValuesList.attribute as RECORD_FORM_recordForm_elements_attribute_StandardAttribute)
                         .values_list,
                     allowFreeEntry: true
                 }
             }
         };
 
-        const recordValuesNoValue = {test_attribute: []};
-
         test('Display values list', async () => {
             render(
                 <StandardField
-                    element={mockFormElementWithValuesList}
-                    recordValues={recordValuesNoValue}
+                    element={{...mockFormElementWithValuesList, values: []}}
                     record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
@@ -471,8 +433,7 @@ describe('StandardField', () => {
         test('Filters list when typing', async () => {
             render(
                 <StandardField
-                    element={mockFormElementWithValuesList}
-                    recordValues={recordValuesNoValue}
+                    element={{...mockFormElementWithValuesList, values: []}}
                     record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
@@ -495,8 +456,7 @@ describe('StandardField', () => {
         test('On click on a value, save it', async () => {
             render(
                 <StandardField
-                    element={mockFormElementWithValuesList}
-                    recordValues={recordValuesNoValue}
+                    element={{...mockFormElementWithValuesList, values: []}}
                     record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
@@ -517,8 +477,7 @@ describe('StandardField', () => {
         test('On Enter, first matching value is selected', async () => {
             render(
                 <StandardField
-                    element={mockFormElementWithValuesList}
-                    recordValues={recordValuesNoValue}
+                    element={{...mockFormElementWithValuesList, values: []}}
                     record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
@@ -545,8 +504,7 @@ describe('StandardField', () => {
         test('If no match, display a message', async () => {
             render(
                 <StandardField
-                    element={mockFormElementWithValuesList}
-                    recordValues={recordValuesNoValue}
+                    element={{...mockFormElementWithValuesList, values: []}}
                     record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
@@ -568,8 +526,7 @@ describe('StandardField', () => {
         test('If open values list, display submit button', async () => {
             render(
                 <StandardField
-                    element={mockFormElementWithValuesListOpen}
-                    recordValues={recordValuesNoValue}
+                    element={{...mockFormElementWithValuesListOpen, values: []}}
                     record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
@@ -585,8 +542,7 @@ describe('StandardField', () => {
             await act(async () => {
                 render(
                     <StandardField
-                        element={mockFormElementWithValuesListOpen}
-                        recordValues={recordValuesNoValue}
+                        element={{...mockFormElementWithValuesListOpen, values: []}}
                         record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
@@ -612,8 +568,7 @@ describe('StandardField', () => {
             await act(async () => {
                 render(
                     <StandardField
-                        element={mockFormElementWithValuesListOpen}
-                        recordValues={recordValuesNoValue}
+                        element={{...mockFormElementWithValuesListOpen, values: []}}
                         record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}

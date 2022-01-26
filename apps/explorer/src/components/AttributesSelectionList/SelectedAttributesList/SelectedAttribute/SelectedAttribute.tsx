@@ -4,7 +4,6 @@
 import {CloseOutlined, HolderOutlined} from '@ant-design/icons';
 import {Button, Space} from 'antd';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../../utils';
@@ -36,10 +35,9 @@ const CloseWrapper = styled.div`
 
 const SelectedAttribute = ({selectedAttribute, handleProps}: ISelectedAttributeProps) => {
     const [{lang}] = useLang();
-    const {t} = useTranslation();
     const {dispatch} = useAttributesSelectionListState();
 
-    const label = localizedTranslation(selectedAttribute.label, lang); //localizedTranslation(attribute.label, lang);
+    const label = localizedTranslation(selectedAttribute.label, lang);
 
     const _handleUnselectAttribute = () => {
         dispatch({

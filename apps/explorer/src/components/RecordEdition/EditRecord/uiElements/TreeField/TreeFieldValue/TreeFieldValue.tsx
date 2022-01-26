@@ -12,12 +12,12 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
+import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
 import {PreviewSize} from '_types/types';
 
 interface ITreeFieldValueProps {
     value: IRecordPropertyTree;
-    attribute: GET_FORM_forms_list_elements_elements_attribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute_TreeAttribute;
     onDelete: () => void;
     isReadOnly: boolean;
 }

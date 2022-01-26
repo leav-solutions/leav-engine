@@ -87,11 +87,6 @@ export enum ViewTypes {
     timeline = 'timeline'
 }
 
-export interface AttributePermissionsRecord {
-    id: string;
-    library: string;
-}
-
 export interface RecordFilterInput {
     field?: string | null;
     value?: string | null;

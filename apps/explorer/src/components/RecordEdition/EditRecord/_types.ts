@@ -4,13 +4,9 @@
 import {AnyPrimitive, FormFieldTypes, FormUIElementTypes, ICommonFieldsSettings, Override} from '@leav/utils';
 import {Checkbox, DatePicker, Input} from 'antd';
 import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
-import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {MutableRefObject} from 'react';
-import {
-    GET_FORM_forms_list_elements_elements,
-    GET_FORM_forms_list_elements_elements_attribute
-} from '_gqlTypes/GET_FORM';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {RECORD_FORM_recordForm_elements, RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 import {
     SAVE_VALUE_BATCH_saveValueBatch_errors,
     SAVE_VALUE_BATCH_saveValueBatch_values
@@ -76,20 +72,19 @@ export type SubmitValueFunc = (values: SubmittedValue[]) => Promise<ISubmitMulti
 export type DeleteValueFunc = (idValue: string | null, attribute: string) => Promise<IDeleteValueResult>;
 
 export interface ISubmittedValueBase {
-    attribute: GET_FORM_forms_list_elements_elements_attribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute;
     idValue: string;
 }
 
 export interface IFormElementProps<SettingsType> {
     record: IRecordIdentityWhoAmI;
     element: FormElement<SettingsType>;
-    recordValues: Record<string, RecordProperty[]>;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
 }
 
 export type FormElement<SettingsType> = Override<
-    GET_FORM_forms_list_elements_elements,
+    RECORD_FORM_recordForm_elements,
     {
         settings: SettingsType;
         uiElementType: FormUIElementTypes | FormFieldTypes;

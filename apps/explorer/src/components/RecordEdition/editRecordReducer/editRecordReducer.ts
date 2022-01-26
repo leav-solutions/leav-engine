@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 
 export interface IRecordPropertyWithAttribute {
-    attribute: GET_FORM_forms_list_elements_elements_attribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute;
     value: RecordProperty;
 }
 

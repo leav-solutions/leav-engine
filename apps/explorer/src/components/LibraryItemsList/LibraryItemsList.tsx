@@ -260,7 +260,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
     >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields), {
-        fetchPolicy: 'no-cache',
+        fetchPolicy: 'network-only',
         onCompleted: data => {
             const itemsFromQuery = data ? data[library.gqlNames.query || ''].list : [];
 
