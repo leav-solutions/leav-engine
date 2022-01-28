@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as Joi from '@hapi/joi';
+import Joi from 'joi';
 import {AwilixContainer} from 'awilix';
 import {partialRight} from 'lodash';
 import {IUtils} from '../../utils/utils';
