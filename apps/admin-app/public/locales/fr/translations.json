@@ -21,6 +21,12 @@
         "isSystem": "Système",
         "settings": "Paramètres"
     },
+    "errors": {
+        "INTERNAL_ERROR": "Une erreur interne est survenue",
+        "PERMISSION_ERROR": "Vous n'avez pas les droits pour effectuer cette opération",
+        "VALIDATION_ERROR": "Requête invalide",
+        "network_error": "Le serveur n'est pas accessible"
+    },
     "libraries": {
         "title": "Bibliothèques",
         "new": "Nouvelle bibliothèque",

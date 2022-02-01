@@ -38,6 +38,7 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
     const {t} = useTranslation();
     const [state, dispatch] = useReducer(formBuilderReducer, computateInitialState(library, form));
     const [isSaving, setIsSaving] = useState<boolean>(false);
+
     const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
         onCompleted: () => setIsSaving(false),
         onError: () => setIsSaving(false)
