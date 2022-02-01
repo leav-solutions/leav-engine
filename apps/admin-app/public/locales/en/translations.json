@@ -245,6 +245,7 @@
         "empty_container": "Drop elements here",
         "text_block_helper": "Insert text here",
         "new_tab_label": "New tab",
+        "save_success": "Form has been saved successfully",
         "settings": {
             "label": "Label",
             "attribute": "Attribute",
