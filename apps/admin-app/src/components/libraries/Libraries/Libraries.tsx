@@ -7,7 +7,6 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {addWildcardToFilters} from '../../../utils/utils';
@@ -21,7 +20,6 @@ interface ILibrariesProps {
 
 const Libraries = ({history}: ILibrariesProps): JSX.Element => {
     const {t} = useTranslation();
-    const {lang} = useLang();
     const userData = useUserData();
     const [filters, setFilters] = useState<any>({});
     const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {

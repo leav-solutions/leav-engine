@@ -22,6 +22,12 @@
         "isSystem": "System",
         "settings": "Settings"
     },
+    "errors": {
+        "INTERNAL_ERROR": "An internal error occured",
+        "PERMISSION_ERROR": "You are not allowed to perform this operation",
+        "VALIDATION_ERROR": "Invalid request",
+        "network_error": "Server is not reachable"
+    },
     "libraries": {
         "title": "Libraries",
         "new": "New library",
