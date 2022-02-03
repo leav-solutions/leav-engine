@@ -44,7 +44,8 @@ module.exports = {
             port: process.env.AMQP_PORT || '5672'
         },
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
-        type: process.env.AMQP_TYPE || 'direct'
+        type: process.env.AMQP_TYPE || 'direct',
+        prefetch: process.env.AMQP_PREFETCH || 5
     },
     filesManager: {
         queues: {
@@ -60,19 +61,20 @@ module.exports = {
         rootKeys: {
             files1: 'files'
         },
-        userId: process.env.FM_USER_ID || '1',
-        prefetch: 1
+        // prefetch: 1,
+        userId: process.env.FM_USER_ID || '1'
     },
     eventsManager: {
         routingKeys: {
             events: 'database.event'
         }
+        // prefetch: 1
     },
     indexationManager: {
         queues: {
             events: 'indexation_events'
-        },
-        prefetch: 1
+        }
+        // prefetch: 1
     },
     debug: process.env.DEBUG || false,
     defaultUserId: '1', // Used for DB migration and any other action that is not bound to a real user

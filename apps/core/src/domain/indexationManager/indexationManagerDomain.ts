@@ -361,8 +361,8 @@ export default function ({
 
     return {
         async init(): Promise<void> {
-            await amqpService.amqpConn.channel.assertQueue(config.indexationManager.queues.events);
-            await amqpService.amqpConn.channel.bindQueue(
+            await amqpService.amqp.consumer.channel.assertQueue(config.indexationManager.queues.events);
+            await amqpService.amqp.consumer.channel.bindQueue(
                 config.indexationManager.queues.events,
                 config.amqp.exchange,
                 config.eventsManager.routingKeys.events
@@ -371,8 +371,7 @@ export default function ({
             return amqpService.consume(
                 config.indexationManager.queues.events,
                 config.eventsManager.routingKeys.events,
-                _onMessage,
-                config.indexationManager.prefetch
+                _onMessage
             );
         },
         async indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<boolean> {

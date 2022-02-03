@@ -1,14 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GraphQLUpload} from 'apollo-server';
+import {GraphQLUpload} from 'graphql-upload';
 import {IImportDomain} from 'domain/import/importDomain';
 import ExcelJS from 'exceljs';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {IFile, IFileUpload} from '_types/import';
+import {IElement, IFile, IFileUpload} from '_types/import';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
+import JsonParser from 'jsonparse';
+import {setTimeout} from 'timers';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -30,20 +32,32 @@ interface IImportExcelParams {
 }
 
 export default function ({'core.domain.import': importDomain = null}: IDeps = {}): ICoreImportApp {
-    const _getFileDataBuffer = async (file: IFileUpload): Promise<Buffer> => {
+    const _getFileDataBuffer = async (file: IFileUpload, callback): Promise<boolean> => {
         const {createReadStream} = file;
+
         const fileStream = createReadStream();
 
-        const data = await ((): Promise<Buffer> =>
-            new Promise((resolve, reject) => {
-                const chunks = [];
+        const p = new JsonParser();
 
-                fileStream.on('data', chunk => chunks.push(chunk));
-                fileStream.on('error', e => reject(new ValidationError({id: Errors.FILE_ERROR})));
-                fileStream.on('end', () => resolve(Buffer.concat(chunks)));
-            }))();
+        p.onValue = async function (value) {
+            if (this.stack[this.stack.length - 1]?.key === 'elements' && !!value.library) {
+                await callback(value);
+            }
 
-        return data;
+            if (this.stack[this.stack.length - 1]?.key === 'trees' && !!value.treeId) {
+                // TODO:
+            }
+        };
+
+        return new Promise((resolve, reject) => {
+            fileStream.on('data', chunk => {
+                setTimeout(() => {
+                    p.write(chunk);
+                }, 100);
+            });
+            fileStream.on('error', e => reject(new ValidationError({id: Errors.FILE_ERROR})));
+            fileStream.on('end', () => resolve(true));
+        });
     };
 
     const _getFileExtension = (filename: string): string | null => {
@@ -75,52 +89,54 @@ export default function ({'core.domain.import': importDomain = null}: IDeps = {}
 
                     extend type Mutation {
                         import(file: Upload!): Boolean!
-                        importExcel(file: Upload!, library: String!, mapping: [String]!, key: String): Boolean!
+                        
                     }
                 `,
+                // importExcel(file: Upload!, library: String!, mapping: [String]!, key: String): Boolean!
                 resolvers: {
                     Upload: GraphQLUpload,
                     Mutation: {
                         async import(_, {file}: IImportParams, ctx: IQueryInfos): Promise<boolean> {
-                            const fileData = await file;
+                            const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['json'];
                             _validateFileFormat(fileData.filename, allowedExtensions);
 
-                            const buffer = await _getFileDataBuffer(fileData);
-                            const data = JSON.parse(buffer.toString('utf8'));
-
-                            return importDomain.import(data as IFile, ctx);
-                        },
-                        async importExcel(
-                            _,
-                            {file, library, mapping, key}: IImportExcelParams,
-                            ctx: IQueryInfos
-                        ): Promise<boolean> {
-                            const fileData = await file;
-
-                            const allowedExtensions = ['xlsx'];
-                            _validateFileFormat(fileData.filename, allowedExtensions);
-
-                            const buffer = await _getFileDataBuffer(fileData);
-                            const workbook = new ExcelJS.Workbook();
-
-                            await workbook.xlsx.load(buffer);
-                            const data: string[][] = [];
-
-                            workbook.eachSheet(s => {
-                                s.eachRow(r => {
-                                    let elem = (r.values as string[]).slice(1);
-
-                                    // replace empty item by null
-                                    elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
-
-                                    data.push(elem);
-                                });
+                            await _getFileDataBuffer(fileData, async (element: any) => {
+                                await importDomain.import(element, ctx);
                             });
 
-                            return importDomain.importExcel({data, library, mapping, key}, ctx);
+                            return true;
                         }
+                        // async importExcel(
+                        //     _,
+                        //     {file, library, mapping, key}: IImportExcelParams,
+                        //     ctx: IQueryInfos
+                        // ): Promise<boolean> {
+                        //     const fileData = await file;
+
+                        //     const allowedExtensions = ['xlsx'];
+                        //     _validateFileFormat(fileData.filename, allowedExtensions);
+
+                        //     const buffer = await _getFileDataBuffer(fileData);
+                        //     const workbook = new ExcelJS.Workbook();
+
+                        //     await workbook.xlsx.load(buffer);
+                        //     const data: string[][] = [];
+
+                        //     workbook.eachSheet(s => {
+                        //         s.eachRow(r => {
+                        //             let elem = (r.values as string[]).slice(1);
+
+                        //             // replace empty item by null
+                        //             elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
+
+                        //             data.push(elem);
+                        //         });
+                        //     });
+
+                        //     return importDomain.importExcel({data, library, mapping, key}, ctx);
+                        // }
                     }
                 }
             };

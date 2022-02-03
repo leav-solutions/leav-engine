@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '../../_types/queryInfos';
-import {Action, IMatch, IValue, IData, IFile} from '../../_types/import';
+import {Action, IMatch, IValue, IData, IFile, IElement} from '../../_types/import';
 import {IAttribute} from '../../_types/attribute';
 import {Operator, AttributeCondition} from '../../_types/record';
 import {Errors} from '../../_types/errors';
@@ -27,8 +27,8 @@ export interface IImportExcelParams {
 }
 
 export interface IImportDomain {
-    import(data: IFile, ctx: IQueryInfos): Promise<boolean>;
-    importExcel(params: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
+    import(data: IElement, ctx: IQueryInfos): Promise<boolean>;
+    // importExcel(params: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
 interface IDeps {
@@ -208,87 +208,88 @@ export default function ({
     };
 
     return {
-        async importExcel({data, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
-            const file: IFile = {elements: [], trees: []};
+        // async importExcel({data, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
+        //     const file: IFile = {elements: [], trees: []};
 
-            // delete first row of columns name
-            data.shift();
+        //     // delete first row of columns name
+        //     data.shift();
 
-            for (const d of data) {
-                const matches =
-                    key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
-                        ? [
-                              {
-                                  attribute: key,
-                                  value: String(d[mapping.indexOf(key)])
-                              }
-                          ]
-                        : [];
+        //     for (const d of data) {
+        //         const matches =
+        //             key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
+        //                 ? [
+        //                       {
+        //                           attribute: key,
+        //                           value: String(d[mapping.indexOf(key)])
+        //                       }
+        //                   ]
+        //                 : [];
 
-                file.elements.push({
-                    library,
-                    matches,
-                    data: d
-                        .filter((_, i) => mapping[i])
-                        .map((e, i) => ({
-                            attribute: mapping.filter(m => m !== null)[i],
-                            values: [{value: String(e)}],
-                            action: Action.REPLACE
-                        }))
-                        .filter(e => e.attribute !== 'id'),
-                    links: []
-                });
-            }
+        //         file.elements.push({
+        //             library,
+        //             matches,
+        //             data: d
+        //                 .filter((_, i) => mapping[i])
+        //                 .map((e, i) => ({
+        //                     attribute: mapping.filter(m => m !== null)[i],
+        //                     values: [{value: String(e)}],
+        //                     action: Action.REPLACE
+        //                 }))
+        //                 .filter(e => e.attribute !== 'id'),
+        //             links: []
+        //         });
+        //     }
 
-            return this.import(file, ctx);
-        },
-        async import(data: IFile, ctx: IQueryInfos): Promise<boolean> {
-            const schema = await fs.promises.readFile(SCHEMA_PATH);
+        //     return this.import(file, ctx);
+        // },
+        async import(element: IElement, ctx: IQueryInfos): Promise<boolean> {
+            //FIXME: validation
+            // const schema = await fs.promises.readFile(SCHEMA_PATH);
 
-            validate(data, JSON.parse(schema.toString()), {throwAll: true});
+            // validate(data, JSON.parse(schema.toString()), {throwAll: true});
 
-            const linksElements: Array<{library: string; recordIds: string[]; links: IData[]}> = [];
+            // const linksElements: Array<{library: string; recordIds: string[]; links: IData[]}> = [];
 
             // elements data
-            for (const e of data.elements) {
-                await validateHelper.validateLibrary(e.library, ctx);
+            // for (const e of data.elements) {
+            await validateHelper.validateLibrary(element.library, ctx);
 
-                let recordIds = await _getMatchRecords(e.library, e.matches, ctx);
+            let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
 
-                recordIds = recordIds.length ? recordIds : [(await recordDomain.createRecord(e.library, ctx)).id];
+            recordIds = recordIds.length ? recordIds : [(await recordDomain.createRecord(element.library, ctx)).id];
 
-                for (const d of e.data) {
-                    await _treatElement(e.library, d, recordIds, ctx);
-                }
-
-                linksElements.push({library: e.library, recordIds, links: e.links});
+            for (const d of element.data) {
+                await _treatElement(element.library, d, recordIds, ctx);
             }
+
+            // linksElements.push({library: e.library, recordIds, links: e.links});
+            // }
 
             // elements links
-            for (const le of linksElements) {
-                for (const link of le.links) {
-                    await _treatElement(le.library, link, le.recordIds, ctx);
-                }
-            }
+            // for (const le of linksElements) {
+            //     for (const link of le.links) {
+            //         await _treatElement(le.library, link, le.recordIds, ctx);
+            //     }
+            // }
 
             // trees
-            for (const t of data.trees) {
-                await validateHelper.validateLibrary(t.library, ctx);
+            // for (const t of data.trees) {
+            //     await validateHelper.validateLibrary(t.library, ctx);
 
-                const recordIds = await _getMatchRecords(t.library, t.matches, ctx);
-                let parent;
+            //     const recordIds = await _getMatchRecords(t.library, t.matches, ctx);
+            //     let parent;
 
-                if (typeof t.parent !== 'undefined') {
-                    const parentIds = await _getMatchRecords(t.parent.library, t.parent.matches, ctx);
-                    parent = parentIds.length ? {id: parentIds[0], library: t.parent.library} : parent;
-                }
+            //     if (typeof t.parent !== 'undefined') {
+            //         const parentIds = await _getMatchRecords(t.parent.library, t.parent.matches, ctx);
+            //         parent = parentIds.length ? {id: parentIds[0], library: t.parent.library} : parent;
+            //     }
 
-                if (typeof parent === 'undefined' && !recordIds.length) {
-                    throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
-                }
+            //     if (typeof parent === 'undefined' && !recordIds.length) {
+            //         throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
+            //     }
 
-                await _treatTree(t.library, t.treeId, parent, recordIds, t.action, ctx, t.order);
-            }
+            //     await _treatTree(t.library, t.treeId, parent, recordIds, t.action, ctx, t.order);
+            // }
 
             return true;
         }

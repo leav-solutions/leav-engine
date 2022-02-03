@@ -48,7 +48,8 @@ export const validateConfig = (conf: IConfig) => {
                 port: Joi.string().required()
             }),
             exchange: Joi.string().required(),
-            type: Joi.string().required()
+            type: Joi.string().required(),
+            prefetch: Joi.number().required()
         }),
         filesManager: Joi.object().keys({
             queues: Joi.object().keys({
@@ -64,14 +65,12 @@ export const validateConfig = (conf: IConfig) => {
             rootKeys: Joi.object().keys({
                 files1: Joi.string().required()
             }),
-            userId: Joi.number().required(),
-            prefetch: Joi.number()
+            userId: Joi.number().required()
         }),
         indexationManager: Joi.object().keys({
             queues: Joi.object().keys({
                 events: Joi.string().required()
-            }),
-            prefetch: Joi.number()
+            })
         }),
         eventsManager: Joi.object().keys({
             routingKeys: Joi.object().keys({

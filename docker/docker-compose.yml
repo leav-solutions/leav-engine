@@ -2,7 +2,7 @@ version: "3.4"
 
 ##### Common properties #####
 x-node-image: &node_image node:14-alpine
-x-message-broker-image: &message_broker_image "rabbitmq:3-management-alpine"
+x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
 x-traefik-image: &traefik_image "traefik:1.7"
 x-redis-image: &redis_image "redis"
 x-elasticsearch-image: &elastisearch_image "docker.elastic.co/elasticsearch/elasticsearch:7.8.0"

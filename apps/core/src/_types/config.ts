@@ -64,6 +64,7 @@ export interface IAmqp {
     connOpt: Options.Connect;
     exchange: string;
     type: string;
+    prefetch?: number;
 }
 
 export interface IFilesManager {
@@ -81,7 +82,6 @@ export interface IFilesManager {
         files1: string;
     };
     userId: string;
-    prefetch?: number;
 }
 
 export interface IEventsManager {
@@ -94,7 +94,6 @@ export interface IIndexationManager {
     queues: {
         events: string;
     };
-    prefetch?: number;
 }
 
 export interface IExport {

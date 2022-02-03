@@ -54,8 +54,8 @@ describe('Indexation Manager', () => {
     test('Init message listening', async () => {
         const amqpServ = amqpService({
             'core.infra.amqp': {
-                connection: null,
-                channel: mockAmqpChannel as amqp.ConfirmChannel
+                publisher: null,
+                consumer: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel}
             },
             config: conf as IConfig
         });

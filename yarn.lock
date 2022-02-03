@@ -4707,13 +4707,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/amqplib@npm:^0.5.13":
-  version: 0.5.17
-  resolution: "@types/amqplib@npm:0.5.17"
+"@types/amqplib@npm:0.8.2":
+  version: 0.8.2
+  resolution: "@types/amqplib@npm:0.8.2"
   dependencies:
     "@types/bluebird": "*"
     "@types/node": "*"
-  checksum: e0026e34f0b5c0c8b6df49c95fdac5542a5d68534bdaa9bd5c80827f96a65d2392667162461669f869226e345fb3cd97c4bb3f89217080b0f4851f4167f07b50
+  checksum: 14977a944f1ef1b548f909f482ba3ed75602606b18f119fac3f6464c9e638afbc30824c9864932ae3f629b29398b6ec2acd4662b6cbdc1c503e33f3f3be84a30
   languageName: node
   linkType: hard
 
@@ -7076,17 +7076,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"amqplib@npm:^0.5.5":
-  version: 0.5.6
-  resolution: "amqplib@npm:0.5.6"
+"amqplib@npm:0.8.0":
+  version: 0.8.0
+  resolution: "amqplib@npm:0.8.0"
   dependencies:
     bitsyntax: ~0.1.0
-    bluebird: ^3.5.2
+    bluebird: ^3.7.2
     buffer-more-ints: ~1.0.0
     readable-stream: 1.x >=1.1.9
-    safe-buffer: ~5.1.2
-    url-parse: ~1.4.3
-  checksum: 01a7cb0dfd10327f27557276bbb860ab72426d013538f7551f836884f98d5c3d203181c8f6713b82e00bc487a6d4f5ea8601db2e7c04b0fc082be419356d640c
+    safe-buffer: ~5.2.1
+    url-parse: ~1.5.1
+  checksum: 25ac82d4096dda201eaf8c186c79a2f1eea8ed5a10187e7c8ef5b62c8e1f000f1e93ddcbbd16d16ad10e304a60970749d6c69781b09439f1dac934b0c57fca4e
   languageName: node
   linkType: hard
 
@@ -8804,11 +8804,11 @@ __metadata:
   dependencies:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
-    "@types/amqplib": ^0.5.13
+    "@types/amqplib": 0.8.2
     "@types/chokidar": ^2.1.3
     "@types/jest": ^24.9.1
     "@types/node": ^12.12.38
-    amqplib: ^0.5.5
+    amqplib: 0.8.0
     app-root-path: ^3.0.0
     chokidar: ^3.4.0
     jest: ^24.9.0
@@ -9493,7 +9493,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bluebird@npm:^3.5.2, bluebird@npm:^3.5.5":
+"bluebird@npm:^3.5.5, bluebird@npm:^3.7.2":
   version: 3.7.2
   resolution: "bluebird@npm:3.7.2"
   checksum: 4f2288662f3d4eadbb82d4daa4a7d7976a28fa3c7eb4102c9b4033b03e5be4574ba123ac52a7c103cde4cb7b2d2afc1dbe41817ca15a29ff21ecd258d0286047
@@ -11425,7 +11425,7 @@ __metadata:
     "@hapi/inert": ^5.2.2
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
-    "@types/amqplib": ^0.5.13
+    "@types/amqplib": 0.8.2
     "@types/debug": 0.0.30
     "@types/elasticsearch": ^5.0.36
     "@types/glob": ^5.0.35
@@ -11438,7 +11438,7 @@ __metadata:
     "@types/uuid": ^7.0.2
     "@types/winston": ^2.3.9
     "@wzrdtales/apollo-server-hapi": ^2.9.4
-    amqplib: ^0.5.5
+    amqplib: 0.8.0
     apollo-server: ^2.19.0
     apollo-server-core: 3.6.2
     apollo-server-express: 3.6.2
@@ -11450,7 +11450,6 @@ __metadata:
     awilix: ^3.0.8
     axios: ^0.19.0
     bcryptjs: ^2.4.3
-    bfj: 7.0.2
     commander: ^2.20.0
     deep-extend: ^0.5.1
     exceljs: 4.2.0
@@ -11469,6 +11468,7 @@ __metadata:
     jest: 25
     jest-cli: 24
     joi: 17.6.0
+    jsonparse: 1.3.1
     jsonschema: ^1.4.0
     jsonwebtoken: ^8.2.2
     license-check-and-add: ^3.0.4
@@ -20285,6 +20285,13 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
+"jsonparse@npm:1.3.1":
+  version: 1.3.1
+  resolution: "jsonparse@npm:1.3.1"
+  checksum: 6669acd7b39cdc4a4cbb078d1a19d2a07cb81651d5045b907b4d067e5c453d060a274f348b53c51ed817456f1cdfc709a13a76ca47c8304547f03843c043ebcb
+  languageName: node
+  linkType: hard
+
 "jsonschema@npm:^1.4.0":
   version: 1.4.0
   resolution: "jsonschema@npm:1.4.0"
@@ -24925,11 +24932,11 @@ fsevents@2.1.2:
   dependencies:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
-    "@types/amqplib": ^0.5.13
+    "@types/amqplib": 0.8.2
     "@types/jest": ^24.0.23
     "@types/node": ^12.11.5
     "@types/uuid": ^3.4.6
-    amqplib: ^0.5.5
+    amqplib: 0.8.0
     app-root-path: ^3.0.0
     jest: ^24.9.0
     lint-staged: ^9.4.3
@@ -27703,7 +27710,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"safe-buffer@npm:5.2.1, safe-buffer@npm:>=5.1.0, safe-buffer@npm:^5.0.1, safe-buffer@npm:^5.1.0, safe-buffer@npm:^5.1.1, safe-buffer@npm:^5.1.2, safe-buffer@npm:^5.2.0, safe-buffer@npm:~5.2.0":
+"safe-buffer@npm:5.2.1, safe-buffer@npm:>=5.1.0, safe-buffer@npm:^5.0.1, safe-buffer@npm:^5.1.0, safe-buffer@npm:^5.1.1, safe-buffer@npm:^5.1.2, safe-buffer@npm:^5.2.0, safe-buffer@npm:~5.2.0, safe-buffer@npm:~5.2.1":
   version: 5.2.1
   resolution: "safe-buffer@npm:5.2.1"
   checksum: 0bb57f0d8f9d1fa4fe35ad8a2db1f83a027d48f2822d59ede88fd5cd4ddad83c0b497213feb7a70fbf90597a70c5217f735b0eb1850df40ce9b4ae81dd22b3f9
@@ -29478,11 +29485,11 @@ resolve@^2.0.0-next.3:
   dependencies:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
-    "@types/amqplib": ^0.5.13
+    "@types/amqplib": 0.8.2
     "@types/jest": ^25.1.4
     "@types/joi": ^14.3.4
     "@types/node": ^13.9.1
-    amqplib: ^0.5.5
+    amqplib: 0.8.0
     apollo-cache-inmemory: ^1.6.5
     apollo-client: ^2.6.8
     apollo-link: ^1.2.13
@@ -31082,13 +31089,13 @@ typescript@4.1.3:
   languageName: node
   linkType: hard
 
-"url-parse@npm:~1.4.3":
-  version: 1.4.7
-  resolution: "url-parse@npm:1.4.7"
+"url-parse@npm:~1.5.1":
+  version: 1.5.4
+  resolution: "url-parse@npm:1.5.4"
   dependencies:
     querystringify: ^2.1.1
     requires-port: ^1.0.0
-  checksum: 33c44a24b9a9e9da7f2591652dc944b6164b93ad1d3ee4eea889b396788f716bd2d6c9d0a2b3ee2e8f863bde69bacbc12c3a4b4e666506ee4c88ea7444004f95
+  checksum: 3a44dab8f38158ff48ffc42d9ed6b80007cdc65ac3d0823dc2a94bc9020336165519a1353b9557ecf6e0531b6e39a5bb78b555d98c1402ddc6a6753214b6d27e
   languageName: node
   linkType: hard
 

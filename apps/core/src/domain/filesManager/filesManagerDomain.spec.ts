@@ -42,7 +42,10 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
 };
 
 const mockAmqpService = amqpService({
-    'core.infra.amqp': {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
+    'core.infra.amqp': {
+        publisher: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
+        consumer: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel}
+    },
     config: mockConfig as Config.IConfig
 });
 
