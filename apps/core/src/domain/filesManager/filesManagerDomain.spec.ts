@@ -2,16 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import * as Config from '_types/config';
-import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
-import filesManager from './filesManagerDomain';
-import winston = require('winston');
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
-import {createPreview} from './helpers/handlePreview';
+import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {create} from 'lodash';
-import {IPreviewVersion} from '_types/filesManager';
+import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
+import filesManager, {systemPreviewVersions} from './filesManagerDomain';
+import {createPreview} from './helpers/handlePreview';
+import winston = require('winston');
 
 const mockConfig: Mockify<Config.IConfig> = {
     amqp: {
@@ -56,27 +54,6 @@ const logger: Mockify<winston.Winston> = {
 jest.mock('./helpers/handlePreview', () => ({
     createPreview: jest.fn()
 }));
-
-const systemPreviewVersions: IPreviewVersion[] = [
-    {
-        background: false,
-        density: 300,
-        sizes: [
-            {
-                size: 64,
-                name: 'small'
-            },
-            {
-                size: 256,
-                name: 'medium'
-            },
-            {
-                size: 1024,
-                name: 'big'
-            }
-        ]
-    }
-];
 
 describe('FilesManager', () => {
     const ctx: IQueryInfos = {
