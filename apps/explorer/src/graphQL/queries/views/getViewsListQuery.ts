@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
-import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
+import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {ISystemTranslation} from '../../../_types/types';
 
 export interface IGetViewListFilter {
@@ -94,6 +94,10 @@ export const getViewsListQuery = gql`
                 filters {
                     field
                     value
+                    tree {
+                        id
+                        label
+                    }
                     condition
                     operator
                 }
