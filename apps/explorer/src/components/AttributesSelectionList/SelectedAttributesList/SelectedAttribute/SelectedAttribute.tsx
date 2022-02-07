@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloseOutlined} from '@ant-design/icons';
-import {Button, Descriptions} from 'antd';
+import {CloseOutlined, HolderOutlined} from '@ant-design/icons';
+import {Button, Space} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -20,37 +20,18 @@ interface ISelectedAttributeProps {
 
 const DragHandle = styled.div`
     border-right: 1px solid #f0f0f0;
-    padding: 20px;
-
+    padding: 0.5em;
     display: flex;
-    justify-content: center;
     align-items: center;
-
-    * {
-        color: #f0f0f0;
-        font-size: 32px;
-    }
 `;
 
-const Content = styled.div`
-    padding: 8px;
-    width: 50%;
+const Content = styled(Space)`
+    padding: 0.5em;
+    flex-grow: 1;
 `;
 
 const CloseWrapper = styled.div`
     padding: 8px;
-`;
-
-const Handle = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 3px;
-`;
-
-const HandlePoint = styled.div`
-    padding: 2px;
-    background: hsla(0, 0%, 70%, 1);
-    border-radius: 100%;
 `;
 
 const SelectedAttribute = ({selectedAttribute, handleProps}: ISelectedAttributeProps) => {
@@ -70,32 +51,16 @@ const SelectedAttribute = ({selectedAttribute, handleProps}: ISelectedAttributeP
     return (
         <>
             <DragHandle {...handleProps}>
-                <Handle>
-                    {[...Array(8)].map((_, index) => (
-                        <HandlePoint key={index} />
-                    ))}
-                </Handle>
+                <HolderOutlined />
             </DragHandle>
 
-            <Content>
-                <Descriptions
-                    title={
-                        <TextAttribute>
-                            {label ? (
-                                <span>
-                                    {label}
-                                    <SmallText>{selectedAttribute.id}</SmallText>
-                                </span>
-                            ) : (
-                                selectedAttribute.id
-                            )}
-                        </TextAttribute>
-                    }
-                >
-                    <Descriptions.Item label={t('attributes-list.items-selected.library')}>
-                        {selectedAttribute.library}
-                    </Descriptions.Item>
-                </Descriptions>
+            <Content direction="vertical">
+                <TextAttribute>{label ?? selectedAttribute.id}</TextAttribute>
+                {label && (
+                    <div>
+                        <SmallText>{selectedAttribute.id}</SmallText>
+                    </div>
+                )}
             </Content>
             <CloseWrapper>
                 <Button icon={<CloseOutlined />} size="small" onClick={_handleUnselectAttribute} />

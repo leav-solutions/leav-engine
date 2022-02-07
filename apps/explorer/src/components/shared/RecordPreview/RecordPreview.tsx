@@ -71,18 +71,18 @@ ImagePreview.displayName = 'ImagePreview';
 
 function RecordPreviewList({label, color, image, size, style}: IRecordPreviewProps): JSX.Element {
     if (image) {
-        const limitSize = size
-            ? {maxHeight: `calc(${getPreviewSize(size)} - 0.5rem)`, maxWidth: `calc(${getPreviewSize(size)} - 0.5rem)`}
-            : {maxHeight: 'auto', maxWidth: 'auto'};
-
         return (
             <ImagePreview size={size} style={style}>
                 <img
                     src={image}
                     alt="record preview"
                     style={{
-                        ...style,
-                        ...limitSize
+                        maxHeight: 'auto',
+                        maxWidth: 'auto',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        ...style
                     }}
                 />
             </ImagePreview>
@@ -140,7 +140,7 @@ const ImagePreviewWrapper = styled.div<IImagePreviewTileProps>`
     border-radius: 0.25rem 0.25rem 0 0;
 
     img {
-        object-fit: contain;
+        object-fit: cover;
     }
 `;
 ImagePreviewWrapper.displayName = 'ImagePreviewTile';

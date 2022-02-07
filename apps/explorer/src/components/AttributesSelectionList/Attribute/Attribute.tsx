@@ -1,84 +1,69 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {Checkbox, Radio, Space} from 'antd';
+import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import styled from 'styled-components';
-import {
-    GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute,
-    GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute,
-    GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute
-} from '../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
+import themingVar from 'themingVar';
+import {attributeToSelectedAttribute, isAttributeSelected, localizedTranslation} from 'utils';
+import {AttributesSelectionListActionTypes} from '../reducer/attributesSelectionListReducer';
 import {useAttributesSelectionListState} from '../reducer/attributesSelectionListStateContext';
+import {SmallText, TextAttribute} from '../sharedComponents';
 import {ICommonAttributeComponentProps} from '../_types';
-import ExtendedAttribute from './ExtendedAttribute';
-import RecordLinkAttribute from './RecordLinkAttribute';
-import StandardAttribute from './StandardAttribute';
-import TreeLinkAttribute from './TreeLinkAttribute/TreeLinkAttribute';
 
 const Item = styled.div`
-    padding: 0.5rem 0;
+    padding: 0.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    border: 2px solid transparent;
+
+    &:hover {
+        border-color: ${themingVar['@primary-color']};
+        background-color: ${themingVar['@leav-background-active']};
+    }
+`;
+
+const CheckboxWrapper = styled.div`
+    margin-left: 1em;
 `;
 
 function Attribute({attribute, depth, path, library, parentAttribute}: ICommonAttributeComponentProps): JSX.Element {
-    const {state} = useAttributesSelectionListState();
-
-    const hasReachedMaxDepth =
-        (attribute.format !== AttributeFormat.extended && depth) ||
-        (attribute.format === AttributeFormat.extended && !state.canExpandExtendedAttributes);
     const attributePath = [path, attribute.id].filter(p => !!p).join('.');
-    const commonProps = {
-        library,
-        depth,
-        path: attributePath,
-        parentAttribute
+    const [{lang}] = useLang();
+    const {state, dispatch} = useAttributesSelectionListState();
+
+    const _handleClick = () => {
+        dispatch({
+            type: AttributesSelectionListActionTypes.TOGGLE_ATTRIBUTE_SELECTION,
+            attribute: attributeToSelectedAttribute(attribute, {
+                path: attributePath,
+                library,
+                parentAttributeData: parentAttribute
+            })
+        });
     };
 
-    let attributeComp;
-    if (hasReachedMaxDepth) {
-        attributeComp = (
-            <StandardAttribute
-                attribute={attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute}
-                {...commonProps}
-            />
-        );
-    } else {
-        switch (attribute.type) {
-            case AttributeType.simple_link:
-            case AttributeType.advanced_link:
-                attributeComp = (
-                    <RecordLinkAttribute
-                        attribute={attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute}
-                        {...commonProps}
-                    />
-                );
-                break;
-            case AttributeType.tree:
-                attributeComp = (
-                    <TreeLinkAttribute
-                        attribute={attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute}
-                        {...commonProps}
-                    />
-                );
-                break;
-            default: {
-                attributeComp =
-                    attribute.format === AttributeFormat.extended && !hasReachedMaxDepth ? (
-                        <ExtendedAttribute
-                            attribute={attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute}
-                            {...commonProps}
-                        />
-                    ) : (
-                        <StandardAttribute
-                            attribute={attribute as GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute}
-                            {...commonProps}
-                        />
-                    );
-                break;
-            }
-        }
-    }
+    const label = localizedTranslation(attribute.label, lang);
+    const isSelected = isAttributeSelected(attributePath, state.selectedAttributes);
 
-    return <Item>{attributeComp}</Item>;
+    return (
+        <Item onClick={_handleClick} data-testid="attribute-in-list">
+            <Space>
+                <TextAttribute>{label ?? attribute.id}</TextAttribute>
+                {label && <SmallText>{attribute.id}</SmallText>}
+            </Space>
+            <CheckboxWrapper>
+                {state.multiple ? (
+                    <Checkbox checked={isSelected} onChange={_handleClick} />
+                ) : (
+                    <Radio checked={isSelected} onChange={_handleClick} />
+                )}
+            </CheckboxWrapper>
+        </Item>
+    );
 }
 export default Attribute;

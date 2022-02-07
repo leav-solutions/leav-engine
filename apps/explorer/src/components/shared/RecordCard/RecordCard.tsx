@@ -6,7 +6,7 @@ import RecordPreview from 'components/shared/RecordPreview';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedTranslation} from 'utils';
-import {IPreview, IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
+import {FilePreview, IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
 
 export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;
@@ -52,9 +52,16 @@ const LibLabel = styled.div`
     font-size: 0.9em;
 `;
 
-const getPreviewBySize = (preview?: IPreview, size?: PreviewSize) => {
-    const previewBySize = preview && (size ? preview[size] ?? preview.small : preview.small);
-    return previewBySize ? getFileUrl(previewBySize) : '';
+const getPreviewBySize = (preview?: FilePreview, size?: PreviewSize) => {
+    const fileSizeByPreviewSize: {[size in PreviewSize]: string} = {
+        [PreviewSize.small]: 'tiny',
+        [PreviewSize.medium]: 'small',
+        [PreviewSize.big]: 'medium'
+    };
+
+    const previewPath: string = preview?.[fileSizeByPreviewSize[size]] ?? preview?.small;
+
+    return previewPath ? getFileUrl(previewPath) : '';
 };
 
 const RecordCard = ({

@@ -23,14 +23,6 @@ jest.mock(
 );
 
 jest.mock(
-    './LibraryItemsModal',
-    () =>
-        function LibraryItemsModal() {
-            return <div>LibraryItemsModal</div>;
-        }
-);
-
-jest.mock(
     './Header',
     () =>
         function Header() {

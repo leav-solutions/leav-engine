@@ -4,6 +4,7 @@
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {INavigationPath} from '_types/types';
 import {IRecordAndChildren} from '../../graphQL/queries/trees/getTreeContentQuery';
+import {mockPreviews} from './record';
 
 export const mockTreeRecord: RecordIdentity = {
     id: 'id',
@@ -11,12 +12,7 @@ export const mockTreeRecord: RecordIdentity = {
         id: 'id',
         color: 'color',
         label: 'label',
-        preview: {
-            small: 'preview',
-            medium: 'preview',
-            big: 'preview',
-            pages: 'preview'
-        },
+        preview: mockPreviews,
         library: {
             id: 'library-id',
             label: {
@@ -37,12 +33,7 @@ export const mockTreeRecordChild: RecordIdentity = {
         id: 'child',
         color: 'color',
         label: 'label-child',
-        preview: {
-            small: 'preview-child',
-            medium: 'preview-child',
-            big: 'preview-child',
-            pages: 'preview-child'
-        },
+        preview: mockPreviews,
         library: {
             id: 'library-id',
             label: {

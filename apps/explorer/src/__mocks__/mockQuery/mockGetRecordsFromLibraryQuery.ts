@@ -9,7 +9,7 @@ import {
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {IField} from '_types/types';
 import {mockLibrary} from '__mocks__/common/library';
-import {mockPreview} from '__mocks__/common/preview';
+import {mockPreviews} from '__mocks__/common/record';
 
 export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryElement = {
     _id: 'id',
@@ -18,7 +18,7 @@ export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryE
         id: 'id',
         label: 'label',
         color: null,
-        preview: mockPreview,
+        preview: mockPreviews,
         library: mockLibrary
     }
 };

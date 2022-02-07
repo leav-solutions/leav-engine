@@ -5,6 +5,7 @@ import {IRecordPropertyWithAttribute} from 'components/RecordEdition/editRecordR
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {mockFormAttribute} from './attribute';
+import {mockPreviews} from './record';
 
 export const mockModifier: RecordIdentity = {
     id: '1',
@@ -19,12 +20,7 @@ export const mockModifier: RecordIdentity = {
                 type: 'User'
             }
         },
-        preview: {
-            small: '/fake/url/small.jpg',
-            big: '/fake/url/big.jpg',
-            medium: '/fake/url/medium.jpg',
-            pages: ''
-        },
+        preview: mockPreviews,
         color: '#123456'
     }
 };

@@ -21,7 +21,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons@npm:^4.4.0, @ant-design/icons@npm:^4.6.2":
+"@ant-design/icons-svg@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "@ant-design/icons-svg@npm:4.2.1"
+  checksum: 6b590e4b9d902b44d095617652cb7f786f944e057c8079317b5fc2865167c60a73df52f2e6943ea8f20fc25eff5525c00c6f60d8bde0ea28400acf93563608b7
+  languageName: node
+  linkType: hard
+
+"@ant-design/icons@npm:4.7.0":
+  version: 4.7.0
+  resolution: "@ant-design/icons@npm:4.7.0"
+  dependencies:
+    "@ant-design/colors": ^6.0.0
+    "@ant-design/icons-svg": ^4.2.1
+    "@babel/runtime": ^7.11.2
+    classnames: ^2.2.6
+    rc-util: ^5.9.4
+  peerDependencies:
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: 1633fb11dc473ae61f01bdebf59b4f84f95b5bdcc3a3149d5faba25a44490f381cf9682cf7c0c64cba69efcd9f12498d21b0f5ed70b95a572a0c211902719666
+  languageName: node
+  linkType: hard
+
+"@ant-design/icons@npm:^4.6.2":
   version: 4.6.2
   resolution: "@ant-design/icons@npm:4.6.2"
   dependencies:
@@ -14134,7 +14157,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "explorer@workspace:apps/explorer"
   dependencies:
-    "@ant-design/icons": ^4.4.0
+    "@ant-design/icons": 4.7.0
     "@apollo/client": ^3.3.7
     "@apollo/link-error": ^2.0.0-beta.3
     "@apollo/react-components": ^3.1.5

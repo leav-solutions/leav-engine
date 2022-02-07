@@ -232,7 +232,7 @@ function Sidebar(): JSX.Element {
                                 };
 
                                 return (
-                                    <Menu.Item key={`tree.${tree.id}`} icon={<DatabaseOutlined />}>
+                                    <Menu.Item key={`tree.${tree.id}`} icon={<ShareAltOutlined />}>
                                         <MenuItemContent>
                                             <Link onClick={() => _goTo(getTreeLink(tree.id))}>
                                                 {localizedTranslation(tree.label, lang)}

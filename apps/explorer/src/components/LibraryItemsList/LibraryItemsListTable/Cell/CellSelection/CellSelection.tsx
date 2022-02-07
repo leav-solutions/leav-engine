@@ -5,7 +5,6 @@ import {CheckCircleFilled, CheckCircleOutlined} from '@ant-design/icons';
 import React from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {IRecordIdentityWhoAmI} from '_types/types';
 
 const Wrapper = styled.div`
     display: grid;
@@ -19,6 +18,7 @@ const CustomCheckbox = styled.span<{checked: boolean}>`
     && {
         display: ${p => (!p.checked ? 'none' : 'block')};
         color: ${p => (p.checked ? `${themingVar['@primary-color']}` : themingVar['@default-text-color'])};
+        font-size: 1.5em;
 
         .ant-checkbox-checked::after {
             border: none;
@@ -31,15 +31,13 @@ const CustomCheckbox = styled.span<{checked: boolean}>`
 `;
 
 interface ICellSelectionProps {
-    record: IRecordIdentityWhoAmI;
     selected: boolean;
-    onClick: () => void;
 }
 
-function CellSelection({record, onClick, selected}: ICellSelectionProps): JSX.Element {
+function CellSelection({selected}: ICellSelectionProps): JSX.Element {
     return (
         <Wrapper>
-            <CustomCheckbox checked={selected} onClick={onClick} role="checkbox">
+            <CustomCheckbox checked={selected} role="checkbox">
                 {selected ? <CheckCircleFilled /> : <CheckCircleOutlined />}
             </CustomCheckbox>
         </Wrapper>

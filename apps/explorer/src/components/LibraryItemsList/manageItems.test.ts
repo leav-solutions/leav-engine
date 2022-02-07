@@ -7,7 +7,7 @@
 import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {IField} from '_types/types';
-import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockPreviews, mockRecordWhoAmI} from '__mocks__/common/record';
 import {manageItems} from './manageItems';
 
 export {};
@@ -27,12 +27,7 @@ describe('manageItems', () => {
                     type: 'RecordLib'
                 }
             },
-            preview: {
-                small: '/fake/url/small.jpg',
-                big: '/fake/url/big.jpg',
-                medium: '/fake/url/medium.jpg',
-                pages: ''
-            },
+            preview: mockPreviews,
             color: '#123456'
         }
     };
