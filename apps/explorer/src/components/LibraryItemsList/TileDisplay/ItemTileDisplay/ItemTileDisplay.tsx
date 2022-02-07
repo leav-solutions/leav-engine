@@ -294,14 +294,12 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                                             text={t('items-list-row.select-only')}
                                             record={item.whoAmI}
                                             size="small"
-                                            ghost
                                         />
                                         <SelectCellsBtn
                                             selectionType={SelectCellsBtnType.ALL}
                                             text={t('items-list-row.select-all')}
                                             record={item.whoAmI}
                                             size="small"
-                                            ghost
                                         />
                                     </SelectionActions>
                                     {isChecked && (
@@ -313,18 +311,13 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                             ) : (
                                 <Actions className="actions">
                                     <Tooltip title={t('global.select')} key="select">
-                                        <Button shape="circle" ghost icon={<CheckOutlined />} onClick={_handleSelect} />
+                                        <Button shape="circle" icon={<CheckOutlined />} onClick={_handleSelect} />
                                     </Tooltip>
                                     <Tooltip title={t('global.edit')} key="edit">
-                                        <EditRecordBtn shape={'circle'} ghost record={item.whoAmI} />
+                                        <EditRecordBtn shape={'circle'} record={item.whoAmI} />
                                     </Tooltip>
                                     <Tooltip title={t('global.delete')} key="delete">
-                                        <Button
-                                            shape="circle"
-                                            ghost
-                                            icon={<DeleteOutlined />}
-                                            onClick={_handleDelete}
-                                        />
+                                        <Button shape="circle" icon={<DeleteOutlined />} onClick={_handleDelete} />
                                     </Tooltip>
                                 </Actions>
                             )}

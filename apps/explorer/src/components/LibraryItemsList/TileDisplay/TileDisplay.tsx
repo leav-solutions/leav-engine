@@ -3,12 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import themingVar from '../../../themingVar';
-import {IItem, IRecordEdition} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
-import LibraryItemsModal from '../LibraryItemsListTable/LibraryItemsModal';
 import ItemTileDisplay from './ItemTileDisplay';
 
 const LoadingWrapper = styled.div`
@@ -42,18 +40,6 @@ const Footer = styled.div`
 
 function TileDisplay(): JSX.Element {
     const {state: searchState} = useSearchReducer();
-    const [recordEdition, setRecordEdition] = useState<IRecordEdition>({
-        show: false
-    });
-
-    const closeRecordEdition = () => {
-        setRecordEdition(re => ({...re, show: false}));
-    };
-
-    const updateItem = (newItem: IItem) => {
-        setRecordEdition(re => ({...re, item: newItem}));
-    };
-
     return (
         <>
             <Wrapper>
@@ -73,13 +59,6 @@ function TileDisplay(): JSX.Element {
             <Footer>
                 <LibraryItemsListPagination />
             </Footer>
-
-            <LibraryItemsModal
-                showModal={recordEdition.show}
-                values={recordEdition.item}
-                closeModal={closeRecordEdition}
-                updateValues={updateItem}
-            />
         </>
     );
 }

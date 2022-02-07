@@ -22,9 +22,11 @@ export interface CREATE_RECORD_createRecord_whoAmI_library {
 }
 
 export interface CREATE_RECORD_createRecord_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 

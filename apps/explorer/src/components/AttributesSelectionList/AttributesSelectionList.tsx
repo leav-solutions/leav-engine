@@ -90,10 +90,11 @@ function AttributesSelectionList({
     return (
         <AttributesSelectionListStateContext.Provider value={{state, dispatch}}>
             <Wrapper multiple={state.multiple}>
-                <ListWrapper>
+                <ListWrapper data-testid="attributes-list">
                     <CustomForm>
                         <Input.Search
                             placeholder={t('attributes-list.search')}
+                            aria-label="search"
                             ref={searchRef}
                             onChange={event => _handleSearchChange(event.target.value ?? '')}
                         />
@@ -127,7 +128,7 @@ function AttributesSelectionList({
                         </List>
                     )}
                 </ListWrapper>
-                {multiple && <SelectedAttributesList />}
+                {multiple && <SelectedAttributesList data-testid="selected-attributes-list" />}
             </Wrapper>
         </AttributesSelectionListStateContext.Provider>
     );

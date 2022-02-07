@@ -16,6 +16,11 @@
         "feature_not_available": "Cette fonctionnalité sera bientôt disponible!",
         "available_soon": "Bientôt"
     },
+    "errors": {
+        "INTERNAL_ERROR": "Une erreur interne est survenue",
+        "PERMISSION_ERROR": "Vous n'avez pas les droits pour effectuer cette opération",
+        "VALIDATION_ERROR": "Requête invalide"
+    },
     "login": {
         "header": "Authentification",
         "email": "Adresse e-mail",

@@ -75,7 +75,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         background: ${themingVar['@default-bg']};
         transition: none;
         border-radius: 0;
-        line-height: 2em;
+        line-height: 2.5em;
     }
 
     ${FormWrapper}:not(:last-child) & input:not(:hover) {
@@ -154,6 +154,11 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
     &:not(:hover) .floating-menu {
         display: none;
     }
+
+    .floating-menu {
+        top: 50%;
+        transform: translateY(-50%);
+    }
 `;
 
 const ActionsWrapper = styled.div`
@@ -176,21 +181,6 @@ const ButtonsWrapper = styled.div`
 const FormItem = styled(Form.Item)`
     && {
         margin: 0;
-    }
-`;
-
-const HoverButtons = styled(Space)`
-    position: absolute;
-    top: calc(50% - 12px);
-    right: 1em;
-
-    ${InputWrapper}:not(:hover) &,
-    ${InputWrapper}.editing & {
-        display: none;
-    }
-
-    ${InputWrapper}.has-value & {
-        margin-top: 5px;
     }
 `;
 

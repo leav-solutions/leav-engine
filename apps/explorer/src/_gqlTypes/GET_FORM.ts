@@ -88,9 +88,11 @@ export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_l
 }
 
 export interface GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -142,9 +144,11 @@ export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_t
 }
 
 export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -173,9 +177,11 @@ export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_t
 }
 
 export interface GET_FORM_forms_list_elements_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 

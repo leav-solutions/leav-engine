@@ -38,10 +38,12 @@ export enum LinkedType {
     tree = 'tree'
 }
 
-export type IPreview = {
+export type FilePreview = {
+    tiny: string;
     small: string;
     medium: string;
     big: string;
+    huge: string;
     pages: string;
 } | null;
 
@@ -59,9 +61,11 @@ export interface IRecordIdentityWhoAmI extends RecordIdentity_whoAmI {
 }
 
 export enum PreviewAttributes {
+    tiny = 'tiny',
     small = 'small',
     medium = 'medium',
     big = 'big',
+    huge = 'huge',
     pages = 'pages'
 }
 
