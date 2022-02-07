@@ -8,7 +8,7 @@ import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
-import {PreviewSizes} from '../../_types/filesManager';
+import {systemPreviewVersions} from '../../domain/filesManager/filesManagerDomain';
 import {AttributeCondition, IRecord, TreeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
@@ -70,7 +70,10 @@ export default function ({
                     }
 
                     type Preview {
-                        ${Object.keys(PreviewSizes).map(sizeName => `${sizeName}: String,`)}
+                        ${systemPreviewVersions
+                            .reduce((sizes, version) => [...sizes, ...version.sizes.map(s => `${s.name}: String,`)], [])
+                            .join(' ')}
+                        pages: String
                     }
 
                     type RecordIdentityConf {
