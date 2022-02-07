@@ -2,27 +2,28 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
-import {Badge, Input, Spin, Button} from 'antd';
-import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
+import {Badge, Button, Input, Spin} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
-import {useAppDispatch} from 'redux/store';
 import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
+import {setDisplaySide} from 'redux/display';
+import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {GET_VIEWS_LIST, GET_VIEWS_LISTVariables, GET_VIEWS_LIST_views_list} from '_gqlTypes/GET_VIEWS_LIST';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
+import {IQueryFilter, TypeSideItem} from '_types/types';
+import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {
     getViewsListQuery,
     IGetViewListDisplay,
-    IGetViewListQuery,
-    IGetViewListSort,
-    IGetViewListVariables
+    IGetViewListSort
 } from '../../../graphQL/queries/views/getViewsListQuery';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
@@ -32,8 +33,6 @@ import {IView} from '../../../_types/types';
 import {getFiltersFromRequest} from '../FiltersPanel/getFiltersFromRequest';
 import EditView from './EditView';
 import View from './View';
-import {setDisplaySide} from 'redux/display';
-import {TypeSideItem} from '_types/types';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -128,7 +127,7 @@ function ViewPanel(): JSX.Element {
     const USER_VIEWS_ORDER_KEY = 'user_views_order_' + searchState.library.id;
     const SHARED_VIEWS_ORDER_KEY = 'shared_views_order_' + searchState.library.id;
 
-    const {data, loading, error, refetch} = useQuery<IGetViewListQuery, IGetViewListVariables>(getViewsListQuery, {
+    const {data, loading, error, refetch} = useQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(getViewsListQuery, {
         variables: {
             libraryId: searchState.library.id || ''
         }
@@ -170,11 +169,16 @@ function ViewPanel(): JSX.Element {
 
     const {sharedViews, userViews}: {sharedViews: IView[]; userViews: IView[]} = data?.views.list.reduce(
         (acc, view) => {
+            const viewFilters: IQueryFilter[] = view.filters.map(f => ({
+                ...f,
+                treeId: f.tree?.id
+            }));
+
             const v: IView = {
-                ..._.omit(view, ['created_by', '__typename']),
+                ...(_.omit(view, ['created_by', '__typename']) as GET_VIEWS_LIST_views_list),
                 owner: view.created_by.id === user?.userId,
-                filters: Array.isArray(view.filters)
-                    ? getFiltersFromRequest(view.filters, searchState.library.id, searchState.attributes)
+                filters: Array.isArray(viewFilters)
+                    ? getFiltersFromRequest(viewFilters, searchState.library.id, searchState.attributes)
                     : [],
                 sort: _.omit(view.sort, ['__typename']) as IGetViewListSort,
                 display: _.omit(view.display, ['__typename']) as IGetViewListDisplay,
