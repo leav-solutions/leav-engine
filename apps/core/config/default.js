@@ -4,7 +4,13 @@
 module.exports = {
     server: {
         host: process.env.SERVER_HOST || 'localhost',
-        port: process.env.SERVER_PORT || 4001
+        port: process.env.SERVER_PORT || 4001,
+        /**
+         * Controls the maximum request body size. If this is a number,
+         * then the value specifies the number of bytes; if it is a string,
+         * the value is passed to the bytes library for parsing (https://www.npmjs.com/package/bytes).
+         */
+        uploadLimit: process.env.SERVER_UPLOAD_LIMIT || '100mb'
     },
     db: {
         url: process.env.ARANGO_URL,
