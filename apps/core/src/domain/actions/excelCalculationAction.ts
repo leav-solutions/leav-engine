@@ -18,7 +18,7 @@ export interface IActionListExcelContext extends IActionsListContext {
 }
 
 export default function ({'core.domain.helpers.calculationVariable': calculationVariable = null}: IDeps = {}) {
-    const processReplacement = async (
+    const _processReplacement = async (
         context: IActionsListContext,
         initialValue: ActionsListValueType,
         variable: string
@@ -30,7 +30,7 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
 
         return stringValues.join(' ');
     };
-    const replaceAsync = async (
+    const _replaceAsync = async (
         str: string,
         regex: RegExp,
         asyncFn,
@@ -48,13 +48,13 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
         const stringDatas = data.map(d => (typeof d === 'object' ? d.recordId : d));
         return str.replace(regex, () => stringDatas.shift());
     };
-    const replaceVariables = async (
+    const _replaceVariables = async (
         formula: string,
         context: IActionsListContext,
         value: ActionsListValueType
     ): Promise<string> => {
         const regExp = /{([^{}]*)}/g;
-        const res = replaceAsync(formula, regExp, processReplacement, context, value);
+        const res = _replaceAsync(formula, regExp, _processReplacement, context, value);
         return res;
     };
     return {
@@ -82,7 +82,7 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
         action: async (value: ActionsListValueType, params: any, ctx: IActionsListContext): Promise<string> => {
             const {Formula: formula} = params;
 
-            const finalFormula = await replaceVariables(formula, ctx, value);
+            const finalFormula = await _replaceVariables(formula, ctx, value);
             const parser = new Parser();
             const {error, result} = parser.parse(finalFormula);
             if (error) {

@@ -90,8 +90,8 @@
             "dateRangeToNumber": "Convert date range dates to number",
             "validateFormat": "Check if value matches attribute format",
             "validateRegex": "Check if value is a string matching given regex",
-            "excelCalculation": "Runs an Excel formula. You can insert attributes values, ex : {getValue(label)} will be replace by the valeur of attribute with identifier label. The input value of the action is available under {input()}. Do not start formula with a \"=\". Usable functions : input(), first(), last(), sum(), avg(), concat(separator), getValue(id_attribut). Ex : {getValue(linked_products).getValue(price).sum()",
-            "heritageCalculation": "Runs an heritage. Usable functions : first(), last(), dedup(), getValue(id_attribute). Ex : {getValue(linked_products).getValue(picture).dedup()}"
+            "excelCalculation": "Runs an Excel formula. You can insert attributes values, ex : {getValue(label)} will be replace by the value of attribute with identifier label. The input value of the action is available under {input()}. Do not start formula with a \"=\". Usable functions : input(), first(), last(), sum(), avg(), concat(separator), getValue(id_attribut). Ex : {getValue(linked_products).getValue(price).sum()",
+            "heritageCalculation": "Runs an heritage. Usable functions : first(), last(), dedup(), getValue(id_attribute). Ex : getValue(linked_products).getValue(picture).dedup()"
         }
     },
     "permissions": {

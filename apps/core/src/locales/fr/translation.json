@@ -90,7 +90,7 @@
             "validateFormat": "Vérifier si la valeur correspond au format de l'attribut",
             "validateRegex": "Vérifier si la valeur est une chaîne de caractères qui correspond à une expression régulière donnée susdit",
             "excelCalculation": "Exécute une formule Excel. Vous pouvez insérer des valeurs d'attributs, ex : {getValue(libelle)} sera remplacé par la valeur de l'attribut ayant l'id libelle. La valeur en entrée de l'action est disponible via {input()}. Ne commencez pas la formule par \"=\". Fonctions utilisables : input(), first(), last(), sum(), avg(), concat(separateur), dedup(), getValue(id_attribut). Ex : {getValue(produits_lies).getValue(prix).sum()}",
-            "heritageCalculation": "Exécute un héritage. Fonctions utilisables : first(), last(), dedup(), getValue(id_attribut). Ex : {getValue(produits_lies).getValue(image).dedup()}"
+            "heritageCalculation": "Exécute un héritage. Fonctions utilisables : first(), last(), dedup(), getValue(id_attribut). Ex : getValue(produits_lies).getValue(image).dedup()"
 
         }
     },

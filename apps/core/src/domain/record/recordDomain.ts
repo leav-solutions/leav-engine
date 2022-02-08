@@ -201,7 +201,7 @@ export default function ({
         library: string,
         ctx: IQueryInfos
     ) => {
-        return /*!isLinkAttribute && value !== null &&*/ !!attrProps.actions_list && !!attrProps.actions_list.getValue
+        return !!attrProps.actions_list && !!attrProps.actions_list.getValue
             ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
                   ...ctx,
                   attribute: attrProps,
@@ -279,8 +279,6 @@ export default function ({
         }
 
         const processedValue: IValue =
-            /*!isLinkAttribute &&
-            val !== null &&*/
             attribute.id !== 'id' && !!attribute.actions_list && !!attribute.actions_list.getValue
                 ? await _runActionsList(isLinkAttribute, val, attribute, record, library, ctx)
                 : val;

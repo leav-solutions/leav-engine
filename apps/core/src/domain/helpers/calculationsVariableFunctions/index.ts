@@ -23,7 +23,7 @@ export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.attribute': attributeDomain = null
 }: IDeps = {}): IVariableFunctions {
-    const first = async (context: IActionsListContext, inputValue: IVariableValue[]) => {
+    const first = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
         return [
             {
                 ...inputValue[0]
@@ -31,14 +31,14 @@ export default function ({
         ];
     };
     const input = first;
-    const last = async (context: IActionsListContext, inputValue: IVariableValue[]) => {
+    const last = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
         return [
             {
                 ...inputValue[inputValue.length - 1]
             }
         ];
     };
-    const sum = async (context: IActionsListContext, inputValue: IVariableValue[]) => {
+    const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
         return [
             {
                 ...inputValue[0],
@@ -49,7 +49,7 @@ export default function ({
             }
         ];
     };
-    const avg = async (context: IActionsListContext, inputValue: IVariableValue[]) => {
+    const avg = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
         return [
             {
                 ...inputValue[0],
@@ -61,7 +61,11 @@ export default function ({
             }
         ];
     };
-    const concat = async (context: IActionsListContext, inputValue: IVariableValue[], separator: string) => {
+    const concat = async (
+        context: IActionsListContext,
+        inputValue: IVariableValue[],
+        separator: string
+    ): Promise<IVariableValue[]> => {
         return [
             {
                 ...inputValue[0],
@@ -69,14 +73,18 @@ export default function ({
             }
         ];
     };
-    const dedup = async (context: IActionsListContext, inputValue: IVariableValue[]) => {
+    const dedup = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
         const seen = {};
         return inputValue.filter(function (v) {
             const stringRepresentation = JSON.stringify(v.value);
             return seen.hasOwnProperty(stringRepresentation) ? false : (seen[stringRepresentation] = true);
         });
     };
-    const getValue = async (context: IActionsListContext, inputValue: IVariableValue[], attributeKey: string) => {
+    const getValue = async (
+        context: IActionsListContext,
+        inputValue: IVariableValue[],
+        attributeKey: string
+    ): Promise<IVariableValue[]> => {
         const properties = await attributeDomain.getAttributeProperties({id: attributeKey, ctx: context});
         let returnValue = {...inputValue};
 

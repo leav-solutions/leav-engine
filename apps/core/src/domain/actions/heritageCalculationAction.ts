@@ -6,6 +6,7 @@ import {ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValue} from '_types/value';
 import {IRecord} from '_types/record';
+import {AttributeTypes} from '_types/attribute';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
@@ -64,7 +65,7 @@ export default function ({
 
             const result = await calculationVariable.processVariableString(ctx, formula, value);
 
-            if (attrProps.type === 'simple_link' || attrProps.type === 'advanced_link') {
+            if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
                 return result.map(v => ({
                     id: `${v.value}`,
                     library: attrProps.linked_library
