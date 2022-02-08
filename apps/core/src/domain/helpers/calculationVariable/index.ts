@@ -42,9 +42,8 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
 
             if (variableFunctions[funcName]) {
                 passingValue = await variableFunctions[funcName].run(context, passingValue, paramsStr);
-            } else {
-                passingValue[0].value = funcString;
             }
+            // else : this function is unknown, we do nothing, as if it was not here
         }
 
         return passingValue;

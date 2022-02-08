@@ -38,7 +38,7 @@ describe('calculationVariable', () => {
 
     test('empty variable', async () => {
         const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, '', 'toto');
-        expect(res[0].value).toBe('');
+        expect(res[0].value).toBe('toto');
     });
     test('run variable function', async () => {
         const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, 'test()', 'toto');
@@ -50,6 +50,6 @@ describe('calculationVariable', () => {
     });
     test('run unknown function', async () => {
         const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, 'meh()', 'toto');
-        expect(res[0].value).toBe('meh()');
+        expect(res[0].value).toBe('toto');
     });
 });
