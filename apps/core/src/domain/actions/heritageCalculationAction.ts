@@ -6,7 +6,7 @@ import {ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValue} from '_types/value';
 import {IRecord} from '_types/record';
-import {AttributeTypes} from '_types/attribute';
+import {AttributeTypes} from '../../_types/attribute';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
