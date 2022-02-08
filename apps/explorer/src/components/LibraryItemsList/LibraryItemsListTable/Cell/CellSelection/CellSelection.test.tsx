@@ -6,7 +6,6 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {selectionInitialState} from 'redux/selection';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockSharedSearchSelection} from '__mocks__/common/selection';
 import CellSelection from './CellSelection';
 
@@ -15,7 +14,7 @@ describe('CellSelection', () => {
         await act(async () => {
             render(
                 <MockStore state={{selection: {...selectionInitialState, selection: mockSharedSearchSelection}}}>
-                    <CellSelection record={mockRecordWhoAmI} selected onClick={jest.fn()} />
+                    <CellSelection selected />
                 </MockStore>
             );
         });

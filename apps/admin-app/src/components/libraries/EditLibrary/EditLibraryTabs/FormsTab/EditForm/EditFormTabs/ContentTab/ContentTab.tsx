@@ -2,8 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/react-hooks';
+import useMessages from 'hooks/useMessages';
 import React, {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {MessagesTypes} from 'redux/messages/messages';
 import {Button, Grid, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
@@ -36,8 +38,10 @@ interface IContentTabProps {
 
 function ContentTab({library, form}: IContentTabProps): JSX.Element {
     const {t} = useTranslation();
+    const {addMessage} = useMessages();
     const [state, dispatch] = useReducer(formBuilderReducer, computateInitialState(library, form));
     const [isSaving, setIsSaving] = useState<boolean>(false);
+
     const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
         onCompleted: () => setIsSaving(false),
         onError: () => setIsSaving(false)
@@ -57,10 +61,13 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
                                 order: el.order,
                                 uiElementType: el.uiElement.type,
                                 type: el.type,
-                                settings: Object.entries(el.settings || {}).map(([key, value]) => ({
-                                    key,
-                                    value
-                                }))
+                                settings: Object.entries(el.settings || {}).reduce((allSettings, [key, value]) => {
+                                    if (typeof value !== 'undefined') {
+                                        allSettings.push({key, value});
+                                    }
+
+                                    return allSettings;
+                                }, [])
                             }));
 
                         const depElems: FormElementsByDepsInput = {elements: elems};
@@ -96,6 +103,10 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
             }
         });
 
+        addMessage({
+            type: MessagesTypes.SUCCESS,
+            content: t('forms.save_success')
+        });
         setIsSaving(false);
     };
 

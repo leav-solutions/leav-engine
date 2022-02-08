@@ -22,6 +22,12 @@
         "isSystem": "System",
         "settings": "Settings"
     },
+    "errors": {
+        "INTERNAL_ERROR": "An internal error occured",
+        "PERMISSION_ERROR": "You are not allowed to perform this operation",
+        "VALIDATION_ERROR": "Invalid request",
+        "network_error": "Server is not reachable"
+    },
     "libraries": {
         "title": "Libraries",
         "new": "New library",
@@ -239,6 +245,7 @@
         "empty_container": "Drop elements here",
         "text_block_helper": "Insert text here",
         "new_tab_label": "New tab",
+        "save_success": "Form has been saved successfully",
         "settings": {
             "label": "Label",
             "attribute": "Attribute",

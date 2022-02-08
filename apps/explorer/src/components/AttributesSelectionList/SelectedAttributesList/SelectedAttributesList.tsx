@@ -25,12 +25,12 @@ const WrapperItemSelected = styled.div`
 const CustomCard = styled.div`
     &&& {
         padding: 0;
-        margin: 0 8px 24px 8px;
+        margin: 0 10px 10px 10px;
         display: flex;
         justify-content: space-between;
         border: 1px solid #f0f0f0;
         border-radius: 2px;
-        min-height: 5rem;
+        min-height: 3rem;
         box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
         background: #fff;
     }

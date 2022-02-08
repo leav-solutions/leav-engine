@@ -33,6 +33,8 @@ interface ICustomTableProps {
     scrollHorizontalActive: boolean;
 }
 
+export const INFOS_COLUMN_WIDTH = '350px';
+
 const CustomTable = styled.div<ICustomTableProps>`
     grid-area: data;
     height: 100%;
@@ -256,8 +258,8 @@ const Table = () => {
                                     // define info column row style
                                     headerCellProps.style = {
                                         ...headerCellProps.style,
-                                        minWidth: '250px',
-                                        maxWidth: '250px'
+                                        minWidth: INFOS_COLUMN_WIDTH,
+                                        maxWidth: INFOS_COLUMN_WIDTH
                                     };
                                 }
 

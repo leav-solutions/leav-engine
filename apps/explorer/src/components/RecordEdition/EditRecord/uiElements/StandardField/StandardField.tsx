@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
+import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
@@ -107,11 +107,22 @@ function StandardField({
             return;
         }
 
+        let errorMessage = submitRes.error;
+        if (!errorMessage && submitRes.errors) {
+            const attributeError = (submitRes?.errors ?? []).filter(err => err.attribute === attribute.id)?.[0];
+
+            if (attributeError) {
+                errorMessage =
+                    attributeError.type === ErrorTypes.VALIDATION_ERROR
+                        ? attributeError.message
+                        : t(`errors.${attributeError.type}`);
+            }
+        }
+
         dispatch({
             type: StandardFieldReducerActionsTypes.SET_ERROR,
             idValue,
-            error:
-                submitRes.error || (submitRes?.errors ?? []).filter(err => err.attribute === attribute.id)?.[0].message
+            error: errorMessage
         });
     };
 

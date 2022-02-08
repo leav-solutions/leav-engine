@@ -1,17 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render} from 'enzyme';
+import {MockedResponse} from '@apollo/client/testing';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
+import {GET_ATTRIBUTES_BY_LIB} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {act, render, screen, waitForElement, within} from '_tests/testUtils';
 import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import AttributesSelectionList from './AttributesSelectionList';
 
 describe('AttributesSelectionList', () => {
-    test('Should render', () => {
-        //TODO write better tests when UI refactoring is done
-        const mocks = [
+    test('Can select attributes in list', async () => {
+        const mocks: Array<MockedResponse<GET_ATTRIBUTES_BY_LIB>> = [
             {
                 request: {
                     query: getAttributesByLibQuery,
@@ -21,21 +22,15 @@ describe('AttributesSelectionList', () => {
                 },
                 result: {
                     data: {
-                        libraries: {
-                            __typename: 'LibrariesList',
+                        attributes: {
                             list: [
                                 {
-                                    __typename: 'Library',
                                     id: 'test_lib',
-                                    system: false,
-                                    label: {},
-                                    attributes: {
-                                        __typename: 'Attribute',
-                                        id: 'string',
-                                        type: AttributeType.simple,
-                                        format: AttributeFormat.text,
-                                        label: {fr: 'test attribute'}
-                                    }
+                                    type: AttributeType.simple,
+                                    format: AttributeFormat.text,
+                                    label: {fr: 'test attribute'},
+                                    multiple_values: false,
+                                    embedded_fields: null
                                 }
                             ]
                         }
@@ -44,12 +39,81 @@ describe('AttributesSelectionList', () => {
             }
         ];
 
-        const comp = render(
-            <MockedProviderWithFragments mocks={mocks}>
-                <AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />
-            </MockedProviderWithFragments>
-        );
+        await act(async () => {
+            render(
+                <AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />,
+                {apolloMocks: mocks}
+            );
+        });
 
-        expect(comp).toMatchSnapshot();
+        const attributesList = screen.getByTestId('attributes-list');
+        const attributeElem = within(attributesList).getByText('test attribute');
+
+        expect(attributeElem).toBeInTheDocument();
+
+        await act(async () => {
+            userEvent.click(attributeElem);
+        });
+
+        const selectedAttributesList = screen.getByTestId('attributes-list');
+        expect(within(selectedAttributesList).getByText('test attribute')).toBeInTheDocument();
+    });
+
+    test('Can filter list of attributes', async () => {
+        const mocks: Array<MockedResponse<GET_ATTRIBUTES_BY_LIB>> = [
+            {
+                request: {
+                    query: getAttributesByLibQuery,
+                    variables: {
+                        library: 'test_lib'
+                    }
+                },
+                result: {
+                    data: {
+                        attributes: {
+                            list: [
+                                {
+                                    id: 'attrA',
+                                    type: AttributeType.simple,
+                                    format: AttributeFormat.text,
+                                    label: {fr: 'attributeA'},
+                                    multiple_values: false,
+                                    embedded_fields: null
+                                },
+                                {
+                                    id: 'attrB',
+                                    type: AttributeType.simple,
+                                    format: AttributeFormat.text,
+                                    label: {fr: 'attributeB'},
+                                    multiple_values: false,
+                                    embedded_fields: null
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ];
+
+        await act(async () => {
+            render(
+                <AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />,
+                {apolloMocks: mocks}
+            );
+        });
+
+        const attributesList = screen.getByTestId('attributes-list');
+
+        expect(within(attributesList).getAllByTestId('attribute-in-list')).toHaveLength(2);
+
+        await act(async () => {
+            userEvent.type(screen.getByRole('textbox', {name: /search/}), 'attributeB');
+        });
+
+        await waitForElement(() => within(attributesList).getAllByTestId('attribute-in-list'));
+
+        expect(within(attributesList).getAllByTestId('attribute-in-list')).toHaveLength(1);
+        expect(within(attributesList).queryByText('attributeA')).not.toBeInTheDocument();
+        expect(within(attributesList).queryByText('attributeB')).toBeInTheDocument();
     });
 });

@@ -19,9 +19,11 @@ const recordIdentityFragment = gql`
                 }
             }
             preview {
+                tiny
                 small
                 medium
                 big
+                huge
                 pages
             }
         }

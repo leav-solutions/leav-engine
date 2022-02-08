@@ -1,19 +1,20 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as hapi from '@hapi/hapi';
-import inert from '@hapi/inert';
-import {ApolloServer} from '@wzrdtales/apollo-server-hapi';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {execute, GraphQLFormattedError} from 'graphql';
-import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
+import express, {Response, NextFunction, Request} from 'express';
+import {ApolloServer, AuthenticationError} from 'apollo-server-express';
+import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
+import {graphqlUploadExpress} from 'graphql-upload';
+
 export interface IServer {
     init(): Promise<void>;
 }
@@ -78,62 +79,67 @@ export default function ({
 
     return {
         async init(): Promise<void> {
-            const server: hapi.Server = new hapi.Server({
-                debug: {log: ['*'], request: ['*']},
-                host: config.server.host,
-                port: config.server.port,
-                routes: {
-                    files: {
-                        relativeTo: '/'
-                    }
-                }
-            });
+            const app = express();
 
             try {
-                // Auth Check
-                await server.register([
-                    {
-                        plugin: hapiAuthJwt2
-                    },
-                    {
-                        plugin: inert
-                    }
-                ]);
+                // Express settings
+                app.set('port', config.server.port);
+                app.set('host', config.server.host);
+                app.use(express.json({limit: config.server.uploadLimit}));
+                app.use(express.urlencoded({limit: config.server.uploadLimit}));
+                app.use(graphqlUploadExpress());
 
-                server.auth.strategy('core', config.auth.scheme, {
-                    key: config.auth.key,
-                    validate: async (decode, request) => {
-                        try {
-                            const isValid = await authApp.validateToken(decode);
-                            return {isValid};
-                        } catch (e) {
-                            logger.error(e);
-                            throw e;
-                        }
-                    },
-                    verifyOptions: {algorithms: ['HS256']}
+                // CORS
+                app.use((req, res, next) => {
+                    res.header('Access-Control-Allow-Origin', '*');
+                    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+                    res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Authorization');
+
+                    return req.method === 'OPTIONS' ? res.sendStatus(204) : next();
                 });
 
-                // Auth App to login
-                authApp.registerRoute(server);
-                server.auth.default('core');
+                // Initialize routes
+                authApp.registerRoute(app);
+                app.use(
+                    '/previews',
+                    // TODO: temporary disabled, we have to send token with explorer
+                    // authApp.checkToken,
+                    express.static('/results')
+                );
+                app.use(
+                    `${config.export.directory}`,
+                    // authApp.checkToken, // FIXME: enable auth?
+                    express.static(config.export.directory)
+                );
+
+                // Handling errors
+                app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+                    if (!err) {
+                        return next ? next() : res.end();
+                    }
+
+                    if (err instanceof SyntaxError) {
+                        return res.status(400).json({message: err.name});
+                    }
+
+                    logger.error(err);
+                    res.status(500).json({error: 'INTERNAL_SERVER_ERROR'}); // FIXME: format error msg?
+                });
 
                 await graphqlApp.generateSchema();
 
-                const _executor = args => {
-                    return execute({
+                const _executor = args =>
+                    execute({
                         ...args,
                         schema: graphqlApp.schema,
                         contextValue: args.context,
                         variableValues: args.request.variables
-                    });
-                };
+                    }) as Promise<any>;
 
-                const apolloServ = new ApolloServer({
+                const server = new ApolloServer({
                     debug: config.debug,
+                    plugins: [require('apollo-tracing').plugin(), ApolloServerPluginCacheControlDisabled()],
                     formatResponse: (resp, ctx) => {
-                        // const formattedErrors = resp.errors ? resp.errors.map(e => _handleError(e, ctx)) : null;
-
                         const formattedResp = {...resp};
 
                         if (resp.errors) {
@@ -142,25 +148,27 @@ export default function ({
 
                         return formattedResp;
                     },
-                    tracing: true,
-                    cacheControl: false,
-                    context: ({request}): IQueryInfos => {
-                        return {
-                            userId: request.auth.isAuthenticated ? request.auth.credentials.userId : 0,
-                            lang: request.query.lang ?? config.lang.default,
-                            queryId: request.requestId || uuidv4()
-                        };
+                    context: async ({req}): Promise<IQueryInfos> => {
+                        try {
+                            const payload = await authApp.validateToken(req.headers.authorization);
+
+                            return {
+                                userId: payload.userId,
+                                lang: (req.query.lang as string) ?? config.lang.default,
+                                queryId: req.body.requestId || uuidv4()
+                            };
+                        } catch (e) {
+                            throw new AuthenticationError('you must be logged in');
+                        }
                     },
                     // We're using a gateway here instead of a simple schema definition because we need to be able
                     // to reload schema when a change occurs (new library, new attribute...)
                     gateway: {
-                        load: () => {
-                            return Promise.resolve({
+                        load: () =>
+                            Promise.resolve({
                                 schema: graphqlApp.schema,
                                 executor: _executor
-                            });
-                        },
-                        executor: _executor,
+                            }),
                         /**
                          * Init the function we want to call on schema change.
                          * The callback received here is an Apollo internal function which actually update
@@ -169,56 +177,21 @@ export default function ({
                          */
                         onSchemaChange: callback => {
                             graphqlApp.schemaUpdateEmitter.on(graphqlApp.SCHEMA_UPDATE_EVENT, callback);
-
                             return () => graphqlApp.schemaUpdateEmitter.off(graphqlApp.SCHEMA_UPDATE_EVENT, callback);
-                        }
-                    },
-                    subscriptions: false
+                        },
+                        stop: Promise.resolve
+                    }
                 });
-
-                await apolloServ.applyMiddleware({app: server, cors: true, path: '/graphql'});
 
                 await server.start();
 
-                logger.info(`Server running at: ${server.info.uri}`);
+                server.applyMiddleware({app, path: '/graphql', cors: true});
+
+                await new Promise<void>(resolve => app.listen(config.server.port, resolve));
+                logger.info(`🚀 Server ready at http://localhost:${config.server.port}${server.graphqlPath}`);
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');
             }
-
-            // Add route for previews
-            server.route({
-                method: 'GET',
-                path: '/previews/{file*}',
-                handler: {
-                    directory: {
-                        path: '/results'
-                    }
-                },
-                config: {
-                    auth: {
-                        strategy: 'core',
-                        mode: 'optional'
-                    }
-                }
-            });
-
-            // Add route for exports
-            const exportDir = config.export.directory;
-            server.route({
-                method: 'GET',
-                path: `${exportDir}/{file*}`,
-                handler: {
-                    directory: {
-                        path: exportDir
-                    }
-                },
-                config: {
-                    auth: {
-                        strategy: 'core',
-                        mode: 'optional'
-                    }
-                }
-            });
         }
     };
 }

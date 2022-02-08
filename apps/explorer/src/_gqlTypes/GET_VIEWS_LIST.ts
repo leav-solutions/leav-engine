@@ -38,9 +38,15 @@ export interface GET_VIEWS_LIST_views_list_created_by {
     whoAmI: GET_VIEWS_LIST_views_list_created_by_whoAmI;
 }
 
+export interface GET_VIEWS_LIST_views_list_filters_tree {
+    id: string;
+    label: any | null;
+}
+
 export interface GET_VIEWS_LIST_views_list_filters {
     field: string | null;
     value: string | null;
+    tree: GET_VIEWS_LIST_views_list_filters_tree | null;
     condition: RecordFilterCondition | null;
     operator: RecordFilterOperator | null;
 }

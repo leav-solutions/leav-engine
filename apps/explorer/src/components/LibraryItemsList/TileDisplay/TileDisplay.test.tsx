@@ -24,14 +24,6 @@ jest.mock(
         }
 );
 
-jest.mock(
-    '../LibraryItemsListTable/LibraryItemsModal',
-    () =>
-        function LibraryItemsModal() {
-            return <div>LibraryItemsModal</div>;
-        }
-);
-
 describe('TileDisplay', () => {
     test('Check render', async () => {
         const mockState: Partial<ISearchState> = {

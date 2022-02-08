@@ -1,10 +1,26 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
+import '@testing-library/jest-dom';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {act} from 'react-test-renderer';
 import AuthHandler from './AuthHandler';
+
+jest.mock('../Login', () => {
+    return function Login() {
+        return <div>Login</div>;
+    };
+});
+
+jest.mock('../../app/App', () => {
+    return function App() {
+        return <div>App</div>;
+    };
+});
+
+jest.mock('../../../redux/store', () => ({
+    store: {}
+}));
 
 const storageGen = () => {
     let store = {};
@@ -32,23 +48,18 @@ const storageGen = () => {
 };
 
 describe('AuthHandler', () => {
-    test('renders login if no token in local storage, app otherwise', async () => {
-        let wrapper;
-        let storage;
+    test('If no token found, render login', async () => {
+        const storage = storageGen();
+        render(<AuthHandler url={''} storage={storage} />);
 
-        act(() => {
-            storage = storageGen();
-            wrapper = shallow(<AuthHandler url={''} storage={storage} />);
-        });
+        expect(screen.getByText('Login')).toBeInTheDocument();
+    });
 
-        expect(wrapper.find('Login')).toHaveLength(1);
+    test('If token is found, render app', async () => {
+        const storage = storageGen();
+        storage.setItem('accessToken', 'mytoken');
+        render(<AuthHandler url={''} storage={storage} />);
 
-        act(() => {
-            const successFunc: any = wrapper.find('Login').prop('onSuccess');
-            successFunc('2');
-            wrapper = shallow(<AuthHandler url={''} storage={storage} />);
-        });
-
-        expect(wrapper.find('App')).toHaveLength(1);
+        expect(screen.getByText('App')).toBeInTheDocument();
     });
 });

@@ -21,6 +21,12 @@
         "isSystem": "Système",
         "settings": "Paramètres"
     },
+    "errors": {
+        "INTERNAL_ERROR": "Une erreur interne est survenue",
+        "PERMISSION_ERROR": "Vous n'avez pas les droits pour effectuer cette opération",
+        "VALIDATION_ERROR": "Requête invalide",
+        "network_error": "Le serveur n'est pas accessible"
+    },
     "libraries": {
         "title": "Bibliothèques",
         "new": "Nouvelle bibliothèque",
@@ -239,6 +245,7 @@
         "empty_container": "Glissez des éléments ici",
         "text_block_helper": "Un bloc de texte permet d'insérer du contenu statique dans le formulaire",
         "new_tab_label": "Nouvel onglet",
+        "save_success": "Le formulaire a bien été sauvegardé",
         "settings": {
             "label": "Libellé",
             "attribute": "Attribut",

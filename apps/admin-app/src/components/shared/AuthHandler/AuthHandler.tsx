@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useState, Suspense} from 'react';
-// import Loader from '../Loading';
+import React, {Suspense, useState} from 'react';
+import {Provider as ReduxProvider} from 'react-redux';
+import {store} from '../../../redux/store';
 import App from '../../app/App';
 import Login from '../Login';
 
@@ -34,7 +35,9 @@ function AuthHandler({url, storage = window.sessionStorage}: IAuthHandlerProps):
     if (token) {
         return (
             <Suspense fallback={'Loader'}>
-                <App token={token} onTokenInvalid={deleteToken} />
+                <ReduxProvider store={store}>
+                    <App token={token} onTokenInvalid={deleteToken} />
+                </ReduxProvider>
             </Suspense>
         );
     } else {

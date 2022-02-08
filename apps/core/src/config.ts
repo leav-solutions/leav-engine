@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
 import {IConfig} from '_types/config';
@@ -11,7 +11,8 @@ export const validateConfig = (conf: IConfig) => {
     const configSchema = Joi.object().keys({
         server: Joi.object().keys({
             host: Joi.string().required(),
-            port: Joi.number().required()
+            port: Joi.number().required(),
+            uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required()
         }),
         db: Joi.object().keys({
             url: Joi.string().required(),

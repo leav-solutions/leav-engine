@@ -1,8 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {RecordIdentity_whoAmI, RecordIdentity_whoAmI_preview} from '_gqlTypes/RecordIdentity';
 import {IRecordIdentityWhoAmI} from '_types/types';
+
+export const mockPreviews: RecordIdentity_whoAmI_preview = {
+    tiny: '/fake/url/tiny.jpg',
+    small: '/fake/url/small.jpg',
+    medium: '/fake/url/medium.jpg',
+    big: '/fake/url/big.jpg',
+    huge: '/fake/url/huge.jpg',
+    pages: ''
+};
 
 export const mockRecord: RecordIdentity_whoAmI = {
     id: '123456',
@@ -15,12 +24,7 @@ export const mockRecord: RecordIdentity_whoAmI = {
             type: 'RecordLib'
         }
     },
-    preview: {
-        small: '/fake/url/small.jpg',
-        big: '/fake/url/big.jpg',
-        medium: '/fake/url/medium.jpg',
-        pages: ''
-    },
+    preview: mockPreviews,
     color: 'blue'
 };
 

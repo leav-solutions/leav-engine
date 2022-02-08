@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {makeGraphQlCall} from '../api/e2eUtils';
 
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 
 describe('Indexation', () => {
     const testLibName = 'indexation_library_test';
@@ -28,6 +28,8 @@ describe('Indexation', () => {
             record1 = rec1.data.data.createRecord.id;
             record2 = rec2.data.data.createRecord.id;
 
+            console.debug('Records IDS', {record1, record2});
+
             done();
         }, 5000);
     });
@@ -37,11 +39,13 @@ describe('Indexation', () => {
 
         setTimeout(async () => {
             const res = await makeGraphQlCall(`{
-                ${libNameQuery}(searchQuery: "admin",sort: {field: "id", order: asc}) {
+                ${libNameQuery}(searchQuery: "admni",sort: {field: "id", order: asc}) {
                     totalCount
                     list {id}
                 }
             }`);
+
+            console.debug('Result, no limit', res.data.data[libNameQuery].list);
 
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
@@ -66,6 +70,8 @@ describe('Indexation', () => {
                         totalCount list {id}
                 }
             }`);
+
+            console.debug('Result, with limit', res.data.data[libNameQuery].list);
 
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);

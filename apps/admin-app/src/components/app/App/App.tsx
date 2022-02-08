@@ -17,7 +17,11 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
+import {useDispatch} from 'react-redux';
+import {addMessage, MessagesTypes} from 'redux/messages/messages';
+import {SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
+import {ErrorTypes} from '_types/errors';
 import {isAllowedQuery, IsAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
 import {getRecordIdentityCacheKey, getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import {AvailableLanguage, PermissionsActions, PermissionTypes} from '../../../_gqlTypes/globalTypes';
@@ -27,6 +31,7 @@ import Loading from '../../shared/Loading';
 import UserContext from '../../shared/UserContext';
 import {IUserContext} from '../../shared/UserContext/UserContext';
 import Home from '../Home';
+import MessagesDisplay from '../MessagesDisplay';
 
 interface IAppProps {
     token: string;
@@ -35,6 +40,51 @@ interface IAppProps {
 
 const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
     const [fragmentMatcher, setFragmentMatcher] = useState<IntrospectionFragmentMatcher | null>(null);
+    const dispatch = useDispatch();
+    const {t, i18n} = useTranslation();
+
+    const _handleApolloError = (err: ErrorResponse) => {
+        const {graphQLErrors, networkError} = err;
+        let title: string;
+        let content: string;
+        let icon: SemanticICONS;
+        if (graphQLErrors) {
+            graphQLErrors.map(graphqlError => {
+                const {message, extensions} = graphqlError;
+
+                title = t(`errors.${extensions?.code ?? ErrorTypes.PERMISSION_ERROR}`);
+                switch (extensions?.code) {
+                    case ErrorTypes.VALIDATION_ERROR:
+                        content = '';
+                        break;
+                    case ErrorTypes.PERMISSION_ERROR:
+                        content = '';
+                        icon = 'frown outline';
+                        break;
+                    case ErrorTypes.INTERNAL_ERROR:
+                    default:
+                        content = message;
+                        break;
+                }
+            });
+        } else if (networkError) {
+            if ((networkError as ServerError).statusCode === 401) {
+                return onTokenInvalid('login.error.session_expired');
+            }
+
+            title = t('errors.network_error');
+            icon = 'plug';
+        }
+
+        dispatch(
+            addMessage({
+                type: MessagesTypes.ERROR,
+                title,
+                content,
+                icon
+            })
+        );
+    };
 
     /**
      * Retrieve information about types from server to give Apollo client some information about our schema and be able
@@ -82,29 +132,9 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
         }
     }, [onTokenInvalid, token]);
 
-    // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = (err: ErrorResponse) => {
-        const {graphQLErrors, networkError} = err;
-        if (graphQLErrors) {
-            graphQLErrors.map(({message, locations, path}) =>
-                console.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
-            );
-        }
-        if (networkError) {
-            console.error(`[Network error]: ${networkError}`);
-            if ((networkError as ServerError).statusCode === 401) {
-                onTokenInvalid('login.error.session_expired');
-            }
-        }
-
-        return err;
-    };
-
     useEffect(() => {
         _getFragmentMatcher();
     }, [_getFragmentMatcher]);
-
-    const {t, i18n} = useTranslation();
 
     if (!fragmentMatcher) {
         return <Loading />;
@@ -113,7 +143,6 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
             onError((err: ErrorResponse) => {
-                console.error({err});
                 _handleApolloError(err);
             }),
             new HttpLink({
@@ -196,6 +225,7 @@ const App = ({token, onTokenInvalid}: IAppProps): JSX.Element => {
                             <LangContext.Provider value={{lang, availableLangs, defaultLang}}>
                                 <UserContext.Provider value={userData}>
                                     <div className="App height100">
+                                        <MessagesDisplay />
                                         <Home />
                                     </div>
                                 </UserContext.Provider>

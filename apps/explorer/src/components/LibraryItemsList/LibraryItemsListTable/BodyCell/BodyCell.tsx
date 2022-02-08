@@ -1,19 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SelectionModeContext} from 'context';
-import React, {useContext} from 'react';
+import React from 'react';
 import {Cell as ReactTableTypeCell} from 'react-table';
-import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
-import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {infosCol, selectionColumn} from '../../../../constants/constants';
-import {ITableRow, SharedStateSelectionType} from '../../../../_types/types';
+import {ITableRow} from '../../../../_types/types';
 import Cell from '../Cell';
 import CellSelection from '../Cell/CellSelection';
+import {INFOS_COLUMN_WIDTH} from '../Table';
 
-const CustomBodyCell = styled.div<{id?: string | number}>`
+const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
+    // Inherit background from row. If background is transparent, the sticky column won't behave properly
+    background-color: inherit;
+
     max-width: ${p => (p.id === selectionColumn ? '35px' : 'auto')};
+
+    display: flex;
+    align-items: center;
 `;
 
 interface IBodyCellProps {
@@ -23,18 +27,13 @@ interface IBodyCellProps {
 
 function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
     const props = cell.getCellProps();
-    const record = cell.row.original.record;
-
-    const selectionMode = useContext(SelectionModeContext);
-    const dispatch = useAppDispatch();
-
     if (cell.column.id === infosCol) {
         // define info column row style
         props.style = {
             ...props.style,
             flex: '1 0 auto',
-            maxWidth: '250px',
-            minWidth: '250px',
+            maxWidth: INFOS_COLUMN_WIDTH,
+            minWidth: INFOS_COLUMN_WIDTH,
             zIndex: 'auto'
         };
     }
@@ -50,28 +49,13 @@ function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
     };
 
     if (!cell.value) {
-        return <CustomBodyCell {...props}></CustomBodyCell>;
+        return <CustomBodyCell selected={selected} {...props}></CustomBodyCell>;
     }
 
-    const _handleCellSelected = () => {
-        const selectionData = {id: record.id, library: record.library.id, label: record.label};
-
-        if (selectionMode) {
-            dispatch(setSelectionToggleSearchSelectionElement(selectionData));
-        } else {
-            dispatch(
-                setSelectionToggleSelected({
-                    selectionType: SharedStateSelectionType.search,
-                    elementSelected: selectionData
-                })
-            );
-        }
-    };
-
     return (
-        <CustomBodyCell {...props} id={cell.column.id} className="body-cell">
+        <CustomBodyCell {...props} id={cell.column.id} selected={selected} className="body-cell">
             {cell.column.id === selectionColumn ? (
-                <CellSelection record={record} onClick={_handleCellSelected} selected={selected} />
+                <CellSelection selected={selected} />
             ) : (
                 <Cell columnName={cell.column.id} data={data} />
             )}

@@ -24,19 +24,22 @@ export const getFiltersFromRequest = (
     let filters: IFilter[] = [];
 
     for (const queryFilter of queryFilters) {
-        if (queryFilter.value) {
+        const isConditionWithNoValue = queryFilter.condition === 'IS_EMPTY' || queryFilter.condition === 'IS_NOT_EMPTY';
+        if (queryFilter.value || isConditionWithNoValue) {
             const splitKey = queryFilter.field.split('.');
 
             const filter: IFilter = {
                 type: queryFilter.condition in TreeConditionFilter ? FilterType.TREE : FilterType.ATTRIBUTE,
                 index: filters.length,
                 key: queryFilter.field,
-                value: {
-                    value:
-                        queryFilter.condition === AttributeConditionFilter.BETWEEN
-                            ? JSON.parse(queryFilter.value)
-                            : queryFilter.value
-                },
+                value: !isConditionWithNoValue
+                    ? {
+                          value:
+                              queryFilter.condition === AttributeConditionFilter.BETWEEN
+                                  ? JSON.parse(queryFilter.value)
+                                  : queryFilter.value
+                      }
+                    : null,
                 active: true,
                 condition: AttributeConditionFilter[queryFilter.condition] || TreeConditionFilter[queryFilter.condition]
             };

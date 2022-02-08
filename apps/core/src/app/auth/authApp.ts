@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {badData, unauthorized} from '@hapi/boom';
-import {Server} from '@hapi/hapi';
 import * as bcrypt from 'bcryptjs';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import * as winston from 'winston';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
+import {Express, Response, Request, NextFunction} from 'express';
 
 export interface IAuthApp {
-    registerRoute(server: Server): void;
-    validateToken(tokenPayload: any): Promise<boolean>;
     getGraphQLSchema(): IAppGraphQLSchema;
+    validateToken(token: string): Promise<jwt.JwtPayload>;
+    registerRoute(app: Express): void;
+    checkToken(req: Request, res: Response, next: NextFunction): Promise<Response>;
 }
 
 interface IDeps {
@@ -63,21 +63,22 @@ export default function ({
                 }
             };
         },
-        registerRoute(server): void {
-            server.route({
-                method: 'POST',
-                path: '/auth/authenticate',
-                async handler(req) {
-                    const {login, password} = req.payload as any;
-                    if (typeof login === 'undefined' || typeof password === 'undefined') {
-                        return badData('Missing credentials');
-                    }
-                    // Get user id
-                    const ctx: IQueryInfos = {
-                        userId: '0',
-                        queryId: 'authenticate'
-                    };
+        registerRoute(app): void {
+            app.post(
+                '/auth/authenticate',
+                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
+                        const {login, password} = req.body as any;
+
+                        if (typeof login === 'undefined' || typeof password === 'undefined') {
+                            return res.status(401).send('Missing credentials');
+                        }
+                        // Get user id
+                        const ctx: IQueryInfos = {
+                            userId: '0',
+                            queryId: 'authenticate'
+                        };
+
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
@@ -87,7 +88,7 @@ export default function ({
                         });
 
                         if (!users.list.length) {
-                            return unauthorized('Invalid credentials');
+                            return res.status(401).send('Invalid credentials');
                         }
 
                         // Check password
@@ -100,9 +101,8 @@ export default function ({
                         });
 
                         const isValidPwd = await bcrypt.compare(password, userPwd[0].value);
-
                         if (!isValidPwd) {
-                            return unauthorized('Invalid credentials');
+                            return res.status(401).send('Invalid credentials');
                         }
 
                         // Generate token
@@ -118,34 +118,22 @@ export default function ({
                                 expiresIn: config.auth.tokenExpiration
                             }
                         );
-                        return {
+
+                        return res.status(200).json({
                             token
-                        };
-                    } catch (e) {
-                        logger.error(e);
-                        throw e;
+                        });
+                    } catch (err) {
+                        next(err);
                     }
-                },
-                options: {
-                    auth: false,
-                    cors: true
                 }
-            });
-            server.route({
-                method: 'GET',
-                path: '/auth/test-token',
-                handler: () => {
-                    return {statusCode: 200, message: 'Valid token'};
-                },
-                options: {
-                    cors: true
-                }
-            });
+            );
         },
-        async validateToken(tokenPayload: any): Promise<boolean> {
-            // Get user by id
-            if (!tokenPayload.userId) {
-                return false;
+        async validateToken(token: string): Promise<jwt.JwtPayload> {
+            // Token validation checking
+            const payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
+
+            if (typeof payload.userId === 'undefined') {
+                throw new Error('invalid token');
             }
 
             const ctx: IQueryInfos = {
@@ -156,12 +144,32 @@ export default function ({
             const users = await recordDomain.find({
                 params: {
                     library: 'users',
-                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: tokenPayload.userId}]
+                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
                 },
                 ctx
             });
 
-            return !!users.list.length;
+            if (!users.list.length) {
+                throw new Error('user not found');
+            }
+
+            return payload;
+        },
+        async checkToken(req: Request, res: Response, next: NextFunction): Promise<Response> {
+            // Get user's token from headers
+            const token = req.headers.authorization;
+
+            if (!token) {
+                return res.status(401).send('No token provided');
+            }
+
+            try {
+                // Token validation checking
+                await this.validateToken(token);
+                next();
+            } catch (err) {
+                return res.status(401).json('Invalid token');
+            }
         }
     };
 }

@@ -15,10 +15,10 @@ import BodyCell from '../BodyCell';
 import {isAllSelected, isSelected} from '../BodyCell/getSelectedCell';
 
 const CustomBodyRow = styled.div<{selected: boolean}>`
-    transition: 100ms ease;
     position: relative;
     border: 2px solid transparent;
 
+    // Must set background on row for the case where we just have the infos column (part of the row is empty)
     background-color: ${p =>
         p.selected ? themingVar['@leav-view-panel-label-background-active'] : themingVar['@default-bg']};
 
@@ -28,6 +28,10 @@ const CustomBodyRow = styled.div<{selected: boolean}>`
 
     &:hover {
         border: 2px solid ${themingVar['@primary-color']};
+        background-color: ${p =>
+            p.selected
+                ? themingVar['@leav-view-panel-label-background-active']
+                : `${themingVar['@leav-background-active']}`};
     }
 `;
 

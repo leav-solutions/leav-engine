@@ -24,9 +24,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -55,9 +57,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_created_by_whoAmI_
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_created_by_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -105,9 +109,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_wh
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -136,9 +142,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_created_by_who
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_created_by_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -174,9 +182,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoA
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -216,9 +226,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_wh
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -247,9 +259,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_created_by_who
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_created_by_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -285,9 +299,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_reco
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
@@ -316,9 +332,11 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ance
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 

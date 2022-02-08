@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as Joi from '@hapi/joi';
+import Joi from 'joi';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IAmqpService} from 'infra/amqp/amqpService';
@@ -11,14 +11,14 @@ import winston from 'winston';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ISystemTranslation} from '_types/systemTranslation';
+import {ITreeNode} from '_types/tree';
 import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
+import {AttributeCondition, IRecord} from '../../_types/record';
 import {IRecordDomain} from '../record/recordDomain';
 import {handleEventFileSystem} from './helpers/handleFileSystem';
-import {handlePreviewResponse} from './helpers/handlePreviewResponse';
 import {createPreview} from './helpers/handlePreview';
-import {ITreeNode} from '_types/tree';
-import {AttributeCondition, IRecord} from '../../_types/record';
+import {handlePreviewResponse} from './helpers/handlePreviewResponse';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -49,13 +49,17 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-const systemPreviewVersions: IPreviewVersion[] = [
+export const systemPreviewVersions: IPreviewVersion[] = [
     {
         background: false,
         density: 300,
         sizes: [
             {
                 size: 64,
+                name: 'tiny'
+            },
+            {
+                size: 128,
                 name: 'small'
             },
             {
@@ -63,8 +67,12 @@ const systemPreviewVersions: IPreviewVersion[] = [
                 name: 'medium'
             },
             {
-                size: 1024,
+                size: 512,
                 name: 'big'
+            },
+            {
+                size: 1024,
+                name: 'huge'
             }
         ]
     }

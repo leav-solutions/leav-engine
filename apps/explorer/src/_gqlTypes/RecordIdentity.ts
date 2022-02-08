@@ -22,9 +22,11 @@ export interface RecordIdentity_whoAmI_library {
 }
 
 export interface RecordIdentity_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
     big: string | null;
+    huge: string | null;
     pages: string | null;
 }
 
