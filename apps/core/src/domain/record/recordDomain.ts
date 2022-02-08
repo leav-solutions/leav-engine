@@ -737,7 +737,14 @@ export default function ({
             }, []);
 
             if (hasNoValue) {
-                formattedValues = formattedValues.filter(v => v.value !== null);
+                // remove null values or values that do not reprensent a record
+                formattedValues = formattedValues.filter(
+                    v =>
+                        v.value !== null &&
+                        typeof v.value === 'object' &&
+                        v.value.hasOwnProperty('id') &&
+                        v.value.hasOwnProperty('library')
+                );
             }
 
             return attrProps.multiple_values || forceArray ? formattedValues : formattedValues[0] || null;
