@@ -11,7 +11,8 @@ export const validateConfig = (conf: IConfig) => {
     const configSchema = Joi.object().keys({
         server: Joi.object().keys({
             host: Joi.string().required(),
-            port: Joi.number().required()
+            port: Joi.number().required(),
+            uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required()
         }),
         db: Joi.object().keys({
             url: Joi.string().required(),

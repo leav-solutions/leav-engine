@@ -85,8 +85,8 @@ export default function ({
                 // Express settings
                 app.set('port', config.server.port);
                 app.set('host', config.server.host);
-                app.use(express.json({limit: '30000mb'}));
-                app.use(express.urlencoded({limit: '30000mb'}));
+                app.use(express.json({limit: config.server.uploadLimit}));
+                app.use(express.urlencoded({limit: config.server.uploadLimit}));
                 app.use(graphqlUploadExpress());
 
                 // CORS

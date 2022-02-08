@@ -26,6 +26,7 @@ export interface IConfig {
 export interface IServer {
     host: string;
     port: number;
+    uploadLimit: number | string;
 }
 
 export interface IDb {

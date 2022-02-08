@@ -47,6 +47,7 @@ x-env-core: &env-core
   APP_ROOT_PATH: *dir-core
   SERVER_HOST: "0.0.0.0"
   SERVER_PORT: 4001
+  SERVER_UPLOAD_LIMIT: "30000mb"
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
