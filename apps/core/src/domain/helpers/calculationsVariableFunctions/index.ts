@@ -5,9 +5,10 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IActionsListContext} from '_types/actionsList';
 import {IVariableValue} from 'domain/helpers/calculationVariable';
+import {IRecordDomain} from 'domain/record/recordDomain';
 
 interface IDeps {
-    'core.domain.value'?: IValueDomain;
+    'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
 }
 
@@ -20,7 +21,7 @@ export interface IVariableFunctions {
 }
 
 export default function ({
-    'core.domain.value': valueDomain = null,
+    'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null
 }: IDeps = {}): IVariableFunctions {
     const first = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
@@ -92,14 +93,21 @@ export default function ({
             const recordId = inputV.recordId;
             const library = inputV.library;
 
-            const values = await valueDomain.getValues({
+            let values = await recordDomain.getRecordFieldValue({
                 library,
-                recordId,
-                attribute: attributeKey,
+                record: {
+                    id: recordId,
+                    library
+                },
+                attributeId: attributeKey,
                 ctx: context
             });
 
             let currReturnValue = [{...inputV}];
+
+            if (!Array.isArray(values)) {
+                values = [values];
+            }
 
             if (values.length) {
                 currReturnValue = [];

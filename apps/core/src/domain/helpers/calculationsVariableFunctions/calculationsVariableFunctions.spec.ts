@@ -3,19 +3,20 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IActionsListContext} from '_types/actionsList';
 import calculationsVariableFunctions from '.';
 
-const mockValueDomain: Mockify<IValueDomain> = {
-    getValues: global.__mockPromise([{value: 'test'}])
+const mockRecordDomain: Mockify<IRecordDomain> = {
+    getRecordFieldValue: global.__mockPromise([{value: 'test'}])
 };
 const mockAttributeDomainDomain: Mockify<IAttributeDomain> = {
     getAttributeProperties: global.__mockPromise({linked_library_id: 'meh'})
 };
 describe('calculationVariable', () => {
     const calculationFunctions = calculationsVariableFunctions({
-        'core.domain.value': mockValueDomain as IValueDomain,
+        'core.domain.record': mockRecordDomain as IRecordDomain,
         'core.domain.attribute': mockAttributeDomainDomain as IAttributeDomain
     });
     const ctx: IActionsListContext = {};
