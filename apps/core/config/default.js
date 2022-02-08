@@ -16,6 +16,9 @@ module.exports = {
         url: process.env.ARANGO_URL,
         name: process.env.DB_NAME
     },
+    diskCache: {
+        directory: '/cache'
+    },
     elasticsearch: {
         url: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200'
     },
@@ -80,5 +83,8 @@ module.exports = {
     defaultUserId: '1', // Used for DB migration and any other action that is not bound to a real user
     export: {
         directory: process.env.EXPORT_DIR || '/exports'
+    },
+    import: {
+        directory: process.env.IMPORT_DIR || '/imports'
     }
 };

@@ -9,8 +9,9 @@ import {IElement, IFile, IFileUpload} from '_types/import';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import JsonParser from 'jsonparse';
-import {setTimeout} from 'timers';
+import fs from 'fs';
+import {nanoid} from 'nanoid';
+import * as Config from '_types/config';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -18,6 +19,7 @@ export interface ICoreImportApp {
 
 interface IDeps {
     'core.domain.import'?: IImportDomain;
+    config?: Config.IConfig;
 }
 
 interface IImportParams {
@@ -31,35 +33,7 @@ interface IImportExcelParams {
     key: string | null;
 }
 
-export default function ({'core.domain.import': importDomain = null}: IDeps = {}): ICoreImportApp {
-    const _getFileDataBuffer = async (file: IFileUpload, callback): Promise<boolean> => {
-        const {createReadStream} = file;
-
-        const fileStream = createReadStream();
-
-        const p = new JsonParser();
-
-        p.onValue = async function (value) {
-            if (this.stack[this.stack.length - 1]?.key === 'elements' && !!value.library) {
-                await callback(value);
-            }
-
-            if (this.stack[this.stack.length - 1]?.key === 'trees' && !!value.treeId) {
-                // TODO:
-            }
-        };
-
-        return new Promise((resolve, reject) => {
-            fileStream.on('data', chunk => {
-                setTimeout(() => {
-                    p.write(chunk);
-                }, 100);
-            });
-            fileStream.on('error', e => reject(new ValidationError({id: Errors.FILE_ERROR})));
-            fileStream.on('end', () => resolve(true));
-        });
-    };
-
+export default function ({'core.domain.import': importDomain = null, config = null}: IDeps = {}): ICoreImportApp {
     const _getFileExtension = (filename: string): string | null => {
         if (filename.lastIndexOf('.') === -1) {
             return null;
@@ -81,6 +55,31 @@ export default function ({'core.domain.import': importDomain = null}: IDeps = {}
         }
     };
 
+    const _storeUploadFile = async (fileData: IFileUpload): Promise<string> => {
+        const {createReadStream, filename} = fileData;
+        const readStream = createReadStream();
+        const storedFileName = `${nanoid()}-${filename}`;
+        // TODO: import directory path as config variable
+        const storedFilePath = `${config.import.directory}/${storedFileName}`;
+
+        await new Promise((resolve, reject) => {
+            const writeStream = fs.createWriteStream(storedFilePath);
+
+            writeStream.on('finish', resolve);
+
+            // If there's an error writing the file, remove the partially written file.
+            writeStream.on('error', error => {
+                fs.unlink(storedFilePath, () => {
+                    reject(error);
+                });
+            });
+
+            readStream.pipe(writeStream);
+        });
+
+        return storedFileName;
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -89,7 +88,6 @@ export default function ({'core.domain.import': importDomain = null}: IDeps = {}
 
                     extend type Mutation {
                         import(file: Upload!): Boolean!
-                        
                     }
                 `,
                 // importExcel(file: Upload!, library: String!, mapping: [String]!, key: String): Boolean!
@@ -102,9 +100,20 @@ export default function ({'core.domain.import': importDomain = null}: IDeps = {}
                             const allowedExtensions = ['json'];
                             _validateFileFormat(fileData.filename, allowedExtensions);
 
-                            await _getFileDataBuffer(fileData, async (element: any) => {
-                                await importDomain.import(element, ctx);
-                            });
+                            // store file in local filesystem
+                            const storedFilename = await _storeUploadFile(fileData);
+
+                            await importDomain.import(storedFilename, ctx);
+
+                            fs.unlinkSync(`${config.import.directory}/${storedFilename}`); // delete stored file once data import is finished
+
+                            // importDomain
+                            //     .import(storedFilename, ctx)
+                            //     .then(() => fs.unlinkSync(`${config.import.directory}/${storedFilename}`)) // delete stored file once data import is finished
+                            //     .catch(err => {
+                            //         throw err;
+                            //     });
+                            // TODO: link an id to this import to retrieve the progression and display it on explorer
 
                             return true;
                         }

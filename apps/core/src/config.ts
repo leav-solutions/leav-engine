@@ -18,6 +18,9 @@ export const validateConfig = (conf: IConfig) => {
             url: Joi.string().required(),
             name: Joi.string().required()
         }),
+        diskCache: Joi.object().keys({
+            directory: Joi.string().required()
+        }),
         elasticsearch: Joi.object().keys({
             url: Joi.string().required()
         }),
@@ -81,6 +84,9 @@ export const validateConfig = (conf: IConfig) => {
         env: Joi.string(),
         defaultUserId: Joi.string().required(),
         export: Joi.object().keys({
+            directory: Joi.string().required()
+        }),
+        import: Joi.object().keys({
             directory: Joi.string().required()
         }),
         plugins: Joi.object().keys().unknown()

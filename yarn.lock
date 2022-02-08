@@ -2514,6 +2514,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gar/promisify@npm:^1.0.1":
+  version: 1.1.2
+  resolution: "@gar/promisify@npm:1.1.2"
+  checksum: 51f64c558516f776e2f8950fc70532a9a0d166a0493bf17b2c5b588f8f9ae6a6e80e330591554b52d97336094c6d4168b96972fb92ceb1e774176d79a0fbb236
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/merge@npm:^8.2.1":
   version: 8.2.1
   resolution: "@graphql-tools/merge@npm:8.2.1"
@@ -3634,6 +3641,16 @@ __metadata:
     "@nodelib/fs.scandir": 2.1.4
     fastq: ^1.6.0
   checksum: d0503ffd0bb4172d5ac5d23993b14665f5f6d42a460a719ad97743ce71e60588d134cc60df12ca76be0e5e3a93c9a3156904d9296b78a8cdf19425c3423c0b58
+  languageName: node
+  linkType: hard
+
+"@npmcli/fs@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "@npmcli/fs@npm:1.1.0"
+  dependencies:
+    "@gar/promisify": ^1.0.1
+    semver: ^7.3.5
+  checksum: 2700c24d8e47c032e569af0d8be33061f7933312147706b4be154335cde6c3ffdb886531270048e1ba87c863b59f53d3384063c70bd44d114e07813f3340dbff
   languageName: node
   linkType: hard
 
@@ -4803,6 +4820,15 @@ __metadata:
     "@types/connect": "*"
     "@types/node": "*"
   checksum: bd4e6dc17c8d5d83a84717a4af276dfab351ca7a09b6b4d29d35ae3c01e29f9c88f28dcec194943a9cec4690568fb42470d8af06097cd0dcd85ee3d32ea6a9fd
+  languageName: node
+  linkType: hard
+
+"@types/cacache@npm:15.0.1":
+  version: 15.0.1
+  resolution: "@types/cacache@npm:15.0.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 7e567561f3f884c37d9f5e078231ec554b74466a8a5fb2648073a1b7a132985857c978ff036cabd90341b95f9cb8e6cccdcb7262f575593b42e556be752e5e31
   languageName: node
   linkType: hard
 
@@ -9952,6 +9978,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cacache@npm:15.3.0":
+  version: 15.3.0
+  resolution: "cacache@npm:15.3.0"
+  dependencies:
+    "@npmcli/fs": ^1.0.0
+    "@npmcli/move-file": ^1.0.1
+    chownr: ^2.0.0
+    fs-minipass: ^2.0.0
+    glob: ^7.1.4
+    infer-owner: ^1.0.4
+    lru-cache: ^6.0.0
+    minipass: ^3.1.1
+    minipass-collect: ^1.0.2
+    minipass-flush: ^1.0.5
+    minipass-pipeline: ^1.2.2
+    mkdirp: ^1.0.3
+    p-map: ^4.0.0
+    promise-inflight: ^1.0.1
+    rimraf: ^3.0.2
+    ssri: ^8.0.1
+    tar: ^6.0.2
+    unique-filename: ^1.1.1
+  checksum: 3ababe9fa2b32ba6a65b3c6efd2d373be6640c379ac54ef3b837b284b8d1eb3c20601f31460c6391c651684e2cd02791ae175834f1ae059f869dad49014f31a4
+  languageName: node
+  linkType: hard
+
 "cacache@npm:^12.0.2":
   version: 12.0.4
   resolution: "cacache@npm:12.0.4"
@@ -11426,6 +11478,7 @@ __metadata:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@types/amqplib": 0.8.2
+    "@types/cacache": 15.0.1
     "@types/debug": 0.0.30
     "@types/elasticsearch": ^5.0.36
     "@types/glob": ^5.0.35
@@ -11450,6 +11503,7 @@ __metadata:
     awilix: ^3.0.8
     axios: ^0.19.0
     bcryptjs: ^2.4.3
+    cacache: 15.3.0
     commander: ^2.20.0
     deep-extend: ^0.5.1
     exceljs: 4.2.0
@@ -11476,6 +11530,7 @@ __metadata:
     lodash: ^4.17.11
     moment: ^2.22.2
     moment-timezone: ^0.5.25
+    nanoid: 3.2.0
     nodemon: ^1.17.5
     npm-run-all: ^4.1.3
     onchange: ^4.0.0
@@ -22290,6 +22345,15 @@ fsevents@2.1.2:
   dependencies:
     node-gyp: latest
   checksum: 36349b2e5df4182aa0d0cc43fcd6cc782ca560a83c2764743d80c14ba5028d0c54041a2f464b8d4cb18a884e04415034a0a764c745e1d5502ea34a5cb6470a39
+  languageName: node
+  linkType: hard
+
+"nanoid@npm:3.2.0":
+  version: 3.2.0
+  resolution: "nanoid@npm:3.2.0"
+  bin:
+    nanoid: bin/nanoid.cjs
+  checksum: 5d6d2922e7dad98e5e9621845b0a92126a1baaf040490afac74c91e872ebe50173a8a85f364b3e42e3c57f06ad44a5e3f149f516fb95411f7fae9284c5dc280b
   languageName: node
   linkType: hard
 

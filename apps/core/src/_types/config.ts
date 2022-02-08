@@ -7,6 +7,7 @@ import {IKeyValue} from './shared';
 export interface IConfig {
     server: IServer;
     db: IDb;
+    diskCache: IDiskCache;
     elasticsearch: IElasticsearch;
     auth: IAuth;
     lang: ILang;
@@ -20,6 +21,7 @@ export interface IConfig {
     env?: string;
     defaultUserId: string;
     export: IExport;
+    import: IImport;
     plugins: IKeyValue<IKeyValue<any>>;
 }
 
@@ -97,5 +99,13 @@ export interface IIndexationManager {
 }
 
 export interface IExport {
+    directory: string;
+}
+
+export interface IImport {
+    directory: string;
+}
+
+export interface IDiskCache {
     directory: string;
 }
