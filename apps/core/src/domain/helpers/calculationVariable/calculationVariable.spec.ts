@@ -49,7 +49,9 @@ describe('calculationVariable', () => {
         expect(res[0].value).toBe(52);
     });
     test('run unknown function', async () => {
-        const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, 'meh()', 'toto');
-        expect(res[0].value).toBe('toto');
+        const res = calculation.processVariableString({recordId: '1', library: 'meh'}, 'meh()', 'toto');
+        res.catch(e => {
+            expect(e).toEqual(Error('Calculation variable: unknown function meh'));
+        });
     });
 });

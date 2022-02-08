@@ -24,8 +24,6 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
         variableString: string,
         initialValue: ActionsListValueType
     ): Promise<IVariableValue[]> => {
-        const functionsStrings = variableString.split('.');
-
         let passingValue = [
             {
                 recordId: context.recordId,
@@ -33,6 +31,8 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
                 value: initialValue
             }
         ] as IVariableValue[];
+
+        const functionsStrings = variableString.split('.').filter(fStr => fStr.length);
 
         for (const funcString of functionsStrings) {
             const openeningParenthesisPos = funcString.indexOf('(');
@@ -42,6 +42,8 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
 
             if (variableFunctions[funcName]) {
                 passingValue = await variableFunctions[funcName].run(context, passingValue, paramsStr);
+            } else {
+                throw new Error(`Calculation variable: unknown function ${funcName}`);
             }
             // else : this function is unknown, we do nothing, as if it was not here
         }
