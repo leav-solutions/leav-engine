@@ -1,7 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlAddUserToGroup, gqlGetAllUsersGroupId, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {
+    gqlAddElemToTree,
+    gqlAddUserToGroup,
+    gqlGetAllUsersGroupNodeId,
+    gqlSaveLibrary,
+    makeGraphQlCall
+} from '../e2eUtils';
 
 describe('TreeLibraryPermissions', () => {
     const permTreeName = 'tree_library_permissions_test_tree';
@@ -27,7 +33,7 @@ describe('TreeLibraryPermissions', () => {
             }
         }`);
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupId();
+        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemId);
     });
 
@@ -109,10 +115,14 @@ describe('TreeLibraryPermissions', () => {
     });
 
     describe('Herited permissions', () => {
-        let userGroupId1;
-        let userGroupId2;
-        let userGroupId3;
-        let userGroupId4;
+        let userGroupId1: string;
+        let nodeUserGroup1: string;
+        let userGroupId2: string;
+        let nodeUserGroup2: string;
+        let userGroupId3: string;
+        let nodeUserGroup3: string;
+        let userGroupId4: string;
+        let nodeUserGroup4: string;
 
         beforeAll(async () => {
             // Create 2 users groups
@@ -129,32 +139,18 @@ describe('TreeLibraryPermissions', () => {
             userGroupId4 = resCreateGroups.data.data.r4.id;
 
             // Add users groups to tree
-            await makeGraphQlCall(`mutation {
-                el1: treeAddElement(treeId: "users_groups", element: {id: "${userGroupId1}", library: "users_groups"}) {
-                    id
-                },
-                el3: treeAddElement(treeId: "users_groups", element: {id: "${userGroupId3}", library: "users_groups"}) {
-                    id
-                },
-            }`);
-
-            await makeGraphQlCall(`mutation {
-                el1: treeAddElement(
-                    treeId: "users_groups",
-                    element: {id: "${userGroupId2}", library: "users_groups"},
-                    parent: {id: "${userGroupId1}", library: "users_groups"}
-                ) { id },
-                el2: treeAddElement(
-                    treeId: "users_groups",
-                    element: {id: "${userGroupId4}", library: "users_groups"},
-                    parent: {id: "${userGroupId3}", library: "users_groups"}
-                ) { id },
-                el3: treeAddElement(
-                    treeId: "users_groups",
-                    element: {id: "${userGroupId4}", library: "users_groups"},
-                    parent: {id: "${userGroupId2}", library: "users_groups"}
-                ) { id },
-            }`);
+            nodeUserGroup1 = await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});
+            nodeUserGroup2 = await gqlAddElemToTree(
+                'users_groups',
+                {id: userGroupId2, library: 'users_groups'},
+                nodeUserGroup1
+            );
+            nodeUserGroup3 = await gqlAddElemToTree('users_groups', {id: userGroupId3, library: 'users_groups'});
+            nodeUserGroup4 = await gqlAddElemToTree(
+                'users_groups',
+                {id: userGroupId4, library: 'users_groups'},
+                nodeUserGroup3
+            );
 
             // User groups tree: [ROOT] -> group 1 -> group 2
             // We save a permission on group 1
@@ -165,7 +161,7 @@ describe('TreeLibraryPermissions', () => {
                     permission: {
                         type: tree_library,
                         applyTo: "${permTreeName}/${treeLibId}",
-                        usersGroup: "${userGroupId1}",
+                        usersGroup: "${nodeUserGroup1}",
                         actions: [
                             {name: access_tree, allowed: false},
                         ]
@@ -178,7 +174,7 @@ describe('TreeLibraryPermissions', () => {
                     permission: {
                         type: tree_library,
                         applyTo: "${permTreeName}/${treeLibId}",
-                        usersGroup: "${userGroupId3}",
+                        usersGroup: "${nodeUserGroup3}",
                         actions: [
                             {name: access_tree, allowed: true},
                         ]
@@ -187,14 +183,14 @@ describe('TreeLibraryPermissions', () => {
             }`);
         });
 
-        test('Retrieve permission herited from user group', async () => {
+        test('Retrieve permission inherited from user group', async () => {
             // Get perm
             const permHeritGroup = await makeGraphQlCall(`{
-                p: heritedPermissions(
+                p: inheritedPermissions(
                     type: tree_library,
                     applyTo: "${permTreeName}/${treeLibId}"
                     actions: [access_tree],
-                    userGroupId: "${userGroupId2}"
+                    userGroupNodeId: "${nodeUserGroup2}"
                 ) { name allowed }
               }
             `);
@@ -205,11 +201,11 @@ describe('TreeLibraryPermissions', () => {
 
             // Get perm an test with one path to false and another to true
             const pHG = await makeGraphQlCall(`{
-                p: heritedPermissions(
+                p: inheritedPermissions(
                     type: tree_library,
                     applyTo: "${permTreeName}/${treeLibId}"
                     actions: [access_tree],
-                    userGroupId: "${userGroupId4}"
+                    userGroupNodeId: "${nodeUserGroup4}"
                 ) { name allowed }
               }
             `);

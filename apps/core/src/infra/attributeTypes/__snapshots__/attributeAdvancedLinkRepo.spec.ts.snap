@@ -22,7 +22,7 @@ Object {
     "modified_at": 400999999,
     "modified_by": "0",
     "version": Object {
-      "my_tree": "test_lib/1",
+      "my_tree": "1",
     },
   },
 }
@@ -186,7 +186,7 @@ Object {
     "modified_at": 400999999,
     "modified_by": "0",
     "version": Object {
-      "my_tree": "test_lib/1",
+      "my_tree": "1",
     },
   },
 }

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
+import {IDbDocument} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import {mockTree} from '../../__tests__/mocks/tree';
 import dbUtils, {IDbUtils} from '../db/dbUtils';
@@ -55,7 +56,7 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^INSERT/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
-            expect(mockDbServ.createCollection.mock.calls.length).toBe(1);
+            expect(mockDbServ.createCollection.mock.calls.length).toBe(2);
 
             expect(createdTree).toMatchObject(treeData);
         });
@@ -146,14 +147,14 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const deletedTree = await repo.deleteTree({id: 'test_tree', ctx});
+            await repo.deleteTree({id: 'test_tree', ctx});
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^REMOVE/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
-            expect(mockDbServ.dropCollection.mock.calls.length).toBe(1);
+            expect(mockDbServ.dropCollection.mock.calls.length).toBe(2);
         });
     });
 
@@ -161,45 +162,104 @@ describe('TreeRepo', () => {
         test('Should add an element to the root', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([])
+                execute: global.__mockPromiseMultiple([
+                    [
+                        // Create node entity
+                        {
+                            _id: 'core_nodes_my_tree/19610667',
+                            _key: '19610667'
+                        }
+                    ],
+                    [], // Link to record
+                    [
+                        // Insert entity in tree
+                        {
+                            _from: 'core_trees/test_tree',
+                            _to: 'core_nodes_my_tree/19610667',
+                            order: 0
+                        }
+                    ]
+                ])
             };
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
-            const addedElement = await repo.addElement({
+
+            const res = await repo.addElement({
                 treeId: 'test_tree',
                 element: {id: '13445', library: 'test_lib'},
                 parent: null,
                 ctx
             });
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(res).toEqual({
+                id: '19610667',
+                order: 0
+            });
+            expect(mockDbServ.execute.mock.calls.length).toBe(3);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^INSERT/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
+
+            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[2][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should add an element under another', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([])
+                execute: global.__mockPromiseMultiple([
+                    [
+                        // Create node entity
+                        {
+                            _id: 'core_nodes_my_tree/19610667',
+                            _key: '19610667'
+                        }
+                    ],
+                    [], // Link to record
+                    [
+                        // Insert entity in tree
+                        {
+                            _from: 'core_nodes_my_tree/6789',
+                            _to: 'core_nodes_my_tree/19610667',
+                            order: 0
+                        }
+                    ]
+                ])
             };
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
-            const addedElement = await repo.addElement({
+            const res = await repo.addElement({
                 treeId: 'test_tree',
                 element: {id: '13445', library: 'test_lib'},
-                parent: {id: '6789', library: 'test_lib2'},
+                parent: '6789',
                 order: 1,
                 ctx
             });
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(res).toEqual({
+                id: '19610667',
+                order: 0
+            });
+            expect(mockDbServ.execute.mock.calls.length).toBe(3);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/INSERT/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
+
+            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatch(/^INSERT/);
+            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[2][0].query.bindVars).toMatchSnapshot();
         });
     });
 
@@ -207,17 +267,20 @@ describe('TreeRepo', () => {
         test('Should move an element', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([])
+                execute: global.__mockPromise([
+                    {
+                        _from: 'core_nodes_my_tree/6789',
+                        _to: 'core_nodes_my_tree/19610667',
+                        order: 0
+                    }
+                ])
             };
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
-            const addedElement = await repo.moveElement({
+            await repo.moveElement({
                 treeId: 'test_tree',
-                element: {id: '13445', library: 'test_lib'},
-                parentTo: {
-                    id: '6789',
-                    library: 'users'
-                },
+                nodeId: '13445',
+                parentTo: '6789',
                 order: 1,
                 ctx
             });
@@ -234,27 +297,43 @@ describe('TreeRepo', () => {
         test('Should delete an element and its children', async () => {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([])
+                execute: global.__mockPromiseMultiple([
+                    [], // Remove children
+                    [], // Remove element
+                    [
+                        // Delete node entity
+                        {
+                            _id: 'core_nodes_my_tree/19610667',
+                            _key: '19610667'
+                        }
+                    ]
+                ])
             };
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
-            const deletedElement = await repo.deleteElement({
+            const res = await repo.deleteElement({
                 treeId: 'test_tree',
-                element: {id: '13445', library: 'test_lib'},
+                nodeId: '13445',
                 deleteChildren: true,
                 ctx
             });
+
+            expect(res).toEqual({id: '19610667'});
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(3);
 
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/REMOVE/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/OUTBOUND/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(2);
-            expect(typeof mockDbServ.execute.mock.calls[1][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/REMOVE/);
             expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
+
+            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatch(/REMOVE/);
+            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[2][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should delete an element and move its children up', async () => {
@@ -273,21 +352,29 @@ describe('TreeRepo', () => {
                             _id: 'B/1'
                         }
                     ],
-                    [] // Removing element
+                    [], // Removing element from its parent
+                    [
+                        // Removing node entity
+                        {
+                            _id: 'core_nodes_my_tree/19610667',
+                            _key: '19610667'
+                        }
+                    ]
                 ])
             };
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ}) as any;
             repo.moveElement = global.__mockPromise([]);
 
-            await repo.deleteElement({
+            const res = await repo.deleteElement({
                 treeId: 'test_tree',
-                element: {id: '13445', library: 'test_lib'},
+                nodeId: '13445',
                 deleteChildren: false,
                 ctx
             });
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(3);
+            expect(res).toEqual({id: '19610667'});
+            expect(mockDbServ.execute.mock.calls.length).toBe(4);
             expect(repo.moveElement.mock.calls.length).toBe(2);
 
             expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/(?!REMOVE)/);
@@ -318,9 +405,9 @@ describe('TreeRepo', () => {
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
-            const isPresent = await repo.isElementPresent({
+            const isPresent = await repo.isNodePresent({
                 treeId: 'test_tree',
-                element: {id: '13445', library: 'test_lib'},
+                nodeId: '13445',
                 ctx
             });
 
@@ -338,13 +425,63 @@ describe('TreeRepo', () => {
 
             const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
 
-            const isPresent = await repo.isElementPresent({
+            const isPresent = await repo.isNodePresent({
                 treeId: 'test_tree',
-                element: {id: '13445', library: 'test_lib'},
+                nodeId: '13445',
                 ctx
             });
 
             expect(isPresent).toBe(false);
+        });
+    });
+
+    describe('isRecordPresent', () => {
+        test('Should check if a record is present in the tree', async () => {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        _key: '223539676',
+                        _id: 'core_edge_tree_test_tree/223539676',
+                        _from: 'core_nodes_test_tree/123456789',
+                        _to: 'users/223536900'
+                    }
+                ])
+            };
+
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+
+            const isPresent = await repo.isRecordPresent({
+                treeId: 'test_tree',
+                record: {id: '223536900', library: 'users'},
+                ctx
+            });
+
+            expect(isPresent).toBe(true);
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/FILTER/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+        });
+        test('Should check if an element is present in the tree', async () => {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([])
+            };
+
+            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+
+            const isPresent = await repo.isRecordPresent({
+                treeId: 'test_tree',
+                record: {id: '223536900', library: 'users'},
+                ctx
+            });
+
+            expect(isPresent).toBe(false);
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/FILTER/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
     });
 
@@ -354,81 +491,64 @@ describe('TreeRepo', () => {
                 db: new Database(),
                 execute: global.__mockPromise([
                     {
-                        order: 0,
+                        id: '19637240',
                         record: {
-                            _id: 'core_trees/test_tree',
-                            _key: 'categories',
-                            _rev: '_Wm_Qdtu--_',
-                            label: {
-                                fr: 'Arbre des catégories'
-                            },
-                            libraries: ['categories'],
-                            system: false,
-                            path: ['core_trees/test_tree']
-                        }
+                            _id: 'nouvelle_biblio/19610667',
+                            _key: '19610667',
+                            label: 'A',
+                            path: ['test_tree']
+                        },
+                        order: 0
                     },
                     {
-                        order: 0,
+                        id: '19637279',
                         record: {
-                            _id: 'categories/223588194',
-                            _key: '223588194',
-                            _rev: '_Wm_Sdaq--_',
-                            created_at: 1524057050,
-                            id: '223588194',
-                            modified_at: 1524057125,
-                            path: ['core_trees/test_tree', 'categories/223588194']
-                        }
+                            _id: 'nouvelle_biblio/19611412',
+                            _key: '19611412',
+                            label: 'B',
+                            path: ['test_tree', '19637240']
+                        },
+                        order: 0
                     },
                     {
-                        order: 1,
+                        id: '19637318',
                         record: {
-                            _id: 'categories/223588185',
-                            _key: '223588185',
-                            _rev: '_Wm_SdZ2--_',
-                            created_at: 1524057050,
-                            id: '223588185',
-                            modified_at: 1524057125,
-                            path: ['core_trees/test_tree', 'categories/223588185']
-                        }
+                            _id: 'nouvelle_biblio/19611963',
+                            _key: '19611963',
+                            label: 'C',
+                            path: ['test_tree', '19637240']
+                        },
+                        order: 0
                     },
                     {
-                        order: 0,
+                        id: '19637350',
                         record: {
-                            _id: 'categories/223588190',
-                            _key: '223588190',
-                            _rev: '_Wm_SdaS--_',
-                            created_at: 1524057050,
-                            id: '223588190',
-                            modified_at: 1524057125,
-                            path: ['core_trees/test_tree', 'categories/223588185', 'categories/223588190']
-                        }
+                            _id: 'nouvelle_biblio/19611963',
+                            _key: '19611963',
+                            label: 'C',
+                            path: ['test_tree', '19637240', '19637279']
+                        },
+                        order: 0
                     },
                     {
-                        order: 1,
+                        id: '19637382',
                         record: {
-                            _id: 'categories/223612473',
-                            _key: '223612473',
-                            _rev: '_WmDqKmm--_',
-                            created_at: 1524130036,
-                            modified_at: 1524130036,
-                            path: ['core_trees/test_tree', 'categories/223588185', 'categories/223612473']
-                        }
+                            _id: 'nouvelle_biblio/19611984',
+                            _key: '19611984',
+                            label: 'D',
+                            path: ['test_tree', '19637240', '19637318']
+                        },
+                        order: 0
                     },
                     {
-                        order: 0,
+                        id: '19637411',
                         record: {
-                            _id: 'categories/223612456',
-                            _key: '223612456',
-                            _rev: '_WmDqGxW--_',
-                            created_at: 1524130032,
-                            modified_at: 1524130032,
-                            path: [
-                                'core_trees/test_tree',
-                                'categories/223588185',
-                                'categories/223612473',
-                                'categories/223612456'
-                            ]
-                        }
+                            _id: 'nouvelle_biblio/19612005',
+                            _key: '19612005',
+                            label: 'E',
+                            path: ['test_tree', '19637240', '19637318']
+                        },
+                        order: 0
                     }
                 ])
             };
@@ -454,51 +574,62 @@ describe('TreeRepo', () => {
 
             expect(treeContent).toEqual([
                 {
+                    id: '19637240',
+                    record: {
+                        id: '19610667',
+                        label: 'A',
+                        library: 'nouvelle_biblio'
+                    },
                     order: 0,
-                    record: {
-                        id: '223588194',
-                        created_at: 1524057050,
-                        modified_at: 1524057125,
-                        library: 'categories'
-                    },
-                    children: []
-                },
-                {
-                    order: 1,
-                    record: {
-                        id: '223588185',
-                        created_at: 1524057050,
-                        modified_at: 1524057125,
-                        library: 'categories'
-                    },
                     children: [
                         {
+                            id: '19637279',
+                            record: {
+                                id: '19611412',
+                                label: 'B',
+                                library: 'nouvelle_biblio'
+                            },
                             order: 0,
-                            record: {
-                                id: '223588190',
-                                created_at: 1524057050,
-                                modified_at: 1524057125,
-                                library: 'categories'
-                            },
-                            children: []
-                        },
-                        {
-                            order: 1,
-                            record: {
-                                id: '223612473',
-                                created_at: 1524130036,
-                                modified_at: 1524130036,
-                                library: 'categories'
-                            },
                             children: [
                                 {
-                                    order: 0,
+                                    id: '19637350',
                                     record: {
-                                        id: '223612456',
-                                        created_at: 1524130032,
-                                        modified_at: 1524130032,
-                                        library: 'categories'
+                                        id: '19611963',
+                                        label: 'C',
+                                        library: 'nouvelle_biblio'
                                     },
+                                    order: 0,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: '19637318',
+                            record: {
+                                id: '19611963',
+                                label: 'C',
+                                library: 'nouvelle_biblio'
+                            },
+                            order: 0,
+                            children: [
+                                {
+                                    id: '19637382',
+                                    record: {
+                                        id: '19611984',
+                                        label: 'D',
+                                        library: 'nouvelle_biblio'
+                                    },
+                                    order: 0,
+                                    children: []
+                                },
+                                {
+                                    id: '19637411',
+                                    record: {
+                                        id: '19612005',
+                                        label: 'E',
+                                        library: 'nouvelle_biblio'
+                                    },
+                                    order: 0,
                                     children: []
                                 }
                             ]
@@ -522,59 +653,82 @@ describe('TreeRepo', () => {
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
-            const treeContent = await repo.getTreeContent({
+            await repo.getTreeContent({
                 treeId: 'test_tree',
-                startingNode: {id: '223588185', library: 'categories'},
+                startingNode: '223588185',
                 ctx
             });
 
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1).toBe('categories/223588185');
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1).toMatch(/223588185/);
         });
     });
+
     describe('getDefaultElement', () => {
         test('Should return the first element of a tree', async () => {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([
                     {
-                        order: 0,
+                        id: '19637240',
                         record: {
-                            _id: 'core_trees/test_tree',
-                            _key: 'categories',
-                            _rev: '_Wm_Qdtu--_',
-                            label: {
-                                fr: 'Arbre des catégories'
-                            },
-                            libraries: ['categories'],
-                            system: false,
-                            path: ['core_trees/test_tree']
-                        }
+                            _id: 'nouvelle_biblio/19610667',
+                            _key: '19610667',
+                            label: 'A',
+                            path: ['test_tree']
+                        },
+                        order: 0
                     },
                     {
-                        order: 0,
+                        id: '19637279',
                         record: {
-                            _id: 'categories/223588194',
-                            _key: '223588194',
-                            _rev: '_Wm_Sdaq--_',
-                            created_at: 1524057050,
-                            id: '223588194',
-                            modified_at: 1524057125,
-                            path: ['core_trees/test_tree', 'categories/223588194']
-                        }
+                            _id: 'nouvelle_biblio/19611412',
+                            _key: '19611412',
+                            label: 'B',
+                            path: ['test_tree', '19637240']
+                        },
+                        order: 0
                     },
                     {
-                        order: 1,
+                        id: '19637318',
                         record: {
-                            _id: 'categories/223588185',
-                            _key: '223588185',
-                            _rev: '_Wm_SdZ2--_',
-                            created_at: 1524057050,
-                            id: '223588185',
-                            modified_at: 1524057125,
-                            path: ['core_trees/test_tree', 'categories/223588185']
-                        }
+                            _id: 'nouvelle_biblio/19611963',
+                            _key: '19611963',
+                            label: 'C',
+                            path: ['test_tree', '19637240']
+                        },
+                        order: 0
+                    },
+                    {
+                        id: '19637350',
+                        record: {
+                            _id: 'nouvelle_biblio/19611963',
+                            _key: '19611963',
+                            label: 'C',
+                            path: ['test_tree', '19637240', '19637279']
+                        },
+                        order: 0
+                    },
+                    {
+                        id: '19637382',
+                        record: {
+                            _id: 'nouvelle_biblio/19611984',
+                            _key: '19611984',
+                            label: 'D',
+                            path: ['test_tree', '19637240', '19637318']
+                        },
+                        order: 0
+                    },
+                    {
+                        id: '19637411',
+                        record: {
+                            _id: 'nouvelle_biblio/19612005',
+                            _key: '19612005',
+                            label: 'E',
+                            path: ['test_tree', '19637240', '19637318']
+                        },
+                        order: 0
                     }
                 ])
             };
@@ -595,10 +749,7 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1).toBe('core_trees/test_tree');
 
-            expect(treeElement).toEqual({
-                id: '223588194',
-                library: 'categories'
-            });
+            expect(treeElement).toBe('19637240');
         });
     });
 
@@ -606,25 +757,22 @@ describe('TreeRepo', () => {
         test('Should return element children', async () => {
             const traversalRes = [
                 {
-                    _key: '123456',
-                    _id: 'images/123456',
-                    _rev: '_WgJhrXO--_',
-                    created_at: 77777,
-                    modified_at: 77777
+                    id: '19637382',
+                    order: 0,
+                    record: {
+                        _key: '19611984',
+                        _id: 'nouvelle_biblio/19611984',
+                        label: 'D'
+                    }
                 },
                 {
-                    _key: '123457',
-                    _id: 'images/123457',
-                    _rev: '_WgJhrXO--_',
-                    created_at: 88888,
-                    modified_at: 88888
-                },
-                {
-                    _key: '123458',
-                    _id: 'images/123458',
-                    _rev: '_WgJhrXO--_',
-                    created_at: 99999,
-                    modified_at: 99999
+                    id: '19637411',
+                    order: 0,
+                    record: {
+                        _key: '19612005',
+                        _id: 'nouvelle_biblio/19612005',
+                        label: 'E'
+                    }
                 }
             ];
 
@@ -636,19 +784,12 @@ describe('TreeRepo', () => {
             const mockCleanupRes = jest
                 .fn()
                 .mockReturnValueOnce({
-                    id: '123456',
-                    created_at: 77777,
-                    modified_at: 77777
+                    id: '19611984',
+                    label: 'D'
                 })
                 .mockReturnValueOnce({
-                    id: '123457',
-                    created_at: 88888,
-                    modified_at: 88888
-                })
-                .mockReturnValueOnce({
-                    id: '123458',
-                    created_at: 99999,
-                    modified_at: 99999
+                    id: '19612005',
+                    label: 'E'
                 });
 
             const mockDbUtils: Mockify<IDbUtils> = {
@@ -662,7 +803,7 @@ describe('TreeRepo', () => {
 
             const values = await repo.getElementChildren({
                 treeId: 'test_tree',
-                element: {id: '123458', library: 'images'},
+                nodeId: '123458',
                 ctx
             });
 
@@ -673,56 +814,46 @@ describe('TreeRepo', () => {
 
             expect(values).toEqual([
                 {
+                    id: '19637382',
+                    order: 0,
                     record: {
-                        id: '123456',
-                        created_at: 77777,
-                        modified_at: 77777
+                        id: '19611984',
+                        label: 'D'
                     }
                 },
                 {
+                    id: '19637411',
+                    order: 0,
                     record: {
-                        id: '123457',
-                        created_at: 88888,
-                        modified_at: 88888
-                    }
-                },
-                {
-                    record: {
-                        id: '123458',
-                        created_at: 99999,
-                        modified_at: 99999
+                        id: '19612005',
+                        label: 'E'
                     }
                 }
             ]);
         });
     });
 
-    describe('getElementParents', () => {
-        test('Should return element parents', async () => {
+    describe('getElementAncestors', () => {
+        test('Should return element ancestors', async () => {
             const traversalRes = [
-                [
-                    {
-                        _key: '123456',
-                        _id: 'images/123456',
-                        _rev: '_WgJhrXO--_',
-                        created_at: 77777,
-                        modified_at: 77777
-                    },
-                    {
-                        _key: '123457',
-                        _id: 'images/123457',
-                        _rev: '_WgJhrXO--_',
-                        created_at: 88888,
-                        modified_at: 88888
-                    },
-                    {
-                        _key: '123458',
-                        _id: 'images/123458',
-                        _rev: '_WgJhrXO--_',
-                        created_at: 99999,
-                        modified_at: 99999
+                {
+                    id: '19637318',
+                    order: 0,
+                    record: {
+                        _key: '19611963',
+                        _id: 'nouvelle_biblio/19611963',
+                        label: 'C'
                     }
-                ]
+                },
+                {
+                    id: '19637240',
+                    order: 0,
+                    record: {
+                        _key: '19610667',
+                        _id: 'nouvelle_biblio/19610667',
+                        label: 'A'
+                    }
+                }
             ];
 
             const mockDbServ = {
@@ -733,19 +864,12 @@ describe('TreeRepo', () => {
             const mockCleanupRes = jest
                 .fn()
                 .mockReturnValueOnce({
-                    id: '123456',
-                    created_at: 77777,
-                    modified_at: 77777
+                    id: '19610667',
+                    label: 'A'
                 })
                 .mockReturnValueOnce({
-                    id: '123457',
-                    created_at: 88888,
-                    modified_at: 88888
-                })
-                .mockReturnValueOnce({
-                    id: '123458',
-                    created_at: 99999,
-                    modified_at: 99999
+                    id: '19611963',
+                    label: 'C'
                 });
 
             const mockDbUtils: Mockify<IDbUtils> = {
@@ -759,7 +883,7 @@ describe('TreeRepo', () => {
 
             const values = await repo.getElementAncestors({
                 treeId: 'test_tree',
-                element: {id: '123458', library: 'images'},
+                nodeId: '123458',
                 ctx
             });
 
@@ -769,29 +893,22 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(values).toEqual([
-                [
-                    {
-                        record: {
-                            id: '123456',
-                            created_at: 77777,
-                            modified_at: 77777
-                        }
-                    },
-                    {
-                        record: {
-                            id: '123457',
-                            created_at: 88888,
-                            modified_at: 88888
-                        }
-                    },
-                    {
-                        record: {
-                            id: '123458',
-                            created_at: 99999,
-                            modified_at: 99999
-                        }
+                {
+                    id: '19637240',
+                    order: 0,
+                    record: {
+                        id: '19610667',
+                        label: 'A'
                     }
-                ]
+                },
+                {
+                    id: '19637318',
+                    order: 0,
+                    record: {
+                        id: '19611963',
+                        label: 'C'
+                    }
+                }
             ]);
         });
     });
@@ -857,7 +974,7 @@ describe('TreeRepo', () => {
             const values = await repo.getLinkedRecords({
                 treeId: 'test_tree',
                 attribute: 'test_attr',
-                element: {id: '123458', library: 'images'},
+                nodeId: '123458',
                 ctx
             });
 
@@ -883,6 +1000,82 @@ describe('TreeRepo', () => {
                     modified_at: 99999
                 }
             ]);
+        });
+    });
+
+    describe('getRecordByNodeId', () => {
+        test('Return record linked to node', async () => {
+            const traversalRes: IDbDocument[] = [
+                {
+                    _key: '123456',
+                    _id: 'mylib/123456',
+                    _rev: '_WgJhrXO--_',
+                    label: 'my record'
+                }
+            ];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const mockCleanupRes = jest.fn().mockReturnValue({
+                id: '123456',
+                library: 'mylib',
+                label: 'my record'
+            });
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: mockCleanupRes
+            };
+
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            const record = await repo.getRecordByNodeId({
+                treeId: 'test_tree',
+                nodeId: '123458',
+                ctx
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+
+            expect(record).toEqual({
+                id: '123456',
+                library: 'mylib',
+                label: 'my record'
+            });
+        });
+    });
+
+    describe('getNodesByRecord', () => {
+        test('Return nodes linked to record', async () => {
+            const traversalRes = ['123456', '654321'];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(traversalRes)
+            };
+
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const record = await repo.getNodesByRecord({
+                treeId: 'test_tree',
+                record: {id: '123456', library: 'mylib'},
+                ctx
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+
+            expect(record).toEqual(['123456', '654321']);
         });
     });
 });

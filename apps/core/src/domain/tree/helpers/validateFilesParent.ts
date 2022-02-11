@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IQueryInfos} from '_types/queryInfos';
 import {ITreeElement} from '_types/tree';
 import {FilesAttributes} from '../../../_types/filesManager';
-import {IQueryInfos} from '_types/queryInfos';
 
 export default async (
     parent: ITreeElement,

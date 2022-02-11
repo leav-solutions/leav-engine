@@ -39,10 +39,9 @@ describe('getPermissionsByActions', () => {
                 RecordPermissionsActions.EDIT_RECORD,
                 RecordPermissionsActions.DELETE_RECORD
             ],
-            usersGroupId: '12345',
+            usersGroupNodeId: '12345',
             permissionTreeTarget: {
-                id: '123',
-                library: 'category',
+                nodeId: '123',
                 tree: 'categories'
             },
             ctx
@@ -81,10 +80,9 @@ describe('getPermissionsByActions', () => {
                 RecordPermissionsActions.EDIT_RECORD,
                 RecordPermissionsActions.DELETE_RECORD
             ],
-            usersGroupId: '12345',
+            usersGroupNodeId: '12345',
             permissionTreeTarget: {
-                id: '123',
-                library: 'category',
+                nodeId: '123',
                 tree: 'categories'
             },
             ctx
@@ -114,10 +112,9 @@ describe('getPermissionsByActions', () => {
                 RecordPermissionsActions.EDIT_RECORD,
                 RecordPermissionsActions.DELETE_RECORD
             ],
-            usersGroupId: '12345',
+            usersGroupNodeId: '12345',
             permissionTreeTarget: {
-                id: '123',
-                library: 'category',
+                nodeId: '123',
                 tree: 'categories'
             },
             ctx

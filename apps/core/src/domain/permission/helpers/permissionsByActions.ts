@@ -12,27 +12,26 @@ export interface IPermissionsByActionsHelper {
     getPermissionsByActions: (params: IGetPermissionsByActionsParams) => Promise<{[name: string]: boolean | null}>;
 }
 
-export default function ({'core.infra.permission': permissionRepo = null}: IDeps): IPermissionsByActionsHelper {
+export default function({'core.infra.permission': permissionRepo = null}: IDeps): IPermissionsByActionsHelper {
     return {
         async getPermissionsByActions({
             type,
             applyTo,
             actions,
-            usersGroupId,
+            usersGroupNodeId,
             permissionTreeTarget,
             ctx
         }: IGetPermissionsByActionsParams): Promise<{[name: string]: boolean | null}> {
             const perms = await permissionRepo.getPermissions({
                 type,
                 applyTo,
-                usersGroupId,
+                usersGroupNodeId,
                 permissionTreeTarget,
                 ctx
             });
 
             return actions.reduce((actionsPerms, action) => {
-                actionsPerms[action] =
-                    perms !== null && typeof perms.actions[action] !== 'undefined' ? perms.actions[action] : null;
+                actionsPerms[action] = perms?.actions?.[action] ?? null;
 
                 return actionsPerms;
             }, {});

@@ -2,7 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {gqlAddUserToGroup, gqlGetAllUsersGroupId, gqlSaveAttribute, makeGraphQlCall} from '../e2eUtils';
+import {
+    gqlAddElemToTree,
+    gqlAddUserToGroup,
+    gqlGetAllUsersGroupNodeId,
+    gqlSaveAttribute,
+    makeGraphQlCall
+} from '../e2eUtils';
 
 describe('AttributePermissions', () => {
     const permAttrName = 'attribute_permissions_test_attr';
@@ -17,7 +23,7 @@ describe('AttributePermissions', () => {
             format: AttributeFormats.TEXT
         });
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupId();
+        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemId);
     });
 
@@ -93,9 +99,11 @@ describe('AttributePermissions', () => {
         });
     });
 
-    describe('Herited permissions', () => {
-        let userGroupId1;
-        let userGroupId2;
+    describe('Inherited permissions', () => {
+        let userGroupId1: string;
+        let nodeUserGroup1: string;
+        let userGroupId2: string;
+        let nodeUserGroup2: string;
 
         beforeAll(async () => {
             // Create 2 users groups
@@ -107,19 +115,12 @@ describe('AttributePermissions', () => {
             userGroupId2 = resCreateGroups.data.data.r2.id;
 
             // Add users groups to tree
-            await makeGraphQlCall(`mutation {
-                el1: treeAddElement(treeId: "users_groups", element: {id: "${userGroupId1}", library: "users_groups"}) {
-                    id
-                },
-            }`);
-
-            await makeGraphQlCall(`mutation {
-                el1: treeAddElement(
-                    treeId: "users_groups",
-                    element: {id: "${userGroupId2}", library: "users_groups"},
-                    parent: {id: "${userGroupId1}", library: "users_groups"}
-                ) { id },
-            }`);
+            nodeUserGroup1 = await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});
+            nodeUserGroup2 = await gqlAddElemToTree(
+                'users_groups',
+                {id: userGroupId2, library: 'users_groups'},
+                nodeUserGroup1
+            );
 
             // User groups tree: [ROOT] -> group 1 -> group 2
             // We save a permission on group 1
@@ -130,7 +131,7 @@ describe('AttributePermissions', () => {
                     permission: {
                         type: attribute,
                         applyTo: "${permAttrName}",
-                        usersGroup: "${userGroupId1}",
+                        usersGroup: "${nodeUserGroup1}",
                         actions: [
                             {name: access_attribute, allowed: false},
                         ]
@@ -141,19 +142,19 @@ describe('AttributePermissions', () => {
 
         test('Retrieve permission herited from user group', async () => {
             // Get perm
-            const permHeritGroup = await makeGraphQlCall(`{
-                p: heritedPermissions(
+            const permInheritGroup = await makeGraphQlCall(`{
+                p: inheritedPermissions(
                     type: attribute,
                     applyTo: "${permAttrName}",
                     actions: [access_attribute],
-                    userGroupId: "${userGroupId2}"
+                    userGroupNodeId: "${nodeUserGroup2}"
                 ) { name allowed }
               }
             `);
 
-            expect(permHeritGroup.status).toBe(200);
-            expect(permHeritGroup.data.data.p[0].name).toBe('access_attribute');
-            expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
+            expect(permInheritGroup.status).toBe(200);
+            expect(permInheritGroup.data.data.p[0].name).toBe('access_attribute');
+            expect(permInheritGroup.data.data.p[0].allowed).toBe(false);
         });
     });
 });

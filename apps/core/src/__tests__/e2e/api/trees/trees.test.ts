@@ -1,7 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {AttributeTypes} from '../../../../_types/attribute';
+import {
+    gqlAddElemToTree,
+    gqlCreateRecord,
+    gqlSaveAttribute,
+    gqlSaveLibrary,
+    gqlSaveTree,
+    makeGraphQlCall
+} from '../e2eUtils';
 
 describe('Trees', () => {
     const testTreeName = 'test_tree';
@@ -16,7 +24,10 @@ describe('Trees', () => {
                 tree: {
                     id: "${testTreeName}",
                     label: {fr: "Test tree"},
-                    libraries: [{library: "users", settings: {allowMultiplePositions: true, allowedAtRoot: true,  allowedChildren: ["__all__"]}}]
+                    libraries: [{
+                        library: "users",
+                        settings: {allowMultiplePositions: true, allowedAtRoot: true,  allowedChildren: ["__all__"]}
+                    }]
                 }
             ) {
                 id
@@ -135,26 +146,19 @@ describe('Trees', () => {
         expect(resAdd.data.data.a1.id).toBeTruthy();
         expect(resAdd.data.errors).toBeUndefined();
 
+        const nodeRecord1 = resAdd.data.data.a1.id;
+        const nodeRecord2 = resAdd.data.data.a2.id;
+        const nodeRecord3 = resAdd.data.data.a3.id;
+
         // test element already present in ancestors
-        await makeGraphQlCall(`mutation {
-            a1: treeAddElement(
-                treeId: "${testTreeName}",
-                    element: {id: "${recordId5}", library: "users"},
-                    order: 1
-            ) {id},
-            a2: treeAddElement(
-                treeId: "${testTreeName}",
-                    element: {id: "${recordId6}", library: "users"},
-                    parent: {id: "${recordId5}", library: "users"},
-                    order: 1
-            ) {id},
-        }`);
+        const nodeRecord5 = await gqlAddElemToTree(testTreeName, {id: recordId5, library: 'users'}, null, 2);
+        const nodeRecord6 = await gqlAddElemToTree(testTreeName, {id: recordId6, library: 'users'}, nodeRecord5);
 
         const resErr = await makeGraphQlCall(`mutation {
             a1: treeAddElement(
                 treeId: "${testTreeName}",
                     element: {id: "${recordId5}", library: "users"},
-                    parent: {id: "${recordId6}", library: "users"},
+                    parent: "${nodeRecord6}",
                     order: 2
             ) {id}
         }`);
@@ -165,37 +169,29 @@ describe('Trees', () => {
         expect(resErr.data.errors[0].message).toBeDefined();
         expect(resErr.data.errors[0].extensions.fields).toBeDefined();
 
-        await makeGraphQlCall(`mutation {
-            a4: treeAddElement(
-                treeId: "${testTreeName}",
-                element: {
-                    id: "${recordId4}",
-                    library: "users"
-                },
-                parent: {id: "${recordId1}", library: "users"}
-            ) {id}
-        }`);
+        await gqlAddElemToTree(testTreeName, {id: recordId4, library: 'users'}, nodeRecord1);
 
         // Move records inside the tree
         const resMove = await makeGraphQlCall(`mutation {
                 treeMoveElement(
                     treeId: "${testTreeName}",
-                    element: {id: "${recordId1}", library: "users"}
-                    parentTo: {id: "${recordId2}", library: "users"}
+                    nodeId: "${nodeRecord1}",
+                    parentTo: "${nodeRecord2}"
                 ) {
                     id
                 }
             }`);
 
         expect(resMove.status).toBe(200);
+        expect(resMove.data.errors).toBeUndefined();
         expect(resMove.data.data.treeMoveElement).toBeDefined();
         expect(resMove.data.data.treeMoveElement.id).toBeTruthy();
-        expect(resMove.data.errors).toBeUndefined();
 
         // Get tree content
         const restreeContent = await makeGraphQlCall(`
         {
             treeContent(treeId: "${testTreeName}") {
+                id
                 order
                 record {
                     id
@@ -204,6 +200,7 @@ describe('Trees', () => {
                     }
                 }
                 children {
+                    id
                     record {
                         id
                         library {
@@ -222,19 +219,21 @@ describe('Trees', () => {
         expect(restreeContent.data.data.treeContent).toBeDefined();
         expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
         expect(restreeContent.data.data.treeContent).toHaveLength(3);
+        expect(restreeContent.data.data.treeContent[0].id).toBeTruthy();
         expect(restreeContent.data.data.treeContent[0].record.library.id).toBeTruthy();
         expect(restreeContent.data.data.treeContent[0].permissions.access_tree).toBeDefined();
-        expect(restreeContent.data.data.treeContent[0].order).toBe(0);
-        expect(restreeContent.data.data.treeContent[1].order).toBe(1);
         expect(restreeContent.data.data.treeContent[0].record.id).toBe(recordId3);
         expect(restreeContent.data.data.treeContent[1].record.id).toBe(recordId2);
+        expect(restreeContent.data.data.treeContent[0].order).toBe(0);
+        expect(restreeContent.data.data.treeContent[1].order).toBe(1);
         expect(restreeContent.data.errors).toBeUndefined();
 
         // Get tree content from a specific node
         // Get tree content
         const restreeContentPartial = await makeGraphQlCall(`
         {
-            treeContent(treeId: "${testTreeName}", startAt: {id: "${recordId2}", library: "users"}) {
+            treeContent(treeId: "${testTreeName}", startAt: "${nodeRecord2}") {
+                id
                 record {
                     id
                     library {
@@ -242,6 +241,7 @@ describe('Trees', () => {
                     }
                 }
                 children {
+                    id
                     record {
                         id
                         library {
@@ -262,63 +262,29 @@ describe('Trees', () => {
         const resDel = await makeGraphQlCall(`mutation {
             treeDeleteElement(
                 treeId: "${testTreeName}",
-                element: {id: "${recordId3}", library: "users"}
+                nodeId: "${nodeRecord3}"
             ) {
                 id
             }
         }`);
 
         expect(resDel.status).toBe(200);
+        expect(resDel.data.errors).toBeUndefined();
         expect(resDel.data.data.treeDeleteElement).toBeDefined();
         expect(resDel.data.data.treeDeleteElement.id).toBeTruthy();
-        expect(resDel.data.errors).toBeUndefined();
 
         // Create a tree attribute
-        await makeGraphQlCall(`mutation {
-            saveAttribute(
-                attribute: {
-                    id: "${attrTreeName}",
-                    type: tree,
-                    linked_tree: "${testTreeName}",
-                    format: text,
-                    label: {fr: "Test attr tree"}
-                }
-            ) { id }
-        }`);
+        await gqlSaveAttribute({
+            id: attrTreeName,
+            type: AttributeTypes.TREE,
+            linkedTree: testTreeName,
+            label: 'Test attr tree'
+        });
 
-        await makeGraphQlCall('mutation { refreshSchema }');
-
-        // Create library for tests
-        await makeGraphQlCall(`mutation {
-            saveLibrary(library: {
-                id: "${testLibName}",
-                label: {fr: "Test lib"},
-            }) { id }
-        }`);
-
-        // Add tree attribute to library
-        await makeGraphQlCall(`mutation {
-            saveLibrary(library: {
-                id: "${testLibName}",
-                attributes: [
-                    "id",
-                    "modified_by",
-                    "modified_at",
-                    "created_by",
-                    "created_at",
-                    "${attrTreeName}"
-                ]
-            }) { id }
-        }`);
+        await gqlSaveLibrary(testLibName, 'Test lib', [attrTreeName]);
 
         // Create a record to link to the tree
-        const resCreaTestRecord = await makeGraphQlCall(`
-                mutation {
-                    r1: createRecord(library: "${testLibName}") {id}
-                }
-            `);
-
-        const testRecordId = resCreaTestRecord.data.data.r1.id;
+        const testRecordId = await gqlCreateRecord(testLibName);
 
         // Save a value to the tree attribute = link record to the tree
         const res = await makeGraphQlCall(`mutation {
@@ -326,11 +292,12 @@ describe('Trees', () => {
                     library: "${testLibName}",
                     recordId: "${testRecordId}",
                     attribute: "${attrTreeName}",
-                    value: {value: "users/${recordId1}"}) {
+                    value: {value: "${nodeRecord1}"}) {
                         id_value
 
                         ... on TreeValue {
                             value {
+                                id
                                 record {
                                     id
                                 }
@@ -353,6 +320,7 @@ describe('Trees', () => {
                         id_value
                         ... on TreeValue {
                             value {
+                                id
                                 record {
                                     ... on User {
                                         id
@@ -370,10 +338,12 @@ describe('Trees', () => {
                         id_value
                         ... on TreeValue {
                             value {
+                                id
                                 record {
                                     id
                                 },
                                 ancestors {
+                                    id
                                     record {
                                         ... on User {
                                             id
@@ -392,10 +362,12 @@ describe('Trees', () => {
                         id_value
                         ... on TreeValue {
                             value {
+                                id
                                 record {
                                     id
                                 },
                                 children {
+                                    id
                                     record {
                                         ... on User {
                                             id
@@ -414,6 +386,7 @@ describe('Trees', () => {
                         id_value
                         ... on TreeValue {
                             value {
+                                id
                                 record {
                                     id
                                 },
@@ -436,14 +409,14 @@ describe('Trees', () => {
         expect(resData.valElement.list[0].property[0].value.record.id).toBeTruthy();
 
         expect(resData.valParents.list[0].property[0].value.ancestors).toBeInstanceOf(Array);
-        expect(resData.valParents.list[0].property[0].value.ancestors.length).toBe(1);
-        expect(resData.valParents.list[0].property[0].value.ancestors[0]).toBeInstanceOf(Array);
-        expect(resData.valParents.list[0].property[0].value.ancestors[0].length).toBe(2);
+        expect(resData.valParents.list[0].property[0].value.ancestors).toHaveLength(2);
+        expect(resData.valParents.list[0].property[0].value.ancestors[0].id).toBe(nodeRecord2);
+        expect(resData.valParents.list[0].property[0].value.ancestors[1].id).toBe(nodeRecord1);
 
         expect(resData.valChildren.list[0].property[0].value.children).toBeInstanceOf(Array);
-        expect(resData.valChildren.list[0].property[0].value.children.length).toBe(1);
+        expect(resData.valChildren.list[0].property[0].value.children).toHaveLength(1);
 
         expect(resData.valLinkedRecords.list[0].property[0].value.linkedRecords).toBeInstanceOf(Array);
-        expect(resData.valLinkedRecords.list[0].property[0].value.linkedRecords.length).toBe(1);
+        expect(resData.valLinkedRecords.list[0].property[0].value.linkedRecords).toHaveLength(1);
     });
 });

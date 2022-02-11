@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {gqlAddElemToTree, gqlSaveAttribute, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
 
 describe('Values', () => {
     const testLibName = 'values_library_test';
@@ -18,11 +18,12 @@ describe('Values', () => {
     const attrTreeName = 'values_attribute_test_tree';
     const attrDateRangeName = 'test_attr_date_range';
 
-    let recordId;
-    let recordIdBatch;
-    let recordIdLinked;
-    let advValueId;
-    let treeElemId;
+    let recordId: string;
+    let recordIdBatch: string;
+    let recordIdLinked: string;
+    let advValueId: string;
+    let treeElemId: string;
+    let nodeTreeElem: string;
 
     beforeAll(async done => {
         // Create attributes
@@ -179,14 +180,7 @@ describe('Values', () => {
         treeElemId = resRecord.data.data.c4.id;
 
         // Add element to tree
-        await makeGraphQlCall(`mutation {
-            treeAddElement(
-                treeId: "${treeName}",
-                element: {id: "${treeElemId}", library: "${treeLibName}"}
-            ) {
-                id
-            }
-        }`);
+        nodeTreeElem = await gqlAddElemToTree(treeName, {id: treeElemId, library: treeLibName});
 
         done();
     });
@@ -197,7 +191,7 @@ describe('Values', () => {
                 library: "${testLibName}",
                 recordId: "${recordId}",
                 attribute: "${attrTreeName}",
-                value: {value: "${treeLibName}/${treeElemId}"}) {
+                value: {value: "${nodeTreeElem}"}) {
                     id_value
 
                     ... on TreeValue {
@@ -418,6 +412,33 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
+    });
+
+    test('Delete value on tree attribute', async () => {
+        const saveValueRes = await makeGraphQlCall(`mutation {
+            saveValue(
+                library: "${testLibName}",
+                recordId: "${recordId}",
+                attribute: "${attrTreeName}",
+                value: {value: "${nodeTreeElem}"}) {
+                    id_value
+                }
+            }`);
+
+        const idValue = saveValueRes.data.data.saveValue.id_value;
+
+        const res = await makeGraphQlCall(`mutation {
+                deleteValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrTreeName}",
+                    valueId: "${idValue}") { id_value }
+              }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.deleteValue.id_value).toBeTruthy();
     });
 
     test('Save value batch', async () => {

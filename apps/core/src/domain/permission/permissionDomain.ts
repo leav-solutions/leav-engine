@@ -30,7 +30,7 @@ import {ITreeNodePermissionDomain} from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 import {
     IGetActionsByTypeParams,
-    IGetHeritedPermissionsParams,
+    IGetInheritedPermissionsParams,
     IGetPermissionsByActionsParams,
     IIsAllowedParams,
     PermByActionsRes
@@ -42,7 +42,7 @@ export interface IPermissionDomain {
         type,
         applyTo,
         actions,
-        usersGroupId,
+        usersGroupNodeId: usersGroupId,
         permissionTreeTarget,
         ctx
     }: IGetPermissionsByActionsParams): Promise<PermByActionsRes>;
@@ -50,14 +50,14 @@ export interface IPermissionDomain {
     /**
      * Retrieve herited permission: ignore permission defined on given element, force retrieval of herited permission
      */
-    getHeritedPermissions({
+    getInheritedPermissions({
         type,
         applyTo,
         action,
         userGroupId,
         permissionTreeTarget,
         ctx
-    }: IGetHeritedPermissionsParams): Promise<boolean>;
+    }: IGetInheritedPermissionsParams): Promise<boolean>;
 
     isAllowed({type, action, userId, applyTo, target, ctx}: IIsAllowedParams): Promise<boolean>;
 
@@ -113,12 +113,12 @@ export default function (deps: IDeps = {}): IPermissionDomain {
     };
 
     const getPermissionsByActions = async (params: IGetPermissionsByActionsParams): Promise<PermByActionsRes> => {
-        const {type, applyTo, actions, usersGroupId, permissionTreeTarget, ctx} = params;
+        const {type, applyTo, actions, usersGroupNodeId: usersGroupId, permissionTreeTarget, ctx} = params;
 
         const perms = await permissionRepo.getPermissions({
             type,
             applyTo,
-            usersGroupId,
+            usersGroupNodeId: usersGroupId,
             permissionTreeTarget,
             ctx
         });
@@ -131,41 +131,41 @@ export default function (deps: IDeps = {}): IPermissionDomain {
         }, {});
     };
 
-    const getHeritedPermissions = async ({
+    const getInheritedPermissions = async ({
         type,
         applyTo,
         action,
         userGroupId,
         permissionTreeTarget,
         ctx
-    }: IGetHeritedPermissionsParams): Promise<boolean> => {
+    }: IGetInheritedPermissionsParams): Promise<boolean> => {
         let perm;
         switch (type) {
             case PermissionTypes.RECORD:
-                perm = await recordPermissionDomain.getHeritedRecordPermission(
-                    action as RecordPermissionsActions,
+                perm = await recordPermissionDomain.getInheritedRecordPermission({
+                    action: action as RecordPermissionsActions,
                     userGroupId,
-                    applyTo,
-                    permissionTreeTarget.tree,
-                    {id: permissionTreeTarget.id, library: permissionTreeTarget.library},
+                    library: applyTo,
+                    permTree: permissionTreeTarget.tree,
+                    permTreeNode: permissionTreeTarget.nodeId,
                     ctx
-                );
+                });
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
-                perm = recordAttributePermissionDomain.getHeritedRecordAttributePermission(
+                perm = recordAttributePermissionDomain.getInheritedRecordAttributePermission(
                     {
                         attributeId: applyTo,
                         action: action as RecordAttributePermissionsActions,
                         userGroupId,
                         permTree: permissionTreeTarget.tree,
-                        permTreeNode: permissionTreeTarget
+                        permTreeNode: permissionTreeTarget.nodeId
                     },
                     ctx
                 );
                 break;
             case PermissionTypes.LIBRARY:
                 action = action as LibraryPermissionsActions;
-                perm = await libraryPermissionDomain.getHeritedLibraryPermission({
+                perm = await libraryPermissionDomain.getInheritedLibraryPermission({
                     action,
                     libraryId: applyTo,
                     userGroupId,
@@ -174,7 +174,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 break;
             case PermissionTypes.ATTRIBUTE:
                 action = action as AttributePermissionsActions;
-                perm = await attributePermissionDomain.getHeritedAttributePermission({
+                perm = await attributePermissionDomain.getInheritedAttributePermission({
                     action,
                     attributeId: applyTo,
                     userGroupId,
@@ -183,14 +183,14 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 break;
             case PermissionTypes.APP:
                 action = action as AppPermissionsActions;
-                perm = await appPermissionDomain.getHeritedAppPermission({
+                perm = await appPermissionDomain.getInheritedAppPermission({
                     action,
                     userGroupId,
                     ctx
                 });
                 break;
             case PermissionTypes.TREE:
-                perm = await treePermissionDomain.getHeritedTreePermission({
+                perm = await treePermissionDomain.getInheritedTreePermission({
                     action: action as TreePermissionsActions,
                     treeId: applyTo,
                     userGroupId,
@@ -200,13 +200,13 @@ export default function (deps: IDeps = {}): IPermissionDomain {
             case PermissionTypes.TREE_NODE: {
                 const [treeId, libraryId] = applyTo.split('/');
 
-                perm = await treeNodePermissionDomain.getHeritedTreeNodePermission({
+                perm = await treeNodePermissionDomain.getInheritedTreeNodePermission({
                     action: action as TreeNodePermissionsActions,
                     treeId,
                     libraryId,
                     userGroupId,
                     permTree: permissionTreeTarget.tree,
-                    permTreeNode: {id: permissionTreeTarget.id, library: permissionTreeTarget.library},
+                    permTreeNode: permissionTreeTarget.nodeId,
                     ctx
                 });
                 break;
@@ -236,13 +236,13 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                     throw new ValidationError({target: Errors.MISSING_RECORD_ID});
                 }
 
-                perm = await recordPermissionDomain.getRecordPermission(
-                    action as RecordPermissionsActions,
+                perm = await recordPermissionDomain.getRecordPermission({
+                    action: action as RecordPermissionsActions,
                     userId,
-                    applyTo,
-                    target.recordId,
+                    library: applyTo,
+                    recordId: target.recordId,
                     ctx
-                );
+                });
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
                 const errors = [];
@@ -310,14 +310,17 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 });
                 break;
             case PermissionTypes.TREE_NODE:
+                if (!target.nodeId) {
+                    throw new ValidationError({
+                        target: {msg: Errors.MISSING_FIELDS, vars: {fields: 'nodeId'}}
+                    });
+                }
+
                 perm = await treeNodePermissionDomain.getTreeNodePermission({
                     action: action as TreeNodePermissionsActions,
                     userId,
                     treeId: applyTo,
-                    node: {
-                        id: target.recordId,
-                        library: target.libraryId
-                    },
+                    nodeId: target.nodeId,
                     ctx
                 });
                 break;
@@ -394,7 +397,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
     return {
         savePermission,
         getPermissionsByActions,
-        getHeritedPermissions,
+        getInheritedPermissions,
         isAllowed,
         getActionsByType,
         registerActions

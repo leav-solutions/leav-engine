@@ -83,11 +83,11 @@ describe('ValueDomain', () => {
 
     describe('saveValue', () => {
         const mockTreeRepo: Mockify<ITreeRepo> = {
-            isElementPresent: global.__mockPromise(true),
+            isNodePresent: global.__mockPromise(true),
             getTrees: global.__mockPromise({list: [mockTree], totalCount: 0})
         };
 
-        test('Should save an indexed value', async function () {
+        test('Should save an indexed value', async function() {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
@@ -125,7 +125,7 @@ describe('ValueDomain', () => {
             expect(savedValue).toMatchObject(savedValueData);
         });
 
-        test('Should save a new standard value', async function () {
+        test('Should save a new standard value', async function() {
             const savedValueData = {
                 id_value: '1337',
                 value: 'test val',
@@ -175,7 +175,7 @@ describe('ValueDomain', () => {
             expect(savedValue.created_at).toBeTruthy();
         });
 
-        test('Should update a standard value', async function () {
+        test('Should update a standard value', async function() {
             const savedValueData = {
                 id_value: '1337',
                 value: 'test val',
@@ -231,7 +231,7 @@ describe('ValueDomain', () => {
             expect(savedValue.created_at).toBeTruthy();
         });
 
-        test('Should throw if unknown attribute', async function () {
+        test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
@@ -257,7 +257,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1}),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
@@ -282,7 +282,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should throw if unknown value', async function () {
+        test('Should throw if unknown value', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
@@ -310,7 +310,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should update record modif date and user', async function () {
+        test('Should update record modif date and user', async function() {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
@@ -363,12 +363,7 @@ describe('ValueDomain', () => {
                 attribute: 'advanced_attribute',
                 modified_at: 123456,
                 created_at: 123456,
-                version: {
-                    my_tree: {
-                        id: '1',
-                        library: 'test_lib'
-                    }
-                }
+                version: {my_tree: '1'}
             };
 
             const mockValRepo = {
@@ -399,12 +394,7 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     value: 'test val',
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -443,12 +433,7 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     value: 'test val',
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -541,12 +526,7 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         value: 'test val',
-                        version: {
-                            my_tree: {
-                                id: '1',
-                                library: 'test_lib'
-                            }
-                        }
+                        version: {my_tree: '1'}
                     },
                     ctx
                 })
@@ -565,7 +545,7 @@ describe('ValueDomain', () => {
 
             const mockTreeRepoNotPresent: Mockify<ITreeRepo> = {
                 ...mockTreeRepo,
-                isElementPresent: global.__mockPromise(false)
+                isNodePresent: global.__mockPromise(false)
             };
 
             const valDomain = valueDomain({
@@ -586,12 +566,7 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         value: 'test val',
-                        version: {
-                            my_tree: {
-                                id: '1',
-                                library: 'test_lib'
-                            }
-                        }
+                        version: {my_tree: '1'}
                     },
                     ctx
                 })
@@ -663,7 +638,7 @@ describe('ValueDomain', () => {
             };
 
             const mockTreeRepoNotPresent: Mockify<ITreeRepo> = {
-                isElementPresent: global.__mockPromise(false),
+                isNodePresent: global.__mockPromise(false),
                 getTrees: global.__mockPromise({list: [mockTree], totalCount: 1})
             };
 
@@ -967,7 +942,7 @@ describe('ValueDomain', () => {
 
     describe('saveValueBatch', () => {
         const mockTreeRepo: Mockify<ITreeRepo> = {
-            isElementPresent: global.__mockPromise(true),
+            isNodePresent: global.__mockPromise(true),
             getTrees: global.__mockPromise({list: [mockTree], totalCount: 0})
         };
 
@@ -1315,7 +1290,7 @@ describe('ValueDomain', () => {
             expect(mockValRepo.deleteValue).toBeCalledTimes(0);
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
@@ -1347,7 +1322,7 @@ describe('ValueDomain', () => {
             await expect(saveVal).rejects.toHaveProperty('fields.library');
         });
 
-        test('Should throw if unknown record', async function () {
+        test('Should throw if unknown record', async function() {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
@@ -1381,7 +1356,7 @@ describe('ValueDomain', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function () {
+        test('Should delete a value', async function() {
             const deletedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
@@ -1418,7 +1393,7 @@ describe('ValueDomain', () => {
             expect(deletedValue).toMatchObject(deletedValueData);
         });
 
-        test('Should throw if unknown attribute', async function () {
+        test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
@@ -1441,7 +1416,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple}),
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
@@ -1486,7 +1461,7 @@ describe('ValueDomain', () => {
             await expect(deleteVal).rejects.toHaveProperty('fields.library');
         });
 
-        test('Should throw if unknown record', async function () {
+        test('Should throw if unknown record', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple}),
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
@@ -1531,7 +1506,7 @@ describe('ValueDomain', () => {
             await expect(deleteVal).rejects.toHaveProperty('fields.recordId');
         });
 
-        test('Should throw if unknown value', async function () {
+        test('Should throw if unknown value', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
@@ -1557,7 +1532,7 @@ describe('ValueDomain', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values', async function () {
+        test('Should return values', async function() {
             const valueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
@@ -1587,8 +1562,8 @@ describe('ValueDomain', () => {
             expect(resValue).toMatchObject(valueData);
         });
 
-        test('Should return versioned values in simple mode', async function () {
-            const version = {my_tree: {library: 'my_lib', id: '12345'}};
+        test('Should return versioned values in simple mode', async function() {
+            const version = {my_tree: '12345'};
             const valueData = {
                 value: 'test val',
                 attribute: 'test_attr',
@@ -1602,10 +1577,6 @@ describe('ValueDomain', () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableSimple)
             };
-
-            // const mockLibDomain = {
-            //     getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
-            // };
 
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -1629,46 +1600,43 @@ describe('ValueDomain', () => {
             expect(resValue).toMatchObject(valueData);
         });
 
-        test('Should return versioned values in smart mode', async function () {
+        test('Should return versioned values in smart mode', async function() {
             const valueData = [
                 {
                     value: 'val1',
                     attribute: 'test_attr',
-                    version: {
-                        my_tree: {id: 7, library: 'my_lib'}
-                    }
+                    version: {my_tree: '7'}
                 },
                 {
                     value: 'val2',
                     attribute: 'test_attr',
-                    version: {
-                        my_tree: {id: 8, library: 'my_lib'}
-                    }
+                    version: {my_tree: '8'}
                 }
             ];
 
             const mockTreeRepo: Mockify<ITreeRepo> = {
                 getElementAncestors: global.__mockPromise([
-                    [
-                        {
-                            record: {
-                                id: 9,
-                                library: 'my_lib'
-                            }
-                        },
-                        {
-                            record: {
-                                id: 8,
-                                library: 'my_lib'
-                            }
-                        },
-                        {
-                            record: {
-                                id: 7,
-                                library: 'my_lib'
-                            }
+                    {
+                        id: '9',
+                        record: {
+                            id: 9,
+                            library: 'my_lib'
                         }
-                    ]
+                    },
+                    {
+                        id: '8',
+                        record: {
+                            id: 8,
+                            library: 'my_lib'
+                        }
+                    },
+                    {
+                        id: '7',
+                        record: {
+                            id: 7,
+                            library: 'my_lib'
+                        }
+                    }
                 ])
             };
 
@@ -1680,10 +1648,6 @@ describe('ValueDomain', () => {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
             };
 
-            // const mockLibDomain = {
-            //     getLibraries: global.__mockPromise({list: [{id: 'test_lib'}], totalCount: 1})
-            // };
-
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1693,9 +1657,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
-            const version: IValueVersion = {
-                my_tree: {id: '9', library: 'my_lib'}
-            };
+            const version: IValueVersion = {my_tree: '9'};
 
             const resValue = await valDomain.getValues({
                 library: 'test_lib',
@@ -1707,50 +1669,50 @@ describe('ValueDomain', () => {
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
             expect(mockValRepo.getValues.mock.calls[0][0].options).toMatchObject({version});
+
             expect(mockTreeRepo.getElementAncestors).toBeCalledTimes(1);
+
             expect(resValue.length).toBe(1);
             expect(resValue[0].value).toBe('val2');
-            expect(resValue[0].version).toMatchObject({
-                my_tree: {id: 8, library: 'my_lib'}
-            });
+            expect(resValue[0].version).toMatchObject({my_tree: '8'});
         });
 
-        test('Should return versioned values with multiple trees', async function () {
+        test('Should return versioned values with multiple trees', async function() {
             const valueData = [
                 {
                     value: 'val1',
                     attribute: 'test_attr',
                     version: {
-                        my_tree: {id: 9, library: 'my_lib'},
-                        other_tree: {id: 1, library: 'my_lib'},
-                        third_tree: {id: 88, library: 'my_lib'}
+                        my_tree: '9',
+                        other_tree: '1',
+                        third_tree: '88'
                     }
                 },
                 {
                     value: 'val2',
                     attribute: 'test_attr',
                     version: {
-                        my_tree: {id: 8, library: 'my_lib'},
-                        other_tree: {id: 2, library: 'my_lib'},
-                        third_tree: {id: 99, library: 'my_lib'}
+                        my_tree: '8',
+                        other_tree: '2',
+                        third_tree: '99'
                     }
                 },
                 {
                     value: 'val3',
                     attribute: 'test_attr',
                     version: {
-                        my_tree: {id: 8, library: 'my_lib'},
-                        other_tree: {id: 2, library: 'my_lib'},
-                        third_tree: {id: 99, library: 'my_lib'}
+                        my_tree: '8',
+                        other_tree: '2',
+                        third_tree: '99'
                     }
                 },
                 {
                     value: 'val4',
                     attribute: 'test_attr',
                     version: {
-                        my_tree: {id: 9, library: 'my_lib'},
-                        other_tree: {id: 2, library: 'my_lib'},
-                        third_tree: {id: 88, library: 'my_lib'}
+                        my_tree: '9',
+                        other_tree: '2',
+                        third_tree: '88'
                     }
                 }
             ];
@@ -1761,68 +1723,70 @@ describe('ValueDomain', () => {
                     switch (treeId) {
                         case 'my_tree':
                             parents = [
-                                [
-                                    {
-                                        record: {
-                                            id: 9,
-                                            library: 'my_lib'
-                                        }
-                                    },
-                                    {
-                                        record: {
-                                            id: 8,
-                                            library: 'my_lib'
-                                        }
-                                    },
-                                    {
-                                        record: {
-                                            id: 7,
-                                            library: 'my_lib'
-                                        }
+                                {
+                                    id: '9',
+                                    record: {
+                                        id: 9,
+                                        library: 'my_lib'
                                     }
-                                ]
+                                },
+                                {
+                                    id: '8',
+                                    record: {
+                                        id: 8,
+                                        library: 'my_lib'
+                                    }
+                                },
+                                {
+                                    id: '7',
+                                    record: {
+                                        id: 7,
+                                        library: 'my_lib'
+                                    }
+                                }
                             ];
                             break;
                         case 'other_tree':
                             parents = [
-                                [
-                                    {
-                                        record: {
-                                            id: 3,
-                                            library: 'my_lib'
-                                        }
-                                    },
-                                    {
-                                        record: {
-                                            id: 2,
-                                            library: 'my_lib'
-                                        }
-                                    },
-                                    {
-                                        record: {
-                                            id: '1',
-                                            library: 'my_lib'
-                                        }
+                                {
+                                    id: '3',
+                                    record: {
+                                        id: 3,
+                                        library: 'my_lib'
                                     }
-                                ]
+                                },
+                                {
+                                    id: '2',
+                                    record: {
+                                        id: 2,
+                                        library: 'my_lib'
+                                    }
+                                },
+                                {
+                                    id: '1',
+                                    record: {
+                                        id: '1',
+                                        library: 'my_lib'
+                                    }
+                                }
                             ];
                             break;
                         case 'third_tree':
                             parents = [
-                                [
-                                    {
-                                        record: {
-                                            id: 99,
-                                            library: 'my_lib'
-                                        }
-                                    },
-                                    {
-                                        record: {
-                                            id: 88,
-                                            library: 'my_lib'
-                                        }
+                                {
+                                    id: '99',
+                                    record: {
+                                        id: '99',
+                                        library: 'my_lib'
                                     }
-                                ]
+                                },
+                                {
+                                    id: '88',
+                                    record: {
+                                        id: '88',
+                                        library: 'my_lib'
+                                    }
+                                }
                             ];
                             break;
                     }
@@ -1857,9 +1821,9 @@ describe('ValueDomain', () => {
             });
 
             const version: IValueVersion = {
-                my_tree: {id: '9', library: 'my_lib'},
-                other_tree: {id: '3', library: 'my_lib'},
-                third_tree: {id: '99', library: 'my_lib'}
+                my_tree: '9',
+                other_tree: '3',
+                third_tree: '99'
             };
 
             const resValue = await valDomain.getValues({
@@ -1877,26 +1841,26 @@ describe('ValueDomain', () => {
             expect(resValue[0].value).toBe('val2');
             expect(resValue[1].value).toBe('val3');
             expect(resValue[0].version).toMatchObject({
-                my_tree: {id: 8, library: 'my_lib'},
-                other_tree: {id: 2, library: 'my_lib'},
-                third_tree: {id: 99, library: 'my_lib'}
+                my_tree: '8',
+                other_tree: '2',
+                third_tree: '99'
             });
         });
 
-        test('Should return empty array if no values matching version', async function () {
+        test('Should return empty array if no values matching version', async function() {
             const valueData = [
                 {
                     value: 'val1',
                     attribute: 'test_attr',
                     version: {
-                        my_tree: {id: 99, library: 'my_lib'}
+                        my_tree: '99'
                     }
                 },
                 {
                     value: 'val2',
                     attribute: 'test_attr',
                     version: {
-                        my_tree: {id: 88, library: 'my_lib'}
+                        my_tree: '88'
                     }
                 }
             ];
@@ -1905,18 +1869,21 @@ describe('ValueDomain', () => {
                 getElementAncestors: global.__mockPromise([
                     [
                         {
+                            id: '9',
                             record: {
                                 id: 9,
                                 library: 'my_lib'
                             }
                         },
                         {
+                            id: '8',
                             record: {
                                 id: 8,
                                 library: 'my_lib'
                             }
                         },
                         {
+                            id: '7',
                             record: {
                                 id: 7,
                                 library: 'my_lib'
@@ -1943,9 +1910,7 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
-            const version: IValueVersion = {
-                my_tree: {id: '9', library: 'my_lib'}
-            };
+            const version: IValueVersion = {my_tree: '9'};
 
             const resValue = await valDomain.getValues({
                 library: 'test_lib',
@@ -1958,7 +1923,7 @@ describe('ValueDomain', () => {
             expect(resValue.length).toBe(0);
         });
 
-        test('Should throw if unknown attribute', async function () {
+        test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
@@ -1979,7 +1944,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockImplementation(() => {
                     throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
@@ -2002,7 +1967,7 @@ describe('ValueDomain', () => {
             await expect(getVal).rejects.toHaveProperty('fields.library');
         });
 
-        test('Should throw if unknown record', async function () {
+        test('Should throw if unknown record', async function() {
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateRecord: jest.fn().mockImplementation(() => {
                     throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});

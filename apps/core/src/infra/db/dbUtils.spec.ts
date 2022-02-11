@@ -128,7 +128,7 @@ describe('dbUtils', () => {
             });
         });
 
-        test('Filter with a LIKE on ID', async function () {
+        test('Filter with a LIKE on ID', async function() {
             const res = await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 filters: {id: 'test'},
@@ -140,7 +140,7 @@ describe('dbUtils', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
-        test('Should filter label on any language', async function () {
+        test('Should filter label on any language', async function() {
             const res = await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 filters: {label: 'test'},
@@ -152,7 +152,7 @@ describe('dbUtils', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
-        test('Should limit results', async function () {
+        test('Should limit results', async function() {
             const mockDbServLimit = {
                 db: new Database(),
                 execute: global.__mockPromise([
@@ -184,7 +184,7 @@ describe('dbUtils', () => {
             expect(mockDbServLimit.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
-        test('Should sort results', async function () {
+        test('Should sort results', async function() {
             const mockDbServLimit = {
                 db: new Database(),
                 execute: global.__mockPromise([
@@ -219,7 +219,7 @@ describe('dbUtils', () => {
             expect(mockDbServLimit.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
-        test('Should convert ID key when sorting', async function () {
+        test('Should convert ID key when sorting', async function() {
             const mockDbServLimit = {
                 db: new Database(),
                 execute: global.__mockPromise([
@@ -252,7 +252,7 @@ describe('dbUtils', () => {
             expect(mockDbServLimit.execute.mock.calls[0][0].query.bindVars.value1).toBe('_key');
         });
 
-        test('Should return an empty array if no results', async function () {
+        test('Should return an empty array if no results', async function() {
             mockDbServ = {db: new Database(), execute: global.__mockPromise([])};
             testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
@@ -307,38 +307,6 @@ describe('dbUtils', () => {
             expect(mockDbServCustom.execute.mock.calls[0][0].query.query).toMatch(/(CUSTOM FILTER){1}/);
         });
     });
-
-    describe('convertValueVersionToDb', () => {
-        test('Should convert value version to DB format', async () => {
-            const testDbUtils = dbUtils();
-
-            const res = testDbUtils.convertValueVersionToDb({
-                my_tree: {id: '12345', library: 'my_lib'},
-                other_tree: {id: '6789', library: 'other_lib'}
-            });
-
-            expect(res).toMatchObject({
-                my_tree: 'my_lib/12345',
-                other_tree: 'other_lib/6789'
-            });
-        });
-    });
-    describe('convertValueVersionFromDb', () => {
-        test('Should convert value version from DB format', async () => {
-            const testDbUtils = dbUtils();
-
-            const res = testDbUtils.convertValueVersionFromDb({
-                my_tree: 'my_lib/12345',
-                other_tree: 'other_lib/6789'
-            });
-
-            expect(res).toMatchObject({
-                my_tree: {id: '12345', library: 'my_lib'},
-                other_tree: {id: '6789', library: 'other_lib'}
-            });
-        });
-    });
-
     describe('migrate', () => {
         test('Run core migrations', async () => {
             // Mock migration files

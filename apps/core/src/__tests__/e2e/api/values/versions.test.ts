@@ -2,7 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {gqlSaveAttribute, gqlSaveLibrary, gqlSaveTree, makeGraphQlCall} from '../e2eUtils';
+import {
+    gqlAddElemToTree,
+    gqlCreateRecord,
+    gqlSaveAttribute,
+    gqlSaveLibrary,
+    gqlSaveTree,
+    makeGraphQlCall
+} from '../e2eUtils';
 
 describe('Versions', () => {
     const testLibName = 'versions_library_test';
@@ -11,9 +18,11 @@ describe('Versions', () => {
     const treeName = 'versions_tree';
     const treeElementLibName = 'versions_library_tree_test';
 
-    let treeElement1;
-    let treeElement2;
-    let recordId;
+    let treeElement1: string;
+    let treeElement2: string;
+    let nodeElement1: string;
+    let nodeElement2: string;
+    let recordId: string;
     beforeAll(async () => {
         await gqlSaveLibrary(treeElementLibName, 'Test Tree Lib');
         await gqlSaveTree(treeName, 'Test Tree', [treeElementLibName]);
@@ -48,27 +57,10 @@ describe('Versions', () => {
         treeElement2 = resCreaTreeRecord.data.data.r2.id;
 
         // Add records to the tree
-        await makeGraphQlCall(`mutation {
-            a1: treeAddElement(
-                treeId: "${treeName}", element: {id: "${treeElement1}", library: "${treeElementLibName}"}
-            ) {id}
-        }`);
+        nodeElement1 = await gqlAddElemToTree(treeName, {id: treeElement1, library: treeElementLibName});
+        nodeElement2 = await gqlAddElemToTree(treeName, {id: treeElement2, library: treeElementLibName}, nodeElement1);
 
-        await makeGraphQlCall(`mutation {
-            a1: treeAddElement(
-                treeId: "${treeName}",
-                element: {id: "${treeElement2}",library: "${treeElementLibName}"},
-                parent: {id: "${treeElement1}", library: "${treeElementLibName}"}
-            ) { id }
-        }`);
-
-        // Create record
-        const resCreaRecord = await makeGraphQlCall(`
-            mutation {
-                r1: createRecord(library: "${testLibName}") {id}
-            }
-        `);
-        recordId = resCreaRecord.data.data.r1.id;
+        recordId = await gqlCreateRecord(testLibName);
     });
 
     test('Save and get values with version', async () => {
@@ -82,7 +74,7 @@ describe('Versions', () => {
                         version: [
                             {
                                 name: "${treeName}",
-                                value: {library: "${treeElementLibName}", id: "${treeElement2}"}
+                                value: "${nodeElement2}"
                             }
                         ]
                     }
@@ -101,13 +93,13 @@ describe('Versions', () => {
         expect(resSaveValue.data.errors).toBeUndefined();
         expect(resSaveValue.data.data.saveValue.version).toBeDefined();
         expect(resSaveValue.data.data.saveValue.version[0].name).toBe(treeName);
-        expect(resSaveValue.data.data.saveValue.version[0].value.id).toBe(treeElement2);
+        expect(resSaveValue.data.data.saveValue.version[0].value).toBe(nodeElement2);
 
         const resGetValues = await makeGraphQlCall(`{
             r: ${testLibNameFormatted}(
                 version: {
                     name: "${treeName}",
-                    value: {library: "${treeElementLibName}", id: "${treeElement2}"}
+                    value: "${nodeElement2}"
                 }
             ) {
                 list {
@@ -126,7 +118,6 @@ describe('Versions', () => {
         expect(resGetValues.data.errors).toBeUndefined();
         expect(resGetValues.data.data.r.list[0].property[0].version).toBeDefined();
         expect(resGetValues.data.data.r.list[0].property[0].version[treeName]).toBeDefined();
-        expect(resGetValues.data.data.r.list[0].property[0].version[treeName].id).toBe(treeElement2);
-        expect(resGetValues.data.data.r.list[0].property[0].version[treeName].library).toBe(treeElementLibName);
+        expect(resGetValues.data.data.r.list[0].property[0].version[treeName]).toBe(nodeElement2);
     });
 });

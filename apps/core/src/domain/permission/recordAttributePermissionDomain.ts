@@ -13,7 +13,10 @@ import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import {IGetDefaultPermissionParams, IGetRecordAttributeHeritedPermissionsParams} from './_types';
+import {
+    IGetDefaultPermissionParams,
+    IGetRecordAttributeHeritedPermissionsParams as IGetRecordAttributeInheritedPermissionsParams
+} from './_types';
 
 export interface IRecordAttributePermissionDomain {
     getRecordAttributePermission(
@@ -25,8 +28,8 @@ export interface IRecordAttributePermissionDomain {
         ctx: IQueryInfos
     ): Promise<boolean>;
 
-    getHeritedRecordAttributePermission(
-        params: IGetRecordAttributeHeritedPermissionsParams,
+    getInheritedRecordAttributePermission(
+        params: IGetRecordAttributeInheritedPermissionsParams,
         ctx: IQueryInfos
     ): Promise<boolean>;
 }
@@ -40,7 +43,7 @@ interface IDeps {
     'core.infra.value'?: IValueRepo;
 }
 
-export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
+export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
     const {
         'core.domain.permission.attribute': attrPermissionDomain = null,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
@@ -88,7 +91,7 @@ export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
             );
 
             const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-                allVal[attrProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value);
+                allVal[attrProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
 
                 return allVal;
             }, {});
@@ -113,8 +116,8 @@ export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
 
             return perm;
         },
-        async getHeritedRecordAttributePermission(
-            {action, attributeId, userGroupId, permTree, permTreeNode}: IGetRecordAttributeHeritedPermissionsParams,
+        async getInheritedRecordAttributePermission(
+            {action, attributeId, userGroupId, permTree, permTreeNode},
             ctx: IQueryInfos
         ): Promise<boolean> {
             const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
@@ -131,13 +134,13 @@ export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
                 return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
             };
 
-            return treeBasedPermissionsHelper.getHeritedTreeBasedPermission(
+            return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD_ATTRIBUTE,
                     applyTo: attributeId,
                     action,
                     userGroupId,
-                    permissionTreeTarget: {tree: permTree, ...permTreeNode},
+                    permissionTreeTarget: {tree: permTree, nodeId: permTreeNode},
                     getDefaultPermission: _getDefaultPermission
                 },
                 ctx

@@ -73,13 +73,13 @@ export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> =>
     const valueExists = doesValueExist(value, attributeProps);
 
     // Check permission
-    const canUpdateRecord = await deps.recordPermissionDomain.getRecordPermission(
-        RecordPermissionsActions.EDIT_RECORD,
-        ctx.userId,
+    const canUpdateRecord = await deps.recordPermissionDomain.getRecordPermission({
+        action: RecordPermissionsActions.EDIT_RECORD,
+        userId: ctx.userId,
         library,
         recordId,
         ctx
-    );
+    });
 
     if (!canUpdateRecord) {
         return {canSave: false, reason: RecordPermissionsActions.EDIT_RECORD};

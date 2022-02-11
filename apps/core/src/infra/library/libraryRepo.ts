@@ -92,7 +92,7 @@ interface IDeps {
     'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attribute': attributeRepo = null,
@@ -257,7 +257,7 @@ export default function ({
         async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
             const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
 
-            const res = await dbService.execute({
+            const res = await dbService.execute<string[]>({
                 query: aql`FOR e IN ${libAttributesCollec}
                         FILTER e._to == ${'core_attributes/' + attributeId}
                     RETURN LAST(SPLIT(e._from, ${LIB_COLLECTION_NAME + '/'}))`,

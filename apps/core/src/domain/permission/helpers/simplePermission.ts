@@ -12,7 +12,7 @@ export interface ISimplePermissionHelper {
     getSimplePermission: (params: IGetSimplePermissionsParams) => Promise<boolean | null>;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.helpers.permissionsByActions': permsByActionsHelper = null
 }: IDeps): ISimplePermissionHelper {
     return {
@@ -20,7 +20,7 @@ export default function ({
             type,
             applyTo,
             action,
-            usersGroupId,
+            usersGroupNodeId,
             permissionTreeTarget = null,
             ctx
         }: IGetSimplePermissionsParams): Promise<boolean | null> {
@@ -28,7 +28,7 @@ export default function ({
                 type,
                 applyTo,
                 actions: [action],
-                usersGroupId,
+                usersGroupNodeId,
                 permissionTreeTarget,
                 ctx
             });

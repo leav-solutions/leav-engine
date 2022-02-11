@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {join} from 'path';
+import {IQueryInfos} from '_types/queryInfos';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {deleteFilesTreeElement, getInputData, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
-import {IQueryInfos} from '_types/queryInfos';
 
 export const handleMoveEvent = async (
     scanMsg: IFileEventData,
@@ -15,7 +15,6 @@ export const handleMoveEvent = async (
 ) => {
     const {fileName: fileNameDest, filePath: filePathDest} = getInputData(scanMsg.pathAfter);
     const {fileName: fileNameOrigin, filePath: filePathOrigin} = getInputData(scanMsg.pathBefore);
-    const {userId} = deps.config.filesManager;
 
     // Find the destination record
     const destRecord = await getRecord(fileNameDest, filePathDest, library, false, deps, ctx);
@@ -31,7 +30,7 @@ export const handleMoveEvent = async (
 
     // Disable the destination record
     if (destRecord) {
-        await deps.recordDomain.deactivateRecord(destRecord, {userId});
+        await deps.recordDomain.deactivateRecord(destRecord, ctx);
         await deleteFilesTreeElement(destRecord.id, library, deps, ctx);
     }
 
@@ -47,25 +46,34 @@ export const handleMoveEvent = async (
     const parentPathList = filePathDest.split('/');
     const parentName = parentPathList.pop();
 
-    // use getRecordParent, ignore disable
-    const parentRecord = await getRecord(parentName, join(...parentPathList), library, false, deps, ctx);
-
-    // Move element in the tree
-    const parentTreeElement = parentRecord
-        ? {
-              id: parentRecord.id,
-              library
-          }
-        : null;
-
     try {
+        const treeId = deps.utils.getLibraryTreeId(library);
+        // use getRecordParent, ignore disable
+        const parentRecord = await getRecord(parentName, join(...parentPathList), library, false, deps, ctx);
+
+        const recordNode = (
+            await deps.treeDomain.getNodesByRecord({
+                treeId,
+                record: {id: originRecord.id, library},
+                ctx
+            })
+        )[0];
+
+        // Move element in the tree
+        const parentNode = parentRecord
+            ? (
+                  await deps.treeDomain.getNodesByRecord({
+                      treeId,
+                      record: {id: parentRecord.id, library},
+                      ctx
+                  })
+              )[0]
+            : null;
+
         await deps.treeDomain.moveElement({
             treeId: deps.utils.getLibraryTreeId(library),
-            element: {
-                id: originRecord.id,
-                library
-            },
-            parentTo: parentTreeElement,
+            nodeId: recordNode,
+            parentTo: parentNode,
             ctx
         });
     } catch (e) {

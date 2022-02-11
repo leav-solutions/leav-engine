@@ -4,10 +4,11 @@
 import {aql} from 'arangojs';
 import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IDbDocument} from 'infra/db/_types';
 import {IForm, IFormFilterOptions, IFormStrict} from '_types/forms';
 import {IList} from '_types/list';
-import {IGetCoreEntitiesParams} from '_types/shared';
 import {IQueryInfos} from '_types/queryInfos';
+import {IGetCoreEntitiesParams} from '_types/shared';
 
 export const FORM_COLLECTION_NAME = 'core_forms';
 
@@ -23,14 +24,14 @@ interface IDeps {
     'core.infra.db.dbUtils'?: IDbUtils;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): IFormRepo {
     const _generateKey = (form: Pick<IForm, 'id' | 'library'>) => `${form.library}__${form.id}`;
     const _cleanKey = (key: string) => key.substring(key.indexOf('__') + 2);
-    const _cleanDocForm = formDoc => {
-        const cleanRes = dbUtils.cleanup(formDoc);
+    const _cleanDocForm = (formDoc: IDbDocument) => {
+        const cleanRes = dbUtils.cleanup<IForm>(formDoc);
         return {...cleanRes, id: _cleanKey(cleanRes.id)};
     };
 

@@ -20,7 +20,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
@@ -50,7 +50,7 @@ export default function ({
             modified_by: valueEdge.modified_by,
             created_at: valueEdge.created_at,
             created_by: valueEdge.created_by,
-            version: valueEdge.version ? dbUtils.convertValueVersionFromDb(valueEdge.version) : null,
+            version: valueEdge.version ?? null,
             metadata: valueEdge.metadata
         };
     };
@@ -67,18 +67,15 @@ export default function ({
                 modified_at: value.modified_at,
                 created_at: value.created_at,
                 created_by: String(ctx.userId),
-                modified_by: String(ctx.userId)
+                modified_by: String(ctx.userId),
+                version: value.version ?? null
             };
-
-            if (value.version) {
-                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
-            }
 
             if (value.metadata) {
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute({
+            const resEdge = await dbService.execute<IValueEdge[]>({
                 query: aql`
                     INSERT ${edgeData}
                         IN ${edgeCollec}
@@ -86,9 +83,9 @@ export default function ({
                 ctx
             });
 
-            const savedEdge = resEdge.length ? resEdge[0] : {};
+            const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
-            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge);
+            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge as IValueEdge);
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -100,18 +97,15 @@ export default function ({
                 attribute: attribute.id,
                 modified_at: value.modified_at,
                 created_by: value.created_by,
-                modified_by: String(ctx.userId)
+                modified_by: String(ctx.userId),
+                version: value.version ?? null
             };
-
-            if (value.version) {
-                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
-            }
 
             if (value.metadata) {
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute({
+            const resEdge = await dbService.execute<IValueEdge[]>({
                 query: aql`
                     UPDATE ${{_key: value.id_value}}
                         WITH ${edgeData}
@@ -119,9 +113,9 @@ export default function ({
                     RETURN NEW`,
                 ctx
             });
-            const savedEdge = resEdge.length ? resEdge[0] : {};
+            const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
-            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge);
+            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge as IValueEdge);
         },
         async deleteValue({value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -131,15 +125,15 @@ export default function ({
                 _key: value.id_value
             };
 
-            const resEdge = await dbService.execute({
+            const resEdge = await dbService.execute<IValueEdge[]>({
                 query: aql`
                     REMOVE ${edgeData} IN ${edgeCollec}
                     RETURN OLD`,
                 ctx
             });
-            const deletedEdge = resEdge.length ? resEdge[0] : {};
+            const deletedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
-            return _buildLinkValue(utils.decomposeValueEdgeDestination(deletedEdge._to), deletedEdge);
+            return _buildLinkValue(utils.decomposeValueEdgeDestination(deletedEdge._to), deletedEdge as IValueEdge);
         },
         async getValues({
             library,
