@@ -45,6 +45,7 @@ describe('globalPermissionsHelper', () => {
         };
 
         const mockTreeRepo: Mockify<ITreeRepo> = {
+            getNodesByRecord: global.__mockPromise([]),
             getElementAncestors: global.__mockPromise([
                 [
                     {
@@ -162,7 +163,7 @@ describe('globalPermissionsHelper', () => {
                     type: PermissionTypes.LIBRARY,
                     action: LibraryPermissionsActions.ACCESS_RECORD,
                     applyTo: 'test_lib',
-                    userGroupId: '12345',
+                    userGroupNodeId: '12345',
                     getDefaultPermission: () => false
                 },
                 ctx
@@ -186,7 +187,7 @@ describe('globalPermissionsHelper', () => {
                     type: PermissionTypes.LIBRARY,
                     action: LibraryPermissionsActions.ACCESS_RECORD,
                     applyTo: 'test_lib',
-                    userGroupId: '12345',
+                    userGroupNodeId: '12345',
                     getDefaultPermission: () => defaultPerm
                 },
                 ctx

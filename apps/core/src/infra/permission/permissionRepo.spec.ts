@@ -39,8 +39,7 @@ describe('PermissionRepo', () => {
                     [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
-                    id: '123445',
-                    library: 'test_lib',
+                    nodeId: '123445',
                     tree: 'test_tree'
                 }
             };
@@ -95,8 +94,7 @@ describe('PermissionRepo', () => {
                     [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
-                    id: '123445',
-                    library: 'test_lib',
+                    nodeId: '123445',
                     tree: 'test_tree'
                 }
             };
@@ -135,7 +133,7 @@ describe('PermissionRepo', () => {
                     [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
-                    id: null,
+                    nodeId: null,
                     tree: 'test_tree'
                 }
             };
@@ -150,8 +148,7 @@ describe('PermissionRepo', () => {
                     [RecordPermissionsActions.DELETE_RECORD]: false
                 },
                 permissionTreeTarget: {
-                    id: null,
-                    library: null,
+                    nodeId: null,
                     tree: 'test_tree'
                 }
             };
@@ -173,12 +170,12 @@ describe('PermissionRepo', () => {
             const savedPerm = await permRepo.savePermission({permData: permDataClean, ctx});
 
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value0.permissionTreeTarget).toMatchObject({
-                id: null,
+                nodeId: null,
                 tree: 'test_tree'
             });
 
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1.permissionTreeTarget).toMatchObject({
-                id: null,
+                nodeId: null,
                 tree: 'test_tree'
             });
 
@@ -211,10 +208,9 @@ describe('PermissionRepo', () => {
             const perm = await permRepo.getPermissions({
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
-                usersGroupId: '12345',
+                usersGroupNodeId: '12345',
                 permissionTreeTarget: {
-                    id: '123',
-                    library: 'category',
+                    nodeId: '123',
                     tree: 'categories'
                 },
                 ctx
@@ -234,10 +230,9 @@ describe('PermissionRepo', () => {
             const perm = await permRepo.getPermissions({
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
-                usersGroupId: '12345',
+                usersGroupNodeId: '12345',
                 permissionTreeTarget: {
-                    id: '123',
-                    library: 'category',
+                    nodeId: '123',
                     tree: 'categories'
                 },
                 ctx

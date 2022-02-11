@@ -5,6 +5,7 @@ import {Database} from 'arangojs';
 import {AqlQuery, isAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
+import {IDbDocument} from './_types';
 
 const MAX_ATTEMPTS = 10;
 export interface IExecute {
@@ -13,9 +14,9 @@ export interface IExecute {
     withTotalCount?: boolean;
     attempts?: number;
 }
-export interface IExecuteWithCount {
+export interface IExecuteWithCount<T = IDbDocument> {
     totalCount: number;
-    results: any[];
+    results: T[];
 }
 
 export interface IDbService {
@@ -31,7 +32,7 @@ export interface IDbService {
      * @param attempts Used when we have to retry a query after a write-write conflict
      * @throws If query fails or we still have a conflict after all attempts
      */
-    execute?<T extends IExecuteWithCount | any[] = any[]>(params: IExecute): Promise<T>;
+    execute?<T extends IExecuteWithCount | unknown[] = IDbDocument[]>(params: IExecute): Promise<T>;
 
     /**
      * Create a new collection in database
@@ -69,8 +70,8 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({'core.infra.db': db = null, 'core.utils': utils = null}: IDeps = {}): IDbService {
-    const collectionExists = async function (name: string): Promise<boolean> {
+export default function({'core.infra.db': db = null, 'core.utils': utils = null}: IDeps = {}): IDbService {
+    const collectionExists = async function(name: string): Promise<boolean> {
         const collections = await db.listCollections();
 
         return collections.reduce((exists, c) => exists || c.name === name, false);

@@ -160,18 +160,23 @@ describe('Records', () => {
         const testTreeAttrId = 'records_sort_filter_test_attr_tree';
         const testAdvThroughLinkAttrId = 'records_sort_filter_test_attr_adv_through_link';
 
-        let sfRecord1;
-        let sfRecord2;
-        let sfRecord3;
-        let sfLinkedRecord1;
-        let sfLinkedRecord2;
-        let sfLinkedRecord3;
-        let sfTreeRecord1;
-        let sfTreeRecord2;
-        let sfTreeRecord3;
-        let sfTreeRecord4;
-        let sfTreeRecord5;
-        let sfTreeRecord6;
+        let sfRecord1: string;
+        let sfRecord2: string;
+        let sfRecord3: string;
+        let sfLinkedRecord1: string;
+        let sfLinkedRecord2: string;
+        let sfLinkedRecord3: string;
+        let sfTreeRecord1: string;
+        let nodeTreeRecord1: string;
+        let sfTreeRecord2: string;
+        let nodeTreeRecord2: string;
+        let sfTreeRecord3: string;
+        let nodeTreeRecord3: string;
+        let sfTreeRecord4: string;
+        let nodeTreeRecord4: string;
+        let sfTreeRecord5: string;
+        let nodeTreeRecord5: string;
+        let sfTreeRecord6: string;
 
         beforeAll(async () => {
             // Create libs
@@ -305,22 +310,18 @@ describe('Records', () => {
             }`);
 
             // Add element to tree
-            await gqlAddElemToTree(testTreeId, {id: sfTreeRecord1, library: sfTestLibTreeId});
-            await gqlAddElemToTree(testTreeId, {id: sfTreeRecord2, library: sfTestLibTreeId});
-            await gqlAddElemToTree(testTreeId, {id: sfTreeRecord3, library: sfTestLibTreeId});
+            nodeTreeRecord1 = await gqlAddElemToTree(testTreeId, {id: sfTreeRecord1, library: sfTestLibTreeId});
+            nodeTreeRecord2 = await gqlAddElemToTree(testTreeId, {id: sfTreeRecord2, library: sfTestLibTreeId});
+            nodeTreeRecord3 = await gqlAddElemToTree(testTreeId, {id: sfTreeRecord3, library: sfTestLibTreeId});
 
             // Add branch to tree to test classified / not classified filters
-            await gqlAddElemToTree(testTreeId, {id: sfTreeRecord4, library: sfTestLibTreeId});
-            await gqlAddElemToTree(
+            nodeTreeRecord4 = await gqlAddElemToTree(testTreeId, {id: sfTreeRecord4, library: sfTestLibTreeId});
+            nodeTreeRecord5 = await gqlAddElemToTree(
                 testTreeId,
                 {id: sfTreeRecord5, library: sfTestLibTreeId},
-                {id: sfTreeRecord4, library: sfTestLibTreeId}
+                nodeTreeRecord4
             );
-            await gqlAddElemToTree(
-                testTreeId,
-                {id: sfTreeRecord6, library: sfTestLibTreeId},
-                {id: sfTreeRecord5, library: sfTestLibTreeId}
-            );
+            await gqlAddElemToTree(testTreeId, {id: sfTreeRecord6, library: sfTestLibTreeId}, nodeTreeRecord5);
         });
 
         describe('On simple attribute', () => {
@@ -627,17 +628,17 @@ describe('Records', () => {
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord1}",
                         attribute: "${testTreeAttrId}",
-                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord1}"}) { id_value }
+                        value: {value: "${nodeTreeRecord1}"}) { id_value }
                     v2: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord2}",
                         attribute: "${testTreeAttrId}",
-                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord2}"}) { id_value }
+                        value: {value: "${nodeTreeRecord2}"}) { id_value }
                     v3: saveValue(
                         library: "${sfTestLibId}",
                         recordId: "${sfRecord3}",
                         attribute: "${testTreeAttrId}",
-                        value: {value: "${sfTestLibTreeId}/${sfTreeRecord3}"}) { id_value }
+                        value: {value: "${nodeTreeRecord3}"}) { id_value }
                   }`);
             });
 
@@ -660,7 +661,10 @@ describe('Records', () => {
             test('Sort', async () => {
                 const res = await makeGraphQlCall(
                     `{ ${sfTestLibQueryName}(
-                            sort: {field: "${testTreeAttrId}.${sfTestLibTreeId}.${testSimpleAttrId}",order: asc}
+                            sort: {
+                                field: "${testTreeAttrId}.${sfTestLibTreeId}.${testSimpleAttrId}",
+                                order: asc
+                            }
                         ) {
                         list {
                             id
@@ -671,6 +675,7 @@ describe('Records', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
+
                 expect(res.data.data[sfTestLibQueryName].list.length).toBe(3);
                 expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
                 expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
@@ -681,7 +686,7 @@ describe('Records', () => {
                 const res = await makeGraphQlCall(`{
                     ${sfTestLibTreeIdQueryName}(
                         filters: [{
-                            value: "${sfTestLibTreeId}/${sfTreeRecord4}",
+                            value: "${nodeTreeRecord4}",
                             condition: ${TreeCondition.CLASSIFIED_IN},
                             treeId: "${testTreeId}"
                         }]) { list {id}} }`);
@@ -689,7 +694,7 @@ describe('Records', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
 
-                expect(res.data.data[sfTestLibTreeIdQueryName].list.length).toBe(2);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list).toHaveLength(2);
                 expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord5);
                 expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord6);
             });
@@ -698,7 +703,7 @@ describe('Records', () => {
                 const res = await makeGraphQlCall(`{
                     ${sfTestLibTreeIdQueryName}(
                         filters: [{
-                            value: "${sfTestLibTreeId}/${sfTreeRecord4}",
+                            value: "${nodeTreeRecord4}",
                             condition: ${TreeCondition.NOT_CLASSIFIED_IN},
                             treeId: "${testTreeId}"
                         }]) { list {id}} }`);

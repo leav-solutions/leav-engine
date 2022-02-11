@@ -2,17 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
+import {IDbDocument, IDbEdge} from 'infra/db/_types';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {ITree, ITreeElement, ITreeNode, TreePaths, IGetCoreTreesParams} from '_types/tree';
+import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, ITreeNodeLight, TreePaths} from '_types/tree';
 import {collectionTypes, IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
+import {
+    getEdgesCollectionName,
+    getFullNodeId,
+    getLibraryFromDbId,
+    getNodesCollectionName,
+    getRootId
+} from './helpers/utils';
 
 export interface ITreeRepo {
-    getDefaultElement({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<ITreeElement>;
+    getDefaultElement({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<string>;
     createTree({treeData, ctx}: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
     updateTree({treeData, ctx}: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
     getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
@@ -22,6 +30,9 @@ export interface ITreeRepo {
      * Add an element to the tree
      *
      * Parent must be a record or null to add element to root
+     *
+     * We return a TreeNodeLight and not a TreeNode to avoid an extra query just to get the record. If client needs it,
+     * we'll get it through or manually where needed
      */
     addElement({
         treeId,
@@ -32,57 +43,60 @@ export interface ITreeRepo {
     }: {
         treeId: string;
         element: ITreeElement;
-        parent: ITreeElement | null;
+        parent: string | null;
         order?: number;
         ctx: IQueryInfos;
-    }): Promise<ITreeElement>;
+    }): Promise<ITreeNodeLight>;
 
     /**
      * Move an element in the tree
      *
      * parentTo A record or null to move to root
+     *
+     * We return a TreeNodeLight and not a TreeNode to avoid an extra query just to get the record. If client needs it,
+     * we'll get it through or manually where needed
      */
     moveElement({
         treeId,
-        element,
+        nodeId,
         parentTo,
         order,
         ctx
     }: {
         treeId: string;
-        element: ITreeElement;
-        parentTo: ITreeElement | null;
+        nodeId: string;
+        parentTo: string | null;
         order?: number;
         ctx: IQueryInfos;
-    }): Promise<ITreeElement>;
+    }): Promise<ITreeNodeLight>;
 
     /**
      * Delete an element from the tree
+     *
+     * We return a TreeNodeLight and not a TreeNode to avoid an extra query just to get the record. If client needs it,
+     * we'll get it through or manually where needed
      */
     deleteElement({
         treeId,
-        element,
+        nodeId,
         deleteChildren,
         ctx
     }: {
         treeId: string;
-        element: ITreeElement;
+        nodeId: string;
         deleteChildren: boolean | null;
         ctx: IQueryInfos;
-    }): Promise<ITreeElement>;
+    }): Promise<ITreeNodeLight>;
 
     /**
-     * Return whether an element is present in given tree
+     * Return whether a node is present in given tree
      */
-    isElementPresent({
-        treeId,
-        element,
-        ctx
-    }: {
-        treeId: string;
-        element: ITreeElement;
-        ctx: IQueryInfos;
-    }): Promise<boolean>;
+    isNodePresent({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
+
+    /**
+     * Return whether a record is present in given tree
+     */
+    isRecordPresent({treeId, record, ctx}: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<boolean>;
 
     /* eslint-disable jsdoc/check-indentation */
     /**
@@ -108,22 +122,14 @@ export interface ITreeRepo {
         ctx
     }: {
         treeId: string;
-        startingNode?: ITreeElement;
+        startingNode?: string;
         ctx: IQueryInfos;
     }): Promise<ITreeNode[]>;
 
     /**
      * Return all first level children of an element
      */
-    getElementChildren({
-        treeId,
-        element,
-        ctx
-    }: {
-        treeId: string;
-        element: ITreeElement;
-        ctx: IQueryInfos;
-    }): Promise<ITreeNode[]>;
+    getElementChildren({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<ITreeNode[]>;
 
     /**
      * Return all ancestors of an element, including element itself, but excluding tree root
@@ -131,32 +137,48 @@ export interface ITreeRepo {
      * @param treeId
      * @param element
      */
-    getElementAncestors({
-        treeId,
-        element,
-        ctx
-    }: {
-        treeId: string;
-        element: ITreeElement;
-        ctx: IQueryInfos;
-    }): Promise<TreePaths>;
+    getElementAncestors({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePaths>;
 
     getLinkedRecords({
         treeId,
         attribute,
-        element,
+        nodeId,
         ctx
     }: {
         treeId: string;
         attribute: string;
-        element: ITreeElement;
+        nodeId: string;
         ctx: IQueryInfos;
     }): Promise<IRecord[]>;
+
+    /**
+     * Return record linked to given node
+     */
+    getRecordByNodeId({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord>;
+
+    /**
+     * Return nodes linked to given record
+     */
+    getNodesByRecord({
+        treeId,
+        record,
+        ctx
+    }: {
+        treeId: string;
+        record: ITreeElement;
+        ctx: IQueryInfos;
+    }): Promise<string[]>;
 }
 
 export const TREES_COLLECTION_NAME = 'core_trees';
+export const NODE_COLLEC_PREFIX = 'core_nodes_';
 export const EDGE_COLLEC_PREFIX = 'core_edge_tree_';
 export const MAX_TREE_DEPTH = 1000;
+export const TO_RECORD_PROP_NAME = 'toRecord';
+
+interface ITreeEdge extends IDbEdge {
+    order: number;
+}
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -166,23 +188,12 @@ export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): ITreeRepo {
-    function _getRootId(treeId: string): string {
-        return `${TREES_COLLECTION_NAME}/${treeId}`;
-    }
-
-    function _getTreeEdgeCollectionName(treeId: string): string {
-        return EDGE_COLLEC_PREFIX + treeId;
-    }
-
     return {
-        async getDefaultElement({id, ctx}): Promise<ITreeElement> {
+        async getDefaultElement({id, ctx}): Promise<string> {
             // TODO Change this behavior
             // for now, get first element in tree
             const content = await this.getTreeContent({treeId: id, ctx});
-            return {
-                id: content[0].record.id,
-                library: content[0].record.library
-            };
+            return content[0].id;
         },
         async createTree({treeData, ctx}): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);
@@ -194,7 +205,8 @@ export default function ({
                 ctx
             });
 
-            await dbService.createCollection(EDGE_COLLEC_PREFIX + treeData.id, collectionTypes.EDGE);
+            await dbService.createCollection(getEdgesCollectionName(treeData.id), collectionTypes.EDGE);
+            await dbService.createCollection(getNodesCollectionName(treeData.id), collectionTypes.DOCUMENT);
 
             return dbUtils.cleanup(treeRes.pop());
         },
@@ -239,82 +251,112 @@ export default function ({
                 ctx
             });
 
-            const delCollec = await dbService.dropCollection(EDGE_COLLEC_PREFIX + id, collectionTypes.EDGE);
+            await dbService.dropCollection(getEdgesCollectionName(id), collectionTypes.EDGE);
+            await dbService.dropCollection(getNodesCollectionName(id), collectionTypes.DOCUMENT);
 
             // Return deleted library
             return dbUtils.cleanup(res.pop());
         },
-        async addElement({treeId, element, parent = null, order = 0, ctx}): Promise<ITreeElement> {
-            const destination = parent !== null ? `${parent.library}/${parent.id}` : _getRootId(treeId);
-            const elemId = `${element.library}/${element.id}`;
+        async addElement({treeId, element, parent = null, order = 0, ctx}): Promise<ITreeNodeLight> {
+            const destination = parent ? getFullNodeId(parent, treeId) : getRootId(treeId);
 
-            const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
+            // Create new node entity
+            const nodeCollec = dbService.db.collection(getNodesCollectionName(treeId));
+            const nodeEntity = (
+                await dbService.execute({
+                    query: aql`INSERT {} IN ${nodeCollec} RETURN NEW`,
+                    ctx
+                })
+            )[0];
 
-            const res = await dbService.execute({
-                query: aql`INSERT {_from: ${destination}, _to: ${elemId}, order: ${order}} IN ${collec} RETURN NEW`,
+            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+
+            // Link this entity to its record
+            const toRecordEdgeData = {
+                _from: nodeEntity._id,
+                _to: `${element.library}/${element.id}`,
+                [TO_RECORD_PROP_NAME]: true
+            };
+            await dbService.execute({
+                query: aql`INSERT ${toRecordEdgeData} IN ${edgeCollec} RETURN NEW`,
                 ctx
             });
 
-            return element;
+            // Add this entity to the tree
+            const res = (
+                await dbService.execute<ITreeEdge[]>({
+                    query: aql`INSERT {_from: ${destination}, _to: ${nodeEntity._id}, order: ${order}} IN ${edgeCollec} RETURN NEW`,
+                    ctx
+                })
+            )[0];
+
+            return {
+                id: nodeEntity._key,
+                order: res.order
+            };
         },
-        async moveElement({treeId, element, parentTo = null, order = 0, ctx}): Promise<ITreeElement> {
-            const destination = parentTo !== null ? `${parentTo.library}/${parentTo.id}` : _getRootId(treeId);
-            const elemId = `${element.library}/${element.id}`;
+        async moveElement({treeId, nodeId, parentTo = null, order = 0, ctx}): Promise<ITreeNodeLight> {
+            const destination = parentTo ? getFullNodeId(parentTo, treeId) : getRootId(treeId);
+            const elemId = getFullNodeId(nodeId, treeId);
 
-            const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
+            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
 
-            const res = await dbService.execute({
-                query: aql`
-                    FOR e IN ${collec}
+            const res = (
+                await dbService.execute<ITreeEdge[]>({
+                    query: aql`
+                    FOR e IN ${edgeCollec}
                         FILTER e._to == ${elemId}
                         UPDATE e WITH {_from: ${destination}, _to: ${elemId}, order: ${order}}
-                        IN ${collec}
+                        IN ${edgeCollec}
                         RETURN NEW
                 `,
-                ctx
-            });
+                    ctx
+                })
+            )[0];
 
-            return element;
+            return {
+                id: nodeId,
+                order: res.order
+            };
         },
-        async deleteElement({treeId, element, deleteChildren = true, ctx}): Promise<ITreeElement> {
-            const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
-            const elemId = `${element.library}/${element.id}`;
+        async deleteElement({treeId, nodeId, deleteChildren = true, ctx}): Promise<ITreeNodeLight> {
+            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const nodesCollec = dbService.db.edgeCollection(getNodesCollectionName(treeId));
+            const fullNodeId = getFullNodeId(nodeId, treeId);
 
             if (deleteChildren) {
                 // Remove all element's children
-                const resRemChildren = await dbService.execute({
+                //TODO: are children of children removed?
+                await dbService.execute({
                     query: aql`
                         LET edges = (
-                            FOR v, e IN 0..${MAX_TREE_DEPTH} OUTBOUND ${elemId}
-                            ${collec}
+                            FOR v, e IN 0..${MAX_TREE_DEPTH} OUTBOUND ${fullNodeId}
+                            ${edgeCollec}
                             RETURN e
                         )
                         FOR ed IN edges
                             FILTER ed != null
-                            REMOVE ed IN ${collec}
+                            REMOVE ed IN ${edgeCollec}
                             RETURN OLD
                     `,
                     ctx
                 });
             } else {
-                const parentId = await dbService.execute({
-                    query: aql`
-                        FOR v IN 1 INBOUND ${elemId}
-                        ${collec}
+                const parentId = (
+                    await dbService.execute<string[]>({
+                        query: aql`
+                        FOR v IN 1 INBOUND ${fullNodeId}
+                        ${edgeCollec}
                         RETURN v._id
                     `,
-                    ctx
-                });
-
-                const parent = {
-                    library: parentId[0].split('/')[0],
-                    id: parentId[0].split('/')[1]
-                };
+                        ctx
+                    })
+                )[0];
 
                 const children = await dbService.execute({
                     query: aql`
-                        FOR v IN 1 OUTBOUND ${elemId}
-                        ${collec}
+                        FOR v IN 1 OUTBOUND ${fullNodeId}
+                        ${edgeCollec}
                         RETURN v
                     `,
                     ctx
@@ -323,35 +365,40 @@ export default function ({
                 // Move children to element's parent
                 await Promise.all(
                     children.map(child => {
-                        const childLib = child._id.split('/')[0];
-                        const childId = child._id.split('/')[1];
-
                         return this.moveElement({
                             treeId,
-                            element: {id: childId, library: childLib},
-                            parentTo: parent,
+                            nodeId: child._key,
+                            parentTo: parentId,
                             ctx
                         });
                     })
                 );
             }
 
-            // Remove element from its parent
-            const resRemElem = await dbService.execute({
+            // Remove element from its parent and link to record
+            await dbService.execute({
                 query: aql`
-                    FOR e IN ${collec}
-                        FILTER e._to == ${elemId}
-                        REMOVE e IN ${collec}
+                    FOR e IN ${edgeCollec}
+                        FILTER e._to == ${fullNodeId} OR e._from == ${fullNodeId}
+                        REMOVE e IN ${edgeCollec}
                         RETURN OLD
                 `,
                 ctx
             });
 
-            return element;
+            // Remove node entity
+            const removedEntity = (
+                await dbService.execute({
+                    query: aql`REMOVE {_id: ${fullNodeId}, _key: ${nodeId}} IN ${nodesCollec} RETURN OLD`,
+                    ctx
+                })
+            )[0];
+
+            return {id: removedEntity._key};
         },
-        async isElementPresent({treeId, element, ctx}): Promise<boolean> {
-            const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
-            const elemId = `${element.library}/${element.id}`;
+        async isNodePresent({treeId, nodeId, ctx}): Promise<boolean> {
+            const collec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const elemId = getFullNodeId(nodeId, treeId);
 
             const query = aql`
                 FOR e IN ${collec}
@@ -362,26 +409,52 @@ export default function ({
 
             return !!res.length;
         },
+        async isRecordPresent({treeId, record, ctx}): Promise<boolean> {
+            const collec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const elementId = `${record.library}/${record.id}`;
+
+            const query = aql`
+                FOR e IN ${collec}
+                    FILTER e._to == ${elementId} AND e.${TO_RECORD_PROP_NAME}
+                    RETURN e
+            `;
+            const res = await dbService.execute({query, ctx});
+
+            return !!res.length;
+        },
         async getTreeContent({treeId, startingNode, ctx}): Promise<ITreeNode[]> {
-            const rootId = _getRootId(treeId);
+            const rootId = getRootId(treeId);
 
-            const treeContent: ITreeNode[] = [];
+            const collec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
 
-            const collec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
-
-            const nodeFrom = !!startingNode ? `${startingNode.library}/${startingNode.id}` : rootId;
+            const nodeFrom = startingNode ? getFullNodeId(startingNode, treeId) : rootId;
+            const nodeFromKey = startingNode ?? rootId.split('/')[1];
 
             /**
              * This query return a list of all records present in the tree with their path IDs
              * from the root. Query is made depth-first
+             *
+             * The order we need is defined between the node and its parent.
+             * Thus, we have to retrieve it on the before-last edge of the path to the record
              */
-            const data = await dbService.execute({
+            const data: Array<{
+                id: string;
+                record: IDbDocument & {path: string[]};
+                order: number;
+            }> = await dbService.execute({
                 query: aql`
                     FOR v, e, p IN 1..${MAX_TREE_DEPTH} OUTBOUND ${nodeFrom}
                     ${collec}
-                    LET path = (FOR pv IN p.vertices RETURN pv._id)
-                    SORT LENGTH(path), e.order ASC
-                    RETURN {record: MERGE(v, {path}), order: TO_NUMBER(e.order)}
+                    FILTER e.${TO_RECORD_PROP_NAME} AND e._from != ${nodeFrom}
+                    LET path = (
+                        FOR pv IN p.vertices
+                        FILTER pv._id != v._id
+                        AND pv._id != e._from
+                        RETURN pv._key
+                    )
+                    LET nodeOrder = TO_NUMBER(p.edges[-2].order)
+                    SORT LENGTH(path), nodeOrder ASC
+                    RETURN {id: SPLIT(e._from, '/')[1], record: MERGE(v, {path}), order: nodeOrder}
                 `,
                 ctx
             });
@@ -392,93 +465,93 @@ export default function ({
              * in the tree.
              * Then we can add it to its parent children.
              */
+            const treeContent: ITreeNode[] = [];
             for (const elem of data) {
-                // We don't want the root in the tree, skip it
-                if (elem.record._id === rootId) {
-                    continue;
-                }
-
-                // Last path part is the element itself, we don't need it
-                elem.record.path.pop();
-
                 /** Determine where is the parent in the tree */
-                let parentInTree: any = treeContent;
+                let parentInTree: ITreeNode[] | ITreeNode = treeContent;
                 for (const pathPart of elem.record.path) {
                     // Root's first level children will be directly added to the tree
-                    if (pathPart === nodeFrom) {
+                    if (pathPart === nodeFromKey) {
                         parentInTree = treeContent;
                     } else {
                         // If previous parent was the tree root, there's no 'children'
-                        const container = parentInTree === treeContent ? parentInTree : parentInTree.children;
+                        const container: ITreeNode[] =
+                            parentInTree === treeContent ? parentInTree : (parentInTree as ITreeNode).children;
 
                         // Look for the path to follow among all nodes
-                        parentInTree = container.find(el => {
-                            const pathLib = pathPart.split('/')[0];
-                            const pathId = pathPart.split('/')[1];
-                            return el.record.library === pathLib && el.record.id === pathId;
-                        });
+                        parentInTree = container.find(el => el.id === pathPart);
                     }
                 }
 
                 /** Add element to its parent */
                 delete elem.record.path;
-                elem.record.library = elem.record._id.split('/')[0];
+                elem.record.library = getLibraryFromDbId(elem.record._id);
 
                 // If destination is the tree root, there's no 'children'
-                const destination = parentInTree === treeContent ? parentInTree : parentInTree.children;
+                const destination = parentInTree === treeContent ? parentInTree : (parentInTree as ITreeNode).children;
 
-                destination.push({order: elem.order, record: dbUtils.cleanup(elem.record), children: []});
+                destination.push({id: elem.id, order: elem.order, record: dbUtils.cleanup(elem.record), children: []});
             }
 
             return treeContent;
         },
-        async getElementChildren({treeId, element, ctx}): Promise<ITreeNode[]> {
-            const treeEdgeCollec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
+        async getElementChildren({treeId, nodeId, ctx}): Promise<ITreeNode[]> {
+            const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
             const query = aql`
-                FOR v
-                    IN 1 OUTBOUND ${element.library + '/' + element.id}
+                FOR v, e IN 2 OUTBOUND ${getFullNodeId(nodeId, treeId)}
                     ${treeEdgeCollec}
-                    RETURN v
+                    RETURN {id: SPLIT(e._from, '/')[1], order: TO_NUMBER(e.order), record: v}
             `;
 
-            const res = await dbService.execute({query, ctx});
+            const res: Array<{
+                id: string;
+                record: IDbDocument;
+                order: number;
+            }> = await dbService.execute({query, ctx});
+
             return res.map(elem => {
-                elem.library = elem._id.split('/')[0];
-                return {record: dbUtils.cleanup(elem)};
+                elem.record.library = getLibraryFromDbId(elem.record._id);
+                return {id: elem.id, order: elem.order, record: dbUtils.cleanup(elem.record)};
             });
         },
-        async getElementAncestors({treeId, element, ctx}): Promise<TreePaths> {
-            if (!element.id) {
+        async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePaths> {
+            if (!nodeId) {
                 return [];
             }
 
-            const treeEdgeCollec = dbService.db.edgeCollection(_getTreeEdgeCollectionName(treeId));
+            const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
 
+            // Fix get ancestors
             const query = aql`
-                FOR v,e,p
-                    IN 0..${MAX_TREE_DEPTH} INBOUND ${element.library + '/' + element.id}
-                    ${treeEdgeCollec}
-                    SORT COUNT(p.edges) DESC
-                    FILTER v._id == ${_getRootId(treeId)}
-                    RETURN APPEND([], REVERSE(p.vertices[* FILTER CURRENT._key != ${treeId}]))
+                FOR v,e,p IN 0..${MAX_TREE_DEPTH} INBOUND ${getFullNodeId(nodeId, treeId)}
+                ${treeEdgeCollec}
+                FILTER v._id != ${getRootId(treeId)}
+                LET rec = FIRST(
+                    FOR vrec, erec in 1 outbound v._id ${treeEdgeCollec}
+                    FILTER erec.${TO_RECORD_PROP_NAME}
+                    return vrec
+                    )
+                RETURN {id: v._key, order: TO_NUMBER(e.order), record: rec}
             `;
 
-            const res = await dbService.execute({query, ctx});
+            const res: Array<{
+                id: string;
+                record: IDbDocument;
+                order: number;
+            }> = await dbService.execute({query, ctx});
 
-            return res.map(path =>
-                path.map(elem => {
-                    elem.library = elem._id.split('/')[0];
-
-                    return {record: dbUtils.cleanup(elem)};
-                })
-            );
+            const cleanResult = res.reverse().map(elem => {
+                elem.record.library = getLibraryFromDbId(elem.record._id);
+                return {id: elem.id, order: elem.order, record: dbUtils.cleanup(elem.record)};
+            });
+            return cleanResult;
         },
-        async getLinkedRecords({treeId, attribute, element, ctx}): Promise<IRecord[]> {
+        async getLinkedRecords({treeId, attribute, nodeId, ctx}): Promise<IRecord[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             const query = aql`
                 FOR v,e,p
-                    IN 1 INBOUND ${element.library + '/' + element.id}
+                    IN 1 INBOUND ${getFullNodeId(nodeId, treeId)}
                     ${edgeCollec}
                     FILTER e.attribute == ${attribute}
                     RETURN v
@@ -487,10 +560,53 @@ export default function ({
             const res = await dbService.execute({query, ctx});
 
             return res.map(elem => {
-                elem.library = elem._id.split('/')[0];
+                elem.library = getLibraryFromDbId(elem._id);
 
                 return dbUtils.cleanup(elem);
             });
+        },
+        async getRecordByNodeId({treeId, nodeId, ctx}): Promise<IRecord> {
+            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const fullNodeId = getFullNodeId(nodeId, treeId);
+
+            const query = aql`
+            FOR v,e,p
+            IN 1 OUTBOUND ${fullNodeId}
+            ${edgeCollec}
+            FILTER e.${TO_RECORD_PROP_NAME}
+            RETURN v
+            `;
+            const queryRes = await dbService.execute({query, ctx});
+            const recordDoc = queryRes[0];
+
+            if (!recordDoc) {
+                return null;
+            }
+
+            recordDoc.library = getLibraryFromDbId(recordDoc._id);
+
+            return dbUtils.cleanup<IRecord>(recordDoc);
+        },
+        async getNodesByRecord({
+            treeId,
+            record,
+            ctx
+        }: {
+            treeId: string;
+            record: ITreeElement;
+            ctx: IQueryInfos;
+        }): Promise<string[]> {
+            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+
+            const query = aql`
+                FOR v,e,p IN 1 INBOUND ${`${record.library}/${record.id}`}
+                    ${edgeCollec}
+                    FILTER e.${TO_RECORD_PROP_NAME}
+                    RETURN v._key
+            `;
+            const nodes = await dbService.execute<string[]>({query, ctx});
+
+            return nodes;
         }
     };
 }

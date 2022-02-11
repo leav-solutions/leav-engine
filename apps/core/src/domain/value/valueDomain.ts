@@ -117,7 +117,7 @@ interface IDeps {
     'core.domain.helpers.validate'?: IValidateHelper;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -178,14 +178,13 @@ export default function ({
 
                             const ancestors = await treeRepo.getElementAncestors({
                                 treeId: treeName,
-                                element: treeElem,
+                                nodeId: treeElem,
                                 ctx
                             });
 
                             return {
                                 name: treeName,
-                                elementIndex: 0,
-                                branchIndex: 0,
+                                currentIndex: 0,
                                 elements: ancestors
                             };
                         }
@@ -419,13 +418,13 @@ export default function ({
             await validate.validateRecord(library, recordId, ctx);
 
             // Check permission
-            const canUpdateRecord = await recordPermissionDomain.getRecordPermission(
-                RecordPermissionsActions.EDIT_RECORD,
-                ctx.userId,
+            const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
+                action: RecordPermissionsActions.EDIT_RECORD,
+                userId: ctx.userId,
                 library,
                 recordId,
                 ctx
-            );
+            });
 
             if (!canUpdateRecord) {
                 throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);

@@ -3,18 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
 import {IGlobalPermissionHelper} from './helpers/globalPermission';
-import {IGetHeritedLibraryPermissionParams, IGetLibraryPermissionParams} from './_types';
+import {IGetInheritedLibraryPermissionParams, IGetLibraryPermissionParams} from './_types';
 
 export interface ILibraryPermissionDomain {
     getLibraryPermission(params: IGetLibraryPermissionParams): Promise<boolean>;
-    getHeritedLibraryPermission({action, userGroupId, ctx}: IGetHeritedLibraryPermissionParams): Promise<boolean>;
+    getInheritedLibraryPermission({action, userGroupId, ctx}: IGetInheritedLibraryPermissionParams): Promise<boolean>;
 }
 
 interface IDeps {
     'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.helpers.globalPermission': globalPermHelper = null
 }: IDeps = {}): ILibraryPermissionDomain {
     const getLibraryPermission = async ({
@@ -34,18 +34,18 @@ export default function ({
         );
     };
 
-    const getHeritedLibraryPermission = async ({
+    const getInheritedLibraryPermission = async ({
         action,
         libraryId,
         userGroupId,
         ctx
-    }: IGetHeritedLibraryPermissionParams): Promise<boolean> => {
+    }: IGetInheritedLibraryPermissionParams): Promise<boolean> => {
         return globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.LIBRARY,
                 action,
                 applyTo: libraryId,
-                userGroupId
+                userGroupNodeId: userGroupId
             },
             ctx
         );
@@ -53,6 +53,6 @@ export default function ({
 
     return {
         getLibraryPermission,
-        getHeritedLibraryPermission
+        getInheritedLibraryPermission
     };
 }

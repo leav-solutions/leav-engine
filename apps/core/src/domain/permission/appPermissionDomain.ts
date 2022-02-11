@@ -3,18 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
 import {IGlobalPermissionHelper} from './helpers/globalPermission';
-import {IGetAppPermissionParams, IGetHeritedAppPermissionParams} from './_types';
+import {IGetAppPermissionParams, IGetInheritedAppPermissionParams} from './_types';
 
 export interface IAppPermissionDomain {
     getAppPermission({action, userId, ctx}: IGetAppPermissionParams): Promise<boolean>;
-    getHeritedAppPermission({action, userGroupId, ctx}: IGetHeritedAppPermissionParams): Promise<boolean>;
+    getInheritedAppPermission({action, userGroupId, ctx}: IGetInheritedAppPermissionParams): Promise<boolean>;
 }
 
 interface IDeps {
     'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.helpers.globalPermission': globalPermHelper = null
 }: IDeps = {}): IAppPermissionDomain {
     const getAppPermission = async ({action, userId, ctx}: IGetAppPermissionParams): Promise<boolean> => {
@@ -28,16 +28,16 @@ export default function ({
         );
     };
 
-    const getHeritedAppPermission = async ({
+    const getInheritedAppPermission = async ({
         action,
         userGroupId,
         ctx
-    }: IGetHeritedAppPermissionParams): Promise<boolean> => {
+    }: IGetInheritedAppPermissionParams): Promise<boolean> => {
         return globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.APP,
                 action,
-                userGroupId
+                userGroupNodeId: userGroupId
             },
             ctx
         );
@@ -45,6 +45,6 @@ export default function ({
 
     return {
         getAppPermission,
-        getHeritedAppPermission
+        getInheritedAppPermission
     };
 }

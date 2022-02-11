@@ -35,13 +35,13 @@ describe('AttributePermissionDomain', () => {
         });
     });
 
-    describe('getHeritedAttributePermission', () => {
+    describe('getInheritedAttributePermission', () => {
         test('Return herited library permission', async () => {
             const permDomain = attributePermissionDomain({
                 'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
             });
 
-            const perm = await permDomain.getHeritedAttributePermission({
+            const perm = await permDomain.getInheritedAttributePermission({
                 action: AttributePermissionsActions.ACCESS_ATTRIBUTE,
                 attributeId: 'test_tree',
                 userGroupId: '12345',

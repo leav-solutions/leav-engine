@@ -8,7 +8,7 @@ import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAllUsersGroupId,
+    gqlGetAllUsersGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -21,12 +21,16 @@ describe('TreeNodePermissions', () => {
     const treeAttrID = 'tree_node_permissions_tree_attr';
     const elementsTreeId = 'tree_node_permissions_elements_tree';
     const permissionsTreeId = 'tree_node_permissions_permissions_tree';
-    let allUsersTreeElemId;
+    let allUsersTreeNodeId: string;
 
-    let elementsTreeRecord1;
-    let elementsTreeRecord2;
-    let permissionsTreeRecord1;
-    let permissionsTreeRecord2;
+    let elementsTreeRecord1: string;
+    let elementsTreeRecord2: string;
+    let permissionsTreeRecord1: string;
+    let permissionsTreeRecord2: string;
+    let nodeElementsRecord1: string;
+    let nodeElementsRecord2: string;
+    let nodePermissionsRecord1: string;
+    let nodePermissionsRecord2: string;
 
     beforeAll(async () => {
         /**
@@ -49,7 +53,10 @@ describe('TreeNodePermissions', () => {
                 tree: {
                     id: "${elementsTreeId}",
                     label: {fr: "${elementsTreeId}"},
-                    libraries: [{library: "${elementsTreeLibId}", settings: {allowMultiplePositions: false, allowedAtRoot: true,  allowedChildren: ["__all__"]}}]
+                    libraries: [{
+                        library: "${elementsTreeLibId}",
+                        settings: {allowMultiplePositions: false, allowedAtRoot: true,  allowedChildren: ["__all__"]}
+                    }]
                     permissions_conf: [
                         {
                             libraryId: "${elementsTreeLibId}",
@@ -75,8 +82,8 @@ describe('TreeNodePermissions', () => {
 
         await gqlSaveLibrary(elementsTreeLibId, 'Test', [treeAttrID]);
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupId();
-        await gqlAddUserToGroup(allUsersTreeElemId);
+        allUsersTreeNodeId = await gqlGetAllUsersGroupNodeId();
+        await gqlAddUserToGroup(allUsersTreeNodeId);
 
         // Create records for elements tree
         elementsTreeRecord1 = await gqlCreateRecord(elementsTreeLibId);
@@ -87,18 +94,24 @@ describe('TreeNodePermissions', () => {
         permissionsTreeRecord2 = await gqlCreateRecord(permissionsTreeLibId);
 
         // Add elements to tree
-        await gqlAddElemToTree(elementsTreeId, {library: elementsTreeLibId, id: elementsTreeRecord1});
-        await gqlAddElemToTree(
+        nodeElementsRecord1 = await gqlAddElemToTree(elementsTreeId, {
+            library: elementsTreeLibId,
+            id: elementsTreeRecord1
+        });
+        nodeElementsRecord2 = await gqlAddElemToTree(
             elementsTreeId,
             {library: elementsTreeLibId, id: elementsTreeRecord2},
-            {library: elementsTreeLibId, id: elementsTreeRecord1}
+            nodeElementsRecord1
         );
 
-        await gqlAddElemToTree(permissionsTreeId, {library: permissionsTreeLibId, id: permissionsTreeRecord1});
-        await gqlAddElemToTree(
+        nodePermissionsRecord1 = await gqlAddElemToTree(permissionsTreeId, {
+            library: permissionsTreeLibId,
+            id: permissionsTreeRecord1
+        });
+        nodePermissionsRecord2 = await gqlAddElemToTree(
             permissionsTreeId,
             {library: permissionsTreeLibId, id: permissionsTreeRecord2},
-            {library: permissionsTreeLibId, id: permissionsTreeRecord1}
+            nodePermissionsRecord1
         );
 
         // Save value on record to be able to retrieve permissions
@@ -108,7 +121,7 @@ describe('TreeNodePermissions', () => {
                 recordId: "${elementsTreeRecord1}"
                 attribute: "${treeAttrID}"
                 value: {
-                    value: "${permissionsTreeLibId}/${permissionsTreeRecord1}"
+                    value: "${nodePermissionsRecord1}"
                 }
             ) {
                 id_value
@@ -121,7 +134,7 @@ describe('TreeNodePermissions', () => {
                 permission: {
                     type: tree_library
                     applyTo: "${elementsTreeId}/${elementsTreeLibId}"
-                    usersGroup: "${allUsersTreeElemId}"
+                    usersGroup: "${allUsersTreeNodeId}"
                     actions: [
                         {name: edit_children, allowed: false},
                     ]
@@ -146,16 +159,15 @@ describe('TreeNodePermissions', () => {
                     permission: {
                         type: tree_node
                         applyTo: "${elementsTreeId}/${elementsTreeLibId}"
-                        usersGroup: "${allUsersTreeElemId}"
+                        usersGroup: "${allUsersTreeNodeId}"
                         actions: [
                             {name: access_tree, allowed: false},
                             {name: detach, allowed: true},
                             {name: edit_children, allowed: null},
                         ]
                         permissionTreeTarget: {
-                            tree: "${permissionsTreeId}"
-                            library: "${permissionsTreeLibId}"
-                            id: "${permissionsTreeRecord1}"
+                            tree: "${permissionsTreeId}",
+                            nodeId: "${nodePermissionsRecord1}"
                         }
                     }
                 ) {
@@ -183,11 +195,10 @@ describe('TreeNodePermissions', () => {
                         detach,
                         edit_children
                     ],
-                    usersGroup: "${allUsersTreeElemId}"
+                    usersGroup: "${allUsersTreeNodeId}"
                     permissionTreeTarget: {
-                        tree: "${permissionsTreeId}"
-                        library: "${permissionsTreeLibId}"
-                        id: "${permissionsTreeRecord1}"
+                        tree: "${permissionsTreeId}",
+                        nodeId: "${nodePermissionsRecord1}"
                     }
                 ) {
                     name
@@ -216,8 +227,7 @@ describe('TreeNodePermissions', () => {
                     ],
                     applyTo: "${elementsTreeId}"
                     target: {
-                        recordId: "${elementsTreeRecord1}"
-                        libraryId: "${elementsTreeLibId}"
+                        nodeId: "${nodeElementsRecord1}"
                     }
                 ) {
                     name
@@ -232,8 +242,7 @@ describe('TreeNodePermissions', () => {
                     ],
                     applyTo: "${elementsTreeId}"
                     target: {
-                        recordId: "${elementsTreeRecord2}"
-                        libraryId: "${elementsTreeLibId}"
+                        nodeId: "${nodeElementsRecord2}"
                     }
                 ) {
                     name
@@ -242,6 +251,7 @@ describe('TreeNodePermissions', () => {
             }`);
 
             expect(resIsAllowedOnElement.status).toBe(200);
+            expect(resIsAllowedOnElement.data.errors).toBeUndefined();
             expect(resIsAllowedOnElement.data.data.onElement).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'detach', allowed: true},
@@ -252,13 +262,12 @@ describe('TreeNodePermissions', () => {
                 {name: 'detach', allowed: true},
                 {name: 'edit_children', allowed: false} // Inherited from library
             ]);
-            expect(resIsAllowedOnElement.data.errors).toBeUndefined();
 
             /**
              * Herited permissions
              */
-            const resGetHeritedPermission = await makeGraphQlCall(`{
-                heritedPermissions(
+            const resGetInheritedPermission = await makeGraphQlCall(`{
+                inheritedPermissions(
                     type: tree_node
                     applyTo: "${elementsTreeId}/${elementsTreeLibId}"
                     actions: [
@@ -266,11 +275,10 @@ describe('TreeNodePermissions', () => {
                         detach,
                         edit_children
                     ],
-                    userGroupId: "${allUsersTreeElemId}"
+                    userGroupNodeId: "${allUsersTreeNodeId}"
                     permissionTreeTarget: {
-                        tree: "${permissionsTreeId}"
-                        library: "${permissionsTreeLibId}"
-                        id: "${permissionsTreeRecord2}"
+                        tree: "${permissionsTreeId}",
+                        nodeId: "${nodePermissionsRecord2}"
                     }
                   ) {
                     name
@@ -279,7 +287,7 @@ describe('TreeNodePermissions', () => {
             }`);
 
             expect(resIsAllowedOnElement.status).toBe(200);
-            expect(resGetHeritedPermission.data.data.heritedPermissions).toEqual([
+            expect(resGetInheritedPermission.data.data.inheritedPermissions).toEqual([
                 {name: 'access_tree', allowed: false},
                 {name: 'detach', allowed: true},
                 {name: 'edit_children', allowed: false} // Inherited from library

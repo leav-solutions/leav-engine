@@ -39,7 +39,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function (deps: IDeps = {}): ICoreAttributeApp {
+export default function(deps: IDeps = {}): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.record': recordDomain = null,
@@ -419,9 +419,9 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                                                 },
                                                 ctx
                                             });
-                                            const isInTree = await treeDomain.isElementPresent({
+                                            const isInTree = await treeDomain.isRecordPresent({
                                                 treeId: attributeData.linked_tree,
-                                                element: {
+                                                record: {
                                                     library,
                                                     id
                                                 },

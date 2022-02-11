@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* eslint-disable jsdoc/check-indentation */
 import {isEqual} from 'lodash';
-import {IFindValueTree, IValue} from '_types/value';
+import {IFindValueTree, IValue, IValueVersion} from '_types/value';
 
 /**
  * Get matching values for given version
@@ -11,14 +11,14 @@ import {IFindValueTree, IValue} from '_types/value';
  * @param version
  * @param values
  */
-const _getValuesForVersion = (version, values): IValue[] => {
+const _getValuesForVersion = (version: IValueVersion, values: IValue[]): IValue[] => {
     return values.filter(v => isEqual(v.version, version));
 };
 
 /**
  * Find closest values matching given versions trees.
  * We start from leaves of each tree and get up on each tree consecutively until we find a value with version
- * matcing our version
+ * matching our version
  *
  * Example:
  *      Tree A:                             Tree B:
@@ -40,38 +40,34 @@ const _getValuesForVersion = (version, values): IValue[] => {
 const findValue = (trees: IFindValueTree[], values: IValue[]): IValue[] => {
     // Extract version from all trees at their current state
     const version = trees.reduce((vers, t) => {
-        const {library: elemLibrary, id: elemId} = t.elements[t.branchIndex][t.elementIndex].record;
-        vers[t.name] = {library: elemLibrary, id: elemId};
+        if (typeof t.elements[t.currentIndex].id !== 'undefined') {
+            vers[t.name] = t.elements[t.currentIndex].id;
+        }
 
         return vers;
     }, {});
 
     const matchingValues = _getValuesForVersion(version, values);
+
     // Yay we found a value! Just return it
     if (matchingValues.length) {
         return matchingValues;
     }
 
     // We run through each tree to determine what version we're checking next:
-    // On the first tree, current element having a parent, we go one level up on the branch and don't look further
-    // If we reach a tree root, we start over from the bottom of the next branch.
-    // If we reach all trees roots of branches, it means we're done and didn't find anything
+    // On the first tree having a parent, we go one level up and don't look further
+    // If we reach a tree root, we start over from the bottom.
+    // If we reach all trees roots, it means we're done and didn't find anything
     let indexMoved = false;
     for (const [i, tree] of trees.entries()) {
         // Element has parent, go up
-        if (tree.elementIndex < tree.elements[tree.branchIndex].length - 1) {
-            trees[i].elementIndex++;
+        if (tree.currentIndex < tree.elements.length - 1) {
+            trees[i].currentIndex++;
             indexMoved = true;
             break; // Don't look on the other trees, only one movement at a time
-        } else if (tree.branchIndex < tree.elements.length - 1) {
-            trees[i].branchIndex++;
-            trees[i].elementIndex = 0;
-            indexMoved = true;
-            break;
         } else {
             // No more parents, go back down
-            trees[i].elementIndex = 0;
-            trees[i].branchIndex = 0;
+            trees[i].currentIndex = 0;
         }
     }
 

@@ -6,6 +6,7 @@ import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
+import {ITreeValue} from '_types/value';
 import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
@@ -21,7 +22,7 @@ interface IGetGlobalPermissionParams {
 interface IGetInheritedGlobalPermissionParams {
     type: PermissionTypes;
     applyTo?: string;
-    userGroupId: string | null;
+    userGroupNodeId: string | null;
     action: PermissionsActions;
     getDefaultPermission?: (params?: IGetDefaultGlobalPermissionParams) => boolean;
 }
@@ -47,7 +48,7 @@ interface IDeps {
     'core.infra.value'?: IValueRepo;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
     'core.infra.attribute': attributeRepo = null,
@@ -68,24 +69,26 @@ export default function ({
             });
 
             // Get user group, retrieve ancestors
-            const userGroups = await valueRepo.getValues({
+            const userGroups = (await valueRepo.getValues({
                 library: 'users',
                 recordId: userId,
                 attribute: userGroupAttr.list[0],
                 ctx
-            });
+            })) as ITreeValue[];
 
             const userGroupsPaths = await Promise.all(
-                userGroups.map(userGroupVal =>
-                    treeRepo.getElementAncestors({
-                        treeId: 'users_groups',
-                        element: {
-                            id: userGroupVal.value.record.id,
-                            library: 'users_groups'
-                        },
+                userGroups.map(async userGroupVal => {
+                    const groupNodeId = await treeRepo.getNodesByRecord({
+                        treeId: userGroupVal.treeId,
+                        record: {id: userGroupVal.value.record.id, library: userGroupVal.value.record.library},
                         ctx
-                    })
-                )
+                    });
+                    return treeRepo.getElementAncestors({
+                        treeId: 'users_groups',
+                        nodeId: groupNodeId[0],
+                        ctx
+                    });
+                })
             );
 
             const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
@@ -99,23 +102,20 @@ export default function ({
             return perm !== null ? perm : getDefaultPermission({action, applyTo, type, userId, ctx});
         },
         async getInheritedGlobalPermission(
-            {type, applyTo, userGroupId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
+            {type, applyTo, userGroupNodeId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
             ctx
         ): Promise<boolean> {
             // Get perm for user group's parent
             const groupAncestors = await treeRepo.getElementAncestors({
                 treeId: 'users_groups',
-                element: {
-                    id: userGroupId,
-                    library: 'users_groups'
-                },
+                nodeId: userGroupNodeId,
                 ctx
             });
 
             const perm = await permByUserGroupsHelper.getPermissionByUserGroups({
                 type,
                 action,
-                userGroupsPaths: [groupAncestors.map(g => g.slice(0, -1))], // Start from parent group
+                userGroupsPaths: [groupAncestors.slice(0, -1)], // Start from parent group
                 applyTo,
                 ctx
             });

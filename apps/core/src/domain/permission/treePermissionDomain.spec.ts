@@ -36,13 +36,13 @@ describe('TreePermissionDomain', () => {
         });
     });
 
-    describe('getHeritedTreePermission', () => {
+    describe('getInheritedTreePermission', () => {
         test('Return herited permission', async () => {
             const permDomain = treePermissionDomain({
                 'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
             });
 
-            const perm = await permDomain.getHeritedTreePermission({
+            const perm = await permDomain.getInheritedTreePermission({
                 action: TreePermissionsActions.ACCESS_TREE,
                 treeId: 'test_tree',
                 userGroupId: '12345',

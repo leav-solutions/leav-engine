@@ -193,27 +193,18 @@ export async function gqlCreateRecord(library: string): Promise<string> {
 /**
  * Retrieve "all users" element ID in users group tree
  */
-export async function gqlGetAllUsersGroupId(): Promise<string> {
-    const usersGroupsTreeContent = await makeGraphQlCall(
-        `{
-        treeContent(treeId: "users_groups") {
-            record {
-                id
-            }
-        }
-    }`,
-        true
-    );
+export async function gqlGetAllUsersGroupNodeId(): Promise<string> {
+    const usersGroupsTreeContent = await makeGraphQlCall('{treeContent(treeId: "users_groups") {id}}', true);
 
-    return usersGroupsTreeContent.data.data.treeContent[0].record.id;
+    return usersGroupsTreeContent.data.data.treeContent[0].id;
 }
 
-export async function gqlAddUserToGroup(groupId: string) {
+export async function gqlAddUserToGroup(groupNodeId: string) {
     const userGroupAttrId = 'user_groups';
     await makeGraphQlCall(
         `mutation {
         saveValue(library: "users", recordId: "1", attribute: "${userGroupAttrId}", value: {
-            value: "users_groups/${groupId}"
+            value: "${groupNodeId}"
         }) {
             id_value
         }
@@ -222,17 +213,33 @@ export async function gqlAddUserToGroup(groupId: string) {
     );
 }
 
-export async function gqlAddElemToTree(treeId: string, element: ITreeElement, parent?: ITreeElement) {
-    await makeGraphQlCall(
+/**
+ * Add an element to the tree
+ *
+ * @param treeId
+ * @param element
+ * @param parent
+ * @return Node ID
+ */
+export async function gqlAddElemToTree(
+    treeId: string,
+    element: ITreeElement,
+    parent?: string,
+    order?: number
+): Promise<string> {
+    const res = await makeGraphQlCall(
         `mutation {
         treeAddElement(
             treeId: "${treeId}",
             element: {id: "${element.id}", library: "${element.library}"}
-            ${parent ? `parent: {id: "${parent.id}", library: "${parent.library}"}` : ''}
+            ${parent ? `parent: ${parent}` : ''}
+            order: ${order ?? 0}
         ) { id }
     }`,
         true
     );
+
+    return res.data.data.treeAddElement.id;
 }
 
 export async function gqlSaveValue(attributeId: string, libraryId: string, recordId: string, value: string | number) {

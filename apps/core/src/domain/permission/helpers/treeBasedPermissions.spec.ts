@@ -6,6 +6,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
+import {IGetTreeBasedPermissionParams} from '../_types';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import treeBasedPermissions from './treeBasedPermissions';
@@ -253,20 +254,13 @@ describe('TreePermissionDomain', () => {
             reducePermissionsArray: jest.fn().mockReturnValue(null)
         };
 
-        const params = {
+        const params: IGetTreeBasedPermissionParams = {
             type: PermissionTypes.RECORD_ATTRIBUTE,
             action: RecordPermissionsActions.ACCESS_RECORD,
             userId: '987654',
             applyTo: 'test_lib',
             treeValues: {
-                category: [
-                    {
-                        record: {
-                            id: '321654',
-                            library: 'category'
-                        }
-                    }
-                ]
+                category: ['321654']
             },
             permissions_conf: mockPermConf,
             getDefaultPermission: jest.fn().mockReturnValue(defaultPerm)
@@ -311,20 +305,7 @@ describe('TreePermissionDomain', () => {
                 {
                     ...params,
                     treeValues: {
-                        category: [
-                            {
-                                record: {
-                                    id: 'cat1',
-                                    library: 'category'
-                                }
-                            },
-                            {
-                                record: {
-                                    id: 'cat2',
-                                    library: 'category'
-                                }
-                            }
-                        ]
+                        category: ['cat1', 'cat2']
                     }
                 },
                 ctx
@@ -449,22 +430,8 @@ describe('TreePermissionDomain', () => {
                 {
                     ...params,
                     treeValues: {
-                        category: [
-                            {
-                                record: {
-                                    id: '321654',
-                                    library: 'category'
-                                }
-                            }
-                        ],
-                        status: [
-                            {
-                                record: {
-                                    id: '123456',
-                                    library: 'status'
-                                }
-                            }
-                        ]
+                        category: ['321654'],
+                        status: ['123456']
                     },
                     permissions_conf: {
                         relation: PermissionsRelations.AND,
@@ -504,22 +471,8 @@ describe('TreePermissionDomain', () => {
                 {
                     ...params,
                     treeValues: {
-                        category: [
-                            {
-                                record: {
-                                    id: '321654',
-                                    library: 'category'
-                                }
-                            }
-                        ],
-                        status: [
-                            {
-                                record: {
-                                    id: '123456',
-                                    library: 'status'
-                                }
-                            }
-                        ]
+                        category: ['321654'],
+                        status: ['123456']
                     },
                     permissions_conf: {
                         relation: PermissionsRelations.OR,

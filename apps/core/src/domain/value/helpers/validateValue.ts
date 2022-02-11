@@ -6,10 +6,10 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {difference} from 'lodash';
-import {AttributeCondition} from '../../../_types/record';
 import {AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {ErrorFieldDetail, Errors, IExtendedErrorMsg} from '../../../_types/errors';
 import {IQueryInfos} from '../../../_types/queryInfos';
+import {AttributeCondition} from '../../../_types/record';
 import {IValue, IValueVersion} from '../../../_types/value';
 import doesValueExist from './doesValueExist';
 
@@ -70,33 +70,11 @@ const _validateTreeLinkedRecord = async (
     deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo; treeRepo: ITreeRepo},
     ctx: IQueryInfos
 ): Promise<ILinkRecordValidationResult> => {
-    const idAttrProps = await deps.attributeDomain.getAttributeProperties({id: 'id', ctx});
-    const [library, recordId] = value.value.split('/');
-    const records = await deps.recordRepo.find({
-        libraryId: library,
-        filters: [
-            {
-                attributes: [idAttrProps],
-                condition: AttributeCondition.EQUAL,
-                value: recordId
-            }
-        ],
-        ctx
-    });
+    const nodeId = value.value;
 
-    if (!records.list.length) {
-        return {
-            isValid: false,
-            reason: {
-                msg: Errors.UNKNOWN_LINKED_RECORD,
-                vars: {record: recordId, library}
-            }
-        };
-    }
-
-    const isElementInTree = await deps.treeRepo.isElementPresent({
+    const isElementInTree = await deps.treeRepo.isNodePresent({
         treeId: attribute.linked_tree,
-        element: {library, id: recordId},
+        nodeId,
         ctx
     });
 
@@ -134,15 +112,15 @@ const _validateVersion = async (
             return errors;
         }
 
-        const isPresent = await deps.treeRepo.isElementPresent({
+        const isPresent = await deps.treeRepo.isNodePresent({
             treeId: treeName,
-            element: value.version[treeName],
+            nodeId: value.version[treeName],
             ctx
         });
         if (!isPresent) {
             errors[treeName] = {
                 msg: Errors.ELEMENT_NOT_IN_TREE,
-                vars: {element: `${value.version[treeName].library}/${value.version[treeName].id}`, tree: treeName}
+                vars: {element: value.version[treeName], tree: treeName}
             };
         }
 

@@ -27,6 +27,7 @@
         "**/*.graphql",
         "**/*.yml",
         "apps/core/exports/*",
-        "docker/**/*"
+        "docker/**/*",
+        "cache"
     ]
 }

@@ -15,7 +15,7 @@ import {
     IPreviewsStatus,
     IPreviewVersion
 } from '../../../_types/filesManager';
-import {IRecord, Operator, AttributeCondition} from '../../../_types/record';
+import {AttributeCondition, IRecord, Operator} from '../../../_types/record';
 import {IHandleFileSystemDeps} from './handleFileSystem';
 import winston = require('winston');
 
@@ -169,26 +169,29 @@ export const getInputData = (input: string) => {
 
 export const createFilesTreeElement = async (
     record: IRecord,
-    parentRecords: IRecord,
+    parentRecord: IRecord,
     library: string,
     deps: IHandleFileSystemDeps,
     ctx: IQueryInfos
 ) => {
-    const parentTreeElement = parentRecords
-        ? {
-              id: parentRecords.id,
-              library
-          }
-        : null;
-
     try {
+        const treeId = deps.utils.getLibraryTreeId(library);
+        const parentNode = parentRecord
+            ? (
+                  await deps.treeDomain.getNodesByRecord({
+                      treeId,
+                      record: {id: parentRecord.id, library},
+                      ctx
+                  })
+              )[0]
+            : null;
         await deps.treeDomain.addElement({
             treeId: deps.utils.getLibraryTreeId(library),
             element: {
                 id: record.id,
                 library
             },
-            parent: parentTreeElement,
+            parent: parentNode,
             ctx
         });
     } catch (e) {
@@ -198,17 +201,23 @@ export const createFilesTreeElement = async (
 
 export const deleteFilesTreeElement = async (recordId: string, library: string, deps: IHandleFileSystemDeps, ctx) => {
     try {
+        const treeId = deps.utils.getLibraryTreeId(library);
+        const recordNode = (
+            await deps.treeDomain.getNodesByRecord({
+                treeId,
+                record: {id: recordId, library},
+                ctx
+            })
+        )[0];
+
         await deps.treeDomain.deleteElement({
             treeId: deps.utils.getLibraryTreeId(library),
-            element: {
-                id: recordId,
-                library
-            },
+            nodeId: recordNode,
             deleteChildren: true,
             ctx
         });
     } catch (e) {
-        deps.logger.warn(`[FilesManager] Error when delete element from tree: ${recordId}`);
+        deps.logger.warn(`[FilesManager] Error when deleting element from tree: ${recordId}`);
     }
 };
 

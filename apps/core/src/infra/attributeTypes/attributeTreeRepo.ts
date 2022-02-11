@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
+import {getEdgesCollectionName, getFullNodeId} from '../../infra/tree/helpers/utils';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {AttributeCondition, IRecord, IRecordFilterOption, IRecordSort} from '../../_types/record';
 import {ITreeValue, IValue, IValueEdge} from '../../_types/value';
@@ -26,11 +27,17 @@ export default function ({
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.utils': utils = null
 }: IDeps = {}): IAttributeTypeRepo {
-    const _buildTreeValue = (treeId: string, linkedRecord: IRecord, valueEdge: IValueEdge): ITreeValue => {
+    const _buildTreeValue = (
+        treeId: string,
+        nodeId: string,
+        linkedRecord: IRecord,
+        valueEdge: IValueEdge
+    ): ITreeValue => {
         return {
             id_value: valueEdge._key,
             value: linkedRecord
                 ? {
+                      id: nodeId,
                       record: linkedRecord
                   }
                 : null,
@@ -39,7 +46,7 @@ export default function ({
             modified_by: valueEdge.modified_by,
             created_at: valueEdge.created_at,
             created_by: valueEdge.created_by,
-            version: valueEdge.version ? dbUtils.convertValueVersionFromDb(valueEdge.version) : null,
+            version: valueEdge.version ?? null,
             metadata: valueEdge.metadata,
             treeId
         };
@@ -67,32 +74,34 @@ export default function ({
             // Create the link between records and add some metadata on it
             const edgeData: any = {
                 _from: library + '/' + recordId,
-                _to: value.value,
+                _to: getFullNodeId(value.value, attribute.linked_tree),
                 attribute: attribute.id,
                 modified_at: value.modified_at,
                 created_at: value.created_at,
                 created_by: String(ctx.userId),
-                modified_by: String(ctx.userId)
+                modified_by: String(ctx.userId),
+                version: value.version ?? null
             };
-
-            if (value.version) {
-                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
-            }
 
             if (value.metadata) {
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute({
+            const resEdge = await dbService.execute<IValueEdge[]>({
                 query: aql`
                     INSERT ${edgeData}
                         IN ${edgeCollec}
                     RETURN NEW`,
                 ctx
             });
-            const savedEdge: IValueEdge = resEdge.length ? resEdge[0] : {};
+            const savedEdge = resEdge.length ? resEdge[0] : {};
 
-            return _buildTreeValue(attribute.linked_tree, utils.decomposeValueEdgeDestination(value.value), savedEdge);
+            return _buildTreeValue(
+                attribute.linked_tree,
+                value.value,
+                utils.decomposeValueEdgeDestination(value.value),
+                savedEdge as IValueEdge
+            );
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -100,22 +109,19 @@ export default function ({
             // Update value's metadata on records link
             const edgeData: any = {
                 _from: library + '/' + recordId,
-                _to: value.value,
+                _to: getFullNodeId(value.value, attribute.linked_tree),
                 attribute: attribute.id,
                 modified_at: value.modified_at,
                 created_by: value.created_by,
-                modified_by: String(ctx.userId)
+                modified_by: String(ctx.userId),
+                version: value.version ?? null
             };
-
-            if (value.version) {
-                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
-            }
 
             if (value.metadata) {
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute({
+            const resEdge = await dbService.execute<IValueEdge[]>({
                 query: aql`
                     UPDATE ${{_key: String(value.id_value)}}
                         WITH ${edgeData}
@@ -125,9 +131,14 @@ export default function ({
             });
             const savedEdge = resEdge.length ? resEdge[0] : {};
 
-            return _buildTreeValue(attribute.linked_tree, utils.decomposeValueEdgeDestination(value.value), savedEdge);
+            return _buildTreeValue(
+                attribute.linked_tree,
+                value.value,
+                utils.decomposeValueEdgeDestination(value.value),
+                savedEdge as IValueEdge
+            );
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
+        async deleteValue({attribute, value, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
@@ -135,7 +146,7 @@ export default function ({
                 _key: value.id_value
             };
 
-            const resEdge = await dbService.execute({
+            const resEdge = await dbService.execute<IValueEdge[]>({
                 query: aql`
                     REMOVE ${edgeData} IN ${edgeCollec}
                     RETURN OLD`,
@@ -145,8 +156,9 @@ export default function ({
 
             return _buildTreeValue(
                 attribute.linked_tree,
-                utils.decomposeValueEdgeDestination(deletedEdge._to),
-                deletedEdge
+                value.value,
+                utils.decomposeValueEdgeDestination((deletedEdge as IValueEdge)._to),
+                deletedEdge as IValueEdge
             );
         },
         async getValues({
@@ -157,14 +169,19 @@ export default function ({
             options,
             ctx
         }): Promise<ITreeValue[]> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            if (!attribute.linked_tree) {
+                return [];
+            }
+
+            const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(attribute.linked_tree));
 
             const queryParts = [
                 aql`
-                FOR linkedRecord, edge
-                    IN 1 OUTBOUND ${library + '/' + recordId}
-                    ${edgeCollec}
-                    FILTER edge.attribute == ${attribute.id}
+                FOR record, edge, path IN 2 OUTBOUND ${library + '/' + recordId}
+                    ${valuesLinksCollec}, ${treeEdgeCollec}
+                    PRUNE (IS_SAME_COLLECTION(${valuesLinksCollec}, edge) AND edge.attribute != ${attribute.id})
+                    FILTER edge.toRecord
                 `
             ];
 
@@ -175,29 +192,29 @@ export default function ({
             const limitOne = aql.literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
             queryParts.push(aql`
                 ${limitOne}
-                RETURN {linkedRecord, edge}
+                RETURN {id: SPLIT(edge._from, '/')[1], record, edge: path.edges[0]}
             `);
 
             const query = aql.join(queryParts);
             const treeElements = await dbService.execute({query, ctx});
 
             return treeElements.map(r => {
-                r.linkedRecord.library = r.linkedRecord._id.split('/')[0];
+                r.record.library = r.record._id.split('/')[0];
 
-                return _buildTreeValue(attribute.linked_tree, dbUtils.cleanup(r.linkedRecord), r.edge);
+                return _buildTreeValue(attribute.linked_tree, r.id, dbUtils.cleanup(r.record), r.edge);
             });
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             const query = aql`
-                FOR linkedRecord, edge
+                FOR linkedNode, edge
                     IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
                     FILTER edge._key == ${valueId}
                     FILTER edge.attribute == ${attribute.id}
                     LIMIT 1
-                    RETURN {linkedRecord, edge}
+                    RETURN {linkedNode, edge}
             `;
 
             const res = await dbService.execute({query, ctx});
@@ -206,20 +223,30 @@ export default function ({
                 return null;
             }
 
-            return _buildTreeValue(attribute.linked_tree, dbUtils.cleanup(res[0].linkedRecord), res[0].edge);
+            return _buildTreeValue(
+                attribute.linked_tree,
+                res[0].linkedNode._key,
+                dbUtils.cleanup(res[0].linkedNode),
+                res[0].edge
+            );
         },
         sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
-            const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const treeCollec = dbService.db.edgeCollection(getEdgesCollectionName(attributes[0].linked_tree));
+
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
+            // [record] ---(values links)---> [node] ---(tree link)---> [linked_record]
+            // We just want to follow the path if the first edge matches our attribute, hence the PRUNE condition
             const linkedValue = aql`FIRST(
-                FOR v, e IN 1 OUTBOUND r._id
-                ${collec}
-                FILTER e.attribute == ${attributes[0].id} RETURN v.${linked.id}
+                FOR v, e IN 2 OUTBOUND r._id
+                ${valuesLinksCollec}, ${treeCollec}
+                PRUNE (IS_SAME_COLLECTION(${valuesLinksCollec}, e) AND e.attribute != ${attributes[0].id})
+                RETURN v.${linked.id}
             )`;
 
             const query =
@@ -234,7 +261,9 @@ export default function ({
             filter: IRecordFilterOption,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
-            const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const treeCollec = dbService.db.edgeCollection(getEdgesCollectionName(attributes[0].linked_tree));
+
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
@@ -246,11 +275,14 @@ export default function ({
             const eIdentifier = aql.literal(parentIdentifier + 'e');
 
             const firstValuePrefix = aql`FIRST(`;
+            // [record] ---(values links)---> [node] ---(tree link)---> [linked_record]
+            // We just want to follow the path if the first edge matches our attribute, hence the PRUNE condition
             const retrieveValue = aql`
-                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
-                ${collec}
-                FILTER ${eIdentifier}.attribute == ${attributes[0].id}
-            `;
+                FOR ${vIdentifier}, ${eIdentifier} IN 2 OUTBOUND ${aql.literal(parentIdentifier)}._id
+                ${valuesLinksCollec}, ${treeCollec}
+                PRUNE (IS_SAME_COLLECTION(${valuesLinksCollec}, ${eIdentifier}) AND ${eIdentifier}.attribute != ${
+                attributes[0].id
+            })`;
             const returnValue = aql`RETURN ${vIdentifier}`;
             const firstValueSuffix = aql`)`;
 

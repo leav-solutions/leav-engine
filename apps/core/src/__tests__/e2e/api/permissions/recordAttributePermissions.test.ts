@@ -6,7 +6,7 @@ import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAllUsersGroupId,
+    gqlGetAllUsersGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -18,9 +18,11 @@ describe('RecordAttributePermissions', () => {
     const permTreeLibName = 'record_attribute_permissions_tree_lib';
     const permTreeName = 'record_attribute_permissions_tree';
 
-    let allUsersTreeElemId;
-    let treeElemId1;
-    let treeElemId2;
+    let allUsersTreeElemId: string;
+    let treeElemId1: string;
+    let nodeElem1: string;
+    let treeElemId2: string;
+    let nodeElem2: string;
 
     beforeAll(async () => {
         await gqlSaveAttribute({
@@ -36,15 +38,11 @@ describe('RecordAttributePermissions', () => {
         treeElemId1 = await gqlCreateRecord(permTreeLibName);
         treeElemId2 = await gqlCreateRecord(permTreeLibName);
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupId();
+        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemId);
 
-        await gqlAddElemToTree(permTreeName, {id: treeElemId1, library: permTreeLibName});
-        await gqlAddElemToTree(
-            permTreeName,
-            {id: treeElemId2, library: permTreeLibName},
-            {id: treeElemId1, library: permTreeLibName}
-        );
+        nodeElem1 = await gqlAddElemToTree(permTreeName, {id: treeElemId1, library: permTreeLibName});
+        nodeElem2 = await gqlAddElemToTree(permTreeName, {id: treeElemId2, library: permTreeLibName}, nodeElem1);
 
         // Save perm
         await makeGraphQlCall(`mutation {
@@ -55,8 +53,7 @@ describe('RecordAttributePermissions', () => {
                     usersGroup: "${allUsersTreeElemId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
-                        library: "${permTreeLibName}",
-                        id: "${treeElemId1}"
+                        nodeId: "${nodeElem1}"
                     },
                     actions: [
                         {name: access_attribute, allowed: true},
@@ -76,8 +73,7 @@ describe('RecordAttributePermissions', () => {
                     usersGroup: "${allUsersTreeElemId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
-                        library: "${permTreeLibName}",
-                        id: "${treeElemId1}"
+                        nodeId: "${nodeElem1}"
                     },
                     actions: [
                         access_attribute,
@@ -98,9 +94,11 @@ describe('RecordAttributePermissions', () => {
         });
     });
 
-    describe('Herited permissions', () => {
-        let userGroupId1;
-        let userGroupId2;
+    describe('Inherited permissions', () => {
+        let userGroupId1: string;
+        let userGroupId2: string;
+        let nodeGroup1: string;
+        let nodeGroup2: string;
 
         beforeAll(async () => {
             // Create 2 users groups
@@ -108,11 +106,11 @@ describe('RecordAttributePermissions', () => {
             userGroupId2 = await gqlCreateRecord('users_groups');
 
             // Add users groups to tree
-            await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});
-            await gqlAddElemToTree(
+            nodeGroup1 = await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});
+            nodeGroup2 = await gqlAddElemToTree(
                 'users_groups',
                 {id: userGroupId2, library: 'users_groups'},
-                {id: userGroupId1, library: 'users_groups'}
+                nodeGroup1
             );
 
             // User groups tree: [ROOT] -> group 1 -> group 2
@@ -124,11 +122,10 @@ describe('RecordAttributePermissions', () => {
                     permission: {
                         type: record_attribute,
                         applyTo: "${permAttrName}",
-                        usersGroup: "${userGroupId1}",
+                        usersGroup: "${nodeGroup1}",
                         permissionTreeTarget: {
                             tree: "${permTreeName}",
-                            library: "${permTreeLibName}",
-                            id: "${treeElemId1}"
+                            nodeId: "${nodeElem1}"
                         },
                         actions: [
                             {name: access_attribute, allowed: false},
@@ -138,18 +135,17 @@ describe('RecordAttributePermissions', () => {
             }`);
         });
 
-        test('Herit permission from user group', async () => {
+        test('Inherit permission from user group', async () => {
             const permHeritGroup = await makeGraphQlCall(`{
-                p: heritedPermissions(
+                p: inheritedPermissions(
                     type: record_attribute,
                     applyTo: "${permAttrName}",
                     actions: [access_attribute],
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
-                        library: "${permTreeLibName}",
-                        id: "${treeElemId1}"
+                        nodeId: "${nodeElem1}"
                     },
-                    userGroupId: "${userGroupId2}"
+                    userGroupNodeId: "${nodeGroup2}"
                 ) { name allowed }
               }
             `);
@@ -159,18 +155,17 @@ describe('RecordAttributePermissions', () => {
             expect(permHeritGroup.data.data.p[0].allowed).toBe(false);
         });
 
-        test('Herit permission from tree elem', async () => {
+        test('Inherit permission from tree elem', async () => {
             const permHeritTree = await makeGraphQlCall(`{
-                p: heritedPermissions(
+                p: inheritedPermissions(
                     type: record_attribute,
                     applyTo: "${permAttrName}",
                     actions: [access_attribute],
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
-                        library: "${permTreeLibName}",
-                        id: "${treeElemId2}"
+                        nodeId: "${nodeElem2}"
                     },
-                    userGroupId: "${userGroupId1}"
+                    userGroupNodeId: "${nodeGroup1}"
                 ) { name allowed }
               }
             `);
@@ -180,14 +175,14 @@ describe('RecordAttributePermissions', () => {
             expect(permHeritTree.data.data.p[0].allowed).toBe(false);
         });
 
-        test('Herit permission from global attribute permission', async () => {
+        test('Inherit permission from global attribute permission', async () => {
             // Save perm
             await makeGraphQlCall(`mutation {
                 savePermission(
                     permission: {
                         type: attribute,
                         applyTo: "${permAttrName}",
-                        usersGroup: "${userGroupId1}",
+                        usersGroup: "${nodeGroup1}",
                         actions: [
                             {name: edit_value, allowed: false},
                         ]
@@ -195,24 +190,23 @@ describe('RecordAttributePermissions', () => {
                 ) { type }
             }`);
 
-            const permHeritAttr = await makeGraphQlCall(`{
-                p: heritedPermissions(
+            const permInheritAttr = await makeGraphQlCall(`{
+                p: inheritedPermissions(
                     type: record_attribute,
                     applyTo: "${permAttrName}",
                     actions: [edit_value]
-                    userGroupId: "${userGroupId1}",
+                    userGroupNodeId: "${nodeGroup1}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}",
-                        library: "${permTreeLibName}",
-                        id: "${treeElemId2}"
+                        nodeId: "${nodeElem2}"
                     }
                 ) { name allowed }
               }
             `);
 
-            expect(permHeritAttr.status).toBe(200);
-            expect(permHeritAttr.data.data.p[0].name).toBe('edit_value');
-            expect(permHeritAttr.data.data.p[0].allowed).toBe(false);
+            expect(permInheritAttr.status).toBe(200);
+            expect(permInheritAttr.data.data.p[0].name).toBe('edit_value');
+            expect(permInheritAttr.data.data.p[0].allowed).toBe(false);
         });
     });
 });

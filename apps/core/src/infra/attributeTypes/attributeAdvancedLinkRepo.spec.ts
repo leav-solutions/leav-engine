@@ -50,16 +50,6 @@ describe('AttributeAdvancedLinkRepo', () => {
         created_by: '0'
     };
 
-    const mockDbUtils: Mockify<IDbUtils> = {
-        convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
-        convertValueVersionFromDb: jest.fn().mockReturnValue({
-            my_tree: {
-                id: '1',
-                library: 'test_lib'
-            }
-        })
-    };
-
     const mockUtils: Mockify<IUtils> = {
         decomposeValueEdgeDestination: jest.fn().mockReturnValue({library: 'test_linked_lib', id: '987654'})
     };
@@ -70,7 +60,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new advanced link value', async function () {
+        test('Should create a new advanced link value', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -78,7 +68,6 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -91,12 +80,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -129,7 +113,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     });
 
     describe('updateValue', () => {
-        test('Should update a advanced link value', async function () {
+        test('Should update a advanced link value', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -137,7 +121,6 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -150,12 +133,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     value: 987654,
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -183,7 +161,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function () {
+        test('Should delete a value', async function() {
             const deletedEdgeData = {
                 _id: 'core_edge_values_links/222435651',
                 _rev: '_WSywvyC--_',
@@ -232,7 +210,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     });
 
     describe('getValueByID', () => {
-        test('Should return value', async function () {
+        test('Should return value', async function() {
             const traversalRes = [
                 {
                     linkedRecord: {
@@ -269,8 +247,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -307,7 +284,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test("Should return null if value doesn't exists", async function () {
+        test("Should return null if value doesn't exists", async function() {
             const traversalRes = [];
 
             const mockDbServ = {
@@ -376,7 +353,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             }
         ];
 
-        test('Should return values for advanced link attribute', async function () {
+        test('Should return values for advanced link attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -395,8 +372,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     modified_at: 77777
                 });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -448,7 +424,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should return values filtered by version', async function () {
+        test('Should return values filtered by version', async function() {
             const traversalResWithVers = [
                 {
                     linkedRecord: {
@@ -486,8 +462,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -502,9 +477,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: mockAttribute,
                 forceGetAllValues: false,
                 options: {
-                    version: {
-                        my_tree: {library: 'my_lib', id: '1345'}
-                    }
+                    version: {my_tree: '1345'}
                 },
                 ctx
             });
@@ -515,7 +488,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
 
-        test('Should return only first value if not multiple attribute', async function () {
+        test('Should return only first value if not multiple attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([traversalRes[0]])
@@ -527,8 +500,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -571,7 +543,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should return all values if forced', async function () {
+        test('Should return all values if forced', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -590,8 +562,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     modified_at: 77777
                 });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 

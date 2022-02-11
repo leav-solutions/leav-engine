@@ -29,10 +29,9 @@ describe('getSimplePermission', () => {
             type: PermissionTypes.RECORD,
             applyTo: 'test_lib',
             action: RecordPermissionsActions.ACCESS_RECORD,
-            usersGroupId: '12345',
+            usersGroupNodeId: '12345',
             permissionTreeTarget: {
-                id: '123',
-                library: 'category',
+                nodeId: '123',
                 tree: 'categories'
             },
             ctx
@@ -42,10 +41,9 @@ describe('getSimplePermission', () => {
             type: PermissionTypes.RECORD,
             applyTo: 'test_lib',
             action: RecordPermissionsActions.EDIT_RECORD,
-            usersGroupId: '12345',
+            usersGroupNodeId: '12345',
             permissionTreeTarget: {
-                id: '123',
-                library: 'category',
+                nodeId: '123',
                 tree: 'categories'
             },
             ctx
@@ -55,10 +53,9 @@ describe('getSimplePermission', () => {
             type: PermissionTypes.RECORD,
             applyTo: 'test_lib',
             action: RecordPermissionsActions.DELETE_RECORD,
-            usersGroupId: '12345',
+            usersGroupNodeId: '12345',
             permissionTreeTarget: {
-                id: '123',
-                library: 'category',
+                nodeId: '123',
                 tree: 'categories'
             },
             ctx

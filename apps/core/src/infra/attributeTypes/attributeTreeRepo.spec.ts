@@ -33,7 +33,7 @@ describe('AttributeTreeRepo', () => {
         created_by: '0',
         metadata: {my_attribute: 'metadata value'},
         version: {
-            my_tree: 'test_lib/1'
+            my_tree: '1'
         }
     };
 
@@ -46,22 +46,7 @@ describe('AttributeTreeRepo', () => {
         modified_by: '0',
         created_by: '0',
         metadata: {my_attribute: 'metadata value'},
-        version: {
-            my_tree: {
-                id: '1',
-                library: 'test_lib'
-            }
-        }
-    };
-
-    const mockDbUtils: Mockify<IDbUtils> = {
-        convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
-        convertValueVersionFromDb: jest.fn().mockReturnValue({
-            my_tree: {
-                id: '1',
-                library: 'test_lib'
-            }
-        })
+        version: {my_tree: '1'}
     };
 
     const mockUtils: Mockify<IUtils> = {
@@ -82,7 +67,6 @@ describe('AttributeTreeRepo', () => {
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -95,12 +79,7 @@ describe('AttributeTreeRepo', () => {
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -124,12 +103,7 @@ describe('AttributeTreeRepo', () => {
                 modified_by: '0',
                 created_by: '0',
                 metadata: {my_attribute: 'metadata value'},
-                version: {
-                    my_tree: {
-                        id: '1',
-                        library: 'test_lib'
-                    }
-                }
+                version: {my_tree: '1'}
             });
         });
     });
@@ -143,7 +117,6 @@ describe('AttributeTreeRepo', () => {
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -156,12 +129,7 @@ describe('AttributeTreeRepo', () => {
                     value: 'categories/123456',
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -243,7 +211,7 @@ describe('AttributeTreeRepo', () => {
         test('Should return value', async function () {
             const traversalRes = [
                 {
-                    linkedRecord: {
+                    linkedNode: {
                         _key: '123456',
                         _id: 'categories/123456',
                         _rev: '_WgJhrXO--_',
@@ -277,8 +245,7 @@ describe('AttributeTreeRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -346,7 +313,8 @@ describe('AttributeTreeRepo', () => {
     describe('getValues', () => {
         const traversalRes = [
             {
-                linkedRecord: {
+                id: '987654',
+                record: {
                     _key: '123456',
                     _id: 'images/123456',
                     _rev: '_WgJhrXO--_',
@@ -368,7 +336,8 @@ describe('AttributeTreeRepo', () => {
                 }
             },
             {
-                linkedRecord: {
+                id: '654321',
+                record: {
                     _key: '123457',
                     _id: 'images/123457',
                     _rev: '_WgJhrXO--_',
@@ -410,8 +379,7 @@ describe('AttributeTreeRepo', () => {
                     modified_at: 88888
                 });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -470,7 +438,8 @@ describe('AttributeTreeRepo', () => {
         test('Should return linked tree element filtered by version', async function () {
             const traversalResWithVers = [
                 {
-                    linkedRecord: {
+                    id: '987654',
+                    record: {
                         _key: '123456',
                         _id: 'images/123456',
                         _rev: '_WgJhrXO--_',
@@ -488,9 +457,7 @@ describe('AttributeTreeRepo', () => {
                         created_at: 99999,
                         modified_by: '0',
                         created_by: '0',
-                        version: {
-                            my_tree: 'my_lib/1345'
-                        }
+                        version: {my_tree: '1345'}
                     }
                 }
             ];
@@ -506,8 +473,7 @@ describe('AttributeTreeRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -522,7 +488,7 @@ describe('AttributeTreeRepo', () => {
                 forceGetAllValues: false,
                 options: {
                     version: {
-                        my_tree: {library: 'my_lib', id: '1345'}
+                        my_tree: '1345'
                     }
                 },
                 ctx
@@ -551,8 +517,7 @@ describe('AttributeTreeRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -603,8 +568,7 @@ describe('AttributeTreeRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
