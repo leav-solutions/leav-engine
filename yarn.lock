@@ -11526,6 +11526,8 @@ __metadata:
     jsonschema: ^1.4.0
     jsonwebtoken: ^8.2.2
     license-check-and-add: ^3.0.4
+    line-by-line: 0.1.6
+    linebyline: 1.3.0
     lint-staged: ^7.1.3
     lodash: ^4.17.11
     moment: ^2.22.2
@@ -11535,6 +11537,7 @@ __metadata:
     npm-run-all: ^4.1.3
     onchange: ^4.0.0
     prettier: ^1.19.1
+    readline: 1.3.0
     subtext: ^6.0.12
     ts-jest: 25
     ts-node: ^6.2.0
@@ -20795,6 +20798,20 @@ fsevents@2.1.2:
   languageName: node
   linkType: hard
 
+"line-by-line@npm:0.1.6":
+  version: 0.1.6
+  resolution: "line-by-line@npm:0.1.6"
+  checksum: ee87fe8ca5bad75a3434c64f487fed4e3d8e9d6d2b14272675f1f3cb033d63bf2f898c8fa096ac7fd8aa2f20f7b6c6d88ec7d10a48269833b2a14535e0c91df6
+  languageName: node
+  linkType: hard
+
+"linebyline@npm:1.3.0":
+  version: 1.3.0
+  resolution: "linebyline@npm:1.3.0"
+  checksum: e09714fd939f0652d13535005582c28f0c9f78e6c6e5079c2a317e1bb2b29e5e551dc79e9f913d989a8557dce13bf47b624ab9780977411e5b1e08fd79bf29b3
+  languageName: node
+  linkType: hard
+
 "lines-and-columns@npm:^1.1.6":
   version: 1.1.6
   resolution: "lines-and-columns@npm:1.1.6"
@@ -26852,6 +26869,13 @@ fsevents@2.1.2:
   dependencies:
     picomatch: ^2.2.1
   checksum: a64fe5606937d9655252230003362d95da05dbfd3baecedb4bb8c1bc0df497d051a192f9b75345c944e58a0b362c68349be602d6dbf05d03770e510b35a9f80f
+  languageName: node
+  linkType: hard
+
+"readline@npm:1.3.0":
+  version: 1.3.0
+  resolution: "readline@npm:1.3.0"
+  checksum: 1638f45209e339c90891d609f999748d2113b8c2e259c19c7e0ea14d0c7439fee0d74c52b09ff17372e52387f8cca9f94650c03396696ac3874d72efc8804219
   languageName: node
   linkType: hard
 

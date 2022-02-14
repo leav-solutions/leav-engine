@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '../../_types/queryInfos';
-import {Action, IMatch, IData, IFile, IElement, ITree} from '../../_types/import';
+import {Action, IMatch, IData, /* IFile, */ IElement, ITree} from '../../_types/import';
 import {IAttribute} from '../../_types/attribute';
 import {Operator, AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
@@ -13,13 +13,14 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
 import ValidationError from '../../errors/ValidationError';
-import fs from 'fs';
+// import fs from 'fs';
 // import {validate} from 'jsonschema';
 import {ITreeElement} from '../../_types/tree';
 import path from 'path';
 import JsonParser from 'jsonparse';
 import * as Config from '_types/config';
 import {ICacheService} from 'infra/cache/cacheService';
+import lineByLine from 'line-by-line';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 
@@ -241,25 +242,26 @@ export default function ({
         callbackElement: (element: IElement, index: number) => Promise<void>,
         callbackTree: (element: ITree) => Promise<void>
     ): Promise<boolean> => {
-        const fileStream = fs.createReadStream(`${config.import.directory}/${filename}`);
-        const p = new JsonParser();
-        let elementIndex = 0;
-
-        p.onValue = async function (data: any) {
-            if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
-                fileStream.pause();
-                await callbackElement(data, elementIndex);
-                elementIndex += 1;
-                fileStream.resume();
-            } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
-                fileStream.pause();
-                await callbackTree(data);
-                fileStream.resume();
-            }
-        };
-
         return new Promise((resolve, reject) => {
-            fileStream.on('data', chunk => p.write(chunk));
+            const p = new JsonParser();
+            let elementIndex = 0;
+            const fileStream = new lineByLine(`${config.import.directory}/${filename}`);
+
+            p.onValue = async function (data: any) {
+                if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
+                    fileStream.pause();
+                    await callbackElement(data, elementIndex++);
+                    fileStream.resume();
+                } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
+                    fileStream.pause();
+                    await callbackTree(data).then();
+                    fileStream.resume();
+                }
+            };
+
+            fileStream.on('line', line => {
+                p.write(line);
+            });
             fileStream.on('error', () => reject(new ValidationError({id: Errors.FILE_ERROR})));
             fileStream.on('end', resolve);
         });
@@ -277,7 +279,7 @@ export default function ({
             await _getStoredFileData(
                 filename,
                 // treat elements and cache links
-                async (element: IElement | ITree, index: number): Promise<void> => {
+                async (element: IElement, index: number): Promise<void> => {
                     await validateHelper.validateLibrary(element.library, ctx);
 
                     let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
@@ -287,7 +289,7 @@ export default function ({
                         recordIds = [(await recordDomain.createRecord(element.library, ctx)).id];
                     }
 
-                    for (const data of (element as IElement).data) {
+                    for (const data of element.data) {
                         await _treatElement(element.library, data, recordIds, ctx);
                     }
 
@@ -295,23 +297,20 @@ export default function ({
                     await cacheService.storeData(
                         cacheDataType,
                         index.toString(),
-                        JSON.stringify({library: element.library, recordIds, links: (element as IElement).links})
+                        JSON.stringify({library: element.library, recordIds, links: element.links})
                     );
 
                     lastCacheIndex = index;
                 },
                 // treat trees
-                async (tree: ITree | IElement) => {
-                    await validateHelper.validateLibrary((tree as ITree).library, ctx);
-                    const recordIds = await _getMatchRecords((tree as ITree).library, (tree as ITree).matches, ctx);
+                async (tree: ITree) => {
+                    await validateHelper.validateLibrary(tree.library, ctx);
+                    const recordIds = await _getMatchRecords(tree.library, tree.matches, ctx);
                     let parent: {id: string; library: string};
 
-                    if (typeof (tree as ITree).parent !== 'undefined') {
-                        const parentIds = await _getMatchRecords(
-                            (tree as ITree).parent.library,
-                            (tree as ITree).parent.matches,
-                            ctx
-                        );
+                    if (typeof tree.parent !== 'undefined') {
+                        const parentIds = await _getMatchRecords(tree.parent.library, tree.parent.matches, ctx);
+
                         parent = parentIds.length
                             ? {id: parentIds[0], library: (tree as ITree).parent.library}
                             : parent;
@@ -321,15 +320,7 @@ export default function ({
                         throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
                     }
 
-                    await _treatTree(
-                        (tree as ITree).library,
-                        (tree as ITree).treeId,
-                        parent,
-                        recordIds,
-                        (tree as ITree).action,
-                        ctx,
-                        (tree as ITree).order
-                    );
+                    await _treatTree(tree.library, tree.treeId, parent, recordIds, tree.action, ctx, tree.order);
                 }
             );
 
