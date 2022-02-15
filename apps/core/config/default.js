@@ -85,6 +85,7 @@ module.exports = {
         directory: process.env.EXPORT_DIR || '/exports'
     },
     import: {
-        directory: process.env.IMPORT_DIR || '/imports'
+        directory: process.env.IMPORT_DIR || '/imports',
+        mbSizeLimit: process.env.IMPORT_MB_SIZE_LIMIT || 1000 // megabytes
     }
 };

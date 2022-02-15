@@ -59,7 +59,6 @@ export default function ({'core.domain.import': importDomain = null, config = nu
         const {createReadStream, filename} = fileData;
         const readStream = createReadStream();
         const storedFileName = `${nanoid()}-${filename}`;
-        // TODO: import directory path as config variable
         const storedFilePath = `${config.import.directory}/${storedFileName}`;
 
         await new Promise((resolve, reject) => {
@@ -102,7 +101,6 @@ export default function ({'core.domain.import': importDomain = null, config = nu
 
                             // store file in local filesystem
                             // const storedFilename = await _storeUploadFile(fileData);
-
                             const storedFilename = 'name.basics.json'; // FIXME: tmp, to del
 
                             await importDomain.import(storedFilename, ctx);

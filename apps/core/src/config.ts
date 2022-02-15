@@ -87,7 +87,8 @@ export const validateConfig = (conf: IConfig) => {
             directory: Joi.string().required()
         }),
         import: Joi.object().keys({
-            directory: Joi.string().required()
+            directory: Joi.string().required(),
+            mbSizeLimit: Joi.number().required()
         }),
         plugins: Joi.object().keys().unknown()
     });

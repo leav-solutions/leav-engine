@@ -13,14 +13,14 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
 import ValidationError from '../../errors/ValidationError';
-// import fs from 'fs';
-// import {validate} from 'jsonschema';
+import fs from 'fs';
 import {ITreeElement} from '../../_types/tree';
 import path from 'path';
 import JsonParser from 'jsonparse';
 import * as Config from '_types/config';
 import {ICacheService} from 'infra/cache/cacheService';
-import lineByLine from 'line-by-line';
+import LineByLine from 'line-by-line';
+import {validate} from 'jsonschema';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 
@@ -245,7 +245,10 @@ export default function ({
         return new Promise((resolve, reject) => {
             const p = new JsonParser();
             let elementIndex = 0;
-            const fileStream = new lineByLine(`${config.import.directory}/${filename}`);
+            const fileStream = new LineByLine(`${config.import.directory}/${filename}`);
+
+            // TODO: stack promises and after each specific number of requests
+            // we pause and execute them at the same time then resume the stream
 
             p.onValue = async function (data: any) {
                 if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
@@ -267,14 +270,42 @@ export default function ({
         });
     };
 
+    const _getFileDataBuffer = async (filename: string): Promise<Buffer> => {
+        const fileStream = fs.createReadStream(`${config.import.directory}/${filename}`);
+
+        const data = await ((): Promise<Buffer> =>
+            new Promise((resolve, reject) => {
+                const chunks = [];
+
+                fileStream.on('data', chunk => chunks.push(chunk));
+                fileStream.on('error', () => reject(new ValidationError({id: Errors.FILE_ERROR})));
+                fileStream.on('end', () => resolve(Buffer.concat(chunks)));
+            }))();
+
+        return data;
+    };
+
+    const _jsonSchemaValidation = async (filename: string): Promise<void> => {
+        const {size} = await fs.promises.stat(`${config.import.directory}/${filename}`);
+        const megaBytesSize = size / (1024 * 1024);
+
+        // if file is too big we validate json schema
+        if (megaBytesSize > config.import.mbSizeLimit) {
+            return;
+        }
+
+        const buffer = await _getFileDataBuffer(filename);
+        const data = JSON.parse(buffer.toString('utf8'));
+        const schema = await fs.promises.readFile(SCHEMA_PATH);
+        validate(data, JSON.parse(schema.toString()), {throwAll: true});
+    };
+
     return {
         async import(filename: string, ctx: IQueryInfos): Promise<boolean> {
+            await _jsonSchemaValidation(filename);
+
             const cacheDataType = `${filename}-links`;
             let lastCacheIndex: number;
-
-            //FIXME: validation
-            // const schema = await fs.promises.readFile(SCHEMA_PATH);
-            // validate(data, JSON.parse(schema.toString()), {throwAll: true});
 
             await _getStoredFileData(
                 filename,
