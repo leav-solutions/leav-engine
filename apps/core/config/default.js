@@ -64,20 +64,17 @@ module.exports = {
         rootKeys: {
             files1: 'files'
         },
-        // prefetch: 1,
         userId: process.env.FM_USER_ID || '1'
     },
     eventsManager: {
         routingKeys: {
             events: 'database.event'
         }
-        // prefetch: 1
     },
     indexationManager: {
         queues: {
             events: 'indexation_events'
         }
-        // prefetch: 1
     },
     debug: process.env.DEBUG || false,
     defaultUserId: '1', // Used for DB migration and any other action that is not bound to a real user
@@ -86,6 +83,7 @@ module.exports = {
     },
     import: {
         directory: process.env.IMPORT_DIR || '/imports',
-        mbSizeLimit: process.env.IMPORT_MB_SIZE_LIMIT || 1000 // megabytes
+        sizeLimit: process.env.IMPORT_SIZE_LIMIT || 100, // megabytes
+        groupData: process.env.IMPORT_GROUP_DATA || 50 // number of elements processed at the same time
     }
 };

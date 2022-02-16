@@ -244,21 +244,39 @@ export default function ({
     ): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             const p = new JsonParser();
-            let elementIndex = 0;
             const fileStream = new LineByLine(`${config.import.directory}/${filename}`);
+            let elementIndex = 0;
+            let treesReached = false;
 
-            // TODO: stack promises and after each specific number of requests
-            // we pause and execute them at the same time then resume the stream
+            // We stack the callbacks and after reaching a specific length we pause
+            // the flow and execute them all before resuming the flow again.
+            let callbacks: Array<Promise<void>> = [];
+
+            const callCallbacks = async () => {
+                fileStream.pause();
+                await Promise.all(callbacks);
+                callbacks = [];
+                fileStream.resume();
+            };
 
             p.onValue = async function (data: any) {
+                if (callbacks.length >= config.import.groupData) {
+                    await callCallbacks();
+                }
+
                 if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
-                    fileStream.pause();
-                    await callbackElement(data, elementIndex++);
-                    fileStream.resume();
+                    callbacks.push(callbackElement(data, elementIndex++));
                 } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
-                    fileStream.pause();
-                    await callbackTree(data).then();
-                    fileStream.resume();
+                    // FIXME: ordre à respecter avec nouveaux nodes tree?
+
+                    // If the first tree has never been reached before we check if callbacks for
+                    // elements are still pending and call them before processing the trees.
+                    if (!treesReached) {
+                        await callCallbacks();
+                    }
+
+                    treesReached = true;
+                    callbacks.push(callbackTree(data));
                 }
             };
 
@@ -266,7 +284,11 @@ export default function ({
                 p.write(line);
             });
             fileStream.on('error', () => reject(new ValidationError({id: Errors.FILE_ERROR})));
-            fileStream.on('end', resolve);
+            fileStream.on('end', async () => {
+                // If there are still pending callbacks we call them.
+                await callCallbacks();
+                resolve(true);
+            });
         });
     };
 
@@ -290,7 +312,7 @@ export default function ({
         const megaBytesSize = size / (1024 * 1024);
 
         // if file is too big we validate json schema
-        if (megaBytesSize > config.import.mbSizeLimit) {
+        if (megaBytesSize > config.import.sizeLimit) {
             return;
         }
 
@@ -331,7 +353,9 @@ export default function ({
                         JSON.stringify({library: element.library, recordIds, links: element.links})
                     );
 
-                    lastCacheIndex = index;
+                    if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
+                        lastCacheIndex = index;
+                    }
                 },
                 // treat trees
                 async (tree: ITree) => {

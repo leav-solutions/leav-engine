@@ -104,7 +104,8 @@ export interface IExport {
 
 export interface IImport {
     directory: string;
-    mbSizeLimit: number;
+    sizeLimit: number;
+    groupData: number;
 }
 
 export interface IDiskCache {

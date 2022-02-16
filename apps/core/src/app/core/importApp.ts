@@ -100,19 +100,17 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             _validateFileFormat(fileData.filename, allowedExtensions);
 
                             // store file in local filesystem
-                            // const storedFilename = await _storeUploadFile(fileData);
-                            const storedFilename = 'name.basics.json'; // FIXME: tmp, to del
+                            const storedFilename = await _storeUploadFile(fileData);
 
-                            await importDomain.import(storedFilename, ctx);
-
-                            // fs.unlinkSync(`${config.import.directory}/${storedFilename}`); // delete stored file once data import is finished
-
-                            // importDomain
-                            //     .import(storedFilename, ctx)
-                            //     .then(() => fs.unlinkSync(`${config.import.directory}/${storedFilename}`)) // delete stored file once data import is finished
-                            //     .catch(err => {
-                            //         throw err;
-                            //     });
+                            importDomain
+                                .import(storedFilename, ctx)
+                                .then(() => {
+                                    // delete stored file once data import is finished
+                                    fs.unlinkSync(`${config.import.directory}/${storedFilename}`);
+                                })
+                                .catch(err => {
+                                    throw err;
+                                });
 
                             // TODO: link an id to this import to retrieve the progression and display it on explorer
 
