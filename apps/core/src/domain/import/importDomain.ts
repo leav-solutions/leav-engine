@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '../../_types/queryInfos';
-import {Action, IMatch, IData, /* IFile, */ IElement, ITree} from '../../_types/import';
+import {Action, IMatch, IData, IElement, ITree} from '../../_types/import';
 import {IAttribute} from '../../_types/attribute';
 import {Operator, AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
@@ -21,11 +21,12 @@ import * as Config from '_types/config';
 import {ICacheService} from 'infra/cache/cacheService';
 import LineByLine from 'line-by-line';
 import {validate} from 'jsonschema';
+import ExcelJS from 'exceljs';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 
 export interface IImportExcelParams {
-    data: string[][];
+    filename: string;
     library: string;
     mapping: string[];
     key?: string | null;
@@ -33,7 +34,7 @@ export interface IImportExcelParams {
 
 export interface IImportDomain {
     import(filename: string, ctx: IQueryInfos): Promise<boolean>;
-    // importExcel(params: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
+    importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean>;
 }
 
 interface IDeps {
@@ -256,36 +257,40 @@ export default function ({
 
             // We stack the callbacks and after reaching a specific length we pause
             // the flow and execute them all before resuming the flow again.
-            let callbacks: Array<Promise<void>> = [];
+            let callbacks: Array<() => Promise<void>> = [];
 
             const callCallbacks = async () => {
                 fileStream.pause();
-                await Promise.all(callbacks);
+                await Promise.all(callbacks.map(c => c()));
                 callbacks = [];
                 fileStream.resume();
             };
 
             p.onValue = async function (data: any) {
-                if (callbacks.length >= config.import.groupData) {
-                    await callCallbacks();
-                }
-
-                if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
-                    callbacks.push(callbackElement(data, elementIndex++));
-                } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
-                    // If the first tree has never been reached before we check if callbacks for
-                    // elements are still pending and call them before processing the trees.
-                    if (!treesReached) {
+                try {
+                    if (callbacks.length >= config.import.groupData) {
                         await callCallbacks();
                     }
 
-                    treesReached = true;
+                    if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
+                        callbacks.push(async () => callbackElement(data, elementIndex++));
+                    } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
+                        // If the first tree has never been reached before we check if callbacks for
+                        // elements are still pending and call them before processing the trees.
+                        if (!treesReached) {
+                            await callCallbacks();
+                        }
 
-                    // We dont stack callbacks for trees to keep the order
-                    // of JSON file because of the parent attribute.
-                    fileStream.pause();
-                    await callbackTree(data);
-                    fileStream.resume();
+                        treesReached = true;
+
+                        // We dont stack callbacks for trees to keep the order
+                        // of JSON file because of the parent attribute.
+                        fileStream.pause();
+                        await callbackTree(data);
+                        fileStream.resume();
+                    }
+                } catch (e) {
+                    reject(e);
                 }
             };
 
@@ -403,40 +408,63 @@ export default function ({
             await cacheService.deleteAll(cacheDataType);
 
             return true;
+        },
+        async importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
+            // convert excel to json
+            // before calling this.import
+
+            return true;
+            // const buffer = await _getFileDataBuffer(filename);
+            // const workbook = new ExcelJS.Workbook();
+
+            // await workbook.xlsx.load(buffer);
+            // const data: string[][] = [];
+
+            // workbook.eachSheet(s => {
+            //     s.eachRow(r => {
+            //         let elem = (r.values as string[]).slice(1);
+
+            //         // replace empty item by null
+            //         elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
+
+            //         data.push(elem);
+            //     });
+            // });
+
+            // const file: IFile = {elements: [], trees: []};
+
+            // // delete first row of columns name
+            // data.shift();
+
+            // for (const d of data) {
+            //     const matches =
+            //         key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
+            //             ? [
+            //                   {
+            //                       attribute: key,
+            //                       value: String(d[mapping.indexOf(key)])
+            //                   }
+            //               ]
+            //             : [];
+
+            //     const element = {
+            //         library,
+            //         matches,
+            //         data: d
+            //             .filter((_, i) => mapping[i])
+            //             .map((e, i) => ({
+            //                 attribute: mapping.filter(m => m !== null)[i],
+            //                 values: [{value: String(e)}],
+            //                 action: Action.REPLACE
+            //             }))
+            //             .filter(e => e.attribute !== 'id'),
+            //         links: []
+            //     };
+
+            //     file.elements.push(element);
+            // }
+
+            // return this.import(file, ctx);
         }
     };
-    // async importExcel({data, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
-    //     const file: IFile = {elements: [], trees: []};
-
-    //     // delete first row of columns name
-    //     data.shift();
-
-    //     for (const d of data) {
-    //         const matches =
-    //             key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
-    //                 ? [
-    //                       {
-    //                           attribute: key,
-    //                           value: String(d[mapping.indexOf(key)])
-    //                       }
-    //                   ]
-    //                 : [];
-
-    //         file.elements.push({
-    //             library,
-    //             matches,
-    //             data: d
-    //                 .filter((_, i) => mapping[i])
-    //                 .map((e, i) => ({
-    //                     attribute: mapping.filter(m => m !== null)[i],
-    //                     values: [{value: String(e)}],
-    //                     action: Action.REPLACE
-    //                 }))
-    //                 .filter(e => e.attribute !== 'id'),
-    //             links: []
-    //         });
-    //     }
-
-    //     return this.import(file, ctx);
-    // },;
 }

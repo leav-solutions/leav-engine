@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GraphQLUpload} from 'graphql-upload';
 import {IImportDomain} from 'domain/import/importDomain';
-import ExcelJS from 'exceljs';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IElement, IFile, IFileUpload} from '_types/import';
 import {IQueryInfos} from '_types/queryInfos';
@@ -87,9 +86,9 @@ export default function ({'core.domain.import': importDomain = null, config = nu
 
                     extend type Mutation {
                         import(file: Upload!): Boolean!
+                        importExcel(file: Upload!, library: String!, mapping: [String]!, key: String): Boolean!
                     }
                 `,
-                // importExcel(file: Upload!, library: String!, mapping: [String]!, key: String): Boolean!
                 resolvers: {
                     Upload: GraphQLUpload,
                     Mutation: {
@@ -99,7 +98,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const allowedExtensions = ['json'];
                             _validateFileFormat(fileData.filename, allowedExtensions);
 
-                            // store file in local filesystem
+                            // store JSON file in local filesystem
                             const storedFilename = await _storeUploadFile(fileData);
 
                             await importDomain.import(storedFilename, ctx);
@@ -107,6 +106,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
 
                             // TODO: Waiting to link an id to this import to retrieve
                             // the progression and display it on explorer.
+                            //
                             // importDomain
                             //     .import(storedFilename, ctx)
                             //     .then(async () => {
@@ -118,36 +118,25 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             //     });
 
                             return true;
+                        },
+                        async importExcel(
+                            _,
+                            {file, library, mapping, key}: IImportExcelParams,
+                            ctx: IQueryInfos
+                        ): Promise<boolean> {
+                            const fileData: IFileUpload = await file;
+
+                            const allowedExtensions = ['xlsx'];
+                            _validateFileFormat(fileData.filename, allowedExtensions);
+
+                            // store XLSX file in local filesystem
+                            const storedFilename = await _storeUploadFile(fileData);
+
+                            await importDomain.importExcel({filename: storedFilename, library, mapping, key}, ctx);
+                            await fs.promises.unlink(`${config.import.directory}/${storedFilename}`);
+
+                            return true;
                         }
-                        // async importExcel(
-                        //     _,
-                        //     {file, library, mapping, key}: IImportExcelParams,
-                        //     ctx: IQueryInfos
-                        // ): Promise<boolean> {
-                        //     const fileData = await file;
-
-                        //     const allowedExtensions = ['xlsx'];
-                        //     _validateFileFormat(fileData.filename, allowedExtensions);
-
-                        //     const buffer = await _getFileDataBuffer(fileData);
-                        //     const workbook = new ExcelJS.Workbook();
-
-                        //     await workbook.xlsx.load(buffer);
-                        //     const data: string[][] = [];
-
-                        //     workbook.eachSheet(s => {
-                        //         s.eachRow(r => {
-                        //             let elem = (r.values as string[]).slice(1);
-
-                        //             // replace empty item by null
-                        //             elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
-
-                        //             data.push(elem);
-                        //         });
-                        //     });
-
-                        //     return importDomain.importExcel({data, library, mapping, key}, ctx);
-                        // }
                     }
                 }
             };
