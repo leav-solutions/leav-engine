@@ -63,7 +63,9 @@ export default function ({
         ctx: IQueryInfos,
         valueId?: string
     ): Promise<void> => {
-        if (Array.isArray(value.value)) {
+        const isMatch = Array.isArray(value.value);
+
+        if (isMatch) {
             const recordsList = await recordDomain.find({
                 params: {
                     library: attribute.linked_library,
@@ -75,7 +77,11 @@ export default function ({
             value.value = recordsList.list[0]?.id;
         }
 
-        // FIXME: value.value undefined
+        if (isMatch && typeof value.value === 'undefined') {
+            // TODO: Throw
+            return;
+        }
+
         await valueDomain.saveValue({
             library,
             recordId,
@@ -267,8 +273,6 @@ export default function ({
                 if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
                     callbacks.push(callbackElement(data, elementIndex++));
                 } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
-                    // FIXME: ordre à respecter avec nouveaux nodes tree?
-
                     // If the first tree has never been reached before we check if callbacks for
                     // elements are still pending and call them before processing the trees.
                     if (!treesReached) {
@@ -276,7 +280,12 @@ export default function ({
                     }
 
                     treesReached = true;
-                    callbacks.push(callbackTree(data));
+
+                    // We dont stack callbacks for trees to keep the order
+                    // of JSON file because of the parent attribute.
+                    fileStream.pause();
+                    await callbackTree(data);
+                    fileStream.resume();
                 }
             };
 
@@ -286,7 +295,10 @@ export default function ({
             fileStream.on('error', () => reject(new ValidationError({id: Errors.FILE_ERROR})));
             fileStream.on('end', async () => {
                 // If there are still pending callbacks we call them.
-                await callCallbacks();
+                if (callbacks.length) {
+                    await callCallbacks();
+                }
+
                 resolve(true);
             });
         });
@@ -350,7 +362,7 @@ export default function ({
                     await cacheService.storeData(
                         cacheDataType,
                         index.toString(),
-                        JSON.stringify({library: element.library, recordIds, links: element.links})
+                        JSON.stringify({library: element.library, recordIds, links: element.links}) // FIXME: if no links cache null
                     );
 
                     if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
@@ -383,7 +395,6 @@ export default function ({
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
                 const cacheStringifiedObject = await cacheService.getData(cacheDataType, cacheKey.toString());
                 const element = JSON.parse(cacheStringifiedObject);
-
                 for (const link of element.links) {
                     await _treatElement(element.library, link, element.recordIds, ctx);
                 }

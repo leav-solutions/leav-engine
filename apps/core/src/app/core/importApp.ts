@@ -102,17 +102,20 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             // store file in local filesystem
                             const storedFilename = await _storeUploadFile(fileData);
 
-                            importDomain
-                                .import(storedFilename, ctx)
-                                .then(() => {
-                                    // delete stored file once data import is finished
-                                    fs.unlinkSync(`${config.import.directory}/${storedFilename}`);
-                                })
-                                .catch(err => {
-                                    throw err;
-                                });
+                            await importDomain.import(storedFilename, ctx);
+                            await fs.promises.unlink(`${config.import.directory}/${storedFilename}`);
 
-                            // TODO: link an id to this import to retrieve the progression and display it on explorer
+                            // TODO: Waiting to link an id to this import to retrieve
+                            // the progression and display it on explorer.
+                            // importDomain
+                            //     .import(storedFilename, ctx)
+                            //     .then(async () => {
+                            //         // delete stored file once data import is finished
+                            //         fs.promises.unlink(`${config.import.directory}/${storedFilename}`);
+                            //     })
+                            //     .catch(err => {
+                            //         throw err;
+                            //     });
 
                             return true;
                         }
