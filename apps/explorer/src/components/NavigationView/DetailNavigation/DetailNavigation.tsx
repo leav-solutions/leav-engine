@@ -81,6 +81,7 @@ const DetailNavigation = (): JSX.Element => {
                     isActive={true}
                     isDetail={true}
                     treeElement={{
+                        id: navigation.recordDetail.id,
                         record: recordData,
                         children: [],
                         permissions: navigation.recordDetail.permissions

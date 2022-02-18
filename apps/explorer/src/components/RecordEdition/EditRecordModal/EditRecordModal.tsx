@@ -187,7 +187,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                     const valueRecord = treeValue.record;
                     (valueToStore as SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue).treeValue = {
                         record: valueRecord,
-                        ancestors: [[{record: valueRecord}]]
+                        ancestors: [{record: valueRecord}]
                     };
                     break;
                 default:

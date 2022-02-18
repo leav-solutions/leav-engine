@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Tree} from 'antd';
 import {DataNode} from 'antd/lib/tree';
-import {IRecordPropertyTree, ITreeValueRecord} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import styled from 'styled-components';
@@ -23,25 +23,23 @@ const MyTree = styled(Tree)`
 
 function TreeValuePath({value, attribute}: ITreeValuePathProps): JSX.Element {
     const [{lang}] = useLang();
-    const ancestorsPath = value.treeValue.ancestors[0] ?? [];
+    const ancestorsPath = value.treeValue.ancestors ?? [];
 
     const nodesProps: Partial<DataNode> = {
         checkable: false,
         selectable: false
     };
 
-    const pathToValue = [...ancestorsPath]
-        .reverse()
-        .reduce((children: DataNode[], node: {record: ITreeValueRecord}): DataNode[] => {
-            return [
-                {
-                    ...nodesProps,
-                    title: node.record.whoAmI.label,
-                    key: node.record.id,
-                    children: children ?? []
-                }
-            ];
-        }, []);
+    const pathToValue = [...ancestorsPath].reverse().reduce((children: DataNode[], node): DataNode[] => {
+        return [
+            {
+                ...nodesProps,
+                title: node.record.whoAmI.label,
+                key: node.record.id,
+                children: children ?? []
+            }
+        ];
+    }, []);
 
     const treeData = [
         {

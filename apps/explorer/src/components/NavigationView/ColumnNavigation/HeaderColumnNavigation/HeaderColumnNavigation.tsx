@@ -94,6 +94,7 @@ function HeaderColumnNavigation({depth, isDetail, isActive, treeElement}: IHeade
         // Select all elements from current column
         const columnSelection: ISharedSelected[] = treeElement.children.map(child => ({
             id: child.record.whoAmI.id,
+            nodeId: child.id,
             library: child.record.whoAmI.library.id,
             label: child.record.whoAmI.label
         }));
@@ -102,12 +103,7 @@ function HeaderColumnNavigation({depth, isDetail, isActive, treeElement}: IHeade
             setSelection({
                 type: SharedStateSelectionType.navigation,
                 selected: columnSelection,
-                parent: treeElement.record
-                    ? {
-                          id: treeElement.record.id,
-                          library: treeElement.record.whoAmI.library.id
-                      }
-                    : null
+                parent: treeElement?.id ?? null
             })
         );
     };
@@ -133,7 +129,9 @@ function HeaderColumnNavigation({depth, isDetail, isActive, treeElement}: IHeade
                 </Tooltip>
             ) : (
                 <>
-                    {isActive && <Checkbox className="select-all-checkbox" onClick={_handleClickCheckbox} />}
+                    {isActive && !isDetail && (
+                        <Checkbox className="select-all-checkbox" onClick={_handleClickCheckbox} />
+                    )}
                     <span>{label}</span>
                 </>
             )}

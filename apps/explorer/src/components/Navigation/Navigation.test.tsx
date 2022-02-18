@@ -82,6 +82,7 @@ describe('Navigation', () => {
             treeContent: [
                 {
                     __typename: 'TreeNode',
+                    id: '12345',
                     record: {
                         id: '1',
                         __typename: 'RecordLib',
@@ -90,6 +91,7 @@ describe('Navigation', () => {
                     children: [
                         {
                             __typename: 'TreeNode',
+                            id: '11',
                             record: {
                                 id: '11',
                                 __typename: 'RecordLib',
@@ -100,6 +102,7 @@ describe('Navigation', () => {
                         },
                         {
                             __typename: 'TreeNode',
+                            id: '12',
                             record: {
                                 id: '12',
                                 __typename: 'RecordLib',
@@ -113,6 +116,7 @@ describe('Navigation', () => {
                 },
                 {
                     __typename: 'TreeNode',
+                    id: '2',
                     record: {
                         id: '2',
                         __typename: 'RecordLib',
@@ -121,6 +125,7 @@ describe('Navigation', () => {
                     children: [
                         {
                             __typename: 'TreeNode',
+                            id: '21',
                             record: {
                                 id: '21',
                                 __typename: 'RecordLib',
@@ -131,6 +136,7 @@ describe('Navigation', () => {
                         },
                         {
                             __typename: 'TreeNode',
+                            id: '22',
                             record: {
                                 id: '22',
                                 __typename: 'RecordLib',
@@ -151,6 +157,7 @@ describe('Navigation', () => {
             treeContent: [
                 {
                     __typename: 'TreeNode',
+                    id: '1',
                     record: {
                         id: '1',
                         __typename: 'RecordLib',
@@ -221,6 +228,7 @@ describe('Navigation', () => {
                         activeTree: 'my_tree',
                         path: [
                             {
+                                id: '12345',
                                 record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                                 permissions: mockTreeNodePermissions,
                                 children: []
@@ -277,6 +285,7 @@ describe('Navigation', () => {
                         activeTree: 'my_tree',
                         path: [
                             {
+                                id: '12345',
                                 record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                                 permissions: mockTreeNodePermissions,
                                 children: []
@@ -284,6 +293,7 @@ describe('Navigation', () => {
                         ],
                         isLoading: false,
                         recordDetail: {
+                            id: '12346',
                             record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                             permissions: mockTreeNodePermissions,
                             children: []
@@ -354,6 +364,7 @@ describe('Navigation', () => {
                         activeTree: 'my_tree',
                         path: [
                             {
+                                id: '12345',
                                 record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                                 permissions: mockTreeNodePermissions,
                                 children: []
@@ -400,6 +411,7 @@ describe('Navigation', () => {
                         activeTree: 'my_tree',
                         path: [
                             {
+                                id: '12345',
                                 record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                                 permissions: mockTreeNodePermissions,
                                 children: []

@@ -16,6 +16,7 @@ export interface ITreeNodePermissions {
 }
 
 export interface ITreeContentRecordAndChildren {
+    id: string;
     record: RecordIdentity;
     children?: ITreeContentRecordAndChildren[];
     permissions: ITreeNodePermissions;
@@ -27,13 +28,11 @@ export interface IGetTreeContentQuery {
 
 export interface IGetTreeContentQueryVar {
     treeId: string;
-    startAt?: {
-        id: string;
-        library: string;
-    };
+    startAt?: string;
 }
 
-const recordField = `
+const nodeField = `
+    id
     record {
         ...RecordIdentity
     }
@@ -47,19 +46,19 @@ const recordField = `
 const recGetChildren = (depth: number) => {
     if (depth) {
         return `
-            ${recordField}
+            ${nodeField}
             children {
                 ${recGetChildren(--depth)}
             }
         `;
     }
-    return recordField;
+    return nodeField;
 };
 
 export const getTreeContentQuery = (depth: number) => {
     return gqlUnchecked`
         ${recordIdentityFragment}
-        query GET_TREE_CONTENT($treeId: ID!, $startAt: TreeElementInput) {
+        query GET_TREE_CONTENT($treeId: ID!, $startAt: ID) {
             treeContent(treeId: $treeId, startAt: $startAt) {
                 ${recGetChildren(depth)}
             }

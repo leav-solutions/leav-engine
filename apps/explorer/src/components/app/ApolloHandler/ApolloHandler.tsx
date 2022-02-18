@@ -185,6 +185,15 @@ function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): 
                         }
                     }
                 },
+                TreeNode: {
+                    fields: {
+                        children: {
+                            merge(existing, incoming) {
+                                return incoming;
+                            }
+                        }
+                    }
+                },
                 RecordForm: {
                     keyFields: ['id', 'recordId', 'library', ['id']]
                 },

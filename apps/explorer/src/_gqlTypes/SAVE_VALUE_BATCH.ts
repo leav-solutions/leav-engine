@@ -359,7 +359,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ance
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue {
     record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record;
-    ancestors: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors[][] | null;
+    ancestors: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors[] | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue {

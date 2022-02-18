@@ -114,7 +114,7 @@ export interface ValueBatchInput {
 
 export interface ValueVersionInput {
     name: string;
-    value: TreeElementInput;
+    value: string;
 }
 
 export interface ViewDisplayInput {
