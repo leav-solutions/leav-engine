@@ -46,6 +46,7 @@ describe('EditTreeStructure', () => {
                         treeContent: [
                             {
                                 __typename: 'TreeNode',
+                                id: '12345',
                                 order: 0,
                                 record: {
                                     __typename: 'UsersGroups',

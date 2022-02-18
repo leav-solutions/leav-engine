@@ -222,8 +222,9 @@ export interface PermissionInput {
  */
 export interface PermissionTarget {
     attributeId?: string | null;
-    recordId: string;
+    recordId?: string | null;
     libraryId?: string | null;
+    nodeId?: string | null;
 }
 
 /**
@@ -231,8 +232,7 @@ export interface PermissionTarget {
  */
 export interface PermissionsTreeTargetInput {
     tree: string;
-    library?: string | null;
-    id?: string | null;
+    nodeId?: string | null;
 }
 
 export interface RecordIdentityConfInput {
@@ -296,7 +296,7 @@ export interface ValueMetadataInput {
 
 export interface ValueVersionInput {
     name: string;
-    value: TreeElementInput;
+    value: string;
 }
 
 export interface ValuesListConfInput {

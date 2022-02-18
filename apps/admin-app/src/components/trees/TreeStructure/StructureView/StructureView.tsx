@@ -5,41 +5,48 @@ import EditRecordModal from 'components/records/EditRecordModal';
 import SelectRecordModal from 'components/records/SelectRecordModal';
 import Loading from 'components/shared/Loading';
 import useLang from 'hooks/useLang';
-import React, {useReducer, useState} from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
-    ExtendedNodeData,
     NodeData,
     OnDragPreviousAndNextLocation,
-    SortableTreeWithoutDndContext as SortableTree,
-    TreeItem
+    SortableTreeWithoutDndContext as SortableTree
 } from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getTreeNodeKey, localizedLabel, stringToColor} from 'utils';
 import {GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
-import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {fakeRootId, IExtendedTreeNodeData, ITreeNode, ITreeNodeData} from '_types/trees';
+import {
+    AddTreeElementHandler,
+    ClickNodeHandler,
+    DeleteNodeHandler,
+    MoveNodeHandler,
+    NodeVisibilityToggleHandler,
+    TreeChangeHandler
+} from '../_types';
 import './rstOverride.css';
 
 interface IStructureViewProps {
     treeSettings: GET_TREE_BY_ID_trees_list;
-    treeData: TreeItem[];
-    onTreeChange: (treeData) => void;
-    onVisibilityToggle: (data) => void;
-    onMoveNode: (data) => void;
-    onDeleteNode: (data: NodeData) => void;
+    treeData: ITreeNode[];
+    onTreeChange: TreeChangeHandler;
+    onVisibilityToggle: NodeVisibilityToggleHandler;
+    onMoveNode: MoveNodeHandler;
+    onDeleteNode: DeleteNodeHandler;
     readOnly: boolean;
-    onClickNode?: (nodeData: NodeData) => void;
-    selection?: NodeData[] | null;
-    onAddElement?: (record: RecordIdentity_whoAmI, parent: TreeItem) => void;
+    onClickNode?: ClickNodeHandler;
+    selection?: ITreeNodeData[] | null;
+    onAddElement?: AddTreeElementHandler;
     compact?: boolean;
 }
 
 interface IEditionState {
     recordId?: string;
     library: string;
-    parent: TreeItem | null;
+    parent: string | null;
+    path: string[];
 }
 
 const LibIconLabel = styled(Label)`
@@ -48,11 +55,8 @@ const LibIconLabel = styled(Label)`
 
 const initialEditionState: IEditionState = {
     library: '',
+    path: [],
     parent: null
-};
-
-const editionReducer = (prevState: IEditionState | undefined, newState: IEditionState): IEditionState => {
-    return {...newState};
 };
 
 const StructureView = ({
@@ -74,22 +78,23 @@ const StructureView = ({
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState<boolean>(false);
     const [openAddElementModal, setOpenAddElementModal] = useState<boolean>(false);
     const [openSelectRecordModal, setOpenSelectRecordModal] = useState<boolean>(false);
-    const [nodeToDelete, setNodeToDelete] = useState<NodeData>();
+    const [nodeToDelete, setNodeToDelete] = useState<ITreeNodeData>();
 
-    const [editionState, editionDispatch] = useReducer(editionReducer, initialEditionState);
+    const [editionState, setEditionState] = useState<IEditionState>(initialEditionState);
 
-    const _handleOpenDeleteConfirm = (node: NodeData) => {
+    const _handleOpenDeleteConfirm = (node: ITreeNodeData) => {
         setNodeToDelete(node);
         setOpenDeleteConfirm(true);
     };
 
     const _handleCloseDeleteConfirm = () => setOpenDeleteConfirm(false);
 
-    const _handleOpenAddElementModal = (parent: TreeItem, library: string, recordId?: string) => () => {
+    const _handleOpenAddElementModal = (parent: string, path: string[], library: string) => () => {
         setOpenAddElementModal(true);
-        editionDispatch({
+        setEditionState({
             parent,
-            library
+            library,
+            path
         });
     };
     const _handleCloseAddElementModal = () => setOpenAddElementModal(false);
@@ -104,25 +109,27 @@ const StructureView = ({
             return;
         }
 
-        onAddElement(record, editionState.parent!);
+        onAddElement(record, editionState.parent, editionState.path);
         _handleCloseSelectRecordModal();
     };
 
-    // TODO: handle versions
-    const [editedVersion] = useState<{[treeName: string]: TreeElementInput}>();
-
-    const _openEditRecordModal = (params?: {parent: TreeItem; library: string; recordId?: string}) => () => {
+    const _openEditRecordModal = (params?: {
+        parent: string;
+        library: string;
+        recordId?: string;
+        path: string[];
+    }) => () => {
         setOpenAddElementModal(false);
         setEditRecordModalOpen(true);
         if (!!params) {
-            editionDispatch(params);
+            setEditionState(params);
         }
     };
 
     const _handleEditRecordPostSave = (record: RecordIdentity_whoAmI | undefined) => {
         setEditRecordModalOpen(false);
         if (record && !editionState.recordId && editionState.parent && !!onAddElement) {
-            return onAddElement(record, editionState.parent);
+            return onAddElement(record, editionState.parent, editionState.path);
         }
     };
 
@@ -131,7 +138,7 @@ const StructureView = ({
         return nodeToDelete && onDeleteNode(nodeToDelete);
     };
 
-    const _genNodeProps = (rowInfo: ExtendedNodeData) => {
+    const _genNodeProps = (rowInfo: IExtendedTreeNodeData) => {
         const onClick =
             onClickNode &&
             ((e: any) => {
@@ -162,9 +169,10 @@ const StructureView = ({
                                         text={t('records.edit')}
                                         icon="edit outline"
                                         onClick={_openEditRecordModal({
-                                            parent: rowInfo.parentNode,
-                                            library: rowInfo.node.library.id,
-                                            recordId: rowInfo.node.id
+                                            parent: rowInfo.parentNode?.id ?? fakeRootId,
+                                            library: rowInfo.node.record.library?.id,
+                                            recordId: rowInfo.node.record.id,
+                                            path: rowInfo.path as string[]
                                         })}
                                     />
                                     <Dropdown.Item
@@ -181,7 +189,11 @@ const StructureView = ({
                                 <Dropdown.Item
                                     key={`add_record_btn_item_${lib.library.id}`}
                                     text={localizedLabel(lib.library.label, availableLanguages)}
-                                    onClick={_handleOpenAddElementModal(rowInfo.node, lib.library.id)}
+                                    onClick={_handleOpenAddElementModal(
+                                        rowInfo.node.id,
+                                        rowInfo.path as string[],
+                                        lib.library.id
+                                    )}
                                     label={
                                         <LibIconLabel
                                             circular
@@ -216,7 +228,7 @@ const StructureView = ({
 
     return (
         <div className="grow height100">
-            {!treeData.length ? (
+            {!treeData?.length ? (
                 <Loading withDimmer />
             ) : (
                 <SortableTree
@@ -237,7 +249,6 @@ const StructureView = ({
                 onClose={_handleEditRecordPostSave}
                 recordId={editionState.recordId}
                 library={editionState.library}
-                version={editedVersion}
             />
             {!readOnly && (
                 <>

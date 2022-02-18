@@ -162,7 +162,7 @@ describe('utils', () => {
                 }
             };
 
-            expect(getTreeNodeKey(nodeData)).toBe('test_lib/12345');
+            expect(getTreeNodeKey(nodeData)).toBe('12345');
         });
 
         test('Return empty key if no node', async () => {
@@ -211,13 +211,13 @@ describe('utils', () => {
     describe('versionObjToGraphql', () => {
         test('Convert a version object to graphql array', async () => {
             const res = versionObjToGraphql({
-                regions: {library: 'regions', id: '13586077'},
-                lang: {library: 'lang', id: '12345'}
+                regions: '13586077',
+                lang: '12345'
             });
 
             expect(res).toStrictEqual([
-                {name: 'regions', value: {library: 'regions', id: '13586077'}},
-                {name: 'lang', value: {library: 'lang', id: '12345'}}
+                {name: 'regions', value: '13586077'},
+                {name: 'lang', value: '12345'}
             ]);
         });
     });

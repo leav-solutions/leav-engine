@@ -14,7 +14,7 @@ import {
     GET_LIB_BY_ID_libraries_list,
     GET_LIB_BY_ID_libraries_list_attributes
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeType, TreeElementInput, ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
+import {AttributeType, ValueBatchInput} from '../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
 import {SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
 import {
@@ -33,7 +33,7 @@ interface ICreateRecordFormContainerProps {
     library: GET_LIB_BY_ID_libraries_list;
     recordId?: string;
     attributes: GET_LIB_BY_ID_libraries_list_attributes[];
-    valueVersion?: {[treeName: string]: TreeElementInput};
+    valueVersion?: {[treeName: string]: string};
     onIdentityUpdate?: (identity: RecordIdentity_whoAmI) => void;
     setSubmitFunc?: RecordEdition.SetSubmitFuncRef;
     inModal?: boolean;
@@ -92,7 +92,7 @@ function CreateRecordFormContainer({
 
     const query = getRecordDataQuery(library, attributes);
     const {loading, error, data, refetch: refetchData, networkStatus} = useQuery<IGetRecordData>(query, {
-        variables: {id: recordId, version: versionObjToGraphql(valueVersion || {}), lang},
+        variables: {id: recordId, version: versionObjToGraphql(valueVersion || null), lang},
         skip: !recordId || savePending,
         fetchPolicy: 'no-cache'
     });

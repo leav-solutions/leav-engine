@@ -19,7 +19,7 @@ describe('EditPermissionsView', () => {
                     {name: PermissionsActions.create_record, allowed: true},
                     {name: PermissionsActions.edit_record, allowed: true}
                 ]}
-                heritedPermissions={[
+                inheritedPermissions={[
                     {name: PermissionsActions.create_record, allowed: false},
                     {name: PermissionsActions.edit_record, allowed: false}
                 ]}

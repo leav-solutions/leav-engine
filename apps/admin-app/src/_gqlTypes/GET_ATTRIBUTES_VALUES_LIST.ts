@@ -140,7 +140,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues {
     record: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record;
-    ancestors: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors[][] | null;
+    ancestors: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors[] | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list {

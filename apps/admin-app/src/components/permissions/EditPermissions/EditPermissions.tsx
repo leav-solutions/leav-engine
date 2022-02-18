@@ -54,7 +54,7 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
         return <Loading />;
     }
 
-    if (error || errorActions || !(data?.perm && data?.heritPerm)) {
+    if (error || errorActions || !(data?.perm && data?.inheritPerm)) {
         return (
             <div className="error" data-test-id="error">
                 Error fetching permissions {errorActions?.toString()} {error?.toString()}
@@ -78,7 +78,7 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
             onChange={_onSave}
             actions={dataActions?.permissionsActionsByType ?? []}
             permissions={data.perm}
-            heritedPermissions={data.heritPerm}
+            inheritedPermissions={data.inheritPerm}
             readOnly={readOnly}
         />
     );

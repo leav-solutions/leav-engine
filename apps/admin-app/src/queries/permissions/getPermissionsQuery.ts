@@ -21,11 +21,11 @@ export const getPermissionsQuery = gql`
             name
             allowed
         }
-        heritPerm: heritedPermissions(
+        inheritPerm: inheritedPermissions(
             type: $type
             applyTo: $applyTo
             actions: $actions
-            userGroupId: $usersGroup
+            userGroupNodeId: $usersGroup
             permissionTreeTarget: $permissionTreeTarget
         ) {
             name
