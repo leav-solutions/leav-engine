@@ -105,6 +105,7 @@ const findPathInTree = (
 ): ITreeContentRecordAndChildren | undefined => {
     if (!pathPart) {
         return {
+            id: null,
             record: null,
             children: treeElements,
             // There is one render before active tree is actually loaded, so we init permissions to false
@@ -113,9 +114,7 @@ const findPathInTree = (
         };
     }
 
-    const parent = treeElements.find(treeElement => {
-        return treeElement.record.whoAmI.id.toString() === pathPart.record.id.toString();
-    });
+    const parent = treeElements.find(treeElement => treeElement.id === pathPart.id);
 
     if (parent) {
         return parent;

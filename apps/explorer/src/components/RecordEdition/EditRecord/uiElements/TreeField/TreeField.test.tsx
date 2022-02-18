@@ -170,7 +170,7 @@ describe('TreeField', () => {
                 values: [
                     {
                         record: mockRecordFromList,
-                        ancestors: [[{record: mockRecordFromList}]]
+                        ancestors: [{record: mockRecordFromList}]
                     }
                 ]
             },

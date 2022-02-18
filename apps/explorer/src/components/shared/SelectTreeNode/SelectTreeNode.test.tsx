@@ -21,6 +21,7 @@ describe('SelectTreeNode', () => {
                     data: {
                         treeContent: [
                             {
+                                id: 'id1',
                                 record: {
                                     id: 'id1',
                                     whoAmI: {
@@ -44,6 +45,7 @@ describe('SelectTreeNode', () => {
                                 },
                                 children: [
                                     {
+                                        id: 'id2',
                                         record: {
                                             id: 'id2',
                                             whoAmI: {

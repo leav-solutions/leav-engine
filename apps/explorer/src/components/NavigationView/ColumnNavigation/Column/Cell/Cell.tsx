@@ -11,12 +11,12 @@ import {setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {localizedTranslation} from 'utils';
-import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {ITreeContentRecordAndChildren} from '../../../../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../../../../themingVar';
 import {
     IRecordIdentityWhoAmI,
     ISharedSelected,
+    ISharedStateSelectionNavigation,
     PreviewSize,
     SharedStateSelectionType
 } from '../../../../../_types/types';
@@ -91,10 +91,6 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
     const dispatch = useAppDispatch();
 
     const parentElement = navigation.path[depth - 1];
-    const parent: TreeElementInput = {
-        id: parentElement?.record.id,
-        library: parentElement?.record.whoAmI.library.id
-    };
 
     const recordLabel = treeElement.record.whoAmI.label;
 
@@ -114,23 +110,16 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
         e.preventDefault();
         e.stopPropagation();
 
-        const current = selectionState.selection.selected.find(
-            element =>
-                element.id === treeElement.record.whoAmI.id && element.library === treeElement.record.whoAmI.library.id
-        );
+        const current = selectionState.selection.selected.find(element => element.nodeId === treeElement.id);
 
         if (current) {
             // remove from selected
-            const newSelected = selectionState.selection.selected.filter(
-                element =>
-                    element.id !== treeElement.record.whoAmI.id ||
-                    element.library !== treeElement.record.whoAmI.library.id
-            );
+            const newSelected = selectionState.selection.selected.filter(element => element.nodeId !== treeElement.id);
 
-            const selection = {
+            const selection: ISharedStateSelectionNavigation = {
                 type: SharedStateSelectionType.navigation,
                 selected: newSelected,
-                parent
+                parent: parentElement?.id
             };
 
             dispatch(setSelection(selection));
@@ -139,26 +128,25 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
             const label = localizedTranslation(treeElement.record.whoAmI.label, lang);
             const newElementSelected: ISharedSelected = {
                 id: treeElement.record.whoAmI.id,
+                nodeId: treeElement.id,
                 library: treeElement.record.whoAmI.library.id,
                 label
             };
 
             // reset selection if previous selection is not navigation or if the parent change
             let newSelected: ISharedSelected[] = [newElementSelected];
-            if (selectionState.selection.type === SharedStateSelectionType.navigation) {
-                if (
-                    parent.id === selectionState.selection.parent?.id &&
-                    parent.library === selectionState.selection.parent?.library
-                ) {
-                    // keep selection if parent is the same
-                    newSelected = [...selectionState.selection.selected, newElementSelected];
-                }
+            if (
+                selectionState.selection.type === SharedStateSelectionType.navigation &&
+                parentElement?.id === selectionState.selection.parent
+            ) {
+                // keep selection if parent is the same
+                newSelected = [...selectionState.selection.selected, newElementSelected];
             }
 
-            const selection = {
+            const selection: ISharedStateSelectionNavigation = {
                 type: SharedStateSelectionType.navigation,
                 selected: newSelected,
-                parent
+                parent: parentElement?.id
             };
 
             dispatch(setSelection(selection));
@@ -176,10 +164,7 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
             pathPart.record.whoAmI.library.id === treeElement.record.whoAmI.library.id
     );
 
-    const isChecked = selectionState.selection.selected.some(
-        element =>
-            element.id === treeElement.record.whoAmI.id && element.library === treeElement.record.whoAmI.library.id
-    );
+    const isChecked = selectionState.selection.selected.some(element => element.nodeId === treeElement.id);
 
     return (
         <CellWrapper onClick={addPath} isInPath={isInPath} isActive={isActive} data-testid="navigation-cell">

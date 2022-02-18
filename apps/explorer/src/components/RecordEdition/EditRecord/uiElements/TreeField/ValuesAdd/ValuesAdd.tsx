@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Divider, Space} from 'antd';
+import {Breadcrumb, Button, Divider, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import List from 'components/shared/List';
+import RecordCard from 'components/shared/RecordCard';
 import SelectTreeNode from 'components/shared/SelectTreeNode';
 import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -16,7 +17,7 @@ import {
     RECORD_FORM_recordForm_elements_attribute_TreeAttribute,
     RECORD_FORM_recordForm_elements_values_TreeValue_treeValue
 } from '_gqlTypes/RECORD_FORM';
-import PathsList from '../PathsList';
+import {PreviewSize} from '_types/types';
 
 interface IValuesAddProps {
     attribute: RECORD_FORM_recordForm_elements_attribute_TreeAttribute;
@@ -47,6 +48,18 @@ const BreadcrumbWrapper = styled.div`
     & .record-card .label {
         font-weight: normal;
     }
+`;
+
+const BreadcrumbRoot = styled(Breadcrumb)`
+    display: flex;
+    align-items: center;
+`;
+
+const BreadcrumbItem = styled(Breadcrumb.Item)`
+    display: flex;
+    align-items: center;
+
+    padding: 0.5em 0;
 `;
 
 type ValueFromList = RECORD_FORM_recordForm_elements_values_TreeValue_treeValue;
@@ -108,11 +121,30 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     };
 
     const _renderListItem = (item: ValueFromList) => {
-        const pathToDisplay = item.ancestors[0] ? [item.ancestors[0]] : [];
+        const pathToDisplay = item.ancestors;
 
+        const parents = pathToDisplay.slice(0, -1);
+        const element = pathToDisplay.slice(-1)[0];
+        const recordCardSettings = {withLibrary: false, withPreview: false};
         return (
             <BreadcrumbWrapper>
-                <PathsList paths={pathToDisplay} recordCardSettings={{withLibrary: false, withPreview: false}} />
+                <BreadcrumbRoot separator="">
+                    {parents.map(ancestor => {
+                        return (
+                            <BreadcrumbItem key={ancestor.record.id}>
+                                <RecordCard
+                                    record={ancestor.record.whoAmI}
+                                    size={PreviewSize.small}
+                                    {...recordCardSettings}
+                                />
+                                <Breadcrumb.Separator>{'>'}</Breadcrumb.Separator>
+                            </BreadcrumbItem>
+                        );
+                    })}
+                    <BreadcrumbItem key={element.record.id}>
+                        <RecordCard record={element.record.whoAmI} size={PreviewSize.small} {...recordCardSettings} />
+                    </BreadcrumbItem>
+                </BreadcrumbRoot>
             </BreadcrumbWrapper>
         );
     };

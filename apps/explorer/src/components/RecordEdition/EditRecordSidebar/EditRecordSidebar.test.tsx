@@ -95,7 +95,7 @@ describe('EditRecordSidebar', () => {
                             ...mockRecordPropertyWithAttribute.value,
                             treeValue: {
                                 record: mockTreeRecord,
-                                ancestors: [[{record: mockTreeRecordChild}, {record: mockTreeRecord}]]
+                                ancestors: [{record: mockTreeRecordChild}, {record: mockTreeRecord}]
                             }
                         }
                     }

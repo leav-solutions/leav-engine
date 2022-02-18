@@ -77,13 +77,6 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 errors: {}
             };
 
-            const parentElement = parent?.record.id
-                ? {
-                      id: parent.record.id,
-                      library: parent.record.whoAmI.library.id
-                  }
-                : null;
-
             for (const elementSelected of selection.selected) {
                 const treeElement: TreeElementInput = {
                     id: elementSelected.id,
@@ -94,7 +87,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                         variables: {
                             treeId: activeTree.id,
                             element: treeElement,
-                            parent: parentElement
+                            parent: parent.id ?? null
                         }
                     });
                     messages = {...messages, countValid: messages.countValid + 1};
@@ -167,12 +160,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                         id: newRecord.id,
                         library: newRecord.library.id
                     },
-                    parent: parent
-                        ? {
-                              id: parent.record.id,
-                              library: parent.record.whoAmI.library.id
-                          }
-                        : null
+                    parent: parent.id ?? null
                 }
             });
 
@@ -217,11 +205,6 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
     const _handleCloseCreateRecordModal = () => setCreateRecordModalVisible(false);
 
     const _handleClickDetach = async () => {
-        const element = {
-            id: parent.record.id,
-            library: parent.record.whoAmI.library.id
-        };
-
         const label = parent.record.whoAmI.label;
 
         let notification: INotification;
@@ -229,7 +212,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
             await removeFromTree({
                 variables: {
                     treeId: activeTree.id,
-                    element
+                    nodeId: parent.id
                 }
             });
 
@@ -243,7 +226,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 channel: NotificationChannel.trigger,
                 type: NotificationType.error,
                 content: t('navigation.notifications.error-detach', {
-                    elementName: label ?? element.id,
+                    elementName: label ?? parent.record.id,
                     errorMessage: e.message
                 })
             };

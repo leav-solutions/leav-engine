@@ -70,7 +70,7 @@ function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
 
     return (
         <Page>
-            <ColumnNavigation treeElements={{record: null, children: treeContent, permissions: null}} />
+            <ColumnNavigation treeElements={{id: null, record: null, children: treeContent, permissions: null}} />
             {navigation.recordDetail && !navigation.isLoading && <DetailNavigation />}
         </Page>
     );

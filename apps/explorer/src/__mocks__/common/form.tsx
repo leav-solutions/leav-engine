@@ -148,14 +148,12 @@ export const mockTreeValueA: IRecordPropertyTree = {
     treeValue: {
         record: mockRecord,
         ancestors: [
-            [
-                {
-                    record: mockRecordAncestor
-                },
-                {
-                    record: mockRecord
-                }
-            ]
+            {
+                record: mockRecordAncestor
+            },
+            {
+                record: mockRecord
+            }
         ]
     },
     created_at: 123456789,
@@ -170,14 +168,12 @@ export const mockTreeValueB: IRecordPropertyTree = {
     treeValue: {
         record: mockRecord2,
         ancestors: [
-            [
-                {
-                    record: mockRecordAncestor
-                },
-                {
-                    record: mockRecord2
-                }
-            ]
+            {
+                record: mockRecordAncestor
+            },
+            {
+                record: mockRecord2
+            }
         ]
     },
     id_value: '987654'

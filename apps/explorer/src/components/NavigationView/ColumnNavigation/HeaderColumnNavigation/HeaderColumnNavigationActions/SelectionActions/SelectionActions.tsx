@@ -41,7 +41,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
     const [activeTree] = useActiveTree();
 
-    const [removeFromTree] = useMutation<REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables>(removeTreeElementMutation, {
+    const [detachFromTree] = useMutation<REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables>(removeTreeElementMutation, {
         refetchQueries: [{query: getTreeContentQuery(depth), variables: {treeId: activeTree?.id}}]
     });
     const [addToTree] = useMutation<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>(addTreeElementMutation);
@@ -80,19 +80,14 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         }
     };
 
-    const handleAddElements = async () => {
+    const _handleAddElements = async () => {
         if (selectionState.selection.selected.length) {
             let messages: IMessages = {
                 countValid: 0,
                 errors: {}
             };
 
-            const parentElement = parent?.record.id
-                ? {
-                      id: parent.record.id,
-                      library: parent.record.whoAmI.library.id
-                  }
-                : null;
+            const parentElement = parent.id ?? null;
 
             for (const elementSelected of selectionState.selection.selected) {
                 const treeElement: TreeElementInput = {
@@ -145,30 +140,20 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         dispatch(setNavigationRefetchTreeData(true));
     };
 
-    const handleMoveEnd = async () => {
+    const _handleMoveEnd = async () => {
         let messages: IMessages = {
             countValid: 0,
             errors: {}
         };
 
-        const parentTo = parent?.record.id
-            ? {
-                  id: parent.record.id,
-                  library: parent.record.whoAmI.library.id
-              }
-            : null;
+        const parentTo = parent.id ?? null;
 
         for (const elementSelected of selectionState.selection.selected) {
-            const treeElement: TreeElementInput = {
-                id: elementSelected.id,
-                library: elementSelected.library
-            };
-
             try {
                 await moveInTree({
                     variables: {
                         treeId: activeTree.id,
-                        element: treeElement,
+                        nodeId: elementSelected.nodeId,
                         parentTo
                     }
                 });
@@ -201,7 +186,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         dispatch(setNavigationRefetchTreeData(true));
     };
 
-    const handleDeleteElements = async () => {
+    const _handleDetachElements = async () => {
         if (selectionState.selection.type === SharedStateSelectionType.navigation) {
             let messages: IMessages = {
                 countValid: 0,
@@ -209,15 +194,11 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             };
 
             for (const elementSelected of selectionState.selection.selected) {
-                const treeElement: TreeElementInput = {
-                    id: elementSelected.id,
-                    library: elementSelected.library
-                };
                 try {
-                    await removeFromTree({
+                    await detachFromTree({
                         variables: {
                             treeId: activeTree.id,
-                            element: treeElement
+                            nodeId: elementSelected.nodeId
                         }
                     });
 
@@ -259,8 +240,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
     const columnIsParent =
         selectionState.selection.type === SharedStateSelectionType.navigation &&
-        selectionState.selection.parent?.id === parent?.record.id &&
-        selectionState.selection.parent?.library === parent?.record.whoAmI.library.id;
+        selectionState.selection.parent === parent?.id;
 
     const canEditChildren = parent ? parent.permissions.edit_children : activeTree.permissions.edit_children;
 
@@ -270,7 +250,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                 {!columnIsParent && canEditChildren && (
                     <StandardBtn
                         icon={<PlusOutlined />}
-                        onClick={handleAddElements}
+                        onClick={_handleAddElements}
                         aria-label="add-selection"
                         title={t('navigation.actions.add-selected')}
                     />
@@ -278,7 +258,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
                 {searchIsNavigation && canEditChildren && !columnIsParent && (
                     <StandardBtn
-                        onClick={handleMoveEnd}
+                        onClick={_handleMoveEnd}
                         icon={<ArrowDownOutlined />}
                         aria-label="move-selection"
                         title={t('navigation.actions.move-selected')}
@@ -287,7 +267,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
                 {searchIsNavigation && (
                     <StandardBtn
-                        onClick={handleDeleteElements}
+                        onClick={_handleDetachElements}
                         aria-label="detach-selection"
                         icon={<DeleteOutlined />}
                         title={t('navigation.actions.detach-selected')}
