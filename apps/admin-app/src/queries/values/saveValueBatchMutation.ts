@@ -2,13 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
+import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 
 export const saveValueBatchQuery = gql`
+    ${recordIdentityFragment}
     mutation SAVE_VALUE_BATCH(
         $library: ID!
         $recordId: ID!
         $version: [ValueVersionInput!]
         $values: [ValueBatchInput!]!
+        $lang: [AvailableLanguage!]
     ) {
         saveValueBatch(library: $library, recordId: $recordId, version: $version, values: $values) {
             values {

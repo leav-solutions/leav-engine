@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {NodeData} from 'react-sortable-tree';
 import {Header} from 'semantic-ui-react';
+import {ITreeNodeData} from '_types/trees';
 import useLang from '../../../hooks/useLang';
 import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
 import {localizedLabel} from '../../../utils/utils';
@@ -13,8 +13,8 @@ import TreeStructure from '../../trees/TreeStructure';
 
 interface IDefinePermissionsViewLoadTreeProps {
     treeId: string;
-    onClick: (nodeData: NodeData) => void;
-    selectedNode: NodeData | null;
+    onClick: (nodeData: ITreeNodeData) => void;
+    selectedNode: ITreeNodeData | null;
 }
 
 const DefinePermissionsViewLoadTree = ({

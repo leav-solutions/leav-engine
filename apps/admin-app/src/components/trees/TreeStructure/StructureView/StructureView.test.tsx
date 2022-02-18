@@ -49,7 +49,7 @@ describe('StructureView', () => {
             <StructureView
                 treeSettings={mockTree}
                 readOnly={false}
-                treeData={[{id: 1234, library: {id: 'test_lib'}}]}
+                treeData={[{id: '1234', library: {id: 'test_lib'}}]}
                 onTreeChange={onTreeChange}
                 onVisibilityToggle={onVisibilityToggle}
                 onMoveNode={onMoveNode}

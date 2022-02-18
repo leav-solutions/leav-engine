@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueVersionInput, ValueBatchInput} from './globalTypes';
+import {ValueVersionInput, ValueBatchInput, AvailableLanguage} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_VALUE_BATCH
@@ -121,7 +121,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ance
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue {
     record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record;
-    ancestors: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors[][] | null;
+    ancestors: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors[] | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue {
@@ -163,4 +163,5 @@ export interface SAVE_VALUE_BATCHVariables {
     recordId: string;
     version?: ValueVersionInput[] | null;
     values: ValueBatchInput[];
+    lang?: AvailableLanguage[] | null;
 }

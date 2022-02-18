@@ -10,8 +10,9 @@ export const TreeContentQuery = p => Query<TREE_CONTENT, TREE_CONTENTVariables>(
 
 export const getTreeContentQuery = gql`
     ${recordIdentityFragment}
-    query TREE_CONTENT($treeId: ID!, $startAt: TreeElementInput, $lang: [AvailableLanguage!]) {
+    query TREE_CONTENT($treeId: ID!, $startAt: ID, $lang: [AvailableLanguage!]) {
         treeContent(treeId: $treeId, startAt: $startAt) {
+            id
             order
             record {
                 id
@@ -22,11 +23,18 @@ export const getTreeContentQuery = gql`
                 ...RecordIdentity
             }
             ancestors {
+                id
                 record {
+                    id
+                    library {
+                        id
+                        label(lang: $lang)
+                    }
                     ...RecordIdentity
                 }
             }
             children {
+                id
                 order
                 record {
                     id

@@ -264,7 +264,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues {
     record: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record;
-    ancestors: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors[][] | null;
+    ancestors: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors[] | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list {

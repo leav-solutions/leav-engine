@@ -16,7 +16,7 @@ import {
     GET_LIB_BY_ID_libraries_list,
     GET_LIB_BY_ID_libraries_list_attributes
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {TreeElementInput, ValueInput} from '../../../../../_gqlTypes/globalTypes';
+import {ValueInput} from '../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
 import {SAVE_VALUE, SAVE_VALUEVariables} from '../../../../../_gqlTypes/SAVE_VALUE';
 import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
@@ -30,7 +30,7 @@ interface IEditRecordFormProps {
     errors?: IEditRecordFormError;
     inModal?: boolean;
     library: GET_LIB_BY_ID_libraries_list;
-    valueVersion?: {[treeName: string]: TreeElementInput};
+    valueVersion?: {[treeName: string]: string};
     onIdentityUpdate?: any;
     initialRecordId?: string;
     setRecordIdentity?: (input: React.SetStateAction<RecordIdentity_whoAmI | undefined>) => void;
@@ -55,7 +55,7 @@ const EditRecordForm = ({
     const recordId = initialRecordId === undefined ? '' : initialRecordId;
 
     const query = getRecordDataQuery(library, attributes);
-    const getRecordDataVariables = {id: recordId, version: versionObjToGraphql(valueVersion || {}), lang};
+    const getRecordDataVariables = {id: recordId, version: versionObjToGraphql(valueVersion || null), lang};
 
     const {loading, error, data, networkStatus} = useQuery<IGetRecordData>(query, {
         variables: getRecordDataVariables,

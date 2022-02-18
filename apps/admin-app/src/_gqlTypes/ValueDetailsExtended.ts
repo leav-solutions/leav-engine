@@ -105,7 +105,7 @@ export interface ValueDetailsExtended_TreeValue_treeValue_ancestors {
 
 export interface ValueDetailsExtended_TreeValue_treeValue {
     record: ValueDetailsExtended_TreeValue_treeValue_record;
-    ancestors: ValueDetailsExtended_TreeValue_treeValue_ancestors[][] | null;
+    ancestors: ValueDetailsExtended_TreeValue_treeValue_ancestors[] | null;
 }
 
 export interface ValueDetailsExtended_TreeValue {

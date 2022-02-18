@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {NodeData, TreeNode} from 'react-sortable-tree';
+import {fakeRootId, ITreeNodeData} from '_types/trees';
 import {getTreeNodeKey} from '../../../utils/utils';
 import {GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
@@ -24,17 +24,13 @@ const DefineTreePermissionsView = ({
     readOnly
 }: IDefineTreePermissionsViewProps): JSX.Element => {
     const usersGroupsTreeId = 'users_groups';
-    const [selectedTreeNode, setSelectedTreeNode] = React.useState<NodeData | null>(null);
-    const [selectedGroupNode, setSelectedGroupNode] = React.useState<NodeData | null>(null);
-    const _selectTreeNode = (nodeData: NodeData) =>
-        setSelectedTreeNode(
-            getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedTreeNode as TreeNode) ? nodeData : null
-        );
+    const [selectedTreeNode, setSelectedTreeNode] = React.useState<ITreeNodeData | null>(null);
+    const [selectedGroupNode, setSelectedGroupNode] = React.useState<ITreeNodeData | null>(null);
+    const _selectTreeNode = (nodeData: ITreeNodeData) =>
+        setSelectedTreeNode(getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedTreeNode) ? nodeData : null);
 
-    const _selectGroupNode = (nodeData: NodeData) =>
-        setSelectedGroupNode(
-            getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedGroupNode as TreeNode) ? nodeData : null
-        );
+    const _selectGroupNode = (nodeData: ITreeNodeData) =>
+        setSelectedGroupNode(getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedGroupNode) ? nodeData : null);
 
     if (!tree.linked_tree) {
         return <p>Cannot find tree</p>;
@@ -64,12 +60,10 @@ const DefineTreePermissionsView = ({
                     permParams={{
                         type: permissionType,
                         applyTo,
-                        usersGroup: selectedGroupNode.node.id !== 'root' ? selectedGroupNode.node.id : null,
+                        usersGroup: selectedGroupNode.node.id !== fakeRootId ? selectedGroupNode.node.id : null,
                         permissionTreeTarget: {
                             tree: tree.linked_tree.id,
-                            id: selectedTreeNode.node.id !== 'root' ? selectedTreeNode.node.id : null,
-                            library:
-                                selectedTreeNode.node.library.id !== 'root' ? selectedTreeNode.node.library.id : null
+                            nodeId: selectedTreeNode.node.id !== fakeRootId ? selectedTreeNode.node.id : null
                         }
                     }}
                     readOnly={readOnly}
