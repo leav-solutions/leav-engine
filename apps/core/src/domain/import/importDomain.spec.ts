@@ -166,8 +166,7 @@ describe('importDomain', () => {
         expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(2);
         expect(mockValueDomain.saveValue.mock.calls.length).toBe(3);
         expect(mockValueDomain.getValues.mock.calls.length).toBe(1);
-
-        await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
+        expect(fs.existsSync(`${mockConfig.import.directory}/test.json`)).toBe(false);
     });
 
     test('test import elements - simple link with matches', async () => {
@@ -260,8 +259,7 @@ describe('importDomain', () => {
         expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(1);
         expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
         expect(mockValueDomain.saveValue.mock.calls.length).toBe(1);
-
-        await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
+        expect(fs.existsSync(`${mockConfig.import.directory}/test.json`)).toBe(false);
     });
 
     test('test import trees', async () => {
@@ -317,5 +315,6 @@ describe('importDomain', () => {
         expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
         expect(mockTreeDomain.isElementPresent.mock.calls.length).toBe(1);
         expect(mockTreeDomain.addElement.mock.calls.length).toBe(1);
+        expect(fs.existsSync(`${mockConfig.import.directory}/test.json`)).toBe(false);
     });
 });

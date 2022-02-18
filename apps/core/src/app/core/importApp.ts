@@ -102,20 +102,12 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const storedFilename = await _storeUploadFile(fileData);
 
                             await importDomain.import(storedFilename, ctx);
-                            await fs.promises.unlink(`${config.import.directory}/${storedFilename}`);
+
+                            // FIXME: If import file should we backup db?
+                            // Delete remaining cache/import files?
 
                             // TODO: Waiting to link an id to this import to retrieve
                             // the progression and display it on explorer.
-                            //
-                            // importDomain
-                            //     .import(storedFilename, ctx)
-                            //     .then(async () => {
-                            //         // delete stored file once data import is finished
-                            //         fs.promises.unlink(`${config.import.directory}/${storedFilename}`);
-                            //     })
-                            //     .catch(err => {
-                            //         throw err;
-                            //     });
 
                             return true;
                         },
@@ -133,7 +125,6 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const storedFilename = await _storeUploadFile(fileData);
 
                             await importDomain.importExcel({filename: storedFilename, library, mapping, key}, ctx);
-                            await fs.promises.unlink(`${config.import.directory}/${storedFilename}`);
 
                             return true;
                         }

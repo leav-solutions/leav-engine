@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '../../_types/queryInfos';
-import {Action, IMatch, IData, IElement, ITree} from '../../_types/import';
+import {Action, IMatch, IFile, IData, IElement, ITree} from '../../_types/import';
 import {IAttribute} from '../../_types/attribute';
 import {Operator, AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
@@ -364,10 +364,11 @@ export default function ({
                     }
 
                     // caching element links
+                    // TODO: Improvement: if no links no cache.
                     await cacheService.storeData(
                         cacheDataType,
                         index.toString(),
-                        JSON.stringify({library: element.library, recordIds, links: element.links}) // FIXME: if no links cache null
+                        JSON.stringify({library: element.library, recordIds, links: element.links})
                     );
 
                     if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
@@ -405,66 +406,78 @@ export default function ({
                 }
             }
 
+            // Delete cache and import file.
             await cacheService.deleteAll(cacheDataType);
+            await fs.promises.unlink(`${config.import.directory}/${filename}`);
 
             return true;
         },
         async importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
-            // convert excel to json
-            // before calling this.import
+            const buffer = await _getFileDataBuffer(filename);
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(buffer);
+            const data: string[][] = [];
 
-            return true;
-            // const buffer = await _getFileDataBuffer(filename);
-            // const workbook = new ExcelJS.Workbook();
+            workbook.eachSheet(s => {
+                s.eachRow(r => {
+                    let elem = (r.values as string[]).slice(1);
+                    // replace empty item by null
+                    elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
+                    data.push(elem);
+                });
+            });
 
-            // await workbook.xlsx.load(buffer);
-            // const data: string[][] = [];
+            // delete first row of columns name
+            data.shift();
 
-            // workbook.eachSheet(s => {
-            //     s.eachRow(r => {
-            //         let elem = (r.values as string[]).slice(1);
+            const JSONFilename = filename.slice(0, filename.lastIndexOf('.')) + '.json';
+            const writeStream = fs.createWriteStream(`${config.import.directory}/${JSONFilename}`, {
+                flags: 'a' // 'a' means appending (old data will be preserved)
+            });
 
-            //         // replace empty item by null
-            //         elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
+            const writeLine = line => writeStream.write(`\n${line}`);
 
-            //         data.push(elem);
-            //     });
-            // });
+            // Header of file.
+            writeLine(`{
+                "elements": [
+              `);
 
-            // const file: IFile = {elements: [], trees: []};
+            for (const [index, d] of data.entries()) {
+                const matches =
+                    key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
+                        ? [
+                              {
+                                  attribute: key,
+                                  value: String(d[mapping.indexOf(key)])
+                              }
+                          ]
+                        : [];
 
-            // // delete first row of columns name
-            // data.shift();
+                const element = {
+                    library,
+                    matches,
+                    data: d
+                        .filter((_, i) => mapping[i])
+                        .map((e, i) => ({
+                            attribute: mapping.filter(m => m !== null)[i],
+                            values: [{value: String(e)}],
+                            action: Action.REPLACE
+                        }))
+                        .filter(e => e.attribute !== 'id'),
+                    links: []
+                };
 
-            // for (const d of data) {
-            //     const matches =
-            //         key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
-            //             ? [
-            //                   {
-            //                       attribute: key,
-            //                       value: String(d[mapping.indexOf(key)])
-            //                   }
-            //               ]
-            //             : [];
+                // Adding element to JSON file.
+                writeLine(JSON.stringify(element) + (index !== data.length - 1 ? ',' : ''));
+            }
 
-            //     const element = {
-            //         library,
-            //         matches,
-            //         data: d
-            //             .filter((_, i) => mapping[i])
-            //             .map((e, i) => ({
-            //                 attribute: mapping.filter(m => m !== null)[i],
-            //                 values: [{value: String(e)}],
-            //                 action: Action.REPLACE
-            //             }))
-            //             .filter(e => e.attribute !== 'id'),
-            //         links: []
-            //     };
+            // End of file.
+            writeLine('], "trees": []}');
 
-            //     file.elements.push(element);
-            // }
+            // Delete XLSX file
+            await fs.promises.unlink(`${config.import.directory}/${filename}`);
 
-            // return this.import(file, ctx);
+            return this.import(JSONFilename, ctx);
         }
     };
 }
