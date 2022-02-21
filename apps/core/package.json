@@ -89,6 +89,7 @@
     "graphql-type-json": "^0.3.1",
     "graphql-upload": "13.0.0",
     "hapi-auth-jwt2": "8.6.0",
+    "hot-formula-parser": "4.0.0",
     "i18next": "^19.0.3",
     "i18next-fs-backend": "^1.0.7",
     "joi": "17.6.0",

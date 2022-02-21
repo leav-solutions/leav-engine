@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttribute} from './attribute';
+import {IQueryInfos} from '_types/queryInfos';
 
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',
@@ -25,10 +26,10 @@ export interface IActionsListConfig {
     [ActionsListEvents.GET_VALUE]?: IActionsListSavedAction[];
 }
 
-export interface IActionsListContext {
+export interface IActionsListContext extends IQueryInfos {
     attribute?: IAttribute;
     library?: string;
-    recordId?: number;
+    recordId?: string;
 }
 
 export interface IActionsListParams {

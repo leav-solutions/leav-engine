@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
-import {Input} from 'semantic-ui-react';
+import {Form, Input, Label, Segment, TextArea, TextAreaProps} from 'semantic-ui-react';
 import {IParam, IParamInput} from '../../../interfaces/interfaces';
 
 //////////////////// INTERFACES
@@ -36,7 +36,7 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
 
     //////////////////// SETTING VALUES ON CHANGE
 
-    const _onChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const _onChange = (event: React.SyntheticEvent<HTMLInputElement>|React.FormEvent<HTMLTextAreaElement>) => {
         const target = event.target as HTMLInputElement;
         const value =
             param && correspondences[param.type] === 'checkbox' ? target.checked.toString() : target.value.toString();
@@ -56,30 +56,49 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
         setBlockCard(false);
     };
 
+    const _getRenderedElement = () => {
+        if (param.type === 'textarea') {
+            return <Form>
+                <Label attached="top" basic size="large">{param.name}:</Label>
+                <TextArea
+                style={{marginBottom: '3px'}}
+                name={param.name}
+                placeholder={param.default_value}
+                value={currentValue ? currentValue : ''}
+                onChange={_onChange}
+                onFocus={_onFocus}
+                onBlur={_onBlur}
+                />
+            </Form>;
+        } else {
+            return <Input
+                style={{marginBottom: '3px'}}
+                fluid
+                label={{basic: true, content: `${param.name}:`}}
+                labelPosition="left"
+                type={correspondences[param.type]}
+                name={param.name}
+                placeholder={param.default_value}
+                value={currentValue ? currentValue : ''}
+                checked={
+                    correspondences[param.type] === 'checkbox' && currentValue
+                        ? JSON.parse(currentValue)
+                        : false
+                }
+                onChange={_onChange}
+                onFocus={_onFocus}
+                onBlur={_onBlur}
+            />;
+        }
+    };
+
     //////////////////// RENDER
 
     return (
         <div>
             {param && (
                 <>
-                    <Input
-                        style={{marginBottom: '3px'}}
-                        fluid
-                        label={{basic: true, content: `${param.name}:`}}
-                        labelPosition="left"
-                        type={correspondences[param.type]}
-                        name={param.name}
-                        placeholder={param.default_value}
-                        value={currentValue ? currentValue : ''}
-                        checked={
-                            correspondences[param.type] === 'checkbox' && currentValue
-                                ? JSON.parse(currentValue)
-                                : false
-                        }
-                        onChange={_onChange}
-                        onFocus={_onFocus}
-                        onBlur={_onBlur}
-                    />
+                    {_getRenderedElement()}
                 </>
             )}
         </div>
