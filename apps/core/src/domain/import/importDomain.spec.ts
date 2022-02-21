@@ -16,7 +16,7 @@ import {when} from 'jest-when';
 import path from 'path';
 
 const importMockConfig: Mockify<Config.IImport> = {
-    directory: path.resolve('./imports'),
+    directory: path.resolve(__dirname, './imports'),
     sizeLimit: 100,
     groupData: 50
 };
