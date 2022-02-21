@@ -6,18 +6,18 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IQueryInfos} from '_types/queryInfos';
-import {IFile, Action} from '../../_types/import';
+import {Action} from '../../_types/import';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ICacheService} from 'infra/cache/cacheService';
 import * as Config from '_types/config';
 import fs from 'fs';
-import appRoot from 'app-root-path';
+import {appRootPath} from '@leav/app-root-path';
 import path from 'path';
 import {when} from 'jest-when';
 
 const importMockConfig: Mockify<Config.IImport> = {
-    directory: path.resolve(appRoot + '/imports'),
+    directory: path.resolve(appRootPath() + '/imports'),
     sizeLimit: 100,
     groupData: 50
 };

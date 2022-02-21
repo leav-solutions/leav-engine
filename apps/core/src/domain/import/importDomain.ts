@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '../../_types/queryInfos';
-import {Action, IMatch, IFile, IData, IElement, ITree} from '../../_types/import';
+import {Action, IMatch, IData, IElement, ITree} from '../../_types/import';
 import {IAttribute} from '../../_types/attribute';
 import {Operator, AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
