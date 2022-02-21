@@ -2586,17 +2586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hapi/accept@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "@hapi/accept@npm:3.2.4"
-  dependencies:
-    "@hapi/boom": 7.x.x
-    "@hapi/hoek": 8.x.x
-  checksum: 1ac7c9869804fd1ab9e6275e25a0098ed4bdc865e8a1eaabc3cc092cce2e05270ce3f9c4ac31cc631ab9f697edf37796e041d01f518e4b69d2b5617d5ba5f94c
-  languageName: node
-  linkType: hard
-
-"@hapi/address@npm:2.x.x, @hapi/address@npm:^2.1.2":
+"@hapi/address@npm:2.x.x":
   version: 2.1.4
   resolution: "@hapi/address@npm:2.1.4"
   checksum: 5dc5d0d3d6aad953bef59c5f24af704ae349dce626460eb2df93bd1e4b560136e354f92ce1c573292dfc7edce84189859794d28381711b50f738e67042081278
