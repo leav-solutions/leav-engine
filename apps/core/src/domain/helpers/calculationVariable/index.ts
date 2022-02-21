@@ -5,6 +5,8 @@
 import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
 import {IValue} from '_types/value';
 import {IVariableFunctions} from '../calculationsVariableFunctions';
+import ValidationError from '../../../errors/ValidationError';
+import {Errors} from '../../../_types/errors';
 
 interface IDeps {
     'core.domain.helpers.calculationsVariableFunctions'?: IVariableFunctions;
@@ -43,9 +45,13 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
             if (variableFunctions[funcName]) {
                 passingValue = await variableFunctions[funcName].run(context, passingValue, paramsStr);
             } else {
-                throw new Error(`Calculation variable: unknown function ${funcName}`);
+                throw new ValidationError({
+                    target: {
+                        msg: Errors.INVALID_VARIABLE_FUNCTION,
+                        vars: {functionName: funcName}
+                    }
+                });
             }
-            // else : this function is unknown, we do nothing, as if it was not here
         }
 
         return passingValue;
