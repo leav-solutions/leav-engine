@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseSquareOutlined} from '@ant-design/icons';
 import {Button, Checkbox, Tooltip} from 'antd';
-import {IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
+import {ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {resetNavigationRecordDetail, setNavigationPath} from 'redux/navigation';
@@ -44,7 +44,7 @@ interface IHeaderColumnNavigationProps {
     depth: number;
     isDetail?: boolean;
     isActive?: boolean;
-    treeElement?: IRecordAndChildren;
+    treeElement?: ITreeContentRecordAndChildren;
 }
 
 function HeaderColumnNavigation({depth, isDetail, isActive, treeElement}: IHeaderColumnNavigationProps): JSX.Element {

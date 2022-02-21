@@ -14,6 +14,13 @@ export const getLibrariesListQuery = gql`
                     filter
                     searchableFields
                 }
+                permissions {
+                    access_library
+                    access_record
+                    create_record
+                    edit_record
+                    delete_record
+                }
             }
         }
     }

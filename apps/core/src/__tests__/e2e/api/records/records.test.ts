@@ -33,7 +33,7 @@ describe('Records', () => {
 
     test('Create records', async () => {
         const res = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}") { id },
+            c1: createRecord(library: "${testLibName}") { id permissions {edit_record}},
             c2: createRecord(library: "${testLibName}") { id },
             c3: createRecord(library: "${testLibName}") { id },
             c4: createRecord(library: "${testLibName}") { id },
@@ -49,11 +49,12 @@ describe('Records', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.c1.id).toBeTruthy();
+        expect(res.data.data.c1.permissions.edit_record).toBeDefined();
     });
 
     test('Get records filtered by ID', async () => {
         const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) { list {id} } }
+            `{ ${testLibNameType}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) { list {id permissions {edit_record}} } }
         `
         );
 
@@ -61,6 +62,7 @@ describe('Records', () => {
         expect(res.status).toBe(200);
         expect(res.data.data[testLibNameType].list.length).toBe(1);
         expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
+        expect(res.data.data[testLibNameType].list[0].permissions.edit_record).toBeDefined();
     });
 
     test('Get library details on a record', async () => {

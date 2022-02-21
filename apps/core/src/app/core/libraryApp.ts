@@ -2,20 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IViewDomain} from 'domain/view/viewDomain';
+import {GraphQLResolveInfo} from 'graphql';
 import {IUtils} from 'utils/utils';
-import {IAttribute} from '_types/attribute';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
+import {IKeyValue} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITree} from '_types/tree';
-import {IValue, IValueVersion} from '_types/value';
+import {IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
+import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import {IRecord} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
@@ -31,25 +35,26 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.domain.view'?: IViewDomain;
+    'core.domain.permission'?: IPermissionDomain;
     'core.app.core.attribute'?: ICoreAttributeApp;
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
     'core.app.core'?: ICoreApp;
 }
 
-export default function ({
+export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.domain.view': viewDomain = null,
+    'core.domain.permission': permissionDomain = null,
     'core.app.core.attribute': coreAttributeApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.utils': utils = null,
     'core.app.core': coreApp = null
 }: IDeps = {}): ICoreLibraryApp {
     const _getLibGqlFilterType = libTypeName => libTypeName + 'Filter';
-    const _getLibGqlSortType = libTypeName => libTypeName + 'Sort';
     const _getLibGqlListType = libTypeName => libTypeName + 'List';
     const _getLibGqlSearchableFieldsType = libTypeName => libTypeName + 'SearchableFields';
 
@@ -66,6 +71,12 @@ export default function ({
                 typeDefs: `
                     enum LibraryBehavior {
                         ${Object.values(LibraryBehavior).join(' ')}
+                    }
+
+                    type LibraryPermissions {
+                        ${Object.values(LibraryPermissionsActions)
+                            .map(action => `${action}: Boolean!`)
+                            .join(' ')}
                     }
 
                     # Specific names generated to query this library on GraphQL
@@ -90,6 +101,7 @@ export default function ({
                         gqlNames: LibraryGraphqlNames!,
                         linkedTrees: [Tree!],
                         defaultView: View,
+                        permissions: LibraryPermissions
                     }
 
                     input LibraryInput {
@@ -175,7 +187,7 @@ export default function ({
                         }
                     },
                     Library: {
-                        attributes: async (parent, args, ctx, info): Promise<IAttribute[]> => {
+                        attributes: async (parent, args, ctx, info): Promise<ILibrary[]> => {
                             return attributeDomain.getLibraryAttributes(parent.id, ctx);
                         },
                         fullTextAttributes: async (parent, args, ctx, info) => {
@@ -213,6 +225,27 @@ export default function ({
                         },
                         defaultView: (library, _, ctx) => {
                             return library.defaultView ? viewDomain.getViewById(library.defaultView, ctx) : null;
+                        },
+                        permissions: (
+                            libData: ILibrary,
+                            _,
+                            ctx: IQueryInfos,
+                            infos: GraphQLResolveInfo
+                        ): Promise<IKeyValue<boolean>> => {
+                            const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
+                            return requestedActions.reduce(async (allPermsProm, action) => {
+                                const allPerms = await allPermsProm;
+
+                                const isAllowed = await permissionDomain.isAllowed({
+                                    type: PermissionTypes.LIBRARY,
+                                    applyTo: libData.id,
+                                    action: action as LibraryPermissionsActions,
+                                    userId: ctx.userId,
+                                    ctx
+                                });
+
+                                return {...allPerms, [action]: isAllowed};
+                            }, Promise.resolve({}));
                         }
                     }
                 }
@@ -238,7 +271,8 @@ export default function ({
                             lib.attributes.map(
                                 async attr => `${attr.id}: ${await coreAttributeApp.getGraphQLFormat(attr)}`
                             )
-                        )}
+                        )},
+                        permissions: RecordPermissions!
                     }
 
                     type ${_getLibGqlListType(libTypeName)} {
@@ -303,7 +337,7 @@ export default function ({
                         rec.library ? libraryDomain.getLibraryProperties(rec.library, ctx) : null,
                     whoAmI: recordDomain.getRecordIdentity,
                     property: async (parent, {attribute}, ctx) => {
-                        const res = await recordDomain.getRecordFieldValue({
+                        return recordDomain.getRecordFieldValue({
                             library: lib.id,
                             record: parent,
                             attributeId: attribute,
@@ -313,17 +347,31 @@ export default function ({
                             },
                             ctx
                         });
+                    },
+                    permissions: (
+                        record: IRecord,
+                        _,
+                        ctx: IQueryInfos,
+                        infos: GraphQLResolveInfo
+                    ): Promise<IKeyValue<boolean>> => {
+                        const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
 
-                        // We add attribute ID on value as it might be useful for nested resolvers (like tree ancestors)
-                        // It will be automatically filtered out from response as it's not in the schema
-                        return (res as IValue[]).map(v => {
-                            return typeof v.value === 'object' && v.value !== null
-                                ? {
-                                      ...v,
-                                      value: {...v.value, attribute}
-                                  }
-                                : v;
-                        });
+                        return requestedActions.reduce(async (allPermsProm, action) => {
+                            const allPerms = await allPermsProm;
+
+                            const isAllowed = await permissionDomain.isAllowed({
+                                type: PermissionTypes.RECORD,
+                                applyTo: record.library,
+                                action: action as RecordPermissionsActions,
+                                userId: ctx.userId,
+                                target: {
+                                    recordId: record.id
+                                },
+                                ctx
+                            });
+
+                            return {...allPerms, [action]: isAllowed};
+                        }, Promise.resolve({}));
                     }
                 };
 

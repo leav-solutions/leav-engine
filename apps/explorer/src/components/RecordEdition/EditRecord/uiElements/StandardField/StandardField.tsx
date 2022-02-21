@@ -4,12 +4,13 @@
 import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React, {useContext, useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_values_Value} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import standardFieldReducer, {
@@ -28,14 +29,14 @@ const Wrapper = styled.div`
 
 function StandardField({
     element,
-    recordValues,
     record,
     onValueSubmit,
     onValueDelete
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
+    const {readOnly: isRecordReadOnly} = useRecordEditionContext();
 
-    const fieldValues = (recordValues[element.settings.attribute] as IRecordPropertyStandard[]) ?? [];
+    const fieldValues = (element.values as RECORD_FORM_recordForm_elements_values_Value[]) ?? [];
     const isMultipleValues = element.attribute.multiple_values;
     const {attribute} = element;
     const creationErrors = useContext(CreationErrorContext);
@@ -67,7 +68,7 @@ function StandardField({
         attribute,
         record,
         formElement: element,
-        isReadOnly: attribute?.system,
+        isReadOnly: attribute?.system || isRecordReadOnly || !attribute.permissions.edit_value,
         values: initialValues
     };
 

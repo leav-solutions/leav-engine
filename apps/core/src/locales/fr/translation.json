@@ -96,7 +96,9 @@
         }
     },
     "permissions": {
-        "access_record": "Accéder",
+        "access_library": "Accéder à la bibliothèque",
+        "admin_library": "Administrer la bibliothèque",
+        "access_record": "Accéder aux éléments",
         "create_record": "Créer",
         "edit_record": "Éditer",
         "delete_record": "Supprimer",
@@ -122,11 +124,9 @@
         "app_access_navigator": "Accéder au navigateur",
         "app_manage_global_preferences": "Gérer les préférences globales",
         "access_attribute": "Voir l'attribut",
-        "create_value": "Créer une valeur",
-        "edit_value": "Éditer une valeur",
-        "delete_value": "Supprimer une valeur",
+        "edit_value": "Modifier une valeur",
         "access_tree": "Accéder",
-        "edit_tree": "Éditer",
-        "edit_children": "Éditer les enfants"
+        "detach": "Détacher",
+        "edit_children": "Modifier les enfants"
     }
 }

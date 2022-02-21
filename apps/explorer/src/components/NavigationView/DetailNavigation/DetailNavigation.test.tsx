@@ -6,7 +6,7 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {navigationInitialState} from 'redux/navigation';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
-import {mockTreeRecord} from '__mocks__/common/treeElements';
+import {mockTreeNodePermissions, mockTreeRecord} from '__mocks__/common/treeElements';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import DetailNavigation from './DetailNavigation';
 
@@ -20,7 +20,12 @@ jest.mock(
 
 describe('DetailNavigation', () => {
     test('should display preview', async () => {
-        const mockState = {navigation: {...navigationInitialState, recordDetail: mockTreeRecord}};
+        const mockState = {
+            navigation: {
+                ...navigationInitialState,
+                recordDetail: {record: mockTreeRecord, permissions: mockTreeNodePermissions, children: []}
+            }
+        };
 
         await act(async () => {
             render(

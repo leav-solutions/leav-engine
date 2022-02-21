@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
@@ -19,7 +20,7 @@ import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} f
 import {Errors} from '../../_types/errors';
 import {EventType} from '../../_types/event';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
-import {RecordPermissionsActions} from '../../_types/permissions';
+import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
@@ -165,6 +166,7 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
+    'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
@@ -178,6 +180,7 @@ export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.record': recordPermissionDomain = null,
+    'core.domain.permission.library': libraryPermissionDomain = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.domain.eventsManager': eventsManager = null,
@@ -535,6 +538,17 @@ export default function ({
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort;
             let searchFilters: IRecordFilterLight[] = [];
+
+            const isLibraryAccessible = await libraryPermissionDomain.getLibraryPermission({
+                libraryId: params.library,
+                userId: ctx.userId,
+                action: LibraryPermissionsActions.ACCESS_LIBRARY,
+                ctx
+            });
+
+            if (!isLibraryAccessible) {
+                throw new PermissionError(LibraryPermissionsActions.ACCESS_LIBRARY);
+            }
 
             // Add ids filters if searchQuery is defined
             if (typeof searchQuery !== 'undefined') {

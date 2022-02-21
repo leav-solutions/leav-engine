@@ -12,15 +12,15 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
-import {
-    GET_FORM_forms_list_elements_elements_attribute,
-    GET_FORM_forms_list_elements_elements_attribute_TreeAttribute
-} from '_gqlTypes/GET_FORM';
 import {AttributeType} from '_gqlTypes/globalTypes';
+import {
+    RECORD_FORM_recordForm_elements_attribute,
+    RECORD_FORM_recordForm_elements_attribute_TreeAttribute
+} from '_gqlTypes/RECORD_FORM';
 import TreeValuePath from './TreeValuePath';
 
 interface IValueDetailsProps {
-    attribute: GET_FORM_forms_list_elements_elements_attribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute;
     value: RecordProperty;
 }
 
@@ -100,7 +100,7 @@ function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
                     <Panel key="path" header={t('record_edition.path_section')}>
                         <TreeValuePath
                             value={value as IRecordPropertyTree}
-                            attribute={attribute as GET_FORM_forms_list_elements_elements_attribute_TreeAttribute}
+                            attribute={attribute as RECORD_FORM_recordForm_elements_attribute_TreeAttribute}
                         />
                     </Panel>
                 )}

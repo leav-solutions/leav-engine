@@ -1,35 +1,55 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
+import '@testing-library/jest-dom';
+import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {mockFormFull} from '../../../../../../../__mocks__/forms';
+import {EditFormContext} from '../hooks/useEditFormContext';
 import EditFormTabs from './EditFormTabs';
 
 jest.mock('../../../../../../../hooks/useLang');
+
+jest.mock('./InfosTab', () => {
+    return function InfosTab() {
+        return <div>InfosTab</div>;
+    };
+});
+
+jest.mock('./ContentTab', () => {
+    return function ContentTab() {
+        return <div>ContentTab</div>;
+    };
+});
 
 describe('EditFormTabs', () => {
     const mockForm = {...mockFormFull};
 
     test('Display form edition for existing form', async () => {
-        const comp = shallow(<EditFormTabs library="test_lib" form={mockForm} />);
+        render(
+            <EditFormContext.Provider value={{form: mockForm, library: 'test_lib', readonly: false}}>
+                <EditFormTabs />
+            </EditFormContext.Provider>
+        );
 
-        expect(comp.find('Header').shallow().text()).toBe('Test Form');
+        expect(screen.getByTestId('header')).toHaveTextContent('Test Form');
 
         // Check number of panes
-        const panes = comp.find('Tab').prop('panes');
-        expect(Array.isArray(panes)).toBe(true);
-        expect((panes as any[]).length).toBeGreaterThan(1);
+        expect(screen.getByText('forms.informations')).toBeInTheDocument();
+        expect(screen.getByText('forms.content')).toBeInTheDocument();
     });
 
     test('Display form edition for new form', async () => {
-        const comp = shallow(<EditFormTabs library="test_lib" form={null} />);
+        const comp = render(
+            <EditFormContext.Provider value={{form: null, library: 'test_lib', readonly: false}}>
+                <EditFormTabs />
+            </EditFormContext.Provider>
+        );
 
-        expect(comp.find('Header').shallow().text()).toBe('forms.new');
+        expect(screen.getByTestId('header')).toHaveTextContent('forms.new');
 
         // Check number of panes
-        const panes = comp.find('Tab').prop('panes');
-        expect(Array.isArray(panes)).toBe(true);
-        expect(panes).toHaveLength(1);
+        expect(screen.getByText('forms.informations')).toBeInTheDocument();
+        expect(screen.queryByText('forms.content')).not.toBeInTheDocument();
     });
 });

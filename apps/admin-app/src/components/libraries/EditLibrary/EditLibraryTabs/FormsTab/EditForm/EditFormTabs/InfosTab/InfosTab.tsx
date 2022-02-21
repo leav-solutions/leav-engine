@@ -8,19 +8,14 @@ import {useHistory, useLocation} from 'react-router-dom';
 import {getFormsQuery} from '../../../../../../../../queries/forms/getFormsQuery';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {clearCacheQueriesFromRegexp} from '../../../../../../../../utils';
-import {GET_FORM_forms_list} from '../../../../../../../../_gqlTypes/GET_FORM';
 import {GET_FORMS_LIST, GET_FORMS_LISTVariables} from '../../../../../../../../_gqlTypes/GET_FORMS_LIST';
 import {FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
 import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
+import {useEditFormContext} from '../../hooks/useEditFormContext';
 import InfosForm from './InfosForm';
 
-interface IInfosTabProps {
-    library: string;
-    form: GET_FORM_forms_list | null;
-    readonly?: boolean;
-}
-
-function InfosTab({library, form, readonly = false}: IInfosTabProps): JSX.Element {
+function InfosTab(): JSX.Element {
+    const {form, library, readonly} = useEditFormContext();
     const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: e => undefined,

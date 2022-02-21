@@ -5,10 +5,11 @@ import {render, screen, waitForElement} from '@testing-library/react';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {mockLibraryPermissions} from '__mocks__/common/library';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
+import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import MenuItemList from './MenuItemList';
-import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 
 jest.mock(
     '../MenuView',
@@ -30,7 +31,9 @@ jest.mock('../MenuItemActions', () => {
     };
 });
 
-jest.mock('../../../hooks/ActiveLibHook/ActiveLibHook', () => ({useActiveLibrary: () => [{id: 'test'}, jest.fn()]}));
+jest.mock('../../../hooks/ActiveLibHook/ActiveLibHook', () => ({
+    useActiveLibrary: () => [{id: 'test', permissions: mockLibraryPermissions}, jest.fn()]
+}));
 
 describe('MenuItemList', () => {
     test('should have MenuView', async () => {

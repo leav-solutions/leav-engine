@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
+import {Button, Space} from 'antd';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {SelectionModeContext} from 'context';
-import {Button, Space} from 'antd';
 import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -31,6 +31,7 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
     const [activeLibrary] = useActiveLibrary();
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
+    const canCreateRecord = activeLibrary.permissions.create_record;
 
     const selectionMode = useContext(SelectionModeContext);
 
@@ -52,7 +53,7 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
             </Space>
 
             <Space size="large">
-                {!selectionMode && (
+                {!selectionMode && canCreateRecord && (
                     <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={_handleCreateRecord}>
                         {t('items_list.new')}
                     </PrimaryBtn>

@@ -9,12 +9,12 @@ import {FAVORITE_LIBRARIES_KEY} from 'components/Home/LibrariesList/LibrariesLis
 import {FAVORITE_TREES_KEY} from 'components/Home/TreeList/TreeList';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from 'hooks/LangHook/LangHook';
+import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
+import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
@@ -22,8 +22,8 @@ import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
-import {GET_LIBRARIES_LIST, GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
+import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 
@@ -75,8 +75,8 @@ function Sidebar(): JSX.Element {
     const history = useHistory();
     const {activePanel} = useAppSelector(state => state);
 
-    const librariesList = useQuery<GET_LIBRARIES_LIST>(getLibrariesListQuery);
-    const treesList = useQuery<GET_TREE_LIST_QUERY>(getTreeListQuery);
+    const librariesList = useGetLibrariesListQuery();
+    const treesList = useGetTreesListQuery();
     const favoritesList = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY]}
     });

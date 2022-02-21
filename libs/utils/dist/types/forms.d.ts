@@ -2,6 +2,7 @@ import {IKeyValue} from './helpers';
 export declare enum FormUIElementTypes {
     DIVIDER = 'divider',
     FIELDS_CONTAINER = 'fields_container',
+    TAB_FIELDS_CONTAINER = 'tab_fields_container',
     TEXT_BLOCK = 'text_block',
     TABS = 'tabs'
 }
@@ -46,3 +47,4 @@ export interface IFormLinkFieldSettings extends ICommonFieldsSettings {
     }>;
     displayRecordIdentity: boolean;
 }
+export declare const FORM_ROOT_CONTAINER_ID = '__root';

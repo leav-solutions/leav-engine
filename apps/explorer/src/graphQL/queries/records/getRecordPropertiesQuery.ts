@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
-import {GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/GET_FORM';
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/RECORD_FORM';
 import {IRecordIdentityWhoAmI, ISystemTranslation} from '_types/types';
 import recordIdentityFragment from './recordIdentityFragment';
 
@@ -76,7 +76,7 @@ export interface IGetRecordPropertiesVariables {
 export interface IRecordPropertiesField {
     attributeId: string;
     linkedAttributes?: string[];
-    linkedLibrary?: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linked_library;
+    linkedLibrary?: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library;
 }
 
 const _getFieldLinkedLibraryPart = (field: IRecordPropertiesField): string =>

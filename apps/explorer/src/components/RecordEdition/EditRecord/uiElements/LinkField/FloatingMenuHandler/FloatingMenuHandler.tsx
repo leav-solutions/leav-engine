@@ -9,14 +9,14 @@ import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
-import {GET_FORM_forms_list_elements_elements_attribute} from '_gqlTypes/GET_FORM';
+import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 import {IRecordIdentityWhoAmI} from '_types/types';
 
 interface IFloatingMenuHandlerProps {
     record: IRecordIdentityWhoAmI;
     onDelete: (record: IRecordIdentityWhoAmI) => void;
     value: RecordProperty;
-    attribute: GET_FORM_forms_list_elements_elements_attribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute;
     isReadOnly: boolean;
     children?: ReactNode;
 }

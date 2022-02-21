@@ -4,6 +4,7 @@
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {mockLibraryPermissions} from '__mocks__/common/library';
 import {IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {initialActiveLibrary, useActiveLibrary} from './ActiveLibHook';
@@ -19,8 +20,10 @@ describe('ActiveLibHook', () => {
             query: 'test',
             type: 'test'
         },
-        trees: []
+        trees: [],
+        permissions: mockLibraryPermissions
     };
+
     test('should get empty library if no activeLibrary set', async () => {
         let givenActiveLibrary: any;
 

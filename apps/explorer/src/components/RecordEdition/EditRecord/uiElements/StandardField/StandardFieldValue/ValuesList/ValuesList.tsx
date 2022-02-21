@@ -7,8 +7,8 @@ import List from 'components/shared/List';
 import React, {SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {IDateRangeValue} from '_types/types';
 
 export interface IValueOfValuesList {
@@ -19,7 +19,7 @@ export interface IValueOfValuesList {
 }
 
 interface IValuesListProps {
-    attribute: GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute_StandardAttribute;
     valuesList: IValueOfValuesList[];
     onValueSelect: (value: string | IDateRangeValue) => void;
     onValueCopy: (value: string | IDateRangeValue) => void;

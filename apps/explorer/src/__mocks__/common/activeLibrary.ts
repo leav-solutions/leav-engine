@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
+import {mockLibraryPermissions} from './library';
 
 export const mockActiveLibrary: IActiveLibrary = {
     id: 'activeLibraryId',
@@ -13,5 +14,6 @@ export const mockActiveLibrary: IActiveLibrary = {
         query: 'activeLibraryQuery',
         type: 'activeLibraryType'
     },
-    trees: []
+    trees: [],
+    permissions: mockLibraryPermissions
 };

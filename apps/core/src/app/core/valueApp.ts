@@ -23,7 +23,7 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
 }
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -263,8 +263,23 @@ export default function ({
                         }
                     },
                     Value: commonValueResolvers,
-                    LinkValue: commonValueResolvers,
-                    TreeValue: commonValueResolvers
+                    LinkValue: {
+                        ...commonValueResolvers,
+                        value: parent => ({
+                            ...parent.value,
+                            // Add attribute on value as it might be useful for nested resolvers like ancestors
+                            attribute: parent.attribute
+                        })
+                    },
+                    TreeValue: {
+                        ...commonValueResolvers,
+                        value: parent => ({
+                            ...parent.value,
+                            // Add attribute and treeId on value as it might be useful for nested resolvers like ancestors
+                            attribute: parent.attribute,
+                            treeId: parent.treeId
+                        })
+                    }
                 }
             };
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};

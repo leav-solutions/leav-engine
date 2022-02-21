@@ -3,14 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
-import {isNumber} from 'util';
+import {omit} from 'lodash';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
+import {IKeyValue} from '_types/shared';
+import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
 import {IRecord} from '../../../_types/record';
-import {ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../../_types/tree';
+import {ITree, ITreeElement, ITreeNode, ITreeNodeWithTreeId, TreeBehavior, TreePaths} from '../../../_types/tree';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {ISaveTreeMutationArgs, ITreeLibraryForGraphQL, ITreePermissionsConfForGraphQL, ITreesQueryArgs} from './_types';
@@ -22,15 +25,18 @@ export interface ITreeAttributeApp {
 interface IDeps {
     'core.domain.tree'?: ITreeDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.permission'?: IPermissionDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core'?: ICoreApp;
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function ({
+export default function({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
+    'core.domain.permission': permissionDomain = null,
     'core.app.core': coreApp = null,
+    'core.app.graphql': graphqlApp = null,
     'core.domain.library': libraryDomain = null
 }: IDeps = {}): ITreeAttributeApp {
     /**
@@ -42,8 +48,8 @@ export default function ({
      * @return string
      */
     const _findParentAttribute = (path): string => {
-        const restrictedKeys = ['ancestors', 'children', 'value'];
-        if (!restrictedKeys.includes(path.key) && !isNumber(path.key)) {
+        const restrictedKeys = ['ancestors', 'children', 'value', 'treeValue'];
+        if (!restrictedKeys.includes(path.key) && typeof path.key !== 'number') {
             return path.key;
         }
 
@@ -60,6 +66,30 @@ export default function ({
         const attribute = parent.attribute ?? _findParentAttribute(info.path);
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
         return attributeProps.linked_tree;
+    };
+
+    const _filterTreeContentReduce = (ctx: IQueryInfos, treeId: string) => async (
+        visibleNodesProm: Promise<ITreeNodeWithTreeId[]>,
+        treeNode: ITreeNode
+    ): Promise<ITreeNodeWithTreeId[]> => {
+        const visibleNodes = await visibleNodesProm;
+        const isVisible = await permissionDomain.isAllowed({
+            type: PermissionTypes.TREE_NODE,
+            applyTo: treeId,
+            action: TreeNodePermissionsActions.ACCESS_TREE,
+            target: {
+                recordId: treeNode.record.id,
+                libraryId: treeNode.record.library
+            },
+            userId: ctx.userId,
+            ctx
+        });
+
+        if (isVisible) {
+            visibleNodes.push({...treeNode, treeId});
+        }
+
+        return visibleNodes;
     };
 
     return {
@@ -83,13 +113,26 @@ export default function ({
                         settings: TreeLibrarySettings!
                     }
 
+                    type TreePermissions {
+                        ${Object.values(TreePermissionsActions)
+                            .map(action => `${action}: Boolean!`)
+                            .join(' ')}
+                    }
+
+                    type TreeNodePermissions {
+                        ${Object.values(TreeNodePermissionsActions)
+                            .map(action => `${action}: Boolean!`)
+                            .join(' ')}
+                    }
+
                     type Tree {
                         id: ID!,
                         system: Boolean!,
                         libraries: [TreeLibrary!]!,
                         behavior: TreeBehavior!,
                         label(lang: [AvailableLanguage!]): SystemTranslation
-                        permissions_conf: [TreeNodePermissionsConf!]
+                        permissions_conf: [TreeNodePermissionsConf!],
+                        permissions: TreePermissions!
                     }
 
                     type TreeNodePermissionsConf {
@@ -131,7 +174,8 @@ export default function ({
                         record: Record!,
                         ancestors: [[TreeNode!]!],
                         children: [TreeNode!],
-                        linkedRecords(attribute: ID): [Record!]
+                        linkedRecords(attribute: ID): [Record!],
+                        permissions: TreeNodePermissions!
                     }
 
                     input TreeElementInput {
@@ -216,10 +260,11 @@ export default function ({
                             ctx: IQueryInfos
                         ): Promise<ITreeNode[]> {
                             ctx.treeId = treeId;
-                            const res = await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx});
 
-                            // Add treeId as it might be useful for nested resolvers
-                            return res.map(r => ({...r, treeId}));
+                            return (await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx})).reduce(
+                                _filterTreeContentReduce(ctx, treeId),
+                                Promise.resolve([])
+                            );
                         },
                         async fullTreeContent(_, {treeId}: {treeId: string}, ctx): Promise<ITreeNode[]> {
                             return treeDomain.getTreeContent({treeId, ctx});
@@ -228,25 +273,27 @@ export default function ({
                     Mutation: {
                         async saveTree(_, {tree}: ISaveTreeMutationArgs, ctx: IQueryInfos): Promise<ITree> {
                             // Convert permissions conf
-                            const treeToSave: ITree = {
-                                ...tree,
-                                libraries: tree.libraries
-                                    ? tree.libraries.reduce((acc, cur) => {
-                                          return {...acc, [cur.library]: cur.settings};
-                                      }, {})
-                                    : [],
-                                permissions_conf: tree.permissions_conf
-                                    ? tree.permissions_conf.reduce(
-                                          (acc, cur) => ({
-                                              ...acc,
-                                              [cur.libraryId]: cur.permissionsConf
-                                          }),
-                                          {}
-                                      )
-                                    : null
+                            const treeToSave: Partial<ITree> = {
+                                ...omit(tree, ['libraries', 'permissions_conf'])
                             };
 
-                            return treeDomain.saveTree(treeToSave, ctx);
+                            if (tree.permissions_conf) {
+                                treeToSave.permissions_conf = tree.permissions_conf.reduce(
+                                    (acc, cur) => ({
+                                        ...acc,
+                                        [cur.libraryId]: cur.permissionsConf
+                                    }),
+                                    {}
+                                );
+                            }
+
+                            if (tree.libraries) {
+                                treeToSave.libraries = tree.libraries.reduce((acc, cur) => {
+                                    return {...acc, [cur.library]: cur.settings};
+                                }, {});
+                            }
+
+                            return treeDomain.saveTree(treeToSave as ITree, ctx);
                         },
                         async deleteTree(parent, {id}, ctx): Promise<ITree> {
                             return treeDomain.deleteTree(id, ctx);
@@ -286,7 +333,7 @@ export default function ({
                         },
                         libraries: async (treeData: ITree, _, ctx: IQueryInfos): Promise<ITreeLibraryForGraphQL[]> => {
                             return Promise.all(
-                                Object.keys(treeData.libraries).map(async libId => {
+                                Object.keys(treeData.libraries ?? {}).map(async libId => {
                                     const lib = await libraryDomain.getLibraries({
                                         params: {
                                             filters: {id: libId},
@@ -305,6 +352,27 @@ export default function ({
                                       permissionsConf: treeData.permissions_conf[libId]
                                   }))
                                 : null;
+                        },
+                        permissions: (
+                            tree: ITree,
+                            _,
+                            ctx: IQueryInfos,
+                            infos: GraphQLResolveInfo
+                        ): Promise<IKeyValue<boolean>> => {
+                            const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
+                            return requestedActions.reduce(async (allPermsProm, action) => {
+                                const allPerms = await allPermsProm;
+
+                                const isAllowed = await permissionDomain.isAllowed({
+                                    type: PermissionTypes.TREE,
+                                    applyTo: tree.id,
+                                    action: action as TreePermissionsActions,
+                                    userId: ctx.userId,
+                                    ctx
+                                });
+
+                                return {...allPerms, [action]: isAllowed};
+                            }, Promise.resolve({}));
                         }
                     },
                     TreeNode: {
@@ -314,22 +382,23 @@ export default function ({
                             ctx: IQueryInfos,
                             info: GraphQLResolveInfo
                         ): Promise<ITreeNode[]> => {
-                            if (typeof parent.children !== 'undefined') {
-                                return parent.children;
-                            }
-
-                            const element = {
-                                id: parent.record.id,
-                                library: parent.record.library
-                            };
-
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
+                            let children = [];
 
-                            const children = await treeDomain.getElementChildren({treeId, element, ctx});
+                            if (typeof parent.children !== 'undefined') {
+                                children = parent.children;
+                            } else {
+                                const element = {
+                                    id: parent.record.id,
+                                    library: parent.record.library
+                                };
+
+                                children = await treeDomain.getElementChildren({treeId, element, ctx});
+                            }
 
                             // Add treeId as it might be useful for nested resolvers
-                            return children.map(n => ({...n, treeId}));
+                            return children.reduce(_filterTreeContentReduce(ctx, treeId), Promise.resolve([]));
                         },
                         ancestors: async (
                             parent: ITreeNode & {treeId?: string},
@@ -369,6 +438,36 @@ export default function ({
                             });
 
                             return records;
+                        },
+                        permissions: (
+                            treeNode: ITreeNode & {treeId?: string},
+                            _,
+                            ctx: IQueryInfos,
+                            infos: GraphQLResolveInfo
+                        ): Promise<IKeyValue<boolean>> => {
+                            if (!treeNode.treeId) {
+                                return null;
+                            }
+
+                            const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
+
+                            return requestedActions.reduce(async (allPermsProm, action) => {
+                                const allPerms = await allPermsProm;
+
+                                const isAllowed = await permissionDomain.isAllowed({
+                                    type: PermissionTypes.TREE_NODE,
+                                    applyTo: treeNode.treeId,
+                                    action: action as TreeNodePermissionsActions,
+                                    userId: ctx.userId,
+                                    target: {
+                                        recordId: treeNode.record.id,
+                                        libraryId: treeNode.record.library
+                                    },
+                                    ctx
+                                });
+
+                                return {...allPerms, [action]: isAllowed};
+                            }, Promise.resolve({}));
                         }
                     }
                 }

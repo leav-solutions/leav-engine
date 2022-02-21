@@ -9,13 +9,13 @@ import {MessagesTypes} from 'redux/messages/messages';
 import {Button, Grid, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
-import {GET_FORM_forms_list} from '../../../../../../../../_gqlTypes/GET_FORM';
 import {
     FormElementInput,
     FormElementsByDepsInput,
     TreeElementInput
 } from '../../../../../../../../_gqlTypes/globalTypes';
 import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
+import {useEditFormContext} from '../../hooks/useEditFormContext';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
 import DependencySettings from './DependencySettings';
 import ElementsReserve from './ElementsReserve';
@@ -31,14 +31,10 @@ const SaveButton = styled(Button)`
     }
 `;
 
-interface IContentTabProps {
-    library: string;
-    form: GET_FORM_forms_list;
-}
-
-function ContentTab({library, form}: IContentTabProps): JSX.Element {
+function ContentTab(): JSX.Element {
     const {t} = useTranslation();
     const {addMessage} = useMessages();
+    const {form, library, readonly} = useEditFormContext();
     const [state, dispatch] = useReducer(formBuilderReducer, computateInitialState(library, form));
     const [isSaving, setIsSaving] = useState<boolean>(false);
 
@@ -48,6 +44,10 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
     });
 
     const _handleSubmit = async () => {
+        if (readonly) {
+            return;
+        }
+
         setIsSaving(true);
         const savableElements = Object.keys(state.elements).reduce(
             (allElems: FormElementsByDepsInput[], depAttr: string): FormElementsByDepsInput[] => {
@@ -121,10 +121,12 @@ function ContentTab({library, form}: IContentTabProps): JSX.Element {
                 <Grid.Row stretched>
                     <Grid.Column width={4} className="elements">
                         <DependencySettings />
-                        <SaveButton loading={isSaving} primary icon labelPosition="left" onClick={_handleSubmit}>
-                            <Icon name="save" />
-                            {t('admin.save')}
-                        </SaveButton>
+                        {!readonly && (
+                            <SaveButton loading={isSaving} primary icon labelPosition="left" onClick={_handleSubmit}>
+                                <Icon name="save" />
+                                {t('admin.save')}
+                            </SaveButton>
+                        )}
                         <ElementsReserve />
                     </Grid.Column>
                     <Grid.Column className="layout" width={12}>

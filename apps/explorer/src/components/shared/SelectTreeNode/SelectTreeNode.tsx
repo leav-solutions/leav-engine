@@ -4,7 +4,11 @@
 import {useQuery} from '@apollo/client';
 import {Spin, Tree} from 'antd';
 import {Key} from 'antd/lib/table/interface';
-import {getTreeContentQuery, IGetTreeContentQuery, IRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
+import {
+    getTreeContentQuery,
+    IGetTreeContentQuery,
+    ITreeContentRecordAndChildren
+} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect, useState} from 'react';
 import {localizedTranslation} from 'utils';
@@ -20,7 +24,7 @@ interface ISelectTreeNodeProps {
     multiple?: boolean;
 }
 
-const _constructTreeContent = (data: IRecordAndChildren[], parentPath?: string): ITreeNodeWithRecord[] => {
+const _constructTreeContent = (data: ITreeContentRecordAndChildren[], parentPath?: string): ITreeNodeWithRecord[] => {
     return data.map(e => {
         const recordKey = e.record.whoAmI.library.id + '/' + e.record.whoAmI.id;
         const path = [parentPath, recordKey].filter(el => !!el).join('_');

@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {DataProxy} from 'apollo-cache';
-import {History} from 'history';
 import React, {useState} from 'react';
 import {deleteFormQuery} from '../../../../../queries/forms/deleteFormMutation';
 import {getFormsQuery} from '../../../../../queries/forms/getFormsQuery';
@@ -16,10 +15,10 @@ import FormsList from './FormsList';
 
 interface IFormsTabProps {
     libraryId: string;
-    history?: History;
+    readonly: boolean;
 }
 
-function FormsTab({libraryId, history}: IFormsTabProps): JSX.Element {
+function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
     const [filters, setFilters] = useState<IFormFilterOptions>({});
     const {loading, error, data} = useQuery<GET_FORMS_LIST, GET_FORMS_LISTVariables>(getFormsQuery, {
         variables: {...addWildcardToFilters(filters), library: libraryId}
@@ -128,6 +127,7 @@ function FormsTab({libraryId, history}: IFormsTabProps): JSX.Element {
                     open={openEditionModal}
                     libraryId={libraryId}
                     onClose={_handleFormEditionClose}
+                    readonly={readonly}
                 />
             )}
         </>

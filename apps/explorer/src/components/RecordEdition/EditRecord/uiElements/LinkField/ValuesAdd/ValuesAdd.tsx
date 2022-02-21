@@ -23,18 +23,18 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {localizedTranslation} from 'utils';
-import {
-    GET_FORM_forms_list_elements_elements_attribute_LinkAttribute,
-    GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values
-} from '_gqlTypes/GET_FORM';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values
+} from '_gqlTypes/RECORD_FORM';
 import {ISharedStateSelectionSearch, PreviewSize} from '_types/types';
 
-type ValueFromList = GET_FORM_forms_list_elements_elements_attribute_LinkAttribute_linkValuesList_values;
+type ValueFromList = RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values;
 
 interface IValuesAddProps {
-    attribute: GET_FORM_forms_list_elements_elements_attribute_LinkAttribute;
+    attribute: RECORD_FORM_recordForm_elements_attribute_LinkAttribute;
     onAdd: (values: RecordIdentity[]) => void;
     onClose: () => void;
 }

@@ -432,7 +432,7 @@ export default function ({
             }
 
             const isAllowedToDelete = await recordAttributePermissionDomain.getRecordAttributePermission(
-                RecordAttributePermissionsActions.DELETE_VALUE,
+                RecordAttributePermissionsActions.EDIT_VALUE,
                 ctx.userId,
                 attribute,
                 library,
@@ -441,7 +441,7 @@ export default function ({
             );
 
             if (!isAllowedToDelete) {
-                throw new PermissionError(RecordAttributePermissionsActions.DELETE_VALUE);
+                throw new PermissionError(RecordAttributePermissionsActions.EDIT_VALUE);
             }
 
             const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});

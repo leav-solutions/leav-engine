@@ -3,10 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
 import Cell from 'components/NavigationView/ColumnNavigation/Column/Cell';
+import {IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
+import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import React, {createRef, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {IRecordAndChildren} from '../../../../graphQL/queries/trees/getTreeContentQuery';
+import {ITreeContentRecordAndChildren} from '../../../../graphQL/queries/trees/getTreeContentQuery';
 import themingVar from '../../../../themingVar';
 import HeaderColumnNavigation from '../HeaderColumnNavigation';
 
@@ -33,16 +34,17 @@ const SpinWrapper = styled.div`
 `;
 
 interface IColumnProps {
-    treeElements: IRecordAndChildren[];
-    pathPart: RecordIdentity_whoAmI | null;
+    treeElements: ITreeContentRecordAndChildren[];
+    pathPart: ITreeContentRecordAndChildren | null;
     depth: number;
     showLoading: boolean;
     columnActive: boolean;
 }
 
 const Column = ({pathPart, treeElements, depth, showLoading, columnActive}: IColumnProps) => {
-    const parent = findPathInTree(pathPart, treeElements);
+    const [activeTree] = useActiveTree();
 
+    const parent = findPathInTree(pathPart, treeElements, activeTree);
     const [items, setItems] = useState(parent?.children ?? []);
 
     const ref = createRef<HTMLDivElement>();
@@ -97,15 +99,22 @@ const Column = ({pathPart, treeElements, depth, showLoading, columnActive}: ICol
 };
 
 const findPathInTree = (
-    pathPart: RecordIdentity_whoAmI | null,
-    treeElements: IRecordAndChildren[]
-): IRecordAndChildren | undefined => {
+    pathPart: ITreeContentRecordAndChildren | null,
+    treeElements: ITreeContentRecordAndChildren[],
+    activeTree: IActiveTree
+): ITreeContentRecordAndChildren | undefined => {
     if (!pathPart) {
-        return {record: null, children: treeElements};
+        return {
+            record: null,
+            children: treeElements,
+            // There is one render before active tree is actually loaded, so we init permissions to false
+            // before having the real permissions
+            permissions: {access_tree: false, edit_children: false, detach: false, ...activeTree?.permissions}
+        };
     }
 
     const parent = treeElements.find(treeElement => {
-        return treeElement.record.whoAmI.id.toString() === pathPart.id.toString();
+        return treeElement.record.whoAmI.id.toString() === pathPart.record.id.toString();
     });
 
     if (parent) {
@@ -118,11 +127,11 @@ const findPathInTree = (
         }
 
         return acc;
-    }, [] as IRecordAndChildren[][]);
+    }, [] as ITreeContentRecordAndChildren[][]);
 
     if (children.length) {
         for (const child of children) {
-            const childParent = findPathInTree(pathPart, child);
+            const childParent = findPathInTree(pathPart, child, activeTree);
             if (childParent) {
                 return childParent;
             }

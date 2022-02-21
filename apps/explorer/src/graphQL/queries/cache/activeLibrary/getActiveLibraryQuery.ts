@@ -4,7 +4,8 @@
 import gql from 'graphql-tag';
 import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes,
-    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees,
+    GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 
 export interface IActiveLibrary {
@@ -18,6 +19,7 @@ export interface IActiveLibrary {
         type: string;
     };
     trees: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[];
+    permissions: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions;
 }
 
 export interface IGetActiveLibrary {
@@ -37,6 +39,13 @@ export const getActiveLibrary = gql`
                 type @client
             }
             trees
+            permissions @client {
+                access_library @client
+                access_record @client
+                create_record @client
+                edit_record @client
+                delete_record @client
+            }
         }
     }
 `;

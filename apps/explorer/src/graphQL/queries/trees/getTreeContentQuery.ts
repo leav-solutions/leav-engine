@@ -9,13 +9,20 @@ export type TreeNodeAncestors = Array<{
     record: RecordIdentity;
 }>;
 
-export interface IRecordAndChildren {
+export interface ITreeNodePermissions {
+    access_tree: boolean;
+    detach: boolean;
+    edit_children: boolean;
+}
+
+export interface ITreeContentRecordAndChildren {
     record: RecordIdentity;
-    children?: IRecordAndChildren[];
+    children?: ITreeContentRecordAndChildren[];
+    permissions: ITreeNodePermissions;
 }
 
 export interface IGetTreeContentQuery {
-    treeContent: IRecordAndChildren[];
+    treeContent: ITreeContentRecordAndChildren[];
 }
 
 export interface IGetTreeContentQueryVar {
@@ -29,6 +36,11 @@ export interface IGetTreeContentQueryVar {
 const recordField = `
     record {
         ...RecordIdentity
+    }
+    permissions {
+        access_tree
+        detach
+        edit_children
     }
 `;
 

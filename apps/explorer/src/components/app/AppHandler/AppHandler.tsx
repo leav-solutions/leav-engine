@@ -6,7 +6,7 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {getMe} from '../../../graphQL/queries/userData/me';
-import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {getSysTranslationQueryLanguage} from '../../../utils';
@@ -40,18 +40,7 @@ function AppHandler(): JSX.Element {
 
     useEffect(() => {
         if (!activeLibrary) {
-            updateActiveLibrary({
-                id: '',
-                name: '',
-                filter: '',
-                attributes: [],
-                gql: {
-                    searchableFields: '',
-                    query: '',
-                    type: ''
-                },
-                trees: []
-            });
+            updateActiveLibrary(initialActiveLibrary);
         }
     }, [updateActiveLibrary, activeLibrary]);
 

@@ -1,19 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import Modal from 'antd/lib/modal/Modal';
 import LibraryItemsList from 'components/LibraryItemsList';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
+import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 import {resetSearchSelection} from 'redux/selection';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {ISharedStateSelectionSearch} from '_types/types';
 
 const WrapperItemsList = styled.div`
@@ -61,14 +60,7 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
         </Modal>
     );
 
-    const {loading, data, error} = useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
-        getLibraryDetailExtendedQuery(0),
-        {
-            variables: {
-                libId
-            }
-        }
-    );
+    const {loading, data, error} = useGetLibraryDetailExtendedQuery({library: libId});
 
     if (loading) {
         return renderModal(<Loading />);
@@ -80,6 +72,10 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
 
     if (!data.libraries.list.length) {
         return renderModal(<ErrorDisplay message={t('lib_detail.not_found')} />);
+    }
+
+    if (!data.libraries.list[0].permissions.access_library) {
+        return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />;
     }
 
     return renderModal(

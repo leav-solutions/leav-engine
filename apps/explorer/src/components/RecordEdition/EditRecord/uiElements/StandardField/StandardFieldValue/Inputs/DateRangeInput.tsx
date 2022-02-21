@@ -9,14 +9,14 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import themingVar from 'themingVar';
 import {stringifyDateRangeValue} from 'utils';
-import {GET_FORM_forms_list_elements_elements_attribute_StandardAttribute} from '_gqlTypes/GET_FORM';
+import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {IDateRangeValue} from '_types/types';
 
 function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardInputProps): JSX.Element {
     const {editingValue, displayValue} = fieldValue;
     const {t} = useTranslation();
 
-    const attribute = state.formElement.attribute as GET_FORM_forms_list_elements_elements_attribute_StandardAttribute;
+    const attribute = state.formElement.attribute as RECORD_FORM_recordForm_elements_attribute_StandardAttribute;
     const isValuesListEnabled = !!attribute?.values_list?.enable;
     const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
 

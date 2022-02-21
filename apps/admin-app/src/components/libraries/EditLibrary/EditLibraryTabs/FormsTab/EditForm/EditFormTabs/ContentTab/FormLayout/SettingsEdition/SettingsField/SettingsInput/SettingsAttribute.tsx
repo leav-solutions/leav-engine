@@ -19,6 +19,7 @@ function SettingsAttribute({
     fieldName,
     library,
     filters,
+    disabled,
     multiple = false
 }: ISettingsAttributeProps): JSX.Element {
     const {t} = useTranslation();
@@ -33,6 +34,7 @@ function SettingsAttribute({
         <AttributeSelector
             multiple={multiple}
             key={fieldName}
+            disabled={disabled}
             placeholder={t('forms.select_attribute')}
             name={fieldName}
             onChange={_handleChange}

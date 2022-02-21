@@ -12,7 +12,8 @@
         "duplicate": "Duplicate",
         "copy": "Copy",
         "feature_not_available": "This feature will be available soon!",
-        "available_soon": "Soon"
+        "available_soon": "Soon",
+        "go_back_home": "Back Home"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
@@ -354,8 +355,12 @@
     },
     "error": {
         "error_occurred": "An error occurred",
+        "access_denied": "Access denied",
+        "access_denied_details": "You are not allowed to access this element, please contact an administrator",
         "graphql_error_occurred": "An error ocurred: {{error}}",
-        "network_error_occurred": "An network error occurred"
+        "network_error_occurred": "An network error occurred",
+        "PERMISSION_ERROR": "You are not allowed to perform this action",
+        "INTERNAL_ERROR": "An internal error occurred"
     },
     "language": {
         "fr": "French",

@@ -9,6 +9,7 @@ import SelectCellsBtn, {
 } from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import {SelectionModeContext} from 'context';
+import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useContext, useEffect, useState} from 'react';
@@ -173,6 +174,8 @@ interface IItemTileDisplayProps {
 
 function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     const {t} = useTranslation();
+    const [activeLibrary] = useActiveLibrary();
+    const canDeleteRecord = activeLibrary.permissions.delete_record;
 
     const {state: searchState} = useSearchReducer();
     const selectionMode = useContext(SelectionModeContext);
@@ -229,13 +232,6 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
 
     const _handleClose = () => {
         setEditRecordModal(false);
-    };
-
-    const _handleEdit = e => {
-        e.stopPropagation();
-        e.preventDefault();
-
-        setEditRecordModal(true);
     };
 
     const _handleSelect = e => {
@@ -316,9 +312,14 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                                     <Tooltip title={t('global.edit')} key="edit">
                                         <EditRecordBtn shape={'circle'} record={item.whoAmI} />
                                     </Tooltip>
-                                    <Tooltip title={t('global.delete')} key="delete">
-                                        <Button shape="circle" icon={<DeleteOutlined />} onClick={_handleDelete} />
-                                    </Tooltip>
+                                    {canDeleteRecord ? (
+                                        <Tooltip title={t('global.delete')} key="delete">
+                                            <Button shape="circle" icon={<DeleteOutlined />} onClick={_handleDelete} />
+                                        </Tooltip>
+                                    ) : (
+                                        // Keep this empty div for styling purpose
+                                        <div></div>
+                                    )}
                                 </Actions>
                             )}
                         </ActionsWrapper>

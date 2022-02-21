@@ -10,38 +10,29 @@ import {
     TabsDirection
 } from '@leav/utils';
 import {FormElement} from 'components/RecordEdition/EditRecord/_types';
+import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
-import {GET_FORM_forms_list} from '_gqlTypes/GET_FORM';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
-import {mockAttributeLink, mockAttributeTree, mockFormAttribute} from './attribute';
+import {RECORD_FORM_recordForm, RECORD_FORM_recordForm_elements_values_LinkValue} from '_gqlTypes/RECORD_FORM';
+import {mockAttribute, mockAttributeLink, mockAttributeTree, mockFormAttribute} from './attribute';
 import {mockRecordWhoAmI} from './record';
-
-export const mockForm: GET_FORM_forms_list = {
-    id: 'edition_form',
-    library: {
-        id: 'test_lib'
-    },
-    dependencyAttributes: [],
-    elements: [
-        {
-            dependencyValue: null,
-            elements: [
-                {
-                    id: '12345',
-                    containerId: '__root',
-                    settings: [{key: 'attribute', value: 'test_attribute'}],
-                    type: FormElementTypes.field,
-                    uiElementType: 'input',
-                    attribute: mockFormAttribute
-                }
-            ]
-        }
-    ]
-};
+import {mockModifier} from './value';
 
 const formElementBase = {
     type: FormElementTypes.layout,
     attribute: null,
+    values: [
+        {
+            value: 'My value formatted',
+            raw_value: 'my_raw_value',
+            created_at: 123456789,
+            modified_at: 123456789,
+            created_by: mockModifier,
+            modified_by: mockModifier,
+            id_value: null,
+            attribute: mockAttribute
+        }
+    ],
     settings: {}
 };
 
@@ -75,6 +66,20 @@ export const mockFormElementDate: FormElement<{}> = {
     uiElementType: FormFieldTypes.DATE
 };
 
+export const mockLinkValue: RECORD_FORM_recordForm_elements_values_LinkValue = {
+    linkValue: {
+        id: '123456',
+        whoAmI: {
+            ...mockRecordWhoAmI
+        }
+    },
+    created_at: 123456789,
+    modified_at: 123456789,
+    created_by: mockModifier,
+    modified_by: mockModifier,
+    id_value: null
+};
+
 export const mockFormElementLink: FormElement<{}> = {
     ...formElementBase,
     id: 'link_element',
@@ -93,7 +98,89 @@ export const mockFormElementLink: FormElement<{}> = {
         },
         system: false,
         linkValuesList: {enable: false, allowFreeEntry: false, values: []}
+    },
+    values: [mockLinkValue]
+};
+
+const mockRecord = {
+    id: '123456',
+    whoAmI: {
+        ...mockRecordWhoAmI,
+        id: '123456',
+        label: 'Record label A',
+        library: {
+            ...mockRecordWhoAmI.library,
+            id: 'linked_lib',
+            label: {en: 'Linked lib'}
+        }
     }
+};
+
+const mockRecord2 = {
+    id: '123458',
+    whoAmI: {
+        ...mockRecordWhoAmI,
+        id: '123458',
+        label: 'Record label B',
+        library: {
+            ...mockRecordWhoAmI.library,
+            id: 'linked_lib',
+            label: {en: 'Linked lib'}
+        }
+    }
+};
+
+const mockRecordAncestor = {
+    id: '123457',
+    whoAmI: {
+        ...mockRecordWhoAmI,
+        id: '123457',
+        label: 'Record label ancestor',
+        library: {
+            ...mockRecordWhoAmI.library,
+            id: 'linked_lib',
+            label: {en: 'Linked lib'}
+        }
+    }
+};
+
+export const mockTreeValueA: IRecordPropertyTree = {
+    treeValue: {
+        record: mockRecord,
+        ancestors: [
+            [
+                {
+                    record: mockRecordAncestor
+                },
+                {
+                    record: mockRecord
+                }
+            ]
+        ]
+    },
+    created_at: 123456789,
+    modified_at: 123456789,
+    created_by: mockModifier,
+    modified_by: mockModifier,
+    id_value: '123456'
+};
+
+export const mockTreeValueB: IRecordPropertyTree = {
+    ...mockTreeValueA,
+    treeValue: {
+        record: mockRecord2,
+        ancestors: [
+            [
+                {
+                    record: mockRecordAncestor
+                },
+                {
+                    record: mockRecord2
+                }
+            ]
+        ]
+    },
+    id_value: '987654'
 };
 
 export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
@@ -108,7 +195,8 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
         ...mockFormAttribute,
         ...mockAttributeTree,
         treeValuesList: {enable: false, allowFreeEntry: false, values: []}
-    }
+    },
+    values: [mockTreeValueA, mockTreeValueB]
 };
 
 export const mockFormElementTextBlock: FormElement<{}> = {
@@ -150,4 +238,13 @@ export const mockCommonFormElementProps = {
     recordValues: {},
     onValueDelete: jest.fn(),
     onValueSubmit: jest.fn()
+};
+
+export const mockRecordForm: RECORD_FORM_recordForm = {
+    id: 'edition_form',
+    library: {
+        id: 'test_lib'
+    },
+    recordId: '123456',
+    elements: [{...mockFormElementInput, settings: [{key: 'my_settings', value: 'value'}]}]
 };

@@ -4,6 +4,8 @@
 /* eslint-disable jsdoc/check-indentation */
 
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
+import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {omit} from 'lodash';
@@ -13,7 +15,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
-import {AppPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions, TreeNodePermissionsActions, TreePermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -31,7 +33,7 @@ export interface ITreeDomain {
         element: ITreeElement;
         ctx: IQueryInfos;
     }): Promise<boolean>;
-    saveTree(tree: ITree, ctx: IQueryInfos): Promise<ITree>;
+    saveTree(tree: Partial<ITree>, ctx: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, ctx: IQueryInfos): Promise<ITree>;
     getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
     getTreeProperties(treeId: string, ctx: IQueryInfos): Promise<ITree>;
@@ -165,6 +167,8 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.domain.permission.tree'?: ITreePermissionDomain;
+    'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
     'core.infra.tree'?: ITreeRepo;
@@ -175,6 +179,8 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.app': appPermissionDomain = null,
+    'core.domain.permission.tree': treePermissionDomain = null,
+    'core.domain.permission.treeNode': treeNodePermissionDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
     'core.infra.tree': treeRepo = null,
@@ -206,13 +212,13 @@ export default function ({
     }
 
     const _isForbiddenAsChild = (treeProps: ITree, parent: ITreeElement, element: ITreeElement): boolean =>
-        (parent === null && !treeProps.libraries[element.library].allowedAtRoot) ||
+        (parent === null && !treeProps.libraries?.[element.library]?.allowedAtRoot) ||
         (parent !== null &&
-            !treeProps.libraries[parent.library].allowedChildren.includes('__all__') &&
-            !treeProps.libraries[parent.library].allowedChildren.includes(element.library));
+            !treeProps.libraries?.[parent.library]?.allowedChildren.includes('__all__') &&
+            !treeProps.libraries?.[parent.library]?.allowedChildren.includes(element.library));
 
     return {
-        async saveTree(treeData: ITree, ctx: IQueryInfos): Promise<ITree> {
+        async saveTree(treeData: Partial<ITree>, ctx: IQueryInfos): Promise<ITree> {
             // Check is existing tree
             const isExistingTree = await _isExistingTree(treeData.id, ctx);
 
@@ -378,6 +384,53 @@ export default function ({
                 errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
+            // Check permissions on source
+            const parents = await this.getElementAncestors({treeId, element, ctx});
+            let canEditSourceChildren: boolean;
+            if (parents.length > 1) {
+                canEditSourceChildren = (
+                    await Promise.all(
+                        parents.map(ancestorBranch => {
+                            const parent = ancestorBranch.splice(-2, 1)[0];
+                            return treeNodePermissionDomain.getTreeNodePermission({
+                                treeId,
+                                action: TreeNodePermissionsActions.EDIT_CHILDREN,
+                                node: {id: parent.record.id, library: parent.record.library},
+                                userId: ctx.userId,
+                                ctx
+                            });
+                        })
+                    )
+                ).reduce((isAllowed, ancestorBranchPermission): boolean => isAllowed || ancestorBranchPermission);
+            } else {
+                canEditSourceChildren = await treePermissionDomain.getTreePermission({
+                    treeId,
+                    action: TreePermissionsActions.EDIT_CHILDREN,
+                    userId: ctx.userId,
+                    ctx
+                });
+            }
+
+            // Check permissions on destination
+            const canEditDestinationChildren = parentTo
+                ? treeNodePermissionDomain.getTreeNodePermission({
+                      treeId,
+                      action: TreeNodePermissionsActions.EDIT_CHILDREN,
+                      node: parentTo,
+                      userId: ctx.userId,
+                      ctx
+                  })
+                : treePermissionDomain.getTreePermission({
+                      treeId,
+                      action: TreePermissionsActions.EDIT_CHILDREN,
+                      userId: ctx.userId,
+                      ctx
+                  });
+
+            if (!canEditSourceChildren || !canEditDestinationChildren) {
+                throw new PermissionError(TreePermissionsActions.EDIT_CHILDREN);
+            }
+
             // check allow as children setting
             if (treeExists && elementExists && _isForbiddenAsChild(treeProps, parentTo, element)) {
                 errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
@@ -423,12 +476,35 @@ export default function ({
                 throw new ValidationError(errors);
             }
 
+            const canDetach = await treeNodePermissionDomain.getTreeNodePermission({
+                treeId,
+                action: TreeNodePermissionsActions.DETACH,
+                node: element,
+                userId: ctx.userId,
+                ctx
+            });
+
+            if (!canDetach) {
+                throw new PermissionError(TreeNodePermissionsActions.DETACH);
+            }
+
             return treeRepo.deleteElement({treeId, element, deleteChildren, ctx});
         },
         async getTreeContent({treeId, startingNode = null, ctx}): Promise<ITreeNode[]> {
             const errors: any = {};
             if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
+            }
+
+            const isTreeAccessible = await treePermissionDomain.getTreePermission({
+                treeId,
+                action: TreePermissionsActions.ACCESS_TREE,
+                userId: ctx.userId,
+                ctx
+            });
+
+            if (!isTreeAccessible) {
+                throw new PermissionError(TreePermissionsActions.ACCESS_TREE);
             }
 
             if (Object.keys(errors).length) {

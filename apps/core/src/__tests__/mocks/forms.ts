@@ -1,25 +1,26 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FormFieldTypes, FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import {FormElementTypes, IFormElement, IFormStrict} from '../../_types/forms';
 
-const myField: IFormElement = {
+export const formField: IFormElement = {
     id: '123456',
     order: 0,
     type: FormElementTypes.field,
-    uiElementType: 'input',
+    uiElementType: FormFieldTypes.TEXT_INPUT,
     containerId: '987654',
     settings: {
         attribute: 'test_attribute'
     }
 };
 
-const myLayoutElement: IFormElement = {
+export const formLayoutElement: IFormElement = {
     id: '987654',
     order: 0,
     type: FormElementTypes.layout,
-    uiElementType: 'container',
-    containerId: '__root',
+    uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
+    containerId: FORM_ROOT_CONTAINER_ID,
     settings: {}
 };
 
@@ -29,5 +30,5 @@ export const mockForm: IFormStrict = {
     system: false,
     dependencyAttributes: [],
     label: {fr: 'Test Form'},
-    elements: [{elements: [myField, myLayoutElement]}]
+    elements: [{elements: [formField, formLayoutElement]}]
 };

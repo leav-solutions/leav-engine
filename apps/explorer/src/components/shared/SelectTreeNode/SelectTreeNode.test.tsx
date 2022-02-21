@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {act, render, screen, waitForElement} from '_tests/testUtils';
+import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
 import {getTreeContentQuery} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import SelectTreeNode from './SelectTreeNode';
 
@@ -65,9 +66,11 @@ describe('SelectTreeNode', () => {
                                             __typename: 'Categorie'
                                         },
                                         children: [],
+                                        permissions: mockTreeNodePermissions,
                                         __typename: 'TreeNode'
                                     }
                                 ],
+                                permissions: mockTreeNodePermissions,
                                 __typename: 'TreeNode'
                             }
                         ]

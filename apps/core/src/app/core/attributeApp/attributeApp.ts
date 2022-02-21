@@ -4,15 +4,19 @@
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
+import {GraphQLResolveInfo} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
+import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IValuesListConf} from '../../../_types/attribute';
+import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {AttributeCondition} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
@@ -29,6 +33,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.domain.actionsList'?: IActionsListDomain;
+    'core.domain.permission'?: IPermissionDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core'?: ICoreApp;
     'core.utils'?: IUtils;
@@ -40,6 +45,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
         'core.domain.record': recordDomain = null,
         'core.domain.library': libraryDomain = null,
         'core.domain.tree': treeDomain = null,
+        'core.domain.permission': permissionDomain = null,
         'core.app.graphql': graphqlApp = null,
         'core.app.core': coreApp = null,
         'core.utils': utils = null
@@ -63,11 +69,61 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                           attributeDomain.getAttributeProperties({id: attrId, ctx})
                       )
                   )
-                : null
+                : null,
+        permissions: (
+            attributeData: IAttribute,
+            {record}: {record: {id: string; library: string}},
+            ctx: IQueryInfos,
+            infos: GraphQLResolveInfo
+        ): Promise<IKeyValue<boolean>> => {
+            const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
+
+            return requestedActions.reduce(async (allPermsProm, action) => {
+                const allPerms = await allPermsProm;
+
+                const hasRecordInformations = record?.id && record?.library;
+
+                const isAllowed = await permissionDomain.isAllowed({
+                    type: hasRecordInformations ? PermissionTypes.RECORD_ATTRIBUTE : PermissionTypes.ATTRIBUTE,
+                    applyTo: hasRecordInformations ? record.library : attributeData.id,
+                    action: action as AttributePermissionsActions,
+                    userId: ctx.userId,
+                    target: hasRecordInformations
+                        ? {
+                              recordId: record.id,
+                              attributeId: attributeData.id
+                          }
+                        : null,
+                    ctx
+                });
+
+                return {...allPerms, [action]: isAllowed};
+            }, Promise.resolve({}));
+        }
     };
 
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
+            const attributesInterfaceSchema = `
+                id: ID!,
+                type: AttributeType!,
+                format: AttributeFormat,
+                system: Boolean!,
+                label(lang: [AvailableLanguage!]): SystemTranslation,
+                description(lang: [AvailableLanguage!]): SystemTranslationOptional,
+                actions_list: ActionsListConfiguration,
+                permissions_conf: Treepermissions_conf,
+                multiple_values: Boolean!,
+                versions_conf: ValuesVersionsConf,
+                input_types: ActionListIOTypes!,
+                output_types: ActionListIOTypes!,
+                metadata_fields: [StandardAttribute!],
+
+                # Permissions for this attribute.
+                # If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
+                permissions(record: AttributePermissionsRecord): AttributePermissions!
+            `;
+
             const baseSchema = {
                 typeDefs: `
                     enum AttributeType {
@@ -94,74 +150,38 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         ${Object.values(ActionsListEvents).map(event => `${event}: [IOTypes!]!`)}
                     }
 
+                    input AttributePermissionsRecord {
+                        id: String,
+                        library: String!
+                    }
+
+                    type AttributePermissions {
+                        ${Object.values(AttributePermissionsActions)
+                            .map(action => `${action}: Boolean!`)
+                            .join(' ')}
+                    }
+
+
                     interface Attribute {
-                        id: ID!,
-                        type: AttributeType!,
-                        format: AttributeFormat,
-                        system: Boolean!,
-                        label(lang: [AvailableLanguage!]): SystemTranslation,
-                        description(lang: [AvailableLanguage!]): SystemTranslationOptional,
-                        actions_list: ActionsListConfiguration,
-                        permissions_conf: Treepermissions_conf,
-                        multiple_values: Boolean!,
-                        versions_conf: ValuesVersionsConf,
-                        input_types: ActionListIOTypes!,
-                        output_types: ActionListIOTypes!,
-                        metadata_fields: [StandardAttribute!]
+                        ${attributesInterfaceSchema}
                     }
 
                     # Application Attribute
                     type StandardAttribute implements Attribute {
-                        id: ID!,
-                        type: AttributeType!,
-                        format: AttributeFormat,
-                        system: Boolean!,
-                        label(lang: [AvailableLanguage!]): SystemTranslation,
-                        description(lang: [AvailableLanguage!]): SystemTranslationOptional,
+                        ${attributesInterfaceSchema}
                         embedded_fields: [EmbeddedAttribute],
-                        actions_list: ActionsListConfiguration,
-                        permissions_conf: Treepermissions_conf,
-                        multiple_values: Boolean!,
-                        versions_conf: ValuesVersionsConf,
-                        input_types: ActionListIOTypes!,
-                        output_types: ActionListIOTypes!,
-                        metadata_fields: [StandardAttribute!],
-                        values_list: StandardValuesListConf
+                        values_list: StandardValuesListConf,
                     }
 
                     type LinkAttribute implements Attribute{
-                        id: ID!,
-                        type: AttributeType!,
-                        format: AttributeFormat,
-                        system: Boolean!,
-                        label(lang: [AvailableLanguage!]): SystemTranslation,
-                        description(lang: [AvailableLanguage!]): SystemTranslationOptional,
+                        ${attributesInterfaceSchema}
                         linked_library: Library,
-                        actions_list: ActionsListConfiguration,
-                        permissions_conf: Treepermissions_conf,
-                        multiple_values: Boolean!,
-                        versions_conf: ValuesVersionsConf,
-                        input_types: ActionListIOTypes!,
-                        output_types: ActionListIOTypes!,
-                        metadata_fields: [StandardAttribute!],
                         values_list: LinkValuesListConf
                     }
 
                     type TreeAttribute implements Attribute{
-                        id: ID!,
-                        type: AttributeType!,
-                        format: AttributeFormat,
-                        system: Boolean!,
-                        label(lang: [AvailableLanguage!]): SystemTranslation,
-                        description(lang: [AvailableLanguage!]): SystemTranslationOptional,
+                        ${attributesInterfaceSchema}
                         linked_tree: Tree,
-                        actions_list: ActionsListConfiguration,
-                        permissions_conf: Treepermissions_conf,
-                        multiple_values: Boolean!,
-                        versions_conf: ValuesVersionsConf,
-                        input_types: ActionListIOTypes!,
-                        output_types: ActionListIOTypes!,
-                        metadata_fields: [StandardAttribute!],
                         values_list: TreeValuesListConf
                     }
 
@@ -386,28 +406,33 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                             // Here, values is a list of "[id_record]/[id_library]". Return tree node instead
                             return {
                                 ...attributeData.values_list,
-                                values: (attributeData.values_list.values as string[])
-                                    .map(async treeElem => {
-                                        const [library, id] = treeElem.split('/');
-                                        const record = await recordDomain.find({
-                                            params: {
-                                                library,
-                                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: id}]
-                                            },
-                                            ctx
-                                        });
-                                        const isInTree = await treeDomain.isElementPresent({
-                                            treeId: attributeData.linked_tree,
-                                            element: {
-                                                library,
-                                                id
-                                            },
-                                            ctx
-                                        });
-                                        const ret = record.list.length && isInTree ? {record: record.list[0]} : null;
-                                        return ret;
-                                    })
-                                    .filter(r => r !== null)
+                                values: (
+                                    await Promise.all(
+                                        (attributeData.values_list.values as string[]).map(async treeElem => {
+                                            const [library, id] = treeElem.split('/');
+                                            const record = await recordDomain.find({
+                                                params: {
+                                                    library,
+                                                    filters: [
+                                                        {field: 'id', condition: AttributeCondition.EQUAL, value: id}
+                                                    ]
+                                                },
+                                                ctx
+                                            });
+                                            const isInTree = await treeDomain.isElementPresent({
+                                                treeId: attributeData.linked_tree,
+                                                element: {
+                                                    library,
+                                                    id
+                                                },
+                                                ctx
+                                            });
+                                            const ret =
+                                                record.list.length && isInTree ? {record: record.list[0]} : null;
+                                            return ret;
+                                        })
+                                    )
+                                ).filter(r => r !== null)
                             };
                         }
                     },

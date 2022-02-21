@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    GET_FORM_forms_list_elements_elements_attribute,
-    GET_FORM_forms_list_elements_elements_attribute_TreeAttribute
-} from '_gqlTypes/GET_FORM';
+    RECORD_FORM_recordForm_elements_attribute,
+    RECORD_FORM_recordForm_elements_attribute_TreeAttribute
+} from '_gqlTypes/RECORD_FORM';
 import {
     GET_ATTRIBUTES_BY_LIB_attributes_list,
     GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute,
@@ -89,7 +89,7 @@ export const mockAttribute: IAttribute = {
     isMultiple: false
 };
 
-export const mockFormAttribute: GET_FORM_forms_list_elements_elements_attribute = {
+export const mockFormAttribute: RECORD_FORM_recordForm_elements_attribute = {
     id: 'test_attribute',
     type: AttributeType.simple,
     format: AttributeFormat.text,
@@ -107,10 +107,14 @@ export const mockFormAttribute: GET_FORM_forms_list_elements_elements_attribute 
         enable: false,
         allowFreeEntry: false,
         values: []
+    },
+    permissions: {
+        access_attribute: true,
+        edit_value: true
     }
 };
 
-export const mockFormAttributeTree: GET_FORM_forms_list_elements_elements_attribute_TreeAttribute = {
+export const mockFormAttributeTree: RECORD_FORM_recordForm_elements_attribute_TreeAttribute = {
     ...mockFormAttribute,
     ...mockAttributeTree,
     treeValuesList: {enable: false, allowFreeEntry: false, values: []}

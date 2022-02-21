@@ -15,7 +15,7 @@ const EditorWrapper = styled.div`
     }
 `;
 
-function SettingsRTE({fieldName, onChange}: ISettingsFieldCommonProps): JSX.Element {
+function SettingsRTE({fieldName, onChange, disabled}: ISettingsFieldCommonProps): JSX.Element {
     const {t} = useTranslation();
     const {
         state: {elementInSettings}
@@ -36,6 +36,7 @@ function SettingsRTE({fieldName, onChange}: ISettingsFieldCommonProps): JSX.Elem
                 onChange={setEditorState}
                 //@ts-ignore
                 onBlur={_handleBlur}
+                disabled={disabled}
                 toolbarConfig={{
                     display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
                     INLINE_STYLE_BUTTONS: [

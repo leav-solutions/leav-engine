@@ -149,7 +149,7 @@ describe('TreeNodePermissions', () => {
                         usersGroup: "${allUsersTreeElemId}"
                         actions: [
                             {name: access_tree, allowed: false},
-                            {name: edit_tree, allowed: true},
+                            {name: detach, allowed: true},
                             {name: edit_children, allowed: null},
                         ]
                         permissionTreeTarget: {
@@ -180,7 +180,7 @@ describe('TreeNodePermissions', () => {
                     applyTo: "${elementsTreeId}/${elementsTreeLibId}"
                     actions: [
                         access_tree,
-                        edit_tree,
+                        detach,
                         edit_children
                     ],
                     usersGroup: "${allUsersTreeElemId}"
@@ -198,7 +198,7 @@ describe('TreeNodePermissions', () => {
             expect(resGetPerm.status).toBe(200);
             expect(resGetPerm.data.data.permissions).toEqual([
                 {name: 'access_tree', allowed: false},
-                {name: 'edit_tree', allowed: true},
+                {name: 'detach', allowed: true},
                 {name: 'edit_children', allowed: null}
             ]);
             expect(resGetPerm.data.errors).toBeUndefined();
@@ -211,7 +211,7 @@ describe('TreeNodePermissions', () => {
                     type: tree_node,
                     actions: [
                         access_tree
-                        edit_tree
+                        detach
                         edit_children
                     ],
                     applyTo: "${elementsTreeId}"
@@ -227,7 +227,7 @@ describe('TreeNodePermissions', () => {
                     type: tree_node,
                     actions: [
                         access_tree
-                        edit_tree
+                        detach
                         edit_children
                     ],
                     applyTo: "${elementsTreeId}"
@@ -244,12 +244,12 @@ describe('TreeNodePermissions', () => {
             expect(resIsAllowedOnElement.status).toBe(200);
             expect(resIsAllowedOnElement.data.data.onElement).toEqual([
                 {name: 'access_tree', allowed: false},
-                {name: 'edit_tree', allowed: true},
+                {name: 'detach', allowed: true},
                 {name: 'edit_children', allowed: false} // Inherited from library
             ]);
             expect(resIsAllowedOnElement.data.data.onChild).toEqual([
                 {name: 'access_tree', allowed: false},
-                {name: 'edit_tree', allowed: true},
+                {name: 'detach', allowed: true},
                 {name: 'edit_children', allowed: false} // Inherited from library
             ]);
             expect(resIsAllowedOnElement.data.errors).toBeUndefined();
@@ -263,7 +263,7 @@ describe('TreeNodePermissions', () => {
                     applyTo: "${elementsTreeId}/${elementsTreeLibId}"
                     actions: [
                         access_tree,
-                        edit_tree,
+                        detach,
                         edit_children
                     ],
                     userGroupId: "${allUsersTreeElemId}"
@@ -281,7 +281,7 @@ describe('TreeNodePermissions', () => {
             expect(resIsAllowedOnElement.status).toBe(200);
             expect(resGetHeritedPermission.data.data.heritedPermissions).toEqual([
                 {name: 'access_tree', allowed: false},
-                {name: 'edit_tree', allowed: true},
+                {name: 'detach', allowed: true},
                 {name: 'edit_children', allowed: false} // Inherited from library
             ]);
             expect(resIsAllowedOnElement.data.errors).toBeUndefined();
