@@ -48,7 +48,6 @@ jobs:
       - run: yarn test --all
         env:
           SKIP_PREFLIGHT_CHECK: 'true'
-          APP_ROOT_PATH: .
 
   e2e-api:
     runs-on: ubuntu-latest

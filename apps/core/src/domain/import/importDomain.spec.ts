@@ -12,12 +12,10 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ICacheService} from 'infra/cache/cacheService';
 import * as Config from '_types/config';
 import fs from 'fs';
-import {appRootPath} from '@leav/app-root-path';
-import path from 'path';
 import {when} from 'jest-when';
 
 const importMockConfig: Mockify<Config.IImport> = {
-    directory: path.resolve(appRootPath() + '/imports'),
+    directory: './imports',
     sizeLimit: 100,
     groupData: 50
 };
