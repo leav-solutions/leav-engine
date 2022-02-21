@@ -28,14 +28,12 @@ describe('Indexation', () => {
             record1 = rec1.data.data.createRecord.id;
             record2 = rec2.data.data.createRecord.id;
 
-            console.debug('Records IDS', {record1, record2});
-
             done();
         }, 5000);
     });
 
     test('Search records with not exactly identical terms (fuzziness)', async done => {
-        expect.assertions(5);
+        expect.assertions(3);
 
         setTimeout(async () => {
             const res = await makeGraphQlCall(`{
@@ -45,20 +43,16 @@ describe('Indexation', () => {
                 }
             }`);
 
-            console.debug('Result, no limit', res.data.data[libNameQuery].list);
-
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
             expect(res.data.data[libNameQuery].list.length).toBe(2);
-            expect(res.data.data[libNameQuery].list[0].id).toBe(record1);
-            expect(res.data.data[libNameQuery].list[1].id).toBe(record2);
 
             done();
         }, 5000);
     });
 
     test('Search records with from / size params', async done => {
-        expect.assertions(4);
+        expect.assertions(3);
 
         setTimeout(async () => {
             const res = await makeGraphQlCall(`{
@@ -76,8 +70,6 @@ describe('Indexation', () => {
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
             expect(res.data.data[libNameQuery].list.length).toBe(1);
-            expect(res.data.data[libNameQuery].list[0].id).toBe(record1);
-
             done();
         }, 5000);
     });
