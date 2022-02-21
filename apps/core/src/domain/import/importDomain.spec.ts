@@ -13,9 +13,10 @@ import {ICacheService} from 'infra/cache/cacheService';
 import * as Config from '_types/config';
 import fs from 'fs';
 import {when} from 'jest-when';
+import path from 'path';
 
 const importMockConfig: Mockify<Config.IImport> = {
-    directory: './imports',
+    directory: path.resolve('./imports'),
     sizeLimit: 100,
     groupData: 50
 };
