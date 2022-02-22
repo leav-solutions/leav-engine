@@ -31,6 +31,14 @@ describe('importDomain', () => {
         queryId: 'importDomainTest'
     };
 
+    beforeAll(async () => {
+        await fs.promises.mkdir(importMockConfig.directory);
+    });
+
+    afterAll(async () => {
+        await fs.promises.rmdir(importMockConfig.directory, {recursive: true});
+    });
+
     beforeEach(() => {
         jest.clearAllMocks();
     });
