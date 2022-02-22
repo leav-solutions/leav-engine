@@ -17,7 +17,7 @@ import path from 'path';
 import {when} from 'jest-when';
 
 const importMockConfig: Mockify<Config.IImport> = {
-    directory: path.resolve(appRootPath() + '/imports'),
+    directory: path.resolve(__dirname, './imports'),
     sizeLimit: 100,
     groupData: 50
 };
@@ -31,6 +31,14 @@ describe('importDomain', () => {
         userId: '1',
         queryId: 'importDomainTest'
     };
+
+    beforeAll(async () => {
+        await fs.promises.mkdir(importMockConfig.directory);
+    });
+
+    afterAll(async () => {
+        await fs.promises.rmdir(importMockConfig.directory, {recursive: true});
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();

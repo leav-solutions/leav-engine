@@ -32,10 +32,9 @@ x-mount_point-repo: &mount_point-repo ../:/app:delegated
 x-mount_point-scripts: &mount_point-scripts ./scripts:/scripts
 x-mount_point-files: &mount_point-files ../files/:/files
 x-mount_point-previews: &mount_point-previews ../previews/:/results
-
-x-mount_point-exports: &mount_point-exports ../exports:/app/apps/core/exports
-x-mount_point-imports: &mount_point-imports ../imports:/app/apps/core/imports
-x-mount_point-cache: &mount_point-cache ../cache:/app/apps/core/cache
+x-mount_point-exports: &mount_point-exports ../exports:/exports
+x-mount_point-imports: &mount_point-imports ../imports:/imports
+x-mount_point-cache: &mount_point-cache ../cache:/cache
 
 # Lists of allowed and ignored files
 # Use ", " characters as separators between files
