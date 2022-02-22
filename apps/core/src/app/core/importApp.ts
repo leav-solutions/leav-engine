@@ -98,14 +98,17 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const allowedExtensions = ['json'];
                             _validateFileFormat(fileData.filename, allowedExtensions);
 
-                            // store JSON file in local filesystem
-                            const storedFilename = await _storeUploadFile(fileData);
+                            // Store JSON file in local filesystem.
+                            const storedFileName = await _storeUploadFile(fileData);
 
-                            await importDomain.import(storedFilename, ctx);
+                            try {
+                                await importDomain.import(storedFileName, ctx);
+                            } finally {
+                                // Delete remaining import file.
+                                await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);
+                            }
 
-                            // FIXME: If import file should we backup db?
-                            // Delete remaining cache/import files?
-
+                            // FIXME: If import fail should we backup db?
                             // TODO: Waiting to link an id to this import to retrieve
                             // the progression and display it on explorer.
 
@@ -121,10 +124,15 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const allowedExtensions = ['xlsx'];
                             _validateFileFormat(fileData.filename, allowedExtensions);
 
-                            // store XLSX file in local filesystem
-                            const storedFilename = await _storeUploadFile(fileData);
+                            // Store XLSX file in local filesystem.
+                            const storedFileName = await _storeUploadFile(fileData);
 
-                            await importDomain.importExcel({filename: storedFilename, library, mapping, key}, ctx);
+                            try {
+                                await importDomain.importExcel({filename: storedFileName, library, mapping, key}, ctx);
+                            } finally {
+                                // Delete remaining import file.
+                                await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);
+                            }
 
                             return true;
                         }

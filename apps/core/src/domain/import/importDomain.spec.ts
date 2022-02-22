@@ -174,6 +174,10 @@ describe('importDomain', () => {
         expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(2);
         expect(mockValueDomain.saveValue.mock.calls.length).toBe(3);
         expect(mockValueDomain.getValues.mock.calls.length).toBe(1);
+
+        // Delete remaining import file.
+        await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
+
         expect(fs.existsSync(`${mockConfig.import.directory}/test.json`)).toBe(false);
     });
 
@@ -260,14 +264,18 @@ describe('importDomain', () => {
             'core.infra.cache.cacheService': mockCacheService as ICacheService
         });
 
-        await imprtDomain.import('test.json', ctx);
+        try {
+            await imprtDomain.import('test.json', ctx);
+        } finally {
+            // Delete remaining import file.
+            await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
+        }
 
         expect(mockRecordDomain.createRecord.mock.calls.length).toBe(1);
         expect(mockRecordDomain.find.mock.calls.length).toBe(1);
         expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(1);
         expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
         expect(mockValueDomain.saveValue.mock.calls.length).toBe(1);
-        expect(fs.existsSync(`${mockConfig.import.directory}/test.json`)).toBe(false);
     });
 
     test('test import trees', async () => {
@@ -317,12 +325,16 @@ describe('importDomain', () => {
             'core.infra.cache.cacheService': mockCacheService as ICacheService
         });
 
-        await imprtDomain.import('test.json', ctx);
+        try {
+            await imprtDomain.import('test.json', ctx);
+        } finally {
+            // Delete remaining import file.
+            await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
+        }
 
         expect(mockRecordDomain.find.mock.calls.length).toBe(1);
         expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
         expect(mockTreeDomain.isElementPresent.mock.calls.length).toBe(1);
         expect(mockTreeDomain.addElement.mock.calls.length).toBe(1);
-        expect(fs.existsSync(`${mockConfig.import.directory}/test.json`)).toBe(false);
     });
 });

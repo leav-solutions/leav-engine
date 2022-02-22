@@ -406,9 +406,8 @@ export default function ({
                 }
             }
 
-            // Delete cache and import file.
+            // Delete cache.
             await cacheService.deleteAll(cacheDataType);
-            await fs.promises.unlink(`${config.import.directory}/${filename}`);
 
             return true;
         },
@@ -473,9 +472,6 @@ export default function ({
 
             // End of file.
             writeLine('], "trees": []}');
-
-            // Delete XLSX file
-            await fs.promises.unlink(`${config.import.directory}/${filename}`);
 
             return this.import(JSONFilename, ctx);
         }
