@@ -268,11 +268,11 @@ export default function ({
 
             p.onValue = async function (data: any) {
                 try {
-                    if (callbacks.length >= config.import.groupData) {
-                        await callCallbacks();
-                    }
-
                     if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
+                        if (callbacks.length >= config.import.groupData) {
+                            await callCallbacks();
+                        }
+
                         callbacks.push(async () => callbackElement(data, elementIndex++));
                     } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
                         // If the first tree has never been reached before we check if callbacks for

@@ -83,7 +83,7 @@ module.exports = {
     },
     import: {
         directory: process.env.IMPORT_DIR || '/imports',
-        sizeLimit: process.env.IMPORT_SIZE_LIMIT || 100, // megabytes
+        sizeLimit: process.env.IMPORT_SIZE_LIMIT || 10, // megabytes
         groupData: process.env.IMPORT_GROUP_DATA || 50 // number of elements processed at the same time
     }
 };
