@@ -20,11 +20,11 @@ import {
 } from './helpers/utils';
 
 export interface ITreeRepo {
-    getDefaultElement({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<string>;
-    createTree({treeData, ctx}: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
-    updateTree({treeData, ctx}: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
-    getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
-    deleteTree({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<ITree>;
+    getDefaultElement(params: {id: string; ctx: IQueryInfos}): Promise<string>;
+    createTree(params: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
+    updateTree(params: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
+    getTrees(params: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
+    deleteTree(params: {id: string; ctx: IQueryInfos}): Promise<ITree>;
 
     /**
      * Add an element to the tree
@@ -34,13 +34,7 @@ export interface ITreeRepo {
      * We return a TreeNodeLight and not a TreeNode to avoid an extra query just to get the record. If client needs it,
      * we'll get it through or manually where needed
      */
-    addElement({
-        treeId,
-        element,
-        parent,
-        order,
-        ctx
-    }: {
+    addElement(params: {
         treeId: string;
         element: ITreeElement;
         parent: string | null;
@@ -56,13 +50,7 @@ export interface ITreeRepo {
      * We return a TreeNodeLight and not a TreeNode to avoid an extra query just to get the record. If client needs it,
      * we'll get it through or manually where needed
      */
-    moveElement({
-        treeId,
-        nodeId,
-        parentTo,
-        order,
-        ctx
-    }: {
+    moveElement(params: {
         treeId: string;
         nodeId: string;
         parentTo: string | null;
@@ -76,12 +64,7 @@ export interface ITreeRepo {
      * We return a TreeNodeLight and not a TreeNode to avoid an extra query just to get the record. If client needs it,
      * we'll get it through or manually where needed
      */
-    deleteElement({
-        treeId,
-        nodeId,
-        deleteChildren,
-        ctx
-    }: {
+    deleteElement(params: {
         treeId: string;
         nodeId: string;
         deleteChildren: boolean | null;
@@ -91,12 +74,12 @@ export interface ITreeRepo {
     /**
      * Return whether a node is present in given tree
      */
-    isNodePresent({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
+    isNodePresent(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
 
     /**
      * Return whether a record is present in given tree
      */
-    isRecordPresent({treeId, record, ctx}: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<boolean>;
+    isRecordPresent(params: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<boolean>;
 
     /* eslint-disable jsdoc/check-indentation */
     /**
@@ -116,20 +99,22 @@ export interface ITreeRepo {
      *
      * startingNode  Return the tree starting from this node. If not specified, start from root
      */
-    getTreeContent({
-        treeId,
-        startingNode,
-        ctx
-    }: {
+    getTreeContent(params: {
         treeId: string;
         startingNode?: string;
+        depth?: number;
         ctx: IQueryInfos;
     }): Promise<ITreeNode[]>;
 
     /**
      * Return all first level children of an element
      */
-    getElementChildren({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<ITreeNode[]>;
+    getElementChildren(params: {
+        treeId: string;
+        nodeId: string;
+        depth?: number;
+        ctx: IQueryInfos;
+    }): Promise<ITreeNode[]>;
 
     /**
      * Return all ancestors of an element, including element itself, but excluding tree root
@@ -137,37 +122,19 @@ export interface ITreeRepo {
      * @param treeId
      * @param element
      */
-    getElementAncestors({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePaths>;
+    getElementAncestors(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePaths>;
 
-    getLinkedRecords({
-        treeId,
-        attribute,
-        nodeId,
-        ctx
-    }: {
-        treeId: string;
-        attribute: string;
-        nodeId: string;
-        ctx: IQueryInfos;
-    }): Promise<IRecord[]>;
+    getLinkedRecords(params: {treeId: string; attribute: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 
     /**
      * Return record linked to given node
      */
-    getRecordByNodeId({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord>;
+    getRecordByNodeId(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord>;
 
     /**
      * Return nodes linked to given record
      */
-    getNodesByRecord({
-        treeId,
-        record,
-        ctx
-    }: {
-        treeId: string;
-        record: ITreeElement;
-        ctx: IQueryInfos;
-    }): Promise<string[]>;
+    getNodesByRecord(params: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<string[]>;
 }
 
 export const TREES_COLLECTION_NAME = 'core_trees';
@@ -422,7 +389,7 @@ export default function ({
 
             return !!res.length;
         },
-        async getTreeContent({treeId, startingNode, ctx}): Promise<ITreeNode[]> {
+        async getTreeContent({treeId, startingNode, depth = MAX_TREE_DEPTH, ctx}): Promise<ITreeNode[]> {
             const rootId = getRootId(treeId);
 
             const collec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
@@ -442,8 +409,9 @@ export default function ({
                 record: IDbDocument & {path: string[]};
                 order: number;
             }> = await dbService.execute({
+                // We query at depth + 1 to reach the records
                 query: aql`
-                    FOR v, e, p IN 1..${MAX_TREE_DEPTH} OUTBOUND ${nodeFrom}
+                    FOR v, e, p IN 1..${depth + 1} OUTBOUND ${nodeFrom}
                     ${collec}
                     FILTER e.${TO_RECORD_PROP_NAME} AND e._from != ${nodeFrom}
                     LET path = (
@@ -495,10 +463,11 @@ export default function ({
 
             return treeContent;
         },
-        async getElementChildren({treeId, nodeId, ctx}): Promise<ITreeNode[]> {
+        async getElementChildren({treeId, nodeId, depth = 1, ctx}): Promise<ITreeNode[]> {
             const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            // We query at depth + 1 to reach the record
             const query = aql`
-                FOR v, e IN 2 OUTBOUND ${getFullNodeId(nodeId, treeId)}
+                FOR v, e IN ${depth + 1} OUTBOUND ${getFullNodeId(nodeId, treeId)}
                     ${treeEdgeCollec}
                     RETURN {id: SPLIT(e._from, '/')[1], order: TO_NUMBER(e.order), record: v}
             `;

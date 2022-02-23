@@ -32,24 +32,18 @@ import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import validateFilesParent from './helpers/validateFilesParent';
 
 export interface ITreeDomain {
-    isNodePresent({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
-    isRecordPresent({treeId, record, ctx}: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<boolean>;
+    isNodePresent(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
+    isRecordPresent(params: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<boolean>;
     saveTree(tree: Partial<ITree>, ctx: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, ctx: IQueryInfos): Promise<ITree>;
-    getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
+    getTrees(params: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
     getTreeProperties(treeId: string, ctx: IQueryInfos): Promise<ITree>;
 
     /**
      * Add an element to the tree
      * parent must be a record or null to add element to root
      */
-    addElement({
-        treeId,
-        element,
-        parent,
-        order,
-        ctx
-    }: {
+    addElement(params: {
         treeId: string;
         element: ITreeElement;
         parent: string | null;
@@ -63,13 +57,7 @@ export interface ITreeDomain {
      * parentFrom A record or null to move from root
      * parentTo A record or null to move to root
      */
-    moveElement({
-        treeId,
-        nodeId,
-        parentTo,
-        order,
-        ctx
-    }: {
+    moveElement(params: {
         treeId: string;
         nodeId: string;
         parentTo: string | null;
@@ -82,12 +70,7 @@ export interface ITreeDomain {
      *
      * parent A record or null to delete from root
      */
-    deleteElement({
-        treeId,
-        nodeId,
-        deleteChildren,
-        ctx
-    }: {
+    deleteElement(params: {
         treeId: string;
         nodeId: string;
         deleteChildren: boolean | null;
@@ -110,52 +93,36 @@ export interface ITreeDomain {
      *      { ... }
      * ]
      */
-    getTreeContent({
-        treeId,
-        startingNode,
-        ctx
-    }: {
+    getTreeContent(params: {
         treeId: string;
         startingNode?: string;
+        depth?: number;
         ctx: IQueryInfos;
     }): Promise<ITreeNode[]>;
 
     /**
      * Retrieve first level children of an element
      */
-    getElementChildren({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<ITreeNode[]>;
+    getElementChildren(params: {
+        treeId: string;
+        nodeId: string;
+        depth?: number;
+        ctx: IQueryInfos;
+    }): Promise<ITreeNode[]>;
 
     /**
      * Retrieve all ancestors of an element, including element itself and starting from the root
      */
-    getElementAncestors({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePaths>;
+    getElementAncestors(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePaths>;
 
     /**
      * Retrieve all records linked to an element via given attribute
      */
-    getLinkedRecords({
-        treeId,
-        attribute,
-        nodeId,
-        ctx
-    }: {
-        treeId: string;
-        attribute: string;
-        nodeId: string;
-        ctx: IQueryInfos;
-    }): Promise<IRecord[]>;
+    getLinkedRecords(params: {treeId: string; attribute: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 
     getLibraryTreeId(library: string, ctx: IQueryInfos): string;
-    getRecordByNodeId({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord>;
-    getNodesByRecord({
-        treeId,
-        record,
-        ctx
-    }: {
-        treeId: string;
-        record: ITreeElement;
-        ctx: IQueryInfos;
-    }): Promise<string[]>;
+    getRecordByNodeId(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord>;
+    getNodesByRecord(params: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<string[]>;
 }
 
 interface IDeps {
@@ -477,7 +444,7 @@ export default function ({
 
             return treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
         },
-        async getTreeContent({treeId, startingNode = null, ctx}): Promise<ITreeNode[]> {
+        async getTreeContent({treeId, startingNode = null, depth, ctx}): Promise<ITreeNode[]> {
             const errors: any = {};
             if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
@@ -498,10 +465,10 @@ export default function ({
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.getTreeContent({treeId, startingNode, ctx});
+            return treeRepo.getTreeContent({treeId, startingNode, depth, ctx});
         },
-        async getElementChildren({treeId, nodeId, ctx}): Promise<ITreeNode[]> {
-            return treeRepo.getElementChildren({treeId, nodeId, ctx});
+        async getElementChildren({treeId, nodeId, depth, ctx}): Promise<ITreeNode[]> {
+            return treeRepo.getElementChildren({treeId, nodeId, depth, ctx});
         },
         async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePaths> {
             return treeRepo.getElementAncestors({treeId, nodeId, ctx});
