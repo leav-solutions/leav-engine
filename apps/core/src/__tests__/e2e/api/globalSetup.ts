@@ -46,21 +46,21 @@ export const init = async (conf: IConfig): Promise<any> => {
     return {coreContainer, dbUtils};
 };
 
-const _createRequiredDirectories = async (conf: any) => {
-    if (!fs.existsSync(conf.import.directory + '/files')) {
-        await fs.promises.mkdir(conf.import.directory + '/files');
+const _createRequiredDirectories = async conf => {
+    if (!fs.existsSync(appRootPath() + '/files')) {
+        await fs.promises.mkdir(appRootPath() + '/files');
     }
-    if (!fs.existsSync(conf.import.directory + '/results')) {
-        await fs.promises.mkdir(conf.import.directory + '/results');
+    if (!fs.existsSync(appRootPath() + '/results')) {
+        await fs.promises.mkdir(appRootPath() + '/results');
     }
-    if (!fs.existsSync(conf.import.directory + '/exports')) {
-        await fs.promises.mkdir(conf.import.directory + '/exports');
+    if (!fs.existsSync(appRootPath() + '/exports')) {
+        await fs.promises.mkdir(appRootPath() + '/exports');
     }
-    if (!fs.existsSync(conf.import.directory + '/imports')) {
-        await fs.promises.mkdir(conf.import.directory + '/imports');
+    if (!fs.existsSync(appRootPath() + '/imports')) {
+        await fs.promises.mkdir(appRootPath() + '/imports');
     }
-    if (!fs.existsSync(conf.import.directory + '/cache')) {
-        await fs.promises.mkdir(conf.import.directory + '/cache');
+    if (!fs.existsSync(appRootPath() + '/cache')) {
+        await fs.promises.mkdir(appRootPath() + '/cache');
     }
 };
 

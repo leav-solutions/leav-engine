@@ -53,9 +53,7 @@ describe('Import', () => {
 
         const filename = 'import.test.json';
 
-        const file = await fs.promises.readFile(
-            path.resolve(appRootPath + '/src/__tests__/e2e/api/import/import.test.json')
-        ); // test file
+        const file = await fs.promises.readFile(appRootPath() + '/src/__tests__/e2e/api/import/import.test.json'); // test file
 
         console.debug('IMPORTS DIR EXIST?', fs.existsSync(conf.import.directory));
 
