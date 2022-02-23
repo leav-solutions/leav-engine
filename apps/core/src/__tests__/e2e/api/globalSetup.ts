@@ -14,7 +14,7 @@ import {IConfig} from '../../../_types/config';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
-    const pluginsFolder = path.resolve(appRootPath() + '/src/plugins/');
+    const pluginsFolder = appRootPath() + '/src/plugins/';
     const fakePluginSrc = `${__dirname}/_fixtures/fakeplugin`;
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
     const relativePath = path.relative(pluginsFolder, fakePluginSrc);
