@@ -94,7 +94,7 @@ jobs:
           AMQP_PWD: guest
           APP_ROOT_PATH: .
           ELASTICSEARCH_URL: "http://localhost:9200"
-          IMPORT_DIR: $GITHUB_WORKSPACE
+          IMPORT_DIR: ${GITHUB_WORKSPACE}
 
   e2e-indexation-manager:
     runs-on: ubuntu-latest
