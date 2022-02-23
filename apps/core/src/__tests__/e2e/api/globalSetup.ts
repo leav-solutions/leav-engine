@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
 import {Database} from 'arangojs';
-import {promises as fs} from 'fs';
+import fs from 'fs';
 import path from 'path';
 import {getConfig} from '../../../config';
 import {init as initDI} from '../../../depsManager';
@@ -20,7 +20,7 @@ const _setupFakePlugin = async () => {
     const relativePath = path.relative(pluginsFolder, fakePluginSrc);
 
     try {
-        await fs.symlink(relativePath, fakePluginDest);
+        await fs.promises.symlink(relativePath, fakePluginDest);
     } catch (e) {
         // It's ok, already exists
         if (e.code === 'EEXIST') {
@@ -46,11 +46,31 @@ export const init = async (conf: IConfig): Promise<any> => {
     return {coreContainer, dbUtils};
 };
 
+const _createRequiredDirectories = async () => {
+    if (!fs.existsSync('/files')) {
+        await fs.promises.mkdir('/files');
+    }
+    if (!fs.existsSync('/results')) {
+        await fs.promises.mkdir('/results');
+    }
+    if (!fs.existsSync('/exports')) {
+        await fs.promises.mkdir('/exports');
+    }
+    if (!fs.existsSync('/imports')) {
+        await fs.promises.mkdir('/imports');
+    }
+    if (!fs.existsSync('/cache')) {
+        await fs.promises.mkdir('/cache');
+    }
+};
+
 export async function setup() {
     try {
         await _setupFakePlugin();
 
         const conf = await getConfig();
+
+        await _createRequiredDirectories();
 
         // Init DB
         const db = new Database({
