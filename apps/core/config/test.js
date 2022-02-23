@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {appRootPath} from '@leav/app-root-path';
-import path from 'path';
 
 module.exports = {
     server: {
@@ -35,9 +33,6 @@ module.exports = {
     },
     logs: {
         transport: ['console']
-    },
-    import: {
-        directory: path.resolve(appRootPath() + '/imports')
     },
     debug: true
 };
