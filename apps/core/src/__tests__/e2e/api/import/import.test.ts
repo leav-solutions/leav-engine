@@ -5,12 +5,11 @@ import {makeGraphQlCall, gqlSaveLibrary, gqlSaveAttribute} from '../e2eUtils';
 import {AttributeTypes} from '../../../../_types/attribute';
 import fs from 'fs';
 import path from 'path';
-import appRoot from 'app-root-path';
-import {IFile} from '../../../../_types/import';
 import {IImportDomain} from '../../../../domain/import/importDomain';
 import {IQueryInfos} from '../../../../_types/queryInfos';
 import {getConfig} from '../../../../config';
 import {init} from '../globalSetup';
+import {appRootPath} from '@leav/app-root-path';
 
 const testLibName = 'test_import';
 const testLibNameQuery = 'testImport';
@@ -55,10 +54,10 @@ describe('Import', () => {
         const filename = 'import.test.json';
 
         const file = await fs.promises.readFile(
-            path.resolve(appRoot + '/src/__tests__/e2e/api/import/import.test.json')
+            path.resolve(appRootPath + '/src/__tests__/e2e/api/import/import.test.json')
         ); // test file
 
-        console.debug('IMPORTS EXIST?', fs.existsSync('/imports'));
+        console.debug('IMPORTS DIR EXIST?', fs.existsSync(conf.import.directory));
 
         await fs.promises.writeFile(`${conf.import.directory}/${filename}`, file.toString());
 

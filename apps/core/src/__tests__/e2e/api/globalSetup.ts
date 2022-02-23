@@ -47,20 +47,20 @@ export const init = async (conf: IConfig): Promise<any> => {
 };
 
 const _createRequiredDirectories = async () => {
-    if (!fs.existsSync('/files')) {
-        await fs.promises.mkdir('/files');
+    if (!fs.existsSync(path.resolve(appRootPath() + '/files'))) {
+        await fs.promises.mkdir(path.resolve(appRootPath() + '/files'));
     }
-    if (!fs.existsSync('/results')) {
-        await fs.promises.mkdir('/results');
+    if (!fs.existsSync(path.resolve(appRootPath() + '/results'))) {
+        await fs.promises.mkdir(path.resolve(appRootPath() + '/results'));
     }
-    if (!fs.existsSync('/exports')) {
-        await fs.promises.mkdir('/exports');
+    if (!fs.existsSync(path.resolve(appRootPath() + '/exports'))) {
+        await fs.promises.mkdir(path.resolve(appRootPath() + '/exports'));
     }
-    if (!fs.existsSync('/imports')) {
-        await fs.promises.mkdir('/imports');
+    if (!fs.existsSync(path.resolve(appRootPath() + '/imports'))) {
+        await fs.promises.mkdir(path.resolve(appRootPath() + '/imports'));
     }
-    if (!fs.existsSync('/cache')) {
-        await fs.promises.mkdir('/cache');
+    if (!fs.existsSync(path.resolve(appRootPath() + '/cache'))) {
+        await fs.promises.mkdir(path.resolve(appRootPath() + '/cache'));
     }
 };
 
@@ -69,8 +69,6 @@ export async function setup() {
         await _setupFakePlugin();
 
         const conf = await getConfig();
-
-        await _createRequiredDirectories();
 
         // Init DB
         const db = new Database({
@@ -89,6 +87,8 @@ export async function setup() {
         const {coreContainer, dbUtils} = await init(conf);
 
         await dbUtils.migrate(coreContainer);
+
+        await _createRequiredDirectories();
 
         const server = coreContainer.cradle['core.interface.server'];
         await server.init();
