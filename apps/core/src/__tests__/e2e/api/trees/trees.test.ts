@@ -217,6 +217,8 @@ describe('Trees', () => {
 
         expect(restreeContent.status).toBe(200);
         expect(restreeContent.data.data.treeContent).toBeDefined();
+        expect(restreeContent.data.errors).toBeUndefined();
+
         expect(Array.isArray(restreeContent.data.data.treeContent)).toBe(true);
         expect(restreeContent.data.data.treeContent).toHaveLength(3);
         expect(restreeContent.data.data.treeContent[0].id).toBeTruthy();
@@ -226,7 +228,9 @@ describe('Trees', () => {
         expect(restreeContent.data.data.treeContent[1].record.id).toBe(recordId2);
         expect(restreeContent.data.data.treeContent[0].order).toBe(0);
         expect(restreeContent.data.data.treeContent[1].order).toBe(1);
-        expect(restreeContent.data.errors).toBeUndefined();
+
+        // Check record5 has children
+        expect(restreeContent.data.data.treeContent.filter(n => n.id === nodeRecord5)[0].children).toHaveLength(1);
 
         // Get tree content from a specific node
         // Get tree content

@@ -12,7 +12,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
-import {IRecord} from '../../../_types/record';
+import {IQueryField, IRecord} from '../../../_types/record';
 import {ITree, ITreeNode, ITreeNodeWithTreeId, TreeBehavior, TreePaths} from '../../../_types/tree';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
@@ -95,6 +95,15 @@ export default function ({
         }
 
         return visibleNodes;
+    };
+
+    const _getChildrenDepth = (fields: IQueryField[], depth): number => {
+        const children = fields.find(f => f.name === 'children');
+        if (children) {
+            return _getChildrenDepth(children.fields, depth + 1);
+        }
+
+        return depth;
     };
 
     return {
@@ -263,14 +272,17 @@ export default function ({
                         async treeContent(
                             _,
                             {treeId, startAt}: {treeId: string; startAt: string},
-                            ctx: IQueryInfos
+                            ctx: IQueryInfos,
+                            info: GraphQLResolveInfo
                         ): Promise<ITreeNode[]> {
                             ctx.treeId = treeId;
 
-                            return (await treeDomain.getTreeContent({treeId, startingNode: startAt, ctx})).reduce(
-                                _filterTreeContentReduce(ctx, treeId),
-                                Promise.resolve([])
-                            );
+                            const fields = graphqlApp.getQueryFields(info);
+                            const depth = _getChildrenDepth(fields, 1);
+
+                            return (
+                                await treeDomain.getTreeContent({treeId, startingNode: startAt, depth, ctx})
+                            ).reduce(_filterTreeContentReduce(ctx, treeId), Promise.resolve([]));
                         },
                         async fullTreeContent(_, {treeId}: {treeId: string}, ctx): Promise<ITreeNode[]> {
                             return treeDomain.getTreeContent({treeId, ctx});
@@ -428,7 +440,10 @@ export default function ({
                             if (typeof parent.children !== 'undefined') {
                                 children = parent.children;
                             } else {
-                                children = await treeDomain.getElementChildren({treeId, nodeId: parent.id, ctx});
+                                const fields = graphqlApp.getQueryFields(info);
+                                const depth = _getChildrenDepth(fields, 1);
+
+                                children = await treeDomain.getElementChildren({treeId, nodeId: parent.id, depth, ctx});
                             }
 
                             // Add treeId as it might be useful for nested resolvers

@@ -212,7 +212,7 @@ exports[`TreeRepo getDefaultElement Should return the first element of a tree 1`
 exports[`TreeRepo getDefaultElement Should return the first element of a tree 2`] = `
 Object {
   "@value2": "core_edge_tree_test_tree",
-  "value0": 1000,
+  "value0": 1001,
   "value1": "core_trees/test_tree",
   "value3": "toRecord",
 }
@@ -244,16 +244,17 @@ Object {
 
 exports[`TreeRepo getElementChildren Should return element children 1`] = `
 "
-                FOR v, e IN 2 OUTBOUND @value0
-                    @@value1
+                FOR v, e IN @value0 OUTBOUND @value1
+                    @@value2
                     RETURN {id: SPLIT(e._from, '/')[1], order: TO_NUMBER(e.order), record: v}
             "
 `;
 
 exports[`TreeRepo getElementChildren Should return element children 2`] = `
 Object {
-  "@value1": "core_edge_tree_test_tree",
-  "value0": "core_nodes_test_tree/123458",
+  "@value2": "core_edge_tree_test_tree",
+  "value0": 2,
+  "value1": "core_nodes_test_tree/123458",
 }
 `;
 
@@ -330,7 +331,7 @@ exports[`TreeRepo getTreeContent Should return content of a tree starting from a
 exports[`TreeRepo getTreeContent Should return content of a tree starting from a given node 2`] = `
 Object {
   "@value2": "core_edge_tree_test_tree",
-  "value0": 1000,
+  "value0": 1001,
   "value1": "core_nodes_test_tree/223588185",
   "value3": "toRecord",
 }
@@ -356,7 +357,7 @@ exports[`TreeRepo getTreeContent Should return full content of a tree 1`] = `
 exports[`TreeRepo getTreeContent Should return full content of a tree 2`] = `
 Object {
   "@value2": "core_edge_tree_test_tree",
-  "value0": 1000,
+  "value0": 1001,
   "value1": "core_trees/test_tree",
   "value3": "toRecord",
 }
