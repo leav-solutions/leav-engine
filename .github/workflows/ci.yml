@@ -92,7 +92,7 @@ jobs:
           AMQP_PORT: 5672
           AMQP_USERNAME: guest
           AMQP_PWD: guest
-          APP_ROOT_PATH: ${{ github.workspace }}
+          APP_ROOT_PATH: ${{ github.workspace }}/apps/core
           ELASTICSEARCH_URL: "http://localhost:9200"
           IMPORT_DIR: ${{ github.workspace }}/imports
 
