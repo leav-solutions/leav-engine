@@ -47,20 +47,8 @@ export const init = async (conf: IConfig): Promise<any> => {
 };
 
 const _createRequiredDirectories = async conf => {
-    if (!fs.existsSync(appRootPath() + '/files')) {
-        await fs.promises.mkdir(appRootPath() + '/files');
-    }
-    if (!fs.existsSync(appRootPath() + '/results')) {
-        await fs.promises.mkdir(appRootPath() + '/results');
-    }
-    if (!fs.existsSync(appRootPath() + '/exports')) {
-        await fs.promises.mkdir(appRootPath() + '/exports');
-    }
-    if (!fs.existsSync(appRootPath() + '/imports')) {
-        await fs.promises.mkdir(appRootPath() + '/imports');
-    }
-    if (!fs.existsSync(appRootPath() + '/cache')) {
-        await fs.promises.mkdir(appRootPath() + '/cache');
+    if (!fs.existsSync(conf.import.directory)) {
+        await fs.promises.mkdir(conf.import.directory);
     }
 };
 
@@ -69,6 +57,8 @@ export async function setup() {
         await _setupFakePlugin();
 
         const conf = await getConfig();
+
+        await _createRequiredDirectories(conf);
 
         // Init DB
         const db = new Database({
@@ -87,8 +77,6 @@ export async function setup() {
         const {coreContainer, dbUtils} = await init(conf);
 
         await dbUtils.migrate(coreContainer);
-
-        await _createRequiredDirectories(conf);
 
         const server = coreContainer.cradle['core.interface.server'];
         await server.init();
