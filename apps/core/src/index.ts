@@ -10,6 +10,7 @@ import i18nextInit from './i18nextInit';
 import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 import {initAmqp} from './infra/amqp';
+import fs from 'fs';
 
 (async function () {
     let conf: Config.IConfig;
@@ -41,8 +42,24 @@ import {initAmqp} from './infra/amqp';
 
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 
+    const _createRequiredDirectories = async () => {
+        try {
+            await fs.promises.mkdir('/files');
+            await fs.promises.mkdir('/results');
+            await fs.promises.mkdir('/exports');
+            await fs.promises.mkdir('/imports');
+            await fs.promises.mkdir('/cache');
+        } catch (err) {
+            if ((err as any).code !== 'EEXIST') {
+                throw err;
+            }
+        }
+    };
+
     try {
         const opt = process.argv[2];
+
+        await _createRequiredDirectories();
 
         if (typeof opt !== 'undefined' && opt.indexOf('server') !== -1) {
             await server.init();

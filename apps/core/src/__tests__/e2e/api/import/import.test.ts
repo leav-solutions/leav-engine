@@ -58,12 +58,12 @@ describe('Import', () => {
             path.resolve(appRoot + '/src/__tests__/e2e/api/import/import.test.json')
         ); // test file
 
-        await fs.promises.writeFile(path.join('/imports', '.', filename), file.toString());
+        await fs.promises.writeFile(`${conf.import.directory}/${filename}`, file.toString());
 
         try {
             await importDomain.import(filename, ctx);
         } finally {
-            await fs.promises.unlink(path.join('/imports', '.', filename));
+            await fs.promises.unlink(`${conf.import.directory}/${filename}`);
         }
     });
 
