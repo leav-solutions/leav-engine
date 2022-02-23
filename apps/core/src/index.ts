@@ -43,16 +43,20 @@ import fs from 'fs';
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 
     const _createRequiredDirectories = async () => {
-        try {
+        if (!fs.existsSync('/files')) {
             await fs.promises.mkdir('/files');
+        }
+        if (!fs.existsSync('/results')) {
             await fs.promises.mkdir('/results');
+        }
+        if (!fs.existsSync('/exports')) {
             await fs.promises.mkdir('/exports');
+        }
+        if (!fs.existsSync('/imports')) {
             await fs.promises.mkdir('/imports');
+        }
+        if (!fs.existsSync('/cache')) {
             await fs.promises.mkdir('/cache');
-        } catch (err) {
-            if ((err as any).code !== 'EEXIST') {
-                throw err;
-            }
         }
     };
 
