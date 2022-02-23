@@ -58,7 +58,11 @@ describe('Import', () => {
             path.resolve(appRoot + '/src/__tests__/e2e/api/import/import.test.json')
         ); // test file
 
+        console.debug('IMPORTS EXIST?', fs.existsSync('/imports'));
+
         await fs.promises.writeFile(`${conf.import.directory}/${filename}`, file.toString());
+
+        console.debug('FILE EXIST?', fs.existsSync(`${conf.import.directory}/${filename}`));
 
         try {
             await importDomain.import(filename, ctx);
