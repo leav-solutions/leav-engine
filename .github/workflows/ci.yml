@@ -95,7 +95,7 @@ jobs:
           APP_ROOT_PATH: ${{ github.workspace }}/apps/core
           ELASTICSEARCH_URL: "http://localhost:9200"
           IMPORT_DIR: ${{ github.workspace }}/imports
-          DISK_CACHE_DIRECTOR: ${{ github.workspace }}/cache
+          DISK_CACHE_DIRECTORY: ${{ github.workspace }}/cache
 
   e2e-indexation-manager:
     runs-on: ubuntu-latest
