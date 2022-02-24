@@ -55,11 +55,7 @@ describe('Import', () => {
 
         const file = await fs.promises.readFile(appRootPath() + '/src/__tests__/e2e/api/import/import.test.json'); // test file
 
-        console.debug('IMPORTS DIR EXIST?', fs.existsSync(conf.import.directory));
-
         await fs.promises.writeFile(`${conf.import.directory}/${filename}`, file.toString());
-
-        console.debug('FILE EXIST?', fs.existsSync(`${conf.import.directory}/${filename}`));
 
         try {
             await importDomain.import(filename, ctx);
@@ -77,12 +73,12 @@ describe('Import', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameQuery].list.length).toBe(2);
+        expect(res.data.data[testLibNameQuery].list.length).toBe(1);
 
         const record = res.data.data[testLibNameQuery].list[0];
 
         expect(record.simple).toBe('simple');
-        expect(record.simple_link.simple).toBe('solo');
+        expect(record.simple_link.simple).toBe('simple');
         expect(record.advanced_link.login).toBe('admin');
         expect(record.property[0].metadata).toEqual(
             expect.objectContaining({
