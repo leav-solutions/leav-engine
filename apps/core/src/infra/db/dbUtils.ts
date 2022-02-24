@@ -37,12 +37,10 @@ export interface IFindCoreEntityParams {
 
 export interface IDbUtils {
     migrate?(depsManager: AwilixContainer): Promise<void>;
-    cleanup?(record: {}): any;
+    cleanup?<T extends {}>(record: {}): T;
     convertToDoc?(obj: {}): any;
     isCollectionExists?(name: string): Promise<boolean>;
     findCoreEntity?<T extends ICoreEntity>(params: IFindCoreEntityParams): Promise<IList<T>>;
-    convertValueVersionToDb?(version: IValueVersion): IDbValueVersion;
-    convertValueVersionFromDb?(version: IDbValueVersion): IValueVersion;
     clearDatabase(): Promise<void>;
 }
 
@@ -129,7 +127,7 @@ export default function ({
                 queryId: 'run-migrations'
             };
             // Load already ran migrations
-            const executedMigrations = await dbService.execute({
+            const executedMigrations = await dbService.execute<string[]>({
                 query: `
                     FOR m IN core_db_migrations
                     RETURN m.file
@@ -282,26 +280,12 @@ export default function ({
         },
         convertValueVersionToDb(version: IValueVersion): IDbValueVersion {
             return Object.keys(version).reduce((allVers, treeName) => {
-                const {library, id} = version[treeName];
+                const id = version[treeName];
 
-                allVers[treeName] = `${library}/${id}`;
+                allVers[treeName] = id;
 
                 return allVers;
             }, {});
-        },
-        convertValueVersionFromDb(version: IDbValueVersion): IValueVersion {
-            return version
-                ? Object.keys(version).reduce((allVers, treeName) => {
-                      const [library, id] = version[treeName].split('/');
-
-                      allVers[treeName] = {
-                          library,
-                          id
-                      };
-
-                      return allVers;
-                  }, {})
-                : null;
         },
         async clearDatabase(): Promise<void> {
             // Drop all collections

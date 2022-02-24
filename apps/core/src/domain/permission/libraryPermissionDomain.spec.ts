@@ -36,13 +36,13 @@ describe('LibraryPermissionDomain', () => {
         });
     });
 
-    describe('getHeritedLibraryPermission', () => {
+    describe('getInheritedLibraryPermission', () => {
         test('Return herited library permission', async () => {
             const permDomain = libraryPermissionDomain({
                 'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
             });
 
-            const perm = await permDomain.getHeritedLibraryPermission({
+            const perm = await permDomain.getInheritedLibraryPermission({
                 action: LibraryPermissionsActions.ACCESS_RECORD,
                 libraryId: 'test_tree',
                 userGroupId: '12345',

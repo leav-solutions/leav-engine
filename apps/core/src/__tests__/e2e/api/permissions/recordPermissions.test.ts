@@ -6,7 +6,7 @@ import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAllUsersGroupId,
+    gqlGetAllUsersGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -19,13 +19,17 @@ describe('Records permissions', () => {
     const testLibId = 'test_lib_record_permission';
     const testLibAttrId = 'test_attr_record_permission';
 
-    let permTreeElemId;
-    let permTreeElemIdForMultiVal1;
-    let permTreeElemIdForMultiVal2;
-    let allUsersTreeElemId;
+    let permTreeElemId: string;
+    let permTreeElemIdForMultiVal1: string;
+    let permTreeElemIdForMultiVal2: string;
+    let allUsersTreeElemId: string;
 
-    let testLibRecordId;
-    let testLibRecordIdForMultival;
+    let testLibRecordId: string;
+    let testLibRecordIdForMultival: string;
+
+    let nodePermTreeElem: string;
+    let nodePermTreeElemForMultival1: string;
+    let nodePermTreeElemForMultival2: string;
 
     beforeAll(async () => {
         await gqlSaveLibrary(permTreeLibName, 'Test lib on permissions tree');
@@ -35,11 +39,17 @@ describe('Records permissions', () => {
         permTreeElemIdForMultiVal1 = await gqlCreateRecord(permTreeLibName);
         permTreeElemIdForMultiVal2 = await gqlCreateRecord(permTreeLibName);
 
-        await gqlAddElemToTree(permTreeName, {id: permTreeElemId, library: permTreeLibName});
-        await gqlAddElemToTree(permTreeName, {id: permTreeElemIdForMultiVal1, library: permTreeLibName});
-        await gqlAddElemToTree(permTreeName, {id: permTreeElemIdForMultiVal2, library: permTreeLibName});
+        nodePermTreeElem = await gqlAddElemToTree(permTreeName, {id: permTreeElemId, library: permTreeLibName});
+        nodePermTreeElemForMultival1 = await gqlAddElemToTree(permTreeName, {
+            id: permTreeElemIdForMultiVal1,
+            library: permTreeLibName
+        });
+        nodePermTreeElemForMultival2 = await gqlAddElemToTree(permTreeName, {
+            id: permTreeElemIdForMultiVal2,
+            library: permTreeLibName
+        });
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupId();
+        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemId);
 
         // Create library using permission tree
@@ -71,18 +81,19 @@ describe('Records permissions', () => {
         // - one for single value tests
         // - two for multiple values tests
         await makeGraphQlCall(`mutation {
-            v1: saveValue(library: "${testLibId}", recordId: "${testLibRecordId}", attribute: "${testLibAttrId}", value: {
-                    value: "${permTreeLibName}/${permTreeElemId}"
-                }) {
+            v1: saveValue(
+                    library: "${testLibId}",
+                    recordId: "${testLibRecordId}",
+                    attribute: "${testLibAttrId}",
+                    value: {value: "${nodePermTreeElem}"}
+                ) {
                     id_value
                 },
             v2: saveValue(
                     library: "${testLibId}",
                     recordId: "${testLibRecordIdForMultival}",
                     attribute: "${testLibAttrId}",
-                    value: {
-                        value: "${permTreeLibName}/${permTreeElemIdForMultiVal1}"
-                    }
+                    value: {value: "${nodePermTreeElemForMultival1}"}
                 ) {
                     id_value
                 },
@@ -90,9 +101,7 @@ describe('Records permissions', () => {
                     library: "${testLibId}",
                     recordId: "${testLibRecordIdForMultival}",
                     attribute: "${testLibAttrId}",
-                    value: {
-                        value: "${permTreeLibName}/${permTreeElemIdForMultiVal2}"
-                    }
+                    value: {value: "${nodePermTreeElemForMultival2}"}
                 ) {
                     id_value
                 }
@@ -108,7 +117,7 @@ describe('Records permissions', () => {
                     applyTo: "${testLibId}",
                     usersGroup: "${allUsersTreeElemId}",
                     permissionTreeTarget: {
-                        tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
+                        tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                     },
                     actions: [
                         {name: access_record, allowed: true},
@@ -122,8 +131,7 @@ describe('Records permissions', () => {
                 usersGroup
                 permissionTreeTarget {
                     tree
-                    library
-                    id
+                    nodeId
                 }
             }
         }`);
@@ -138,7 +146,7 @@ describe('Records permissions', () => {
                 applyTo: "${testLibId}",
                 usersGroup: "${allUsersTreeElemId}",
                 permissionTreeTarget: {
-                    tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemId}"
+                    tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                 },
                 actions: [access_record]
             ){
@@ -189,9 +197,7 @@ describe('Records permissions', () => {
         expect(resIsAllowed.data.errors).toBeUndefined();
 
         const resDelRecord = await makeGraphQlCall(`mutation {
-            deleteRecord(library: "${testLibId}", id: "${testLibRecordId}") {
-                id
-            }
+            deleteRecord(library: "${testLibId}", id: "${testLibRecordId}") {id}
         }`);
 
         expect(resDelRecord.status).toBe(200);
@@ -211,7 +217,7 @@ describe('Records permissions', () => {
                     applyTo: "${testLibId}",
                     usersGroup: "${allUsersTreeElemId}",
                     permissionTreeTarget: {
-                        tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemIdForMultiVal1}"
+                        tree: "${permTreeName}", nodeId: "${nodePermTreeElemForMultival1}"
                     },
                     actions: [
                         {name: delete_record, allowed: false}
@@ -224,7 +230,7 @@ describe('Records permissions', () => {
                     applyTo: "${testLibId}",
                     usersGroup: "${allUsersTreeElemId}",
                     permissionTreeTarget: {
-                        tree: "${permTreeName}", library: "${permTreeLibName}", id: "${permTreeElemIdForMultiVal2}"
+                        tree: "${permTreeName}", nodeId: "${nodePermTreeElemForMultival2}"
                     },
                     actions: [
                         {name: delete_record, allowed: true}

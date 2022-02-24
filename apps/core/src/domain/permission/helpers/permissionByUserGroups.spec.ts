@@ -15,32 +15,32 @@ describe('getPermissionByUserGroups', () => {
 
     const mockUserGroups = [
         [
-            [
-                {
-                    record: {
-                        id: '9'
-                    }
-                },
-                {
-                    record: {
-                        id: '1'
-                    }
+            {
+                id: '9',
+                record: {
+                    id: '9'
                 }
-            ]
+            },
+            {
+                id: '1',
+                record: {
+                    id: '1'
+                }
+            }
         ],
         [
-            [
-                {
-                    record: {
-                        id: '8'
-                    }
-                },
-                {
-                    record: {
-                        id: '0'
-                    }
+            {
+                id: '8',
+                record: {
+                    id: '8'
                 }
-            ]
+            },
+            {
+                id: '0',
+                record: {
+                    id: '0'
+                }
+            }
         ]
     ];
 
@@ -86,8 +86,8 @@ describe('getPermissionByUserGroups', () => {
 
     test('Return "forbidden" if no "allowed" found', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest.fn().mockImplementation(({usersGroupId}) => {
-                if (usersGroupId === '0') {
+            getSimplePermission: jest.fn().mockImplementation(({usersGroupNodeId}) => {
+                if (usersGroupNodeId === '0') {
                     return Promise.resolve(false);
                 } else {
                     return Promise.resolve(null);
@@ -113,8 +113,8 @@ describe('getPermissionByUserGroups', () => {
 
     test('Return root permission if nothing found on tree', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest.fn().mockImplementation(({usersGroupId}) => {
-                return Promise.resolve(usersGroupId === null ? false : null);
+            getSimplePermission: jest.fn().mockImplementation(({usersGroupNodeId}) => {
+                return Promise.resolve(usersGroupNodeId === null ? false : null);
             })
         };
 

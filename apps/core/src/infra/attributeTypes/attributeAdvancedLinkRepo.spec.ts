@@ -50,16 +50,6 @@ describe('AttributeAdvancedLinkRepo', () => {
         created_by: '0'
     };
 
-    const mockDbUtils: Mockify<IDbUtils> = {
-        convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
-        convertValueVersionFromDb: jest.fn().mockReturnValue({
-            my_tree: {
-                id: '1',
-                library: 'test_lib'
-            }
-        })
-    };
-
     const mockUtils: Mockify<IUtils> = {
         decomposeValueEdgeDestination: jest.fn().mockReturnValue({library: 'test_linked_lib', id: '987654'})
     };
@@ -78,7 +68,6 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -91,12 +80,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -137,7 +121,6 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             const attrRepo = attributeAdvancedLinkRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -150,12 +133,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     value: 987654,
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -269,8 +247,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -395,8 +372,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     modified_at: 77777
                 });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -486,8 +462,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -502,9 +477,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: mockAttribute,
                 forceGetAllValues: false,
                 options: {
-                    version: {
-                        my_tree: {library: 'my_lib', id: '1345'}
-                    }
+                    version: {my_tree: '1345'}
                 },
                 ctx
             });
@@ -527,8 +500,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 modified_at: 88888
             });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 
@@ -590,8 +562,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                     modified_at: 77777
                 });
 
-            const mockDbUtilsWithCleanup = {
-                ...mockDbUtils,
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
                 cleanup: mockCleanupRes
             };
 

@@ -23,7 +23,7 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     'core.utils'?: IUtils;
 }
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -36,10 +36,7 @@ export default function({
         for (const versName of versionsNames) {
             formattedVersion.push({
                 name: versName,
-                value: {
-                    library: version[versName].library,
-                    id: version[versName].id
-                }
+                value: version[versName]
             });
         }
         return formattedVersion;
@@ -83,9 +80,10 @@ export default function({
                 typeDefs: `
                     scalar ValueVersion
                     scalar ValueMetadata
+
                     input ValueVersionInput {
                         name: String!,
-                        value: TreeElementInput!
+                        value: String!
                     }
                     interface GenericValue {
                         id_value: ID,
@@ -239,7 +237,7 @@ export default function({
                     ValueVersion: new GraphQLScalarType({
                         name: 'ValueVersion',
                         description: `Value version, object looking like:
-                            {versionTreeName: {library: "tree_element_library", id: "tree_element_id"}`,
+                            {versionTreeName: "nodeId"}`,
                         serialize: val => val,
                         parseValue: val => val,
                         parseLiteral: ast => ast

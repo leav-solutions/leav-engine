@@ -20,7 +20,7 @@ export default function ({
             type,
             applyTo,
             action,
-            usersGroupId,
+            usersGroupNodeId,
             permissionTreeTarget = null,
             ctx
         }: IGetSimplePermissionsParams): Promise<boolean | null> {
@@ -28,7 +28,7 @@ export default function ({
                 type,
                 applyTo,
                 actions: [action],
-                usersGroupId,
+                usersGroupNodeId,
                 permissionTreeTarget,
                 ctx
             });

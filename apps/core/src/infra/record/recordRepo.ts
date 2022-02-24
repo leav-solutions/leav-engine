@@ -3,7 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IDbDocument} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
+import {getEdgesCollectionName, getFullNodeId, getRootId} from '../../infra/tree/helpers/utils';
 import {
     CursorDirection,
     ICursorPaginationParams,
@@ -24,7 +26,7 @@ import {BASE_QUERY_IDENTIFIER, IAttributeTypesRepo} from '../attributeTypes/attr
 import {IDbService, IExecuteWithCount} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
-import {EDGE_COLLEC_PREFIX, TREES_COLLECTION_NAME} from '../tree/treeRepo';
+import {MAX_TREE_DEPTH, TO_RECORD_PROP_NAME} from '../tree/treeRepo';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -130,20 +132,27 @@ export default function ({
             let filterQueryPart: AqlQuery;
 
             if (_isClassifiedFilter(filter)) {
-                const collec = dbService.db.edgeCollection(EDGE_COLLEC_PREFIX + filter.treeId);
+                const collec = dbService.db.edgeCollection(getEdgesCollectionName(filter.treeId));
 
-                const records = aql`
-                    FOR v, e, p IN 1..${1000} OUTBOUND ${filter.value || TREES_COLLECTION_NAME + '/' + filter.treeId}
-                    ${collec}
-                    LET path = (FOR pv IN p.vertices RETURN pv._id)
-                    SORT LENGTH(path), e.order ASC
-                    RETURN v._id
-                `;
+                const startingNode = filter.value
+                    ? getFullNodeId(String(filter.value), filter.treeId)
+                    : getRootId(filter.treeId);
+
+                // Run through the tree to retrieve records present in this tree.
+                // For a "CLASSIFIED IN" filter, we must exclude the record linked to starting node.
+                const recordsSubQuery = aql.join([
+                    aql` FOR v, e IN 1..${MAX_TREE_DEPTH} OUTBOUND ${startingNode}
+                        ${collec}
+                        FILTER e.${TO_RECORD_PROP_NAME}
+                    `,
+                    filter.condition === TreeCondition.CLASSIFIED_IN ? aql`FILTER e._from != ${startingNode}` : aql``,
+                    aql` RETURN v._id`
+                ]);
 
                 filterQueryPart =
                     filter.condition === TreeCondition.CLASSIFIED_IN
-                        ? aql`FILTER POSITION(${records}, r._id)`
-                        : aql`FILTER !POSITION(${records}, r._id) && r._id != ${filter.value}`;
+                        ? aql`FILTER POSITION(${recordsSubQuery}, r._id)`
+                        : aql`FILTER !POSITION(${recordsSubQuery}, r._id)`;
             } else {
                 const filterAttribute = filter.attributes[0];
                 filterQueryPart = attributeTypesRepo.getTypeRepo(filterAttribute).filterQueryPart(
@@ -262,20 +271,20 @@ export default function ({
 
             const fullQuery = aql.join(queryParts, '\n');
 
-            const records = await dbService.execute<IExecuteWithCount | any[]>({
+            const records = await dbService.execute<IExecuteWithCount | IDbDocument[]>({
                 query: fullQuery,
                 withTotalCount,
                 ctx
             });
 
-            const list: any[] = withTotalCount ? (records as IExecuteWithCount).results : (records as any[]);
+            const list = withTotalCount ? (records as IExecuteWithCount).results : (records as IDbDocument[]);
             const totalCount = withTotalCount ? (records as IExecuteWithCount).totalCount : null;
 
             // TODO: detect if we reach end/begining of the list and should not provide a cursor
             const cursor: IPaginationCursors = pagination
                 ? {
-                      prev: list.length ? _generateCursor(list[0]._key, CursorDirection.PREV) : null,
-                      next: list.length ? _generateCursor(list.slice(-1)[0]._key, CursorDirection.NEXT) : null
+                      prev: list.length ? _generateCursor(Number(list[0]._key), CursorDirection.PREV) : null,
+                      next: list.length ? _generateCursor(Number(list.slice(-1)[0]._key), CursorDirection.NEXT) : null
                   }
                 : null;
 

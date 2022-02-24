@@ -14,9 +14,8 @@ export const savePermissionsQuery = gql`
                 allowed
             }
             permissionTreeTarget {
-                id
+                nodeId
                 tree
-                library
             }
         }
     }

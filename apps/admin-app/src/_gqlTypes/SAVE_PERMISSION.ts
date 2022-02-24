@@ -18,9 +18,8 @@ export interface SAVE_PERMISSION_savePermission_actions {
 }
 
 export interface SAVE_PERMISSION_savePermission_permissionTreeTarget {
-    id: string | null;
+    nodeId: string | null;
     tree: string;
-    library: string | null;
 }
 
 export interface SAVE_PERMISSION_savePermission {

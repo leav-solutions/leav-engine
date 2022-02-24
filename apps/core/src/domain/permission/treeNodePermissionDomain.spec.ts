@@ -31,7 +31,8 @@ describe('treeNodePermissionDomain', () => {
         };
 
         const mockTreeRepoNoPerm: Mockify<ITreeRepo> = {
-            getTrees: global.__mockPromise({list: [{...mockTree, permissions_conf: null}]})
+            getTrees: global.__mockPromise({list: [{...mockTree, permissions_conf: null}]}),
+            getRecordByNodeId: global.__mockPromise(treeNode)
         };
 
         const mockTreeLibPermissionDomain: Mockify<ITreeLibraryPermissionDomain> = {
@@ -53,25 +54,26 @@ describe('treeNodePermissionDomain', () => {
         };
 
         const mockAncestors: TreePaths = [
-            [
-                {
-                    record: {
-                        id: 'parent1',
-                        library: 'lib1'
-                    }
-                },
-                {
-                    record: {
-                        id: 'parent2',
-                        library: 'lib1'
-                    }
+            {
+                id: 'parentNode1',
+                record: {
+                    id: 'parent1',
+                    library: 'lib1'
                 }
-            ]
+            },
+            {
+                id: 'parentNode2',
+                record: {
+                    id: 'parent2',
+                    library: 'lib1'
+                }
+            }
         ];
 
         const mockTreeRepoWithPerm: Mockify<ITreeRepo> = {
             getTrees: global.__mockPromise({list: [treeWithPerms]}),
-            getElementAncestors: global.__mockPromise(mockAncestors)
+            getElementAncestors: global.__mockPromise(mockAncestors),
+            getRecordByNodeId: global.__mockPromise(treeNode)
         };
 
         const mockDefaultPermHelper: Mockify<IDefaultPermissionHelper> = {
@@ -90,6 +92,7 @@ describe('treeNodePermissionDomain', () => {
                         val = {
                             id_value: 12345,
                             value: {
+                                id: recordId === 'parent1' ? 'parentCategory' : 'elementCategory',
                                 record: {
                                     id: recordId === 'parent1' ? 'parentCategory' : 'elementCategory',
                                     library: 'category'
@@ -101,6 +104,7 @@ describe('treeNodePermissionDomain', () => {
                         val = {
                             id_value: 54321,
                             value: {
+                                id: '12346',
                                 record: {
                                     id: 1,
                                     library: 'users_groups'
@@ -133,7 +137,7 @@ describe('treeNodePermissionDomain', () => {
             const perm = await domain.getTreeNodePermission({
                 action: TreeNodePermissionsActions.EDIT_CHILDREN,
                 userId: ctx.userId,
-                node: treeNode,
+                nodeId: '123456',
                 treeId: 'test',
                 ctx
             });
@@ -159,7 +163,7 @@ describe('treeNodePermissionDomain', () => {
             const perm = await domain.getTreeNodePermission({
                 action: TreeNodePermissionsActions.ACCESS_TREE,
                 userId: ctx.userId,
-                node: treeNode,
+                nodeId: '123456',
                 treeId: 'test',
                 ctx
             });
@@ -168,10 +172,10 @@ describe('treeNodePermissionDomain', () => {
             expect(perm).toBe(false);
         });
 
-        test('If nothing defined on element, should return a permission defined on tree library', async () => {
+        test.only('If nothing defined on element, should return a permission defined on tree library', async () => {
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
                 getTreeBasedPermission: jest.fn().mockImplementation((params: IGetTreeBasedPermissionParams) => {
-                    switch (params.treeValues.attr1[0].record.id) {
+                    switch (params.treeValues.attr1[0]) {
                         case 'elementCategory':
                             return Promise.resolve(null);
                         case 'parentCategory':
@@ -192,7 +196,7 @@ describe('treeNodePermissionDomain', () => {
             const perm = await domain.getTreeNodePermission({
                 action: TreeNodePermissionsActions.ACCESS_TREE,
                 userId: ctx.userId,
-                node: treeNode,
+                nodeId: '123456',
                 treeId: 'test',
                 ctx
             });
@@ -204,7 +208,7 @@ describe('treeNodePermissionDomain', () => {
         test('If nothing defined on element and library, should return a permission defined on parent', async () => {
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
                 getTreeBasedPermission: jest.fn().mockImplementation((params: IGetTreeBasedPermissionParams) => {
-                    switch (params.treeValues.attr1[0].record.id) {
+                    switch (params.treeValues.attr1[0]) {
                         case 'elementCategory':
                             return Promise.resolve(null);
                         case 'parentCategory':
@@ -225,7 +229,7 @@ describe('treeNodePermissionDomain', () => {
             const perm = await domain.getTreeNodePermission({
                 action: TreeNodePermissionsActions.ACCESS_TREE,
                 userId: ctx.userId,
-                node: treeNode,
+                nodeId: '123456',
                 treeId: 'test',
                 ctx
             });
@@ -255,7 +259,7 @@ describe('treeNodePermissionDomain', () => {
             const perm = await domain.getTreeNodePermission({
                 action: TreeNodePermissionsActions.ACCESS_TREE,
                 userId: ctx.userId,
-                node: treeNode,
+                nodeId: '123456',
                 treeId: 'test',
                 ctx
             });
@@ -265,23 +269,23 @@ describe('treeNodePermissionDomain', () => {
         });
     });
 
-    describe('getHeritedTreeNodePermission', () => {
+    describe('getInheritedTreeNodePermission', () => {
         test('Return herited tree node permission', async () => {
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
-                getHeritedTreeBasedPermission: global.__mockPromise(false)
+                getInheritedTreeBasedPermission: global.__mockPromise(false)
             };
 
             const treeNodePermDomain = treeNodePermissionDomain({
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper
             });
 
-            const perm = await treeNodePermDomain.getHeritedTreeNodePermission({
+            const perm = await treeNodePermDomain.getInheritedTreeNodePermission({
                 action: TreeNodePermissionsActions.ACCESS_TREE,
                 userGroupId: '12345',
                 treeId: 'test_tree',
                 libraryId: 'test_lib',
                 permTree: 'categories',
-                permTreeNode: {id: '54321', library: 'categories'},
+                permTreeNode: '54321',
                 ctx
             });
 

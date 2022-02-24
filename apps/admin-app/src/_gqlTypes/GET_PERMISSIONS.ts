@@ -17,7 +17,7 @@ export interface GET_PERMISSIONS_perm {
     allowed: boolean | null;
 }
 
-export interface GET_PERMISSIONS_heritPerm {
+export interface GET_PERMISSIONS_inheritPerm {
     name: PermissionsActions;
     allowed: boolean;
 }
@@ -28,9 +28,9 @@ export interface GET_PERMISSIONS {
      */
     perm: GET_PERMISSIONS_perm[] | null;
     /**
-     * Return herited permissions only for given user group
+     * Return inherited permissions only for given user group
      */
-    heritPerm: GET_PERMISSIONS_heritPerm[] | null;
+    inheritPerm: GET_PERMISSIONS_inheritPerm[] | null;
 }
 
 export interface GET_PERMISSIONSVariables {

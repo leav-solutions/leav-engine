@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
-import {IDbUtils} from 'infra/db/dbUtils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
@@ -16,15 +15,6 @@ describe('AttributeStandardRepo', () => {
         multiple_values: true
     };
 
-    const mockDbUtils: Mockify<IDbUtils> = {
-        convertValueVersionToDb: jest.fn().mockReturnValue({my_tree: 'test_lib/1'}),
-        convertValueVersionFromDb: jest.fn().mockReturnValue({
-            my_tree: {
-                id: '1',
-                library: 'test_lib'
-            }
-        })
-    };
     const ctx: IQueryInfos = {
         userId: '0',
         queryId: 'attributeAdvancedRepoTest'
@@ -106,7 +96,7 @@ describe('AttributeStandardRepo', () => {
                 _key: 987654,
                 value: 'test_val',
                 version: {
-                    my_tree: 'test_lib/1'
+                    my_tree: '1'
                 }
             };
 
@@ -122,7 +112,7 @@ describe('AttributeStandardRepo', () => {
                 modified_by: '0',
                 created_by: '0',
                 version: {
-                    my_tree: 'test_lib/1'
+                    my_tree: '1'
                 }
             };
 
@@ -135,10 +125,7 @@ describe('AttributeStandardRepo', () => {
                 modified_by: '0',
                 created_by: '0',
                 version: {
-                    my_tree: {
-                        id: '1',
-                        library: 'test_lib'
-                    }
+                    my_tree: '1'
                 }
             };
 
@@ -148,8 +135,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbService': mockDbServ
             });
 
             const createdVal = await attrRepo.createValue({
@@ -160,12 +146,7 @@ describe('AttributeStandardRepo', () => {
                     value: 'test val',
                     modified_at: 400999999,
                     created_at: 400999999,
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -253,7 +234,7 @@ describe('AttributeStandardRepo', () => {
                 _key: 987654,
                 value: 'test_val',
                 version: {
-                    my_tree: 'test_lib/1'
+                    my_tree: '1'
                 }
             };
 
@@ -269,7 +250,7 @@ describe('AttributeStandardRepo', () => {
                 modified_by: '0',
                 created_by: '0',
                 version: {
-                    my_tree: 'test_lib/1'
+                    my_tree: '1'
                 }
             };
 
@@ -282,10 +263,7 @@ describe('AttributeStandardRepo', () => {
                 modified_by: '0',
                 created_by: '0',
                 version: {
-                    my_tree: {
-                        id: '1',
-                        library: 'test_lib'
-                    }
+                    my_tree: '1'
                 }
             };
 
@@ -295,8 +273,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbService': mockDbServ
             });
 
             const savedVal = await attrRepo.updateValue({
@@ -307,12 +284,7 @@ describe('AttributeStandardRepo', () => {
                     id_value: '987654',
                     value: 'test val',
                     modified_at: 500999999,
-                    version: {
-                        my_tree: {
-                            id: '1',
-                            library: 'test_lib'
-                        }
-                    }
+                    version: {my_tree: '1'}
                 },
                 ctx
             });
@@ -529,8 +501,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbService': mockDbServ
             });
 
             const values = await attrRepo.getValues({
@@ -565,8 +536,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbService': mockDbServ
             });
 
             const mockAttrNotMultival = {
@@ -622,8 +592,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbService': mockDbServ
             });
 
             const values = await attrRepo.getValues({
@@ -631,9 +600,7 @@ describe('AttributeStandardRepo', () => {
                 recordId: '123456',
                 attribute: mockAttrAdvVersionableSimple,
                 forceGetAllValues: false,
-                options: {
-                    version: {my_tree: {library: 'my_lib', id: '1345'}}
-                },
+                options: {version: {my_tree: '1345'}},
                 ctx
             });
 
@@ -650,8 +617,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbService': mockDbServ
             });
 
             const mockAttrNotMultival = {

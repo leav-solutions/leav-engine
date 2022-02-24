@@ -111,14 +111,9 @@ export interface IPermissionsTreeTarget {
     tree: string;
 
     /**
-     * Tree element's library
-     */
-    library: string | null;
-
-    /**
      * Tree element's ID
      */
-    id: string | null;
+    nodeId: string | null;
 }
 
 export interface IPermission {

@@ -1,27 +1,27 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IQueryInfos} from '../../_types/queryInfos';
-import {Action, IMatch, IData, IElement, ITree} from '../../_types/import';
-import {IAttribute} from '../../_types/attribute';
 import {Operator, AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
-import {Errors} from '../../_types/errors';
-import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IValidateHelper} from '../helpers/validate';
+import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import ValidationError from '../../errors/ValidationError';
-import fs from 'fs';
 import {ITreeElement} from '../../_types/tree';
-import path from 'path';
 import JsonParser from 'jsonparse';
 import * as Config from '_types/config';
 import {ICacheService} from 'infra/cache/cacheService';
 import LineByLine from 'line-by-line';
 import {validate} from 'jsonschema';
 import ExcelJS from 'exceljs';
+import {IValueDomain} from 'domain/value/valueDomain';
+import fs from 'fs';
+import path from 'path';
+import {IAttribute} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
+import {Action, IData, IMatch, IElement, ITree} from '../../_types/import';
+import {IQueryInfos} from '../../_types/queryInfos';
+import {IValidateHelper} from '../helpers/validate';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 
@@ -200,20 +200,31 @@ export default function ({
                 throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
             }
 
-            for (const element of elements) {
-                if (await treeDomain.isElementPresent({treeId, element: {library, id: element}, ctx})) {
+            for (const e of elements) {
+                const record = {library, id: e};
+                const elementNodes = await treeDomain.getNodesByRecord({treeId, record, ctx});
+                const destination = parent
+                    ? (await treeDomain.getNodesByRecord({treeId, record: parent, ctx}))[0]
+                    : null;
+
+                if (parent && !destination) {
+                    throw new ValidationError({parent: Errors.UNKNOWN_PARENT});
+                }
+
+                if (elementNodes.length) {
+                    // If record is at multiple places in tree, only move the first
                     await treeDomain.moveElement({
                         treeId,
-                        element: {library, id: element},
-                        parentTo: parent,
+                        nodeId: elementNodes[0],
+                        parentTo: destination,
                         order,
                         ctx
                     });
                 } else {
                     await treeDomain.addElement({
                         treeId,
-                        element: {library, id: element},
-                        parent,
+                        element: {library, id: e},
+                        parent: destination,
                         order,
                         ctx
                     });
@@ -221,21 +232,22 @@ export default function ({
             }
         } else if (action === Action.REMOVE) {
             if (elements.length) {
-                for (const element of elements) {
-                    await treeDomain.deleteElement({
-                        treeId,
-                        element: {library, id: element},
-                        deleteChildren: true,
-                        ctx
-                    });
+                for (const e of elements) {
+                    const record = {library, id: e};
+                    const elementNodes = await treeDomain.getNodesByRecord({treeId, record, ctx});
+
+                    for (const node of elementNodes) {
+                        await treeDomain.deleteElement({treeId, nodeId: node, deleteChildren: true, ctx});
+                    }
                 }
             } else if (typeof parent !== 'undefined') {
-                const children = await treeDomain.getElementChildren({treeId, element: parent, ctx});
+                const parentNodes = await treeDomain.getNodesByRecord({treeId, record: parent, ctx});
 
-                for (const c of children) {
+                const children = await treeDomain.getElementChildren({treeId, nodeId: parentNodes[0], ctx});
+                for (const child of children) {
                     await treeDomain.deleteElement({
                         treeId,
-                        element: {library: c.record?.library, id: c.record?.id},
+                        nodeId: child.id,
                         deleteChildren: true,
                         ctx
                     });

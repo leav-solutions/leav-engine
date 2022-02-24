@@ -1,23 +1,65 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TreeRepo AddElement Should add an element to the root 1`] = `"INSERT {_from: @value0, _to: @value1, order: @value2} IN @@value3 RETURN NEW"`;
+exports[`TreeRepo AddElement Should add an element to the root 1`] = `"INSERT {} IN @@value0 RETURN NEW"`;
 
 exports[`TreeRepo AddElement Should add an element to the root 2`] = `
 Object {
+  "@value0": "core_nodes_test_tree",
+}
+`;
+
+exports[`TreeRepo AddElement Should add an element to the root 3`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`TreeRepo AddElement Should add an element to the root 4`] = `
+Object {
+  "@value1": "core_edge_tree_test_tree",
+  "value0": Object {
+    "_from": "core_nodes_my_tree/19610667",
+    "_to": "test_lib/13445",
+    "toRecord": true,
+  },
+}
+`;
+
+exports[`TreeRepo AddElement Should add an element to the root 5`] = `"INSERT {_from: @value0, _to: @value1, order: @value2} IN @@value3 RETURN NEW"`;
+
+exports[`TreeRepo AddElement Should add an element to the root 6`] = `
+Object {
   "@value3": "core_edge_tree_test_tree",
   "value0": "core_trees/test_tree",
-  "value1": "test_lib/13445",
+  "value1": "core_nodes_my_tree/19610667",
   "value2": 0,
 }
 `;
 
-exports[`TreeRepo AddElement Should add an element under another 1`] = `"INSERT {_from: @value0, _to: @value1, order: @value2} IN @@value3 RETURN NEW"`;
+exports[`TreeRepo AddElement Should add an element under another 1`] = `"INSERT {} IN @@value0 RETURN NEW"`;
 
 exports[`TreeRepo AddElement Should add an element under another 2`] = `
 Object {
+  "@value0": "core_nodes_test_tree",
+}
+`;
+
+exports[`TreeRepo AddElement Should add an element under another 3`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`TreeRepo AddElement Should add an element under another 4`] = `
+Object {
+  "@value1": "core_edge_tree_test_tree",
+  "value0": Object {
+    "_from": "core_nodes_my_tree/19610667",
+    "_to": "test_lib/13445",
+    "toRecord": true,
+  },
+}
+`;
+
+exports[`TreeRepo AddElement Should add an element under another 5`] = `"INSERT {_from: @value0, _to: @value1, order: @value2} IN @@value3 RETURN NEW"`;
+
+exports[`TreeRepo AddElement Should add an element under another 6`] = `
+Object {
   "@value3": "core_edge_tree_test_tree",
-  "value0": "test_lib2/6789",
-  "value1": "test_lib/13445",
+  "value0": "core_nodes_test_tree/6789",
+  "value1": "core_nodes_my_tree/19610667",
   "value2": 1,
 }
 `;
@@ -40,14 +82,14 @@ exports[`TreeRepo DeleteElement Should delete an element and its children 2`] = 
 Object {
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
-  "value1": "test_lib/13445",
+  "value1": "core_nodes_test_tree/13445",
 }
 `;
 
 exports[`TreeRepo DeleteElement Should delete an element and its children 3`] = `
 "
                     FOR e IN @@value0
-                        FILTER e._to == @value1
+                        FILTER e._to == @value1 OR e._from == @value1
                         REMOVE e IN @@value0
                         RETURN OLD
                 "
@@ -56,7 +98,17 @@ exports[`TreeRepo DeleteElement Should delete an element and its children 3`] = 
 exports[`TreeRepo DeleteElement Should delete an element and its children 4`] = `
 Object {
   "@value0": "core_edge_tree_test_tree",
-  "value1": "test_lib/13445",
+  "value1": "core_nodes_test_tree/13445",
+}
+`;
+
+exports[`TreeRepo DeleteElement Should delete an element and its children 5`] = `"REMOVE {_id: @value0, _key: @value1} IN @@value2 RETURN OLD"`;
+
+exports[`TreeRepo DeleteElement Should delete an element and its children 6`] = `
+Object {
+  "@value2": "core_nodes_test_tree",
+  "value0": "core_nodes_test_tree/13445",
+  "value1": "13445",
 }
 `;
 
@@ -71,14 +123,14 @@ exports[`TreeRepo DeleteElement Should delete an element and move its children u
 exports[`TreeRepo DeleteElement Should delete an element and move its children up 2`] = `
 Object {
   "@value1": "core_edge_tree_test_tree",
-  "value0": "test_lib/13445",
+  "value0": "core_nodes_test_tree/13445",
 }
 `;
 
 exports[`TreeRepo DeleteElement Should delete an element and move its children up 3`] = `
 "
                     FOR e IN @@value0
-                        FILTER e._to == @value1
+                        FILTER e._to == @value1 OR e._from == @value1
                         REMOVE e IN @@value0
                         RETURN OLD
                 "
@@ -87,7 +139,7 @@ exports[`TreeRepo DeleteElement Should delete an element and move its children u
 exports[`TreeRepo DeleteElement Should delete an element and move its children up 4`] = `
 Object {
   "@value0": "core_edge_tree_test_tree",
-  "value1": "test_lib/13445",
+  "value1": "core_nodes_test_tree/13445",
 }
 `;
 
@@ -104,8 +156,8 @@ exports[`TreeRepo MoveElement Should move an element 1`] = `
 exports[`TreeRepo MoveElement Should move an element 2`] = `
 Object {
   "@value0": "core_edge_tree_test_tree",
-  "value1": "test_lib/13445",
-  "value2": "users/6789",
+  "value1": "core_nodes_test_tree/13445",
+  "value2": "core_nodes_test_tree/6789",
   "value3": 1,
 }
 `;
@@ -144,9 +196,16 @@ exports[`TreeRepo getDefaultElement Should return the first element of a tree 1`
 "
                     FOR v, e, p IN 1..@value0 OUTBOUND @value1
                     @@value2
-                    LET path = (FOR pv IN p.vertices RETURN pv._id)
-                    SORT LENGTH(path), e.order ASC
-                    RETURN {record: MERGE(v, {path}), order: TO_NUMBER(e.order)}
+                    FILTER e.@value3 AND e._from != @value1
+                    LET path = (
+                        FOR pv IN p.vertices
+                        FILTER pv._id != v._id
+                        AND pv._id != e._from
+                        RETURN pv._key
+                    )
+                    LET nodeOrder = TO_NUMBER(p.edges[-2].order)
+                    SORT LENGTH(path), nodeOrder ASC
+                    RETURN {id: SPLIT(e._from, '/')[1], record: MERGE(v, {path}), order: nodeOrder}
                 "
 `;
 
@@ -155,43 +214,46 @@ Object {
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
   "value1": "core_trees/test_tree",
+  "value3": "toRecord",
+}
+`;
+
+exports[`TreeRepo getElementAncestors Should return element ancestors 1`] = `
+"
+                FOR v,e,p IN 0..@value0 INBOUND @value1
+                @@value2
+                FILTER v._id != @value3
+                LET rec = FIRST(
+                    FOR vrec, erec in 1 outbound v._id @@value2
+                    FILTER erec.@value4
+                    return vrec
+                    )
+                RETURN {id: v._key, order: TO_NUMBER(e.order), record: rec}
+            "
+`;
+
+exports[`TreeRepo getElementAncestors Should return element ancestors 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": 1000,
+  "value1": "core_nodes_test_tree/123458",
+  "value3": "core_trees/test_tree",
+  "value4": "toRecord",
 }
 `;
 
 exports[`TreeRepo getElementChildren Should return element children 1`] = `
 "
-                FOR v
-                    IN 1 OUTBOUND @value0
+                FOR v, e IN 2 OUTBOUND @value0
                     @@value1
-                    RETURN v
+                    RETURN {id: SPLIT(e._from, '/')[1], order: TO_NUMBER(e.order), record: v}
             "
 `;
 
 exports[`TreeRepo getElementChildren Should return element children 2`] = `
 Object {
   "@value1": "core_edge_tree_test_tree",
-  "value0": "images/123458",
-}
-`;
-
-exports[`TreeRepo getElementParents Should return element parents 1`] = `
-"
-                FOR v,e,p
-                    IN 0..@value0 INBOUND @value1
-                    @@value2
-                    SORT COUNT(p.edges) DESC
-                    FILTER v._id == @value3
-                    RETURN APPEND([], REVERSE(p.vertices[* FILTER CURRENT._key != @value4]))
-            "
-`;
-
-exports[`TreeRepo getElementParents Should return element parents 2`] = `
-Object {
-  "@value2": "core_edge_tree_test_tree",
-  "value0": 1000,
-  "value1": "images/123458",
-  "value3": "core_trees/test_tree",
-  "value4": "test_tree",
+  "value0": "core_nodes_test_tree/123458",
 }
 `;
 
@@ -208,8 +270,43 @@ exports[`TreeRepo getLinkedRecords Should return linked records 1`] = `
 exports[`TreeRepo getLinkedRecords Should return linked records 2`] = `
 Object {
   "@value1": "core_edge_values_links",
-  "value0": "images/123458",
+  "value0": "core_nodes_test_tree/123458",
   "value2": "test_attr",
+}
+`;
+
+exports[`TreeRepo getNodesByRecord Return nodes linked to record 1`] = `
+"
+                FOR v,e,p IN 1 INBOUND @value0
+                    @@value1
+                    FILTER e.@value2
+                    RETURN v._key
+            "
+`;
+
+exports[`TreeRepo getNodesByRecord Return nodes linked to record 2`] = `
+Object {
+  "@value1": "core_edge_tree_test_tree",
+  "value0": "mylib/123456",
+  "value2": "toRecord",
+}
+`;
+
+exports[`TreeRepo getRecordByNodeId Return record linked to node 1`] = `
+"
+            FOR v,e,p
+            IN 1 OUTBOUND @value0
+            @@value1
+            FILTER e.@value2
+            RETURN v
+            "
+`;
+
+exports[`TreeRepo getRecordByNodeId Return record linked to node 2`] = `
+Object {
+  "@value1": "core_edge_tree_test_tree",
+  "value0": "core_nodes_test_tree/123458",
+  "value2": "toRecord",
 }
 `;
 
@@ -217,9 +314,16 @@ exports[`TreeRepo getTreeContent Should return content of a tree starting from a
 "
                     FOR v, e, p IN 1..@value0 OUTBOUND @value1
                     @@value2
-                    LET path = (FOR pv IN p.vertices RETURN pv._id)
-                    SORT LENGTH(path), e.order ASC
-                    RETURN {record: MERGE(v, {path}), order: TO_NUMBER(e.order)}
+                    FILTER e.@value3 AND e._from != @value1
+                    LET path = (
+                        FOR pv IN p.vertices
+                        FILTER pv._id != v._id
+                        AND pv._id != e._from
+                        RETURN pv._key
+                    )
+                    LET nodeOrder = TO_NUMBER(p.edges[-2].order)
+                    SORT LENGTH(path), nodeOrder ASC
+                    RETURN {id: SPLIT(e._from, '/')[1], record: MERGE(v, {path}), order: nodeOrder}
                 "
 `;
 
@@ -227,7 +331,8 @@ exports[`TreeRepo getTreeContent Should return content of a tree starting from a
 Object {
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
-  "value1": "categories/223588185",
+  "value1": "core_nodes_test_tree/223588185",
+  "value3": "toRecord",
 }
 `;
 
@@ -235,9 +340,16 @@ exports[`TreeRepo getTreeContent Should return full content of a tree 1`] = `
 "
                     FOR v, e, p IN 1..@value0 OUTBOUND @value1
                     @@value2
-                    LET path = (FOR pv IN p.vertices RETURN pv._id)
-                    SORT LENGTH(path), e.order ASC
-                    RETURN {record: MERGE(v, {path}), order: TO_NUMBER(e.order)}
+                    FILTER e.@value3 AND e._from != @value1
+                    LET path = (
+                        FOR pv IN p.vertices
+                        FILTER pv._id != v._id
+                        AND pv._id != e._from
+                        RETURN pv._key
+                    )
+                    LET nodeOrder = TO_NUMBER(p.edges[-2].order)
+                    SORT LENGTH(path), nodeOrder ASC
+                    RETURN {id: SPLIT(e._from, '/')[1], record: MERGE(v, {path}), order: nodeOrder}
                 "
 `;
 
@@ -246,6 +358,7 @@ Object {
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
   "value1": "core_trees/test_tree",
+  "value3": "toRecord",
 }
 `;
 
@@ -260,7 +373,39 @@ exports[`TreeRepo isElementPresent Should check if an element is present in the 
 exports[`TreeRepo isElementPresent Should check if an element is present in the tree 2`] = `
 Object {
   "@value0": "core_edge_tree_test_tree",
-  "value1": "test_lib/13445",
+  "value1": "core_nodes_test_tree/13445",
+}
+`;
+
+exports[`TreeRepo isRecordPresent Should check if a record is present in the tree 1`] = `
+"
+                FOR e IN @@value0
+                    FILTER e._to == @value1 AND e.@value2
+                    RETURN e
+            "
+`;
+
+exports[`TreeRepo isRecordPresent Should check if a record is present in the tree 2`] = `
+Object {
+  "@value0": "core_edge_tree_test_tree",
+  "value1": "users/223536900",
+  "value2": "toRecord",
+}
+`;
+
+exports[`TreeRepo isRecordPresent Should check if an element is present in the tree 1`] = `
+"
+                FOR e IN @@value0
+                    FILTER e._to == @value1 AND e.@value2
+                    RETURN e
+            "
+`;
+
+exports[`TreeRepo isRecordPresent Should check if an element is present in the tree 2`] = `
+Object {
+  "@value0": "core_edge_tree_test_tree",
+  "value1": "users/223536900",
+  "value2": "toRecord",
 }
 `;
 

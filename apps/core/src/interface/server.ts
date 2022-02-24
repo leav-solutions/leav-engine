@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
+import {ApolloServer, AuthenticationError} from 'apollo-server-express';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import express, {NextFunction, Request, Response} from 'express';
 import {execute, GraphQLFormattedError} from 'graphql';
+import {graphqlUploadExpress} from 'graphql-upload';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
-import express, {Response, NextFunction, Request} from 'express';
-import {ApolloServer, AuthenticationError} from 'apollo-server-express';
-import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
-import {graphqlUploadExpress} from 'graphql-upload';
 
 export interface IServer {
     init(): Promise<void>;
@@ -158,6 +158,7 @@ export default function ({
                                 queryId: req.body.requestId || uuidv4()
                             };
                         } catch (e) {
+                            console.error(e);
                             throw new AuthenticationError('you must be logged in');
                         }
                     },

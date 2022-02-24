@@ -13,7 +13,7 @@ import {TreeElementInput} from './globalTypes';
 // ====================================================
 
 export interface ADD_TREE_ELEMENT_treeAddElement {
-    id: string | null;
+    id: string;
 }
 
 export interface ADD_TREE_ELEMENT {
@@ -23,6 +23,6 @@ export interface ADD_TREE_ELEMENT {
 export interface ADD_TREE_ELEMENTVariables {
     treeId: string;
     element: TreeElementInput;
-    parent?: TreeElementInput | null;
+    parent?: string | null;
     order?: number | null;
 }

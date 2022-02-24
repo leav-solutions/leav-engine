@@ -4,6 +4,7 @@
 import * as amqp from 'amqplib';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
+import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
@@ -113,6 +114,10 @@ describe('FilesManager', () => {
     });
 
     test('Force preview generation one directory', async () => {
+        const mockUtils: Mockify<IUtils> = {
+            getLibraryTreeId: jest.fn(() => 'files_tree')
+        };
+
         const mockRecordDomain: Mockify<IRecordDomain> = {
             find: global.__mockPromise({
                 cursor: {},
@@ -125,7 +130,11 @@ describe('FilesManager', () => {
             getTreeContent: global.__mockPromise([
                 {record: {id: 'file1', is_directory: false, file_path: 'file_path_1', file_name: 'file_name_1'}},
                 {record: {id: 'file2', is_directory: false, file_path: 'file_path_2', file_name: 'file_name_2'}}
-            ])
+            ]),
+            getNodesByRecord: global.__mockPromise({
+                id: '12345',
+                record: {id: 'file1', is_directory: false, file_path: 'file_path_1', file_name: 'file_name_1'}
+            })
         };
 
         const files = filesManager({
@@ -133,7 +142,8 @@ describe('FilesManager', () => {
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.infra.amqp.amqpService': mockAmqpService as IAmqpService,
-            'core.domain.tree': mockTreeDomain as ITreeDomain
+            'core.domain.tree': mockTreeDomain as ITreeDomain,
+            'core.utils': mockUtils as IUtils
         });
 
         await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordId: 'id'});

@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
 import {IGlobalPermissionHelper} from './helpers/globalPermission';
-import {IGetAttributePermissionParams, IGetHeritedAttributePermissionParams} from './_types';
+import {IGetAttributePermissionParams, IGetInheritedAttributePermissionParams} from './_types';
 
 export interface IAttributePermissionDomain {
     getAttributePermission(params: IGetAttributePermissionParams): Promise<boolean>;
-    getHeritedAttributePermission(params: IGetHeritedAttributePermissionParams): Promise<boolean>;
+    getInheritedAttributePermission(params: IGetInheritedAttributePermissionParams): Promise<boolean>;
 }
 
 interface IDeps {
@@ -33,18 +33,18 @@ export default function (deps: IDeps = {}): IAttributePermissionDomain {
         );
     };
 
-    const getHeritedAttributePermission = async ({
+    const getInheritedAttributePermission = async ({
         action,
         attributeId,
         userGroupId,
         ctx
-    }: IGetHeritedAttributePermissionParams): Promise<boolean> => {
+    }: IGetInheritedAttributePermissionParams): Promise<boolean> => {
         return globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.ATTRIBUTE,
                 action,
                 applyTo: attributeId,
-                userGroupId
+                userGroupNodeId: userGroupId
             },
             ctx
         );
@@ -52,6 +52,6 @@ export default function (deps: IDeps = {}): IAttributePermissionDomain {
 
     return {
         getAttributePermission,
-        getHeritedAttributePermission
+        getInheritedAttributePermission
     };
 }

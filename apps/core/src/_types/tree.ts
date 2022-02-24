@@ -33,19 +33,22 @@ export interface ITreeElement {
 }
 
 export interface ITreeNode {
+    id: string;
     order?: number;
     record?: IRecord;
     parent?: ITreeNode[];
-    ancestors?: TreePaths;
+    ancestors?: ITreeNode[];
     children?: ITreeNode[];
     linkedRecords?: IRecord[];
 }
+
+export type ITreeNodeLight = Pick<ITreeNode, 'id' | 'order'>;
 
 export interface ITreeNodeWithTreeId extends ITreeNode {
     treeId: string;
 }
 
-export type TreePaths = ITreeNode[][];
+export type TreePaths = ITreeNode[];
 
 export enum TreeBehavior {
     STANDARD = 'standard',

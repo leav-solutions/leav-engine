@@ -3,9 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IDbDocument, IDbEdge} from 'infra/db/_types';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
-import {IValue} from '../../_types/value';
+import {IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
@@ -56,7 +57,7 @@ export default function ({
                     RETURN NEW`,
                 ctx
             });
-            const savedVal = resVal.length ? resVal[0] : {};
+            const savedVal: Partial<IDbDocument> = resVal.length ? resVal[0] : {};
 
             // Create the link record<->value and add some metadata on it
             const edgeData: any = {
@@ -66,25 +67,22 @@ export default function ({
                 modified_at: value.modified_at,
                 created_at: value.created_at,
                 modified_by: String(ctx.userId),
-                created_by: String(ctx.userId)
+                created_by: String(ctx.userId),
+                version: value.version ?? null
             };
-
-            if (value.version) {
-                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
-            }
 
             if (value.metadata) {
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute({
+            const resEdge = await dbService.execute<IDbEdge[]>({
                 query: aql`
                     INSERT ${edgeData}
                     IN ${edgeCollec}
                     RETURN NEW`,
                 ctx
             });
-            const savedEdge = resEdge.length ? resEdge[0] : {};
+            const savedEdge: Partial<IDbEdge> = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
                 id_value: savedVal._key,
@@ -94,12 +92,9 @@ export default function ({
                 created_at: savedEdge.created_at,
                 modified_by: savedEdge.modified_by,
                 created_by: savedEdge.created_by,
-                metadata: savedEdge.metadata
+                metadata: savedEdge.metadata,
+                version: savedEdge.version ?? null
             };
-
-            if (value.version) {
-                res.version = dbUtils.convertValueVersionFromDb(savedEdge.version);
-            }
 
             return res;
         },
@@ -120,7 +115,7 @@ export default function ({
                     RETURN NEW`,
                 ctx
             });
-            const savedVal = resVal.length ? resVal[0] : {};
+            const savedVal: Partial<IDbDocument> = resVal.length ? resVal[0] : {};
 
             // Update value's metadata on record<->value link
             const edgeFrom = library + '/' + recordId;
@@ -132,18 +127,15 @@ export default function ({
                 modified_at: value.modified_at,
                 created_at: value.created_at,
                 modified_by: String(ctx.userId),
-                created_by: value.created_by
+                created_by: value.created_by,
+                version: value.version ?? null
             };
-
-            if (value.version) {
-                edgeData.version = dbUtils.convertValueVersionToDb(value.version);
-            }
 
             if (value.metadata) {
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute({
+            const resEdge = await dbService.execute<IValueEdge[]>({
                 query: aql`
                     FOR e IN ${edgeCollec}
                     FILTER e._from == ${edgeFrom} AND e._to == ${edgeTo}
@@ -153,7 +145,7 @@ export default function ({
                     RETURN NEW`,
                 ctx
             });
-            const savedEdge = resEdge.length ? resEdge[0] : {};
+            const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
             const res: IValue = {
                 id_value: savedVal._key,
@@ -163,12 +155,9 @@ export default function ({
                 created_at: savedEdge.created_at,
                 modified_by: savedEdge.modified_by,
                 created_by: savedEdge.created_by,
-                metadata: savedEdge.metadata
+                metadata: savedEdge.metadata,
+                version: savedEdge.version ?? null
             };
-
-            if (value.version) {
-                res.version = dbUtils.convertValueVersionFromDb(savedEdge.version);
-            }
 
             return res;
         },
@@ -228,7 +217,7 @@ export default function ({
                 modified_by: r.edge.modified_by,
                 created_by: r.edge.created_by,
                 metadata: r.edge.metadata,
-                version: dbUtils.convertValueVersionFromDb(r.edge.version)
+                version: r.edge.version ?? null
             }));
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {

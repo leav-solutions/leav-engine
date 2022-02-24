@@ -3,38 +3,24 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {
-    LibraryPermissionsActions,
-    PermissionsActions,
-    PermissionTypes,
-    RecordPermissionsActions
-} from '../../_types/permissions';
+import {LibraryPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import {IGetDefaultPermissionParams} from './_types';
+import {
+    IGetDefaultPermissionParams,
+    IGetInheritedRecordPermissionParams,
+    IGetRecordPermissionParams,
+    IGetTreeBasedPermissionParams
+} from './_types';
 
 export interface IRecordPermissionDomain {
-    getRecordPermission(
-        action: string,
-        userId: string,
-        recordLibrary: string,
-        recordId: string,
-        ctx: IQueryInfos
-    ): Promise<boolean>;
-    getHeritedRecordPermission(
-        action: PermissionsActions,
-        userGroupId: string,
-        recordLibrary: string,
-        permTree: string,
-        permTreeNode: {id: string; library: string},
-        ctx: IQueryInfos
-    ): Promise<boolean>;
+    getRecordPermission(params: IGetRecordPermissionParams): Promise<boolean>;
+    getInheritedRecordPermission(params: IGetInheritedRecordPermissionParams): Promise<boolean>;
 }
 
 interface IDeps {
@@ -59,15 +45,9 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
     } = deps;
 
     return {
-        async getRecordPermission(
-            action: RecordPermissionsActions,
-            userId: string,
-            recordLibrary: string,
-            recordId: string,
-            ctx: IQueryInfos
-        ): Promise<boolean> {
+        async getRecordPermission({action, userId, library, recordId, ctx}): Promise<boolean> {
             const libs = await libraryRepo.getLibraries({
-                params: {filters: {id: recordLibrary}, strictFilters: true},
+                params: {filters: {id: library}, strictFilters: true},
                 ctx
             });
 
@@ -87,7 +67,7 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
                 return isLibAction
                     ? libraryPermissionDomain.getLibraryPermission({
                           action: (action as unknown) as LibraryPermissionsActions,
-                          libraryId: recordLibrary,
+                          libraryId: library,
                           userId,
                           ctx
                       })
@@ -98,7 +78,7 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
                 lib.permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
                     return valueRepo.getValues({
-                        library: recordLibrary,
+                        library,
                         recordId,
                         attribute: permTreeAttrProps,
                         ctx
@@ -106,18 +86,21 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
                 })
             );
 
-            const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-                allVal[lib.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value);
+            const valuesByAttr: IGetTreeBasedPermissionParams['treeValues'] = treesAttrValues.reduce(
+                (allVal, treeVal, i) => {
+                    allVal[lib.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
 
-                return allVal;
-            }, {});
+                    return allVal;
+                },
+                {}
+            );
 
             const perm = await treeBasedPermissionsHelper.getTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD,
                     action,
                     userId,
-                    applyTo: recordLibrary,
+                    applyTo: library,
                     treeValues: valuesByAttr,
                     permissions_conf: lib.permissions_conf,
                     getDefaultPermission: params =>
@@ -133,14 +116,14 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
 
             return perm;
         },
-        async getHeritedRecordPermission(
-            action: PermissionsActions,
-            userGroupId: string,
-            recordLibrary: string,
-            permTree: string,
-            permTreeNode: {id: string; library: string},
-            ctx: IQueryInfos
-        ): Promise<boolean> {
+        async getInheritedRecordPermission({
+            action,
+            userGroupId,
+            library: recordLibrary,
+            permTree,
+            permTreeNode,
+            ctx
+        }): Promise<boolean> {
             const _getDefaultPermission = async (params: IGetDefaultPermissionParams) => {
                 const {applyTo, userGroups} = params;
 
@@ -155,13 +138,13 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
                 return libPerm !== null ? libPerm : defaultPermHelper.getDefaultPermission();
             };
 
-            return treeBasedPermissionsHelper.getHeritedTreeBasedPermission(
+            return treeBasedPermissionsHelper.getInheritedTreeBasedPermission(
                 {
                     type: PermissionTypes.RECORD,
                     applyTo: recordLibrary,
                     action,
                     userGroupId,
-                    permissionTreeTarget: {tree: permTree, ...permTreeNode},
+                    permissionTreeTarget: {tree: permTree, nodeId: permTreeNode},
                     getDefaultPermission: _getDefaultPermission
                 },
                 ctx

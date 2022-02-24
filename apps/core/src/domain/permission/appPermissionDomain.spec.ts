@@ -34,13 +34,13 @@ describe('PermissionDomain', () => {
         });
     });
 
-    describe('getHeritedAppPermission', () => {
+    describe('getInheritedAppPermission', () => {
         test('Return herited admin permission', async () => {
             const permDomain = appPermissionDomain({
                 'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
             });
 
-            const perm = await permDomain.getHeritedAppPermission({
+            const perm = await permDomain.getInheritedAppPermission({
                 action: AppPermissionsActions.ACCESS_ATTRIBUTES,
                 userGroupId: '12345',
                 ctx

@@ -11,7 +11,8 @@ import {
     ITreePermissionsConf,
     PermissionsRelations,
     PermissionTypes
-} from '../../_types/permissions';
+} from '../../../_types/permissions';
+import {IInheritedPermissionsQueryParams} from './_types';
 
 export interface IPluginPermission {
     name: string;
@@ -104,15 +105,13 @@ export default function ({
                     # If id and library are not specified, permission will apply to tree root
                     type PermissionsTreeTarget {
                         tree: ID!,
-                        library: ID,
-                        id: ID
+                        nodeId: ID
                     }
 
                     # If id and library are not specified, permission will apply to tree root
                     input PermissionsTreeTargetInput {
                         tree: ID!,
-                        library: ID,
-                        id: ID
+                        nodeId: ID
                     }
 
                     # A "null" users groups means this permission applies at root level. A "null" on tree target's
@@ -141,8 +140,9 @@ export default function ({
                     # libraryId and recordId are mandatory for tree node permission
                     input PermissionTarget {
                         attributeId: ID,
-                        recordId: ID!
-                        libraryId: ID
+                        recordId: ID,
+                        libraryId: ID,
+                        nodeId: ID
                     }
 
                     extend type Query {
@@ -163,12 +163,12 @@ export default function ({
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): [PermissionAction!],
 
-                        # Return herited permissions only for given user group
-                        heritedPermissions(
+                        # Return inherited permissions only for given user group
+                        inheritedPermissions(
                             type: PermissionTypes!,
                             applyTo: ID,
                             actions: [PermissionsActions!]!,
-                            userGroupId: ID,
+                            userGroupNodeId: ID,
                             permissionTreeTarget: PermissionsTreeTargetInput
                         ): [HeritedPermissionAction!]
 
@@ -204,7 +204,7 @@ export default function ({
                                 type,
                                 applyTo,
                                 actions,
-                                usersGroupId: usersGroup,
+                                usersGroupNodeId: usersGroup,
                                 permissionTreeTarget,
                                 ctx
                             });
@@ -214,14 +214,24 @@ export default function ({
                                 return permByActions;
                             }, []);
                         },
-                        async heritedPermissions(_, {type, applyTo, actions, userGroupId, permissionTreeTarget}, ctx) {
+                        async inheritedPermissions(
+                            _,
+                            {
+                                type,
+                                applyTo,
+                                actions,
+                                userGroupNodeId,
+                                permissionTreeTarget
+                            }: IInheritedPermissionsQueryParams,
+                            ctx
+                        ) {
                             return Promise.all(
                                 actions.map(async action => {
-                                    const perm = await permissionDomain.getHeritedPermissions({
+                                    const perm = await permissionDomain.getInheritedPermissions({
                                         type,
                                         applyTo,
                                         action,
-                                        userGroupId,
+                                        userGroupId: userGroupNodeId,
                                         permissionTreeTarget,
                                         ctx
                                     });

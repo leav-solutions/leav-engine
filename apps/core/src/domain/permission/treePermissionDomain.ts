@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
 import {IGlobalPermissionHelper} from './helpers/globalPermission';
-import {IGetHeritedTreePermissionParams, IGetTreePermissionParams} from './_types';
+import {IGetInheritedTreePermissionParams, IGetTreePermissionParams} from './_types';
 
 export interface ITreePermissionDomain {
     getTreePermission(params: IGetTreePermissionParams): Promise<boolean>;
-    getHeritedTreePermission(params: IGetHeritedTreePermissionParams): Promise<boolean>;
+    getInheritedTreePermission(params: IGetInheritedTreePermissionParams): Promise<boolean>;
 }
 
 interface IDeps {
@@ -28,18 +28,18 @@ export default function ({
         );
     };
 
-    const getHeritedTreePermission = async ({
+    const getInheritedTreePermission = async ({
         action,
         treeId,
         userGroupId,
         ctx
-    }: IGetHeritedTreePermissionParams): Promise<boolean> => {
+    }: IGetInheritedTreePermissionParams): Promise<boolean> => {
         return globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.TREE,
                 action,
                 applyTo: treeId,
-                userGroupId
+                userGroupNodeId: userGroupId
             },
             ctx
         );
@@ -47,6 +47,6 @@ export default function ({
 
     return {
         getTreePermission,
-        getHeritedTreePermission
+        getInheritedTreePermission
     };
 }

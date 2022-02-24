@@ -419,9 +419,9 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                                                 },
                                                 ctx
                                             });
-                                            const isInTree = await treeDomain.isElementPresent({
+                                            const isInTree = await treeDomain.isRecordPresent({
                                                 treeId: attributeData.linked_tree,
-                                                element: {
+                                                record: {
                                                     library,
                                                     id
                                                 },

@@ -9,7 +9,7 @@ import {IAttribute, IGetCoreAttributesParams} from '../../_types/attribute';
 import {IGetCoreEntitiesParams} from '../../_types/shared';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {LIB_COLLECTION_NAME, LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
+import {LIB_ATTRIB_COLLECTION_NAME, LIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
 
 export interface IAttributeRepo {
@@ -52,7 +52,7 @@ export default function ({
 
             const res = await dbService.execute({query, ctx});
 
-            return res.map(dbUtils.cleanup);
+            return res.map(a => dbUtils.cleanup<IAttribute>(a));
         },
         async getLibraryFullTextAttributes({libraryId, ctx}): Promise<IAttribute[]> {
             const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
@@ -72,7 +72,7 @@ export default function ({
                 ctx
             });
 
-            return attrs.map(dbUtils.cleanup);
+            return attrs.map(a => dbUtils.cleanup<IAttribute>(a));
         },
         async getAttributes({
             params,

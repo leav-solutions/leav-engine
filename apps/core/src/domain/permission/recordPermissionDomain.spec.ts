@@ -92,13 +92,13 @@ describe('recordPermissionDomain', () => {
                 'core.infra.value': mockValueRepo as IValueRepo
             });
 
-            const perm = await recordPermDomain.getRecordPermission(
-                RecordPermissionsActions.ACCESS_RECORD,
-                '987654',
-                'test_lib',
-                '123456',
+            const perm = await recordPermDomain.getRecordPermission({
+                action: RecordPermissionsActions.ACCESS_RECORD,
+                userId: '987654',
+                library: 'test_lib',
+                recordId: '123456',
                 ctx
-            );
+            });
 
             expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
             expect(mockValueRepo.getValues.mock.calls.length).toBe(1);
@@ -118,27 +118,27 @@ describe('recordPermissionDomain', () => {
                 'core.infra.value': mockValueRepo as IValueRepo
             });
 
-            const perm = await recordPermDomain.getRecordPermission(
-                RecordPermissionsActions.ACCESS_RECORD,
-                '987654',
-                'test_lib',
-                '123456',
+            const perm = await recordPermDomain.getRecordPermission({
+                action: RecordPermissionsActions.ACCESS_RECORD,
+                userId: '987654',
+                library: 'test_lib',
+                recordId: '123456',
                 ctx
-            );
+            });
 
             expect(mockLibPermDomain.getLibraryPermission).toBeCalled();
             expect(perm).toBe(defaultPerm);
         });
     });
 
-    describe('getHeritedRecordPermission', () => {
+    describe('getInheritedRecordPermission', () => {
         test('Return herited record permission', async () => {
             const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
                 getPermissionByUserGroups: global.__mockPromise(true)
             };
 
             const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
-                getHeritedTreeBasedPermission: global.__mockPromise(true)
+                getInheritedTreeBasedPermission: global.__mockPromise(true)
             };
 
             const recordPermDomain = recordPermissionDomain({
@@ -146,14 +146,14 @@ describe('recordPermissionDomain', () => {
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper
             });
 
-            const perm = await recordPermDomain.getHeritedRecordPermission(
-                RecordPermissionsActions.ACCESS_RECORD,
-                '12345',
-                'test_lib',
-                'test_tree',
-                {id: '54321', library: 'some_lib'},
+            const perm = await recordPermDomain.getInheritedRecordPermission({
+                action: RecordPermissionsActions.ACCESS_RECORD,
+                userGroupId: '12345',
+                library: 'test_lib',
+                permTree: 'test_tree',
+                permTreeNode: '54321',
                 ctx
-            );
+            });
 
             expect(perm).toBe(true);
         });

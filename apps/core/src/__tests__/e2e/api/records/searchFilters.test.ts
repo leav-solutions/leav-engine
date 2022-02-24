@@ -1341,13 +1341,18 @@ describe('searchFilters', () => {
         });
 
         describe('Tree attribute', () => {
-            beforeAll(async () => {
-                await gqlAddElemToTree(treeId, {id: treeRecordId1, library: treeLibraryId});
-                await gqlAddElemToTree(treeId, {id: treeRecordId2, library: treeLibraryId});
-                await gqlAddElemToTree(treeId, {id: treeRecordId3, library: treeLibraryId});
+            let nodeTreeRecordId1;
+            let nodeTreeRecordId2;
+            let nodeTreeRecordId3;
 
-                await gqlSaveValue(treeAttributeId, libraryId, recordId1, `${treeLibraryId}/${treeRecordId1}`);
-                await gqlSaveValue(treeAttributeId, libraryId, recordId2, `${treeLibraryId}/${treeRecordId2}`);
+            beforeAll(async () => {
+                nodeTreeRecordId1 = await gqlAddElemToTree(treeId, {id: treeRecordId1, library: treeLibraryId});
+
+                nodeTreeRecordId2 = await gqlAddElemToTree(treeId, {id: treeRecordId2, library: treeLibraryId});
+                nodeTreeRecordId3 = await gqlAddElemToTree(treeId, {id: treeRecordId3, library: treeLibraryId});
+
+                await gqlSaveValue(treeAttributeId, libraryId, recordId1, nodeTreeRecordId1);
+                await gqlSaveValue(treeAttributeId, libraryId, recordId2, nodeTreeRecordId2);
             });
 
             test('Contains', async () => {
@@ -1459,44 +1464,14 @@ describe('searchFilters', () => {
 
             describe('Values count', () => {
                 beforeAll(async () => {
-                    await gqlSaveValue(
-                        treeMultivalAttributeId,
-                        libraryId,
-                        recordId1,
-                        `${treeLibraryId}/${treeRecordId1}`
-                    );
+                    await gqlSaveValue(treeMultivalAttributeId, libraryId, recordId1, nodeTreeRecordId1);
 
-                    await gqlSaveValue(
-                        treeMultivalAttributeId,
-                        libraryId,
-                        recordId2,
-                        `${treeLibraryId}/${treeRecordId1}`
-                    );
-                    await gqlSaveValue(
-                        treeMultivalAttributeId,
-                        libraryId,
-                        recordId2,
-                        `${treeLibraryId}/${treeRecordId2}`
-                    );
+                    await gqlSaveValue(treeMultivalAttributeId, libraryId, recordId2, nodeTreeRecordId1);
+                    await gqlSaveValue(treeMultivalAttributeId, libraryId, recordId2, nodeTreeRecordId2);
 
-                    await gqlSaveValue(
-                        treeMultivalAttributeId,
-                        libraryId,
-                        recordId3,
-                        `${treeLibraryId}/${treeRecordId1}`
-                    );
-                    await gqlSaveValue(
-                        treeMultivalAttributeId,
-                        libraryId,
-                        recordId3,
-                        `${treeLibraryId}/${treeRecordId2}`
-                    );
-                    await gqlSaveValue(
-                        treeMultivalAttributeId,
-                        libraryId,
-                        recordId3,
-                        `${treeLibraryId}/${treeRecordId3}`
-                    );
+                    await gqlSaveValue(treeMultivalAttributeId, libraryId, recordId3, nodeTreeRecordId1);
+                    await gqlSaveValue(treeMultivalAttributeId, libraryId, recordId3, nodeTreeRecordId2);
+                    await gqlSaveValue(treeMultivalAttributeId, libraryId, recordId3, nodeTreeRecordId3);
                 });
 
                 test('Equal', async () => {

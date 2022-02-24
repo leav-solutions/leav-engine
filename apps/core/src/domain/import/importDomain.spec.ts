@@ -1,20 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import importDomain from './importDomain';
-import {IRecordDomain} from 'domain/record/recordDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IQueryInfos} from '_types/queryInfos';
 import {Action} from '../../_types/import';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ICacheService} from 'infra/cache/cacheService';
 import * as Config from '_types/config';
 import fs from 'fs';
-import {appRootPath} from '@leav/app-root-path';
 import path from 'path';
 import {when} from 'jest-when';
+import importDomain from './importDomain';
 
 const importMockConfig: Mockify<Config.IImport> = {
     directory: path.resolve(__dirname, './imports'),
@@ -299,8 +298,9 @@ describe('importDomain', () => {
         await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data));
 
         const mockTreeDomain: Mockify<ITreeDomain> = {
-            isElementPresent: global.__mockPromise(false),
-            addElement: global.__mockPromise()
+            isRecordPresent: global.__mockPromise(false),
+            addElement: global.__mockPromise(),
+            getNodesByRecord: global.__mockPromise([])
         };
 
         const mockRecordDomain: Mockify<IRecordDomain> = {
@@ -334,7 +334,7 @@ describe('importDomain', () => {
 
         expect(mockRecordDomain.find.mock.calls.length).toBe(1);
         expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
-        expect(mockTreeDomain.isElementPresent.mock.calls.length).toBe(1);
+        expect(mockTreeDomain.getNodesByRecord.mock.calls.length).toBe(1);
         expect(mockTreeDomain.addElement.mock.calls.length).toBe(1);
     });
 });

@@ -13,10 +13,18 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
 import {IRecord} from '../../../_types/record';
-import {ITree, ITreeElement, ITreeNode, ITreeNodeWithTreeId, TreeBehavior, TreePaths} from '../../../_types/tree';
+import {ITree, ITreeNode, ITreeNodeWithTreeId, TreeBehavior, TreePaths} from '../../../_types/tree';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
-import {ISaveTreeMutationArgs, ITreeLibraryForGraphQL, ITreePermissionsConfForGraphQL, ITreesQueryArgs} from './_types';
+import {
+    IAddElementMutationArgs,
+    IDeleteElementMutationArgs,
+    IMoveElementMutationArgs,
+    ISaveTreeMutationArgs,
+    ITreeLibraryForGraphQL,
+    ITreePermissionsConfForGraphQL,
+    ITreesQueryArgs
+} from './_types';
 
 export interface ITreeAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -31,7 +39,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -77,10 +85,7 @@ export default function({
             type: PermissionTypes.TREE_NODE,
             applyTo: treeId,
             action: TreeNodePermissionsActions.ACCESS_TREE,
-            target: {
-                recordId: treeNode.record.id,
-                libraryId: treeNode.record.library
-            },
+            target: {nodeId: treeNode.id},
             userId: ctx.userId,
             ctx
         });
@@ -170,9 +175,10 @@ export default function({
                     }
 
                     type TreeNode {
+                        id: ID!,
                         order: Int!,
                         record: Record!,
-                        ancestors: [[TreeNode!]!],
+                        ancestors: [TreeNode!],
                         children: [TreeNode!],
                         linkedRecords(attribute: ID): [Record!],
                         permissions: TreeNodePermissions!
@@ -217,7 +223,7 @@ export default function({
                         # Retrieve tree content.
                         # If startAt is specified, it returns this element's children. Otherwise, it starts
                         # from tree root
-                        treeContent(treeId: ID!, startAt: TreeElementInput): [TreeNode!]
+                        treeContent(treeId: ID!, startAt: ID): [TreeNode!]
 
                         # Retrieve full tree content form tree root, as an object.
                         fullTreeContent(treeId: ID!): FullTreeContent
@@ -229,20 +235,20 @@ export default function({
                         treeAddElement(
                             treeId: ID!,
                             element: TreeElementInput!,
-                            parent: TreeElementInput,
+                            parent: ID,
                             order: Int
-                        ): TreeElement!
+                        ): TreeNode!
                         treeMoveElement(
                             treeId: ID!,
-                            element: TreeElementInput!,
-                            parentTo: TreeElementInput,
+                            nodeId: ID!,
+                            parentTo: ID,
                             order: Int
-                        ): TreeElement!
+                        ): TreeNode!
                         treeDeleteElement(
                             treeId: ID!,
-                            element: TreeElementInput!,
+                            nodeId: ID!,
                             deleteChildren: Boolean
-                        ): TreeElement!
+                        ): TreeNode!
                     }
                 `,
                 resolvers: {
@@ -256,7 +262,7 @@ export default function({
                         },
                         async treeContent(
                             _,
-                            {treeId, startAt}: {treeId: string; startAt: ITreeElement},
+                            {treeId, startAt}: {treeId: string; startAt: string},
                             ctx: IQueryInfos
                         ): Promise<ITreeNode[]> {
                             ctx.treeId = treeId;
@@ -298,22 +304,47 @@ export default function({
                         async deleteTree(parent, {id}, ctx): Promise<ITree> {
                             return treeDomain.deleteTree(id, ctx);
                         },
-                        async treeAddElement(_, {treeId, element, parent, order}, ctx): Promise<ITreeElement> {
+                        async treeAddElement(
+                            _,
+                            {treeId, element, parent, order}: IAddElementMutationArgs,
+                            ctx
+                        ): Promise<ITreeNodeWithTreeId> {
                             parent = parent || null;
-                            return treeDomain.addElement({treeId, element, parent, order, ctx});
+
+                            const addedNode = await treeDomain.addElement({treeId, element, parent, order, ctx});
+
+                            return {...addedNode, treeId};
                         },
-                        async treeMoveElement(_, {treeId, element, parentTo, order}, ctx): Promise<ITreeElement> {
+                        async treeMoveElement(
+                            _,
+                            {treeId, nodeId, parentTo, order}: IMoveElementMutationArgs,
+                            ctx
+                        ): Promise<ITreeNodeWithTreeId> {
                             parentTo = parentTo || null;
-                            return treeDomain.moveElement({treeId, element, parentTo, order, ctx});
+                            const movedNode = await treeDomain.moveElement({
+                                treeId,
+                                nodeId,
+                                parentTo,
+                                order,
+                                ctx
+                            });
+
+                            return {...movedNode, treeId};
                         },
                         async treeDeleteElement(
                             _,
-                            {treeId, element, parent, deleteChildren},
+                            {treeId, nodeId, deleteChildren}: IDeleteElementMutationArgs,
                             ctx
-                        ): Promise<ITreeElement> {
-                            parent = parent || null;
+                        ): Promise<ITreeNodeWithTreeId> {
                             deleteChildren = typeof deleteChildren !== 'undefined' ? deleteChildren : true;
-                            return treeDomain.deleteElement({treeId, element, deleteChildren, ctx});
+                            const deletedNode = await treeDomain.deleteElement({
+                                treeId,
+                                nodeId,
+                                deleteChildren: deleteChildren ?? true,
+                                ctx
+                            });
+
+                            return {...deletedNode, treeId};
                         }
                     },
                     FullTreeContent: new GraphQLScalarType({
@@ -376,6 +407,14 @@ export default function({
                         }
                     },
                     TreeNode: {
+                        record: async (
+                            parent: ITreeNode & {treeId?: string},
+                            _,
+                            ctx: IQueryInfos,
+                            info: GraphQLResolveInfo
+                        ): Promise<IRecord> => {
+                            return treeDomain.getRecordByNodeId({treeId: parent.treeId, nodeId: parent.id, ctx});
+                        },
                         children: async (
                             parent: ITreeNode & {treeId?: string},
                             _,
@@ -384,17 +423,12 @@ export default function({
                         ): Promise<ITreeNode[]> => {
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
-                            let children = [];
 
+                            let children = [];
                             if (typeof parent.children !== 'undefined') {
                                 children = parent.children;
                             } else {
-                                const element = {
-                                    id: parent.record.id,
-                                    library: parent.record.library
-                                };
-
-                                children = await treeDomain.getElementChildren({treeId, element, ctx});
+                                children = await treeDomain.getElementChildren({treeId, nodeId: parent.id, ctx});
                             }
 
                             // Add treeId as it might be useful for nested resolvers
@@ -406,18 +440,13 @@ export default function({
                             ctx: IQueryInfos,
                             info: GraphQLResolveInfo
                         ): Promise<TreePaths> => {
-                            const element = {
-                                id: parent.record.id,
-                                library: parent.record.library
-                            };
-
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
 
-                            const ancestors = await treeDomain.getElementAncestors({treeId, element, ctx});
+                            const ancestors = await treeDomain.getElementAncestors({treeId, nodeId: parent.id, ctx});
 
                             // Add treeId as it might be useful for nested resolvers
-                            return ancestors.map(path => path.map(n => ({...n, treeId})));
+                            return ancestors.map(n => ({...n, treeId}));
                         },
                         linkedRecords: async (
                             parent: ITreeNode & {treeId?: string},
@@ -426,14 +455,10 @@ export default function({
                             info: GraphQLResolveInfo
                         ): Promise<IRecord[]> => {
                             const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-                            const element = {
-                                id: parent.record.id,
-                                library: parent.record.library
-                            };
                             const records = await treeDomain.getLinkedRecords({
                                 treeId: attributeProps.linked_tree,
                                 attribute,
-                                element,
+                                nodeId: parent.id,
                                 ctx
                             });
 
@@ -459,10 +484,7 @@ export default function({
                                     applyTo: treeNode.treeId,
                                     action: action as TreeNodePermissionsActions,
                                     userId: ctx.userId,
-                                    target: {
-                                        recordId: treeNode.record.id,
-                                        libraryId: treeNode.record.library
-                                    },
+                                    target: {nodeId: treeNode.id},
                                     ctx
                                 });
 

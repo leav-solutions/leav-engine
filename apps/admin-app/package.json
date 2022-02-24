@@ -50,7 +50,7 @@
     "test": "react-scripts test --forceExit --detectOpenHandles",
     "lint": "eslint src/",
     "eject": "react-scripts eject",
-    "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes=**/*.test.* src/_gqlTypes --passthroughCustomScalars && prettier --write src/_gqlTypes/*",
+    "gen_types": "apollo codegen:generate ./src/_gqlTypes --target=typescript --no-addTypename --outputFlat --passthroughCustomScalars --excludes='**/*.test.*' && cd ../../ && yarn prettier --write apps/admin-app/src/_gqlTypes",
     "create_comp": "scripts/createComponent.js",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p ."

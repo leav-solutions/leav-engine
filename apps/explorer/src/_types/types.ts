@@ -8,7 +8,6 @@ import {
     AttributeType,
     RecordFilterCondition,
     RecordFilterOperator,
-    TreeElementInput,
     ViewSizes,
     ViewTypes
 } from '_gqlTypes/globalTypes';
@@ -360,7 +359,7 @@ export interface ISharedStateSelectionSearch {
 export interface ISharedStateSelectionNavigation {
     type: SharedStateSelectionType.navigation;
     selected: ISharedSelected[];
-    parent: TreeElementInput;
+    parent: string;
 }
 
 export type SharedStateSelection = ISharedStateSelectionSearch | ISharedStateSelectionNavigation;
@@ -374,12 +373,13 @@ export interface ISharedSelected {
     id: string;
     library: string;
     label: string;
+    nodeId?: string;
 }
 
 export interface IToggleSelection {
     selectionType: SharedStateSelectionType;
     elementSelected: ISharedSelected;
-    parent?: TreeElementInput;
+    parent?: string;
 }
 
 export enum WorkspacePanels {

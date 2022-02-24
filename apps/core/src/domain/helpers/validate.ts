@@ -7,8 +7,8 @@ import {IViewRepo} from 'infra/view/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
-import {AttributeCondition} from '../../_types/record';
 import {Errors} from '../../_types/errors';
+import {AttributeCondition} from '../../_types/record';
 
 interface IDeps {
     'core.infra.library'?: ILibraryRepo;

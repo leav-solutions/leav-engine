@@ -4,7 +4,7 @@
 import {ILibrary} from '_types/library';
 import {IPaginationParams, ISortParams} from '_types/list';
 import {ITreePermissionsConf} from '_types/permissions';
-import {ITree, ITreeLibrarySettings, ITreeFilterOptions} from '_types/tree';
+import {ITree, ITreeElement, ITreeFilterOptions, ITreeLibrarySettings} from '_types/tree';
 
 export interface ITreeLibraryForGraphQL {
     library: ILibrary;
@@ -34,4 +34,24 @@ export interface ITreesQueryArgs {
 
 export interface ISaveTreeMutationArgs {
     tree: TreeFromGraphQL;
+}
+
+export interface IAddElementMutationArgs {
+    treeId: string;
+    element: ITreeElement;
+    parent?: string;
+    order?: number;
+}
+
+export interface IMoveElementMutationArgs {
+    treeId: string;
+    nodeId: string;
+    parentTo?: string;
+    order?: number;
+}
+
+export interface IDeleteElementMutationArgs {
+    treeId: string;
+    nodeId: string;
+    deleteChildren?: boolean;
 }

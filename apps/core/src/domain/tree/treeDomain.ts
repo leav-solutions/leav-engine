@@ -17,22 +17,23 @@ import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions, TreeNodePermissionsActions, TreePermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, TreeBehavior, TreePaths} from '../../_types/tree';
+import {
+    IGetCoreTreesParams,
+    ITree,
+    ITreeElement,
+    ITreeNode,
+    ITreeNodeLight,
+    TreeBehavior,
+    TreePaths
+} from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import validateFilesParent from './helpers/validateFilesParent';
 
 export interface ITreeDomain {
-    isElementPresent({
-        treeId,
-        element,
-        ctx
-    }: {
-        treeId: string;
-        element: ITreeElement;
-        ctx: IQueryInfos;
-    }): Promise<boolean>;
+    isNodePresent({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
+    isRecordPresent({treeId, record, ctx}: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<boolean>;
     saveTree(tree: Partial<ITree>, ctx: IQueryInfos): Promise<ITree>;
     deleteTree(id: string, ctx: IQueryInfos): Promise<ITree>;
     getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
@@ -51,10 +52,10 @@ export interface ITreeDomain {
     }: {
         treeId: string;
         element: ITreeElement;
-        parent: ITreeElement | null;
+        parent: string | null;
         order?: number;
         ctx: IQueryInfos;
-    }): Promise<ITreeElement>;
+    }): Promise<ITreeNodeLight>;
 
     /**
      * Move an element in the tree
@@ -64,17 +65,17 @@ export interface ITreeDomain {
      */
     moveElement({
         treeId,
-        element,
+        nodeId,
         parentTo,
         order,
         ctx
     }: {
         treeId: string;
-        element: ITreeElement;
-        parentTo: ITreeElement | null;
+        nodeId: string;
+        parentTo: string | null;
         order?: number;
         ctx: IQueryInfos;
-    }): Promise<ITreeElement>;
+    }): Promise<ITreeNodeLight>;
 
     /**
      * Delete an element from the tree
@@ -83,15 +84,15 @@ export interface ITreeDomain {
      */
     deleteElement({
         treeId,
-        element,
+        nodeId,
         deleteChildren,
         ctx
     }: {
         treeId: string;
-        element: ITreeElement;
+        nodeId: string;
         deleteChildren: boolean | null;
         ctx: IQueryInfos;
-    }): Promise<ITreeElement>;
+    }): Promise<ITreeNodeLight>;
 
     /* eslint-disable jsdoc/check-indentation */
     /**
@@ -115,35 +116,19 @@ export interface ITreeDomain {
         ctx
     }: {
         treeId: string;
-        startingNode?: ITreeElement;
+        startingNode?: string;
         ctx: IQueryInfos;
     }): Promise<ITreeNode[]>;
 
     /**
      * Retrieve first level children of an element
      */
-    getElementChildren({
-        treeId,
-        element,
-        ctx
-    }: {
-        treeId: string;
-        element: ITreeElement;
-        ctx: IQueryInfos;
-    }): Promise<ITreeNode[]>;
+    getElementChildren({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<ITreeNode[]>;
 
     /**
      * Retrieve all ancestors of an element, including element itself and starting from the root
      */
-    getElementAncestors({
-        treeId,
-        element,
-        ctx
-    }: {
-        treeId: string;
-        element: ITreeElement;
-        ctx: IQueryInfos;
-    }): Promise<TreePaths>;
+    getElementAncestors({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<TreePaths>;
 
     /**
      * Retrieve all records linked to an element via given attribute
@@ -151,16 +136,26 @@ export interface ITreeDomain {
     getLinkedRecords({
         treeId,
         attribute,
-        element,
+        nodeId,
         ctx
     }: {
         treeId: string;
         attribute: string;
-        element: ITreeElement;
+        nodeId: string;
         ctx: IQueryInfos;
     }): Promise<IRecord[]>;
 
     getLibraryTreeId(library: string, ctx: IQueryInfos): string;
+    getRecordByNodeId({treeId, nodeId, ctx}: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord>;
+    getNodesByRecord({
+        treeId,
+        record,
+        ctx
+    }: {
+        treeId: string;
+        record: ITreeElement;
+        ctx: IQueryInfos;
+    }): Promise<string[]>;
 }
 
 interface IDeps {
@@ -198,11 +193,11 @@ export default function ({
         return !!treeProps;
     }
 
-    async function _treeElementExists(treeElement: ITreeElement, ctx: IQueryInfos) {
+    async function _isRecordExisting(element: ITreeElement, ctx: IQueryInfos) {
         const record = await recordDomain.find({
             params: {
-                library: treeElement.library,
-                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: `${treeElement.id}`}],
+                library: element.library,
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: `${element.id}`}],
                 retrieveInactive: true
             },
             ctx
@@ -211,7 +206,7 @@ export default function ({
         return !!record.list.length;
     }
 
-    const _isForbiddenAsChild = (treeProps: ITree, parent: ITreeElement, element: ITreeElement): boolean =>
+    const _isForbiddenAsChild = (treeProps: ITree, parent: ITreeElement | null, element: ITreeElement): boolean =>
         (parent === null && !treeProps.libraries?.[element.library]?.allowedAtRoot) ||
         (parent !== null &&
             !treeProps.libraries?.[parent.library]?.allowedChildren.includes('__all__') &&
@@ -295,7 +290,7 @@ export default function ({
 
             return tree;
         },
-        async addElement({treeId, element, parent = null, order = 0, ctx}): Promise<ITreeElement> {
+        async addElement({treeId, element, parent = null, order = 0, ctx}): Promise<ITreeNodeLight> {
             const errors: any = {};
             const treeProps = await _getTreeProps(treeId, ctx);
             const treeExists = !!treeProps;
@@ -304,55 +299,42 @@ export default function ({
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
-            const elementExists = await _treeElementExists(element, ctx);
+            const isRecordExisting = await _isRecordExisting(element, ctx);
 
-            if (!elementExists) {
-                errors.element = Errors.UNKNOWN_ELEMENT;
+            if (!isRecordExisting) {
+                errors.element = Errors.UNKNOWN_RECORD;
             }
 
-            if (parent !== null && !(await _treeElementExists(parent, ctx))) {
+            if (parent !== null && !(await treeRepo.isNodePresent({treeId, nodeId: parent, ctx}))) {
                 errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
             // check allow as children setting
-            if (treeExists && elementExists && _isForbiddenAsChild(treeProps, parent, element)) {
+            const parentRecord = parent ? await treeRepo.getRecordByNodeId({treeId, nodeId: parent, ctx}) : null;
+            const parentElement = parentRecord ? {id: parentRecord.id, library: parentRecord.library} : null;
+            if (treeExists && isRecordExisting && _isForbiddenAsChild(treeProps, parentElement, element)) {
                 errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
             }
 
-            if (treeExists && elementExists && (await treeRepo.isElementPresent({treeId, element, ctx}))) {
+            if (treeExists && isRecordExisting && (await treeRepo.isRecordPresent({treeId, record: element, ctx}))) {
                 if (!treeProps.libraries[element.library].allowMultiplePositions) {
                     errors.element = Errors.ELEMENT_ALREADY_PRESENT;
                     // if allow multiple positions is true, check if parents are not same
                 } else {
+                    const ancestors = await this.getElementAncestors({treeId, nodeId: parent, ctx});
+
                     if (
                         parent &&
-                        (await this.getElementAncestors({treeId, element: parent, ctx})).some(ancestors =>
-                            ancestors.some(a => a.record.id === element.id && a.record.library === element.library)
-                        )
+                        ancestors.some(a => a.record.id === element.id && a.record.library === element.library)
                     ) {
                         errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
-                    }
-
-                    const siblings = parent
-                        ? await treeRepo.getElementChildren({
-                              treeId,
-                              element: {library: element.library, id: parent.id},
-                              ctx
-                          })
-                        : await treeRepo.getTreeContent({
-                              treeId,
-                              ctx
-                          });
-
-                    if (siblings.some(c => c.record?.id === element.id)) {
-                        errors.element = Errors.ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT;
                     }
                 }
             }
 
             // If files tree, check if parent is not a file
             if (treeExists && treeProps.behavior === TreeBehavior.FILES) {
-                const validateParentDir = await validateFilesParent(parent, {valueDomain}, ctx);
+                const validateParentDir = await validateFilesParent(parentElement, {valueDomain}, ctx);
 
                 if (!validateParentDir.isValid) {
                     errors.parent = validateParentDir.message;
@@ -363,9 +345,15 @@ export default function ({
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.addElement({treeId, element, parent, order, ctx});
+            return treeRepo.addElement({
+                treeId,
+                element,
+                parent,
+                order,
+                ctx
+            });
         },
-        async moveElement({treeId, element, parentTo = null, order = 0, ctx}): Promise<ITreeElement> {
+        async moveElement({treeId, nodeId, parentTo = null, order = 0, ctx}): Promise<ITreeNodeLight> {
             const errors: any = {};
             const treeProps = await _getTreeProps(treeId, ctx);
             const treeExists = !!treeProps;
@@ -374,34 +362,33 @@ export default function ({
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
-            const elementExists = await _treeElementExists(element, ctx);
-
-            if (!elementExists) {
+            const nodeExists = await treeRepo.isNodePresent({treeId, nodeId, ctx});
+            if (!nodeExists) {
                 errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
-            if (parentTo !== null && !(await _treeElementExists(parentTo, ctx))) {
+            const parentExists = await treeRepo.isNodePresent({treeId, nodeId: parentTo, ctx});
+            if (parentTo !== null && !parentExists) {
                 errors.parentTo = Errors.UNKNOWN_PARENT;
             }
 
+            const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
+            const nodeElement = {id: nodeRecord.id, library: nodeRecord.library};
+            const parentRecord = parentTo ? await treeRepo.getRecordByNodeId({treeId, nodeId: parentTo, ctx}) : null;
+            const parentElement = parentRecord ? {id: parentRecord.id, library: parentRecord.library} : null;
+
             // Check permissions on source
-            const parents = await this.getElementAncestors({treeId, element, ctx});
+            const parents = await this.getElementAncestors({treeId, nodeId, ctx});
             let canEditSourceChildren: boolean;
             if (parents.length > 1) {
-                canEditSourceChildren = (
-                    await Promise.all(
-                        parents.map(ancestorBranch => {
-                            const parent = ancestorBranch.splice(-2, 1)[0];
-                            return treeNodePermissionDomain.getTreeNodePermission({
-                                treeId,
-                                action: TreeNodePermissionsActions.EDIT_CHILDREN,
-                                node: {id: parent.record.id, library: parent.record.library},
-                                userId: ctx.userId,
-                                ctx
-                            });
-                        })
-                    )
-                ).reduce((isAllowed, ancestorBranchPermission): boolean => isAllowed || ancestorBranchPermission);
+                const parent = parents.splice(-2, 1)[0]; // parent is before-last in the list of ancestors
+                canEditSourceChildren = await treeNodePermissionDomain.getTreeNodePermission({
+                    treeId,
+                    action: TreeNodePermissionsActions.EDIT_CHILDREN,
+                    nodeId: parent.id,
+                    userId: ctx.userId,
+                    ctx
+                });
             } else {
                 canEditSourceChildren = await treePermissionDomain.getTreePermission({
                     treeId,
@@ -416,7 +403,7 @@ export default function ({
                 ? treeNodePermissionDomain.getTreeNodePermission({
                       treeId,
                       action: TreeNodePermissionsActions.EDIT_CHILDREN,
-                      node: parentTo,
+                      nodeId: parentTo,
                       userId: ctx.userId,
                       ctx
                   })
@@ -432,16 +419,16 @@ export default function ({
             }
 
             // check allow as children setting
-            if (treeExists && elementExists && _isForbiddenAsChild(treeProps, parentTo, element)) {
+            if (treeExists && nodeExists && _isForbiddenAsChild(treeProps, parentElement, nodeElement)) {
                 errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
             }
 
             if (
                 treeExists &&
-                elementExists &&
+                nodeExists &&
                 parentTo &&
-                (await this.getElementAncestors({treeId, element: parentTo, ctx})).some(ancestors =>
-                    ancestors.some(a => a.record.id === element.id && a.record.library === element.library)
+                (await this.getElementAncestors({treeId, nodeId: parentTo, ctx})).some(
+                    a => a.record.id === nodeRecord.id && a.record.library === nodeRecord.library
                 )
             ) {
                 errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
@@ -449,7 +436,7 @@ export default function ({
 
             // If files tree, check if parent is not a file
             if (treeExists && treeProps.behavior === TreeBehavior.FILES) {
-                const validateParentDir = await validateFilesParent(parentTo, {valueDomain}, ctx);
+                const validateParentDir = await validateFilesParent(parentElement, {valueDomain}, ctx);
                 if (!validateParentDir.isValid) {
                     errors.parent = validateParentDir.message;
                 }
@@ -459,16 +446,16 @@ export default function ({
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.moveElement({treeId, element, parentTo, order, ctx});
+            return treeRepo.moveElement({treeId, nodeId, parentTo, order, ctx});
         },
-        async deleteElement({treeId, element, deleteChildren = true, ctx}): Promise<ITreeElement> {
+        async deleteElement({treeId, nodeId, deleteChildren = true, ctx}): Promise<ITreeNodeLight> {
             const errors: any = {};
 
             if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
-            if (!(await _treeElementExists(element, ctx))) {
+            if (!(await treeRepo.isNodePresent({treeId, nodeId, ctx}))) {
                 errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
@@ -479,7 +466,7 @@ export default function ({
             const canDetach = await treeNodePermissionDomain.getTreeNodePermission({
                 treeId,
                 action: TreeNodePermissionsActions.DETACH,
-                node: element,
+                nodeId,
                 userId: ctx.userId,
                 ctx
             });
@@ -488,7 +475,7 @@ export default function ({
                 throw new PermissionError(TreeNodePermissionsActions.DETACH);
             }
 
-            return treeRepo.deleteElement({treeId, element, deleteChildren, ctx});
+            return treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
         },
         async getTreeContent({treeId, startingNode = null, ctx}): Promise<ITreeNode[]> {
             const errors: any = {};
@@ -513,26 +500,35 @@ export default function ({
 
             return treeRepo.getTreeContent({treeId, startingNode, ctx});
         },
-        async getElementChildren({treeId, element, ctx}): Promise<ITreeNode[]> {
-            return treeRepo.getElementChildren({treeId, element, ctx});
+        async getElementChildren({treeId, nodeId, ctx}): Promise<ITreeNode[]> {
+            return treeRepo.getElementChildren({treeId, nodeId, ctx});
         },
-        async getElementAncestors({treeId, element, ctx}): Promise<TreePaths> {
-            return treeRepo.getElementAncestors({treeId, element, ctx});
+        async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePaths> {
+            return treeRepo.getElementAncestors({treeId, nodeId, ctx});
         },
-        async getLinkedRecords({treeId, attribute, element, ctx}): Promise<IRecord[]> {
+        async getLinkedRecords({treeId, attribute, nodeId, ctx}): Promise<IRecord[]> {
             const attrs = await attributeDomain.getAttributes({params: {filters: {id: attribute}}, ctx});
 
             if (!attrs.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
             }
 
-            return treeRepo.getLinkedRecords({treeId, attribute, element, ctx});
+            return treeRepo.getLinkedRecords({treeId, attribute, nodeId, ctx});
         },
-        async isElementPresent({treeId, element, ctx}): Promise<boolean> {
-            return treeRepo.isElementPresent({treeId, element, ctx});
+        async isNodePresent({treeId, nodeId, ctx}): Promise<boolean> {
+            return treeRepo.isNodePresent({treeId, nodeId, ctx});
+        },
+        async isRecordPresent({treeId, record, ctx}): Promise<boolean> {
+            return treeRepo.isRecordPresent({treeId, record, ctx});
         },
         getLibraryTreeId(library, ctx) {
             return utils.getLibraryTreeId(library);
+        },
+        async getRecordByNodeId({treeId, nodeId, ctx}): Promise<IRecord> {
+            return treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
+        },
+        async getNodesByRecord({treeId, record, ctx}): Promise<string[]> {
+            return treeRepo.getNodesByRecord({treeId, record, ctx});
         }
     };
 }

@@ -338,7 +338,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ance
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue {
     record: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record;
-    ancestors: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors[][] | null;
+    ancestors: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors[] | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue {
@@ -553,7 +553,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values {
     record: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record;
-    ancestors: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors[][] | null;
+    ancestors: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors[] | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList {

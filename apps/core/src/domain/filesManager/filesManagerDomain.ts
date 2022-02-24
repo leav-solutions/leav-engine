@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IAmqpService} from 'infra/amqp/amqpService';
+import Joi from 'joi';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
@@ -232,12 +232,12 @@ export default function ({
             failedOnly,
             recordId
         }: IForcePreviewsGenerationParams): Promise<boolean> {
-            const getChildren = (nodes: ITreeNode[], records: IRecord[] = []): IRecord[] => {
+            const _getChildren = (nodes: ITreeNode[], records: IRecord[] = []): IRecord[] => {
                 for (const n of nodes) {
                     records.push(n.record);
 
                     if (!!n.children) {
-                        records = getChildren(n.children, records);
+                        records = _getChildren(n.children, records);
                     }
                 }
 
@@ -258,13 +258,20 @@ export default function ({
 
             // if recordId is a directory: recreate all previews of subfiles
             if (records.length === 1 && records[0][FilesAttributes.IS_DIRECTORY]) {
-                const nodes: ITreeNode[] = await treeDomain.getTreeContent({
-                    treeId: 'files_tree',
-                    startingNode: {id: records[0].id, library: libraryId},
+                const treeId = utils.getLibraryTreeId(libraryId);
+                const treeNodes = await treeDomain.getNodesByRecord({
+                    treeId,
+                    record: {id: records[0].id, library: libraryId},
                     ctx
                 });
 
-                records = getChildren(nodes);
+                const nodes: ITreeNode[] = await treeDomain.getTreeContent({
+                    treeId,
+                    startingNode: treeNodes[0], // Process only first node, as a record in file tree shouldn't be at multiple places
+                    ctx
+                });
+
+                records = _getChildren(nodes);
             }
 
             // del all directories records

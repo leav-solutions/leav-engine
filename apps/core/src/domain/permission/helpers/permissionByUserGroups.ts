@@ -36,7 +36,7 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
                     type,
                     applyTo,
                     action,
-                    usersGroupId: null,
+                    usersGroupNodeId: null,
                     permissionTreeTarget,
                     ctx
                 });
@@ -46,50 +46,34 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
             const userPerms = userGroupsPaths.length
                 ? await Promise.all(
                       userGroupsPaths.map(
-                          async (groupPaths): Promise<boolean> => {
-                              return groupPaths.length
-                                  ? groupPaths.reduce(async (globalPerm, groupPath) => {
-                                        const gP = await globalPerm;
+                          async (groupPath): Promise<boolean> => {
+                              return groupPath.length
+                                  ? groupPath.slice().reduce(async (pathPermProm, pathNode): Promise<
+                                        boolean | null
+                                    > => {
+                                        const pathPerm: boolean | null = await pathPermProm;
 
-                                        for (const group of groupPath.slice().reverse()) {
-                                            const perm = await simplePermHelper.getSimplePermission({
-                                                type,
-                                                applyTo,
-                                                action,
-                                                usersGroupId: group.record.id,
-                                                permissionTreeTarget,
-                                                ctx
-                                            });
+                                        const perm = await simplePermHelper.getSimplePermission({
+                                            type,
+                                            applyTo,
+                                            action,
+                                            usersGroupNodeId: pathNode.id,
+                                            permissionTreeTarget,
+                                            ctx
+                                        });
 
-                                            if (perm !== null) {
-                                                return Promise.resolve(gP || perm);
-                                            }
+                                        if (perm !== null) {
+                                            return pathPerm || perm;
                                         }
 
                                         // Nothing found in tree, check on root level
                                         return _getRootPermission();
-                                    }, Promise.resolve(null))
+                                    }, Promise.resolve<boolean | null>(null))
                                   : _getRootPermission();
                           }
                       )
                   )
                 : [await _getRootPermission()];
-
-            // If user is allowed at least once among all his groups (whether a defined permission or default config)
-            //    => return true
-            // Otherwise, if user is forbidden at least once
-            //    => return false
-            // If no permission defined for all groups
-            //    => return null
-            // const userPerm = userPerms.reduce((globalPerm, groupPerm) => {
-            //     if (globalPerm || groupPerm) {
-            //         return true;
-            //     } else if (globalPerm === groupPerm || (globalPerm === null && !groupPerm)) {
-            //         return groupPerm;
-            //     }
-
-            //     return globalPerm;
-            // }, null);
 
             return reducePermissionsArrayHelper.reducePermissionsArray(userPerms);
         }

@@ -70,7 +70,7 @@ describe('EditPermissions', () => {
                                 allowed: null
                             }
                         ],
-                        heritPerm: [
+                        inheritPerm: [
                             {
                                 __typename: 'HeritedPermissionAction',
                                 name: PermissionsActions.app_create_library,

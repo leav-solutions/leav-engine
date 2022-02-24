@@ -10,7 +10,7 @@ export {default as form} from './formApp/formApp';
 export {default as import} from './importApp';
 export {default as indexationManager} from './indexationManagerApp';
 export {default as library} from './libraryApp';
-export {default as permission} from './permissionApp';
+export {default as permission} from './permissionApp/permissionApp';
 export {default as plugins} from './pluginsApp';
 export {default as record} from './recordApp';
 export {default as tree} from './treeApp/treeApp';

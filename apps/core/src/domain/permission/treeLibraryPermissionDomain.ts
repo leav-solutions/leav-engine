@@ -50,7 +50,7 @@ export default function ({
                 type: PermissionTypes.TREE_LIBRARY,
                 action,
                 applyTo: `${treeId}/${libraryId}`,
-                userGroupId,
+                userGroupNodeId: userGroupId,
                 getDefaultPermission
             },
             ctx

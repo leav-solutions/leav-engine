@@ -307,38 +307,6 @@ describe('dbUtils', () => {
             expect(mockDbServCustom.execute.mock.calls[0][0].query.query).toMatch(/(CUSTOM FILTER){1}/);
         });
     });
-
-    describe('convertValueVersionToDb', () => {
-        test('Should convert value version to DB format', async () => {
-            const testDbUtils = dbUtils();
-
-            const res = testDbUtils.convertValueVersionToDb({
-                my_tree: {id: '12345', library: 'my_lib'},
-                other_tree: {id: '6789', library: 'other_lib'}
-            });
-
-            expect(res).toMatchObject({
-                my_tree: 'my_lib/12345',
-                other_tree: 'other_lib/6789'
-            });
-        });
-    });
-    describe('convertValueVersionFromDb', () => {
-        test('Should convert value version from DB format', async () => {
-            const testDbUtils = dbUtils();
-
-            const res = testDbUtils.convertValueVersionFromDb({
-                my_tree: 'my_lib/12345',
-                other_tree: 'other_lib/6789'
-            });
-
-            expect(res).toMatchObject({
-                my_tree: {id: '12345', library: 'my_lib'},
-                other_tree: {id: '6789', library: 'other_lib'}
-            });
-        });
-    });
-
     describe('migrate', () => {
         test('Run core migrations', async () => {
             // Mock migration files

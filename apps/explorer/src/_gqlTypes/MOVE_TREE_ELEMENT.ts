@@ -6,14 +6,12 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeElementInput} from './globalTypes';
-
 // ====================================================
 // GraphQL mutation operation: MOVE_TREE_ELEMENT
 // ====================================================
 
 export interface MOVE_TREE_ELEMENT_treeMoveElement {
-    id: string | null;
+    id: string;
 }
 
 export interface MOVE_TREE_ELEMENT {
@@ -22,7 +20,7 @@ export interface MOVE_TREE_ELEMENT {
 
 export interface MOVE_TREE_ELEMENTVariables {
     treeId: string;
-    element: TreeElementInput;
-    parentTo?: TreeElementInput | null;
+    nodeId: string;
+    parentTo?: string | null;
     order?: number | null;
 }

@@ -56,10 +56,17 @@ export const mockTreeNodePermissions: ITreeNodePermissions & {__typename: string
 };
 
 export const mockTreeElement: ITreeContentRecordAndChildren = {
+    id: '12345',
     record: {
         ...mockTreeRecord
     },
-    children: [{record: mockTreeRecordChild, permissions: mockTreeNodePermissions}],
+    children: [
+        {
+            id: '12346',
+            record: mockTreeRecordChild,
+            permissions: mockTreeNodePermissions
+        }
+    ],
     permissions: mockTreeNodePermissions
 };
 

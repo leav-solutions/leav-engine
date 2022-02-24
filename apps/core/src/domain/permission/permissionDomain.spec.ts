@@ -28,7 +28,7 @@ describe('PermissionDomain', () => {
 
     const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
         getAppPermission: global.__mockPromise(true),
-        getHeritedAppPermission: global.__mockPromise(true)
+        getInheritedAppPermission: global.__mockPromise(true)
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -65,8 +65,7 @@ describe('PermissionDomain', () => {
                         [RecordPermissionsActions.DELETE_RECORD]: false
                     },
                     permissionTreeTarget: {
-                        library: 'test_lib',
-                        id: '12345',
+                        nodeId: '12345',
                         tree: 'test_tree'
                     }
                 },

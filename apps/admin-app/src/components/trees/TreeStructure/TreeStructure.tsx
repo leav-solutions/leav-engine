@@ -3,21 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useApolloClient} from '@apollo/react-hooks';
 import {FetchResult} from 'apollo-link';
+import {ITreeItem} from 'components/attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import React, {useState} from 'react';
-import {
-    addNodeUnderParent,
-    changeNodeAtPath,
-    find,
-    FullTree,
-    getNodeAtPath,
-    NodeData,
-    OnMovePreviousAndNextLocation,
-    removeNodeAtPath,
-    TreeItem
-} from 'react-sortable-tree';
+import {addNodeUnderParent, changeNodeAtPath, find, getNodeAtPath, removeNodeAtPath} from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
 import {Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {fakeRootId, ITreeNode, ITreeNodeData} from '_types/trees';
+import {WithOptional} from '_types/WithOptional';
 import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
 import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
 import {deleteTreeElementQuery} from '../../../queries/trees/treeDeleteElementMutation';
@@ -26,44 +19,45 @@ import {getTreeNodeKey} from '../../../utils/utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '../../../_gqlTypes/ADD_TREE_ELEMENT';
 import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../_gqlTypes/DELETE_TREE_ELEMENT';
 import {GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
-import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
-import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from '../../../_gqlTypes/TREE_CONTENT';
-import {ITreeItem} from '../../attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import RecordCard from '../../shared/RecordCard';
 import StructureView from './StructureView';
+import {
+    AddTreeElementHandler,
+    ClickNodeHandler,
+    DeleteNodeHandler,
+    MoveNodeHandler,
+    NodeVisibilityToggleHandler
+} from './_types';
 
 interface ITreeStructureProps {
     tree: GET_TREE_BY_ID_trees_list;
     readOnly?: boolean;
-    onClickNode?: (nodeData: NodeData) => void;
-    selection?: NodeData[] | null;
+    onClickNode?: (nodeData: ITreeNodeData) => void;
+    selection?: ITreeNodeData[] | null;
     withFakeRoot?: boolean;
     fakeRootLabel?: string;
     compact?: boolean;
-    startAt?: TreeElementInput;
+    startAt?: string;
 }
 
-const fakeRootId = 'root';
-
-const _convertTreeRecord = (records: TREE_CONTENT_treeContent[], compact: boolean): TreeItem[] => {
-    return records.map(
-        (r: TREE_CONTENT_treeContent): TreeItem => {
+type ConvertTreeRecordNode = WithOptional<TREE_CONTENT_treeContent, 'children' | 'ancestors' | 'order'>;
+const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): ITreeItem[] => {
+    return nodes.map(
+        (n: ConvertTreeRecordNode): ITreeItem => {
             const nodeTitle =
-                r.record.id !== fakeRootId && !compact ? (
-                    <RecordCard record={r.record.whoAmI} style={{height: '100%'}} />
+                n.id !== fakeRootId && !compact ? (
+                    <RecordCard record={n.record.whoAmI} style={{height: '100%'}} />
                 ) : (
-                    <RootElem>{r.record.whoAmI.label}</RootElem>
+                    <RootElem>{n.record.whoAmI.label}</RootElem>
                 );
 
             return {
-                ...r.record,
+                ...n,
                 title: nodeTitle,
-                children: r.children ? _convertTreeRecord(r.children as TREE_CONTENT_treeContent[], compact) : [],
-                ancestors: r.ancestors
-                    ? r.ancestors.map(a => _convertTreeRecord(a as TREE_CONTENT_treeContent[], compact))
-                    : [],
+                children: n.children ? _convertTreeRecord(n.children, compact) : [],
+                ancestors: n.ancestors ? _convertTreeRecord(n.ancestors, compact) : [],
                 expanded: false,
                 path: []
             };
@@ -93,6 +87,7 @@ const TreeStructure = ({
 
     const fakeRootData = [
         {
+            id: fakeRootId,
             record: {
                 id: fakeRootId,
                 library: {id: fakeRootId, label: null},
@@ -113,7 +108,7 @@ const TreeStructure = ({
 
     const initTreeData = withFakeRoot ? _convertTreeRecord(fakeRootData, compact) : [];
 
-    const [treeData, setTreeData] = useState<TreeItem[]>(initTreeData);
+    const [treeData, setTreeData] = useState<ITreeNode[]>(initTreeData);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [error, setError] = useState<string>();
 
@@ -121,20 +116,15 @@ const TreeStructure = ({
      * Retrieve node children.
      * We retrieve current node children + first level children to know if we must display "expand" button
      *
-     * @param client
      * @param parent	No parent = root
      * @param path      No path = root
      * @param expand    Should expand node?
      */
-    const _loadChildren = async (
-        parent?: TreeElementInput | null,
-        path?: Array<string | number>,
-        expand: boolean = true
-    ) => {
+    const _loadChildren = async (parent?: string | null, path?: Array<string | number>, expand: boolean = true) => {
         // Show loading spinner on node
         const withPath = !!path;
         if (withPath && parent) {
-            const node = getNodeAtPath({treeData, path: path!, getNodeKey: getTreeNodeKey});
+            const node = getNodeAtPath({treeData, path: path!, getNodeKey: getTreeNodeKey}) as ITreeNodeData;
 
             if (node !== null) {
                 setTreeData(
@@ -166,7 +156,7 @@ const TreeStructure = ({
 
         // Update tree node with fetched data
         // We must get fresh node data from in case its state has changed during loading (expand/collapse...)
-        const nodeToUpdate = getNodeAtPath({treeData, path: path!, getNodeKey: getTreeNodeKey});
+        const nodeToUpdate = getNodeAtPath({treeData, path: path!, getNodeKey: getTreeNodeKey}) as ITreeNodeData;
 
         let newTreeData;
         if (!withPath) {
@@ -195,15 +185,12 @@ const TreeStructure = ({
      * @param client
      * @param moveData
      */
-    const _saveMove = async (moveData: NodeData & FullTree & OnMovePreviousAndNextLocation) => {
-        const element: TreeElementInput = _nodeToTreeElement(moveData.node);
-
+    const _saveMove: MoveNodeHandler = async moveData => {
         // Parent node in tree
-        const parentNode = moveData.nextParentNode;
+        const parentNode = moveData.nextParentNode as ITreeNode;
 
         // Parent element to save
-        const parentTo: TreeElementInput | null =
-            parentNode !== null && parentNode.id !== fakeRootId ? _nodeToTreeElement(parentNode) : null;
+        const parentTo = parentNode !== null && parentNode.id !== fakeRootId ? parentNode.id : null;
 
         // Get new element position
         let position = moveData.treeIndex;
@@ -222,7 +209,7 @@ const TreeStructure = ({
                 mutation: moveTreeElementQuery,
                 variables: {
                     treeId: tree.id,
-                    element,
+                    nodeId: moveData.node.id,
                     parentTo,
                     order: position
                 }
@@ -234,13 +221,12 @@ const TreeStructure = ({
                 await Promise.all(
                     (siblings as ITreeItem[]).map(
                         (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> => {
-                            const siblingElement = _nodeToTreeElement(s);
                             return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
                                 ? apolloClient.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
                                       mutation: moveTreeElementQuery,
                                       variables: {
                                           treeId: tree.id,
-                                          element: siblingElement,
+                                          nodeId: s.id,
                                           parentTo,
                                           order: i
                                       }
@@ -257,12 +243,10 @@ const TreeStructure = ({
         }
     };
 
-    const _deleteNode = async (node: NodeData) => {
-        const element: TreeElementInput = _nodeToTreeElement(node.node);
-
+    const _deleteNode: DeleteNodeHandler = async node => {
         const variables: DELETE_TREE_ELEMENTVariables = {
             treeId: tree.id,
-            element
+            nodeId: node.node.id
         };
 
         await apolloClient.mutate<DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables>({
@@ -275,38 +259,31 @@ const TreeStructure = ({
             path: node.path,
             getNodeKey: getTreeNodeKey
         });
-        setTreeData(updatedTree);
+        setTreeData(updatedTree as ITreeNode[]);
         setError('');
     };
 
-    const _mergeNode = (nodeData: TreeItem, path: Array<string | number>) => {
-        return changeNodeAtPath({treeData, path, newNode: nodeData, getNodeKey: getTreeNodeKey});
+    const _mergeNode = (nodeData: ITreeNode, path: Array<string | number>): ITreeNode[] => {
+        return changeNodeAtPath({treeData, path, newNode: nodeData, getNodeKey: getTreeNodeKey}) as ITreeNode[];
     };
 
-    const _nodeToTreeElement = (node: TreeItem): TreeElementInput => {
-        return {
-            id: node.id,
-            library: node.library.id
-        };
-    };
-    const _handleClickNode = treeItem => {
+    const _handleClickNode: ClickNodeHandler = nodeData => {
         // Add all parents details on selected node
-        const hydratedPath = treeItem.path.map(k => {
+        const hydratedPath = nodeData.path.map(nodeKey => {
             // All we have is the parent key, so we need to find matching node in tree data
             const findRes = find({
                 treeData,
                 getNodeKey: getTreeNodeKey,
-                searchQuery: k,
+                searchQuery: nodeKey,
                 searchMethod: d => {
-                    const [lib, id] = k.split('/');
-                    return d.node.id === id && d.node.library.id === lib;
+                    return d.node.id === nodeKey;
                 }
             });
 
             return findRes.matches.length ? findRes.matches[0].node : null;
         });
 
-        return onClickNode ? onClickNode({...treeItem, node: {...treeItem.node, parents: hydratedPath}}) : undefined;
+        return onClickNode ? onClickNode({...nodeData, node: {...nodeData.node, parents: hydratedPath}}) : undefined;
     };
 
     /**
@@ -316,17 +293,9 @@ const TreeStructure = ({
      * @param record
      * @param parent
      */
-    const _handleAddElement = async (record: RecordIdentity_whoAmI, parent: TreeItem) => {
-        const parentToSave =
-            parent.id !== fakeRootId
-                ? {
-                      id: parent.id,
-                      library: parent.library.id
-                  }
-                : null;
-
+    const _handleAddElement: AddTreeElementHandler = async (record, parent, path) => {
         try {
-            await apolloClient.mutate<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>({
+            const addResult = await apolloClient.mutate<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>({
                 mutation: addTreeElementQuery,
                 variables: {
                     treeId: tree.id,
@@ -334,11 +303,12 @@ const TreeStructure = ({
                         id: record.id,
                         library: record.library.id
                     },
-                    parent: parentToSave
+                    parent: parent !== fakeRootId ? parent : null
                 }
             });
 
             const newRecord = {
+                id: addResult.data.treeAddElement.id,
                 record: {
                     id: record.id,
                     library: record.library,
@@ -349,14 +319,15 @@ const TreeStructure = ({
                 order: 0
             };
 
+            const parentKey = getTreeNodeKey({node: {id: parent, path}});
             const updatedTree = addNodeUnderParent({
                 treeData,
                 newNode: _convertTreeRecord([newRecord], compact)[0],
-                parentKey: getTreeNodeKey({node: parent}),
+                parentKey,
                 getNodeKey: getTreeNodeKey,
                 expandParent: true
             });
-            setTreeData(updatedTree.treeData);
+            setTreeData(updatedTree.treeData as ITreeNode[]);
             setError('');
         } catch (err) {
             const message = err.graphQLErrors?.[0]?.extensions?.fields?.element ?? err.message;
@@ -365,19 +336,17 @@ const TreeStructure = ({
     };
 
     if (!loaded) {
-        const path = withFakeRoot ? ['root/root'] : undefined;
+        const path = withFakeRoot ? [fakeRootId] : undefined;
         _loadChildren(startAt || null, path);
     }
 
-    const onVisibilityToggle = ({expanded, node, path}) => {
+    const onVisibilityToggle: NodeVisibilityToggleHandler = ({expanded, node, path}) => {
         if (node.expanded || node.loaded) {
             return;
         }
 
-        return _loadChildren({id: node.id, library: node.library.id}, path, expanded);
+        return _loadChildren(node.id, path, expanded);
     };
-
-    const onAddElement = (record: RecordIdentity_whoAmI, parent: TreeItem) => _handleAddElement(record, parent);
 
     return (
         <>
@@ -398,7 +367,7 @@ const TreeStructure = ({
                 onDeleteNode={_deleteNode}
                 onClickNode={_handleClickNode}
                 selection={selection}
-                onAddElement={onAddElement}
+                onAddElement={_handleAddElement}
                 compact={compact}
             />
         </>

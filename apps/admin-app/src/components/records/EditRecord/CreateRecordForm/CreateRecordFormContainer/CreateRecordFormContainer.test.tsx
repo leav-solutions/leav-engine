@@ -84,7 +84,7 @@ describe('CreateRecordFormContainer', () => {
             {
                 request: {
                     query: recordDataQuery,
-                    variables: {id: '1234567', version: [], lang: ['fr', 'en']}
+                    variables: {id: '1234567', version: null, lang: ['fr', 'en']}
                 },
                 result: {
                     data: {

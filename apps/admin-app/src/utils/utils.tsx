@@ -13,7 +13,7 @@ import {
     GET_ATTRIBUTES_attributes_list_LinkAttribute,
     GET_ATTRIBUTES_attributes_list_TreeAttribute
 } from '../_gqlTypes/GET_ATTRIBUTES';
-import {AttributeType, AvailableLanguage, TreeElementInput} from '../_gqlTypes/globalTypes';
+import {AttributeType, AvailableLanguage} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {IErrorByField} from '../_types/errors';
 import {IGenericValue, ILinkValue, ITreeLinkValue, IValue} from '../_types/records';
@@ -145,14 +145,8 @@ export const getInvertColor = (color: string): string => {
     return yiq >= 128 ? '#000000' : '#FFFFFF';
 };
 
-export const getTreeNodeKey = (nodeData: TreeNode | null) => {
-    if (nodeData === null) {
-        return '';
-    }
-
-    return nodeData.node.path?.length
-        ? [nodeData.node.path.join('/'), nodeData.node.library.id, nodeData.node.id].join('/')
-        : [nodeData.node.library.id, nodeData.node.id].join('/');
+export const getTreeNodeKey = (nodeData: TreeNode | null): string => {
+    return String(nodeData?.node?.id ?? '');
 };
 
 export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: string]: boolean} => {
@@ -182,10 +176,12 @@ export function getFieldError<T>(
     return inputFieldError || serverFieldError;
 }
 
-export function versionObjToGraphql(version: {
-    [treeName: string]: TreeElementInput;
-}): Array<{name: string; value: TreeElementInput}> {
-    const gqlVersions: Array<{name: string; value: TreeElementInput}> = [];
+export function versionObjToGraphql(version: {[treeName: string]: string}): Array<{name: string; value: string}> {
+    if (!version) {
+        return null;
+    }
+
+    const gqlVersions: Array<{name: string; value: string}> = [];
     for (const versionName of Object.keys(version)) {
         gqlVersions.push({name: versionName, value: version[versionName]});
     }

@@ -1,11 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IDbEdge} from 'infra/db/_types';
 import {IRecord} from './record';
-import {ITreeElement, TreePaths} from './tree';
+import {ITreeNode, TreePaths} from './tree';
 
 export interface IValueVersion {
-    [treeName: string]: ITreeElement;
+    [treeName: string]: string;
 }
 
 export interface IDbValueVersion {
@@ -37,9 +38,7 @@ export interface ILinkValue extends IGenericValue {
 }
 
 export interface ITreeValue extends IGenericValue {
-    value?: {
-        record: IRecord;
-    };
+    value?: ITreeNode;
     treeId: string;
 }
 
@@ -59,15 +58,11 @@ export interface IValuesOptions {
 
 export interface IFindValueTree {
     name: string;
-    branchIndex: number;
-    elementIndex: number;
+    currentIndex: number;
     elements: TreePaths;
 }
 
-export interface IValueEdge {
-    _key: string;
-    _from: string;
-    _to: string;
+export interface IValueEdge extends IDbEdge {
     attribute: string;
     modified_at: number;
     modified_by: string;

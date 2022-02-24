@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
-import {NodeData, TreeNode} from 'react-sortable-tree';
+import React, {useState} from 'react';
+import {ITreeNodeData} from '_types/trees';
 import {getTreeNodeKey} from '../../../utils/utils';
 import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import ColumnsDisplay from '../../shared/ColumnsDisplay';
@@ -18,12 +18,10 @@ interface IDefinePermByUserGroupViewProps {
 function DefinePermByUserGroupView({applyTo, readOnly, type}: IDefinePermByUserGroupViewProps): JSX.Element {
     const usersGroupsTreeId = 'users_groups';
 
-    const [selectedGroupNode, setSelectedGroupNode] = React.useState<NodeData | null>(null);
+    const [selectedGroupNode, setSelectedGroupNode] = useState<ITreeNodeData | null>(null);
 
-    const _selectGroupNode = (nodeData: NodeData) =>
-        setSelectedGroupNode(
-            getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedGroupNode as TreeNode) ? nodeData : null
-        );
+    const _selectGroupNode = (nodeData: ITreeNodeData) =>
+        setSelectedGroupNode(getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedGroupNode) ? nodeData : null);
 
     const cols = [
         <DefinePermissionsViewLoadTree

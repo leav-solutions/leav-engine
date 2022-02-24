@@ -23,7 +23,7 @@ describe('DetailNavigation', () => {
         const mockState = {
             navigation: {
                 ...navigationInitialState,
-                recordDetail: {record: mockTreeRecord, permissions: mockTreeNodePermissions, children: []}
+                recordDetail: {id: '12345', record: mockTreeRecord, permissions: mockTreeNodePermissions, children: []}
             }
         };
 

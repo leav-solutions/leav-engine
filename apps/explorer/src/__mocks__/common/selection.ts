@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ISharedSelected, SharedStateSelection, SharedStateSelectionType} from '_types/types';
-import {mockNavigationPath} from '__mocks__/common/treeElements';
 
 export const mockSelection = {
     type: SharedStateSelectionType.search,
@@ -23,11 +22,11 @@ export const mockSharedSearchSelection: SharedStateSelection = {
 export const mockSharedNavigationSelection: SharedStateSelection = {
     selected: [mockSharedSelectedElement],
     type: SharedStateSelectionType.navigation,
-    parent: mockNavigationPath
+    parent: '12345'
 };
 
 export const mockSharedNavigationSelectionWithNoSelected: SharedStateSelection = {
     selected: [],
     type: SharedStateSelectionType.navigation,
-    parent: mockNavigationPath
+    parent: '12345'
 };
