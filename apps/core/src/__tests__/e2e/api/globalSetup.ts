@@ -50,6 +50,10 @@ const _createRequiredDirectories = async conf => {
     if (!fs.existsSync(conf.import.directory)) {
         await fs.promises.mkdir(conf.import.directory);
     }
+
+    if (!fs.existsSync(conf.diskCache.directory)) {
+        await fs.promises.mkdir(conf.diskCache.directory);
+    }
 };
 
 export async function setup() {

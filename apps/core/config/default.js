@@ -17,7 +17,7 @@ module.exports = {
         name: process.env.DB_NAME
     },
     diskCache: {
-        directory: '/cache'
+        directory: '/cache' || process.env.DISK_CACHE_DIRECTORY
     },
     elasticsearch: {
         url: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200'
