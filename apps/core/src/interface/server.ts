@@ -104,7 +104,7 @@ export default function ({
                     '/previews',
                     // TODO: temporary disabled, we have to send token with explorer
                     // authApp.checkToken,
-                    express.static('/results')
+                    express.static(config.preview.directory)
                 );
                 app.use(
                     `${config.export.directory}`,

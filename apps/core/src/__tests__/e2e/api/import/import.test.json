@@ -22,7 +22,7 @@
               "value": [
                 {
                   "attribute": "simple",
-                  "value": "solo"
+                  "value": "simple"
                 }
               ]
             }
@@ -42,22 +42,6 @@
           "action": "replace"
         }
       ]
-    },
-    {
-      "library": "test_import",
-      "matches": [],
-      "data": [
-        {
-          "attribute": "simple",
-          "values": [
-            {
-              "value": "solo"
-            }
-          ],
-          "action": "add"
-        }
-      ],
-      "links": []
     },
     {
       "library": "users_groups",

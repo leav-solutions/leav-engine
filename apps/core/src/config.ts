@@ -91,7 +91,10 @@ export const validateConfig = (conf: IConfig) => {
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required()
         }),
-        plugins: Joi.object().keys().unknown()
+        plugins: Joi.object().keys().unknown(),
+        preview: Joi.object().keys({
+            directory: Joi.string().required()
+        })
     });
 
     const isValid = configSchema.validate(conf);

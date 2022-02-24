@@ -23,6 +23,7 @@ export interface IConfig {
     export: IExport;
     import: IImport;
     plugins: IKeyValue<IKeyValue<any>>;
+    preview: IPreview;
 }
 
 export interface IServer {
@@ -109,5 +110,9 @@ export interface IImport {
 }
 
 export interface IDiskCache {
+    directory: string;
+}
+
+export interface IPreview {
     directory: string;
 }

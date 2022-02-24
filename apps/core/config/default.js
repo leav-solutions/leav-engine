@@ -17,7 +17,7 @@ module.exports = {
         name: process.env.DB_NAME
     },
     diskCache: {
-        directory: '/cache'
+        directory: process.env.DISK_CACHE_DIRECTORY || '/cache'
     },
     elasticsearch: {
         url: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200'
@@ -85,5 +85,8 @@ module.exports = {
         directory: process.env.IMPORT_DIR || '/imports',
         sizeLimit: process.env.IMPORT_SIZE_LIMIT || 10, // megabytes
         groupData: process.env.IMPORT_GROUP_DATA || 50 // number of elements processed at the same time
+    },
+    preview: {
+        directory: process.env.PREVIEWS_DIRECTORY || '/results'
     }
 };
