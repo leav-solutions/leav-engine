@@ -1,26 +1,26 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Operator, AttributeCondition} from '../../_types/record';
-import {IValue} from '../../_types/value';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
-import ValidationError from '../../errors/ValidationError';
-import {ITreeElement} from '../../_types/tree';
-import JsonParser from 'jsonparse';
-import * as Config from '_types/config';
-import {ICacheService} from 'infra/cache/cacheService';
-import LineByLine from 'line-by-line';
-import {validate} from 'jsonschema';
-import ExcelJS from 'exceljs';
 import {IValueDomain} from 'domain/value/valueDomain';
+import ExcelJS from 'exceljs';
 import fs from 'fs';
+import {ICacheService} from 'infra/cache/cacheService';
+import JsonParser from 'jsonparse';
+import {validate} from 'jsonschema';
+import LineByLine from 'line-by-line';
 import path from 'path';
+import * as Config from '_types/config';
+import ValidationError from '../../errors/ValidationError';
 import {IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {Action, IData, IMatch, IElement, ITree} from '../../_types/import';
+import {Action, IData, IElement, IMatch, ITree} from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
+import {AttributeCondition, Operator} from '../../_types/record';
+import {ITreeElement} from '../../_types/tree';
+import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
@@ -102,7 +102,9 @@ export default function ({
         const libraryAttribute = attrs.find(a => a.id === data.attribute);
 
         if (typeof libraryAttribute === 'undefined') {
-            throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
+            throw new ValidationError<IAttribute>({
+                id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: data.attribute}}
+            });
         }
 
         for (const recordId of recordIds) {
