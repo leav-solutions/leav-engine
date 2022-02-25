@@ -204,9 +204,15 @@ exports[`TreeRepo getDefaultElement Should return the first element of a tree 1`
                         RETURN pv._key
                     )
                     LET nodeOrder = TO_NUMBER(p.edges[-2].order)
-                    SORT LENGTH(path), nodeOrder ASC
-                    RETURN {id: SPLIT(e._from, '/')[1], record: MERGE(v, {path}), order: nodeOrder}
-                "
+                 
+                SORT LENGTH(path), nodeOrder ASC
+                RETURN {
+                    id: SPLIT(e._from, '/')[1],
+                    record: MERGE(v, {path}),
+                    order: nodeOrder,
+                    
+                }
+            "
 `;
 
 exports[`TreeRepo getDefaultElement Should return the first element of a tree 2`] = `
@@ -311,6 +317,45 @@ Object {
 }
 `;
 
+exports[`TreeRepo getTreeContent Should return children count of elements 1`] = `
+"
+                    FOR v, e, p IN 1..@value0 OUTBOUND @value1
+                    @@value2
+                    FILTER e.@value3 AND e._from != @value1
+                    LET path = (
+                        FOR pv IN p.vertices
+                        FILTER pv._id != v._id
+                        AND pv._id != e._from
+                        RETURN pv._key
+                    )
+                    LET nodeOrder = TO_NUMBER(p.edges[-2].order)
+                 
+                    LET childrenCount = COUNT(
+                        FOR vChildren, eChildren IN 1 outbound e._from
+                        @@value2
+                        FILTER !eChildren.@value3
+                        return vChildren._key
+                    )
+                 
+                SORT LENGTH(path), nodeOrder ASC
+                RETURN {
+                    id: SPLIT(e._from, '/')[1],
+                    record: MERGE(v, {path}),
+                    order: nodeOrder,
+                    childrenCount
+                }
+            "
+`;
+
+exports[`TreeRepo getTreeContent Should return children count of elements 2`] = `
+Object {
+  "@value2": "core_edge_tree_test_tree",
+  "value0": 1001,
+  "value1": "core_trees/test_tree",
+  "value3": "toRecord",
+}
+`;
+
 exports[`TreeRepo getTreeContent Should return content of a tree starting from a given node 1`] = `
 "
                     FOR v, e, p IN 1..@value0 OUTBOUND @value1
@@ -323,9 +368,15 @@ exports[`TreeRepo getTreeContent Should return content of a tree starting from a
                         RETURN pv._key
                     )
                     LET nodeOrder = TO_NUMBER(p.edges[-2].order)
-                    SORT LENGTH(path), nodeOrder ASC
-                    RETURN {id: SPLIT(e._from, '/')[1], record: MERGE(v, {path}), order: nodeOrder}
-                "
+                 
+                SORT LENGTH(path), nodeOrder ASC
+                RETURN {
+                    id: SPLIT(e._from, '/')[1],
+                    record: MERGE(v, {path}),
+                    order: nodeOrder,
+                    
+                }
+            "
 `;
 
 exports[`TreeRepo getTreeContent Should return content of a tree starting from a given node 2`] = `
@@ -349,9 +400,15 @@ exports[`TreeRepo getTreeContent Should return full content of a tree 1`] = `
                         RETURN pv._key
                     )
                     LET nodeOrder = TO_NUMBER(p.edges[-2].order)
-                    SORT LENGTH(path), nodeOrder ASC
-                    RETURN {id: SPLIT(e._from, '/')[1], record: MERGE(v, {path}), order: nodeOrder}
-                "
+                 
+                SORT LENGTH(path), nodeOrder ASC
+                RETURN {
+                    id: SPLIT(e._from, '/')[1],
+                    record: MERGE(v, {path}),
+                    order: nodeOrder,
+                    
+                }
+            "
 `;
 
 exports[`TreeRepo getTreeContent Should return full content of a tree 2`] = `

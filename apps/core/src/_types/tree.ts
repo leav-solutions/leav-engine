@@ -35,6 +35,7 @@ export interface ITreeElement {
 export interface ITreeNode {
     id: string;
     order?: number;
+    childrenCount?: number;
     record?: IRecord;
     parent?: ITreeNode[];
     ancestors?: ITreeNode[];

@@ -193,6 +193,7 @@ describe('Trees', () => {
             treeContent(treeId: "${testTreeName}") {
                 id
                 order
+                childrenCount
                 record {
                     id
                     library {
@@ -230,7 +231,9 @@ describe('Trees', () => {
         expect(restreeContent.data.data.treeContent[1].order).toBe(1);
 
         // Check record5 has children
-        expect(restreeContent.data.data.treeContent.filter(n => n.id === nodeRecord5)[0].children).toHaveLength(1);
+        const treeContentRecord5 = restreeContent.data.data.treeContent.find(n => n.id === nodeRecord5);
+        expect(treeContentRecord5.childrenCount).toBe(1);
+        expect(treeContentRecord5.children).toHaveLength(1);
 
         // Get tree content from a specific node
         // Get tree content
