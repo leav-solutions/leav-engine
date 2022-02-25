@@ -186,6 +186,7 @@ export default function ({
                     type TreeNode {
                         id: ID!,
                         order: Int!,
+                        childrenCount: Int,
                         record: Record!,
                         ancestors: [TreeNode!],
                         children: [TreeNode!],
@@ -278,10 +279,17 @@ export default function ({
                             ctx.treeId = treeId;
 
                             const fields = graphqlApp.getQueryFields(info);
+                            const hasChildrenCount = !!fields.find(f => f.name === 'childrenCount');
                             const depth = _getChildrenDepth(fields, 1);
 
                             return (
-                                await treeDomain.getTreeContent({treeId, startingNode: startAt, depth, ctx})
+                                await treeDomain.getTreeContent({
+                                    treeId,
+                                    startingNode: startAt,
+                                    depth,
+                                    childrenCount: hasChildrenCount,
+                                    ctx
+                                })
                             ).reduce(_filterTreeContentReduce(ctx, treeId), Promise.resolve([]));
                         },
                         async fullTreeContent(_, {treeId}: {treeId: string}, ctx): Promise<ITreeNode[]> {

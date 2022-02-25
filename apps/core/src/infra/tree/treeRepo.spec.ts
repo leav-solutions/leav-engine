@@ -639,6 +639,83 @@ describe('TreeRepo', () => {
             ]);
         });
 
+        test('Should return children count of elements', async () => {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {
+                        id: '19637240',
+                        record: {
+                            _id: 'nouvelle_biblio/19610667',
+                            _key: '19610667',
+                            label: 'A',
+                            path: ['test_tree']
+                        },
+                        order: 0,
+                        childrenCount: 1
+                    },
+                    {
+                        id: '19637279',
+                        record: {
+                            _id: 'nouvelle_biblio/19611412',
+                            _key: '19611412',
+                            label: 'B',
+                            path: ['test_tree', '19637240']
+                        },
+                        order: 0,
+                        childrenCount: 0
+                    }
+                ])
+            };
+
+            const mockDbUtils = {
+                cleanup: dbUtils().cleanup
+            };
+
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            const treeContent = await repo.getTreeContent({
+                treeId: 'test_tree',
+                childrenCount: true,
+                ctx
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/childrenCount/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value1).toBe('core_trees/test_tree');
+
+            expect(treeContent).toEqual([
+                {
+                    id: '19637240',
+                    record: {
+                        id: '19610667',
+                        label: 'A',
+                        library: 'nouvelle_biblio'
+                    },
+                    order: 0,
+                    childrenCount: 1,
+                    children: [
+                        {
+                            id: '19637279',
+                            record: {
+                                id: '19611412',
+                                label: 'B',
+                                library: 'nouvelle_biblio'
+                            },
+                            order: 0,
+                            childrenCount: 0,
+                            children: []
+                        }
+                    ]
+                }
+            ]);
+        });
+
         test('Should return content of a tree starting from a given node', async () => {
             const mockDbServ = {
                 db: new Database(),

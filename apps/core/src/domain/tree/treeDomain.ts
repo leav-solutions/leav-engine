@@ -97,6 +97,7 @@ export interface ITreeDomain {
         treeId: string;
         startingNode?: string;
         depth?: number;
+        childrenCount?: boolean;
         ctx: IQueryInfos;
     }): Promise<ITreeNode[]>;
 
@@ -444,7 +445,7 @@ export default function ({
 
             return treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
         },
-        async getTreeContent({treeId, startingNode = null, depth, ctx}): Promise<ITreeNode[]> {
+        async getTreeContent({treeId, startingNode = null, depth, childrenCount, ctx}): Promise<ITreeNode[]> {
             const errors: any = {};
             if (!(await _isExistingTree(treeId, ctx))) {
                 errors.treeId = Errors.UNKNOWN_TREE;
@@ -465,7 +466,7 @@ export default function ({
                 throw new ValidationError(errors);
             }
 
-            return treeRepo.getTreeContent({treeId, startingNode, depth, ctx});
+            return treeRepo.getTreeContent({treeId, startingNode, depth, childrenCount, ctx});
         },
         async getElementChildren({treeId, nodeId, depth, ctx}): Promise<ITreeNode[]> {
             return treeRepo.getElementChildren({treeId, nodeId, depth, ctx});

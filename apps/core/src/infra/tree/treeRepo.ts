@@ -103,6 +103,7 @@ export interface ITreeRepo {
         treeId: string;
         startingNode?: string;
         depth?: number;
+        childrenCount?: boolean;
         ctx: IQueryInfos;
     }): Promise<ITreeNode[]>;
 
@@ -389,7 +390,13 @@ export default function ({
 
             return !!res.length;
         },
-        async getTreeContent({treeId, startingNode, depth = MAX_TREE_DEPTH, ctx}): Promise<ITreeNode[]> {
+        async getTreeContent({
+            treeId,
+            startingNode,
+            depth = MAX_TREE_DEPTH,
+            childrenCount = false,
+            ctx
+        }): Promise<ITreeNode[]> {
             const rootId = getRootId(treeId);
 
             const collec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
@@ -404,13 +411,9 @@ export default function ({
              * The order we need is defined between the node and its parent.
              * Thus, we have to retrieve it on the before-last edge of the path to the record
              */
-            const data: Array<{
-                id: string;
-                record: IDbDocument & {path: string[]};
-                order: number;
-            }> = await dbService.execute({
-                // We query at depth + 1 to reach the records
-                query: aql`
+            // We query at depth + 1 to reach the records
+            const queryParts = [
+                aql`
                     FOR v, e, p IN 1..${depth + 1} OUTBOUND ${nodeFrom}
                     ${collec}
                     FILTER e.${TO_RECORD_PROP_NAME} AND e._from != ${nodeFrom}
@@ -421,9 +424,37 @@ export default function ({
                         RETURN pv._key
                     )
                     LET nodeOrder = TO_NUMBER(p.edges[-2].order)
-                    SORT LENGTH(path), nodeOrder ASC
-                    RETURN {id: SPLIT(e._from, '/')[1], record: MERGE(v, {path}), order: nodeOrder}
-                `,
+                `
+            ];
+
+            if (childrenCount) {
+                queryParts.push(aql`
+                    LET childrenCount = COUNT(
+                        FOR vChildren, eChildren IN 1 outbound e._from
+                        ${collec}
+                        FILTER !eChildren.${TO_RECORD_PROP_NAME}
+                        return vChildren._key
+                    )
+                `);
+            }
+
+            queryParts.push(aql`
+                SORT LENGTH(path), nodeOrder ASC
+                RETURN {
+                    id: SPLIT(e._from, '/')[1],
+                    record: MERGE(v, {path}),
+                    order: nodeOrder,
+                    ${aql.literal(childrenCount ? 'childrenCount' : '')}
+                }
+            `);
+
+            const data: Array<{
+                id: string;
+                record: IDbDocument & {path: string[]};
+                order: number;
+                childrenCount?: number;
+            }> = await dbService.execute({
+                query: aql.join(queryParts),
                 ctx
             });
 
@@ -458,7 +489,17 @@ export default function ({
                 // If destination is the tree root, there's no 'children'
                 const destination = parentInTree === treeContent ? parentInTree : (parentInTree as ITreeNode).children;
 
-                destination.push({id: elem.id, order: elem.order, record: dbUtils.cleanup(elem.record), children: []});
+                const treeNode: ITreeNode = {
+                    id: elem.id,
+                    order: elem.order,
+                    record: dbUtils.cleanup(elem.record),
+                    children: []
+                };
+
+                if (childrenCount) {
+                    treeNode.childrenCount = elem.childrenCount ?? 0;
+                }
+                destination.push(treeNode);
             }
 
             return treeContent;
