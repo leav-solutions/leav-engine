@@ -16,7 +16,7 @@ export interface IPermissionByUserGroupsHelper {
     getPermissionByUserGroups: (params: IGetPermissionByUserGroupsParams) => Promise<boolean | null>;
 }
 
-export default function(deps: IDeps): IPermissionByUserGroupsHelper {
+export default function (deps: IDeps): IPermissionByUserGroupsHelper {
     const {
         'core.domain.permission.helpers.simplePermission': simplePermHelper = null,
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper

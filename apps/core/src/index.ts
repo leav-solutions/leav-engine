@@ -10,6 +10,7 @@ import i18nextInit from './i18nextInit';
 import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 import {initAmqp} from './infra/amqp';
+import fs from 'fs';
 
 (async function () {
     let conf: Config.IConfig;
@@ -41,8 +42,28 @@ import {initAmqp} from './infra/amqp';
 
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 
+    const _createRequiredDirectories = async () => {
+        if (!fs.existsSync('/files')) {
+            await fs.promises.mkdir('/files');
+        }
+        if (!fs.existsSync(conf.preview.directory)) {
+            await fs.promises.mkdir(conf.preview.directory);
+        }
+        if (!fs.existsSync(conf.export.directory)) {
+            await fs.promises.mkdir(conf.export.directory);
+        }
+        if (!fs.existsSync(conf.import.directory)) {
+            await fs.promises.mkdir(conf.import.directory);
+        }
+        if (!fs.existsSync(conf.diskCache.directory)) {
+            await fs.promises.mkdir(conf.diskCache.directory);
+        }
+    };
+
     try {
         const opt = process.argv[2];
+
+        await _createRequiredDirectories();
 
         if (typeof opt !== 'undefined' && opt.indexOf('server') !== -1) {
             await server.init();

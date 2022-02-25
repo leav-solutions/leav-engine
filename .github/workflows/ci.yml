@@ -92,8 +92,10 @@ jobs:
           AMQP_PORT: 5672
           AMQP_USERNAME: guest
           AMQP_PWD: guest
-          APP_ROOT_PATH: .
+          APP_ROOT_PATH: ${{ github.workspace }}/apps/core
           ELASTICSEARCH_URL: "http://localhost:9200"
+          IMPORT_DIR: ${{ github.workspace }}/imports
+          DISK_CACHE_DIRECTORY: ${{ github.workspace }}/cache
 
   e2e-indexation-manager:
     runs-on: ubuntu-latest

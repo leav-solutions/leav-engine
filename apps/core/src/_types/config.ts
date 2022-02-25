@@ -7,6 +7,7 @@ import {IKeyValue} from './shared';
 export interface IConfig {
     server: IServer;
     db: IDb;
+    diskCache: IDiskCache;
     elasticsearch: IElasticsearch;
     auth: IAuth;
     lang: ILang;
@@ -20,7 +21,9 @@ export interface IConfig {
     env?: string;
     defaultUserId: string;
     export: IExport;
+    import: IImport;
     plugins: IKeyValue<IKeyValue<any>>;
+    preview: IPreview;
 }
 
 export interface IServer {
@@ -64,6 +67,7 @@ export interface IAmqp {
     connOpt: Options.Connect;
     exchange: string;
     type: string;
+    prefetch?: number;
 }
 
 export interface IFilesManager {
@@ -81,7 +85,6 @@ export interface IFilesManager {
         files1: string;
     };
     userId: string;
-    prefetch?: number;
 }
 
 export interface IEventsManager {
@@ -94,9 +97,22 @@ export interface IIndexationManager {
     queues: {
         events: string;
     };
-    prefetch?: number;
 }
 
 export interface IExport {
+    directory: string;
+}
+
+export interface IImport {
+    directory: string;
+    sizeLimit: number;
+    groupData: number;
+}
+
+export interface IDiskCache {
+    directory: string;
+}
+
+export interface IPreview {
     directory: string;
 }

@@ -22,7 +22,7 @@ export interface IValidateHelper {
     validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
 }
 
-export default function({
+export default function ({
     'core.infra.library': libraryRepo = null,
     'core.infra.record': recordRepo = null,
     'core.infra.view': viewRepo = null

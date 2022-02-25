@@ -34,7 +34,10 @@ describe('amqp', () => {
 
     test('Set up message listening', async () => {
         const amqpServ = amqpService({
-            'core.infra.amqp': {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
+            'core.infra.amqp': {
+                publisher: null,
+                consumer: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel}
+            },
             config: mockConfig as Config.IConfig
         });
         const mockCbFunc = jest.fn();
@@ -46,7 +49,10 @@ describe('amqp', () => {
 
     test('Publish a message', async () => {
         const amqpServ = amqpService({
-            'core.infra.amqp': {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
+            'core.infra.amqp': {
+                publisher: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
+                consumer: null
+            },
             config: mockConfig as Config.IConfig
         });
 

@@ -117,7 +117,7 @@ interface IDeps {
     'core.domain.helpers.validate'?: IValidateHelper;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,

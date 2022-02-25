@@ -16,6 +16,9 @@ module.exports = {
         url: process.env.ARANGO_URL,
         name: process.env.DB_NAME
     },
+    diskCache: {
+        directory: process.env.DISK_CACHE_DIRECTORY || '/cache'
+    },
     elasticsearch: {
         url: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200'
     },
@@ -44,7 +47,8 @@ module.exports = {
             port: process.env.AMQP_PORT || '5672'
         },
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
-        type: process.env.AMQP_TYPE || 'direct'
+        type: process.env.AMQP_TYPE || 'direct',
+        prefetch: process.env.AMQP_PREFETCH || 5
     },
     filesManager: {
         queues: {
@@ -60,8 +64,7 @@ module.exports = {
         rootKeys: {
             files1: 'files'
         },
-        userId: process.env.FM_USER_ID || '1',
-        prefetch: 1
+        userId: process.env.FM_USER_ID || '1'
     },
     eventsManager: {
         routingKeys: {
@@ -71,12 +74,19 @@ module.exports = {
     indexationManager: {
         queues: {
             events: 'indexation_events'
-        },
-        prefetch: 1
+        }
     },
     debug: process.env.DEBUG || false,
     defaultUserId: '1', // Used for DB migration and any other action that is not bound to a real user
     export: {
         directory: process.env.EXPORT_DIR || '/exports'
+    },
+    import: {
+        directory: process.env.IMPORT_DIR || '/imports',
+        sizeLimit: process.env.IMPORT_SIZE_LIMIT || 10, // megabytes
+        groupData: process.env.IMPORT_GROUP_DATA || 50 // number of elements processed at the same time
+    },
+    preview: {
+        directory: process.env.PREVIEWS_DIRECTORY || '/results'
     }
 };

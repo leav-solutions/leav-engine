@@ -43,7 +43,7 @@ interface IDeps {
     'core.infra.value'?: IValueRepo;
 }
 
-export default function(deps: IDeps = {}): IRecordAttributePermissionDomain {
+export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
     const {
         'core.domain.permission.attribute': attrPermissionDomain = null,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,

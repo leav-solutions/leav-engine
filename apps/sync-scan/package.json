@@ -15,7 +15,7 @@
     "author": "",
     "license": "LGPL3",
     "devDependencies": {
-        "@types/amqplib": "^0.5.13",
+        "@types/amqplib": "0.8.2",
         "@types/jest": "^25.1.4",
         "@types/joi": "^14.3.4",
         "@types/node": "^13.9.1",
@@ -30,7 +30,7 @@
     "dependencies": {
         "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
-        "amqplib": "^0.5.5",
+        "amqplib": "0.8.0",
         "apollo-cache-inmemory": "^1.6.5",
         "apollo-client": "^2.6.8",
         "apollo-link": "^1.2.13",

@@ -14,7 +14,7 @@ interface IDeps {
     'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.helpers.globalPermission': globalPermHelper = null
 }: IDeps = {}): ILibraryPermissionDomain {
     const getLibraryPermission = async ({

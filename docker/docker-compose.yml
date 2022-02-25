@@ -2,7 +2,7 @@ version: "3.4"
 
 ##### Common properties #####
 x-node-image: &node_image node:14-alpine
-x-message-broker-image: &message_broker_image "rabbitmq:3-management-alpine"
+x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
 x-traefik-image: &traefik_image "traefik:1.7"
 x-redis-image: &redis_image "redis"
 x-elasticsearch-image: &elastisearch_image "docker.elastic.co/elasticsearch/elasticsearch:7.8.0"
@@ -32,6 +32,9 @@ x-mount_point-repo: &mount_point-repo ../:/app:delegated
 x-mount_point-scripts: &mount_point-scripts ./scripts:/scripts
 x-mount_point-files: &mount_point-files ../files/:/files
 x-mount_point-previews: &mount_point-previews ../previews/:/results
+x-mount_point-exports: &mount_point-exports ../exports:/exports
+x-mount_point-imports: &mount_point-imports ../imports:/imports
+x-mount_point-cache: &mount_point-cache ../cache:/cache
 
 # Lists of allowed and ignored files
 # Use ", " characters as separators between files
@@ -47,7 +50,7 @@ x-env-core: &env-core
   APP_ROOT_PATH: *dir-core
   SERVER_HOST: "0.0.0.0"
   SERVER_PORT: 4001
-  SERVER_UPLOAD_LIMIT: "30000mb"
+  SERVER_UPLOAD_LIMIT: "15000mb"
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
@@ -117,6 +120,9 @@ services:
       - *mount_point-files
       - *mount_point-previews
       - *mount_point-scripts
+      - *mount_point-exports
+      - *mount_point-imports
+      - *mount_point-cache
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-core-modules
@@ -127,7 +133,6 @@ services:
       - *volume-sync_scan-modules
       - *volume-config_manager-modules
       - *volume-app_root_path-modules
-      - ./exports:/exports
     ports:
       - "9229:9229"
     working_dir: *dir-core

@@ -153,7 +153,7 @@ interface IDeps {
     'core.infra.attributeTypes.attributeTree'?: IAttributeTypeRepo;
 }
 
-export default function({
+export default function ({
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
     'core.infra.attributeTypes.attributeAdvanced': attributeAdvancedRepo = null,

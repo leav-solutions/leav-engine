@@ -1,34 +1,40 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {Operator, AttributeCondition} from '../../_types/record';
+import {IValue} from '../../_types/value';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
+import ValidationError from '../../errors/ValidationError';
+import {ITreeElement} from '../../_types/tree';
+import JsonParser from 'jsonparse';
+import * as Config from '_types/config';
+import {ICacheService} from 'infra/cache/cacheService';
+import LineByLine from 'line-by-line';
+import {validate} from 'jsonschema';
+import ExcelJS from 'exceljs';
 import {IValueDomain} from 'domain/value/valueDomain';
 import fs from 'fs';
-import {validate} from 'jsonschema';
 import path from 'path';
-import ValidationError from '../../errors/ValidationError';
 import {IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {Action, IData, IFile, IMatch, IValue} from '../../_types/import';
+import {Action, IData, IMatch, IElement, ITree} from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {AttributeCondition, Operator} from '../../_types/record';
-import {ITreeElement} from '../../_types/tree';
 import {IValidateHelper} from '../helpers/validate';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 
 export interface IImportExcelParams {
-    data: string[][];
+    filename: string;
     library: string;
     mapping: string[];
     key?: string | null;
 }
 
 export interface IImportDomain {
-    import(data: IFile, ctx: IQueryInfos): Promise<boolean>;
-    importExcel(params: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
+    import(filename: string, ctx: IQueryInfos): Promise<boolean>;
+    importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean>;
 }
 
 interface IDeps {
@@ -37,14 +43,18 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.infra.cache.cacheService'?: ICacheService;
+    config?: Config.IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.value': valueDomain = null,
-    'core.domain.tree': treeDomain = null
+    'core.domain.tree': treeDomain = null,
+    'core.infra.cache.cacheService': cacheService = null,
+    config = null
 }: IDeps = {}): IImportDomain {
     const _addValue = async (
         library: string,
@@ -54,7 +64,9 @@ export default function({
         ctx: IQueryInfos,
         valueId?: string
     ): Promise<void> => {
-        if (Array.isArray(value.value)) {
+        const isMatch = Array.isArray(value.value);
+
+        if (isMatch) {
             const recordsList = await recordDomain.find({
                 params: {
                     library: attribute.linked_library,
@@ -66,7 +78,11 @@ export default function({
             value.value = recordsList.list[0]?.id;
         }
 
-        // FIXME: value.value undefined
+        if (isMatch && typeof value.value === 'undefined') {
+            // TODO: Throw
+            return;
+        }
+
         await valueDomain.saveValue({
             library,
             recordId,
@@ -90,7 +106,7 @@ export default function({
         }
 
         for (const recordId of recordIds) {
-            let currentValues;
+            let currentValues: IValue[];
 
             if (data.action === Action.REPLACE) {
                 currentValues = await valueDomain.getValues({
@@ -126,10 +142,28 @@ export default function({
     };
 
     const _matchesToFilters = (matches: IMatch[]): IRecordFilterLight[] => {
-        const filters = matches.reduce((acc, m) => acc.concat(m, {operator: Operator.AND}), []);
+        // add AND operator between matches
+        const filters: Array<IMatch & {operator: Operator}> = matches.reduce(
+            (acc, m) => acc.concat(m, {operator: Operator.AND}),
+            []
+        );
+
+        // delete last AND operator
         filters.pop();
 
-        return filters.map((m: IMatch) => ({field: m.attribute, condition: AttributeCondition.EQUAL, value: m.value}));
+        const filtersLight = filters.map((m: IMatch & {operator: Operator}) => {
+            if (!!m.operator) {
+                return {operator: m.operator};
+            }
+
+            return {
+                field: m.attribute,
+                condition: AttributeCondition.EQUAL,
+                value: m.value
+            };
+        });
+
+        return filtersLight;
     };
 
     const _getMatchRecords = async (library: string, matches: IMatch[], ctx: IQueryInfos): Promise<string[]> => {
@@ -196,9 +230,7 @@ export default function({
                     });
                 }
             }
-        }
-
-        if (action === Action.REMOVE) {
+        } else if (action === Action.REMOVE) {
             if (elements.length) {
                 for (const e of elements) {
                     const record = {library, id: e};
@@ -224,14 +256,204 @@ export default function({
         }
     };
 
+    const _getStoredFileData = async (
+        filename: string,
+        callbackElement: (element: IElement, index: number) => Promise<void>,
+        callbackTree: (element: ITree) => Promise<void>
+    ): Promise<boolean> => {
+        return new Promise((resolve, reject) => {
+            const p = new JsonParser();
+            const fileStream = new LineByLine(`${config.import.directory}/${filename}`);
+            let elementIndex = 0;
+            let treesReached = false;
+
+            // We stack the callbacks and after reaching a specific length we pause
+            // the flow and execute them all before resuming the flow again.
+            let callbacks: Array<() => Promise<void>> = [];
+
+            const callCallbacks = async () => {
+                fileStream.pause();
+                await Promise.all(callbacks.map(c => c()));
+                callbacks = [];
+                fileStream.resume();
+            };
+
+            p.onValue = async function (data: any) {
+                try {
+                    if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
+                        if (callbacks.length >= config.import.groupData) {
+                            await callCallbacks();
+                        }
+
+                        callbacks.push(async () => callbackElement(data, elementIndex++));
+                    } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
+                        // If the first tree has never been reached before we check if callbacks for
+                        // elements are still pending and call them before processing the trees.
+                        if (!treesReached) {
+                            await callCallbacks();
+                        }
+
+                        treesReached = true;
+
+                        // We dont stack callbacks for trees to keep the order
+                        // of JSON file because of the parent attribute.
+                        fileStream.pause();
+                        await callbackTree(data);
+                        fileStream.resume();
+                    }
+                } catch (e) {
+                    reject(e);
+                }
+            };
+
+            fileStream.on('line', line => {
+                p.write(line);
+            });
+            fileStream.on('error', () => reject(new ValidationError({id: Errors.FILE_ERROR})));
+            fileStream.on('end', async () => {
+                // If there are still pending callbacks we call them.
+                if (callbacks.length) {
+                    await callCallbacks();
+                }
+
+                resolve(true);
+            });
+        });
+    };
+
+    const _getFileDataBuffer = async (filename: string): Promise<Buffer> => {
+        const fileStream = fs.createReadStream(`${config.import.directory}/${filename}`);
+
+        const data = await ((): Promise<Buffer> =>
+            new Promise((resolve, reject) => {
+                const chunks = [];
+
+                fileStream.on('data', chunk => chunks.push(chunk));
+                fileStream.on('error', () => reject(new ValidationError({id: Errors.FILE_ERROR})));
+                fileStream.on('end', () => resolve(Buffer.concat(chunks)));
+            }))();
+
+        return data;
+    };
+
+    const _jsonSchemaValidation = async (filename: string): Promise<void> => {
+        const {size} = await fs.promises.stat(`${config.import.directory}/${filename}`);
+        const megaBytesSize = size / (1024 * 1024);
+
+        // if file is too big we validate json schema
+        if (megaBytesSize > config.import.sizeLimit) {
+            return;
+        }
+
+        const buffer = await _getFileDataBuffer(filename);
+        const data = JSON.parse(buffer.toString('utf8'));
+        const schema = await fs.promises.readFile(SCHEMA_PATH);
+        validate(data, JSON.parse(schema.toString()), {throwAll: true});
+    };
+
     return {
-        async importExcel({data, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
-            const file: IFile = {elements: [], trees: []};
+        async import(filename: string, ctx: IQueryInfos): Promise<boolean> {
+            await _jsonSchemaValidation(filename);
+
+            const cacheDataType = `${filename}-links`;
+            let lastCacheIndex: number;
+
+            await _getStoredFileData(
+                filename,
+                // treat elements and cache links
+                async (element: IElement, index: number): Promise<void> => {
+                    await validateHelper.validateLibrary(element.library, ctx);
+
+                    let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
+
+                    // if not match we create a new record
+                    if (!recordIds.length) {
+                        recordIds = [(await recordDomain.createRecord(element.library, ctx)).id];
+                    }
+
+                    for (const data of element.data) {
+                        await _treatElement(element.library, data, recordIds, ctx);
+                    }
+
+                    // caching element links
+                    // TODO: Improvement: if no links no cache.
+                    await cacheService.storeData(
+                        cacheDataType,
+                        index.toString(),
+                        JSON.stringify({library: element.library, recordIds, links: element.links})
+                    );
+
+                    if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
+                        lastCacheIndex = index;
+                    }
+                },
+                // treat trees
+                async (tree: ITree) => {
+                    await validateHelper.validateLibrary(tree.library, ctx);
+                    const recordIds = await _getMatchRecords(tree.library, tree.matches, ctx);
+                    let parent: {id: string; library: string};
+
+                    if (typeof tree.parent !== 'undefined') {
+                        const parentIds = await _getMatchRecords(tree.parent.library, tree.parent.matches, ctx);
+
+                        parent = parentIds.length
+                            ? {id: parentIds[0], library: (tree as ITree).parent.library}
+                            : parent;
+                    }
+
+                    if (typeof parent === 'undefined' && !recordIds.length) {
+                        throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
+                    }
+
+                    await _treatTree(tree.library, tree.treeId, parent, recordIds, tree.action, ctx, tree.order);
+                }
+            );
+
+            // treat links cached before
+            for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
+                const cacheStringifiedObject = await cacheService.getData(cacheDataType, cacheKey.toString());
+                const element = JSON.parse(cacheStringifiedObject);
+                for (const link of element.links) {
+                    await _treatElement(element.library, link, element.recordIds, ctx);
+                }
+            }
+
+            // Delete cache.
+            await cacheService.deleteAll(cacheDataType);
+
+            return true;
+        },
+        async importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
+            const buffer = await _getFileDataBuffer(filename);
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(buffer);
+            const data: string[][] = [];
+
+            workbook.eachSheet(s => {
+                s.eachRow(r => {
+                    let elem = (r.values as string[]).slice(1);
+                    // replace empty item by null
+                    elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
+                    data.push(elem);
+                });
+            });
 
             // delete first row of columns name
             data.shift();
 
-            for (const d of data) {
+            const JSONFilename = filename.slice(0, filename.lastIndexOf('.')) + '.json';
+            const writeStream = fs.createWriteStream(`${config.import.directory}/${JSONFilename}`, {
+                flags: 'a' // 'a' means appending (old data will be preserved)
+            });
+
+            const writeLine = line => writeStream.write(`\n${line}`);
+
+            // Header of file.
+            writeLine(`{
+                "elements": [
+              `);
+
+            for (const [index, d] of data.entries()) {
                 const matches =
                     key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
                         ? [
@@ -242,7 +464,7 @@ export default function({
                           ]
                         : [];
 
-                file.elements.push({
+                const element = {
                     library,
                     matches,
                     data: d
@@ -254,60 +476,16 @@ export default function({
                         }))
                         .filter(e => e.attribute !== 'id'),
                     links: []
-                });
+                };
+
+                // Adding element to JSON file.
+                writeLine(JSON.stringify(element) + (index !== data.length - 1 ? ',' : ''));
             }
 
-            return this.import(file, ctx);
-        },
-        async import(data: IFile, ctx: IQueryInfos): Promise<boolean> {
-            const schema = await fs.promises.readFile(SCHEMA_PATH);
+            // End of file.
+            writeLine('], "trees": []}');
 
-            validate(data, JSON.parse(schema.toString()), {throwAll: true});
-
-            const linksElements: Array<{library: string; recordIds: string[]; links: IData[]}> = [];
-
-            // elements data
-            for (const e of data.elements) {
-                await validateHelper.validateLibrary(e.library, ctx);
-
-                let recordIds = await _getMatchRecords(e.library, e.matches, ctx);
-
-                recordIds = recordIds.length ? recordIds : [(await recordDomain.createRecord(e.library, ctx)).id];
-
-                for (const d of e.data) {
-                    await _treatElement(e.library, d, recordIds, ctx);
-                }
-
-                linksElements.push({library: e.library, recordIds, links: e.links});
-            }
-
-            // elements links
-            for (const le of linksElements) {
-                for (const link of le.links) {
-                    await _treatElement(le.library, link, le.recordIds, ctx);
-                }
-            }
-
-            // trees
-            for (const t of data.trees) {
-                await validateHelper.validateLibrary(t.library, ctx);
-
-                const recordIds = await _getMatchRecords(t.library, t.matches, ctx);
-                let parent;
-
-                if (typeof t.parent !== 'undefined') {
-                    const parentIds = await _getMatchRecords(t.parent.library, t.parent.matches, ctx);
-                    parent = parentIds.length ? {id: parentIds[0], library: t.parent.library} : parent;
-                }
-
-                if (typeof parent === 'undefined' && !recordIds.length) {
-                    throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
-                }
-
-                await _treatTree(t.library, t.treeId, parent, recordIds, t.action, ctx, t.order);
-            }
-
-            return true;
+            return this.import(JSONFilename, ctx);
         }
     };
 }

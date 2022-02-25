@@ -44,8 +44,8 @@ describe('Events Manager', () => {
     test('send amqp message', async () => {
         const amqpServ = amqpService({
             'core.infra.amqp': {
-                connection: null,
-                channel: mockAmqpChannel as amqp.ConfirmChannel
+                publisher: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
+                consumer: null
             },
             config: conf as IConfig
         });

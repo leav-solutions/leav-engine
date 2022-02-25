@@ -30,7 +30,7 @@ export interface ITreeBasedPermissionHelper {
     getInheritedTreeBasedPermission(params: IGetInheritedTreeBasedPermissionParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
-export default function(deps: IDeps): ITreeBasedPermissionHelper {
+export default function (deps: IDeps): ITreeBasedPermissionHelper {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,

@@ -51,7 +51,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.utils.logger': logger = null,
     'core.infra.plugins': pluginsRepo = null,

@@ -451,41 +451,25 @@ describe('searchFilters', () => {
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdYesterday,
-                    String(
-                        moment()
-                            .subtract(1, 'days')
-                            .unix()
-                    ) // yesterday
+                    String(moment().subtract(1, 'days').unix()) // yesterday
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdTomorrow,
-                    String(
-                        moment()
-                            .add(1, 'days')
-                            .unix()
-                    ) // tomorrow
+                    String(moment().add(1, 'days').unix()) // tomorrow
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdNextMonth,
-                    String(
-                        moment()
-                            .add(29, 'days')
-                            .unix()
-                    ) // next month (= next 31 days)
+                    String(moment().add(29, 'days').unix()) // next month (= next 31 days)
                 );
                 await gqlSaveValue(
                     dateAttributeId,
                     libraryDateId,
                     recordDateIdLastMonth,
-                    String(
-                        moment()
-                            .subtract(29, 'days')
-                            .unix()
-                    ) // last month (= last 31 days)
+                    String(moment().subtract(29, 'days').unix()) // last month (= last 31 days)
                 );
             });
 

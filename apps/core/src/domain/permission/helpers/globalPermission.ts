@@ -48,7 +48,7 @@ interface IDeps {
     'core.infra.value'?: IValueRepo;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
     'core.infra.attribute': attributeRepo = null,

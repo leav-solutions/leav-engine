@@ -78,7 +78,7 @@ export const systemPreviewVersions: IPreviewVersion[] = [
     }
 ];
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqp.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -158,8 +158,8 @@ export default function({
 
     return {
         async init(): Promise<void> {
-            await amqpService.amqpConn.channel.assertQueue(config.filesManager.queues.events);
-            await amqpService.amqpConn.channel.bindQueue(
+            await amqpService.amqp.consumer.channel.assertQueue(config.filesManager.queues.events);
+            await amqpService.amqp.consumer.channel.bindQueue(
                 config.filesManager.queues.events,
                 config.amqp.exchange,
                 config.filesManager.routingKeys.events
@@ -177,8 +177,7 @@ export default function({
             return amqpService.consume(
                 config.filesManager.queues.events,
                 config.filesManager.routingKeys.events,
-                _onMessage,
-                config.filesManager.prefetch
+                _onMessage
             );
         },
         getPreviewVersion(): IPreviewVersion[] {

@@ -14,7 +14,7 @@ interface IDeps {
     'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
 }
 
-export default function(deps: IDeps = {}): IAttributePermissionDomain {
+export default function (deps: IDeps = {}): IAttributePermissionDomain {
     const {'core.domain.permission.helpers.globalPermission': globalPermHelper = null} = deps;
 
     const getAttributePermission = async ({
