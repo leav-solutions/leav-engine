@@ -320,6 +320,7 @@ services:
       - traefik.frontend.rule=Host:arango.leav.localhost
     volumes:
       - arango_data:/var/lib/arangodb3
+      - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
 
   message-broker:
     image: *message_broker_image
