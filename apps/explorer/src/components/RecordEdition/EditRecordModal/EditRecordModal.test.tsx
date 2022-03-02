@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IUseCanEditRecordHook} from 'hooks/useCanEditRecord/useCanEditRecord';
 import React from 'react';
-import {act, fireEvent, render, screen, waitForElement} from '_tests/testUtils';
+import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import EditRecordModal from './EditRecordModal';
 
@@ -66,7 +66,7 @@ describe('EditRecordModal', () => {
                 );
             });
 
-            await waitForElement(() => screen.getByText('EditRecord'));
+            await waitFor(() => screen.getByText('EditRecord'));
 
             expect(screen.getByText(/new_record/)).toBeVisible();
             expect(screen.getByText('EditRecord')).toBeVisible();

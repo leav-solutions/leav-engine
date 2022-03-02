@@ -51,7 +51,7 @@ describe('useSaveValueBatchMutation', () => {
                         }
                     }
                 }),
-            {loading: false, called: true, client: null}
+            {loading: false, called: true, client: null, reset: null}
         ]);
 
         const {saveValues} = useSaveValueBatchMutation();
@@ -88,7 +88,7 @@ describe('useSaveValueBatchMutation', () => {
                         }
                     }
                 }),
-            {loading: false, called: true, client: null}
+            {loading: false, called: true, client: null, reset: null}
         ]);
 
         const {saveValues} = useSaveValueBatchMutation();
@@ -118,7 +118,7 @@ describe('useSaveValueBatchMutation', () => {
                         }
                     }
                 }),
-            {loading: false, called: true, client: null}
+            {loading: false, called: true, client: null, reset: null}
         ]);
 
         const {saveValues} = useSaveValueBatchMutation();

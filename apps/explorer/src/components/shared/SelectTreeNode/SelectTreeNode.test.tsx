@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {act, render, screen, waitForElement} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
 import {getTreeContentQuery} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import SelectTreeNode from './SelectTreeNode';
@@ -92,7 +92,7 @@ describe('SelectTreeNode', () => {
             });
         });
 
-        await waitForElement(() => screen.getByText('tree'));
+        await waitFor(() => screen.getByText('tree'));
         expect(screen.getByText('tree')).toBeInTheDocument();
     });
 });

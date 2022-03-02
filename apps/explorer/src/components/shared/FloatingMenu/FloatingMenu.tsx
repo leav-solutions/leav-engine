@@ -92,6 +92,7 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                         <Button
                             size={size}
                             icon={<IconEllipsisHorizontal />}
+                            aria-label={t('floating_menu.more_actions')}
                             title={t('floating_menu.more_actions')}
                             shape="circle"
                         />

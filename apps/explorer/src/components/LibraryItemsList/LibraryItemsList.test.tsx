@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitForElement} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {
@@ -89,7 +89,7 @@ describe('LibraryItemsList', () => {
             });
         });
 
-        await waitForElement(() => screen.getByText('DisplayTypeSelector'));
+        await waitFor(() => screen.getByText('DisplayTypeSelector'));
 
         expect(screen.getByText('SideItems')).toBeInTheDocument();
         expect(screen.getByText('MenuItemList')).toBeInTheDocument();

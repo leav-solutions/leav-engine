@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitForElement} from '@testing-library/react';
 import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {render, screen, waitFor} from '_tests/testUtils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import {
@@ -45,7 +45,7 @@ describe('SearchModal', () => {
             );
         });
 
-        await waitForElement(() => screen.getByText('LibraryItemsList'));
+        await waitFor(() => screen.getByText('LibraryItemsList'));
 
         expect(screen.getByText('LibraryItemsList')).toBeInTheDocument();
     });

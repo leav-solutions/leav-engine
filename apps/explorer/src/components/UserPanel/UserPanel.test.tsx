@@ -30,7 +30,10 @@ describe('UserPanel', () => {
             saveToken: jest.fn(),
             deleteToken: mockDeleteToken
         }));
-        window.location.replace = jest.fn();
+
+        const mockedLocation = {...window.location, replace: jest.fn()};
+        delete window.location;
+        window.location = mockedLocation;
 
         await act(async () => {
             render(

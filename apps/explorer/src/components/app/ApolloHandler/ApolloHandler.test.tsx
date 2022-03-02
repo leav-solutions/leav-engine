@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {render, screen, waitForElement} from '@testing-library/react';
 import gql from 'graphql-tag';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {render, screen, waitFor} from '_tests/testUtils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import ApolloHandler from './ApolloHandler';
 
@@ -50,7 +50,7 @@ describe('ApolloHandler', () => {
         });
 
         // wait for dispatch to be call
-        expect(await waitForElement(() => screen.getByText('MockComponent'))).toBeInTheDocument();
+        expect(await waitFor(() => screen.getByText('MockComponent'))).toBeInTheDocument();
 
         expect(mockDispatch).toBeCalledWith({
             payload: {

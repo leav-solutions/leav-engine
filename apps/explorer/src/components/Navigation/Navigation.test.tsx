@@ -4,7 +4,7 @@
 import {MockedResponse} from '@apollo/client/testing';
 import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import React from 'react';
-import {act, render, screen, waitForElement, within} from '_tests/testUtils';
+import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
 import {mockInitialState} from '__mocks__/common/mockRedux/mockInitialState';
 import {mockRecord} from '__mocks__/common/record';
@@ -207,7 +207,7 @@ describe('Navigation', () => {
             render(<Navigation tree="my_tree" />, renderOptions);
         });
 
-        await waitForElement(() => screen.getAllByTestId('navigation-column'));
+        await waitFor(() => screen.getAllByTestId('navigation-column'));
 
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];
@@ -239,7 +239,7 @@ describe('Navigation', () => {
                 }
             });
         });
-        await waitForElement(() => screen.getAllByTestId('navigation-column'));
+        await waitFor(() => screen.getAllByTestId('navigation-column'));
 
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(2);
 
@@ -312,7 +312,7 @@ describe('Navigation', () => {
             render(<Navigation tree="my_tree" />, renderOptions);
         });
 
-        await waitForElement(() => screen.getAllByTestId('navigation-column'));
+        await waitFor(() => screen.getAllByTestId('navigation-column'));
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];
 
@@ -343,7 +343,7 @@ describe('Navigation', () => {
             });
         });
 
-        await waitForElement(() => screen.getAllByTestId('navigation-column'));
+        await waitFor(() => screen.getAllByTestId('navigation-column'));
 
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];
@@ -390,7 +390,7 @@ describe('Navigation', () => {
             });
         });
 
-        await waitForElement(() => screen.getAllByTestId('navigation-column'));
+        await waitFor(() => screen.getAllByTestId('navigation-column'));
         const childColHeader = screen.getAllByRole('banner')[1];
 
         expect(within(childColHeader).getByText('1')).toBeInTheDocument(); // Selection count
@@ -437,7 +437,7 @@ describe('Navigation', () => {
             });
         });
 
-        await waitForElement(() => screen.getAllByTestId('navigation-column'));
+        await waitFor(() => screen.getAllByTestId('navigation-column'));
         const childColHeader = screen.getAllByRole('banner')[1];
 
         expect(within(childColHeader).getByText('1')).toBeInTheDocument(); // Selection count
