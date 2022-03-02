@@ -7,14 +7,13 @@ import Loading from 'components/shared/Loading';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {resetNavigationRecordDetail} from 'redux/navigation';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../utils';
 import {IBaseNotification, NotificationType, WorkspacePanels} from '../../_types/types';
-import NavigationView from '../NavigationView';
+import NavigationView from './NavigationView';
 
 interface INavigationProps {
     tree?: string;
@@ -36,10 +35,6 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     useEffect(() => {
         if (activePanel !== WorkspacePanels.TREE || !hasAccess) {
             return;
-        }
-
-        if (activeTree?.id !== tree) {
-            dispatch(resetNavigationRecordDetail());
         }
 
         const currentTree = data?.trees?.list[0];

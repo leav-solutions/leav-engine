@@ -258,7 +258,7 @@ export default function ({
                             treeId: ID!,
                             nodeId: ID!,
                             deleteChildren: Boolean
-                        ): TreeNode!
+                        ): ID!
                     }
                 `,
                 resolvers: {
@@ -355,8 +355,7 @@ export default function ({
                             _,
                             {treeId, nodeId, deleteChildren}: IDeleteElementMutationArgs,
                             ctx
-                        ): Promise<ITreeNodeWithTreeId> {
-                            deleteChildren = typeof deleteChildren !== 'undefined' ? deleteChildren : true;
+                        ): Promise<string> {
                             const deletedNode = await treeDomain.deleteElement({
                                 treeId,
                                 nodeId,
@@ -364,7 +363,7 @@ export default function ({
                                 ctx
                             });
 
-                            return {...deletedNode, treeId};
+                            return deletedNode.id;
                         }
                     },
                     FullTreeContent: new GraphQLScalarType({

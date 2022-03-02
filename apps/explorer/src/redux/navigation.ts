@@ -2,14 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
+import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
 import {INavigationState} from './stateType';
 
 export const navigationInitialState: INavigationState = {
     activeTree: '',
-    path: [],
-    isLoading: true,
-    refetchTreeData: false
+    path: []
 };
 
 const navigationSlice = createSlice({
@@ -22,32 +20,12 @@ const navigationSlice = createSlice({
                 state.path = [];
             }
         },
-        setNavigationPath: (state, action: PayloadAction<ITreeContentRecordAndChildren[]>) => {
+        setNavigationPath: (state, action: PayloadAction<GET_TREE_CONTENT_treeContent[]>) => {
             state.path = action.payload;
-        },
-        setNavigationIsLoading: (state, action: PayloadAction<boolean>) => {
-            state.isLoading = action.payload;
-        },
-        setNavigationRecordDetail: (state, action: PayloadAction<ITreeContentRecordAndChildren>) => {
-            state.recordDetail = action.payload;
-        },
-        resetNavigationRecordDetail: state => {
-            state.recordDetail = undefined;
-        },
-        setNavigationRefetchTreeData: (state, action: PayloadAction<boolean>) => {
-            state.refetchTreeData = action.payload;
-            state.isLoading = action.payload;
         }
     }
 });
 
-export const {
-    setNavigationActiveTree,
-    setNavigationPath,
-    setNavigationIsLoading,
-    setNavigationRecordDetail,
-    resetNavigationRecordDetail,
-    setNavigationRefetchTreeData
-} = navigationSlice.actions;
+export const {setNavigationActiveTree, setNavigationPath} = navigationSlice.actions;
 
 export default navigationSlice.reducer;

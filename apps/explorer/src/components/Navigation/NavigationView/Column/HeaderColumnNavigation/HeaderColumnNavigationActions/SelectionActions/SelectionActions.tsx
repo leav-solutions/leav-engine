@@ -7,11 +7,12 @@ import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMutation';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
-import {getTreeContentQuery, ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
+import {ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {resetNavigationRecordDetail, setNavigationRefetchTreeData} from 'redux/navigation';
+import {setNavigationPath} from 'redux/navigation';
 import {addNotification} from 'redux/notifications';
 import {resetSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -34,18 +35,18 @@ interface ISelectionActionsProps {
 function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {selectionState} = useAppSelector(state => ({
-        selectionState: state.selection
+    const {selectionState, navigation} = useAppSelector(state => ({
+        selectionState: state.selection,
+        navigation: state.navigation
     }));
     const dispatch = useAppDispatch();
 
     const [activeTree] = useActiveTree();
 
-    const [detachFromTree] = useMutation<REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables>(removeTreeElementMutation, {
-        refetchQueries: [{query: getTreeContentQuery(depth), variables: {treeId: activeTree?.id}}]
-    });
+    const [detachFromTree] = useMutation<REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables>(removeTreeElementMutation);
     const [addToTree] = useMutation<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>(addTreeElementMutation);
     const [moveInTree] = useMutation<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>(moveTreeElementMutation);
+    const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
 
     const displayMessages = (tMessageSuccess: string, tMessageFail: string, messages: IMessages) => {
         if (messages.countValid) {
@@ -125,6 +126,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             }
 
             displayMessages('navigation.notifications.success-add', 'navigation.notifications.error-add', messages);
+            refreshTreeContent();
         } else {
             const notification: INotification = {
                 channel: NotificationChannel.trigger,
@@ -136,17 +138,15 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
         }
 
         dispatch(resetSelection());
-        dispatch(resetNavigationRecordDetail());
-        dispatch(setNavigationRefetchTreeData(true));
     };
 
     const _handleMoveEnd = async () => {
-        let messages: IMessages = {
+        const messages: IMessages = {
             countValid: 0,
             errors: {}
         };
 
-        const parentTo = parent.id ?? null;
+        const parentTo = parent?.id ?? null;
 
         for (const elementSelected of selectionState.selection.selected) {
             try {
@@ -157,7 +157,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                         parentTo
                     }
                 });
-                messages = {...messages, countValid: messages.countValid + 1};
+                messages.countValid++;
             } catch (e) {
                 if (e.graphQLErrors && e.graphQLErrors.length) {
                     const errorMessageParent = e.graphQLErrors[0].extensions.fields?.parent;
@@ -177,21 +177,20 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                     }
                 }
             }
-
-            displayMessages('navigation.notifications.success-move', 'navigation.notifications.error-move', messages);
         }
 
+        refreshTreeContent();
+        displayMessages('navigation.notifications.success-move', 'navigation.notifications.error-move', messages);
         dispatch(resetSelection());
-        dispatch(resetNavigationRecordDetail());
-        dispatch(setNavigationRefetchTreeData(true));
     };
 
     const _handleDetachElements = async () => {
         if (selectionState.selection.type === SharedStateSelectionType.navigation) {
-            let messages: IMessages = {
+            const messages: IMessages = {
                 countValid: 0,
                 errors: {}
             };
+            const deletedNodes = [];
 
             for (const elementSelected of selectionState.selection.selected) {
                 try {
@@ -202,7 +201,8 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                         }
                     });
 
-                    messages = {...messages, countValid: messages.countValid + 1};
+                    messages.countValid++;
+                    deletedNodes.push(elementSelected.nodeId);
                 } catch (e) {
                     if (e.graphQLErrors && e.graphQLErrors.length) {
                         const errorMessageParent = e.graphQLErrors[0].extensions.fields?.parent;
@@ -224,6 +224,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                 }
             }
 
+            refreshTreeContent();
             displayMessages(
                 'navigation.notifications.success-detach',
                 'navigation.notifications.error-detach',
@@ -231,8 +232,8 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
             );
 
             dispatch(resetSelection());
-            dispatch(resetNavigationRecordDetail());
-            dispatch(setNavigationRefetchTreeData(true));
+            const newPath = navigation.path.filter(p => !deletedNodes.includes(p.id));
+            dispatch(setNavigationPath(newPath));
         }
     };
 

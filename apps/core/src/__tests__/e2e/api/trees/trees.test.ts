@@ -270,15 +270,12 @@ describe('Trees', () => {
             treeDeleteElement(
                 treeId: "${testTreeName}",
                 nodeId: "${nodeRecord3}"
-            ) {
-                id
-            }
+            )
         }`);
 
         expect(resDel.status).toBe(200);
         expect(resDel.data.errors).toBeUndefined();
         expect(resDel.data.data.treeDeleteElement).toBeDefined();
-        expect(resDel.data.data.treeDeleteElement.id).toBeTruthy();
 
         // Create a tree attribute
         await gqlSaveAttribute({

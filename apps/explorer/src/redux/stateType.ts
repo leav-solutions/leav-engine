@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ITreeContentRecordAndChildren, ITreeNodePermissions} from 'graphQL/queries/trees/getTreeContentQuery';
+import {ITreeNodePermissions} from 'graphQL/queries/trees/getTreeContentQuery';
+import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
@@ -63,12 +64,13 @@ export interface IRecordWithTreeNodePermissions {
     permissions: ITreeNodePermissions;
 }
 
+export interface INavigationElement extends GET_TREE_CONTENT_treeContent {
+    showDetails?: boolean;
+}
+
 export interface INavigationState {
     activeTree: string;
-    path: ITreeContentRecordAndChildren[];
-    isLoading: boolean;
-    recordDetail?: ITreeContentRecordAndChildren;
-    refetchTreeData: boolean;
+    path: INavigationElement[];
 }
 
 export interface INotificationsState {

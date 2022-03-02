@@ -6,12 +6,12 @@ import {Badge, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
-import {resetNavigationRecordDetail, setNavigationPath, setNavigationRecordDetail} from 'redux/navigation';
+import {setNavigationPath} from 'redux/navigation';
 import {setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {localizedTranslation} from 'utils';
-import {ITreeContentRecordAndChildren} from '../../../../../graphQL/queries/trees/getTreeContentQuery';
+import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
 import themingVar from '../../../../../themingVar';
 import {
     IRecordIdentityWhoAmI,
@@ -22,17 +22,18 @@ import {
 } from '../../../../../_types/types';
 import RecordCard from '../../../../shared/RecordCard';
 
-interface ICellProps {
+interface IRowProps {
     style?: CSSObject;
     isInPath: boolean;
     isActive: boolean;
 }
 
-const CellWrapper = styled.div<ICellProps>`
+const RowWrapper = styled.div<IRowProps>`
     display: grid;
 
     place-items: flex-start;
     align-items: center;
+    max-width: ${themingVar['@leav-navigation-column-width']};
 
     grid-template-columns: ${props => (props.isActive ? '1rem auto auto 1rem' : 'auto auto 1rem')};
     padding: 1rem;
@@ -44,7 +45,7 @@ const CellWrapper = styled.div<ICellProps>`
     }};
 
     &:hover {
-        background: ${themingVar['@item-hover-bg']};
+        ${props => (props.isInPath ? '' : `background: ${themingVar['@item-hover-bg']}`)};
 
         .checkbox-wrapper {
             opacity: 1;
@@ -75,13 +76,13 @@ const CheckboxWrapper = styled.div<ICheckboxWrapperProps>`
     }
 `;
 
-interface IActiveCellNavigationProps {
+interface IActiveRowNavigationProps {
     isActive: boolean;
-    treeElement: ITreeContentRecordAndChildren;
+    treeElement: GET_TREE_CONTENT_treeContent;
     depth: number;
 }
 
-function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.Element {
+function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Element {
     const [{lang}] = useLang();
 
     const {selectionState, navigation} = useAppSelector(state => ({
@@ -95,15 +96,9 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
     const recordLabel = treeElement.record.whoAmI.label;
 
     const addPath = () => {
-        const newPath = [...navigation.path.slice(0, depth), treeElement];
+        const newPath = [...navigation.path.slice(0, depth), {...treeElement}];
 
         dispatch(setNavigationPath(newPath));
-
-        if (treeElement.children?.length) {
-            dispatch(resetNavigationRecordDetail());
-        } else {
-            dispatch(setNavigationRecordDetail(treeElement));
-        }
     };
 
     const handleCheckboxOnClick = (e: any) => {
@@ -167,7 +162,7 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
     const isChecked = selectionState.selection.selected.some(element => element.nodeId === treeElement.id);
 
     return (
-        <CellWrapper onClick={addPath} isInPath={isInPath} isActive={isActive} data-testid="navigation-cell">
+        <RowWrapper onClick={addPath} isInPath={isInPath} isActive={isActive}>
             {isActive && (
                 <CheckboxWrapper
                     onClick={e => {
@@ -187,18 +182,18 @@ function Cell({isActive, treeElement, depth}: IActiveCellNavigationProps): JSX.E
                 </RecordCardWrapper>
             </Tooltip>
 
-            {!!treeElement.children?.length && (
+            {!!treeElement.childrenCount && (
                 <>
                     <div className="counter">
-                        <Badge count={treeElement.children?.length} />
+                        <Badge count={treeElement.childrenCount} overflowCount={1000} />
                     </div>
                     <div>
                         <RightOutlined />
                     </div>
                 </>
             )}
-        </CellWrapper>
+        </RowWrapper>
     );
 }
 
-export default Cell;
+export default Row;

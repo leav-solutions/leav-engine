@@ -294,7 +294,6 @@ export default function ({
 
             if (deleteChildren) {
                 // Remove all element's children
-                //TODO: are children of children removed?
                 await dbService.execute({
                     query: aql`
                         LET edges = (
@@ -551,7 +550,7 @@ export default function ({
             }> = await dbService.execute({query, ctx});
 
             const cleanResult = res.reverse().map(elem => {
-                elem.record.library = getLibraryFromDbId(elem.record._id);
+                elem.record.library = elem.record?._id ? getLibraryFromDbId(elem.record._id) : null;
                 return {id: elem.id, order: elem.order, record: dbUtils.cleanup(elem.record)};
             });
             return cleanResult;

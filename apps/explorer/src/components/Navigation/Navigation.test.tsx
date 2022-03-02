@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
-import {getTreeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
+import {treeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
 import React from 'react';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
@@ -77,7 +77,7 @@ describe('Navigation', () => {
         }
     };
 
-    const getTreeContentMockResult = {
+    const getTreeContentMockResultFirstLevel = {
         data: {
             treeContent: [
                 {
@@ -88,30 +88,7 @@ describe('Navigation', () => {
                         __typename: 'RecordLib',
                         whoAmI: {...mockRecordWithTypenames, id: '1', label: 'first-child'}
                     },
-                    children: [
-                        {
-                            __typename: 'TreeNode',
-                            id: '11',
-                            record: {
-                                id: '11',
-                                __typename: 'RecordLib',
-                                whoAmI: {...mockRecordWithTypenames, id: '11', label: 'child-1-1'}
-                            },
-                            children: [],
-                            permissions: mockTreeNodePermissions
-                        },
-                        {
-                            __typename: 'TreeNode',
-                            id: '12',
-                            record: {
-                                id: '12',
-                                __typename: 'RecordLib',
-                                whoAmI: {...mockRecordWithTypenames, id: '12', label: 'child-1-2'}
-                            },
-                            children: [],
-                            permissions: mockTreeNodePermissions
-                        }
-                    ],
+                    childrenCount: 2,
                     permissions: mockTreeNodePermissions
                 },
                 {
@@ -122,30 +99,36 @@ describe('Navigation', () => {
                         __typename: 'RecordLib',
                         whoAmI: {...mockRecordWithTypenames, id: '2', label: 'second-child'}
                     },
-                    children: [
-                        {
-                            __typename: 'TreeNode',
-                            id: '21',
-                            record: {
-                                id: '21',
-                                __typename: 'RecordLib',
-                                whoAmI: {...mockRecordWithTypenames, id: '21', label: 'child-2-1'}
-                            },
-                            children: [],
-                            permissions: mockTreeNodePermissions
-                        },
-                        {
-                            __typename: 'TreeNode',
-                            id: '22',
-                            record: {
-                                id: '22',
-                                __typename: 'RecordLib',
-                                whoAmI: {...mockRecordWithTypenames, id: '22', label: 'child-2-2'}
-                            },
-                            children: [],
-                            permissions: mockTreeNodePermissions
-                        }
-                    ],
+                    childrenCount: 2,
+                    permissions: mockTreeNodePermissions
+                }
+            ]
+        }
+    };
+
+    const getTreeContentMockResultSecondLevel = {
+        data: {
+            treeContent: [
+                {
+                    __typename: 'TreeNode',
+                    id: '11',
+                    record: {
+                        id: '11',
+                        __typename: 'RecordLib',
+                        whoAmI: {...mockRecordWithTypenames, id: '11', label: 'child-1-1'}
+                    },
+                    childrenCount: 0,
+                    permissions: mockTreeNodePermissions
+                },
+                {
+                    __typename: 'TreeNode',
+                    id: '12',
+                    record: {
+                        id: '12',
+                        __typename: 'RecordLib',
+                        whoAmI: {...mockRecordWithTypenames, id: '12', label: 'child-1-2'}
+                    },
+                    childrenCount: 0,
                     permissions: mockTreeNodePermissions
                 }
             ]
@@ -154,19 +137,7 @@ describe('Navigation', () => {
 
     const getTreeContentMockResultNoChildren = {
         data: {
-            treeContent: [
-                {
-                    __typename: 'TreeNode',
-                    id: '1',
-                    record: {
-                        id: '1',
-                        __typename: 'RecordLib',
-                        whoAmI: {...mockRecordWithTypenames, id: '1', label: 'first-child'}
-                    },
-                    children: [],
-                    permissions: mockTreeNodePermissions
-                }
-            ]
+            treeContent: []
         }
     };
 
@@ -175,21 +146,23 @@ describe('Navigation', () => {
         // Call on first level
         {
             request: {
-                query: getTreeContentQuery(1),
+                query: treeContentQuery,
                 variables: {
-                    treeId: 'my_tree'
+                    treeId: 'my_tree',
+                    startAt: null
                 }
             },
-            result: getTreeContentMockResult
+            result: getTreeContentMockResultFirstLevel
         },
         {
             request: {
-                query: getTreeContentQuery(2),
+                query: treeContentQuery,
                 variables: {
-                    treeId: 'my_tree'
+                    treeId: 'my_tree',
+                    startAt: '12345'
                 }
             },
-            result: getTreeContentMockResult
+            result: getTreeContentMockResultSecondLevel
         }
     ];
 
@@ -218,7 +191,7 @@ describe('Navigation', () => {
     });
 
     test('When an element is in path, navigate in the tree to this element', async () => {
-        await act(async () => {
+        const twoLevelMocks = await act(async () => {
             render(<Navigation tree="my_tree" />, {
                 ...renderOptions,
                 storeState: {
@@ -231,10 +204,9 @@ describe('Navigation', () => {
                                 id: '12345',
                                 record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                                 permissions: mockTreeNodePermissions,
-                                children: []
+                                childrenCount: 0
                             }
-                        ],
-                        isLoading: false
+                        ]
                     }
                 }
             });
@@ -256,18 +228,20 @@ describe('Navigation', () => {
             // Call on first level
             {
                 request: {
-                    query: getTreeContentQuery(1),
+                    query: treeContentQuery,
                     variables: {
-                        treeId: 'my_tree'
+                        treeId: 'my_tree',
+                        startAt: null
                     }
                 },
-                result: getTreeContentMockResultNoChildren
+                result: getTreeContentMockResultFirstLevel
             },
             {
                 request: {
-                    query: getTreeContentQuery(2),
+                    query: treeContentQuery,
                     variables: {
-                        treeId: 'my_tree'
+                        treeId: 'my_tree',
+                        startAt: '12345'
                     }
                 },
                 result: getTreeContentMockResultNoChildren
@@ -288,23 +262,16 @@ describe('Navigation', () => {
                                 id: '12345',
                                 record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                                 permissions: mockTreeNodePermissions,
-                                children: []
+                                childrenCount: 0
                             }
-                        ],
-                        isLoading: false,
-                        recordDetail: {
-                            id: '12346',
-                            record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
-                            permissions: mockTreeNodePermissions,
-                            children: []
-                        }
+                        ]
                     }
                 }
             });
         });
 
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
-        expect(screen.getAllByTestId('details-column')).toHaveLength(1);
+        expect(screen.getAllByTestId('navigation-column-with-details')).toHaveLength(1);
     });
 
     test('When no selection is set, display appropriate buttons on header', async () => {
@@ -367,10 +334,9 @@ describe('Navigation', () => {
                                 id: '12345',
                                 record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                                 permissions: mockTreeNodePermissions,
-                                children: []
+                                childrenCount: 0
                             }
-                        ],
-                        isLoading: false
+                        ]
                     },
                     selection: {
                         searchSelection: null,
@@ -414,10 +380,9 @@ describe('Navigation', () => {
                                 id: '12345',
                                 record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
                                 permissions: mockTreeNodePermissions,
-                                children: []
+                                childrenCount: 0
                             }
-                        ],
-                        isLoading: false
+                        ]
                     },
                     selection: {
                         searchSelection: null,
