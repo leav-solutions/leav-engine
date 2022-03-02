@@ -59,7 +59,8 @@ export default function ({
         async createValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            // Create the link between records and add some metadata on it
+            // Create the link between records and add some metadata on it.
+
             const _from = !!attribute.reverse_link
                 ? attribute.linked_library + '/' + value.value
                 : library + '/' + recordId;
@@ -100,7 +101,8 @@ export default function ({
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            // Update value's metadata on records link
+            // Update value's metadata on records link.
+
             const _from = !!attribute.reverse_link
                 ? attribute.linked_library + '/' + value.value
                 : library + '/' + recordId;
