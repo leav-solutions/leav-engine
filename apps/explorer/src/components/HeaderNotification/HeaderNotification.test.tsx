@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
-import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {notificationsInitialState} from 'redux/notifications';
+import {render, screen, waitFor} from '_tests/testUtils';
 import {
     IBaseNotification,
     INotification,
@@ -54,7 +54,7 @@ describe('HeaderNotification', () => {
             );
         });
 
-        expect(await waitForElement(() => screen.getByText(mockBaseNotification.content))).toBeInTheDocument();
+        expect(await waitFor(() => screen.getByText(mockBaseNotification.content))).toBeInTheDocument();
     });
 
     test('should display trigger message given', async () => {
@@ -82,6 +82,6 @@ describe('HeaderNotification', () => {
             );
         });
 
-        expect(await waitForElement(() => screen.getByText(mockNotification.content))).toBeInTheDocument();
+        expect(await waitFor(() => screen.getByText(mockNotification.content))).toBeInTheDocument();
     });
 });

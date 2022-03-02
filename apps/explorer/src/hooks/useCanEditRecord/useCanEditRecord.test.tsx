@@ -5,7 +5,7 @@ import {MockedResponse} from '@apollo/client/testing';
 import {getLibraryPermissionsQuery} from 'graphQL/queries/libraries/getLibraryPermissionsQuery';
 import {getRecordPermissionsQuery} from 'graphQL/queries/records/getRecordPermissions';
 import React from 'react';
-import {act, render, screen, waitForElement} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {useCanEditRecord} from './useCanEditRecord';
 
 describe('ActiveTreeHook', () => {
@@ -25,6 +25,7 @@ describe('ActiveTreeHook', () => {
                             list: [
                                 {
                                     permissions: {
+                                        access_library: true,
                                         access_record: true,
                                         create_record: true,
                                         edit_record: true,
@@ -48,7 +49,7 @@ describe('ActiveTreeHook', () => {
             render(<ComponentUsingHook />, {apolloMocks: mocks});
         });
 
-        await waitForElement(() => screen.getByTestId('elem'));
+        await waitFor(() => screen.getByTestId('elem'));
 
         expect(screen.getByTestId('elem')).toHaveTextContent('CAN_EDIT');
     });
@@ -96,7 +97,7 @@ describe('ActiveTreeHook', () => {
             render(<ComponentUsingHook />, {apolloMocks: mocks});
         });
 
-        await waitForElement(() => screen.getByTestId('can-edit'));
+        await waitFor(() => screen.getByTestId('can-edit'));
 
         expect(screen.getByTestId('can-edit')).toHaveTextContent('CANNOT_EDIT');
         expect(screen.getByTestId('is-read-only')).toHaveTextContent('READ_ONLY');
@@ -139,7 +140,7 @@ describe('ActiveTreeHook', () => {
             render(<ComponentUsingHook />, {apolloMocks: mocks});
         });
 
-        await waitForElement(() => screen.getByTestId('elem'));
+        await waitFor(() => screen.getByTestId('elem'));
 
         expect(screen.getByTestId('elem')).toHaveTextContent('CAN_EDIT');
     });
@@ -157,6 +158,7 @@ describe('ActiveTreeHook', () => {
                             list: [
                                 {
                                     permissions: {
+                                        access_library: true,
                                         access_record: true,
                                         create_record: false,
                                         edit_record: true,
@@ -180,7 +182,7 @@ describe('ActiveTreeHook', () => {
             render(<ComponentUsingHook />, {apolloMocks: mocks});
         });
 
-        await waitForElement(() => screen.getByTestId('elem'));
+        await waitFor(() => screen.getByTestId('elem'));
 
         expect(screen.getByTestId('elem')).toHaveTextContent('CANNOT_EDIT');
     });

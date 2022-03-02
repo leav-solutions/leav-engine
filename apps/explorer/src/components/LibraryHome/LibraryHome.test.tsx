@@ -3,16 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
 import {RootState} from 'redux/store';
-import {render, screen, waitForElement} from '_tests/testUtils';
 import {NotificationType, WorkspacePanels} from '_types/types';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 import {
     mockGetLibraryDetailExtendedQuery,
     mockGetLibraryDetailExtendedQueryVar
 } from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
-import LibraryHome from './LibraryHome';
 
 jest.mock('components/LibraryItemsList', () => {
     return function LibraryItemsList() {
@@ -66,7 +63,7 @@ describe('LibraryHome', () => {
         //         storeState: mockStoreState
         //     });
         // });
-        // await waitForElement(() => screen.getByText('LibraryItemsList'));
+        // await waitFor(() => screen.getByText('LibraryItemsList'));
         // expect(screen.getByText('LibraryItemsList')).toBeInTheDocument();
     });
 
@@ -77,7 +74,7 @@ describe('LibraryHome', () => {
         //         storeState: mockStoreState
         //     });
         // });
-        // await waitForElement(() => screen.getByText('LibraryItemsList'));
+        // await waitFor(() => screen.getByText('LibraryItemsList'));
         // expect(mockUpdateActiveLib).toBeCalled();
     });
 });

@@ -101,7 +101,7 @@ describe('LinkField', () => {
         });
 
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(screen.getAllByRole('row')).toHaveLength(2); // Header is counted here
+        expect(screen.getAllByRole('row')).toHaveLength(1);
     });
 
     test('Display list of values with configured columns', async () => {
@@ -146,7 +146,7 @@ describe('LinkField', () => {
         });
 
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(screen.getAllByRole('columnheader')).toHaveLength(3);
+        expect(screen.getAllByRole('cell')).toHaveLength(3);
         expect(screen.getByText('col1 value')).toBeInTheDocument();
         expect(screen.getByText('col2 value')).toBeInTheDocument();
     });
@@ -198,7 +198,7 @@ describe('LinkField', () => {
             );
         });
 
-        const row = screen.getByRole('row', {name: /whoAmI/});
+        const row = screen.getByRole('row', {name: /record/});
         userEvent.hover(row, null);
 
         expect(screen.queryByRole('button', {name: /delete/, hidden: true})).toBeInTheDocument();

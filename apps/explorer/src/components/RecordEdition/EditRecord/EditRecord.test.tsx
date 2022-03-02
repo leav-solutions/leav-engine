@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getRecordFormQuery} from 'graphQL/queries/forms/getRecordFormQuery';
 import React from 'react';
-import {act, render, screen, waitForElement} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockRecordForm} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import EditRecord from './EditRecord';
@@ -25,6 +25,7 @@ describe('EditRecord', () => {
                         recordForm: {
                             __typename: 'RecordForm',
                             id: mockRecordForm.id,
+                            recordId: '123456',
                             library: mockRecordForm.library,
                             system: false,
                             elements: mockRecordForm.elements
@@ -51,7 +52,7 @@ describe('EditRecord', () => {
             expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);
         });
 
-        await waitForElement(() => screen.getByTestId('container-child-element'));
+        await waitFor(() => screen.getByTestId('container-child-element'));
 
         expect(screen.getByTestId('container-child-element')).toBeInTheDocument();
     });

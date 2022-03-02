@@ -9,7 +9,7 @@ import {
 import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import React from 'react';
 import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
-import {act, render, screen, waitForElement, within} from '_tests/testUtils';
+import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockAttributeTree} from '__mocks__/common/attribute';
 import {mockFormElementTree, mockTreeValueA} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
@@ -31,13 +31,12 @@ jest.mock('antd/lib/typography/Paragraph', () => {
 });
 
 describe('TreeField', () => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
     const mockEditRecordDispatch = jest.fn();
     jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
         state: initialState,
         dispatch: mockEditRecordDispatch
     }));
-
-    window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     const mockSubmitRes: ISubmitMultipleResult = {
         status: APICallStatus.SUCCESS,
@@ -50,7 +49,9 @@ describe('TreeField', () => {
             }
         ]
     };
-    const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
+    const mockHandleSubmit: SubmitValueFunc = jest.fn(async () => {
+        return mockSubmitRes;
+    });
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
 
     beforeEach(() => jest.clearAllMocks());
@@ -150,6 +151,7 @@ describe('TreeField', () => {
 
         userEvent.click(valueDetailsButtons[0]);
 
+        expect(mockEditRecordDispatch).toBeCalled();
         expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 
@@ -199,7 +201,7 @@ describe('TreeField', () => {
 
         const valuesAddBlock = within(screen.getByTestId('values-add'));
 
-        const elementInList = await waitForElement(() => valuesAddBlock.getByText(mockRecordFromList.whoAmI.label));
+        const elementInList = await waitFor(() => valuesAddBlock.getByText(mockRecordFromList.whoAmI.label));
         expect(elementInList).toBeInTheDocument();
 
         await act(async () => {

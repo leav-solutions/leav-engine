@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitForElement} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {render, screen, waitFor} from '_tests/testUtils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import {INotification, NotificationType} from '../../../_types/types';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
@@ -41,7 +41,7 @@ describe('DisplayNotification', () => {
             );
         });
 
-        expect(await waitForElement(() => screen.getByText(mockMessage.content))).toBeInTheDocument();
+        expect(await waitFor(() => screen.getByText(mockMessage.content))).toBeInTheDocument();
     });
 
     test('should display trigger notification', async () => {

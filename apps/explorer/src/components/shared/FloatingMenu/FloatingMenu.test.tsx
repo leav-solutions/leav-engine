@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
-import {render, screen, waitForElement} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {render, screen, waitFor} from '_tests/testUtils';
 import FloatingMenu, {FloatingMenuAction, IFloatingMenuActionWithIcon} from './FloatingMenu';
 
 describe('FloatingMenu', () => {
@@ -83,7 +83,7 @@ describe('FloatingMenu', () => {
             userEvent.hover(moreBtn, null);
         });
 
-        await waitForElement(() => screen.getByText('moreActionA'));
+        await waitFor(() => screen.getByText('moreActionA'));
 
         expect(screen.getByText('moreActionA')).toBeInTheDocument();
     });

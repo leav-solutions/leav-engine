@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitForElement} from '@testing-library/react';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {render, screen, waitFor} from '_tests/testUtils';
 import {mockLibraryPermissions} from '__mocks__/common/library';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
@@ -48,7 +48,7 @@ describe('MenuItemList', () => {
                 </MockedProviderWithFragments>
             );
 
-            await waitForElement(() => screen.getByText('MenuView'));
+            await waitFor(() => screen.getByText('MenuView'));
 
             const menuViewMockContent = screen.getByText('MenuView');
 
@@ -68,7 +68,7 @@ describe('MenuItemList', () => {
                 </MockedProviderWithFragments>
             );
 
-            await waitForElement(() => screen.getByText('MenuSelection'));
+            await waitFor(() => screen.getByText('MenuSelection'));
 
             const menuSelectionMockContent = screen.getByText('MenuSelection');
 

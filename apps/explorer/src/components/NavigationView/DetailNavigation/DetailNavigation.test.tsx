@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitForElement} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {navigationInitialState} from 'redux/navigation';
@@ -37,6 +37,6 @@ describe('DetailNavigation', () => {
             );
         });
 
-        expect(await waitForElement(() => screen.getByText('RecordPreview'))).toBeInTheDocument();
+        expect(await waitFor(() => screen.getByText('RecordPreview'))).toBeInTheDocument();
     });
 });
