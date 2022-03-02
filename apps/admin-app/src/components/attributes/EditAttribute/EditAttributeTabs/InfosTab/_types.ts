@@ -6,5 +6,5 @@ import {Override} from '_types/Override';
 
 export type AttributeInfosFormValues = Override<
     GET_ATTRIBUTES_attributes_list,
-    {linked_library?: string; linked_tree?: string}
+    {linked_library?: string; linked_tree?: string; reverse_link?: string}
 >;

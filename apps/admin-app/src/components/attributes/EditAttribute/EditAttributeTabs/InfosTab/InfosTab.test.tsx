@@ -38,6 +38,7 @@ describe('InfosTab', () => {
             multiple_values: mockAttrAdv.multiple_values,
             linked_library: null,
             linked_tree: null,
+            reverse_link: null,
             versions_conf: {
                 versionable: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.versionable : false,
                 mode: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.mode : null,

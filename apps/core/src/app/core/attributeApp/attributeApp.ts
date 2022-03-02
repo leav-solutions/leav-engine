@@ -176,7 +176,8 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     type LinkAttribute implements Attribute{
                         ${attributesInterfaceSchema}
                         linked_library: Library,
-                        values_list: LinkValuesListConf
+                        values_list: LinkValuesListConf,
+                        reverse_link: String
                     }
 
                     type TreeAttribute implements Attribute{
@@ -199,7 +200,8 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         multiple_values: Boolean,
                         versions_conf: ValuesVersionsConfInput,
                         metadata_fields: [String!],
-                        values_list: ValuesListConfInput
+                        values_list: ValuesListConfInput,
+                        reverse_link: String
                     }
 
                     type EmbeddedAttribute {

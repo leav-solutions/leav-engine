@@ -72,6 +72,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                 format: dataToSave.format,
                 linked_tree: dataToSave.linked_tree,
                 linked_library: dataToSave.linked_library,
+                reverse_link: dataToSave.reverse_link,
                 multiple_values: dataToSave.multiple_values,
                 versions_conf: {
                     versionable: dataToSave.versions_conf ? dataToSave.versions_conf.versionable : false,
@@ -80,6 +81,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                 }
             }
         };
+
         await saveAttribute({
             variables
         });

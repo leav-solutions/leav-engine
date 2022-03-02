@@ -143,6 +143,7 @@ export interface AttributeInput {
     versions_conf?: ValuesVersionsConfInput | null;
     metadata_fields?: string[] | null;
     values_list?: ValuesListConfInput | null;
+    reverse_link?: string | null;
 }
 
 export interface EmbeddedAttributeInput {

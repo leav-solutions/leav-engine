@@ -60,10 +60,20 @@ export default function ({
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
+            const _from = !!attribute.reverse_link
+                ? attribute.linked_library + '/' + value.value
+                : library + '/' + recordId;
+
+            const _to = !!attribute.reverse_link
+                ? library + '/' + recordId
+                : attribute.linked_library + '/' + value.value;
+
+            const edgeDataAttr = attribute.reverse_link || attribute.id;
+
             const edgeData: any = {
-                _from: library + '/' + recordId,
-                _to: attribute.linked_library + '/' + value.value,
-                attribute: attribute.id,
+                _from,
+                _to,
+                attribute: edgeDataAttr,
                 modified_at: value.modified_at,
                 created_at: value.created_at,
                 created_by: String(ctx.userId),
@@ -91,10 +101,20 @@ export default function ({
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Update value's metadata on records link
+            const _from = !!attribute.reverse_link
+                ? attribute.linked_library + '/' + value.value
+                : library + '/' + recordId;
+
+            const _to = !!attribute.reverse_link
+                ? library + '/' + recordId
+                : attribute.linked_library + '/' + value.value;
+
+            const edgeDataAttr = attribute.reverse_link || attribute.id;
+
             const edgeData: any = {
-                _from: library + '/' + recordId,
-                _to: attribute.linked_library + '/' + value.value,
-                attribute: attribute.id,
+                _from,
+                _to,
+                attribute: edgeDataAttr,
                 modified_at: value.modified_at,
                 created_by: value.created_by,
                 modified_by: String(ctx.userId),
@@ -144,15 +164,17 @@ export default function ({
             ctx
         }): Promise<ILinkValue[]> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const queryParts = [];
 
-            const queryParts = [
-                aql`
+            const edgeAttribute = !!attribute.reverse_link ? attribute.reverse_link : attribute.id;
+            const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+
+            queryParts.push(aql`
                 FOR linkedRecord, edge
-                    IN 1 OUTBOUND ${library + '/' + recordId}
+                    IN 1 ${direction} ${library + '/' + recordId}
                     ${edgeCollec}
-                    FILTER edge.attribute == ${attribute.id}
-                `
-            ];
+                    FILTER edge.attribute == ${edgeAttribute}
+                `);
 
             if (!forceGetAllValues && typeof options !== 'undefined' && options.version) {
                 queryParts.push(aql`FILTER edge.version == ${options.version}`);
@@ -171,15 +193,16 @@ export default function ({
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            const query = aql`
-                FOR linkedRecord, edge
-                    IN 1 OUTBOUND ${library + '/' + recordId}
+            const edgeAttribute = !!attribute.reverse_link ? attribute.reverse_link : attribute.id;
+            const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+
+            const query = aql` FOR linkedRecord, edge
+                    IN 1 ${direction} ${library + '/' + recordId}
                     ${edgeCollec}
                     FILTER edge._key == ${valueId}
-                    FILTER edge.attribute == ${attribute.id}
+                    FILTER edge.attribute == ${edgeAttribute}
                     LIMIT 1
-                    RETURN {linkedRecord, edge}
-            `;
+                    RETURN {linkedRecord, edge}`;
 
             const res = await dbService.execute({query, ctx});
 

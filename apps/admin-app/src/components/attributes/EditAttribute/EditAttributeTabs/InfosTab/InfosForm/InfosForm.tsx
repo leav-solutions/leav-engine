@@ -17,6 +17,7 @@ import {
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
+import AttributeSelector from 'components/attributes/AttributeSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import TreesSelector from '../../../../../trees/TreesSelector';
 import {AttributeInfosFormValues} from '../_types';
@@ -45,6 +46,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     format: AttributeFormat.text,
     linked_tree: null,
     linked_library: null,
+    reverse_link: null,
     permissions_conf: null,
     multiple_values: false,
     metadata_fields: null,
@@ -72,6 +74,7 @@ function InfosForm({
                   ...attribute,
                   linked_library:
                       (attribute as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library?.id ?? null,
+                  reverse_link: (attribute as GET_ATTRIBUTES_attributes_list_LinkAttribute).reverse_link ?? null,
                   linked_tree: (attribute as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree?.id ?? null
               }
             : defaultAttributeData;
@@ -278,8 +281,30 @@ function InfosForm({
                             placeholder={t('attributes.linked_library')}
                             width="4"
                             name="linked_library"
-                            onChange={_handleChange}
+                            onChange={(event, data) => {
+                                setFieldValue('reverse_link', null);
+                                _handleChange(event, data);
+                            }}
                             value={values.linked_library || ''}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {isLinkAttribute && !!values.linked_library && (
+                    <FormFieldWrapper error={_getErrorByField('reverse_link')}>
+                        <AttributeSelector
+                            filters={{libraries: [values.linked_library]}}
+                            disabled={values.system || readonly}
+                            lang={userLang}
+                            fluid
+                            selection
+                            clearable
+                            multiple={false}
+                            label={t('attributes.reverse_link')}
+                            placeholder={t('attributes.reverse_link')}
+                            width="4"
+                            name="reverse_link"
+                            onChange={_handleChange}
+                            value={values.reverse_link || ''}
                         />
                     </FormFieldWrapper>
                 )}

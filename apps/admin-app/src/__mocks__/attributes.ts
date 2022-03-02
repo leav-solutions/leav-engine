@@ -25,6 +25,7 @@ const base: GET_ATTRIBUTES_attributes_list = {
     system: false,
     linked_tree: null,
     linked_library: null,
+    reverse_link: null,
     permissions_conf: null,
     versions_conf: {versionable: false, mode: ValueVersionMode.smart, trees: null},
     metadata_fields: null
@@ -64,7 +65,8 @@ export const mockAttrAdvLink: GET_ATTRIBUTES_attributes_list_LinkAttribute = {
     ...base,
     id: 'adv_link_attribute',
     type: AttributeType.advanced_link,
-    linked_library: {id: 'test_lib'}
+    linked_library: {id: 'test_lib'},
+    reverse_link: null
 };
 export const mockAttrAdvLinkMultiVal: GET_ATTRIBUTES_attributes_list_LinkAttribute = {
     ...mockAttrAdvLink,

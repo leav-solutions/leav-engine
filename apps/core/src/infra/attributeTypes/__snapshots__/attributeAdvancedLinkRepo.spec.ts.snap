@@ -60,15 +60,13 @@ Object {
 `;
 
 exports[`AttributeAdvancedLinkRepo getValueByID Should return value 1`] = `
-"
-                FOR linkedRecord, edge
+" FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
                     @@value1
                     FILTER edge._key == @value2
                     FILTER edge.attribute == @value3
                     LIMIT 1
-                    RETURN {linkedRecord, edge}
-            "
+                    RETURN {linkedRecord, edge}"
 `;
 
 exports[`AttributeAdvancedLinkRepo getValueByID Should return value 2`] = `

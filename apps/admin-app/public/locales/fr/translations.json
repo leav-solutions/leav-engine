@@ -100,6 +100,7 @@
         "new_embedded_fields": "Créer un nouveau champs intégrés pour {{attrId}}",
         "remove_embedded_fields": "Supprimer ce champs intégrés et ses enfants ?",
         "validation_regex": "Règle de Validation",
+        "reverse_link": "Lien inversé (Attribut lié)",
         "types": {
             "tree": "Arbre",
             "advanced": "Avancé",

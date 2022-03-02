@@ -162,6 +162,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
         });
 
         if (existingVal === null) {
+            console.debug('EXIST PAS');
             errors.id_value = Errors.UNKNOWN_VALUE;
         }
     }

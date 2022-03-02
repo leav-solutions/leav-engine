@@ -18,6 +18,7 @@ export const getAttributeValuesListQuery = gql`
                     linked_library {
                         id
                     }
+                    reverse_link
                 }
                 ... on TreeAttribute {
                     linked_tree {

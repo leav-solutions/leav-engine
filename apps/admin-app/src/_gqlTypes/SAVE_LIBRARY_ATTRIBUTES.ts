@@ -115,6 +115,7 @@ export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_LinkAttribute {
     permissions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_LinkAttribute_permissions_conf | null;
     versions_conf: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_LinkAttribute_versions_conf | null;
     linked_library: SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_LinkAttribute_linked_library | null;
+    reverse_link: string | null;
 }
 
 export interface SAVE_LIBRARY_ATTRIBUTES_saveLibrary_attributes_TreeAttribute_metadata_fields {
