@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {INavigationPath} from '_types/types';
-import {ITreeContentRecordAndChildren, ITreeNodePermissions} from '../../graphQL/queries/trees/getTreeContentQuery';
+import {ITreeNodePermissions} from '../../graphQL/queries/trees/getTreeContentQuery';
 import {mockPreviews} from './record';
 
 export const mockTreeRecord: RecordIdentity = {
@@ -55,22 +56,16 @@ export const mockTreeNodePermissions: ITreeNodePermissions & {__typename: string
     __typename: 'TreePermissions'
 };
 
-export const mockTreeElement: ITreeContentRecordAndChildren = {
+export const mockTreeElement: GET_TREE_CONTENT_treeContent = {
     id: '12345',
     record: {
         ...mockTreeRecord
     },
-    children: [
-        {
-            id: '12346',
-            record: mockTreeRecordChild,
-            permissions: mockTreeNodePermissions
-        }
-    ],
+    childrenCount: 1,
     permissions: mockTreeNodePermissions
 };
 
-export const mockTreeElements: ITreeContentRecordAndChildren[] = [mockTreeElement];
+export const mockTreeElements: GET_TREE_CONTENT_treeContent[] = [mockTreeElement];
 
 export const mockNavigationPath: INavigationPath = {
     id: 'id',

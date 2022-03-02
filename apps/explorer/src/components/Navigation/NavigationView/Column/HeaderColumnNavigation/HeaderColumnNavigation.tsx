@@ -3,16 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseSquareOutlined} from '@ant-design/icons';
 import {Button, Checkbox, Tooltip} from 'antd';
-import {ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
+import Paragraph from 'antd/lib/typography/Paragraph';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {resetNavigationRecordDetail, setNavigationPath} from 'redux/navigation';
+import {setNavigationPath} from 'redux/navigation';
 import {resetSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
 import {ISharedSelected, SharedStateSelectionType} from '_types/types';
-import {useActiveTree} from '../../../../hooks/ActiveTreeHook/ActiveTreeHook';
-import themingVar from '../../../../themingVar';
+import {useActiveTree} from '../../../../../hooks/ActiveTreeHook/ActiveTreeHook';
+import themingVar from '../../../../../themingVar';
 import HeaderColumnNavigationActions from './HeaderColumnNavigationActions';
 
 interface IHeaderColumnProps {
@@ -28,12 +29,7 @@ const HeaderColumn = styled.header<IHeaderColumnProps>`
     height: 4rem;
     flex-shrink: 0;
     cursor: pointer;
-
-    ${({isActive}) =>
-        !isActive &&
-        `&:hover {
-        background: ${themingVar['@item-hover-bg']};
-    }`}
+    max-width: ${themingVar['@leav-navigation-column-details-width']};
 
     &:not(:hover) .select-all-checkbox {
         visibility: hidden;
@@ -44,10 +40,17 @@ interface IHeaderColumnNavigationProps {
     depth: number;
     isDetail?: boolean;
     isActive?: boolean;
-    treeElement?: ITreeContentRecordAndChildren;
+    treeElement?: GET_TREE_CONTENT_treeContent;
+    children?: GET_TREE_CONTENT_treeContent[];
 }
 
-function HeaderColumnNavigation({depth, isDetail, isActive, treeElement}: IHeaderColumnNavigationProps): JSX.Element {
+function HeaderColumnNavigation({
+    depth,
+    isDetail,
+    isActive,
+    treeElement,
+    children
+}: IHeaderColumnNavigationProps): JSX.Element {
     const {t} = useTranslation();
     const {navigation, selectionState} = useAppSelector(state => ({
         navigation: state.navigation,
@@ -64,12 +67,10 @@ function HeaderColumnNavigation({depth, isDetail, isActive, treeElement}: IHeade
 
     const resetPath = () => {
         dispatch(setNavigationPath([]));
-        dispatch(resetNavigationRecordDetail());
     };
 
     const goToPath = () => {
         dispatch(setNavigationPath(navigation.path.slice(0, currentPositionInPath)));
-        dispatch(resetNavigationRecordDetail());
     };
 
     const headerClickFn = () => {
@@ -92,7 +93,7 @@ function HeaderColumnNavigation({depth, isDetail, isActive, treeElement}: IHeade
 
     const _handleClickCheckbox = () => {
         // Select all elements from current column
-        const columnSelection: ISharedSelected[] = treeElement.children.map(child => ({
+        const columnSelection: ISharedSelected[] = children.map(child => ({
             id: child.record.whoAmI.id,
             nodeId: child.id,
             library: child.record.whoAmI.library.id,
@@ -132,7 +133,9 @@ function HeaderColumnNavigation({depth, isDetail, isActive, treeElement}: IHeade
                     {isActive && !isDetail && (
                         <Checkbox className="select-all-checkbox" onClick={_handleClickCheckbox} />
                     )}
-                    <span>{label}</span>
+                    <Paragraph ellipsis={{tooltip: label, rows: 1}} style={{marginBottom: 0, marginRight: '.5em'}}>
+                        {label}
+                    </Paragraph>
                 </>
             )}
             {isActive && <HeaderColumnNavigationActions depth={depth} isDetail={isDetail} />}

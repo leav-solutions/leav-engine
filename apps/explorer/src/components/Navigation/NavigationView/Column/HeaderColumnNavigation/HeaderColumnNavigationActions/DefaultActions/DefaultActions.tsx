@@ -10,7 +10,7 @@ import {
     PlusOutlined,
     SearchOutlined
 } from '@ant-design/icons';
-import {useMutation, useQuery} from '@apollo/client';
+import {useApolloClient, useMutation, useQuery} from '@apollo/client';
 import {Dropdown, Menu, message} from 'antd';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
@@ -19,16 +19,17 @@ import SearchModal from 'components/SearchModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
-import {ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {useLang} from 'hooks/LangHook/LangHook';
+import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {resetNavigationRecordDetail, setNavigationRecordDetail, setNavigationRefetchTreeData} from 'redux/navigation';
+import {setNavigationPath} from 'redux/navigation';
 import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {localizedTranslation} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
+import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
 import {GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
@@ -37,14 +38,18 @@ import {INotification, ISharedStateSelectionSearch, NotificationChannel, Notific
 
 interface IDefaultActionsProps {
     isDetail: boolean;
-    parent?: ITreeContentRecordAndChildren;
+    parent?: GET_TREE_CONTENT_treeContent;
     activeTree: IActiveTree;
 }
 
 function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): JSX.Element {
     const {t} = useTranslation();
-    const {selectionState: selectionStat} = useAppSelector(state => ({selectionState: state.selection}));
+    const {selectionState: selectionStat, navigation} = useAppSelector(state => ({
+        selectionState: state.selection,
+        navigation: state.navigation
+    }));
     const dispatch = useAppDispatch();
+    const apolloClient = useApolloClient();
 
     const [{lang}] = useLang();
 
@@ -61,6 +66,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
     });
     const [addToTree] = useMutation<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>(addTreeElementMutation);
     const [removeFromTree] = useMutation<REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables>(removeTreeElementMutation);
+    const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
 
     const showSearch = (selectedLibId: string) => {
         setLibId(selectedLibId);
@@ -141,13 +147,14 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 dispatch(addNotification(notification));
             }
 
-            dispatch(setNavigationRefetchTreeData(true));
-            dispatch(resetNavigationRecordDetail());
+            refreshTreeContent();
         }
     };
 
     const _handleClickDetails = () => {
-        dispatch(setNavigationRecordDetail(parent));
+        const newPath = [...navigation.path, {...parent, showDetails: true}];
+
+        dispatch(setNavigationPath(newPath));
     };
 
     const _handleAfterCreateRecord = async (newRecord: RecordIdentity_whoAmI) => {
@@ -169,8 +176,6 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 type: NotificationType.success,
                 content: t('navigation.notifications.success-add', {nb: 1})
             };
-            dispatch(setNavigationRefetchTreeData(true));
-            dispatch(resetNavigationRecordDetail());
         } catch (err) {
             if (err.graphQLErrors && err.graphQLErrors.length) {
                 const errorMessageParent = err.graphQLErrors[0].extensions.fields?.parent;
@@ -193,6 +198,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
             }
         }
         dispatch(addNotification(notification));
+        refreshTreeContent();
     };
 
     const _handleOpenEditRecordModal = () => setEditRecordModalVisible(true);
@@ -233,8 +239,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
         }
 
         dispatch(addNotification(notification));
-        dispatch(resetNavigationRecordDetail());
-        dispatch(setNavigationRefetchTreeData(true));
+        refreshTreeContent();
     };
 
     const _handleClickClassifiedIn = () => message.warn(t('global.feature_not_available'));
