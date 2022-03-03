@@ -157,6 +157,7 @@ describe('Records', () => {
         const testSimpleLinkAttrId = 'records_sort_filter_test_attr_simple_link';
         const testAdvAttrId = 'records_sort_filter_test_attr_adv';
         const testAdvLinkAttrId = 'records_sort_filter_test_attr_adv_link';
+        const testAdvRevLinkAttrId = 'records_sort_filter_test_attr_adv_rev_link';
         const testTreeAttrId = 'records_sort_filter_test_attr_tree';
         const testAdvThroughLinkAttrId = 'records_sort_filter_test_attr_adv_through_link';
 
@@ -225,6 +226,13 @@ describe('Records', () => {
                 linkedLibrary: sfTestLibLinkId
             });
             await gqlSaveAttribute({
+                id: testAdvRevLinkAttrId,
+                type: AttributeTypes.ADVANCED_LINK,
+                label: 'test',
+                linkedLibrary: sfTestLibLinkId,
+                reverse_link: testAdvThroughLinkAttrId
+            });
+            await gqlSaveAttribute({
                 id: testTreeAttrId,
                 type: AttributeTypes.TREE,
                 label: 'test',
@@ -243,6 +251,7 @@ describe('Records', () => {
                 testSimpleExtAttrId,
                 testAdvAttrId,
                 testAdvLinkAttrId,
+                testAdvRevLinkAttrId,
                 testTreeAttrId
             ]);
             await gqlSaveLibrary(sfTestLibLinkId, 'Test', [testSimpleAttrId, testAdvThroughLinkAttrId]);
@@ -604,6 +613,75 @@ describe('Records', () => {
             test('Sort', async () => {
                 const res = await makeGraphQlCall(
                     `{ ${sfTestLibQueryName}(sort: {field: "${testAdvLinkAttrId}.${testSimpleAttrId}", order: asc}) {
+                        list {
+                            id
+                        }
+                    }
+                }`
+                );
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[sfTestLibQueryName].list.length).toBe(3);
+                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
+                expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
+                expect(res.data.data[sfTestLibQueryName].list[2].id).toBe(sfRecord1);
+            });
+        });
+
+        describe('On advanced reverse link attribute', () => {
+            beforeAll(async () => {
+                // Save values on records
+                await makeGraphQlCall(`mutation {
+                    v1: saveValue(
+                        library: "${sfTestLibId}",
+                        recordId: "${sfRecord1}",
+                        attribute: "${testAdvRevLinkAttrId}",
+                        value: {value: "${sfLinkedRecord1}"}) { id_value }
+                    v2: saveValue(
+                        library: "${sfTestLibId}",
+                        recordId: "${sfRecord2}",
+                        attribute: "${testAdvRevLinkAttrId}",
+                        value: {value: "${sfLinkedRecord2}"}) { id_value }
+                    v3: saveValue(
+                        library: "${sfTestLibId}",
+                        recordId: "${sfRecord3}",
+                        attribute: "${testAdvRevLinkAttrId}",
+                        value: {value: "${sfLinkedRecord3}"}) { id_value }
+                  }`);
+            });
+
+            test('Filter', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${sfTestLibQueryName}(
+                        filters: [{field: "${testAdvRevLinkAttrId}.${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
+                    ) { list {id}} }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
+                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+            });
+
+            test('Filter on advanced attribute through reverse advanced link', async () => {
+                const res = await makeGraphQlCall(`{
+                    ${sfTestLibQueryName}(
+                        filters: [{
+                            field: "${testAdvRevLinkAttrId}.${testAdvThroughLinkAttrId}",
+                            condition: ${AttributeCondition.EQUAL},
+                            value: "adv_value"
+                        }]
+                    ) { list {id}} }`);
+
+                expect(res.data.errors).toBeUndefined();
+                expect(res.status).toBe(200);
+                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
+                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+            });
+
+            test('Sort', async () => {
+                const res = await makeGraphQlCall(
+                    `{ ${sfTestLibQueryName}(sort: {field: "${testAdvRevLinkAttrId}.${testSimpleAttrId}", order: asc}) {
                         list {
                             id
                         }

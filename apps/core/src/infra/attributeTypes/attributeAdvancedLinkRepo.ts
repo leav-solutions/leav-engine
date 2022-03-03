@@ -95,8 +95,9 @@ export default function ({
             });
 
             const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
+            const savedValue = !!attribute.reverse_link ? savedEdge._from : savedEdge._to;
 
-            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge as IValueEdge);
+            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedValue), savedEdge as IValueEdge);
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -222,10 +223,13 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
+            const eAttribute = !!attributes[0].reverse_link ? attributes[0].reverse_link : attributes[0].id;
+            const direction = !!attributes[0].reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+
             const linkedValue = aql`FIRST(
-                FOR v, e IN 1 OUTBOUND r._id
+                FOR v, e IN 1 ${direction} r._id
                 ${collec}
-                FILTER e.attribute == ${attributes[0].id} RETURN v.${linked.id}
+                FILTER e.attribute == ${eAttribute} RETURN v.${linked.id}
             )`;
 
             const query =
@@ -251,11 +255,15 @@ export default function ({
             const vIdentifier = aql.literal(linkIdentifier);
             const eIdentifier = aql.literal(parentIdentifier + 'e');
 
+            const eAttribute = !!attributes[0].reverse_link ? attributes[0].reverse_link : attributes[0].id;
+            const direction = !!attributes[0].reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+
             const retrieveValue = aql`
-                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
+                FOR ${vIdentifier}, ${eIdentifier} IN 1 ${direction} ${aql.literal(parentIdentifier)}._id
                 ${collec}
-                FILTER ${eIdentifier}.attribute == ${attributes[0].id}
+                FILTER ${eIdentifier}.attribute == ${eAttribute}
             `;
+
             const returnValue = aql`RETURN ${vIdentifier}`;
 
             let query: AqlQuery;
