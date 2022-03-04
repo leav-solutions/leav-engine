@@ -16,7 +16,7 @@ import AttributeSelectorField from './AttributeSelectorField';
 
 interface IAttributeSelectorProps extends FormDropdownProps {
     filters?: GET_ATTRIBUTESVariables;
-    reverseLinks?: boolean;
+    excludeReverseLinks?: boolean;
 }
 
 function AttributeSelector({

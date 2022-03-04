@@ -268,7 +268,7 @@ export default function ({
 
             await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
 
-            // get old value ?
+            // TODO: get old value ?
             await eventsManager.send(
                 {
                     type: EventType.VALUE_SAVE,
