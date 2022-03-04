@@ -155,16 +155,9 @@ function InfosForm({
             }
         };
 
-        const _handleDescriptionChange = (e, data) => {
+        const _handleLinkedLibraryChange = (e, data) => {
             _handleChange(e, data);
-
-            const {name, value} = data;
-            const [field, subfield] = name.split('.');
-
-            // On new attribute, automatically generate an ID based on label
-            if (isNewAttribute && field === 'description' && subfield === defaultLang) {
-                setFieldValue('id', formatIDString(value));
-            }
+            setFieldValue('reverse_link', null);
         };
 
         const _handleChange = (e, data) => {
@@ -220,7 +213,7 @@ function InfosForm({
                                 width="4"
                                 name={`description.${lang}`}
                                 disabled={readonly}
-                                onChange={_handleDescriptionChange}
+                                onChange={_handleChange}
                                 onBlur={handleBlur}
                             />
                         </FormFieldWrapper>
@@ -281,10 +274,7 @@ function InfosForm({
                             placeholder={t('attributes.linked_library')}
                             width="4"
                             name="linked_library"
-                            onChange={(event, data) => {
-                                setFieldValue('reverse_link', null);
-                                _handleChange(event, data);
-                            }}
+                            onChange={_handleLinkedLibraryChange}
                             value={values.linked_library || ''}
                         />
                     </FormFieldWrapper>
