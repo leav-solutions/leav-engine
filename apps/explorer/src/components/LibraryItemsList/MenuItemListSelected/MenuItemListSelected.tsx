@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloseCircleOutlined, DeleteOutlined, DownOutlined} from '@ant-design/icons';
+import {CloseOutlined, DeleteOutlined, DownOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu, message} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -213,7 +213,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                             <DownOutlined style={{paddingLeft: 12}} />
                         </SelectionSummary>
                         <ClearSelection onClick={disableModeSelection}>
-                            <CloseCircleOutlined />
+                            <CloseOutlined />
                         </ClearSelection>
                     </DropdownButton>
                 </Dropdown>
