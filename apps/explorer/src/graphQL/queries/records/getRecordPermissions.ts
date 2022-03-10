@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
-import {RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
 
 export enum RecordPermissionsActions {
     access_record = 'access_record',
@@ -26,9 +26,15 @@ export interface IGetRecordPermissionsVariables {
 export const getRecordPermissionsQuery = (libraryGqlQueryName: string) => {
     return gqlUnchecked`
         query GET_RECORD_PERMISSIONS_${libraryGqlQueryName}($recordId: String!) {
-            ${libraryGqlQueryName}(filters: [{field: "id", condition: ${
-        RecordFilterCondition.EQUAL
-    }, value: $recordId}]) {
+            ${libraryGqlQueryName}(filters: [
+                {field: "id", condition: ${RecordFilterCondition.EQUAL}, value: $recordId}
+                {operator: ${RecordFilterOperator.AND}},
+                {operator: ${RecordFilterOperator.OPEN_BRACKET}},
+                {field: "active", condition: ${RecordFilterCondition.EQUAL}, value: "true"},
+                {operator: ${RecordFilterOperator.OR}},
+                {field: "active", condition: ${RecordFilterCondition.EQUAL}, value: "false"},
+                {operator: ${RecordFilterOperator.CLOSE_BRACKET}},
+            ]) {
                 list {
                     permissions {
                         ${Object.values(RecordPermissionsActions).join(' ')}
