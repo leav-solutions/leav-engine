@@ -3,10 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {shallow} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
 import {create} from 'react-test-renderer';
+import {act, render, screen} from '_tests/testUtils';
 import InfosForm from '.';
 import {mockFormFull} from '../../../../../../../../../__mocks__/forms';
+import * as useEditFormContext from '../../../hooks/useEditFormContext';
 
 jest.mock('hooks/useLang');
 
@@ -19,21 +20,41 @@ jest.mock('../../../../../../../../attributes/AttributeSelector', () => {
 describe('InfosForm', () => {
     const onSubmit = jest.fn();
     test('Render form for existing form', async () => {
-        const comp = shallow(
-            <InfosForm library="test_lib" onSubmit={onSubmit} form={{...mockFormFull}} readonly={false} />
-        );
+        jest.spyOn(useEditFormContext, 'useEditFormContext').mockImplementation(() => ({
+            form: mockFormFull,
+            library: 'test_lib',
+            readonly: false,
+            setForm: jest.fn()
+        }));
 
-        expect(comp.find('Formik').shallow().find('[name="id"]').prop('disabled')).toBe(true);
+        await act(async () => {
+            render(<InfosForm onSubmit={onSubmit} />);
+        });
+
+        expect(screen.getByRole('textbox', {name: 'id'})).toBeDisabled();
     });
 
     test('Render form for new form', async () => {
-        const comp = shallow(<InfosForm library="test_lib" onSubmit={onSubmit} form={null} readonly={false} />);
+        jest.spyOn(useEditFormContext, 'useEditFormContext').mockImplementation(() => ({
+            form: null,
+            library: 'test_lib',
+            readonly: false,
+            setForm: jest.fn()
+        }));
+        const comp = shallow(<InfosForm onSubmit={onSubmit} />);
 
         expect(comp.find('Formik').shallow().find('[name="id"]').prop('disabled')).toBe(false);
     });
 
     test('Autofill ID with label on new form', async () => {
-        const comp = create(<InfosForm library="test_lib" onSubmit={onSubmit} form={null} readonly={false} />);
+        jest.spyOn(useEditFormContext, 'useEditFormContext').mockImplementation(() => ({
+            form: null,
+            library: 'test_lib',
+            readonly: false,
+            setForm: jest.fn()
+        }));
+
+        const comp = create(<InfosForm onSubmit={onSubmit} />);
 
         act(() => {
             comp.root.findByProps({name: 'label.fr'}).props.onChange(null, {

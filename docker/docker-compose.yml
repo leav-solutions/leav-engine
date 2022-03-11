@@ -67,6 +67,7 @@ x-env-react: &env-react
   REACT_APP_AVAILABLE_LANG: fr,en
   SKIP_PREFLIGHT_CHECK: "true"
   TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling # To reduce CPU usage of TSC's file watching
+  ESLINT_NO_DEV_ERRORS: "true" # To keep compiling on eslint errors
 
 x-env-automate-scan: &env-automate-scan
   ALLOW_FILES_LIST: *allow-list

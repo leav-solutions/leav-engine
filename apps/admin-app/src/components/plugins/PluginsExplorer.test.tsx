@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {MockedProvider} from '@apollo/client/testing';
 import {mount} from 'enzyme';
-import PluginsExplorer from './PluginsExplorer';
+import React from 'react';
+import {act} from 'react-dom/test-utils';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {MockedProvider} from '@apollo/react-testing';
+import {getPluginsQuery} from '../../queries/plugins/getPluginsQuery';
 import {Mockify} from '../../_types//Mockify';
 import MockedLangContextProvider from '../../__mocks__/MockedLangContextProvider';
 import MockedUserContextProvider from '../../__mocks__/MockedUserContextProvider';
-import {getPluginsQuery} from '../../queries/plugins/getPluginsQuery';
-import {act} from 'react-dom/test-utils';
+import PluginsExplorer from './PluginsExplorer';
 
 const wait = () => {
     return new Promise((res, rej) => {

@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider, wait} from '@apollo/react-testing';
+import {MockedProvider} from '@apollo/client/testing';
 import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {wait} from 'utils/testUtils';
+import {act} from '_tests/testUtils';
 import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
 import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
 import SelectTreeNodeModal from './SelectTreeNodeModal';

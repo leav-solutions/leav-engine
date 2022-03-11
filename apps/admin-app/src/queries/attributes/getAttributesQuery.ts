@@ -1,9 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Query} from '@apollo/react-components';
 import gql from 'graphql-tag';
-import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../_gqlTypes/GET_ATTRIBUTES';
 import {attributeDetailsFragment} from './attributeFragments';
 
 // This const is useful to refer this query in refetchQueries on mutations.
@@ -13,7 +11,6 @@ export const getAttributesQueryName = 'GET_ATTRIBUTES';
 export const getAttributesQuery = gql`
     ${attributeDetailsFragment}
     query GET_ATTRIBUTES(
-        $lang: [AvailableLanguage!]
         $id: ID
         $label: String
         $type: [AttributeType]
@@ -42,5 +39,3 @@ export const getAttributesQuery = gql`
         }
     }
 `;
-
-export const AttributesQuery = p => Query<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(p);

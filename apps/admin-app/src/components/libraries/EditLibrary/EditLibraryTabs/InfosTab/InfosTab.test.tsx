@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {wait} from '@apollo/react-testing';
-import {mount, shallow} from 'enzyme';
+import {mount} from 'enzyme';
 import {History} from 'history';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {wait} from 'utils/testUtils';
+import {act, render, screen} from '_tests/testUtils';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {Mockify} from '../../../../../_types/Mockify';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
@@ -18,7 +18,7 @@ jest.mock(
     './InfosForm',
     () =>
         function InfosForm() {
-            return <div>Infos form</div>;
+            return <div>InfosForm</div>;
         }
 );
 describe('InfosTab', () => {
@@ -38,9 +38,11 @@ describe('InfosTab', () => {
     };
 
     test('Render form', async () => {
-        const comp = shallow(<InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />);
+        await act(async () => {
+            render(<InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />);
+        });
 
-        expect(comp.find('InfosForm')).toHaveLength(1);
+        expect(screen.getByText('InfosForm')).toBeInTheDocument();
     });
 
     test('Save data on submit', async () => {
@@ -96,7 +98,14 @@ describe('InfosTab', () => {
                             extensions: {
                                 code: 'VALIDATION_ERROR',
                                 fields: {id: 'invalid id'}
-                            }
+                            },
+                            locations: null,
+                            path: null,
+                            nodes: null,
+                            source: null,
+                            positions: null,
+                            originalError: null,
+                            name: 'Error'
                         }
                     ]
                 }

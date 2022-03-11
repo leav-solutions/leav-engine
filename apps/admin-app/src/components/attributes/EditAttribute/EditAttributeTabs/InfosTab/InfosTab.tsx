@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLazyQuery, useMutation} from '@apollo/react-hooks';
+import {useLazyQuery, useMutation} from '@apollo/client';
 import {History} from 'history';
 import React from 'react';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-import {clearCacheQueriesFromRegexp} from '../../../../../utils';
 import {
     GET_ATTRIBUTES,
     GET_ATTRIBUTESVariables,
@@ -29,33 +28,23 @@ interface IInfosTabProps {
 function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps): JSX.Element {
     const [saveAttribute, {error}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-        onError: e => undefined,
-        update: async (cache, {data: dataCached}) => {
-            const newAttribute = dataCached!.saveAttribute;
-            const cachedData: any = cache.readQuery({query: getAttributesQuery, variables: {id: newAttribute.id}});
-
-            clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.attributes/);
-
-            const newAttributes = {
-                totalCount: 1,
-                list: [newAttribute],
-                __typename: cachedData.attributes.__typename
-            };
-
-            cache.writeQuery({
-                query: getAttributesQuery,
-                data: {attributes: newAttributes},
-                variables: {id: newAttribute.id}
-            });
-
+        onError: () => undefined,
+        onCompleted: res => {
             if (history) {
-                history.replace({pathname: '/attributes/edit/' + newAttribute.id});
+                history.replace({pathname: '/attributes/edit/' + res.saveAttribute.id});
+            }
+        },
+        update: cache => {
+            // We created a new attribute, invalidate all attributes list cache
+            if (!attribute) {
+                cache.evict({fieldName: 'attributes'});
             }
         }
     });
 
     const [getAttrById, {data: dataAttrById}] = useLazyQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(
-        getAttributesQuery
+        getAttributesQuery,
+        {fetchPolicy: 'no-cache'}
     );
 
     const _isIdUnique = async val => {

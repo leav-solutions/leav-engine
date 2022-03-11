@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {MockedProvider} from '@apollo/client/testing';
 import {mount} from 'enzyme';
-import {MockedProvider} from '@apollo/react-testing';
+import React from 'react';
 import {act} from 'react-dom/test-utils';
-
-import RootSelector, {QUERY} from './RootSelector';
 import {wait} from '../../utils/testUtils';
+import RootSelector, {QUERY} from './RootSelector';
 
 const lang = ['fr', 'en'];
 const DATAMOCK = [

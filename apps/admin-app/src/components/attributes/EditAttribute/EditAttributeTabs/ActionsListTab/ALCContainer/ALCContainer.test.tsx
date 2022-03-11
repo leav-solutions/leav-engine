@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import ALCList from '../ALCList';
-import {MockedProvider} from '@apollo/react-testing';
+import {MockedProvider} from '@apollo/client/testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {DndProvider} from 'react-dnd';

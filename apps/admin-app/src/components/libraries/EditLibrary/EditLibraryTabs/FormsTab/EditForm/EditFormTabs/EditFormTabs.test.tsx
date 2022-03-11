@@ -27,7 +27,9 @@ describe('EditFormTabs', () => {
 
     test('Display form edition for existing form', async () => {
         render(
-            <EditFormContext.Provider value={{form: mockForm, library: 'test_lib', readonly: false}}>
+            <EditFormContext.Provider
+                value={{form: mockForm, library: 'test_lib', readonly: false, setForm: jest.fn()}}
+            >
                 <EditFormTabs />
             </EditFormContext.Provider>
         );
@@ -41,7 +43,7 @@ describe('EditFormTabs', () => {
 
     test('Display form edition for new form', async () => {
         const comp = render(
-            <EditFormContext.Provider value={{form: null, library: 'test_lib', readonly: false}}>
+            <EditFormContext.Provider value={{form: null, library: 'test_lib', readonly: false, setForm: jest.fn()}}>
                 <EditFormTabs />
             </EditFormContext.Provider>
         );

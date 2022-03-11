@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Formik, FormikProps} from 'formik';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -12,11 +12,9 @@ import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM
 import {AttributeType, FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
 import AttributeSelector from '../../../../../../../../attributes/AttributeSelector';
 import FormFieldWrapper from '../../../../../../../../shared/FormFieldWrapper';
+import {useEditFormContext} from '../../../hooks/useEditFormContext';
 
 interface IInfosFormProps {
-    form: GET_FORM_forms_list | null;
-    library: string;
-    readonly?: boolean;
     onSubmit: (formData: FormInput) => void;
 }
 
@@ -29,11 +27,11 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
-function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.Element {
+function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
     const {defaultLang, availableLangs} = useLang();
-    const {t} = useTranslation();
+    const {form, library, readonly} = useEditFormContext();
     const existingForm = form !== null;
-
+    const {t} = useTranslation();
     const defaultForm: FormValues = {
         id: '',
         system: false,
@@ -41,12 +39,18 @@ function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.El
         dependencyAttributes: []
     };
 
-    const initialValues: FormValues = existingForm
-        ? {
-              ...pick(form as GET_FORM_forms_list, ['id', 'system', 'label']),
-              dependencyAttributes: arrayPick(form?.dependencyAttributes || [], 'id')
-          }
-        : defaultForm;
+    const [formValues, setFormValues] = useState<FormValues>(defaultForm);
+
+    useEffect(() => {
+        if (!form) {
+            return;
+        }
+
+        setFormValues({
+            ...pick(form as GET_FORM_forms_list, ['id', 'system', 'label']),
+            dependencyAttributes: arrayPick(form?.dependencyAttributes || [], 'id')
+        });
+    }, [form]);
 
     const _handleSubmit = (values: FormValues) => {
         const valuesToSubmit: FormInput = {
@@ -111,6 +115,7 @@ function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.El
                         label={t('attributes.ID')}
                         disabled={existingForm || readonly}
                         name="id"
+                        aria-label="id"
                         onChange={_handleChange}
                         onBlur={handleBlur}
                         value={id}
@@ -136,7 +141,7 @@ function InfosForm({form, library, readonly, onSubmit}: IInfosFormProps): JSX.El
         );
     };
 
-    return <Formik initialValues={initialValues} onSubmit={_handleSubmit} render={_renderForm} />;
+    return <Formik initialValues={formValues} onSubmit={_handleSubmit} render={_renderForm} enableReinitialize />;
 }
 
 export default InfosForm;

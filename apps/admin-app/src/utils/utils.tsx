@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ApolloCache, StoreObject} from '@apollo/client';
 import {FormikErrors, FormikTouched} from 'formik';
 import gql from 'graphql-tag';
 import {i18n} from 'i18next';
@@ -208,8 +209,13 @@ export function isTreeAttribute(
     return attribute.type === AttributeType.tree;
 }
 
-export const clearCacheQueriesFromRegexp = (cache, regexp) => {
-    Object.keys(cache.data.data).forEach(key => key.match(regexp) && cache.data.delete(key));
+export const clearCacheForQuery = (cache: ApolloCache<unknown>, queryName: string, variables?: Record<string, any>) => {
+    cache.evict({fieldName: queryName, args: variables});
+};
+
+export const deleteFromCache = (cache: ApolloCache<unknown>, object: StoreObject) => {
+    cache.evict({id: cache.identify(object)});
+    cache.gc();
 };
 
 export function getRecordIdentityCacheKey(libId: string, recordId: string): string {

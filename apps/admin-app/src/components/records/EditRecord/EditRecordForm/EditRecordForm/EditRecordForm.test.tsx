@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/react-testing';
-import {render} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {act, render, screen} from '_tests/testUtils';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {
     GET_LIB_BY_ID_libraries_list,
@@ -14,7 +12,7 @@ import {LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
 
-const lang = ['en', 'fr'];
+const lang = ['fr'];
 
 const attributes = [
     {
@@ -162,7 +160,7 @@ const query = getRecordDataQuery(library, attributes as GET_LIB_BY_ID_libraries_
 const requestAndResult = {
     request: {
         query,
-        variables: {id: '1234567', version: [], lang}
+        variables: {id: '1234567', version: null, lang}
     },
     result: {
         data: {
@@ -236,21 +234,35 @@ const requestAndResult = {
 
 const mocks = [requestAndResult];
 
+jest.mock('../../../FormFields/LinksField', () => {
+    return function LinksField() {
+        return <div>LinksField</div>;
+    };
+});
+
+jest.mock('./StandardValuesWrapper', () => {
+    return function StandardValuesWrapper() {
+        return <div>StandardValuesWrapper</div>;
+    };
+});
+
 describe('EditRecordForm', () => {
     test('Renders without error', async () => {
         await act(async () => {
             render(
                 <MockedLangContextProvider>
-                    <MockedProvider mocks={mocks} addTypename={false}>
-                        <EditRecordForm
-                            attributes={attributes as GET_LIB_BY_ID_libraries_list_attributes[]}
-                            library={library}
-                            initialRecordId={'1234567'}
-                        />
-                    </MockedProvider>
-                </MockedLangContextProvider>
+                    <EditRecordForm
+                        attributes={attributes as GET_LIB_BY_ID_libraries_list_attributes[]}
+                        library={library}
+                        initialRecordId={'1234567'}
+                    />
+                </MockedLangContextProvider>,
+                {apolloMocks: mocks}
             );
         });
+
+        expect(screen.getAllByText('LinksField')).toHaveLength(2);
+        expect(screen.getAllByText('StandardValuesWrapper')).toHaveLength(6);
     });
 
     test('Queries and Renders the Edit Record Form Links, Multiple Values Edition Input, and Edit Record Input', async () => {

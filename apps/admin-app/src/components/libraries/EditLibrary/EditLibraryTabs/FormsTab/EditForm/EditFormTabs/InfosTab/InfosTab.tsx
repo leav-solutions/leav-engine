@@ -1,62 +1,30 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation} from '@apollo/react-hooks';
-import {DataProxy} from 'apollo-cache';
+import {useMutation} from '@apollo/client';
 import React from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
-import {getFormsQuery} from '../../../../../../../../queries/forms/getFormsQuery';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
-import {clearCacheQueriesFromRegexp} from '../../../../../../../../utils';
-import {GET_FORMS_LIST, GET_FORMS_LISTVariables} from '../../../../../../../../_gqlTypes/GET_FORMS_LIST';
+import {clearCacheForQuery} from '../../../../../../../../utils';
 import {FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
 import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import InfosForm from './InfosForm';
 
 function InfosTab(): JSX.Element {
-    const {form, library, readonly} = useEditFormContext();
+    const {form, library, readonly, setForm} = useEditFormContext();
     const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: e => undefined,
-        update: (cache: DataProxy, {data: {saveForm: savedForm}}: any) => {
+        onCompleted: res => {
+            if (history?.replace) {
+                history.replace({pathname, hash: 'forms', search: `fid=${res.saveForm.id}`});
+            }
+        },
+        update: cache => {
             // On form creation, handle cache
             if (!form) {
-                // Get cached data for library's forms list
-                const cacheData = cache.readQuery<GET_FORMS_LIST, GET_FORMS_LISTVariables>({
-                    query: getFormsQuery,
-                    variables: {library}
-                });
-
-                // Clear everything in cache related to this library's forms list. There might be
-                // some filtered list here
-                clearCacheQueriesFromRegexp(
-                    cache,
-                    new RegExp(`ROOT_QUERY.forms\\({"filters":{.*"library":"${library}"}}`)
-                );
-
-                // Rewrite cache for the full forms list only (no filters).
-                // If a filtered list is being displayed, it won't refresh automatically.
-                // It's not optimal, but we consider the most common use case when creating form is
-                // displaying the full list. As it's not trivial at all to refresh every possible
-                // filters properly, we don't do it.
-                const newCacheData = {
-                    forms: {
-                        list: [...(cacheData?.forms?.list || []), {...savedForm, __typename: 'Form'}],
-                        totalCount: (cacheData?.forms?.totalCount || 0) + 1,
-                        __typename: 'FormsList'
-                    }
-                };
-
-                cache.writeQuery({
-                    query: getFormsQuery,
-                    variables: {library},
-                    data: newCacheData
-                });
-
-                if (history?.replace) {
-                    history.replace({pathname, hash: 'forms', search: `fid=${savedForm.id}`});
-                }
+                clearCacheForQuery(cache, 'forms', {filters: {library}});
             }
         }
     });
@@ -64,14 +32,16 @@ function InfosTab(): JSX.Element {
     const history = useHistory();
     const {pathname} = useLocation();
 
-    const _handleSubmit = (formData: FormInput) => {
-        return saveForm({
+    const _handleSubmit = async (formData: FormInput) => {
+        const res = await saveForm({
             variables: {
                 formData: {...formData, id: formData.id, library}
             }
         });
+
+        setForm(res.data.saveForm);
     };
-    return <InfosForm form={form} library={library} readonly={readonly} onSubmit={_handleSubmit} />;
+    return <InfosForm onSubmit={_handleSubmit} />;
 }
 
 export default InfosTab;

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/react-hooks';
+import {useQuery} from '@apollo/client';
 import React from 'react';
 import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import {GET_FORM_forms_list_dependencyAttributes_TreeAttribute} from '../../../../../../../../../_gqlTypes/GET_FORM';

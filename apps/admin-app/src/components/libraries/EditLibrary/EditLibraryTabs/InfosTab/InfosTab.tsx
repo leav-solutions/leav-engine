@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLazyQuery, useMutation} from '@apollo/react-hooks';
+import {useLazyQuery, useMutation} from '@apollo/client';
 import {History} from 'history';
 import React from 'react';
-import useLang from '../../../../../hooks/useLang';
 import {getLibByIdQuery} from '../../../../../queries/libraries/getLibraryById';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
-import {clearCacheQueriesFromRegexp} from '../../../../../utils';
+import {clearCacheForQuery} from '../../../../../utils';
 import {
     GET_LIB_BY_ID,
     GET_LIB_BY_IDVariables,
@@ -23,31 +22,21 @@ interface IInfosTabProps {
 }
 
 function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
-    const {lang} = useLang();
     const [saveLibrary, {error: errorSave}] = useMutation(saveLibQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-        onError: e => undefined,
-        update: async (cache, {data: {saveLibrary: savedLibraryData}}) => {
+        onError: () => undefined,
+        update: cache => {
             // There might be a lot of different lists with different
             // filters in cache, thus we just revoke everything
-            clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.libraries/);
-
-            // Write library data to cache on a query with ID filter
-            const newlibraries = {
-                totalCount: 1,
-                list: [savedLibraryData],
-                __typename: 'Library'
-            };
-
-            cache.writeQuery({
-                query: getLibByIdQuery,
-                data: {libraries: newlibraries},
-                variables: {id: savedLibraryData.id, lang}
-            });
+            if (!library) {
+                clearCacheForQuery(cache, 'libraries');
+            }
         }
     });
 
-    const [getLibById, {data: dataLibById}] = useLazyQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery);
+    const [getLibById, {data: dataLibById}] = useLazyQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
+        fetchPolicy: 'no-cache'
+    });
 
     const _handleCheckIdExists = async val => {
         await getLibById({variables: {id: val}});

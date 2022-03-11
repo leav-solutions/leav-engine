@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider, MockedResponse, wait} from '@apollo/react-testing';
-import {mount, shallow} from 'enzyme';
+import {MockedProvider, MockedResponse} from '@apollo/client/testing';
+import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {wait} from 'utils/testUtils';
+import {act, render, screen} from '_tests/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
@@ -17,7 +18,7 @@ jest.mock(
     './InfosForm',
     () =>
         function InfosForm() {
-            return <div>Infos form</div>;
+            return <div>InfosForm</div>;
         }
 );
 describe('InfosTab', () => {
@@ -46,9 +47,11 @@ describe('InfosTab', () => {
     };
 
     test('Render form', async () => {
-        const comp = shallow(<InfosTab />);
+        await act(async () => {
+            render(<InfosTab />);
+        });
 
-        expect(comp.find('InfosForm')).toHaveLength(1);
+        expect(screen.getByText('InfosForm')).toBeInTheDocument();
     });
 
     test('Save data on submit and run onPostSave', async () => {
@@ -97,7 +100,7 @@ describe('InfosTab', () => {
         });
 
         const comp = mount(
-            <MockedProvider mocks={mocks} cache={mockCache} addTypename>
+            <MockedProvider mocks={mocks} addTypename>
                 <InfosTab onPostSave={onPostSave} />
             </MockedProvider>
         );

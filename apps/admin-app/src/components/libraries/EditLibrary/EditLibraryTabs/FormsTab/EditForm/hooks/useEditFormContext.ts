@@ -8,8 +8,14 @@ export interface IEditFormContext {
     form: GET_FORM_forms_list;
     library: string;
     readonly: boolean;
+    setForm: (form: GET_FORM_forms_list) => void;
 }
 
-export const EditFormContext = createContext<IEditFormContext>({form: null, library: null, readonly: false});
+export const EditFormContext = createContext<IEditFormContext>({
+    form: null,
+    library: null,
+    readonly: false,
+    setForm: null
+});
 
 export const useEditFormContext = () => useContext(EditFormContext);

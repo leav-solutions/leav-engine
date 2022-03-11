@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider, MockedResponse, wait} from '@apollo/react-testing';
+import {MockedProvider, MockedResponse} from '@apollo/client/testing';
 import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {wait} from 'utils/testUtils';
+import {act, render, screen} from '_tests/testUtils';
 import {deleteFormQuery} from '../../../../../queries/forms/deleteFormMutation';
 import {getFormsQuery} from '../../../../../queries/forms/getFormsQuery';
 import {mockFormLight} from '../../../../../__mocks__/forms';
@@ -40,25 +41,11 @@ describe('FormsTab', () => {
     ];
 
     test('Display list of forms', async () => {
-        let comp;
-
         await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocks}>
-                    <FormsTab libraryId="my_lib" readonly={false} />
-                </MockedProvider>
-            );
+            render(<FormsTab libraryId="my_lib" readonly={false} />, {apolloMocks: mocks});
         });
 
-        expect(comp.find('FormsList')).toHaveLength(1);
-        expect(comp.find('FormsList').prop('loading')).toBe(true);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('FormsList').prop('loading')).toBe(false);
+        expect(screen.getByText('FormsList')).toBeInTheDocument();
     });
 
     test('Error state', async () => {
@@ -73,23 +60,11 @@ describe('FormsTab', () => {
                 error: new Error('boom!')
             }
         ];
-
-        let comp;
-
         await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={errorMock}>
-                    <FormsTab libraryId="my_lib" readonly={false} />
-                </MockedProvider>
-            );
+            render(<FormsTab libraryId="my_lib" readonly={false} />, {apolloMocks: errorMock});
         });
 
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('div.error')).toHaveLength(1);
+        expect(screen.getByText(/boom!/)).toBeInTheDocument();
     });
 
     test('On filters update, re run query with filters', async () => {
