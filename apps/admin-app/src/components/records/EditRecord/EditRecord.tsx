@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/react-hooks';
+import {useQuery} from '@apollo/client';
 import React from 'react';
 import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables} from '../../../_gqlTypes/GET_LIB_BY_ID';

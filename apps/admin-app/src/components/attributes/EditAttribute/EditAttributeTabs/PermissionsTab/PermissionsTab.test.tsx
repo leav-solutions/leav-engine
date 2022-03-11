@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {wait} from '@apollo/react-testing';
-import {InMemoryCache} from 'apollo-cache-inmemory';
+import {InMemoryCache} from '@apollo/client';
 import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {wait} from 'utils/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType, PermissionsRelation, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {mockAttrAdv, mockAttrSimple} from '../../../../../__mocks__/attributes';
-import {attributesFragmentMatcher} from '../../../../../__mocks__/fragmentMatchers/attributesFragmentMatchers';
+import {attributesPossibleTypes} from '../../../../../__mocks__/fragmentMatchers/attributesFragmentMatchers';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import PermissionsTab from './PermissionsTab';
 
@@ -155,7 +155,7 @@ describe('PermissionsTab', () => {
             }
         ];
 
-        const mockCache = new InMemoryCache({fragmentMatcher: attributesFragmentMatcher});
+        const mockCache = new InMemoryCache({possibleTypes: attributesPossibleTypes});
         mockCache.writeQuery({
             query: getAttributesQuery,
             variables: {id: 'simple_attribute'},

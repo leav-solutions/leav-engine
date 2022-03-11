@@ -1,37 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/react-testing';
-import {InMemoryCache, IntrospectionFragmentMatcher} from 'apollo-cache-inmemory';
-import {render} from 'enzyme';
 import React from 'react';
-import sleep from 'sleep-promise';
+import {render, screen} from '_tests/testUtils';
 import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
 import {mockTree} from '../../../__mocks__/trees';
 import TreeStructure from './TreeStructure';
 
 jest.mock('../../../hooks/useLang');
 
-const fragmentMatcher = new IntrospectionFragmentMatcher({
-    introspectionQueryResultData: {
-        __schema: {
-            types: [
-                {
-                    kind: 'INTERFACE',
-                    name: 'Record',
-                    possibleTypes: [
-                        {
-                            name: 'UsersGroup'
-                        }
-                    ]
-                }
-            ]
-        }
-    }
+jest.mock('./StructureView', () => {
+    return function StructureView() {
+        return <div>StructureView</div>;
+    };
 });
 
 describe('EditTreeStructure', () => {
-    test('Snapshot test', async () => {
+    test('Render tree structure', async () => {
         const mocks = [
             {
                 request: {
@@ -67,14 +52,11 @@ describe('EditTreeStructure', () => {
             }
         ];
 
-        const comp = render(
-            <MockedProvider mocks={mocks} addTypename cache={new InMemoryCache({fragmentMatcher})}>
-                <TreeStructure tree={mockTree} />
-            </MockedProvider>
-        );
+        render(<TreeStructure tree={mockTree} />, {
+            apolloMocks: mocks,
+            cacheSettings: {possibleTypes: {Record: ['UsersGroup']}}
+        });
 
-        await sleep(0);
-
-        expect(comp).toMatchSnapshot();
+        expect(screen.getByText('StructureView')).toBeInTheDocument();
     });
 });

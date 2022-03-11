@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {wait} from '@apollo/react-testing';
-import {mount, shallow} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {wait} from 'utils/testUtils';
+import {act, render, screen} from '_tests/testUtils';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {mockFormFull} from '../../../../../../../../__mocks__/forms';
@@ -35,9 +35,11 @@ describe('InfosTab', () => {
     };
 
     test('Render form', async () => {
-        const comp = shallow(<InfosTab />);
+        await act(async () => {
+            render(<InfosTab />);
+        });
 
-        expect(comp.find('InfosForm')).toHaveLength(1);
+        expect(screen.getByText('InfosForm')).toBeInTheDocument();
     });
 
     test('Save data on submit', async () => {
@@ -60,7 +62,9 @@ describe('InfosTab', () => {
         ];
         const comp = mount(
             <MockedProviderWithFragments mocks={mocks} addTypename>
-                <EditFormContext.Provider value={{form: mockFormFull, library: 'test_lib', readonly: false}}>
+                <EditFormContext.Provider
+                    value={{form: mockFormFull, library: 'test_lib', readonly: false, setForm: jest.fn()}}
+                >
                     <InfosTab />
                 </EditFormContext.Provider>
             </MockedProviderWithFragments>

@@ -1,22 +1,25 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/react-testing';
-import {render} from 'enzyme';
 import React from 'react';
+import {act, render, screen} from '_tests/testUtils';
 import {AvailableLanguage} from '../../../_gqlTypes/globalTypes';
 import LibrariesSelector from './LibrariesSelector';
 
 jest.mock('../../../hooks/useLang');
 
+jest.mock('../LibrariesSelectorField', () => {
+    return function LibrariesSelectorField() {
+        return <div>LibrariesSelectorField</div>;
+    };
+});
+
 describe('LibrariesSelector', () => {
     test('Snapshot test', async () => {
-        const comp = render(
-            <MockedProvider>
-                <LibrariesSelector lang={[AvailableLanguage.fr]} />
-            </MockedProvider>
-        );
+        await act(async () => {
+            render(<LibrariesSelector lang={[AvailableLanguage.fr]} />);
+        });
 
-        expect(comp).toMatchSnapshot();
+        expect(screen.getByText('LibrariesSelectorField')).toBeInTheDocument();
     });
 });

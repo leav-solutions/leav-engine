@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/react-hooks';
+import {useQuery} from '@apollo/client';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {History, Location} from 'history';
 import React, {useMemo} from 'react';
 import {match} from 'react-router';
@@ -70,7 +71,7 @@ function EditAttribute({
     }
 
     if (!data || !data.attributes || !data.attributes.list.length) {
-        return <div className="unknown">Unknown attribute</div>;
+        return <ErrorDisplay message="Unknown attribute" />;
     }
 
     return _renderEditAttributeTabs(data.attributes.list[0], location);

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import '@testing-library/jest-dom';
-import {render, screen} from '@testing-library/react';
 import React from 'react';
+import {render, screen, waitFor} from '_tests/testUtils';
 import AuthHandler from './AuthHandler';
 
 jest.mock('../Login', () => {
@@ -15,6 +15,12 @@ jest.mock('../Login', () => {
 jest.mock('../../app/App', () => {
     return function App() {
         return <div>App</div>;
+    };
+});
+
+jest.mock('components/app/ApolloHandler', () => {
+    return function ApolloHandler({children}) {
+        return <div>{children}</div>;
     };
 });
 
@@ -60,6 +66,6 @@ describe('AuthHandler', () => {
         storage.setItem('accessToken', 'mytoken');
         render(<AuthHandler url={''} storage={storage} />);
 
-        expect(screen.getByText('App')).toBeInTheDocument();
+        expect(await waitFor(() => screen.getByText('App'))).toBeInTheDocument();
     });
 });

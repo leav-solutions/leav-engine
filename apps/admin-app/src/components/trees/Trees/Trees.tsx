@@ -1,6 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useQuery} from '@apollo/client';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import Loading from 'components/shared/Loading';
 import {History} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -8,9 +11,9 @@ import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
-import {getTreesQuery, TreesQuery} from '../../../queries/trees/getTreesQuery';
+import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {addWildcardToFilters} from '../../../utils/utils';
-import {GET_TREESVariables} from '../../../_gqlTypes/GET_TREES';
+import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import TreesList from '../TreesList';
 
@@ -22,6 +25,9 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
     const {t} = useTranslation();
     const {lang} = useLang();
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
+    const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
+        variables: {...addWildcardToFilters(filters), lang}
+    });
     const userData = useUserData();
 
     const _onFiltersUpdate = (filterElem: any) => {
@@ -37,6 +43,8 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
             [filterElem.name]: newElemState
         });
     };
+
+    const _handleRowClick = (tree: GET_TREES_trees_list) => history.push('/trees/edit/' + tree.id);
 
     return (
         <>
@@ -56,25 +64,17 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
                     </Grid.Column>
                 )}
             </Grid>
-            <TreesQuery query={getTreesQuery} variables={{...addWildcardToFilters(filters), lang}}>
-                {({loading, error, data}) => {
-                    if (typeof error !== 'undefined') {
-                        return <p>Error : {error.message}</p>;
-                    }
-
-                    const onRowClick = tree => history.push('/trees/edit/' + tree.id);
-
-                    return (
-                        <TreesList
-                            trees={data && data.trees ? data.trees.list : null}
-                            onRowClick={onRowClick}
-                            onFiltersUpdate={_onFiltersUpdate}
-                            filters={filters}
-                            loading={loading}
-                        />
-                    );
-                }}
-            </TreesQuery>
+            {loading && <Loading />}
+            {error && <ErrorDisplay message={error.message} />}
+            {!loading && !error && (
+                <TreesList
+                    trees={data && data.trees ? data.trees.list : null}
+                    onRowClick={_handleRowClick}
+                    onFiltersUpdate={_onFiltersUpdate}
+                    filters={filters}
+                    loading={loading}
+                />
+            )}
         </>
     );
 };

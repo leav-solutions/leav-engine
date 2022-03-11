@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider, wait} from '@apollo/react-testing';
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {act, render, screen} from '_tests/testUtils';
 import {getPermissionsActionsQuery} from '../../../queries/permissions/getPermissionsActionsQuery';
 import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQuery';
 import {GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
@@ -87,52 +85,27 @@ describe('EditPermissions', () => {
             }
         ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
-                    <EditPermissions permParams={permParams} />
-                </MockedProvider>
-            );
-        });
+        render(<EditPermissions permParams={permParams} />, {apolloMocks: mocks});
 
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('EditPermissionsView')).toHaveLength(1);
+        expect(screen.getByText(/loading/)).toBeInTheDocument();
+        expect(await screen.findByText('EditPermissionsView')).toBeInTheDocument();
     });
 
     test('Error state', async () => {
         const mocks = [
             {
                 request: {
-                    query: getPermissionsQuery,
-                    variables: permParams
+                    query: getPermissionsActionsQuery,
+                    variables: {type: permParams.type}
                 },
                 error: new Error('Boom!')
             }
         ];
 
-        let comp;
         await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
-                    <EditPermissions permParams={permParams} />
-                </MockedProvider>
-            );
+            render(<EditPermissions permParams={permParams} />, {apolloMocks: mocks});
         });
 
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('[data-test-id="error"]')).toHaveLength(1);
+        expect(screen.getByText(/Boom!/)).toBeInTheDocument();
     });
 });

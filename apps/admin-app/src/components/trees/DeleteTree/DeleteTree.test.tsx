@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/react-testing';
-import {render} from 'enzyme';
+import {MockedProvider} from '@apollo/client/testing';
 import React from 'react';
+import {act, render, screen} from '_tests/testUtils';
 import DeleteTree from '.';
 import {GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {Mockify} from '../../../_types//Mockify';
@@ -18,15 +18,17 @@ describe('DeleteTree', () => {
             system: false
         };
 
-        const comp = render(
-            <MockedProvider>
-                <MockedUserContextProvider>
-                    <DeleteTree tree={tree as GET_TREES_trees_list} />
-                </MockedUserContextProvider>
-            </MockedProvider>
-        );
+        await act(async () => {
+            render(
+                <MockedProvider>
+                    <MockedUserContextProvider>
+                        <DeleteTree tree={tree as GET_TREES_trees_list} />
+                    </MockedUserContextProvider>
+                </MockedProvider>
+            );
+        });
 
-        expect(comp.find('button.delete').prop('disabled')).toBe(false);
+        expect(screen.getByRole('button')).not.toBeDisabled();
     });
 
     test('Disable button for system tree', async () => {
@@ -35,14 +37,16 @@ describe('DeleteTree', () => {
             system: true
         };
 
-        const comp = render(
-            <MockedProvider>
-                <MockedUserContextProvider>
-                    <DeleteTree tree={tree as GET_TREES_trees_list} />
-                </MockedUserContextProvider>
-            </MockedProvider>
-        );
+        await act(async () => {
+            render(
+                <MockedProvider>
+                    <MockedUserContextProvider>
+                        <DeleteTree tree={tree as GET_TREES_trees_list} />
+                    </MockedUserContextProvider>
+                </MockedProvider>
+            );
+        });
 
-        expect(comp.find('button.delete').prop('disabled')).toBe(true);
+        expect(screen.getByRole('button')).toBeDisabled();
     });
 });

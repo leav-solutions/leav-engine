@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider, wait} from '@apollo/react-testing';
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {act, render, screen} from '_tests/testUtils';
 import TreesSelector from '.';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
@@ -58,19 +56,10 @@ describe('TreesSelector', () => {
             }
         ];
 
-        let comp;
         await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
-                    <TreesSelector />
-                </MockedProvider>
-            );
-            await wait(0);
-            comp.update();
+            render(<TreesSelector />, {apolloMocks: mocks});
         });
 
-        expect(comp.find('TreesSelectorField')).toHaveLength(1);
-        expect(comp.find('TreesSelectorField').prop('trees')).toHaveLength(1);
-        expect(comp.contains('TestTree')).toBe(true);
+        expect(screen.getByText('TestTree')).toBeInTheDocument();
     });
 });

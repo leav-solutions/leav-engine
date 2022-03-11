@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render} from 'enzyme';
 import React from 'react';
+import {act, render, screen} from '_tests/testUtils';
 import {mockTree} from '../../../../../__mocks__/trees';
 import PermissionsTab from './PermissionsTab';
 
@@ -14,8 +14,10 @@ jest.mock('./PermissionsContent', () => {
 
 describe('PermissionsTab', () => {
     test('Snapshot test', async () => {
-        const comp = render(<PermissionsTab tree={{...mockTree}} readonly={false} />);
+        await act(async () => {
+            render(<PermissionsTab tree={{...mockTree}} readonly={false} />);
+        });
 
-        expect(comp).toMatchSnapshot();
+        expect(screen.getByText('PermissionsContent')).toBeInTheDocument();
     });
 });

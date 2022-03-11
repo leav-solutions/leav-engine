@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {wait} from '@apollo/react-testing';
-import {mount, shallow} from 'enzyme';
+import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {wait} from 'utils/testUtils';
+import {act, render, screen} from '_tests/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
@@ -17,7 +17,7 @@ jest.mock(
     './MetadataList',
     () =>
         function MetadataList() {
-            return <div>Metadata</div>;
+            return <div>MetadataList</div>;
         }
 );
 
@@ -28,9 +28,11 @@ describe('MetadataTab', () => {
     };
 
     test('Render list', async () => {
-        const comp = shallow(<MetadataTab attribute={attribute} readonly={false} />);
+        await act(async () => {
+            render(<MetadataTab attribute={attribute} readonly={false} />);
+        });
 
-        expect(comp.find('MetadataList')).toHaveLength(1);
+        expect(screen.getByText('MetadataList')).toBeInTheDocument();
     });
 
     test('Save new fields on change', async () => {

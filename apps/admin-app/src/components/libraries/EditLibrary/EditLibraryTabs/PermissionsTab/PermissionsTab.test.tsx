@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {wait} from '@apollo/react-testing';
 import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {wait} from 'utils/testUtils';
+import {act, render, screen} from '_tests/testUtils';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsRelation, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
@@ -16,7 +16,7 @@ jest.mock(
     './PermissionsContent',
     () =>
         function PermissionsContent() {
-            return <div>Permissions</div>;
+            return <div>PermissionsContent</div>;
         }
 );
 
@@ -27,12 +27,11 @@ describe('PermissionsTab', () => {
     };
 
     test('Render content', async () => {
-        let comp;
         await act(async () => {
-            comp = mount(<PermissionsTab library={library} readonly={false} />);
+            render(<PermissionsTab library={library} readonly={false} />);
         });
 
-        expect(comp.find('PermissionsContent')).toHaveLength(1);
+        expect(screen.getByText('PermissionsContent')).toBeInTheDocument();
     });
 
     test('Save data on submit', async () => {

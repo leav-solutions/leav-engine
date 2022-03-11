@@ -19,13 +19,17 @@
         "label": "Libellé",
         "id": "Identifiant",
         "isSystem": "Système",
-        "settings": "Paramètres"
+        "settings": "Paramètres",
+        "go_back_home": "Retourner à l'accueil"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
         "PERMISSION_ERROR": "Vous n'avez pas les droits pour effectuer cette opération",
         "VALIDATION_ERROR": "Requête invalide",
-        "network_error": "Le serveur n'est pas accessible"
+        "network_error": "Le serveur n'est pas accessible",
+        "error_occurred": "Une erreur est survenue",
+        "access_denied": "Accès interdit",
+        "access_denied_details": "Vous n'êtes pas autorisé à accéder à cet élément, veuillez contacter un administrateur."
     },
     "libraries": {
         "title": "Bibliothèques",

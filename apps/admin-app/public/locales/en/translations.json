@@ -20,13 +20,17 @@
         "label": "Label",
         "id": "ID",
         "isSystem": "System",
-        "settings": "Settings"
+        "settings": "Settings",
+        "go_back_home": "Go back home"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
         "PERMISSION_ERROR": "You are not allowed to perform this operation",
         "VALIDATION_ERROR": "Invalid request",
-        "network_error": "Server is not reachable"
+        "network_error": "Server is not reachable",
+        "error_occurred": "An error occurred",
+        "access_denied": "Access denied",
+        "access_denied_details": "You are not allowed to access this element, please contact an administrator"
     },
     "libraries": {
         "title": "Libraries",

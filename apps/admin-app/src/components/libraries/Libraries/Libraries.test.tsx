@@ -1,32 +1,49 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/react-testing';
-import {render} from 'enzyme';
+import {MockedResponse} from '@apollo/client/testing';
 import {History} from 'history';
+import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import React from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
+import {act, render, screen} from '_tests/testUtils';
+import {mockLibrary} from '__mocks__/libraries';
 import {Mockify} from '../../../_types//Mockify';
-import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
-import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import Libraries from './Libraries';
 
+jest.mock('../LibrariesList', () => {
+    return function LibrariesList() {
+        return <div>LibrariesList</div>;
+    };
+});
 describe('Libraries', () => {
     test('Snapshot test', async () => {
         const mockHistory: Mockify<History> = {};
 
-        const comp = render(
-            <MockedProvider>
-                <MockedLangContextProvider>
-                    <MockedUserContextProvider>
-                        <Router>
-                            <Libraries history={mockHistory as History} />
-                        </Router>
-                    </MockedUserContextProvider>
-                </MockedLangContextProvider>
-            </MockedProvider>
-        );
+        const mocks: MockedResponse[] = [
+            {
+                request: {
+                    query: getLibsQuery
+                },
+                result: {
+                    data: {
+                        attributes: {
+                            list: [mockLibrary]
+                        }
+                    }
+                }
+            }
+        ];
 
-        expect(comp).toMatchSnapshot();
+        await act(async () => {
+            render(
+                <Router>
+                    <Libraries history={mockHistory as History} />
+                </Router>,
+                {apolloMocks: mocks}
+            );
+        });
+
+        expect(screen.getByText('LibrariesList')).toBeInTheDocument();
     });
 });

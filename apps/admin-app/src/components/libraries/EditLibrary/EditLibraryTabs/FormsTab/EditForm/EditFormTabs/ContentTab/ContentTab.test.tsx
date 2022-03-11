@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render} from 'enzyme';
 import React from 'react';
+import {act, render, screen} from '_tests/testUtils';
 import {EditFormContext} from '../../hooks/useEditFormContext';
 import ContentTab from './ContentTab';
 import {formData} from './formBuilderReducer/_fixtures/fixtures';
@@ -32,13 +32,19 @@ jest.mock('./FormLayout', () => {
 });
 
 describe('ContentTab', () => {
-    test('Snapshot test', async () => {
-        const comp = render(
-            <EditFormContext.Provider value={{form: formData, library: 'test_lib', readonly: false}}>
-                <ContentTab />
-            </EditFormContext.Provider>
-        );
+    test('Render form content editor', async () => {
+        await act(async () => {
+            render(
+                <EditFormContext.Provider
+                    value={{form: formData, library: 'test_lib', readonly: false, setForm: jest.fn()}}
+                >
+                    <ContentTab />
+                </EditFormContext.Provider>
+            );
+        });
 
-        expect(comp).toMatchSnapshot();
+        expect(screen.getByText('FormLayout')).toBeInTheDocument();
+        expect(screen.getByText('ElementsReserve')).toBeInTheDocument();
+        expect(screen.getByText('DependencySettings')).toBeInTheDocument();
     });
 });

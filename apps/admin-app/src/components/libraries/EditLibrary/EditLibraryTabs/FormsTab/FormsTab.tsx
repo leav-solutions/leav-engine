@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/react-hooks';
-import {DataProxy} from 'apollo-cache';
+import {useMutation, useQuery} from '@apollo/client';
 import React, {useState} from 'react';
 import {deleteFormQuery} from '../../../../../queries/forms/deleteFormMutation';
 import {getFormsQuery} from '../../../../../queries/forms/getFormsQuery';
-import {addWildcardToFilters, clearCacheQueriesFromRegexp} from '../../../../../utils';
+import {addWildcardToFilters, clearCacheForQuery} from '../../../../../utils';
 import {DELETE_FORM, DELETE_FORMVariables} from '../../../../../_gqlTypes/DELETE_FORM';
 import {GET_FORMS_LIST, GET_FORMS_LISTVariables} from '../../../../../_gqlTypes/GET_FORMS_LIST';
 import {IFormFilterOptions} from '../../../../../_types/forms';
@@ -65,7 +64,7 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
                 formId,
                 library: libraryId
             },
-            update: (cache: DataProxy, {data: {deleteForm: deletedForm}}: any) => {
+            update: (cache, {data: {deleteForm: deletedForm}}: any) => {
                 // Get cached data for library's forms list
                 const cacheData = cache.readQuery<GET_FORMS_LIST, GET_FORMS_LISTVariables>({
                     query: getFormsQuery,
@@ -74,10 +73,7 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
 
                 // Clear everything in cache related to this library's forms list. There might be
                 // some filtered list here
-                clearCacheQueriesFromRegexp(
-                    cache,
-                    new RegExp(`ROOT_QUERY.forms\\({"filters":{.*"library":"${libraryId}"}}`)
-                );
+                clearCacheForQuery(cache, 'forms', {filters: {library: libraryId}});
 
                 // Rewrite cache for the full forms list only (no filters).
                 // If a filtered list is being displayed, it won't refresh automatically.

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/react-hooks';
+import {useQuery} from '@apollo/client';
 import React, {useRef, useState} from 'react';
 import {useDrag, useDrop, XYCoord} from 'react-dnd';
 import {Button, Icon} from 'semantic-ui-react';

@@ -1,14 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DataProxy} from 'apollo-cache';
+import {StoreObject, useMutation} from '@apollo/client';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {deleteFromCache} from 'utils';
+import {DELETE_ATTRIBUTE, DELETE_ATTRIBUTEVariables} from '_gqlTypes/DELETE_ATTRIBUTE';
 import useLang from '../../../hooks/useLang';
-import {DeleteAttributeMutation, deleteAttrQuery} from '../../../queries/attributes/deleteAttributeMutation';
-import {getAttributesQuery, getAttributesQueryName} from '../../../queries/attributes/getAttributesQuery';
-import {clearCacheQueriesFromRegexp} from '../../../utils';
-import {addWildcardToFilters} from '../../../utils/utils';
+import {deleteAttrQuery} from '../../../queries/attributes/deleteAttributeMutation';
 import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import ConfirmedButton from '../../shared/ConfirmedButton';
 import DeleteButton from '../../shared/DeleteButton';
@@ -22,53 +21,24 @@ const DeleteAttribute = (props: IDeleteAttributeProps): JSX.Element => {
     const {attribute, filters} = props;
     const {t} = useTranslation();
     const {lang} = useLang();
-
-    const _updateCache = (cache: DataProxy, {data: {deleteAttribute}}) => {
-        const cachedData: any = cache.readQuery({
-            query: getAttributesQuery,
-            variables: {...addWildcardToFilters(filters), lang}
-        });
-
-        if (!cachedData) {
-            return;
+    const [deleteAttr] = useMutation<DELETE_ATTRIBUTE, DELETE_ATTRIBUTEVariables>(deleteAttrQuery, {
+        update: (cache, {data: {deleteAttribute}}) => {
+            deleteFromCache(cache, (deleteAttribute as unknown) as StoreObject);
         }
+    });
 
-        clearCacheQueriesFromRegexp(cache, /ROOT_QUERY.attributes/);
-
-        const newCount = cachedData.attributes?.totalCount ? cachedData.attributes?.totalCount - 1 : 0;
-        const newList = cachedData.attributes?.list
-            ? cachedData.attributes.list.filter(l => l.id !== deleteAttribute.id)
-            : [];
-
-        cache.writeQuery({
-            query: getAttributesQuery,
-            variables: {...addWildcardToFilters(filters), lang},
-            data: {attributes: {...cachedData.attributes, totalCount: newCount, list: newList}}
+    const onDelete = async () =>
+        deleteAttr({
+            variables: {attrId: attribute.id}
         });
-    };
 
-    return !!attribute ? (
-        <DeleteAttributeMutation
-            mutation={deleteAttrQuery}
-            refetchQueries={[getAttributesQueryName]}
-            update={_updateCache}
-        >
-            {deleteAttr => {
-                const onDelete = async () =>
-                    deleteAttr({
-                        variables: {attrId: attribute.id}
-                    });
+    const attrLabel =
+        attribute.label !== null ? attribute.label.fr || attribute.label.en || attribute.id : attribute.id;
 
-                const attrLabel =
-                    attribute.label !== null ? attribute.label.fr || attribute.label.en || attribute.id : attribute.id;
-
-                return (
-                    <ConfirmedButton action={onDelete} confirmMessage={t('attributes.confirm_delete', {attrLabel})}>
-                        <DeleteButton disabled={attribute.system} />
-                    </ConfirmedButton>
-                );
-            }}
-        </DeleteAttributeMutation>
+    return attribute ? (
+        <ConfirmedButton action={onDelete} confirmMessage={t('attributes.confirm_delete', {attrLabel})}>
+            <DeleteButton disabled={attribute.system} />
+        </ConfirmedButton>
     ) : (
         <></>
     );

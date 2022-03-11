@@ -9,19 +9,19 @@ export const attributeDetailsFragment = gql`
         type
         format
         system
-        label(lang: $lang)
-        description(lang: $lang)
+        label
+        description
         multiple_values
         metadata_fields {
             id
-            label(lang: $lang)
+            label
             type
             format
         }
         permissions_conf {
             permissionTreeAttributes {
                 id
-                label(lang: $lang)
+                label
                 ... on TreeAttribute {
                     linked_tree {
                         id

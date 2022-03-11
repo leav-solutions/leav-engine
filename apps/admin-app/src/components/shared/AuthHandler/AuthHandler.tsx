@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import ApolloHandler from 'components/app/ApolloHandler';
 import React, {Suspense, useState} from 'react';
 import {Provider as ReduxProvider} from 'react-redux';
 import {store} from '../../../redux/store';
@@ -36,7 +37,9 @@ function AuthHandler({url, storage = window.sessionStorage}: IAuthHandlerProps):
         return (
             <Suspense fallback={'Loader'}>
                 <ReduxProvider store={store}>
-                    <App token={token} onTokenInvalid={deleteToken} />
+                    <ApolloHandler token={token} onTokenInvalid={deleteToken}>
+                        <App />
+                    </ApolloHandler>
                 </ReduxProvider>
             </Suspense>
         );
