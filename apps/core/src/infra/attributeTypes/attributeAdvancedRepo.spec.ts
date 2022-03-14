@@ -598,7 +598,7 @@ describe('AttributeStandardRepo', () => {
             const values = await attrRepo.getValues({
                 library: 'test_lib',
                 recordId: '123456',
-                attribute: mockAttrAdvVersionableSimple,
+                attribute: {...mockAttrAdvVersionableSimple, reverse_link: undefined},
                 forceGetAllValues: false,
                 options: {version: {my_tree: '1345'}},
                 ctx

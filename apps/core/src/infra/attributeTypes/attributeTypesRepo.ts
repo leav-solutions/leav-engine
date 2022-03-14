@@ -8,12 +8,16 @@ import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types
 import {IValue, IValuesOptions} from '../../_types/value';
 
 // To avoid some cyclic dependencies issues, we have to pass repo along attribute props
-export interface IAttributeWithRepo extends IAttribute {
+export interface IAttributeWithRepo extends IAttributeRepo {
     _repo: IAttributeTypeRepo;
 }
 
 export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
+}
+
+export interface IAttributeRepo extends IAttribute {
+    reverse_link?: IAttribute;
 }
 
 export type GetConditionPartParentFunc = (
@@ -36,7 +40,7 @@ export interface IAttributeTypeRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttribute;
+        attribute: IAttributeRepo;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -53,7 +57,7 @@ export interface IAttributeTypeRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttribute;
+        attribute: IAttributeRepo;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -70,7 +74,7 @@ export interface IAttributeTypeRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttribute;
+        attribute: IAttributeRepo;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -90,9 +94,26 @@ export interface IAttributeTypeRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttribute;
+        attribute: IAttributeRepo;
         forceGetAllValues?: boolean;
         options?: IValuesOptions;
+        ctx: IQueryInfos;
+    }): Promise<IValue[]>;
+
+    /**
+     * Get all reverse values for given attribute / value
+     *
+     * @return Array<{}>    Return an empty array if no value found
+     */
+    getReverseValues?({
+        library,
+        advancedLinkAttr,
+        ctx
+    }: {
+        library: string;
+        advancedLinkAttr: IAttributeRepo;
+        value: string;
+        forceGetAllValues: boolean;
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
 
@@ -101,7 +122,7 @@ export interface IAttributeTypeRepo {
      *
      * @return {}   Return null if no value found
      */
-    getValueById({
+    getValueById?({
         library,
         recordId,
         attribute,
@@ -123,7 +144,7 @@ export interface IAttributeTypeRepo {
     /**
      * Return AQL query part to sort on this attribute
      */
-    sortQueryPart({attributes, order}: IRecordSort): AqlQuery;
+    sortQueryPart({attributes, order}: {attributes: IAttributeRepo[]; order: string}): AqlQuery;
 
     /**
      * Clear all values of given attribute. Can be used to cleanup values when an attribute is deleted for example.

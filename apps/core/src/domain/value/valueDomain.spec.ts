@@ -1385,7 +1385,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                valueId: '123',
+                value: {id_value: '123'},
                 ctx
             });
 
@@ -1453,7 +1453,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                valueId: '123',
+                value: {id_value: '123'},
                 ctx
             });
 
@@ -1473,7 +1473,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    valueId: '123',
+                    value: {id_value: '123'},
                     ctx
                 })
             };
@@ -1498,7 +1498,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                valueId: '123',
+                value: {id_value: '123'},
                 ctx
             });
 

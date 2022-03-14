@@ -4,6 +4,7 @@
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IAttributeRepo} from 'infra/attributeTypes/attributeTypesRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -365,9 +366,19 @@ export default function ({
 
         for (const [lib, attrs] of Object.entries(libraryAttrs)) {
             for (const attr of attrs) {
+                let reverseLink: IAttribute;
+                if (!!attr.reverse_link) {
+                    reverseLink = await attributeDomain.getAttributeProperties({
+                        id: attr.reverse_link as string,
+                        ctx
+                    });
+                }
+
                 const records = await recordRepo.find({
                     libraryId: lib,
-                    filters: [{attributes: [attr], condition: AttributeCondition.EQUAL, value}],
+                    filters: [
+                        {attributes: [{...attr, reverse_link: reverseLink}], condition: AttributeCondition.EQUAL, value}
+                    ],
                     ctx
                 });
 
@@ -598,8 +609,24 @@ export default function ({
                         },
                         ctx
                     );
+
+                    // Set reverse links if necessary.
+                    const attrsRepo = (await Promise.all(
+                        attributes.map(async a =>
+                            !!a.reverse_link
+                                ? {
+                                      ...a,
+                                      reverse_link: await attributeDomain.getAttributeProperties({
+                                          id: a.reverse_link as string,
+                                          ctx
+                                      })
+                                  }
+                                : a
+                        )
+                    )) as IAttributeRepo[];
+
                     let value: any = f.value ?? null;
-                    const lastAttr: IAttribute = attributes[attributes.length - 1];
+                    const lastAttr: IAttribute = attrsRepo[attrsRepo.length - 1];
 
                     if (value !== null) {
                         if (
@@ -633,7 +660,7 @@ export default function ({
                         throw new ValidationError({condition: Errors.INVALID_FILTER_CONDITION_VALUE});
                     }
 
-                    filter = {attributes, value, condition: f.condition};
+                    filter = {attributes: attrsRepo, value, condition: f.condition};
                 } else {
                     filter = f;
                 }
@@ -643,17 +670,33 @@ export default function ({
 
             // Check sort fields
             if (sort && sort?.field) {
+                const sortAttributes = await getAttributesFromField(
+                    sort.field,
+                    null,
+                    {
+                        'core.domain.attribute': attributeDomain,
+                        'core.infra.library': libraryRepo,
+                        'core.infra.tree': treeRepo
+                    },
+                    ctx
+                );
+
+                const sortAttributesRepo = (await Promise.all(
+                    sortAttributes.map(async a =>
+                        !!a.reverse_link
+                            ? {
+                                  ...a,
+                                  reverse_link: await attributeDomain.getAttributeProperties({
+                                      id: a.reverse_link as string,
+                                      ctx
+                                  })
+                              }
+                            : a
+                    )
+                )) as IAttributeRepo[];
+
                 fullSort = {
-                    attributes: await getAttributesFromField(
-                        sort.field,
-                        null,
-                        {
-                            'core.domain.attribute': attributeDomain,
-                            'core.infra.library': libraryRepo,
-                            'core.infra.tree': treeRepo
-                        },
-                        ctx
-                    ),
+                    attributes: sortAttributesRepo,
                     order: sort.order
                 };
             }

@@ -230,7 +230,7 @@ export default function ({
                 res[0].edge
             );
         },
-        sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
+        sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
             const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
             const treeCollec = dbService.db.edgeCollection(getEdgesCollectionName(attributes[0].linked_tree));
 

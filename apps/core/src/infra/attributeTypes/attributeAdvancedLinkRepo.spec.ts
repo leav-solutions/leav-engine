@@ -20,6 +20,13 @@ describe('AttributeAdvancedLinkRepo', () => {
         multiple_values: true
     };
 
+    const mockReverseAttribute = {
+        id: 'test',
+        type: AttributeTypes.ADVANCED_LINK,
+        linked_library: 'test_lib',
+        multiple_values: true
+    };
+
     const savedEdgeData = {
         _id: 'core_edge_values_links/222435651',
         _rev: '_WSywvyC--_',
@@ -128,7 +135,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             await attrRepo.createValue({
                 library: 'test_lib',
                 recordId: '12345',
-                attribute: {...mockAttribute, reverse_link: 'test'},
+                attribute: {...mockAttribute, reverse_link: mockReverseAttribute},
                 value: {
                     value: 987654,
                     modified_at: 400999999,
@@ -213,7 +220,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             await attrRepo.updateValue({
                 library: 'test_lib',
                 recordId: '12345',
-                attribute: {...mockAttribute, reverse_link: 'test'},
+                attribute: {...mockAttribute, reverse_link: mockReverseAttribute},
                 value: {
                     id_value: '987654',
                     value: 987654,
@@ -380,7 +387,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             await attrRepo.getValueById({
                 library: 'test_lib',
                 recordId: '987654',
-                attribute: {...mockAttribute, reverse_link: 'test'},
+                attribute: {...mockAttribute, reverse_link: mockReverseAttribute},
                 valueId: '112233',
                 ctx
             });
@@ -556,7 +563,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             await attrRepo.getValues({
                 library: 'test_lib',
                 recordId: '123456',
-                attribute: {...mockAttribute, reverse_link: 'test'},
+                attribute: {...mockAttribute, reverse_link: mockReverseAttribute},
                 ctx
             });
 

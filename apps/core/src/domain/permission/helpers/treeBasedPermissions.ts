@@ -136,7 +136,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
         const userGroups = await valueRepo.getValues({
             library: 'users',
             recordId: userId,
-            attribute: userGroupAttr,
+            attribute: {...userGroupAttr, reverse_link: undefined},
             ctx
         });
 

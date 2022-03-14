@@ -82,7 +82,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
                 return valueRepo.getValues({
                     library,
                     recordId,
-                    attribute: permTreeAttrProps,
+                    attribute: {...permTreeAttrProps, reverse_link: undefined},
                     ctx
                 });
             })

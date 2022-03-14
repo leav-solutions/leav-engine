@@ -431,7 +431,7 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
-                    valueId: "${advValueId}") { id_value }
+                    value: { id_value: "${advValueId}"}) { id_value }
               }`);
 
         expect(res.status).toBe(200);
@@ -471,7 +471,7 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrTreeName}",
-                    valueId: "${idValue}") { id_value }
+                    value: { id_value: "${idValue}"}) { id_value }
               }`);
 
         expect(res.status).toBe(200);

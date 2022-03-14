@@ -22,7 +22,7 @@ export interface IAttribute extends ICoreEntity {
     versions_conf?: IAttributeVersionsConf;
     metadata_fields?: string[];
     values_list?: IValuesListConf;
-    reverse_link?: string; // linked attribute id
+    reverse_link?: string | IAttribute; // linked attribute
 }
 
 export enum ValueVersionMode {

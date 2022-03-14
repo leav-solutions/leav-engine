@@ -72,7 +72,7 @@ export default function ({
             const userGroups = (await valueRepo.getValues({
                 library: 'users',
                 recordId: userId,
-                attribute: userGroupAttr.list[0],
+                attribute: {...userGroupAttr.list[0], reverse_link: undefined},
                 ctx
             })) as ITreeValue[];
 

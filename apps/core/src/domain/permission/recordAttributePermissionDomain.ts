@@ -84,7 +84,7 @@ export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
                     return valueRepo.getValues({
                         library: recordLibrary,
                         recordId,
-                        attribute: permTreeAttrProps,
+                        attribute: {...permTreeAttrProps, reverse_link: undefined},
                         ctx
                     });
                 })
