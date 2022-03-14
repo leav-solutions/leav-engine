@@ -298,11 +298,6 @@ export default function ({
             filter: IRecordFilterOption,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
-            // FIXME:
-            // if ((attributes[0].reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
-            //     return attributeSimpleLinkRepo.filterQueryPart([attributes[1]], filter, parentIdentifier);
-            // }
-
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -319,19 +314,24 @@ export default function ({
                 : attributes[0].id;
             const direction = !!attributes[0].reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
 
-            // FIXME:
-            const retrieveValue = aql`
-                FOR ${vIdentifier}, ${eIdentifier} IN 1 ${direction} ${aql.literal(parentIdentifier)}._id
-                ${collec}
-                FILTER ${eIdentifier}.attribute == ${eAttribute}
-            `;
+            let retrieveValue: GeneratedAqlQuery;
 
-            // FOR  p IN products
-            //     FILTER p.${attributes[0].reverse_link.id} == parentIdentifier._key
+            if (attributes[0].reverse_link?.type === AttributeTypes.SIMPLE_LINK) {
+                const c = dbService.db.collection(attributes[0].linked_library);
+                retrieveValue = aql`
+                    FOR ${vIdentifier} IN ${c}
+                        FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${aql.literal(
+                    parentIdentifier
+                )}._key`;
+            } else {
+                retrieveValue = aql`
+                    FOR ${vIdentifier}, ${eIdentifier} IN 1 ${direction} ${aql.literal(parentIdentifier)}._id
+                        ${collec}
+                        FILTER ${eIdentifier}.attribute == ${eAttribute}
+                    `;
+            }
 
             const returnValue = aql`RETURN ${vIdentifier}`;
-
-            // RETURN p
 
             let query: AqlQuery;
             const linkValIdentifier = aql.literal(`${parentIdentifier}linkVal`);
@@ -377,10 +377,9 @@ export default function ({
                 ]);
             } else {
                 const filterValue = attributes[1]
-                    ? attributes[1]._repo.filterQueryPart([...attributes].splice(1), filter, linkIdentifier)
+                    ? attributes[1]._repo.filterQueryPart([...attributes].splice(1), filter, linkIdentifier) // FIXME: i instead linkIdentifier
                     : null;
                 const linkedValue = aql.join([aql`FIRST(`, retrieveValue, filterValue, returnValue, aql`)`]);
-
                 query =
                     linked.format !== AttributeFormats.EXTENDED
                         ? aql`FILTER ${linkedValue} != null`
