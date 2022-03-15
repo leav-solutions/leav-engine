@@ -57,14 +57,9 @@ export default function ({
 
             return _buildLinkValue(deletedValue, args.attribute);
         },
-        async getReverseValues({
-            library,
-            advancedLinkAttr,
-            value,
-            forceGetAllValues = false,
-            ctx
-        }): Promise<ILinkValue[]> {
-            const libCollec = dbService.db.collection(library);
+        // To get values from advanced reverse link attribute into simple link.
+        async getReverseValues({advancedLinkAttr, value, forceGetAllValues = false, ctx}): Promise<ILinkValue[]> {
+            const libCollec = dbService.db.collection(advancedLinkAttr.linked_library);
             const queryParts = [];
 
             queryParts.push(aql`

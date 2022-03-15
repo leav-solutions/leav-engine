@@ -106,11 +106,9 @@ export interface IAttributeTypeRepo {
      * @return Array<{}>    Return an empty array if no value found
      */
     getReverseValues?({
-        library,
         advancedLinkAttr,
         ctx
     }: {
-        library: string;
         advancedLinkAttr: IAttributeRepo;
         value: string;
         forceGetAllValues: boolean;

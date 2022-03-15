@@ -491,9 +491,10 @@ export default function ({
                     valueId: value.id_value,
                     ctx
                 });
-                if (!v) {
-                    throw new ValidationError({id: Errors.UNKNOWN_VALUE});
-                }
+            }
+
+            if (!v) {
+                throw new ValidationError({id: Errors.UNKNOWN_VALUE});
             }
 
             const actionsListRes =

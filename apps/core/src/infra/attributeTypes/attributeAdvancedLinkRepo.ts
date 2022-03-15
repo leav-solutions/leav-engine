@@ -59,18 +59,18 @@ export default function ({
 
     return {
         async createValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
-
             // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 return attributeSimpleLinkRepo.createValue({
                     library: attribute.linked_library,
-                    recordId: value.value, // FIXME: a tester
+                    recordId: value.value,
                     attribute: {...(attribute.reverse_link as IAttribute), reverse_link: undefined},
                     value: {value: recordId},
                     ctx
                 });
             }
+
+            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it.
 
@@ -200,19 +200,17 @@ export default function ({
             options,
             ctx
         }): Promise<ILinkValue[]> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
-            const queryParts = [];
-
             // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 return attributeSimpleLinkRepo.getReverseValues({
-                    library: attribute.linked_library,
                     advancedLinkAttr: attribute,
                     value: recordId,
                     forceGetAllValues,
                     ctx
                 });
             }
+            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const queryParts = [];
 
             const edgeAttribute = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
             const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
@@ -264,10 +262,6 @@ export default function ({
             return _buildLinkValue(dbUtils.cleanup(res[0].edge.linkedRecord), res[0].edge);
         },
         sortQueryPart({attributes, order}: {attributes: IAttributeRepo[]; order: string}): AqlQuery {
-            // if ((attributes[0].reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
-            //     return attributeSimpleLinkRepo.sortQueryPart({attributes: attributes.slice(1), order});
-            // }
-
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -280,11 +274,20 @@ export default function ({
                 : attributes[0].id;
             const direction = !!attributes[0].reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
 
-            const linkedValue = aql`FIRST(
+            let linkedValue = aql`FIRST(
                 FOR v, e IN 1 ${direction} r._id
                 ${collec}
                 FILTER e.attribute == ${eAttribute} RETURN v.${linked.id}
             )`;
+
+            if (attributes[0].reverse_link?.type === AttributeTypes.SIMPLE_LINK) {
+                const c = dbService.db.collection(attributes[0].linked_library);
+                linkedValue = aql`
+                        FIRST(FOR v IN ${c}
+                            FILTER v.${eAttribute} == r._key
+                        RETURN v.${linked.id})
+                    `;
+            }
 
             const query =
                 linked.format !== AttributeFormats.EXTENDED

@@ -87,6 +87,22 @@ Object {
 }
 `;
 
+exports[`AttributeAdvancedLinkRepo filterQueryPart Should return value for reverse advanced link attribute 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "linked",
+    "value2": null,
+  },
+  "query": "FILTER FIRST( 
+                    FOR rv, re IN 1 INBOUND r._id
+                        @@value0
+                        FILTER re.attribute == @value1
+                     @value2 RETURN rv ) != null",
+}
+`;
+
 exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced link attribute 1`] = `
 " FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
