@@ -39,6 +39,7 @@ export default function ({
                 RETURN NEW`,
             ctx
         });
+
         const updatedDoc = res.length ? res[0] : {};
 
         return {

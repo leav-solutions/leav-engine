@@ -61,13 +61,20 @@ export default function ({
         async createValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
-                return attributeSimpleLinkRepo.createValue({
+                await attributeSimpleLinkRepo.createValue({
                     library: attribute.linked_library,
                     recordId: value.value,
                     attribute: {...(attribute.reverse_link as IAttribute), reverse_link: undefined},
                     value: {value: recordId},
                     ctx
                 });
+
+                // To return the "from" value.
+                return {
+                    value: {id: value.value, library: attribute.linked_library},
+                    created_by: null,
+                    modified_by: null
+                };
             }
 
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);

@@ -16,6 +16,7 @@ describe('Values', () => {
     const attrAdvancedName = 'values_attribute_test_adv';
     const attrAdvancedLinkName = 'values_attribute_test_adv_link';
     const attrAdvancedReverseLinkName = 'values_attribute_test_adv_reverse_link';
+    const attrAdvancedReverseLinkToSimpleLinkName = 'values_attribute_test_adv_reverse_link_to_simple_link';
     const attrTreeName = 'values_attribute_test_tree';
     const attrDateRangeName = 'test_attr_date_range';
 
@@ -129,6 +130,19 @@ describe('Values', () => {
                 ) { id }
             }`);
 
+        await makeGraphQlCall(`mutation {
+                saveAttribute(
+                    attribute: {
+                        id: "${attrAdvancedReverseLinkToSimpleLinkName}",
+                        type: advanced_link,
+                        format: text,
+                        linked_library: "${testLibName}",
+                        label: {fr: "Test attr advanced link"},
+                        reverse_link: "${attrSimpleLinkName}"
+                    }
+                ) { id }
+            }`);
+
         await gqlSaveAttribute({
             id: attrDateRangeName,
             type: AttributeTypes.SIMPLE,
@@ -172,6 +186,7 @@ describe('Values', () => {
                         "${attrSimpleLinkName}",
                         "${attrAdvancedLinkName}",
                         "${attrAdvancedReverseLinkName}",
+                        "${attrAdvancedReverseLinkToSimpleLinkName}",
                         "${attrSimpleExtendedName}",
                         "${attrTreeName}",
                         "${attrDateRangeName}"
@@ -422,6 +437,30 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue.id_value).toBeTruthy();
+        expect(res.data.data.saveValue.value.id).toBe(recordIdLinked);
+    });
+
+    test('Save value advanced reverse link into simple link', async () => {
+        const res = await makeGraphQlCall(`mutation {
+                saveValue(
+                    library: "${testLibName}",
+                    recordId: "${recordId}",
+                    attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
+                    value: {value: "${recordIdLinked}"}) {
+                        id_value
+
+                        ... on LinkValue {
+                            value {
+                                id
+                            }
+                        }
+                    }
+              }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.saveValue.id_value).toBeFalsy();
         expect(res.data.data.saveValue.value.id).toBe(recordIdLinked);
     });
 
