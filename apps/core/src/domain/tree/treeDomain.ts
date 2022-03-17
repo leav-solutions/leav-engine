@@ -14,7 +14,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {IList, SortOrder} from '../../_types/list';
+import {IList, IPaginationParams, SortOrder} from '../../_types/list';
 import {AppPermissionsActions, TreeNodePermissionsActions, TreePermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {
@@ -107,9 +107,11 @@ export interface ITreeDomain {
     getElementChildren(params: {
         treeId: string;
         nodeId: string;
-        depth?: number;
+        childrenCount?: boolean;
+        withTotalCount?: boolean;
+        pagination?: IPaginationParams;
         ctx: IQueryInfos;
-    }): Promise<ITreeNode[]>;
+    }): Promise<IList<ITreeNode>>;
 
     /**
      * Retrieve all ancestors of an element, including element itself and starting from the root
@@ -468,8 +470,23 @@ export default function ({
 
             return treeRepo.getTreeContent({treeId, startingNode, depth, childrenCount, ctx});
         },
-        async getElementChildren({treeId, nodeId, depth, ctx}): Promise<ITreeNode[]> {
-            return treeRepo.getElementChildren({treeId, nodeId, depth, ctx});
+        async getElementChildren({
+            treeId,
+            nodeId,
+            childrenCount,
+            withTotalCount,
+            pagination,
+            ctx
+        }): Promise<IList<ITreeNode>> {
+            if (!(await _isExistingTree(treeId, ctx))) {
+                throw new ValidationError({treeId: Errors.UNKNOWN_TREE});
+            }
+
+            if (nodeId && !(await this.isNodePresent({treeId, nodeId, ctx}))) {
+                throw new ValidationError({node: Errors.UNKNOWN_NODE});
+            }
+
+            return treeRepo.getElementChildren({treeId, nodeId, childrenCount, withTotalCount, pagination, ctx});
         },
         async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePaths> {
             return treeRepo.getElementAncestors({treeId, nodeId, ctx});

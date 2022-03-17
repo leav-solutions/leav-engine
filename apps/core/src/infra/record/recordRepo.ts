@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {IDbDocument} from 'infra/db/_types';
+import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import {getEdgesCollectionName, getFullNodeId, getRootId} from '../../infra/tree/helpers/utils';
 import {
@@ -23,7 +23,7 @@ import {
     TreeCondition
 } from '../../_types/record';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
-import {IDbService, IExecuteWithCount} from '../db/dbService';
+import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
 import {MAX_TREE_DEPTH, TO_RECORD_PROP_NAME} from '../tree/treeRepo';

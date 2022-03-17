@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {IDbDocument, IDbEdge} from 'infra/db/_types';
-import {IList} from '_types/list';
+import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, ITreeNodeLight, TreePaths} from '_types/tree';
+import {IDbDocument, IDbEdge, IExecuteWithCount, isExecuteWithCount} from '../../infra/db/_types';
 import {collectionTypes, IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
@@ -18,6 +18,7 @@ import {
     getNodesCollectionName,
     getRootId
 } from './helpers/utils';
+import {IChildrenResultNode} from './_types';
 
 export interface ITreeRepo {
     getDefaultElement(params: {id: string; ctx: IQueryInfos}): Promise<string>;
@@ -113,9 +114,11 @@ export interface ITreeRepo {
     getElementChildren(params: {
         treeId: string;
         nodeId: string;
-        depth?: number;
+        childrenCount?: boolean;
+        withTotalCount?: boolean;
+        pagination?: IPaginationParams;
         ctx: IQueryInfos;
-    }): Promise<ITreeNode[]>;
+    }): Promise<IList<ITreeNode>>;
 
     /**
      * Return all ancestors of an element, including element itself, but excluding tree root
@@ -503,25 +506,67 @@ export default function ({
 
             return treeContent;
         },
-        async getElementChildren({treeId, nodeId, depth = 1, ctx}): Promise<ITreeNode[]> {
+        async getElementChildren({
+            treeId,
+            nodeId,
+            childrenCount = false,
+            withTotalCount,
+            pagination,
+            ctx
+        }): Promise<IList<ITreeNode>> {
+            const rootId = getRootId(treeId);
+            const nodeFrom = nodeId ? getFullNodeId(nodeId, treeId) : rootId;
+
+            const hasPagination = typeof pagination?.offset !== 'undefined' && typeof pagination?.limit !== 'undefined';
+
             const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
-            // We query at depth + 1 to reach the record
-            const query = aql`
-                FOR v, e IN ${depth + 1} OUTBOUND ${getFullNodeId(nodeId, treeId)}
+
+            const childrenCountQuery = aql`
+                LET childrenCount = COUNT(
+                    FOR vChildren, eChildren IN 1 OUTBOUND e._from
                     ${treeEdgeCollec}
-                    RETURN {id: SPLIT(e._from, '/')[1], order: TO_NUMBER(e.order), record: v}
+                    FILTER !eChildren.${TO_RECORD_PROP_NAME}
+                    RETURN eChildren._id
+                )
             `;
 
-            const res: Array<{
-                id: string;
-                record: IDbDocument;
-                order: number;
-            }> = await dbService.execute({query, ctx});
+            // We query at depth + 1 to reach the record
+            const query = aql`
+                FOR v, e, p IN 2 OUTBOUND ${nodeFrom}
+                    ${treeEdgeCollec}
+                    FILTER e.${TO_RECORD_PROP_NAME}
+                    LET order = TO_NUMBER(p.edges[-2].order)
+                    ${childrenCount ? childrenCountQuery : aql``}
+                    ${hasPagination ? aql`LIMIT ${pagination.offset}, ${pagination.limit}` : aql.literal('')}
+                    SORT order ASC, p.edges[-2]._key ASC
+                    RETURN {
+                        _nodeId: e._from,
+                        id: PARSE_IDENTIFIER(e._from).key,
+                        order: TO_NUMBER(e.order),
+                        ${childrenCount ? aql.literal('childrenCount,') : aql``}
+                        record: v
+                    }
+            `;
 
-            return res.map(elem => {
-                elem.record.library = getLibraryFromDbId(elem.record._id);
-                return {id: elem.id, order: elem.order, record: dbUtils.cleanup(elem.record)};
+            const res = await dbService.execute<IExecuteWithCount<IChildrenResultNode> | IChildrenResultNode[]>({
+                query,
+                withTotalCount,
+                ctx
             });
+
+            const list = isExecuteWithCount(res) ? res.results : res;
+            return {
+                totalCount: isExecuteWithCount(res) ? res.totalCount : null,
+                list: list.map(elem => {
+                    elem.record.library = getLibraryFromDbId(elem.record._id);
+                    return {
+                        id: elem.id,
+                        order: elem.order,
+                        record: dbUtils.cleanup(elem.record),
+                        childrenCount: elem.childrenCount ?? null
+                    };
+                })
+            };
         },
         async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePaths> {
             if (!nodeId) {

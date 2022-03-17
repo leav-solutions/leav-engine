@@ -8,7 +8,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {omit} from 'lodash';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {IList} from '_types/list';
+import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
@@ -194,6 +194,20 @@ export default function ({
                         permissions: TreeNodePermissions!
                     }
 
+                    type TreeNodeLight {
+                        id: ID!,
+                        order: Int!,
+                        childrenCount: Int,
+                        record: Record!,
+                        linkedRecords(attribute: ID): [Record!],
+                        permissions: TreeNodePermissions!
+                    }
+
+                    type TreeNodeLightList {
+                        totalCount: Int,
+                        list: [TreeNodeLight!]!
+                    }
+
                     input TreeElementInput {
                         id: ID!,
                         library: String!
@@ -233,7 +247,10 @@ export default function ({
                         # Retrieve tree content.
                         # If startAt is specified, it returns this element's children. Otherwise, it starts
                         # from tree root
-                        treeContent(treeId: ID!, startAt: ID): [TreeNode!]
+                        treeContent(treeId: ID!, startAt: ID): [TreeNode!]!
+
+                        # Retrieve direct children of a node. If node is not specified, retrieves root children
+                        treeNodeChildren(treeId: ID!, node: ID, pagination: Pagination): TreeNodeLightList!
 
                         # Retrieve full tree content form tree root, as an object.
                         fullTreeContent(treeId: ID!): FullTreeContent
@@ -290,7 +307,38 @@ export default function ({
                                     childrenCount: hasChildrenCount,
                                     ctx
                                 })
-                            ).reduce(_filterTreeContentReduce(ctx, treeId), Promise.resolve([]));
+                            ).map(node => ({
+                                ...node,
+                                treeId
+                            }));
+                        },
+                        async treeNodeChildren(
+                            _,
+                            {treeId, node, pagination}: {treeId: string; node?: string; pagination?: IPaginationParams},
+                            ctx: IQueryInfos,
+                            info: GraphQLResolveInfo
+                        ): Promise<IList<ITreeNode>> {
+                            ctx.treeId = treeId;
+
+                            const fields = graphqlApp.getQueryFields(info);
+                            const hasChildrenCount = !!fields
+                                .find(f => f.name === 'list')
+                                ?.fields?.find(f => f.name === 'childrenCount');
+                            const withTotalCount = !!fields.find(f => f.name === 'totalCount');
+
+                            const children = await treeDomain.getElementChildren({
+                                treeId,
+                                nodeId: node ?? null,
+                                childrenCount: hasChildrenCount,
+                                withTotalCount,
+                                pagination,
+                                ctx
+                            });
+
+                            return {
+                                ...children,
+                                list: children.list.map(child => ({...child, treeId}))
+                            };
                         },
                         async fullTreeContent(_, {treeId}: {treeId: string}, ctx): Promise<ITreeNode[]> {
                             return treeDomain.getTreeContent({treeId, ctx});
@@ -447,10 +495,7 @@ export default function ({
                             if (typeof parent.children !== 'undefined') {
                                 children = parent.children;
                             } else {
-                                const fields = graphqlApp.getQueryFields(info);
-                                const depth = _getChildrenDepth(fields, 1);
-
-                                children = await treeDomain.getElementChildren({treeId, nodeId: parent.id, depth, ctx});
+                                children = (await treeDomain.getElementChildren({treeId, nodeId: parent.id, ctx})).list;
                             }
 
                             // Add treeId as it might be useful for nested resolvers
@@ -486,6 +531,35 @@ export default function ({
 
                             return records;
                         },
+                        permissions: (
+                            treeNode: ITreeNode & {treeId?: string},
+                            _,
+                            ctx: IQueryInfos,
+                            infos: GraphQLResolveInfo
+                        ): Promise<IKeyValue<boolean>> => {
+                            if (!treeNode.treeId) {
+                                return null;
+                            }
+
+                            const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
+
+                            return requestedActions.reduce(async (allPermsProm, action) => {
+                                const allPerms = await allPermsProm;
+
+                                const isAllowed = await permissionDomain.isAllowed({
+                                    type: PermissionTypes.TREE_NODE,
+                                    applyTo: treeNode.treeId,
+                                    action: action as TreeNodePermissionsActions,
+                                    userId: ctx.userId,
+                                    target: {nodeId: treeNode.id},
+                                    ctx
+                                });
+
+                                return {...allPerms, [action]: isAllowed};
+                            }, Promise.resolve({}));
+                        }
+                    },
+                    TreeNodeLight: {
                         permissions: (
                             treeNode: ITreeNode & {treeId?: string},
                             _,

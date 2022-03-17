@@ -47,6 +47,7 @@
         "UNKNOWN_LIBRARY": "Bibliothèque inconnue",
         "UNKNOWN_LINKED_RECORD": "Élément {{record}} inconnu dans la bibliothèque {{library}}",
         "UNKNOWN_METADATA_FIELDS": "Champs de métadonnées inconnus : {{fields}}",
+        "UNKNOWN_NODE": "Noeud inconnu",
         "UNKNOWN_PARENT": "Parent inconnu",
         "UNKNOWN_RECORD": "Élément inconnu",
         "UNKNOWN_TREE": "Arbre inconnu",

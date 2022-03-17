@@ -48,6 +48,7 @@
         "UNKNOWN_LIBRARY": "Unknown library",
         "UNKNOWN_LINKED_RECORD": "Unknown record {{record}} in library {{library}}",
         "UNKNOWN_METADATA_FIELDS": "Unknown metadata fields : {{fields}}",
+        "UNKNOWN_NODE": "Unknown node",
         "UNKNOWN_PARENT": "Unknown parent",
         "UNKNOWN_RECORD": "Unknown record",
         "UNKNOWN_TREE": "Unknown tree",
