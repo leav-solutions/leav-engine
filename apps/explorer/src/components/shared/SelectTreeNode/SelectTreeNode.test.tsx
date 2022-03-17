@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import React from 'react';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
-import {treeContentQuery} from '../../../graphQL/queries/trees/getTreeContentQuery';
 import SelectTreeNode from './SelectTreeNode';
 
 describe('SelectTreeNode', () => {
@@ -13,84 +13,92 @@ describe('SelectTreeNode', () => {
         const mocks = [
             {
                 request: {
-                    query: treeContentQuery,
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'treeId',
-                        startAt: null
+                        node: null,
+                        pagination: {limit: 20, offset: 0}
                     }
                 },
                 result: {
                     data: {
-                        treeContent: [
-                            {
-                                id: 'id1',
-                                record: {
+                        treeNodeChildren: {
+                            totalCount: 1,
+                            list: [
+                                {
                                     id: 'id1',
-                                    whoAmI: {
+                                    record: {
                                         id: 'id1',
-                                        label: 'label1',
-                                        color: null,
-                                        library: {
-                                            id: 'categories',
-                                            label: {fr: 'Catégories'},
-                                            gqlNames: {
-                                                type: 'Categorie',
-                                                query: 'categories',
-                                                __typename: 'LibraryGraphqlNames'
+                                        whoAmI: {
+                                            id: 'id1',
+                                            label: 'label1',
+                                            color: null,
+                                            library: {
+                                                id: 'categories',
+                                                label: {fr: 'Catégories'},
+                                                gqlNames: {
+                                                    type: 'Categorie',
+                                                    query: 'categories',
+                                                    __typename: 'LibraryGraphqlNames'
+                                                },
+                                                __typename: 'Library'
                                             },
-                                            __typename: 'Library'
+                                            preview: null,
+                                            __typename: 'RecordIdentity'
                                         },
-                                        preview: null,
-                                        __typename: 'RecordIdentity'
+                                        __typename: 'Categorie'
                                     },
-                                    __typename: 'Categorie'
-                                },
-                                childrenCount: 1,
-                                permissions: mockTreeNodePermissions
-                            }
-                        ]
+                                    childrenCount: 1,
+                                    permissions: mockTreeNodePermissions
+                                }
+                            ]
+                        }
                     }
                 }
             },
             {
                 request: {
-                    query: treeContentQuery,
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'treeId',
-                        startAt: 'id1'
+                        node: 'id1',
+                        pagination: {limit: 20, offset: 0}
                     }
                 },
                 result: {
                     data: {
-                        treeContent: [
-                            {
-                                id: 'id2',
-                                record: {
+                        treeNodeChildren: {
+                            totalCount: 1,
+                            list: [
+                                {
                                     id: 'id2',
-                                    whoAmI: {
-                                        __typename: 'RecordIdentity',
+                                    record: {
                                         id: 'id2',
-                                        label: 'label2',
-                                        color: null,
-                                        library: {
-                                            id: 'categories',
-                                            label: {fr: 'Catégories'},
-                                            gqlNames: {
-                                                type: 'Categorie',
-                                                query: 'categories',
-                                                __typename: 'LibraryGraphqlNames'
+                                        whoAmI: {
+                                            __typename: 'RecordIdentity',
+                                            id: 'id2',
+                                            label: 'label2',
+                                            color: null,
+                                            library: {
+                                                id: 'categories',
+                                                label: {fr: 'Catégories'},
+                                                gqlNames: {
+                                                    type: 'Categorie',
+                                                    query: 'categories',
+                                                    __typename: 'LibraryGraphqlNames'
+                                                },
+                                                __typename: 'Library'
                                             },
-                                            __typename: 'Library'
+                                            preview: null
                                         },
-                                        preview: null
+                                        __typename: 'Categorie'
                                     },
-                                    __typename: 'Categorie'
-                                },
-                                childrenCount: 0,
-                                permissions: mockTreeNodePermissions,
-                                __typename: 'TreeNode'
-                            }
-                        ]
+                                    childrenCount: 0,
+                                    permissions: mockTreeNodePermissions,
+                                    __typename: 'TreeNode'
+                                }
+                            ]
+                        }
                     }
                 }
             }

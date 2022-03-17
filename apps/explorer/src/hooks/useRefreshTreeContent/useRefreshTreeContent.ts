@@ -14,7 +14,7 @@ const useRefreshTreeContent = (treeId: string) => {
                         [key: string]: any;
                     };
                     Object.keys(cacheContent.ROOT_QUERY)
-                        .filter(key => key.match(new RegExp(`treeContent(.*)${treeId}`)))
+                        .filter(key => key.match(new RegExp(`treeNodeChildren(.*)${treeId}`)))
                         .forEach(key => cache.evict({fieldName: key}));
 
                     // Collect the garbage

@@ -206,7 +206,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const _getValueFromNode = (node: ITreeNode): IFilter['value'] => {
         return typeof node === 'undefined' || node.id === (filter as IFilterTree).tree.id
             ? {value: null}
-            : {value: node.id, label: node.title};
+            : {value: node.id, label: String(node.title)};
     };
 
     const toggleActiveStatus = () => {

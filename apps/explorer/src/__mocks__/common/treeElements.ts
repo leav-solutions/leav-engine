@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list_permissions} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {INavigationPath} from '_types/types';
-import {ITreeNodePermissions} from '../../graphQL/queries/trees/getTreeContentQuery';
 import {mockPreviews} from './record';
 
 export const mockTreeRecord: RecordIdentity = {
@@ -49,7 +49,7 @@ export const mockTreeRecordChild: RecordIdentity = {
     }
 };
 
-export const mockTreeNodePermissions: ITreeNodePermissions & {__typename: string} = {
+export const mockTreeNodePermissions: TREE_NODE_CHILDREN_treeNodeChildren_list_permissions & {__typename: string} = {
     access_tree: true,
     edit_children: true,
     detach: true,

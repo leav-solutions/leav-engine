@@ -87,6 +87,11 @@ export enum ViewTypes {
     timeline = 'timeline'
 }
 
+export interface Pagination {
+    limit: number;
+    offset: number;
+}
+
 export interface RecordFilterInput {
     field?: string | null;
     value?: string | null;

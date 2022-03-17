@@ -2,22 +2,27 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {Pagination} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
+import {treeNavigationPageSize} from 'constants/constants';
+import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import React, {createRef, useEffect} from 'react';
+import React, {createRef, useEffect, useState} from 'react';
 import {INavigationElement} from 'redux/stateType';
 import styled from 'styled-components';
-import {GET_TREE_CONTENT, GET_TREE_CONTENTVariables} from '_gqlTypes/GET_TREE_CONTENT';
-import {treeContentQuery} from '../../../../graphQL/queries/trees/getTreeContentQuery';
+import {TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables} from '_gqlTypes/TREE_NODE_CHILDREN';
 import themingVar from '../../../../themingVar';
 import DetailNavigation from './DetailNavigation';
 import HeaderColumnNavigation from './HeaderColumnNavigation';
 import Row from './Row';
 
-const ColumnWrapper = styled.div`
+const ColumnWrapper = styled.div<{showDetails: boolean}>`
     border-right: 1px solid ${themingVar['@divider-color']};
-    min-width: ${themingVar['@leav-navigation-column-width']};
+    width: ${p =>
+        p.showDetails
+            ? themingVar['@leav-navigation-column-details-width']
+            : themingVar['@leav-navigation-column-width']};
     height: 100%;
     display: flex;
     flex-flow: column nowrap;
@@ -31,6 +36,14 @@ const ColumnContent = styled.div`
     height: 100%;
 `;
 
+const ColumnPagination = styled(Pagination)`
+    && {
+        text-align: center;
+        padding: 0.5em 0;
+        border-bottom: 1px solid ${themingVar['@border-color-base']};
+    }
+`;
+
 interface IColumnProps {
     treeElement?: INavigationElement;
     depth: number;
@@ -39,14 +52,27 @@ interface IColumnProps {
 
 const Column = ({treeElement, depth, isActive: columnActive}: IColumnProps) => {
     const [activeTree] = useActiveTree();
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [totalCount, setTotalCount] = useState<number>(0);
 
-    const {loading, error, data} = useQuery<GET_TREE_CONTENT, GET_TREE_CONTENTVariables>(treeContentQuery, {
-        variables: {
-            treeId: activeTree?.id,
-            startAt: treeElement?.id ?? null
-        },
-        skip: !activeTree
-    });
+    const queryVariables = {
+        treeId: activeTree?.id,
+        node: treeElement?.id ?? null,
+        pagination: {
+            limit: treeNavigationPageSize,
+            offset: (currentPage - 1) * treeNavigationPageSize
+        }
+    };
+    const {loading, error, data, refetch, called} = useQuery<TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables>(
+        treeNodeChildrenQuery,
+        {
+            variables: queryVariables,
+            onCompleted: res => {
+                setTotalCount(res.treeNodeChildren.totalCount);
+            },
+            skip: !activeTree
+        }
+    );
 
     const ref = createRef<HTMLDivElement>();
 
@@ -59,12 +85,28 @@ const Column = ({treeElement, depth, isActive: columnActive}: IColumnProps) => {
         }
     }, [ref, columnActive]);
 
-    const children = data?.treeContent ?? [];
-    const canDisplayContent = !loading && !error;
-    const showDetails = treeElement && (!children.length || treeElement.showDetails);
+    useEffect(() => {
+        if (!activeTree || !called) {
+            return;
+        }
+
+        refetch(queryVariables);
+    }, [currentPage]);
+
+    const children = data?.treeNodeChildren.list ?? [];
+    const canDisplayContent = !error;
+    const showDetails = treeElement && ((!loading && !totalCount) || treeElement.showDetails);
+
+    const _handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
 
     return (
-        <ColumnWrapper ref={ref} data-testid={`navigation-column${showDetails ? '-with-details' : ''}`}>
+        <ColumnWrapper
+            ref={ref}
+            data-testid={`navigation-column${showDetails ? '-with-details' : ''}`}
+            showDetails={showDetails}
+        >
             <HeaderColumnNavigation
                 depth={depth}
                 treeElement={treeElement}
@@ -72,14 +114,28 @@ const Column = ({treeElement, depth, isActive: columnActive}: IColumnProps) => {
                 isDetail={showDetails}
                 children={children}
             />
-            {loading && <Loading />}
             {error && <ErrorDisplay message={error.message} />}
             {canDisplayContent && !showDetails && (
-                <ColumnContent>
-                    {children.map(child => (
-                        <Row key={child.id} treeElement={child} depth={depth} isActive={columnActive} />
-                    ))}
-                </ColumnContent>
+                <>
+                    {totalCount > treeNavigationPageSize && columnActive && (
+                        <ColumnPagination
+                            simple
+                            current={currentPage}
+                            total={totalCount}
+                            onChange={_handlePageChange}
+                            pageSize={treeNavigationPageSize}
+                        />
+                    )}
+                    {loading ? (
+                        <Loading />
+                    ) : (
+                        <ColumnContent>
+                            {children.map(child => (
+                                <Row key={child.id} treeElement={child} depth={depth} isActive={columnActive} />
+                            ))}
+                        </ColumnContent>
+                    )}
+                </>
             )}
             {canDisplayContent && showDetails && <DetailNavigation treeElement={treeElement} />}
         </ColumnWrapper>

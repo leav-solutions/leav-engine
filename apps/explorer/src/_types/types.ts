@@ -11,7 +11,8 @@ import {
     ViewSizes,
     ViewTypes
 } from '_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list_permissions} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
@@ -396,4 +397,11 @@ export type ValueOf<T> = T[keyof T];
 
 export interface IPermissions {
     [key: string]: boolean;
+}
+
+export interface ITreeContentRecordAndChildren {
+    id: string;
+    record: RecordIdentity;
+    children?: ITreeContentRecordAndChildren[];
+    permissions: TREE_NODE_CHILDREN_treeNodeChildren_list_permissions;
 }

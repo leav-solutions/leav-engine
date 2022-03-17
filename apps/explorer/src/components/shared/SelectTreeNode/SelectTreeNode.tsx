@@ -6,11 +6,17 @@ import {useLazyQuery} from '@apollo/client';
 import {Spin, Tree} from 'antd';
 import {Key} from 'antd/lib/table/interface';
 import {EventDataNode} from 'antd/lib/tree';
-import {treeContentQuery} from 'graphQL/queries/trees/getTreeContentQuery';
+import {treeNavigationPageSize} from 'constants/constants';
+import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from 'utils';
-import {GET_TREE_CONTENT, GET_TREE_CONTENTVariables, GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
+import {
+    TREE_NODE_CHILDREN,
+    TREE_NODE_CHILDRENVariables,
+    TREE_NODE_CHILDREN_treeNodeChildren_list
+} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {ISystemTranslation} from '_types/types';
 import ErrorDisplay from '../ErrorDisplay';
 import {ITreeNodeWithRecord} from '../SelectTreeNodeModal/SelectTreeNodeModal';
@@ -23,7 +29,7 @@ interface ISelectTreeNodeProps {
     multiple?: boolean;
 }
 
-const _constructTreeContent = (data: GET_TREE_CONTENT_treeContent[]): ITreeNodeWithRecord[] => {
+const _constructTreeContent = (data: TREE_NODE_CHILDREN_treeNodeChildren_list[]): ITreeNodeWithRecord[] => {
     return data.map(e => {
         return {
             record: e.record,
@@ -50,8 +56,16 @@ const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITr
     }
 };
 
+type ITreeMapElement = ITreeNodeWithRecord & {
+    isLeaf?: boolean;
+    paginationOffset: number;
+    children: ITreeMapElement[];
+    isShowMore?: boolean;
+    selectable?: boolean;
+};
+
 interface ITreeMap {
-    [nodeId: string]: ITreeNodeWithRecord;
+    [nodeId: string]: ITreeMapElement;
 }
 
 function SelectTreeNode({
@@ -62,13 +76,15 @@ function SelectTreeNode({
     multiple = false
 }: ISelectTreeNodeProps): JSX.Element {
     const [{lang}] = useLang();
+    const {t} = useTranslation();
 
-    const rootNode: ITreeNodeWithRecord & {isLeaf?: boolean} = {
+    const rootNode: ITreeMapElement = {
         title: localizedTranslation(tree.label, lang) || tree.id,
         record: null,
         id: tree.id,
         key: tree.id,
         isLeaf: false,
+        paginationOffset: 0,
         children: []
     };
 
@@ -81,28 +97,57 @@ function SelectTreeNode({
     const [fetchError, setFetchError] = useState<string>();
 
     // Retrieve tree content
-    const [loadTreeContent, {error, called}] = useLazyQuery<GET_TREE_CONTENT, GET_TREE_CONTENTVariables>(
-        treeContentQuery
+    const [loadTreeContent, {error, called}] = useLazyQuery<TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables>(
+        treeNodeChildrenQuery
     );
 
-    const _fetchTreeContent = async (key?: string) => {
+    const _fetchTreeContent = async (key?: string, offset: number = 0) => {
         try {
             const data = await loadTreeContent({
                 variables: {
                     treeId: tree.id,
-                    startAt: key ?? null
+                    node: key && key !== tree.id ? key : null,
+                    pagination: {
+                        limit: treeNavigationPageSize,
+                        offset
+                    }
                 }
             });
 
-            const formattedNodes = _constructTreeContent(data.data.treeContent);
+            const formattedNodes = _constructTreeContent(data.data.treeNodeChildren.list);
             const parentMapKey = key ?? tree.id;
+
             const newTreeMap = {...treeMap};
+            const totalCount = data.data.treeNodeChildren.totalCount;
+            const parentElement = newTreeMap[parentMapKey];
+            const showMoreKey = '__showMore' + parentMapKey + offset;
+
+            parentElement.children = parentElement.children.filter(
+                child => !child.key.match(`__showMore${parentMapKey}`)
+            ) as ITreeMapElement[];
 
             for (const node of formattedNodes) {
-                newTreeMap[node.key] = node;
-                newTreeMap[parentMapKey].children.push(node);
+                const nodeForTreeMap = {...node, paginationOffset: 0};
+                newTreeMap[nodeForTreeMap.key] = nodeForTreeMap as ITreeMapElement;
+                parentElement.paginationOffset = offset;
+                parentElement.children.push(nodeForTreeMap);
             }
 
+            if (totalCount > parentElement.paginationOffset + treeNavigationPageSize) {
+                const showMoreElement: ITreeMapElement = {
+                    id: parentMapKey,
+                    key: showMoreKey,
+                    record: null,
+                    title: t('tree-node-selection.show_more'),
+                    isLeaf: false,
+                    paginationOffset: 0,
+                    isShowMore: true,
+                    selectable: false,
+                    children: []
+                };
+
+                parentElement.children.push(showMoreElement);
+            }
             setTreeMap(newTreeMap);
 
             setFetchError(null);
@@ -121,14 +166,20 @@ function SelectTreeNode({
     }, []);
 
     const _handleLoadData = async (nodeData: EventDataNode) => {
-        const {key} = nodeData;
+        const {id, isShowMore} = nodeData as EventDataNode & ITreeMapElement;
 
-        if (key === tree.id) {
+        // Handle offset if we get here through the "show more" element
+        const currentNodeOffset = treeMap[id]?.paginationOffset ?? 0;
+        const paginationOffset = isShowMore
+            ? (treeMap[id]?.paginationOffset ?? 0) + treeNavigationPageSize
+            : currentNodeOffset;
+
+        if (id === tree.id) {
             // Root has already been loaded
             return;
         }
 
-        await _fetchTreeContent(String(key));
+        await _fetchTreeContent(String(id), paginationOffset);
     };
 
     const _handleSelect = (_, e: {selected: boolean; node: any}) => {

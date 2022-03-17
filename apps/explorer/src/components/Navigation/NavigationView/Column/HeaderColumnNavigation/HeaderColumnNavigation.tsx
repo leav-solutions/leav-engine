@@ -93,12 +93,14 @@ function HeaderColumnNavigation({
 
     const _handleClickCheckbox = () => {
         // Select all elements from current column
-        const columnSelection: ISharedSelected[] = children.map(child => ({
-            id: child.record.whoAmI.id,
-            nodeId: child.id,
-            library: child.record.whoAmI.library.id,
-            label: child.record.whoAmI.label
-        }));
+        const columnSelection: ISharedSelected[] = children
+            .filter(child => child.permissions.access_tree)
+            .map(child => ({
+                id: child.record.whoAmI.id,
+                nodeId: child.id,
+                library: child.record.whoAmI.library.id,
+                label: child.record.whoAmI.label
+            }));
 
         dispatch(
             setSelection({

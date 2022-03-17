@@ -1,11 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RightOutlined} from '@ant-design/icons';
+import {LockFilled, RightOutlined} from '@ant-design/icons';
 import {Badge, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'redux/navigation';
 import {setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -29,6 +30,7 @@ interface IRowProps {
 }
 
 const RowWrapper = styled.div<IRowProps>`
+    position: relative;
     display: grid;
 
     place-items: flex-start;
@@ -85,17 +87,21 @@ interface IActiveRowNavigationProps {
 function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Element {
     const [{lang}] = useLang();
 
+    const {t} = useTranslation();
     const {selectionState, navigation} = useAppSelector(state => ({
         selectionState: state.selection,
         navigation: state.navigation
     }));
     const dispatch = useAppDispatch();
-
     const parentElement = navigation.path[depth - 1];
-
     const recordLabel = treeElement.record.whoAmI.label;
+    const isAccessible = treeElement.permissions.access_tree;
 
     const addPath = () => {
+        if (!isAccessible) {
+            return;
+        }
+
         const newPath = [...navigation.path.slice(0, depth), {...treeElement}];
 
         dispatch(setNavigationPath(newPath));
@@ -163,7 +169,12 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
 
     return (
         <RowWrapper onClick={addPath} isInPath={isInPath} isActive={isActive}>
-            {isActive && (
+            {!isAccessible && (
+                <Tooltip title={t('navigation.access_denied')}>
+                    <LockFilled />
+                </Tooltip>
+            )}
+            {isActive && isAccessible && (
                 <CheckboxWrapper
                     onClick={e => {
                         // checkbox onclick doesn't allow to do that
@@ -187,9 +198,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                     <div className="counter">
                         <Badge count={treeElement.childrenCount} overflowCount={1000} />
                     </div>
-                    <div>
-                        <RightOutlined />
-                    </div>
+                    <div>{isAccessible && <RightOutlined />}</div>
                 </>
             )}
         </RowWrapper>
