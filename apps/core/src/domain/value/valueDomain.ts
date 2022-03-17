@@ -233,7 +233,8 @@ export default function ({
 
             // Validate value
             const validationErrors = await validateValue({
-                ...{...valueChecksParams, attributeProps},
+                ...valueChecksParams,
+                attributeProps,
                 deps: {
                     attributeDomain,
                     recordRepo,
