@@ -16,6 +16,7 @@ import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from './uiElements/StandardField/standardFieldReducer/standardFieldReducer';
+import {ValueInput} from '_gqlTypes/globalTypes';
 
 export interface IValueToSubmit {
     attribute: string;
@@ -69,7 +70,7 @@ export interface ISubmittedValueTree extends ISubmittedValueBase {
 export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISubmittedValueTree;
 
 export type SubmitValueFunc = (values: SubmittedValue[]) => Promise<ISubmitMultipleResult>;
-export type DeleteValueFunc = (idValue: string | null, attribute: string) => Promise<IDeleteValueResult>;
+export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
 
 export interface ISubmittedValueBase {
     attribute: RECORD_FORM_recordForm_elements_attribute;

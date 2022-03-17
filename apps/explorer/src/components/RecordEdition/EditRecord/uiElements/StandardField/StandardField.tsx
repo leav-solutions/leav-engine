@@ -133,7 +133,7 @@ function StandardField({
             idValue
         });
 
-        const deleteRes = await onValueDelete(idValue, attribute.id);
+        const deleteRes = await onValueDelete({id_value: idValue}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             dispatch({

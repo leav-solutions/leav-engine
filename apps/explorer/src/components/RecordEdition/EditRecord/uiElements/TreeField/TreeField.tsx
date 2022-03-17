@@ -86,7 +86,7 @@ function TreeField({
 
     const renderItem = (value: IRecordPropertyTree) => {
         const _handleDelete = async () => {
-            const deleteRes = await onValueDelete(value.id_value, attribute.id);
+            const deleteRes = await onValueDelete({id_value: value.id_value}, attribute.id);
 
             if (deleteRes.status === APICallStatus.SUCCESS) {
                 setFieldValues(fieldValues.filter(val => val.id_value !== value.id_value));
