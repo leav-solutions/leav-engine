@@ -39,6 +39,7 @@ export const attributeDetailsFragment = gql`
             linked_library {
                 id
             }
+            reverse_link
         }
         ... on TreeAttribute {
             linked_tree {

@@ -155,6 +155,7 @@ export default function ({
                         : aql`FILTER !POSITION(${recordsSubQuery}, r._id)`;
             } else {
                 const filterAttribute = filter.attributes[0];
+
                 filterQueryPart = attributeTypesRepo.getTypeRepo(filterAttribute).filterQueryPart(
                     filter.attributes.map(attr => ({...attr, _repo: attributeTypesRepo.getTypeRepo(attr)})),
                     filter

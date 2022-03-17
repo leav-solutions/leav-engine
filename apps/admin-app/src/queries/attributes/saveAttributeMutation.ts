@@ -11,6 +11,17 @@ export const saveAttributeQuery = gql`
         saveAttribute(attribute: $attrData) {
             ...AttributeDetails
             ...AttributeValuesListDetails
+            ... on LinkAttribute {
+                linked_library {
+                    id
+                }
+                reverse_link
+            }
+            ... on TreeAttribute {
+                linked_tree {
+                    id
+                }
+            }
         }
     }
 `;

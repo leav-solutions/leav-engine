@@ -149,10 +149,12 @@ function LinkField({
     const _handleCloseValuesAdd = () => setIsValuesAddVisible(false);
 
     const _handleDeleteValue = async (value: IRecordPropertyLink) => {
-        const deleteRes = await onValueDelete(value.id_value, attribute.id);
+        const deleteRes = await onValueDelete({value: value.linkValue.id}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            setFieldValues(fieldValues.filter(val => val.id_value !== value.id_value));
+            setFieldValues(
+                fieldValues.filter(val => val.id_value !== value.id_value || val.linkValue.id !== value.linkValue.id)
+            );
             return;
         }
     };
@@ -247,7 +249,7 @@ function LinkField({
     }));
 
     const data: IRowData[] = fieldValues.map(val => ({
-        key: val.id_value,
+        key: val.id_value + val.linkValue.id,
         value: val,
         whoAmI: val.linkValue.whoAmI,
         ..._getLinkedRecordColumnsValues(val.linkValue.id)

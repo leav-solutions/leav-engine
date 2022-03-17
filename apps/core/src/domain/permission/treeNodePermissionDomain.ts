@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
@@ -82,7 +83,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
                 return valueRepo.getValues({
                     library,
                     recordId,
-                    attribute: permTreeAttrProps,
+                    attribute: permTreeAttrProps as IAttributeWithRevLink,
                     ctx
                 });
             })

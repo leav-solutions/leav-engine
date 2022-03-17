@@ -170,6 +170,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
     metadata_fields: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_metadata_fields[] | null;
     values_list: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list | null;
     linked_library: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_linked_library | null;
+    reverse_link: string | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {

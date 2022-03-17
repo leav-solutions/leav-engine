@@ -125,7 +125,7 @@ export default function ({
                             library,
                             recordId,
                             attribute: libraryAttribute.id,
-                            valueId: cv.id_value,
+                            value: {id_value: cv.id_value},
                             ctx
                         });
                     }

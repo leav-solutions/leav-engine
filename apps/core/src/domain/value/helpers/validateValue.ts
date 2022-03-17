@@ -41,11 +41,19 @@ const _validateLinkedRecord = async (
     ctx: IQueryInfos
 ): Promise<ILinkRecordValidationResult> => {
     const idAttrProps = await deps.attributeDomain.getAttributeProperties({id: 'id', ctx});
+    let reverseLink: IAttribute;
+    if (!!idAttrProps.reverse_link) {
+        reverseLink = await deps.attributeDomain.getAttributeProperties({
+            id: idAttrProps.reverse_link as string,
+            ctx
+        });
+    }
+
     const records = await deps.recordRepo.find({
         libraryId: attribute.linked_library,
         filters: [
             {
-                attributes: [idAttrProps],
+                attributes: [{...idAttrProps, reverse_link: reverseLink}],
                 condition: AttributeCondition.EQUAL,
                 value: value.value
             }
@@ -175,7 +183,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
         }
     }
 
-    const metadataErrors = _validateMetadata(params.attributeProps, params.value);
+    const metadataErrors = _validateMetadata(attributeProps, params.value);
     errors = {...errors, ...metadataErrors};
 
     if (_mustCheckLinkedRecord(attributeProps)) {

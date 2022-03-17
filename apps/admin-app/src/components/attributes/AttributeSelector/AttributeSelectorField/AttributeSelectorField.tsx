@@ -15,7 +15,11 @@ function AttributeSelectorField({attributes = [], ...fieldProps}: IAttributeSele
     const availableLanguages = useLang().lang;
     const options = attributes.map(l => ({key: l.id, value: l.id, text: localizedLabel(l.label, availableLanguages)}));
 
-    return <Form.Dropdown {...fieldProps} search options={options} />;
+    if (!!fieldProps.clearable) {
+        options.unshift({key: '', value: '', text: ''});
+    }
+
+    return <Form.Dropdown {...{...fieldProps, clearable: undefined}} search options={options} />;
 }
 
 export default AttributeSelectorField;

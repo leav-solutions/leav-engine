@@ -9,7 +9,7 @@ import {IStandardValue, IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
@@ -39,6 +39,7 @@ export default function ({
                 RETURN NEW`,
             ctx
         });
+
         const updatedDoc = res.length ? res[0] : {};
 
         return {
@@ -89,11 +90,8 @@ export default function ({
                 }
             ];
         },
-        async getValueById(): Promise<IStandardValue> {
-            return null;
-        },
         filterQueryPart(
-            attributes: IAttribute[],
+            attributes: IAttributeWithRepo[],
             filter: IRecordFilterOption,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
@@ -140,7 +138,7 @@ export default function ({
 
             return query;
         },
-        sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
+        sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 
             const query: AqlQuery =

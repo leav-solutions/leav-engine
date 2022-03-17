@@ -115,6 +115,7 @@ export interface GET_ATTRIBUTES_attributes_list_LinkAttribute {
     permissions_conf: GET_ATTRIBUTES_attributes_list_LinkAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTES_attributes_list_LinkAttribute_versions_conf | null;
     linked_library: GET_ATTRIBUTES_attributes_list_LinkAttribute_linked_library | null;
+    reverse_link: string | null;
 }
 
 export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_metadata_fields {

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import moment from 'moment';
@@ -20,6 +21,7 @@ export default async (
         valueRepo: IValueRepo;
         recordRepo: IRecordRepo;
         actionsListDomain: IActionsListDomain;
+        attributeDomain: IAttributeDomain;
     },
     ctx: IQueryInfos
 ): Promise<IValue> => {
@@ -34,9 +36,29 @@ export default async (
         valueToSave.created_at = moment().unix();
     }
 
+    let reverseLink: IAttribute;
+    if (!!attribute.reverse_link) {
+        reverseLink = await deps.attributeDomain.getAttributeProperties({
+            id: attribute.reverse_link as string,
+            ctx
+        });
+    }
+
     const savedVal = valueExists
-        ? await deps.valueRepo.updateValue({library, recordId, attribute, value: valueToSave, ctx})
-        : await deps.valueRepo.createValue({library, recordId, attribute, value: valueToSave, ctx});
+        ? await deps.valueRepo.updateValue({
+              library,
+              recordId,
+              attribute: {...attribute, reverse_link: reverseLink},
+              value: valueToSave,
+              ctx
+          })
+        : await deps.valueRepo.createValue({
+              library,
+              recordId,
+              attribute: {...attribute, reverse_link: reverseLink},
+              value: valueToSave,
+              ctx
+          });
 
     // Apply actions list on value
     const processedValue = attribute?.actions_list?.[ActionsListEvents.GET_VALUE]

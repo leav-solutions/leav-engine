@@ -122,6 +122,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute {
     permissions_conf: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissions_conf | null;
     versions_conf: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_conf | null;
     linked_library: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_linked_library | null;
+    reverse_link: string | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_metadata_fields {

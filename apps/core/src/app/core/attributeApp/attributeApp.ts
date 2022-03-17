@@ -11,11 +11,18 @@ import {GraphQLResolveInfo} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
+import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
 import {ActionsListEvents} from '../../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute, IValuesListConf} from '../../../_types/attribute';
+import {
+    AttributeFormats,
+    AttributeTypes,
+    IAttribute,
+    IValuesListConf,
+    IGetCoreAttributesParams
+} from '../../../_types/attribute';
 import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {AttributeCondition} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
@@ -176,7 +183,8 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     type LinkAttribute implements Attribute{
                         ${attributesInterfaceSchema}
                         linked_library: Library,
-                        values_list: LinkValuesListConf
+                        values_list: LinkValuesListConf,
+                        reverse_link: String
                     }
 
                     type TreeAttribute implements Attribute{
@@ -199,7 +207,8 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         multiple_values: Boolean,
                         versions_conf: ValuesVersionsConfInput,
                         metadata_fields: [String!],
-                        values_list: ValuesListConfInput
+                        values_list: ValuesListConfInput,
+                        reverse_link: String
                     }
 
                     type EmbeddedAttribute {
@@ -308,7 +317,11 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                 `,
                 resolvers: {
                     Query: {
-                        async attributes(parent, {filters, pagination, sort}, ctx) {
+                        async attributes(
+                            parent,
+                            {filters, pagination, sort}: IGetCoreAttributesParams,
+                            ctx: IQueryInfos
+                        ): Promise<IList<IAttribute>> {
                             return attributeDomain.getAttributes({
                                 params: {filters, withCount: true, pagination, sort},
                                 ctx

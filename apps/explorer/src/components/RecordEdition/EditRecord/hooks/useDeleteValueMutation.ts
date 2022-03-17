@@ -31,14 +31,14 @@ export default function useDeleteValueMutation(record: IRecordIdentityWhoAmI): I
     const {t} = useTranslation();
 
     return {
-        deleteValue: async (valueId, attribute) => {
+        deleteValue: async (value, attribute) => {
             try {
                 await executeDeleteValue({
                     variables: {
                         library: record.library.id,
                         attribute,
                         recordId: record.id,
-                        valueId
+                        value
                     }
                 });
                 return {status: APICallStatus.SUCCESS};

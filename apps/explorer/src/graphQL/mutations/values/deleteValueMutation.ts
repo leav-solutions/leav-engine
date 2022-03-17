@@ -4,8 +4,8 @@
 import {gql} from 'graphql-tag';
 
 export const deleteValueMutation = gql`
-    mutation DELETE_VALUE($library: ID!, $recordId: ID!, $attribute: ID!, $valueId: ID) {
-        deleteValue(library: $library, recordId: $recordId, attribute: $attribute, valueId: $valueId) {
+    mutation DELETE_VALUE($library: ID!, $recordId: ID!, $attribute: ID!, $value: ValueInput) {
+        deleteValue(library: $library, recordId: $recordId, attribute: $attribute, value: $value) {
             id_value
             attribute {
                 id

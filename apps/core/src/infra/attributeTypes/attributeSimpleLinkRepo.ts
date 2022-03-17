@@ -57,6 +57,27 @@ export default function ({
 
             return _buildLinkValue(deletedValue, args.attribute);
         },
+        // To get values from advanced reverse link attribute into simple link.
+        async getReverseValues({advancedLinkAttr, value, forceGetAllValues = false, ctx}): Promise<ILinkValue[]> {
+            const libCollec = dbService.db.collection(advancedLinkAttr.linked_library);
+            const queryParts = [];
+
+            queryParts.push(aql`
+                FOR r IN ${libCollec}
+                    FILTER r.${(advancedLinkAttr.reverse_link as IAttribute)?.id} == ${value}`);
+
+            const limitOne = aql.literal(!advancedLinkAttr.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
+
+            queryParts.push(aql`
+                ${limitOne}
+                RETURN r
+            `);
+
+            const query = aql.join(queryParts);
+            const res = await dbService.execute({query, ctx});
+
+            return res.map(r => ({id_value: null, value: dbUtils.cleanup(r), created_by: null, modified_by: null}));
+        },
         async getValues({library, recordId, attribute, ctx}): Promise<ILinkValue[]> {
             const libCollec = dbService.db.collection(library);
             const linkedLibCollec = dbService.db.collection(attribute.linked_library);
@@ -76,10 +97,7 @@ export default function ({
                 .slice(0, 1)
                 .map(r => ({id_value: null, value: dbUtils.cleanup(r), created_by: null, modified_by: null}));
         },
-        async getValueById(): Promise<ILinkValue> {
-            return null;
-        },
-        sortQueryPart({attributes, order}: IRecordSort): AqlQuery {
+        sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}

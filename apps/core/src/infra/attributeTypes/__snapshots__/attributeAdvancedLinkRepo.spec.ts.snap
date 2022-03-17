@@ -28,6 +28,34 @@ Object {
 }
 `;
 
+exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advanced link value 1`] = `
+"
+                    INSERT @value0
+                        IN @@value1
+                    RETURN NEW"
+`;
+
+exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advanced link value 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": Object {
+    "_from": "test_linked_lib/987654",
+    "_to": "test_lib/12345",
+    "attribute": "test",
+    "created_at": 400999999,
+    "created_by": "0",
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
+    "modified_at": 400999999,
+    "modified_by": "0",
+    "version": Object {
+      "my_tree": "1",
+    },
+  },
+}
+`;
+
 exports[`AttributeAdvancedLinkRepo deleteValue Should delete a value 1`] = `
 "
                     REMOVE @value0 IN @@value1
@@ -52,31 +80,64 @@ Object {
     "value2": null,
   },
   "query": "FILTER FIRST( 
-                FOR rv, re IN 1 OUTBOUND r._id
-                @@value0
-                FILTER re.attribute == @value1
-             @value2 RETURN rv ) != null",
+                    FOR rv, re IN 1 OUTBOUND r._id
+                        @@value0
+                        FILTER re.attribute == @value1
+                     @value2 RETURN rv ) != null",
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo getValueByID Should return value 1`] = `
-"
-                FOR linkedRecord, edge
+exports[`AttributeAdvancedLinkRepo filterQueryPart Should return value for reverse advanced link attribute 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "core_edge_values_links",
+    "value1": "linked",
+    "value2": null,
+  },
+  "query": "FILTER FIRST( 
+                    FOR rv, re IN 1 INBOUND r._id
+                        @@value0
+                        FILTER re.attribute == @value1
+                     @value2 RETURN rv ) != null",
+}
+`;
+
+exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced link attribute 1`] = `
+" FOR linkedRecord, edge
                     IN 1 OUTBOUND @value0
                     @@value1
                     FILTER edge._key == @value2
                     FILTER edge.attribute == @value3
                     LIMIT 1
-                    RETURN {linkedRecord, edge}
-            "
+                    RETURN {linkedRecord, edge}"
 `;
 
-exports[`AttributeAdvancedLinkRepo getValueByID Should return value 2`] = `
+exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced link attribute 2`] = `
 Object {
   "@value1": "core_edge_values_links",
   "value0": "test_lib/987654",
   "value2": "112233",
   "value3": "test_adv_link_attr",
+}
+`;
+
+exports[`AttributeAdvancedLinkRepo getValueByID Should return value for reverse advanced link attribute 1`] = `
+" FOR linkedRecord, edge
+                    IN 1 INBOUND @value0
+                    @@value1
+                    FILTER edge._key == @value2
+                    FILTER edge.attribute == @value3
+                    LIMIT 1
+                    RETURN {linkedRecord, edge}"
+`;
+
+exports[`AttributeAdvancedLinkRepo getValueByID Should return value for reverse advanced link attribute 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": "test_lib/987654",
+  "value2": "112233",
+  "value3": "test",
 }
 `;
 
@@ -144,6 +205,26 @@ Object {
 }
 `;
 
+exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse advanced link attribute 1`] = `
+"
+                FOR linkedRecord, edge
+                    IN 1 INBOUND @value0
+                    @@value1
+                    FILTER edge.attribute == @value2
+                 
+                
+                RETURN {linkedRecord, edge}
+            "
+`;
+
+exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse advanced link attribute 2`] = `
+Object {
+  "@value1": "core_edge_values_links",
+  "value0": "test_lib/123456",
+  "value2": "test",
+}
+`;
+
 exports[`AttributeAdvancedLinkRepo sortQueryPart Should return advanced link sort 1`] = `
 Object {
   "_source": [Function],
@@ -179,6 +260,37 @@ Object {
     "_from": "test_lib/12345",
     "_to": "test_linked_lib/987654",
     "attribute": "test_adv_link_attr",
+    "created_by": undefined,
+    "metadata": Object {
+      "my_attribute": "metadata value",
+    },
+    "modified_at": 400999999,
+    "modified_by": "0",
+    "version": Object {
+      "my_tree": "1",
+    },
+  },
+}
+`;
+
+exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced link value 1`] = `
+"
+                    UPDATE @value0
+                        WITH @value1
+                        IN @@value2
+                    RETURN NEW"
+`;
+
+exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced link value 2`] = `
+Object {
+  "@value2": "core_edge_values_links",
+  "value0": Object {
+    "_key": "987654",
+  },
+  "value1": Object {
+    "_from": "test_linked_lib/987654",
+    "_to": "test_lib/12345",
+    "attribute": "test",
     "created_by": undefined,
     "metadata": Object {
       "my_attribute": "metadata value",

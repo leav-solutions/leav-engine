@@ -283,13 +283,13 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
         }
     };
 
-    const _handleDeleteValue: DeleteValueFunc = async (idValue, attribute) => {
+    const _handleDeleteValue: DeleteValueFunc = async (value, attribute) => {
         if (!isCreationMode) {
-            return deleteValue(idValue, attribute);
+            return deleteValue(value, attribute);
         }
 
         const newPendingValues = {...pendingValues};
-        delete newPendingValues[attribute][idValue];
+        delete newPendingValues[attribute][value.id_value];
 
         setPendingValues(newPendingValues);
 

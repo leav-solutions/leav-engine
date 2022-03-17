@@ -13,6 +13,27 @@ Object {
 }
 `;
 
+exports[`AttributeSimpleLinkRepo getReverseValues Should return values for advanced reverse link attribute into simple link 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "@value0": "test_lib",
+    "@value2": "test_linked_lib",
+    "value1": "123456",
+    "value3": "test_simple_link_attr",
+  },
+  "query": "
+                    FOR r IN @@value0
+                        FILTER r._key == @value1
+                        FOR l IN @@value2
+                            FILTER r.@value3 == l._key
+                            RETURN l
+                ",
+}
+`;
+
+exports[`AttributeSimpleLinkRepo getReverseValues Should return values for advanced reverse link attribute into simple link 2`] = `undefined`;
+
 exports[`AttributeSimpleLinkRepo getValues Should return values for simple link attribute 1`] = `
 Object {
   "_source": [Function],

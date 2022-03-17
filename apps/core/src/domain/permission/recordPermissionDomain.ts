@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import ValidationError from '../../errors/ValidationError';
@@ -80,7 +81,7 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
                     return valueRepo.getValues({
                         library,
                         recordId,
-                        attribute: permTreeAttrProps,
+                        attribute: permTreeAttrProps as IAttributeWithRevLink,
                         ctx
                     });
                 })

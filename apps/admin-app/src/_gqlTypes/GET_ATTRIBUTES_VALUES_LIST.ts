@@ -84,6 +84,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute {
     format: AttributeFormat | null;
     values_list: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list | null;
     linked_library: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_linked_library | null;
+    reverse_link: string | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_library {

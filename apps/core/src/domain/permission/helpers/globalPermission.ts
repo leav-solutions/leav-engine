@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
@@ -72,7 +73,7 @@ export default function ({
             const userGroups = (await valueRepo.getValues({
                 library: 'users',
                 recordId: userId,
-                attribute: userGroupAttr.list[0],
+                attribute: userGroupAttr.list[0] as IAttributeWithRevLink,
                 ctx
             })) as ITreeValue[];
 

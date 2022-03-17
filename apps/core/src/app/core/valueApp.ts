@@ -171,7 +171,7 @@ export default function ({
                             values: [ValueBatchInput],
                             deleteEmpty: Boolean
                         ): saveValueBatchResult!
-                        deleteValue(library: ID!, recordId: ID!, attribute: ID!, valueId: ID): GenericValue!
+                        deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): GenericValue!
                     }
                 `,
                 resolvers: {
@@ -224,12 +224,12 @@ export default function ({
 
                             return res;
                         },
-                        async deleteValue(parent, {library, recordId, attribute, valueId}, ctx): Promise<IValue> {
+                        async deleteValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
                             return valueDomain.deleteValue({
                                 library,
                                 recordId,
                                 attribute,
-                                valueId,
+                                value,
                                 ctx
                             });
                         }

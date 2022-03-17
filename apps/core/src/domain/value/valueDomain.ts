@@ -9,7 +9,7 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {AttributeTypes, ValueVersionMode} from '../../_types/attribute';
+import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
 import {EventType} from '../../_types/event';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
@@ -92,13 +92,13 @@ export interface IValueDomain {
         library,
         recordId,
         attribute,
-        valueId,
+        value,
         ctx
     }: {
         library: string;
         recordId: string;
         attribute: string;
-        valueId?: string;
+        value?: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
 }
@@ -137,6 +137,11 @@ export default function ({
 
             const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
+            let reverseLink: IAttribute;
+            if (!!attr.reverse_link) {
+                reverseLink = await attributeDomain.getAttributeProperties({id: attr.reverse_link as string, ctx});
+            }
+
             let values: IValue[];
             if (
                 !attr.versions_conf ||
@@ -151,7 +156,7 @@ export default function ({
                 values = await valueRepo.getValues({
                     library,
                     recordId,
-                    attribute: attr,
+                    attribute: {...attr, reverse_link: reverseLink},
                     forceGetAllValues: false,
                     options: getValOptions,
                     ctx
@@ -161,7 +166,7 @@ export default function ({
                 const allValues: IValue[] = await valueRepo.getValues({
                     library,
                     recordId,
-                    attribute: attr,
+                    attribute: {...attr, reverse_link: reverseLink},
                     forceGetAllValues: true,
                     options,
                     ctx
@@ -229,6 +234,7 @@ export default function ({
             // Validate value
             const validationErrors = await validateValue({
                 ...valueChecksParams,
+                attributeProps,
                 deps: {
                     attributeDomain,
                     recordRepo,
@@ -261,7 +267,8 @@ export default function ({
                 {
                     valueRepo,
                     recordRepo,
-                    actionsListDomain
+                    actionsListDomain,
+                    attributeDomain
                 },
                 ctx
             );
@@ -294,6 +301,14 @@ export default function ({
                     try {
                         const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
 
+                        let reverseLink: IAttribute;
+                        if (!!attributeProps.reverse_link) {
+                            reverseLink = await attributeDomain.getAttributeProperties({
+                                id: attributeProps.reverse_link as string,
+                                ctx
+                            });
+                        }
+
                         const valueChecksParams = {
                             attributeProps,
                             library,
@@ -318,7 +333,7 @@ export default function ({
 
                         // Validate value
                         const validationErrors = await validateValue({
-                            ...valueChecksParams,
+                            ...{...valueChecksParams, attributeProps},
                             deps: {
                                 attributeDomain,
                                 recordRepo,
@@ -348,7 +363,7 @@ export default function ({
                                 ? await valueRepo.deleteValue({
                                       library,
                                       recordId,
-                                      attribute: attributeProps,
+                                      attribute: {...attributeProps, reverse_link: reverseLink},
                                       value: valToSave,
                                       ctx
                                   })
@@ -360,7 +375,8 @@ export default function ({
                                       {
                                           valueRepo,
                                           recordRepo,
-                                          actionsListDomain
+                                          actionsListDomain,
+                                          attributeDomain
                                       },
                                       ctx
                                   );
@@ -413,7 +429,7 @@ export default function ({
 
             return saveRes;
         },
-        async deleteValue({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
+        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
 
@@ -445,32 +461,57 @@ export default function ({
 
             const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
-            // if simple attribute type
-            let value: IValue = {};
-            if (attr.type === AttributeTypes.SIMPLE || attr.type === AttributeTypes.SIMPLE_LINK) {
-                value = (await valueRepo.getValues({library, recordId, attribute: attr, ctx})).pop();
-            } else {
-                value = await valueRepo.getValueById({library, recordId, attribute: attr, valueId, ctx});
+            let reverseLink: IAttribute;
+            if (!!attr.reverse_link) {
+                reverseLink = await attributeDomain.getAttributeProperties({
+                    id: attr.reverse_link as string,
+                    ctx
+                });
+            }
 
-                if (value === null) {
-                    throw new ValidationError({id: Errors.UNKNOWN_VALUE});
-                }
+            // if simple attribute type
+            let v: IValue = {};
+            if (attr.type === AttributeTypes.SIMPLE || attr.type === AttributeTypes.SIMPLE_LINK) {
+                v = (
+                    await valueRepo.getValues({library, recordId, attribute: {...attr, reverse_link: reverseLink}, ctx})
+                ).pop();
+            } else if (attr.type === AttributeTypes.ADVANCED_LINK && reverseLink?.type === AttributeTypes.SIMPLE_LINK) {
+                const values = await valueRepo.getValues({
+                    library,
+                    recordId,
+                    attribute: {...attr, reverse_link: reverseLink},
+                    ctx
+                });
+
+                v = values.filter(val => val.value.id === value.value).pop();
+            } else if (!!value.id_value) {
+                v = await valueRepo.getValueById({
+                    library,
+                    recordId,
+                    attribute: attr,
+                    valueId: value.id_value,
+                    ctx
+                });
+            }
+
+            if (!v) {
+                throw new ValidationError({id: Errors.UNKNOWN_VALUE});
             }
 
             const actionsListRes =
                 !!attr.actions_list && !!attr.actions_list.deleteValue
-                    ? await actionsListDomain.runActionsList(attr.actions_list.deleteValue, value, {
+                    ? await actionsListDomain.runActionsList(attr.actions_list.deleteValue, v, {
                           attribute: attr,
                           recordId,
                           library,
-                          value
+                          v
                       })
-                    : value;
+                    : v;
 
             const res: IValue = await valueRepo.deleteValue({
                 library,
                 recordId,
-                attribute: attr,
+                attribute: {...attr, reverse_link: reverseLink},
                 value: actionsListRes,
                 ctx
             });

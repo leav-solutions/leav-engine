@@ -17,6 +17,7 @@ import {
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
+import AttributeSelector from 'components/attributes/AttributeSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import TreesSelector from '../../../../../trees/TreesSelector';
 import {AttributeInfosFormValues} from '../_types';
@@ -45,6 +46,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     format: AttributeFormat.text,
     linked_tree: null,
     linked_library: null,
+    reverse_link: null,
     permissions_conf: null,
     multiple_values: false,
     metadata_fields: null,
@@ -72,6 +74,7 @@ function InfosForm({
                   ...attribute,
                   linked_library:
                       (attribute as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library?.id ?? null,
+                  reverse_link: (attribute as GET_ATTRIBUTES_attributes_list_LinkAttribute).reverse_link ?? null,
                   linked_tree: (attribute as GET_ATTRIBUTES_attributes_list_TreeAttribute).linked_tree?.id ?? null
               }
             : defaultAttributeData;
@@ -152,16 +155,9 @@ function InfosForm({
             }
         };
 
-        const _handleDescriptionChange = (e, data) => {
+        const _handleLinkedLibraryChange = (e, data) => {
             _handleChange(e, data);
-
-            const {name, value} = data;
-            const [field, subfield] = name.split('.');
-
-            // On new attribute, automatically generate an ID based on label
-            if (isNewAttribute && field === 'description' && subfield === defaultLang) {
-                setFieldValue('id', formatIDString(value));
-            }
+            setFieldValue('reverse_link', null);
         };
 
         const _handleChange = (e, data) => {
@@ -217,7 +213,7 @@ function InfosForm({
                                 width="4"
                                 name={`description.${lang}`}
                                 disabled={readonly}
-                                onChange={_handleDescriptionChange}
+                                onChange={_handleChange}
                                 onBlur={handleBlur}
                             />
                         </FormFieldWrapper>
@@ -278,8 +274,31 @@ function InfosForm({
                             placeholder={t('attributes.linked_library')}
                             width="4"
                             name="linked_library"
-                            onChange={_handleChange}
+                            onChange={_handleLinkedLibraryChange}
                             value={values.linked_library || ''}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {isLinkAttribute && !!values.linked_library && (
+                    <FormFieldWrapper error={_getErrorByField('reverse_link')}>
+                        <AttributeSelector
+                            filters={{
+                                libraries: [values.linked_library],
+                                type: [AttributeType.advanced_link, AttributeType.simple_link]
+                            }}
+                            excludeReverseLinks
+                            disabled={values.system || readonly}
+                            lang={userLang}
+                            fluid
+                            selection
+                            clearable
+                            multiple={false}
+                            label={t('attributes.reverse_link')}
+                            placeholder={t('attributes.linked_attribute')}
+                            width="4"
+                            name="reverse_link"
+                            onChange={_handleChange}
+                            value={values.reverse_link || ''}
                         />
                     </FormFieldWrapper>
                 )}

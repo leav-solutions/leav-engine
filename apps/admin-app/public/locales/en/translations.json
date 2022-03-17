@@ -100,6 +100,8 @@
         "new_embedded_fields": "Create a new embedded fields",
         "remove_embedded_fields": "Remove these embedded fields and his child?",
         "validation_regex": "Validation Rule",
+        "reverse_link": "Reverse link",
+        "linked_attribute": "Linked attribute",
         "types": {
             "tree": "Tree",
             "advanced": "Advanced",

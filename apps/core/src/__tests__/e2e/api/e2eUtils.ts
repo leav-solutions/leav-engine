@@ -94,6 +94,7 @@ export async function gqlSaveAttribute(params: {
     linkedLibrary?: string;
     linkedTree?: string;
     multipleValues?: boolean;
+    reverse_link?: string;
 }) {
     const {
         id,
@@ -106,7 +107,8 @@ export async function gqlSaveAttribute(params: {
         embeddedFields,
         linkedLibrary,
         linkedTree,
-        multipleValues
+        multipleValues,
+        reverse_link
     } = params;
 
     const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => {
@@ -132,6 +134,7 @@ export async function gqlSaveAttribute(params: {
                 label: {fr: "${label}"},
                 description: {fr: "${description ? `"${description}"` : 'null'}"},
                 linked_library: ${linkedLibrary ? `"${linkedLibrary}"` : 'null'},
+                reverse_link: ${reverse_link ? `"${reverse_link}"` : 'null'},
                 linked_tree: ${linkedTree ? `"${linkedTree}"` : 'null'},
                 metadata_fields: ${metadataFields ? `[${metadataFields.map(t => `"${t}"`).join(', ')}]` : 'null'},
                 versions_conf: ${

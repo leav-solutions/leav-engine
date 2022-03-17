@@ -4,7 +4,7 @@
 import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValuesOptions} from '_types/value';
-import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
+import {IAttributeTypesRepo, IAttributeWithRevLink} from '../attributeTypes/attributeTypesRepo';
 
 export interface IValueRepo {
     createValue({
@@ -16,7 +16,7 @@ export interface IValueRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttribute;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -33,7 +33,7 @@ export interface IValueRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttribute;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -50,7 +50,7 @@ export interface IValueRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttribute;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -70,7 +70,7 @@ export interface IValueRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttribute;
+        attribute: IAttributeWithRevLink;
         forceGetAllValues?: boolean;
         options?: IValuesOptions;
         ctx: IQueryInfos;
@@ -94,6 +94,7 @@ export interface IValueRepo {
         valueId: string;
         ctx: IQueryInfos;
     }): Promise<IValue>;
+
     clearAllValues({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<boolean>;
 }
 
@@ -117,11 +118,24 @@ export default function ({'core.infra.attributeTypes': attributeTypesRepo = null
         },
         getValues({library, recordId, attribute, forceGetAllValues, options, ctx}): Promise<IValue[]> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValues({library, recordId, attribute, forceGetAllValues, options, ctx});
+            return typeRepo.getValues({
+                library,
+                recordId,
+                attribute,
+                forceGetAllValues,
+                options,
+                ctx
+            });
         },
         getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-            return typeRepo.getValueById({library, recordId, attribute, valueId, ctx});
+            return typeRepo.getValueById({
+                library,
+                recordId,
+                attribute,
+                valueId,
+                ctx
+            });
         },
         clearAllValues({attribute, ctx}): Promise<boolean> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
