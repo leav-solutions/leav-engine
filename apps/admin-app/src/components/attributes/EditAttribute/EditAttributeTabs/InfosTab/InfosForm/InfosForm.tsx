@@ -282,7 +282,10 @@ function InfosForm({
                 {isLinkAttribute && !!values.linked_library && (
                     <FormFieldWrapper error={_getErrorByField('reverse_link')}>
                         <AttributeSelector
-                            filters={{libraries: [values.linked_library], type: [AttributeType.advanced_link]}}
+                            filters={{
+                                libraries: [values.linked_library],
+                                type: [AttributeType.advanced_link, AttributeType.simple_link]
+                            }}
                             excludeReverseLinks
                             disabled={values.system || readonly}
                             lang={userLang}

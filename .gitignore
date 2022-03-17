@@ -70,7 +70,7 @@ magick-*
 # eslint cache
 *.eslintcache
 
-previews
-files
-imports
-cache
+/previews
+/files
+/imports
+/cache
