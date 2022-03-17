@@ -17,8 +17,9 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
-import {collectionTypes, IDbService, IExecuteWithCount} from './dbService';
+import {collectionTypes, IDbService} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
+import {IExecuteWithCount} from './_types';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
@@ -41,7 +42,7 @@ export interface IDbUtils {
     convertToDoc?(obj: {}): any;
     isCollectionExists?(name: string): Promise<boolean>;
     findCoreEntity?<T extends ICoreEntity>(params: IFindCoreEntityParams): Promise<IList<T>>;
-    clearDatabase(): Promise<void>;
+    clearDatabase?(): Promise<void>;
 }
 
 interface IDeps {

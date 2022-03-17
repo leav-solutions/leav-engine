@@ -2,22 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {AqlQuery, isAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {isAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
-import {IQueryInfos} from '_types/queryInfos';
-import {IDbDocument} from './_types';
+import {IDbDocument, IExecute, IExecuteWithCount} from './_types';
 
 const MAX_ATTEMPTS = 10;
-export interface IExecute {
-    query: string | AqlQuery;
-    ctx: IQueryInfos;
-    withTotalCount?: boolean;
-    attempts?: number;
-}
-export interface IExecuteWithCount<T = IDbDocument> {
-    totalCount: number;
-    results: T[];
-}
 
 export interface IDbService {
     db?: Database;
@@ -32,7 +21,7 @@ export interface IDbService {
      * @param attempts Used when we have to retry a query after a write-write conflict
      * @throws If query fails or we still have a conflict after all attempts
      */
-    execute?<T extends IExecuteWithCount | unknown[] = IDbDocument[]>(params: IExecute): Promise<T>;
+    execute?<T extends IExecuteWithCount<unknown> | unknown[] = IDbDocument[]>(params: IExecute): Promise<T>;
 
     /**
      * Create a new collection in database
@@ -83,7 +72,7 @@ export default function ({'core.infra.db': db = null, 'core.utils': utils = null
 
     return {
         db,
-        async execute<T extends IExecuteWithCount | any[] = any[]>({
+        async execute<T extends IExecuteWithCount<any> | any[] = any[]>({
             query,
             ctx,
             withTotalCount = false,

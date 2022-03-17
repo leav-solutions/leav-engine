@@ -889,24 +889,29 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
-            expect(values).toEqual([
-                {
-                    id: '19637382',
-                    order: 0,
-                    record: {
-                        id: '19611984',
-                        label: 'D'
+            expect(values).toEqual({
+                totalCount: null,
+                list: [
+                    {
+                        id: '19637382',
+                        order: 0,
+                        childrenCount: null,
+                        record: {
+                            id: '19611984',
+                            label: 'D'
+                        }
+                    },
+                    {
+                        id: '19637411',
+                        order: 0,
+                        childrenCount: null,
+                        record: {
+                            id: '19612005',
+                            label: 'E'
+                        }
                     }
-                },
-                {
-                    id: '19637411',
-                    order: 0,
-                    record: {
-                        id: '19612005',
-                        label: 'E'
-                    }
-                }
-            ]);
+                ]
+            });
         });
     });
 

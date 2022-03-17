@@ -246,7 +246,7 @@ export default function ({
                 const parentNodes = await treeDomain.getNodesByRecord({treeId, record: parent, ctx});
 
                 const children = await treeDomain.getElementChildren({treeId, nodeId: parentNodes[0], ctx});
-                for (const child of children) {
+                for (const child of children.list) {
                     await treeDomain.deleteElement({
                         treeId,
                         nodeId: child.id,
