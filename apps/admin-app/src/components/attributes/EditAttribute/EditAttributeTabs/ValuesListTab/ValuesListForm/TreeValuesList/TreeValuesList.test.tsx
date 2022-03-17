@@ -43,6 +43,7 @@ describe('TreeValuesList', () => {
     };
     const mockValues: ITreeValuesList[] = [
         {
+            id: '123456',
             record: {
                 whoAmI: {
                     ...baseWhoAmI,
@@ -50,27 +51,26 @@ describe('TreeValuesList', () => {
                 }
             },
             ancestors: [
-                [
-                    {
-                        record: {
-                            whoAmI: {
-                                ...baseWhoAmI,
-                                id: '654321'
-                            }
-                        }
-                    },
-                    {
-                        record: {
-                            whoAmI: {
-                                ...baseWhoAmI,
-                                id: '987654'
-                            }
+                {
+                    record: {
+                        whoAmI: {
+                            ...baseWhoAmI,
+                            id: '654321'
                         }
                     }
-                ]
+                },
+                {
+                    record: {
+                        whoAmI: {
+                            ...baseWhoAmI,
+                            id: '987654'
+                        }
+                    }
+                }
             ]
         },
         {
+            id: '123457',
             record: {
                 whoAmI: {
                     ...baseWhoAmI,
@@ -78,24 +78,22 @@ describe('TreeValuesList', () => {
                 }
             },
             ancestors: [
-                [
-                    {
-                        record: {
-                            whoAmI: {
-                                ...baseWhoAmI,
-                                id: '888888'
-                            }
-                        }
-                    },
-                    {
-                        record: {
-                            whoAmI: {
-                                ...baseWhoAmI,
-                                id: '999999'
-                            }
+                {
+                    record: {
+                        whoAmI: {
+                            ...baseWhoAmI,
+                            id: '888888'
                         }
                     }
-                ]
+                },
+                {
+                    record: {
+                        whoAmI: {
+                            ...baseWhoAmI,
+                            id: '999999'
+                        }
+                    }
+                }
             ]
         }
     ];
@@ -126,21 +124,30 @@ describe('TreeValuesList', () => {
             if (onSelectFunc) {
                 onSelectFunc({
                     node: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '111111'
+                        id: '111111',
+                        record: {
+                            whoAmI: {
+                                ...baseWhoAmI,
+                                id: '111111'
+                            }
                         },
                         parents: [
                             {
-                                whoAmI: {
-                                    ...baseWhoAmI,
-                                    id: '222222'
+                                id: '222222',
+                                record: {
+                                    whoAmI: {
+                                        ...baseWhoAmI,
+                                        id: '222222'
+                                    }
                                 }
                             },
                             {
-                                whoAmI: {
-                                    ...baseWhoAmI,
-                                    id: '333333'
+                                id: '333333',
+                                record: {
+                                    whoAmI: {
+                                        ...baseWhoAmI,
+                                        id: '333333'
+                                    }
                                 }
                             }
                         ]
@@ -170,21 +177,30 @@ describe('TreeValuesList', () => {
             if (onSelectFunc) {
                 onSelectFunc({
                     node: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '123456'
+                        id: '123456',
+                        record: {
+                            whoAmI: {
+                                ...baseWhoAmI,
+                                id: '123456'
+                            }
                         },
                         parents: [
                             {
-                                whoAmI: {
-                                    ...baseWhoAmI,
-                                    id: '654321'
+                                id: '654321',
+                                record: {
+                                    whoAmI: {
+                                        ...baseWhoAmI,
+                                        id: '654321'
+                                    }
                                 }
                             },
                             {
-                                whoAmI: {
-                                    ...baseWhoAmI,
-                                    id: '987654'
+                                id: '987654',
+                                record: {
+                                    whoAmI: {
+                                        ...baseWhoAmI,
+                                        id: '987654'
+                                    }
                                 }
                             }
                         ]

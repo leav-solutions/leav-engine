@@ -71,10 +71,11 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
     const _onTreeNodeSelected = ({node}: TreeItem) => {
         const val: ITreeLinkValue = {
             treeValue: {
-                record: {whoAmI: node.whoAmI},
+                id: node.id,
+                record: {whoAmI: node.record.whoAmI},
                 ancestors: node.parents.map(p => ({
                     record: {
-                        whoAmI: p.whoAmI
+                        whoAmI: p.record.whoAmI
                     }
                 }))
             },

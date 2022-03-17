@@ -19,13 +19,14 @@ interface ILinkElement {
 }
 
 export interface ITreeLinkNode {
+    id: string;
     record: {
         whoAmI: RecordIdentity_whoAmI;
     };
 }
 
 export interface ITreeLinkElement extends ITreeLinkNode {
-    ancestors: ITreeLinkNode[][];
+    ancestors: ITreeLinkNode[];
 }
 
 export interface IGenericValue {

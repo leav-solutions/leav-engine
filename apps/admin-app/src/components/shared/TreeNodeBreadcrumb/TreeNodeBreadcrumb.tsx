@@ -24,11 +24,7 @@ function TreeNodeBreadcrumb({element, actions}: ITreeNodeBreadcrumbProps): JSX.E
     const altPaths: RecordIdentity_whoAmI[][] = [];
 
     if (element.ancestors?.length) {
-        for (const path of element.ancestors.slice(1)) {
-            altPaths.push(path.map(p => p.record?.whoAmI));
-        }
-
-        const defaultPath = element.ancestors[0].slice(0, -1);
+        const defaultPath = element.ancestors.slice(0, -1);
 
         for (const el of defaultPath) {
             breadcrumbSections.push({

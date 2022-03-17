@@ -58,7 +58,7 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
             type: FormBuilderActionTypes.CHANGE_ACTIVE_DEPENDENCY,
             activeDependency: {
                 attribute: state.activeDependency?.attribute || defaultDepAttribute,
-                value: node.whoAmI || defaultDepValue,
+                value: node.record.whoAmI || defaultDepValue,
                 ancestors: node.ancestors.slice(0, -1).map(p => p.whoAmI)
             }
         });

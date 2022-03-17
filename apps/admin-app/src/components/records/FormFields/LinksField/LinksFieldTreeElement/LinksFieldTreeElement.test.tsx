@@ -26,6 +26,7 @@ describe('EditRecordFormLinksTreeElement', () => {
     const value: ITreeLinkValue = {
         id_value: '98765',
         treeValue: {
+            id: '1',
             record: {
                 whoAmI: {
                     id: '1',
@@ -41,40 +42,40 @@ describe('EditRecordFormLinksTreeElement', () => {
                 }
             },
             ancestors: [
-                [
-                    {
-                        record: {
-                            whoAmI: {
-                                id: '2',
-                                library: {
-                                    id: 'test_lib',
-                                    label: {
-                                        fr: 'Test Lib'
-                                    }
-                                },
-                                label: 'TestLabel2',
-                                color: null,
-                                preview: null
-                            }
-                        }
-                    },
-                    {
-                        record: {
-                            whoAmI: {
-                                id: '1',
-                                library: {
-                                    id: 'test_lib',
-                                    label: {
-                                        fr: 'Test Lib'
-                                    }
-                                },
-                                label: 'TestLabel',
-                                color: null,
-                                preview: null
-                            }
+                {
+                    id: '2',
+                    record: {
+                        whoAmI: {
+                            id: '2',
+                            library: {
+                                id: 'test_lib',
+                                label: {
+                                    fr: 'Test Lib'
+                                }
+                            },
+                            label: 'TestLabel2',
+                            color: null,
+                            preview: null
                         }
                     }
-                ]
+                },
+                {
+                    id: '1',
+                    record: {
+                        whoAmI: {
+                            id: '1',
+                            library: {
+                                id: 'test_lib',
+                                label: {
+                                    fr: 'Test Lib'
+                                }
+                            },
+                            label: 'TestLabel',
+                            color: null,
+                            preview: null
+                        }
+                    }
+                }
             ]
         },
         modified_at: 1234567890,
