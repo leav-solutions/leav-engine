@@ -4,7 +4,7 @@
 import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValuesOptions} from '_types/value';
-import {IAttributeTypesRepo, IAttributeRepo} from '../attributeTypes/attributeTypesRepo';
+import {IAttributeTypesRepo, IAttributeWithRevLink} from '../attributeTypes/attributeTypesRepo';
 
 export interface IValueRepo {
     createValue({
@@ -16,7 +16,7 @@ export interface IValueRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttributeRepo;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -33,7 +33,7 @@ export interface IValueRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttributeRepo;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -50,7 +50,7 @@ export interface IValueRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttributeRepo;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -70,7 +70,7 @@ export interface IValueRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttributeRepo;
+        attribute: IAttributeWithRevLink;
         forceGetAllValues?: boolean;
         options?: IValuesOptions;
         ctx: IQueryInfos;

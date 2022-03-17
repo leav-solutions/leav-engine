@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttributeRepo} from 'infra/attributeTypes/attributeTypesRepo';
+import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {IAttribute} from './attribute';
 import {ILibrary} from './library';
 import {IPreview} from './preview';
@@ -63,7 +63,7 @@ export interface IDateFilterValue {
 }
 
 export interface IRecordFilterOption {
-    attributes?: IAttributeRepo[];
+    attributes?: IAttributeWithRevLink[];
     value?: string | number | boolean;
     condition?: AttributeCondition | TreeCondition;
     operator?: Operator;
@@ -71,7 +71,7 @@ export interface IRecordFilterOption {
 }
 
 export interface IRecordSort {
-    attributes: IAttributeRepo[];
+    attributes: IAttributeWithRevLink[];
     order: string;
 }
 

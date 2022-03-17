@@ -8,7 +8,7 @@ import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types
 import {IValue, IValuesOptions} from '../../_types/value';
 
 // To avoid some cyclic dependencies issues, we have to pass repo along attribute props
-export interface IAttributeWithRepo extends IAttributeRepo {
+export interface IAttributeWithRepo extends IAttributeWithRevLink {
     _repo: IAttributeTypeRepo;
 }
 
@@ -16,7 +16,7 @@ export interface IAttributeTypesRepo {
     getTypeRepo?(attribute: IAttribute): IAttributeTypeRepo;
 }
 
-export interface IAttributeRepo extends IAttribute {
+export interface IAttributeWithRevLink extends IAttribute {
     reverse_link?: IAttribute;
 }
 
@@ -40,7 +40,7 @@ export interface IAttributeTypeRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttributeRepo;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -57,7 +57,7 @@ export interface IAttributeTypeRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttributeRepo;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -74,7 +74,7 @@ export interface IAttributeTypeRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttributeRepo;
+        attribute: IAttributeWithRevLink;
         value: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
@@ -94,7 +94,7 @@ export interface IAttributeTypeRepo {
     }: {
         library: string;
         recordId: string;
-        attribute: IAttributeRepo;
+        attribute: IAttributeWithRevLink;
         forceGetAllValues?: boolean;
         options?: IValuesOptions;
         ctx: IQueryInfos;
@@ -109,7 +109,7 @@ export interface IAttributeTypeRepo {
         advancedLinkAttr,
         ctx
     }: {
-        advancedLinkAttr: IAttributeRepo;
+        advancedLinkAttr: IAttributeWithRevLink;
         value: string;
         forceGetAllValues: boolean;
         ctx: IQueryInfos;
@@ -142,7 +142,7 @@ export interface IAttributeTypeRepo {
     /**
      * Return AQL query part to sort on this attribute
      */
-    sortQueryPart({attributes, order}: {attributes: IAttributeRepo[]; order: string}): AqlQuery;
+    sortQueryPart({attributes, order}: {attributes: IAttributeWithRevLink[]; order: string}): AqlQuery;
 
     /**
      * Clear all values of given attribute. Can be used to cleanup values when an attribute is deleted for example.

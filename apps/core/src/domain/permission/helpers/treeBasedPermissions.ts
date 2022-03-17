@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
@@ -136,7 +137,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
         const userGroups = await valueRepo.getValues({
             library: 'users',
             recordId: userId,
-            attribute: {...userGroupAttr, reverse_link: undefined},
+            attribute: userGroupAttr as IAttributeWithRevLink,
             ctx
         });
 

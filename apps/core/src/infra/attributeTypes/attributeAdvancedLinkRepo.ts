@@ -8,7 +8,12 @@ import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribu
 import {AttributeCondition, IRecord, IRecordFilterOption, IRecordSort} from '../../_types/record';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo, IAttributeRepo} from './attributeTypesRepo';
+import {
+    BASE_QUERY_IDENTIFIER,
+    IAttributeTypeRepo,
+    IAttributeWithRepo,
+    IAttributeWithRevLink
+} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -268,7 +273,7 @@ export default function ({
 
             return _buildLinkValue(dbUtils.cleanup(res[0].edge.linkedRecord), res[0].edge);
         },
-        sortQueryPart({attributes, order}: {attributes: IAttributeRepo[]; order: string}): AqlQuery {
+        sortQueryPart({attributes, order}: {attributes: IAttributeWithRevLink[]; order: string}): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}

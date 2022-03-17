@@ -4,7 +4,7 @@
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {IAttributeRepo} from 'infra/attributeTypes/attributeTypesRepo';
+import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -623,7 +623,7 @@ export default function ({
                                   }
                                 : a
                         )
-                    )) as IAttributeRepo[];
+                    )) as IAttributeWithRevLink[];
 
                     let value: any = f.value ?? null;
                     const lastAttr: IAttribute = attrsRepo[attrsRepo.length - 1];
@@ -693,7 +693,7 @@ export default function ({
                               }
                             : a
                     )
-                )) as IAttributeRepo[];
+                )) as IAttributeWithRevLink[];
 
                 fullSort = {
                     attributes: sortAttributesRepo,
