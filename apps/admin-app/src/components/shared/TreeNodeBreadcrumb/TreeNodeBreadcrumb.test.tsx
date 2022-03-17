@@ -22,6 +22,7 @@ describe('TreeNodeBreadcrumb', () => {
     };
 
     const mockElementWithAncestors: ITreeLinkElement = {
+        id: '123456',
         record: {
             whoAmI: {
                 ...baseWhoAmI,
@@ -29,36 +30,38 @@ describe('TreeNodeBreadcrumb', () => {
             }
         },
         ancestors: [
-            [
-                {
-                    record: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '654321'
-                        }
-                    }
-                },
-                {
-                    record: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '987654'
-                        }
-                    }
-                },
-                {
-                    record: {
-                        whoAmI: {
-                            ...baseWhoAmI,
-                            id: '123456'
-                        }
+            {
+                id: '654321',
+                record: {
+                    whoAmI: {
+                        ...baseWhoAmI,
+                        id: '654321'
                     }
                 }
-            ]
+            },
+            {
+                id: '987654',
+                record: {
+                    whoAmI: {
+                        ...baseWhoAmI,
+                        id: '987654'
+                    }
+                }
+            },
+            {
+                id: '123456',
+                record: {
+                    whoAmI: {
+                        ...baseWhoAmI,
+                        id: '123456'
+                    }
+                }
+            }
         ]
     };
 
     const mockElementNoAncestors: ITreeLinkElement = {
+        id: '123456',
         record: {
             whoAmI: {
                 ...baseWhoAmI,

@@ -14,10 +14,11 @@ export interface ITreeValuesListAncestors {
 }
 
 export interface ITreeValuesList {
+    id: string;
     record: {
         whoAmI: RecordIdentity_whoAmI;
     };
-    ancestors: ITreeValuesListAncestors[][] | null;
+    ancestors: ITreeValuesListAncestors[] | null;
 }
 
 export interface IValuesListConf {

@@ -142,9 +142,7 @@ const EditRecordForm = ({
 
                 const savedValue = {
                     id_value: value.id_value,
-                    value: isTreeValue(value)
-                        ? `${value.treeValue?.record.whoAmI.library.id}/${value.treeValue?.record.whoAmI.id}`
-                        : (value as ILinkValue)!.linkValue?.id
+                    value: isTreeValue(value) ? value.treeValue?.id : (value as ILinkValue)!.linkValue?.id
                 };
 
                 return _submitValue(attribute)(savedValue);

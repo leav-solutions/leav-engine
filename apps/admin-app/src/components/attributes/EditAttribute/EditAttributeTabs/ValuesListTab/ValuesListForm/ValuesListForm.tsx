@@ -112,9 +112,7 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
                     break;
                 case AttributeType.tree:
                     const treeValues = conf.values as ITreeValuesList[];
-                    valuesToSave = treeValues
-                        ? treeValues.map(v => `${v.record.whoAmI.library.id}/${v.record.whoAmI.id}`)
-                        : [];
+                    valuesToSave = treeValues ? treeValues.map(v => v.id) : [];
                     break;
             }
 

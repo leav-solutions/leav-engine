@@ -71,6 +71,7 @@ describe('EditRecordFormLinks', () => {
         {
             id_value: '98765',
             treeValue: {
+                id: '1',
                 record: {
                     whoAmI: {
                         id: '1',
@@ -86,24 +87,23 @@ describe('EditRecordFormLinks', () => {
                     }
                 },
                 ancestors: [
-                    [
-                        {
-                            record: {
-                                whoAmI: {
-                                    id: '2',
-                                    library: {
-                                        id: 'test_lib',
-                                        label: {
-                                            fr: 'Test Lib'
-                                        }
-                                    },
-                                    label: 'TestLabel2',
-                                    color: null,
-                                    preview: null
-                                }
+                    {
+                        id: '2',
+                        record: {
+                            whoAmI: {
+                                id: '2',
+                                library: {
+                                    id: 'test_lib',
+                                    label: {
+                                        fr: 'Test Lib'
+                                    }
+                                },
+                                label: 'TestLabel2',
+                                color: null,
+                                preview: null
                             }
                         }
-                    ]
+                    }
                 ]
             },
             modified_at: 1234567890,

@@ -34,21 +34,24 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
     const _onTreeNodeSelected = ({node}: TreeItem) => {
         _handleCloseSelectTreeNodeModal();
 
-        if (values.filter(v => v.record.whoAmI.id === node.whoAmI.id && v.record.whoAmI.id === node.whoAmI.id).length) {
+        if (
+            values.filter(
+                v => v.record.whoAmI.id === node.record.whoAmI.id && v.record.whoAmI.id === node.record.whoAmI.id
+            ).length
+        ) {
             return;
         }
 
         const newValuesList = [
             ...values,
             {
-                record: {whoAmI: node.whoAmI},
-                ancestors: [
-                    node.parents.map(p => ({
-                        record: {
-                            whoAmI: p.whoAmI
-                        }
-                    }))
-                ]
+                id: node.id,
+                record: {whoAmI: node.record.whoAmI},
+                ancestors: node.parents.map(p => ({
+                    record: {
+                        whoAmI: p.whoAmI
+                    }
+                }))
             }
         ];
         onValuesUpdate(newValuesList);
