@@ -241,7 +241,8 @@
         "submit": "Update Columns"
     },
     "tree-node-selection": {
-        "title": "Select Tree Node"
+        "title": "Select Tree Node",
+        "show_more": "Show more"
     },
     "change-attribute": {
         "submit": "Change",
@@ -293,7 +294,8 @@
             "error-move": "An error occurs while moving elements {{elements}}: {{errorMessage}}",
             "success-detach": "{{nb}} elements had been detach",
             "error-detach": "An error occurs while detach elements {{elements}}: {{errorMessage}}"
-        }
+        },
+        "access_denied": "You cannot access this element"
     },
     "notification": {
         "base-message": "Welcome to the explorer",

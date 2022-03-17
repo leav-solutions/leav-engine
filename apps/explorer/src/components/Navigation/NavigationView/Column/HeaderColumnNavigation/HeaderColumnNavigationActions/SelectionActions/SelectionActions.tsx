@@ -7,7 +7,6 @@ import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMutation';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
-import {ITreeContentRecordAndChildren} from 'graphQL/queries/trees/getTreeContentQuery';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import React from 'react';
@@ -20,7 +19,13 @@ import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_EL
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '_gqlTypes/MOVE_TREE_ELEMENT';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
-import {INotification, NotificationChannel, NotificationType, SharedStateSelectionType} from '_types/types';
+import {
+    INotification,
+    ITreeContentRecordAndChildren,
+    NotificationChannel,
+    NotificationType,
+    SharedStateSelectionType
+} from '_types/types';
 
 interface IMessages {
     countValid: number;

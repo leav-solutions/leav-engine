@@ -246,7 +246,8 @@
         "submit": "Mettre à jour les colonnes"
     },
     "tree-node-selection": {
-        "title": "Sélectionner un nœud de l'arbre"
+        "title": "Sélectionner un nœud de l'arbre",
+        "show_more": "Voir plus"
     },
     "change-attribute": {
         "submit": "Changer",
@@ -298,7 +299,8 @@
             "error-move": "Une erreur est survenue lors du déplacement des éléments {{elements}}: {{errorMessage}}",
             "success-detach": "{{nb}} élément(s) détaché(s)",
             "error-detach": "Une erreur est survenue lors du détachement des élements {{elements}}: {{errorMessage}}"
-        }
+        },
+        "access_denied": "Vous ne pouvez pas accéder à cet élément"
     },
     "notification": {
         "base-message": "Bienvenue sur l'explorateur",

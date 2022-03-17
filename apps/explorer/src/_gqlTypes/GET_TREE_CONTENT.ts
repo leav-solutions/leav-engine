@@ -62,7 +62,7 @@ export interface GET_TREE_CONTENT {
      * If startAt is specified, it returns this element's children. Otherwise, it starts
      * from tree root
      */
-    treeContent: GET_TREE_CONTENT_treeContent[] | null;
+    treeContent: GET_TREE_CONTENT_treeContent[];
 }
 
 export interface GET_TREE_CONTENTVariables {
