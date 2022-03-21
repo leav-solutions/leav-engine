@@ -93,7 +93,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                 errors: {}
             };
 
-            const parentElement = parent.id ?? null;
+            const parentElement = parent?.id ?? null;
 
             for (const elementSelected of selectionState.selection.selected) {
                 const treeElement: TreeElementInput = {
