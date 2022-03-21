@@ -4,11 +4,12 @@
 import {ICommonFieldsSettings} from '@leav/utils';
 import {List, Popover} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
+import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import Dimmer from 'components/shared/Dimmer';
 import ErrorMessage from 'components/shared/ErrorMessage';
 import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {
@@ -60,15 +61,9 @@ function TreeField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
     const attribute = element.attribute as RECORD_FORM_recordForm_elements_attribute_TreeAttribute;
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const recordValues = (element.values as RECORD_FORM_recordForm_elements_values_TreeValue[]) ?? [];
+    const creationErrors = useContext(CreationErrorContext);
 
     const [fieldValues, setFieldValues] = useState<RECORD_FORM_recordForm_elements_values_TreeValue[]>(recordValues);
-
-    useEffect(() => {
-        if (record) {
-            // Update values only for existing record. On creation, we handle everything here
-            setFieldValues(recordValues ?? []);
-        }
-    }, [recordValues, element.settings.attribute, record]);
 
     const [errorMessage, setErrorMessage] = useState<string | string[]>();
     const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
@@ -78,6 +73,12 @@ function TreeField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
         ...val,
         key: val.id_value
     }));
+
+    useEffect(() => {
+        if (creationErrors[attribute.id]) {
+            setErrorMessage(creationErrors[attribute.id].message);
+        }
+    }, [creationErrors, attribute.id]);
 
     const renderItem = (value: IRecordPropertyTree) => {
         const _handleDelete = async () => {

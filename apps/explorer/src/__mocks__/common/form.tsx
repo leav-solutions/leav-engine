@@ -151,6 +151,7 @@ const mockRecordAncestor = {
 
 export const mockTreeValueA: IRecordPropertyTree = {
     treeValue: {
+        id: '123456',
         record: mockRecord,
         ancestors: [
             {
@@ -172,6 +173,7 @@ export const mockTreeValueA: IRecordPropertyTree = {
 export const mockTreeValueB: IRecordPropertyTree = {
     ...mockTreeValueA,
     treeValue: {
+        id: '123457',
         record: mockRecord2,
         ancestors: [
             {

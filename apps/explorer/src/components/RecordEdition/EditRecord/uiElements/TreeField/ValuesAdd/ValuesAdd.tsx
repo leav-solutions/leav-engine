@@ -90,7 +90,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const _handleClose = () => onClose();
 
     const _handleItemClick = (valueListItem: ValueFromList) => {
-        const recordKey = getTreeRecordKey(valueListItem.record);
+        const recordKey = valueListItem.id;
         onAdd([
             {
                 record: valueListItem.record,

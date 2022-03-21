@@ -67,6 +67,7 @@ export const getRecordFormQuery = gql`
 
                     ... on TreeValue {
                         treeValue: value {
+                            id
                             record {
                                 ...RecordIdentity
                             }
@@ -144,6 +145,7 @@ export const getRecordFormQuery = gql`
                             enable
                             allowFreeEntry
                             values {
+                                id
                                 record {
                                     ...RecordIdentity
                                 }
