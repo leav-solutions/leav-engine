@@ -12,7 +12,7 @@ import {
     OnDragPreviousAndNextLocation,
     SortableTreeWithoutDndContext as SortableTree
 } from 'react-sortable-tree';
-import {Button, Confirm, Dropdown, Icon, Label, Loader, Modal} from 'semantic-ui-react';
+import {Button, Confirm, Dropdown, Icon, Label, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getTreeNodeKey, localizedLabel, stringToColor} from 'utils';
 import {GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
@@ -158,7 +158,6 @@ const StructureView = ({
         return {
             canDrag: !readOnly && !isFakeRoot,
             buttons: [
-                rowInfo.node.loading && <Loader key="loader_spinner" size="mini" active inline />,
                 !readOnly && (
                     <Dropdown pointing={false} basic compact icon="ellipsis vertical">
                         <Dropdown.Menu>

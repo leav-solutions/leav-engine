@@ -4,15 +4,20 @@
 import {useApolloClient} from '@apollo/client';
 import {FetchResult} from 'apollo-link';
 import {ITreeItem} from 'components/attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
+import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
 import React, {useState} from 'react';
 import {addNodeUnderParent, changeNodeAtPath, find, getNodeAtPath, removeNodeAtPath} from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
 import {Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {
+    TREE_NODE_CHILDREN,
+    TREE_NODE_CHILDRENVariables,
+    TREE_NODE_CHILDREN_treeNodeChildren_list
+} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {fakeRootId, ITreeNode, ITreeNodeData} from '_types/trees';
 import {WithOptional} from '_types/WithOptional';
 import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
-import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
 import {deleteTreeElementQuery} from '../../../queries/trees/treeDeleteElementMutation';
 import {moveTreeElementQuery} from '../../../queries/trees/treeMoveElementMutation';
 import {getTreeNodeKey} from '../../../utils/utils';
@@ -20,7 +25,6 @@ import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '../../../_gqlTypes/AD
 import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../_gqlTypes/DELETE_TREE_ELEMENT';
 import {GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
-import {TREE_CONTENT, TREE_CONTENTVariables, TREE_CONTENT_treeContent} from '../../../_gqlTypes/TREE_CONTENT';
 import RecordCard from '../../shared/RecordCard';
 import StructureView from './StructureView';
 import {
@@ -42,7 +46,7 @@ interface ITreeStructureProps {
     startAt?: string;
 }
 
-type ConvertTreeRecordNode = WithOptional<TREE_CONTENT_treeContent, 'children' | 'ancestors' | 'order'>;
+type ConvertTreeRecordNode = WithOptional<TREE_NODE_CHILDREN_treeNodeChildren_list, 'order'>;
 const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): ITreeItem[] => {
     return nodes.map(
         (n: ConvertTreeRecordNode): ITreeItem => {
@@ -56,9 +60,10 @@ const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): I
             return {
                 ...n,
                 title: nodeTitle,
-                children: n.children ? _convertTreeRecord(n.children, compact) : [],
-                ancestors: n.ancestors ? _convertTreeRecord(n.ancestors, compact) : [],
                 expanded: false,
+                // Actual children loading will be handle by the _loadChildren function.
+                // Assigning an empty function here just displays the "+" button if we have children
+                children: n.childrenCount ? () => null : null,
                 path: []
             };
         }
@@ -100,8 +105,7 @@ const TreeStructure = ({
                 },
                 isFakeRoot: true
             },
-            children: [],
-            ancestors: [],
+            childrenCount: 0,
             order: 0
         }
     ];
@@ -121,37 +125,19 @@ const TreeStructure = ({
      * @param expand    Should expand node?
      */
     const _loadChildren = async (parent?: string | null, path?: Array<string | number>, expand: boolean = true) => {
-        // Show loading spinner on node
         const withPath = !!path;
-        if (withPath && parent) {
-            const node = getNodeAtPath({treeData, path: path!, getNodeKey: getTreeNodeKey}) as ITreeNodeData;
-
-            if (node !== null) {
-                setTreeData(
-                    _mergeNode(
-                        {
-                            ...node.node,
-                            loading: true,
-                            loaded: false,
-                            expanded: expand
-                        },
-                        path!
-                    )
-                );
-            }
-        }
 
         // Retrieve data
-        const data = await apolloClient.query<TREE_CONTENT, TREE_CONTENTVariables>({
-            query: getTreeContentQuery,
+        const data = await apolloClient.query<TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables>({
+            query: getTreeNodeChildrenQuery,
             variables: {
                 treeId: tree.id,
-                startAt: parent || null
+                node: parent || null
             }
         });
 
-        const convertedRecords = data.data.treeContent
-            ? _convertTreeRecord(data.data.treeContent, compact).map(i => ({...i, path}))
+        const convertedRecords = data.data.treeNodeChildren
+            ? _convertTreeRecord(data.data.treeNodeChildren.list, compact).map(i => ({...i, path}))
             : [];
 
         // Update tree node with fetched data
@@ -314,8 +300,7 @@ const TreeStructure = ({
                     library: record.library,
                     whoAmI: record
                 },
-                children: [],
-                ancestors: [],
+                childrenCount: 0,
                 order: 0
             };
 
