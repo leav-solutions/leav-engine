@@ -27,6 +27,7 @@ export interface ITreeValueRecord {
 }
 
 export interface ITreeValue {
+    id: string;
     record: ITreeValueRecord;
     ancestors: TreePath;
 }

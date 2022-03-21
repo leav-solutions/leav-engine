@@ -21,7 +21,7 @@ import {useTranslation} from 'react-i18next';
 import {addNotification} from 'redux/notifications';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord} from '_gqlTypes/CREATE_RECORD';
+import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_whoAmI} from '_gqlTypes/CREATE_RECORD';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
@@ -46,6 +46,7 @@ import {
     SubmitValueFunc
 } from '../EditRecord/_types';
 import editRecordReducer from '../editRecordReducer';
+import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext from './creationErrorContext';
@@ -127,6 +128,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
     const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordMutation, {
         variables: {library}
     });
+
     const [creationErrors, setCreationErrors] = useState<{
         [attributeId: string]: SAVE_VALUE_BATCH_saveValueBatch_errors;
     }>({});
@@ -190,6 +192,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                     const treeValue = (value as ISubmittedValueTree).value;
                     const valueRecord = treeValue.record;
                     (valueToStore as SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue).treeValue = {
+                        id: treeValue.id,
                         record: valueRecord,
                         ancestors: [{record: valueRecord}]
                     };
@@ -249,18 +252,25 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
         }
 
         // Create Record
-        let newRecord: CREATE_RECORD_createRecord;
-        try {
-            const createdRecord = await createRecord();
+        let newRecord: CREATE_RECORD_createRecord_whoAmI = state.record ?? null;
+        if (!newRecord) {
+            try {
+                const createdRecord = await createRecord();
 
-            newRecord = createdRecord.data.createRecord;
-        } catch (err) {
-            addNotification({
-                type: NotificationType.error,
-                content: err.message,
-                priority: NotificationPriority.high
-            });
-            return;
+                newRecord = createdRecord.data.createRecord.whoAmI;
+
+                dispatch({
+                    type: EditRecordReducerActionsTypes.SET_RECORD,
+                    record: newRecord
+                });
+            } catch (err) {
+                addNotification({
+                    type: NotificationType.error,
+                    content: err.message,
+                    priority: NotificationPriority.high
+                });
+                return;
+            }
         }
 
         try {
@@ -275,7 +285,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                             break;
                         case AttributeType.tree:
                             const treeValue = (val as SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue).treeValue;
-                            actualValue = `${treeValue.record.whoAmI.library.id}/${treeValue.record.id}`;
+                            actualValue = treeValue.id;
                             break;
                         default:
                             actualValue = (val as SAVE_VALUE_BATCH_saveValueBatch_values_Value).raw_value;
@@ -292,7 +302,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 return [...allValues, ...attributeValues];
             }, []);
 
-            const saveRes = await saveValues(newRecord.whoAmI, valuesToSave);
+            const saveRes = await saveValues(newRecord, valuesToSave);
 
             // All encountered errors are available for children, grouped by attribute ID
             if (saveRes.status === APICallStatus.ERROR || saveRes.status === APICallStatus.PARTIAL) {
@@ -302,7 +312,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 return;
             } else {
                 if (afterSave) {
-                    await afterSave(newRecord.whoAmI);
+                    await afterSave(newRecord);
                 }
 
                 onClose();

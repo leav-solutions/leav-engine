@@ -61,6 +61,7 @@ export const saveValueBatchMutation = gql`
 
                 ... on TreeValue {
                     treeValue: value {
+                        id
                         record {
                             ...RecordIdentity
                         }

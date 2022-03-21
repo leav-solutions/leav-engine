@@ -168,6 +168,7 @@ describe('TreeField', () => {
                 allowFreeEntry: true,
                 values: [
                     {
+                        id: '123456',
                         record: mockRecordFromList,
                         ancestors: [{record: mockRecordFromList}]
                     }

@@ -5,6 +5,7 @@ import {AnyPrimitive, ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav
 import {Popover, Skeleton, Switch, Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import Paragraph from 'antd/lib/typography/Paragraph';
+import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import Dimmer from 'components/shared/Dimmer';
 import ErrorMessage from 'components/shared/ErrorMessage';
 import RecordCard from 'components/shared/RecordCard';
@@ -17,7 +18,7 @@ import {
 import {IRecordPropertyLink, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -101,6 +102,7 @@ function LinkField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
     const [{lang}] = useLang();
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const recordValues = (element.values as RECORD_FORM_recordForm_elements_values_LinkValue[]) ?? [];
+    const creationErrors = useContext(CreationErrorContext);
 
     const attribute = element.attribute as RECORD_FORM_recordForm_elements_attribute_LinkAttribute;
     const settings = element.settings as IFormLinkFieldSettings;
@@ -114,6 +116,12 @@ function LinkField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
         linkedRecordsColumns.map(c => c.id),
         recordValues.map(r => r.linkValue.id)
     );
+
+    useEffect(() => {
+        if (creationErrors[attribute.id]) {
+            setErrorMessage(creationErrors[attribute.id].message);
+        }
+    }, [creationErrors, attribute.id]);
 
     const _getLinkedRecordColumnsValues = (recordId: string) =>
         linkedRecordsColumns.reduce((allCols: {[col: string]: string}, col) => {
