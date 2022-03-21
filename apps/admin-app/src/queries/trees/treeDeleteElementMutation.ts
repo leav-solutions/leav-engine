@@ -5,8 +5,6 @@ import gql from 'graphql-tag';
 
 export const deleteTreeElementQuery = gql`
     mutation DELETE_TREE_ELEMENT($treeId: ID!, $nodeId: ID!, $deleteChildren: Boolean) {
-        treeDeleteElement(treeId: $treeId, nodeId: $nodeId, deleteChildren: $deleteChildren) {
-            id
-        }
+        treeDeleteElement(treeId: $treeId, nodeId: $nodeId, deleteChildren: $deleteChildren)
     }
 `;

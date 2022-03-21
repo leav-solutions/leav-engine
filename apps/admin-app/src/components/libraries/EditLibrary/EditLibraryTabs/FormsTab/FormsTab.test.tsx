@@ -64,7 +64,7 @@ describe('FormsTab', () => {
             render(<FormsTab libraryId="my_lib" readonly={false} />, {apolloMocks: errorMock});
         });
 
-        expect(screen.getByText(/boom!/)).toBeInTheDocument();
+        expect(await screen.findByText(/boom!/)).toBeInTheDocument();
     });
 
     test('On filters update, re run query with filters', async () => {

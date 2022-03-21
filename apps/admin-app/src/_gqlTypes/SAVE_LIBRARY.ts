@@ -233,6 +233,15 @@ export interface SAVE_LIBRARY_saveLibrary_gqlNames {
     searchableFields: string;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_permissions {
+    admin_library: boolean;
+    access_library: boolean;
+    access_record: boolean;
+    create_record: boolean;
+    edit_record: boolean;
+    delete_record: boolean;
+}
+
 export interface SAVE_LIBRARY_saveLibrary {
     id: string;
     system: boolean | null;
@@ -244,6 +253,7 @@ export interface SAVE_LIBRARY_saveLibrary {
     recordIdentityConf: SAVE_LIBRARY_saveLibrary_recordIdentityConf | null;
     defaultView: SAVE_LIBRARY_saveLibrary_defaultView | null;
     gqlNames: SAVE_LIBRARY_saveLibrary_gqlNames;
+    permissions: SAVE_LIBRARY_saveLibrary_permissions | null;
 }
 
 export interface SAVE_LIBRARY {
