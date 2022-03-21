@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_ATTRIBUTES
@@ -188,7 +188,6 @@ export interface GET_ATTRIBUTES {
 }
 
 export interface GET_ATTRIBUTESVariables {
-    lang?: AvailableLanguage[] | null;
     id?: string | null;
     label?: string | null;
     type?: (AttributeType | null)[] | null;

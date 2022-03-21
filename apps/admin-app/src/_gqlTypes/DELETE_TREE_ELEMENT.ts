@@ -10,12 +10,8 @@
 // GraphQL mutation operation: DELETE_TREE_ELEMENT
 // ====================================================
 
-export interface DELETE_TREE_ELEMENT_treeDeleteElement {
-    id: string;
-}
-
 export interface DELETE_TREE_ELEMENT {
-    treeDeleteElement: DELETE_TREE_ELEMENT_treeDeleteElement;
+    treeDeleteElement: string;
 }
 
 export interface DELETE_TREE_ELEMENTVariables {

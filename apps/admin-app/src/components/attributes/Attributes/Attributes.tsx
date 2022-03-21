@@ -35,7 +35,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
     const userData = useUserData();
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
-        variables: {...addWildcardToFilters(filters), lang}
+        variables: {...addWildcardToFilters(filters)}
     });
 
     const _onFiltersUpdate = (filterElem: any) => {

@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
+import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_LIBRARY_ATTRIBUTES
@@ -190,5 +190,4 @@ export interface SAVE_LIBRARY_ATTRIBUTES {
 export interface SAVE_LIBRARY_ATTRIBUTESVariables {
     libId: string;
     attributes: string[];
-    lang?: AvailableLanguage[] | null;
 }

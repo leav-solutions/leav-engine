@@ -24,8 +24,7 @@ describe('Attributes', () => {
         const mocks: MockedResponse[] = [
             {
                 request: {
-                    query: getAttributesQuery,
-                    variables: {lang: ['fr']}
+                    query: getAttributesQuery
                 },
                 result: {
                     data: {
