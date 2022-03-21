@@ -94,9 +94,10 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                         variables: {
                             treeId: activeTree.id,
                             element: treeElement,
-                            parent: parent.id ?? null
+                            parent: parent?.id ?? null
                         }
                     });
+
                     messages = {...messages, countValid: messages.countValid + 1};
                 } catch (e) {
                     if (e.graphQLErrors && e.graphQLErrors.length) {
@@ -115,6 +116,14 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                                 elementSelected.label || elementSelected.id
                             ];
                         }
+                    } else {
+                        dispatch(
+                            addNotification({
+                                channel: NotificationChannel.trigger,
+                                type: NotificationType.error,
+                                content: `${t('error.error_occurred')}: ${e.message}`
+                            })
+                        );
                     }
                 }
             }
@@ -168,7 +177,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                         id: newRecord.id,
                         library: newRecord.library.id
                     },
-                    parent: parent.id ?? null
+                    parent: parent?.id ?? null
                 }
             });
 
@@ -194,7 +203,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 notification = {
                     channel: NotificationChannel.trigger,
                     type: NotificationType.error,
-                    content: err.message
+                    content: `${t('error.error_occurred')}: ${err.message}`
                 };
             }
         }
@@ -219,7 +228,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
             await removeFromTree({
                 variables: {
                     treeId: activeTree.id,
-                    nodeId: parent.id
+                    nodeId: parent?.id ?? null
                 }
             });
 
