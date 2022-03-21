@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
 import React from 'react';
 import {render, screen} from '_tests/testUtils';
-import {getTreeContentQuery} from '../../../queries/trees/treeContentQuery';
 import {mockTree} from '../../../__mocks__/trees';
 import TreeStructure from './TreeStructure';
 
@@ -20,17 +20,17 @@ describe('EditTreeStructure', () => {
         const mocks = [
             {
                 request: {
-                    query: getTreeContentQuery,
+                    query: getTreeNodeChildrenQuery,
                     variables: {
                         treeId: 'test_tree',
-                        startAt: null
+                        node: null
                     }
                 },
                 result: {
                     data: {
-                        treeContent: [
+                        treeNodeChildren: [
                             {
-                                __typename: 'TreeNode',
+                                __typename: 'TreeNodeLight',
                                 id: '12345',
                                 order: 0,
                                 record: {
@@ -42,9 +42,7 @@ describe('EditTreeStructure', () => {
                                         id: 'test_lib',
                                         label: {fr: 'Test'}
                                     }
-                                },
-                                children: [],
-                                ancestors: []
+                                }
                             }
                         ]
                     }

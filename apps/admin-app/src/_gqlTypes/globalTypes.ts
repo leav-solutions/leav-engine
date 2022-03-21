@@ -198,6 +198,11 @@ export interface LibraryInput {
     defaultView?: string | null;
 }
 
+export interface Pagination {
+    limit: number;
+    offset: number;
+}
+
 export interface PermissionActionInput {
     name: PermissionsActions;
     allowed?: boolean | null;
