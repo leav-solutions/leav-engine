@@ -30,6 +30,11 @@ import {MAX_TREE_DEPTH, TO_RECORD_PROP_NAME} from '../tree/treeRepo';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
+export interface IFindRequestResult {
+    initialVars: GeneratedAqlQuery[]; // Some "global" variables needed later on the query (eg. "classified in" subquery)
+    queryPart: GeneratedAqlQuery;
+}
+
 export interface IRecordRepo {
     createRecord({
         libraryId,
@@ -122,9 +127,16 @@ export default function ({
         return output.concat(stack.reverse());
     };
 
-    const _findRequest = async (libraryId: string, filter?: IRecordFilterOption): Promise<AqlQuery> => {
+    const _findRequest = async (
+        libraryId: string,
+        index: string,
+        filter?: IRecordFilterOption
+    ): Promise<IFindRequestResult> => {
         const queryParts = [];
         const coll = dbService.db.collection(libraryId);
+
+        // Will contain query to init some "global" variables needed later on the query
+        const initialVars: GeneratedAqlQuery[] = [];
 
         queryParts.push(aql`(FOR ${aql.literal(BASE_QUERY_IDENTIFIER)} IN ${coll}`);
 
@@ -140,19 +152,25 @@ export default function ({
 
                 // Run through the tree to retrieve records present in this tree.
                 // For a "CLASSIFIED IN" filter, we must exclude the record linked to starting node.
-                const recordsSubQuery = aql.join([
-                    aql` FOR v, e IN 1..${MAX_TREE_DEPTH} OUTBOUND ${startingNode}
-                        ${collec}
-                        FILTER e.${TO_RECORD_PROP_NAME}
-                    `,
-                    filter.condition === TreeCondition.CLASSIFIED_IN ? aql`FILTER e._from != ${startingNode}` : aql``,
-                    aql` RETURN v._id`
-                ]);
+                const classifiedSubqueryName = aql.literal('classifiedSubquery_' + index);
+                initialVars.push(aql`
+                    LET ${classifiedSubqueryName} = (
+                        FOR v, e IN 1..${MAX_TREE_DEPTH} OUTBOUND ${startingNode}
+                            ${collec}
+                            FILTER e.${TO_RECORD_PROP_NAME}
+                            ${
+                                filter.condition === TreeCondition.CLASSIFIED_IN
+                                    ? aql`FILTER e._from != ${startingNode}`
+                                    : aql``
+                            }
+                            RETURN v._id
+                    )
+                `);
 
                 filterQueryPart =
                     filter.condition === TreeCondition.CLASSIFIED_IN
-                        ? aql`FILTER POSITION(${recordsSubQuery}, r._id)`
-                        : aql`FILTER !POSITION(${recordsSubQuery}, r._id)`;
+                        ? aql`FILTER r._id IN (${classifiedSubqueryName})`
+                        : aql`FILTER r._id NOT IN (${classifiedSubqueryName})`;
             } else {
                 const filterAttribute = filter.attributes[0];
 
@@ -167,7 +185,7 @@ export default function ({
 
         queryParts.push(aql`RETURN r)`);
 
-        return aql.join(queryParts);
+        return {initialVars, queryPart: aql.join(queryParts)};
     };
 
     const _isAttributeFilter = (filter: IRecordFilterOption) => {
@@ -198,12 +216,14 @@ export default function ({
             // Force disbaling count on cursor pagination as it's pointless
             const withTotalCount = withCount && !withCursorPagination;
             const coll = dbService.db.collection(libraryId);
+
+            let initialVars: GeneratedAqlQuery[] = [];
             let queryParts = [!filters || !filters.length ? aql`FOR r IN ${coll}` : aql`FOR r IN`];
             let isFilteringOnActive = false;
 
             if (typeof filters !== 'undefined' && filters.length) {
                 const rpn: IRecordFilterOption[] = _toReversePolishNotation(filters);
-                const stack = [];
+                const stack: Array<IRecordFilterOption | GeneratedAqlQuery> = [];
 
                 for (const [i, filter] of rpn.entries()) {
                     if (_isAttributeFilter(filter) || _isClassifiedFilter(filter)) {
@@ -211,30 +231,44 @@ export default function ({
                             isFilteringOnActive || (_isAttributeFilter(filter) && filter.attributes[0].id === 'active');
                         stack.push(filter);
                     } else {
-                        let [f0, f1] = [stack.pop(), stack.pop()].reverse();
+                        const [f0, f1] = [stack.pop(), stack.pop()].reverse() as IRecordFilterOption[];
+                        let f0FindRequest: IFindRequestResult;
+                        let f1FindRequest: IFindRequestResult;
 
                         if (_isAttributeFilter(f0) || _isClassifiedFilter(f0)) {
-                            f0 = await _findRequest(libraryId, f0);
+                            f0FindRequest = await _findRequest(libraryId, `${i}_0`, f0);
                         }
 
                         if (_isAttributeFilter(f1) || _isClassifiedFilter(f1)) {
-                            f1 = await _findRequest(libraryId, f1);
+                            f1FindRequest = await _findRequest(libraryId, `${i}_1`, f1);
                         }
 
                         const res =
                             filter.operator === Operator.AND
-                                ? aql`INTERSECTION(${f0}, ${f1})`
-                                : aql`APPEND(${f0}, ${f1}, true)`;
+                                ? aql`INTERSECTION(${f0FindRequest.queryPart}, ${f1FindRequest.queryPart})`
+                                : aql`APPEND(${f0FindRequest.queryPart}, ${f1FindRequest.queryPart}, true)`;
+
+                        initialVars = [
+                            ...initialVars,
+                            ...(f0FindRequest?.initialVars ?? []),
+                            ...(f1FindRequest?.initialVars ?? [])
+                        ];
 
                         stack.push(res);
                     }
                 }
 
-                if (_isAttributeFilter(stack[0]) || _isClassifiedFilter(stack[0])) {
-                    stack[0] = await _findRequest(libraryId, stack[0]);
+                if (
+                    _isAttributeFilter(stack[0] as IRecordFilterOption) ||
+                    _isClassifiedFilter(stack[0] as IRecordFilterOption)
+                ) {
+                    const stackFindRequest = await _findRequest(libraryId, 'stack0', stack[0] as IRecordFilterOption);
+                    stack[0] = stackFindRequest.queryPart;
+                    initialVars = [...initialVars, ...(stackFindRequest?.initialVars ?? [])];
                 }
 
-                queryParts = queryParts.concat([].concat.apply([], stack));
+                // Initial vars must be at the very beginning of the query, before the FOR loop
+                queryParts = [...initialVars, ...queryParts, ...(stack as GeneratedAqlQuery[])];
             }
 
             const sortQueryPart = sort
