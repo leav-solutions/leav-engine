@@ -8,7 +8,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IQueryInfos} from '_types/queryInfos';
 import {Action} from '../../_types/import';
-import {ICacheService} from 'infra/cache/cacheService';
+import {ICacheService, ECacheType} from '../../infra/cache/cacheService';
 import * as Config from '_types/config';
 import fs from 'fs';
 import path from 'path';
@@ -128,8 +128,8 @@ describe('importDomain', () => {
         };
 
         when(mockCacheService.getData)
-            .calledWith('test.json-links', '0')
-            .mockReturnValue(
+            .calledWith(ECacheType.DISK, ['0'], 'test.json-links')
+            .mockReturnValue([
                 JSON.stringify({
                     library: 'test_import',
                     recordIds: ['1'],
@@ -145,17 +145,17 @@ describe('importDomain', () => {
                         }
                     ]
                 })
-            );
+            ]);
 
         when(mockCacheService.getData)
-            .calledWith('test.json-links', '1')
-            .mockReturnValue(
+            .calledWith(ECacheType.DISK, ['1'], 'test.json-links')
+            .mockReturnValue([
                 JSON.stringify({
                     library: 'users_groups',
                     recordIds: ['1'],
                     links: []
                 })
-            );
+            ]);
 
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
@@ -228,7 +228,7 @@ describe('importDomain', () => {
         };
 
         const mockCacheService: Mockify<ICacheService> = {
-            getData: global.__mockPromise(
+            getData: global.__mockPromise([
                 JSON.stringify({
                     library: 'test_import',
                     recordIds: ['1'],
@@ -249,7 +249,7 @@ describe('importDomain', () => {
                         }
                     ]
                 })
-            ),
+            ]),
             storeData: global.__mockPromise(),
             deleteAll: global.__mockPromise()
         };

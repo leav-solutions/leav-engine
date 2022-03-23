@@ -14,6 +14,8 @@ import * as winston from 'winston';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
+import {IValueDomain} from 'domain/value/valueDomain';
+import {ITreeValue} from '_types/value';
 
 export interface IServer {
     init(): Promise<void>;
@@ -25,12 +27,14 @@ interface IDeps {
     'core.app.auth'?: IAuthApp;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
+    'core.domain.value'?: IValueDomain;
 }
 
 export default function ({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
+    'core.domain.value': valueDomain = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null
 }: IDeps = {}): IServer {
@@ -77,6 +81,17 @@ export default function ({
         return newError;
     };
 
+    const _getUserGroups = async (userId: string, ctx: IQueryInfos): Promise<string[]> => {
+        const userGroups = (await valueDomain.getValues({
+            library: 'users',
+            recordId: userId,
+            attribute: 'user_groups',
+            ctx
+        })) as ITreeValue[];
+
+        return userGroups.map(g => g.value.record.id);
+    };
+
     return {
         async init(): Promise<void> {
             const app = express();
@@ -86,7 +101,7 @@ export default function ({
                 app.set('port', config.server.port);
                 app.set('host', config.server.host);
                 app.use(express.json({limit: config.server.uploadLimit}));
-                app.use(express.urlencoded({limit: config.server.uploadLimit}));
+                app.use(express.urlencoded({extended: true, limit: config.server.uploadLimit}));
                 app.use(graphqlUploadExpress());
 
                 // CORS
@@ -152,11 +167,15 @@ export default function ({
                         try {
                             const payload = await authApp.validateToken(req.headers.authorization);
 
-                            return {
+                            const ctx: IQueryInfos = {
                                 userId: payload.userId,
                                 lang: (req.query.lang as string) ?? config.lang.default,
                                 queryId: req.body.requestId || uuidv4()
                             };
+
+                            ctx.groupsId = await _getUserGroups(payload.userId, ctx);
+
+                            return ctx;
                         } catch (e) {
                             console.error(e);
                             throw new AuthenticationError('you must be logged in');

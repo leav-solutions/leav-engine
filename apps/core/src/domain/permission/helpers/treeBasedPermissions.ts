@@ -14,6 +14,8 @@ import {IGetInheritedTreeBasedPermissionParams, IGetTreeBasedPermissionParams} f
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
+import getPermissionsCacheKey from './getPermissionsCacheKey';
+import {ECacheType, ICacheService} from '../../../infra/cache/cacheService';
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
@@ -23,6 +25,7 @@ interface IDeps {
     'core.infra.tree'?: ITreeRepo;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.value'?: IValueRepo;
+    'core.infra.cache.cacheService'?: ICacheService;
     config?: IConfig;
 }
 
@@ -31,7 +34,7 @@ export interface ITreeBasedPermissionHelper {
     getInheritedTreeBasedPermission(params: IGetInheritedTreeBasedPermissionParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
-export default function (deps: IDeps): ITreeBasedPermissionHelper {
+export default function(deps: IDeps): ITreeBasedPermissionHelper {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
@@ -39,6 +42,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper = null,
         'core.infra.tree': treeRepo = null,
         'core.infra.value': valueRepo = null,
+        'core.infra.cache.cacheService': cacheService = null,
         config = null
     } = deps;
 
@@ -131,56 +135,68 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
             return getDefaultPermission({action, applyTo, userId});
         }
 
-        const userGroupAttr = await attributeDomain.getAttributeProperties({id: 'user_groups', ctx});
+        const key = permissions_conf.permissionTreeAttributes.reduce((acc, permTreeAttr) => {
+            const values = treeValues[permTreeAttr];
+            return values.length ? acc + `${acc.length ? '_' : ''}${values.join('_')}` : acc;
+        }, '');
 
-        // Get user group, retrieve ancestors
-        const userGroups = await valueRepo.getValues({
-            library: 'users',
-            recordId: userId,
-            attribute: userGroupAttr as IAttributeWithRevLink,
-            ctx
-        });
+        const cacheKey = getPermissionsCacheKey(ctx.groupsId, type, applyTo, action, key);
+        const permFromCache = (await cacheService.getData(ECacheType.RAM, [cacheKey]))[0];
 
-        const userGroupsPaths = await Promise.all(
-            userGroups.map(userGroupVal =>
-                treeRepo.getElementAncestors({
-                    treeId: 'users_groups',
-                    nodeId: userGroupVal.value.id,
-                    ctx
+        let perm: boolean;
+
+        if (permFromCache !== null) {
+            perm = permFromCache === 'true';
+        } else {
+            const userGroupsPaths = !!ctx.groupsId
+                ? await Promise.all(
+                      ctx.groupsId.map(async groupId => {
+                          const groupNodeId = await treeRepo.getNodesByRecord({
+                              treeId: 'users_groups',
+                              record: {id: groupId, library: 'user_groups'},
+                              ctx
+                          });
+
+                          return treeRepo.getElementAncestors({
+                              treeId: 'users_groups',
+                              nodeId: groupNodeId[0],
+                              ctx
+                          });
+                      })
+                  )
+                : [];
+
+            const treePerms = await Promise.all(
+                permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
+                    const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
+                    const treePerm = await _getPermTreePermission({
+                        type,
+                        action,
+                        applyTo,
+                        userGroupsPaths,
+                        permTreeId: permTreeAttrProps.linked_tree,
+                        permTreeValues: treeValues[permTreeAttr],
+                        ctx
+                    });
+
+                    return treePerm ?? getDefaultPermission({action, applyTo, userId});
                 })
-            )
-        );
+            );
 
-        const treePerms = await Promise.all(
-            permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
-                const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
-                const treePerm = await _getPermTreePermission({
-                    type,
-                    action,
-                    applyTo,
-                    userGroupsPaths,
-                    permTreeId: permTreeAttrProps.linked_tree,
-                    permTreeValues: treeValues[permTreeAttr],
-                    ctx
-                });
-
-                if (treePerm !== null) {
+            perm = treePerms.reduce((globalPerm, treePerm) => {
+                if (globalPerm === null) {
                     return treePerm;
                 }
 
-                return getDefaultPermission({action, applyTo, userId});
-            })
-        );
+                return permissions_conf.relation === PermissionsRelations.AND
+                    ? globalPerm && treePerm
+                    : globalPerm || treePerm;
+            }, null);
 
-        const perm = treePerms.reduce((globalPerm, treePerm) => {
-            if (globalPerm === null) {
-                return treePerm;
+            if (perm !== null) {
+                await cacheService.storeData(ECacheType.RAM, cacheKey, perm.toString());
             }
-
-            return permissions_conf.relation === PermissionsRelations.AND
-                ? globalPerm && treePerm
-                : globalPerm || treePerm;
-        }, null);
+        }
 
         return perm;
     };

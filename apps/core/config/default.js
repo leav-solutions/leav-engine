@@ -50,6 +50,10 @@ module.exports = {
         type: process.env.AMQP_TYPE || 'direct',
         prefetch: process.env.AMQP_PREFETCH || 5
     },
+    redis: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT
+    },
     filesManager: {
         queues: {
             events: process.env.FM_EVENTS_QUEUE || 'files_events',

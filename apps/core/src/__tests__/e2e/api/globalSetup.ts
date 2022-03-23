@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {appRootPath} from '@leav/app-root-path';
 import {Database} from 'arangojs';
 import fs from 'fs';
 import path from 'path';
@@ -9,6 +8,7 @@ import {getConfig} from '../../../config';
 import {init as initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {initAmqp} from '../../../infra/amqp';
+import {initRedis} from '../../../infra/cache/redis';
 import {initPlugins} from '../../../pluginsLoader';
 import {IConfig} from '../../../_types/config';
 
@@ -37,8 +37,13 @@ export const init = async (conf: IConfig): Promise<any> => {
 
     // Init AMQP
     const amqpConn = await initAmqp({config: conf});
+    const redisClient = await initRedis({config: conf});
 
-    const {coreContainer, pluginsContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
+    const {coreContainer, pluginsContainer} = await initDI({
+        translator,
+        'core.infra.amqp': amqpConn,
+        'core.infra.redis': redisClient
+    });
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);

@@ -7,7 +7,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
-import {ICacheService} from 'infra/cache/cacheService';
+import {ICacheService, ECacheType} from '../../infra/cache/cacheService';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
@@ -357,7 +357,7 @@ export default function ({
         async import(filename: string, ctx: IQueryInfos): Promise<boolean> {
             await _jsonSchemaValidation(filename);
 
-            const cacheDataType = `${filename}-links`;
+            const cacheDataPath = `${filename}-links`;
             let lastCacheIndex: number;
 
             await _getStoredFileData(
@@ -380,9 +380,10 @@ export default function ({
                     // caching element links
                     // TODO: Improvement: if no links no cache.
                     await cacheService.storeData(
-                        cacheDataType,
+                        ECacheType.DISK,
                         index.toString(),
-                        JSON.stringify({library: element.library, recordIds, links: element.links})
+                        JSON.stringify({library: element.library, recordIds, links: element.links}),
+                        cacheDataPath
                     );
 
                     if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
@@ -413,7 +414,9 @@ export default function ({
 
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
-                const cacheStringifiedObject = await cacheService.getData(cacheDataType, cacheKey.toString());
+                const cacheStringifiedObject = (
+                    await cacheService.getData(ECacheType.DISK, [cacheKey.toString()], cacheDataPath)
+                )[0];
                 const element = JSON.parse(cacheStringifiedObject);
                 for (const link of element.links) {
                     await _treatElement(element.library, link, element.recordIds, ctx);
@@ -421,7 +424,7 @@ export default function ({
             }
 
             // Delete cache.
-            await cacheService.deleteAll(cacheDataType);
+            await cacheService.deleteAll(ECacheType.DISK, cacheDataPath);
 
             return true;
         },

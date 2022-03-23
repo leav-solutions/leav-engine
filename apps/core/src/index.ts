@@ -10,6 +10,7 @@ import i18nextInit from './i18nextInit';
 import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 import {initAmqp} from './infra/amqp';
+import {initRedis} from './infra/cache';
 import fs from 'fs';
 
 (async function () {
@@ -31,8 +32,13 @@ import fs from 'fs';
 
     // Init AMQP
     const amqpConn = await initAmqp({config: conf});
+    const redisClient = await initRedis({config: conf});
 
-    const {coreContainer, pluginsContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
+    const {coreContainer, pluginsContainer} = await initDI({
+        translator,
+        'core.infra.amqp': amqpConn,
+        'core.infra.redis': redisClient
+    });
 
     const server = coreContainer.cradle['core.interface.server'];
     const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
