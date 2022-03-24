@@ -1,9 +1,10 @@
-FROM node:14-alpine
+FROM node:14-alpine3.15
 
 # imagemagick is use for image
 # ffmpeg is use for convert video
 # inkscape is use to convert svg, imageMagick can't do it correctly
-RUN apk add imagemagick ffmpeg inkscape
+RUN apk update
+RUN apk add --no-cache imagemagick~=7.1 ffmpeg inkscape
 
 ENV UNO_URL https://raw.githubusercontent.com/dagwieers/unoconv/master/unoconv
 

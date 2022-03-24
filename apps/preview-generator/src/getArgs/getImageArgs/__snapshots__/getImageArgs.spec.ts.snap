@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getImageArgs Compute preview command args 1`] = `
+Array [
+  Object {
+    "args": Array [
+      "-density",
+      600,
+      "test.jpg[0]",
+      "-colorspace",
+      "srgb",
+      "-geometry",
+      "800x800>",
+      "-density",
+      "72",
+      "png:test.png",
+    ],
+    "command": "magick",
+  },
+  null,
+]
+`;

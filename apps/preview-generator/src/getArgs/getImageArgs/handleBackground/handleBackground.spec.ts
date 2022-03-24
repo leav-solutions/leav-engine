@@ -9,15 +9,15 @@ describe('handleBackground', () => {
     test('background color', () => {
         const background = '#FF0000';
 
-        const {command} = handleBackground(args, background, output);
+        const {command} = handleBackground(background, output);
 
-        expect(command).toBe('convert');
+        expect(command).toBe('magick');
     });
 
     test('background true', () => {
         const background = true;
 
-        const {command} = handleBackground(args, background, output);
+        const {command} = handleBackground(background, output);
 
         expect(command).toBe('composite');
     });
@@ -25,7 +25,7 @@ describe('handleBackground', () => {
     test('background false', () => {
         const background = false;
 
-        const shouldBeNull = handleBackground(args, background, output);
+        const shouldBeNull = handleBackground(background, output);
 
         expect(shouldBeNull).toBeFalsy();
     });

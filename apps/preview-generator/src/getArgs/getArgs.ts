@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorPreview} from './../types/ErrorPreview';
 import {extname} from 'path';
+import {ErrorPreview} from '../errors/ErrorPreview';
 import {IExec, IVersion} from '../types/types';
-import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
+import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 
 export const getArgs = async (
     type: string,
@@ -16,7 +16,9 @@ export const getArgs = async (
     version: IVersion,
     first = false
 ): Promise<IExec[]> => {
-    const ext = extname(input).toLowerCase().replace('.', '');
+    const ext = extname(input)
+        .toLowerCase()
+        .replace('.', '');
 
     switch (type) {
         case 'video':

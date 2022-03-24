@@ -5,8 +5,8 @@ import {execFile} from 'child_process';
 import {access} from 'fs';
 import {join} from 'path';
 import {createDirectoryRecursively} from '../../check/checkOutput/checkOutput';
+import {ErrorPreview} from '../../errors/ErrorPreview';
 import {IResult, IRootPaths} from '../../types/types';
-import {ErrorPreview} from './../../types/ErrorPreview';
 import {handleError} from './../../utils/log';
 
 export const handleMultiPage = async (

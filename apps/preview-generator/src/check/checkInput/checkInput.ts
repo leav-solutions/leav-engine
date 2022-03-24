@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {access, lstat} from 'fs';
 import {join} from 'path';
-import {ErrorPreview} from './../../types/ErrorPreview';
+import {ErrorPreview} from '../../errors/ErrorPreview';
 import {handleError} from './../../utils/log';
 
 export const checkInput = async (input: string, inputRootPath: string) => {

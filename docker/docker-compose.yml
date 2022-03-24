@@ -26,6 +26,7 @@ x-volume-automate_scan-modules: &volume-automate_scan-modules node_modules_autom
 x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/app/apps/sync-scan/node_modules
 x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
 x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
+x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
 
 # Host path is relative to the docker folder
 x-mount_point-repo: &mount_point-repo ../:/app:delegated
@@ -134,6 +135,7 @@ services:
       - *volume-sync_scan-modules
       - *volume-config_manager-modules
       - *volume-app_root_path-modules
+      - *volume-utils-modules
     ports:
       - "9229:9229"
     working_dir: *dir-core
@@ -394,4 +396,6 @@ volumes:
   node_modules_config-manager:
     driver: local
   node_modules_app-root-path:
+    driver: local
+  node_modules_utils:
     driver: local

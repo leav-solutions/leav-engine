@@ -13,10 +13,14 @@ export const consume = async (channel: Channel, config: IConfig) => {
 
 export const handleMsg = async (msg: ConsumeMessage, channel: Channel, config: IConfig) => {
     if (msg.content) {
-        const response = await processPreview(msg, config);
+        try {
+            const response = await processPreview(msg, config);
 
-        await sendResponse(channel, config.amqp.publish, response);
-
-        channel.ack(msg);
+            await sendResponse(channel, config.amqp.publish, response);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            channel.ack(msg);
+        }
     }
 };

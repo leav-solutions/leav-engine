@@ -1,16 +1,106 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {execFile} from 'child_process';
 import {join} from 'path';
-import {IArgs, IExec, IVersion} from '../../types/types';
+import {ErrorPreview} from '../../errors/ErrorPreview';
+import {Colorspaces} from '../../types/constants';
+import {IExec, IVersion} from '../../types/types';
+import {handleError} from '../../utils/log';
 import {getConfig} from './../../getConfig/getConfig';
-import {ErrorPreview} from './../../types/ErrorPreview';
-import {handleError} from './../../utils/log';
 import {getSvgCommand} from './../getSvgCommand/getSvgCommand';
-import {getJpgArgs} from './getJpgArgs/getJpgArgs';
-import {getPsdArgs} from './getPsdArgs/getPsdArgs';
 import {handleBackground} from './handleBackground/handleBackground';
+import {getColorspace} from './helpers/getColorspace';
+import {hasClippingPath} from './helpers/hasClippingPath';
+import {hasTransparency} from './helpers/hasTransparency';
+
+const _getMainCommand = async (
+    ext: string,
+    input: string,
+    output: string,
+    size: number,
+    name: string,
+    version: IVersion,
+    first = false
+): Promise<IExec> => {
+    if (ext === 'svg') {
+        return getSvgCommand(input, output, size);
+    }
+
+    const inputFile = `${input}[0]`;
+    const command = 'magick';
+    const config = await getConfig();
+
+    const inputHasClippingPath = await hasClippingPath(inputFile);
+
+    let profileArgs = [];
+    let clippingPathArgs: string[] = [];
+
+    // Hardcoded value in input, to process the image with better quality.
+    // User defined density (eg. 72 or 300) is used in output
+    const densityArgs = [
+        '-density', // use density option
+        600 // density value
+    ];
+
+    const colorspaceArgs = ['-colorspace', 'srgb'];
+    let stripArgs = [];
+
+    if (first) {
+        const colorspace = await getColorspace(input);
+
+        if (inputHasClippingPath) {
+            const inputHasTransparency = await hasTransparency(inputFile);
+
+            // Select the outside of the clipping path, and apply transparency
+            clippingPathArgs = ['+clip-path', '#1', '-alpha', 'transparent', '-evaluate', 'divide', '0'];
+
+            // Select the inside of the clipping path, and set it opaque
+            if (!inputHasTransparency) {
+                clippingPathArgs = [...clippingPathArgs, '-clip', '-alpha', 'opaque'];
+            }
+        }
+
+        if (colorspace === Colorspaces.CMYK) {
+            profileArgs = [
+                ...profileArgs,
+                '-profile', // use profile option
+                join(config.ICCPath, 'eciCMYK_v2.icc') // profile value
+            ];
+        }
+
+        profileArgs = [
+            ...profileArgs,
+            '-profile', // use profile option
+            join(config.ICCPath, 'eciRGB_v2.icc') // profile value
+        ];
+
+        stripArgs = ['-strip'];
+    }
+
+    const densityOutArgs = [
+        '-density', // use density option
+        version.density ? version.density.toString() : '72' // density value
+    ];
+
+    const resizeArgs: string[] = [
+        '-geometry', // use resize option
+        `${size}x${size}>` // resize value
+    ];
+
+    const args: string[] = [
+        ...densityArgs,
+        inputFile,
+        ...profileArgs,
+        ...colorspaceArgs,
+        ...clippingPathArgs,
+        ...resizeArgs,
+        ...densityOutArgs,
+        ...stripArgs,
+        `png:${output}` // output path
+    ];
+
+    return {command, args};
+};
 
 export const getImageArgs = async (
     ext: string,
@@ -21,99 +111,28 @@ export const getImageArgs = async (
     version: IVersion,
     first = false
 ): Promise<IExec[]> => {
-    let command = 'convert';
+    try {
+        const mainCommand = await _getMainCommand(ext, input, output, size, name, version, first);
 
-    let args = [
-        '-density', // use density option
-        version.density ? version.density.toString() : '200', // density value
-        input, // input path
-        '-resize', // use resize option
-        `${size}x${size}>`, // resize value
-        `png:${output}` // output path
-    ];
-
-    if (first) {
-        const [errorIdentify, colorspace] = await new Promise(r =>
-            execFile('identify', ['-format', '%r', input], {}, (error, response) => r([error, response]))
-        );
-
-        if (errorIdentify) {
-            const errorId = handleError(errorIdentify);
-
-            throw new ErrorPreview({
-                error: 504,
-                params: {
-                    background: version.background,
-                    density: version.density,
-                    size,
-                    output,
-                    name,
-                    errorId
-                }
-            });
+        let backgroundCommand: IExec = null;
+        if (first && version.background !== false) {
+            backgroundCommand = handleBackground(version.background, output);
         }
 
-        if (colorspace.indexOf('CMYK') > -1) {
-            const config = await getConfig();
-            const profileArgs = [
-                '-profile', // use profile option
-                join(config.ICCPath, 'EuroscaleCoated.icc'), // profile value
-                '-profile', // use profile option
-                join(config.ICCPath, 'srgb.icm') // profile value
-            ];
+        return [mainCommand, backgroundCommand];
+    } catch (err) {
+        const errorId = handleError(err);
 
-            args.splice(-1, 0, ...profileArgs);
-        }
+        throw new ErrorPreview({
+            error: 504,
+            params: {
+                background: version.background,
+                density: version.density,
+                size,
+                output,
+                name,
+                errorId
+            }
+        });
     }
-
-    switch (ext) {
-        case 'psd':
-            await _addTypeArgs(getPsdArgs, args, input);
-            break;
-        case 'jpg':
-        case 'jpeg':
-            await _addTypeArgs(getJpgArgs, args, input);
-            break;
-        case 'pdf':
-            args.splice(2, 1, `${input}[0]`); // replace the input, take only the first page of the pdf
-            break;
-        case 'svg':
-            // svg don't work with imageMagick
-            const res = getSvgCommand(input, output, size);
-            command = res.command;
-            args = res.args;
-            break;
-        case 'eps':
-            // remove existing profile after input given
-            args.splice(
-                2,
-                0,
-                '+profile', // remove profile
-                '*' // remove all profile
-            );
-            break;
-        case 'tif':
-        case 'tiff':
-            args.splice(0, 0, '-flatten');
-            break;
-    }
-
-    let backgroundsArgs: IExec = null;
-    if (first) {
-        backgroundsArgs = handleBackground(args, version.background, output);
-    }
-
-    return [
-        {
-            command,
-            args
-        },
-        backgroundsArgs
-    ];
-};
-
-const _addTypeArgs = async (getTypeArgs: (input: string) => Promise<IArgs>, args: string[], input: string) => {
-    const {before: beforeArgs, after: afterArgs}: IArgs = await getTypeArgs(input);
-    args.splice(2, 0, ...beforeArgs);
-    args.splice(-1, 0, ...afterArgs);
 };

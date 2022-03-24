@@ -26,7 +26,7 @@ export enum ErrorList {
     'error when generating the preview' = 501,
     'error when creating the temporary file for the document type' = 502,
     'error when generating preview from temporary pdf document' = 503,
-    'error when getting the colorspace of the input' = 504,
+    'error when computing preview command' = 504,
 
     // multiPage
     'error when create the folder for multi page' = 601,
