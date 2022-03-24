@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {access, mkdir} from 'fs';
 import {dirname, extname, join} from 'path';
+import {ErrorPreview} from '../../errors/ErrorPreview';
 import {IConfig} from '../../types/types';
 import {handleError} from '../../utils/log';
-import {ErrorPreview} from './../../types/ErrorPreview';
 
 export const checkOutput = async (output: string, size: number, name: string, config: IConfig) => {
     // check if folder exist and create it if not
@@ -37,7 +37,9 @@ export const checkOutput = async (output: string, size: number, name: string, co
     }
 
     // checkOutput
-    const extOutput = extname(output).toLowerCase().replace('.', '');
+    const extOutput = extname(output)
+        .toLowerCase()
+        .replace('.', '');
 
     if (extOutput !== 'png') {
         throw new ErrorPreview({

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {execFile} from 'child_process';
+import {ErrorPreview} from '../../errors/ErrorPreview';
 import {getArgs} from '../../getArgs/getArgs';
 import {handleDocument} from '../../handleDocument/handleDocument';
-import {ErrorPreview} from '../../types/ErrorPreview';
 import {IConfig, IResult, IRootPaths, ISize, IVersion} from '../../types/types';
 import {handleError} from '../../utils/log';
 

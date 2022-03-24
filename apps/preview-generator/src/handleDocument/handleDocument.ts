@@ -4,9 +4,9 @@
 import {execFile} from 'child_process';
 import {unlink} from 'fs';
 import {extname} from 'path';
+import {ErrorPreview} from '../errors/ErrorPreview';
 import {getImageArgs} from '../getArgs/getImageArgs/getImageArgs';
 import {IResult, IRootPaths, IVersion} from '../types/types';
-import {ErrorPreview} from './../types/ErrorPreview';
 import {handleError} from './../utils/log';
 import {handleMultiPage} from './handleMultiPage/handleMultiPage';
 
@@ -22,10 +22,14 @@ interface IHandleDocument {
 
 // convert document in tmp pdf, convert the pdf in png and delete the pdf
 export const handleDocument = async ({input, output, size, name, version, rootPaths, results}: IHandleDocument) => {
-    const ext = extname(input).toLowerCase().replace('.', '');
+    const ext = extname(input)
+        .toLowerCase()
+        .replace('.', '');
+
+    const isPdfLike = ext === 'pdf' || ext === 'ai';
 
     let pdfFile = input;
-    if (ext !== 'pdf') {
+    if (!isPdfLike) {
         pdfFile = await _createDocumentTmpFile(input, output, size, name);
     }
 
@@ -56,7 +60,7 @@ export const handleDocument = async ({input, output, size, name, version, rootPa
         }
     }
 
-    if (ext !== 'pdf') {
+    if (!isPdfLike) {
         await new Promise(r => unlink(pdfFile, r));
     }
 };

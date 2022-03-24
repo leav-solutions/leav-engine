@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Channel} from 'amqplib';
+import {ErrorList} from '../../errors/ErrorList';
 import {IResponse} from '../../types/types';
-import {ErrorList} from './../../types/ErrorList';
 
 interface IProps {
     exchange: string;

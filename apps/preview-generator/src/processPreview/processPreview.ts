@@ -8,7 +8,12 @@ import {generatePreview} from './../generatePreview/generatePreview';
 import {getFileType} from './getFileType/getFileType';
 
 export const processPreview = async (msg: ConsumeMessage, config: IConfig): Promise<IResponse> => {
-    const msgContent: IMessageConsume = JSON.parse(msg.content.toString());
+    let msgContent: IMessageConsume;
+    try {
+        msgContent = JSON.parse(msg.content.toString());
+    } catch (err) {
+        throw new Error(`Invalid message ${msg.content.toString()}`);
+    }
 
     if (config.verbose) {
         console.info('input:', msgContent.input);

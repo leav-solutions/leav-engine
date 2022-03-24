@@ -28,6 +28,9 @@
         "**/*.yml",
         "apps/core/exports/*",
         "docker/**/*",
-        "cache"
+        "cache",
+        "files",
+        "previews",
+        "**/*.icc"
     ]
 }

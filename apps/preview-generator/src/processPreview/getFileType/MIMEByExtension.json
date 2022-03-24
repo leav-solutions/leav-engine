@@ -11,6 +11,10 @@
         "mime": "application/pdf",
         "type": "document"
     },
+    "ai": {
+        "mime": "application/pdf",
+        "type": "document"
+    },
     "xls": {
         "mime": "application/vnd.ms-excel",
         "type": "document"
