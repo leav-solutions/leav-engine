@@ -28,43 +28,25 @@ jest.mock('../../../redux/store', () => ({
     store: {}
 }));
 
-const storageGen = () => {
-    let store = {};
-
-    return {
-        key: nbr => {
-            return nbr.toString;
-        },
-        length: 1,
-        setItem: (key, value) => {
-            store[key] = value;
-        },
-        removeItem: key => {
-            if (store[key]) {
-                store[key] = undefined;
-            }
-        },
-        getItem: key => {
-            return store[key];
-        },
-        clear: () => {
-            store = {};
-        }
-    };
-};
-
+const mockGetToken = jest.fn();
+jest.mock('@leav/utils', () => ({
+    useAuthToken: jest.fn(() => ({
+        getToken: mockGetToken,
+        saveToken: jest.fn(),
+        deleteToken: jest.fn()
+    }))
+}));
 describe('AuthHandler', () => {
     test('If no token found, render login', async () => {
-        const storage = storageGen();
-        render(<AuthHandler url={''} storage={storage} />);
+        mockGetToken.mockImplementation(() => null);
+        render(<AuthHandler url={''} />);
 
         expect(screen.getByText('Login')).toBeInTheDocument();
     });
 
     test('If token is found, render app', async () => {
-        const storage = storageGen();
-        storage.setItem('accessToken', 'mytoken');
-        render(<AuthHandler url={''} storage={storage} />);
+        mockGetToken.mockImplementation(() => 'my_token');
+        render(<AuthHandler url={''} />);
 
         expect(await waitFor(() => screen.getByText('App'))).toBeInTheDocument();
     });

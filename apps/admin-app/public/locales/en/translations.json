@@ -1,6 +1,6 @@
 {
     "admin": {
-        "title": "Administration",
+        "title": "Home",
         "submit": "Submit",
         "save": "Save",
         "cancel": "Cancel",
@@ -21,7 +21,18 @@
         "id": "ID",
         "isSystem": "System",
         "settings": "Settings",
-        "go_back_home": "Go back home"
+        "go_back_home": "Go back home",
+        "logout": "Log out",
+        "choose-lang": "Language"
+    },
+    "dashboard": {
+        "title": "LEAV Engine administration"
+    },
+    "general": {
+        "title": "General",
+        "infos": "Informations",
+        "admin_permissions": "Admin permissions",
+        "version": "LEAV Engine v{{version}}"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
@@ -218,7 +229,8 @@
         "label": "Name",
         "description": "Description",
         "version": "Version",
-        "author": "Author"
+        "author": "Author",
+        "no_plugins": "No plugin installed"
     },
     "records": {
         "add_value": "Add value",

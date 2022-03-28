@@ -51,7 +51,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Header size="large">
-                        <Icon name="share alternate" />
+                        <Icon name="share alternate" rotated="clockwise" />
                         {t('trees.title')}
                     </Header>
                 </Grid.Column>

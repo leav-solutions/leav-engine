@@ -1,6 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import PermissionsAllowedIcon from 'components/shared/icons/PermissionsAllowedIcon';
+import PermissionsForbiddenIcon from 'components/shared/icons/PermissionsForbiddenIcon';
+import PermissionsInheritIcon from 'components/shared/icons/PermissionsInheritIcon';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon, Table} from 'semantic-ui-react';
@@ -64,12 +67,12 @@ const EditPermissionsView = ({
         <Table celled>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell>{t('permissions.permission_col_name')}</Table.HeaderCell>
-                    <Table.HeaderCell>
+                    <Table.HeaderCell width={10}>{t('permissions.permission_col_name')}</Table.HeaderCell>
+                    <Table.HeaderCell width={6}>
                         <PermissionsHeader>
-                            <ForbiddenIcon name="ban" />
-                            <Icon name="sitemap" />
-                            <AllowedIcon name="checkmark" />
+                            <PermissionsForbiddenIcon />
+                            <PermissionsInheritIcon />
+                            <PermissionsAllowedIcon />
                         </PermissionsHeader>
                     </Table.HeaderCell>
                 </Table.Row>

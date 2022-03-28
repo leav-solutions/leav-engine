@@ -2,11 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ISystemTranslationGenerator} from 'app/graphql/customScalars/systemTranslation/systemTranslation';
+import {ICoreDomain} from 'domain/core/coreDomain';
 import {constants, promises as fs} from 'fs';
 import {GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
 import {i18n} from 'i18next';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {IQueryInfos} from '_types/queryInfos';
 import {IAppModule} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {IGraphqlApp} from '../graphql/graphqlApp';
@@ -17,6 +19,7 @@ export interface ICoreApp extends IAppModule {
 }
 
 interface IDeps {
+    'core.domain.core'?: ICoreDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.graphql.customScalars.systemTranslation'?: ISystemTranslationGenerator;
     'core.app.graphql.customScalars.dateTime'?: GraphQLScalarType;
@@ -47,8 +50,9 @@ const _parseLiteralAny = ast => {
     }
 };
 
-export default function (
+export default function(
     {
+        'core.domain.core': coreDomain = null,
         'core.app.graphql': graphqlApp = null,
         'core.app.graphql.customScalars.systemTranslation': systemTranslation = null,
         'core.app.graphql.customScalars.dateTime': DateTime = null,
@@ -82,9 +86,15 @@ export default function (
                         asc
                         desc
                     }
+
+                    extend type Query {
+                        version: String!
+                    }
                 `,
                 resolvers: {
-                    Query: {} as any,
+                    Query: {
+                        version: (parent, args, ctx: IQueryInfos): string => coreDomain.getVersion(ctx)
+                    } as any,
                     Mutation: {} as any,
                     JSON: GraphQLJSON,
                     JSONObject: GraphQLJSONObject,

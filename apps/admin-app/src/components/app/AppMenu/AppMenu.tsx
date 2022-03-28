@@ -1,38 +1,56 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import RecordCard from 'components/shared/RecordCard';
+import useMenuItems from 'hooks/useMenuItems';
+import useUserData from 'hooks/useUserData';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Icon, Menu} from 'semantic-ui-react';
+import {SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
+import styled from 'styled-components';
+import UserPanel from '../UserPanel';
 
-export interface IAppMenuItem {
-    id: string;
-    label: string;
-}
+const StyledMenu = styled(Menu)`
+    &&& {
+        height: 3rem;
+        background: transparent linear-gradient(85deg, #0f2027 0%, #203a43 52%, #2c5364 100%) 0% 0% no-repeat
+            padding-box;
+    }
+`;
 
-export interface IAppMenuProps {
-    items: IAppMenuItem[];
-}
-
-const AppMenu = (props: IAppMenuProps): JSX.Element => {
-    const {items} = props;
+const AppMenu = (): JSX.Element => {
     const {t} = useTranslation();
+    const menuItems = useMenuItems();
+    const userData = useUserData();
+    const [userPanelVisible, setSidebarVisible] = React.useState(false);
+    const _toggleUserPanel = () => {
+        setSidebarVisible(!userPanelVisible);
+    };
+
     return (
-        <Menu vertical fluid inverted>
-            <Menu.Item header position="left">
-                <Icon name="cogs" />
-                <strong>{t('admin.title')}</strong>
-            </Menu.Item>
-            <Menu.Menu>
-                {items.map((item: IAppMenuItem) => (
-                    <Menu.Item className="menu_item" key={item.id} as={NavLink} to={'/' + item.id} name={item.id}>
-                        <Icon name="angle right" />
-                        {item.label}
-                    </Menu.Item>
-                ))}
-            </Menu.Menu>
-        </Menu>
+        <>
+            <StyledMenu fixed="top" fluid inverted size="large">
+                <Menu.Item header as={NavLink} to="/" exact>
+                    <Icon name="home" />
+                </Menu.Item>
+                <Menu.Menu>
+                    {menuItems.map(item => (
+                        <Menu.Item className="menu_item" key={item.id} as={NavLink} to={'/' + item.id} name={item.id}>
+                            <span>
+                                {typeof item.icon === 'string' ? <Icon name={item.icon as SemanticICONS} /> : item.icon}
+                                {item.label}
+                            </span>
+                        </Menu.Item>
+                    ))}
+                </Menu.Menu>
+                <Menu.Item position="right" onClick={_toggleUserPanel}>
+                    <RecordCard record={userData.whoAmI} withLibrary={false} />
+                </Menu.Item>
+            </StyledMenu>
+            <UserPanel visible={userPanelVisible} onHide={_toggleUserPanel} />
+        </>
     );
 };
 

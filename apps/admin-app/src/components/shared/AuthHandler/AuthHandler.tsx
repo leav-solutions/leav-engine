@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useAuthToken} from '@leav/utils';
 import ApolloHandler from 'components/app/ApolloHandler';
 import React, {Suspense, useState} from 'react';
 import {Provider as ReduxProvider} from 'react-redux';
@@ -10,34 +11,34 @@ import Login from '../Login';
 
 interface IAuthHandlerProps {
     url: string;
-    storage: Storage;
 }
 
-function AuthHandler({url, storage = window.sessionStorage}: IAuthHandlerProps): JSX.Element {
-    const [token, setToken] = useState(storage.getItem('accessToken') || '');
+function AuthHandler({url}: IAuthHandlerProps): JSX.Element {
+    const {getToken, saveToken, deleteToken} = useAuthToken();
+    const [token, setToken] = useState(getToken());
     const [internalMessage, setInternalMessage] = useState('');
 
-    // to be passed to Login
-    const recordToken = (tokenStr: string) => {
-        storage.setItem('accessToken', tokenStr);
+    const _onLoginSuccess = (tokenStr: string) => {
+        saveToken(tokenStr);
         setToken(tokenStr);
     };
 
     // to be passed to App, allowing to handle the expiration of the token
     // and error handling
-    const deleteToken = (message?: string) => {
-        storage.removeItem('accessToken');
+    const _handleTokenInvalid = (message?: string) => {
+        deleteToken();
         setToken('');
+
         if (message) {
             setInternalMessage(message);
         }
     };
 
-    if (token) {
+    if (getToken()) {
         return (
             <Suspense fallback={'Loader'}>
                 <ReduxProvider store={store}>
-                    <ApolloHandler token={token} onTokenInvalid={deleteToken}>
+                    <ApolloHandler token={token} onTokenInvalid={_handleTokenInvalid}>
                         <App />
                     </ApolloHandler>
                 </ReduxProvider>
@@ -46,7 +47,7 @@ function AuthHandler({url, storage = window.sessionStorage}: IAuthHandlerProps):
     } else {
         return (
             <Suspense fallback={'Loader'}>
-                <Login onSuccess={recordToken} message={internalMessage} url={url} />
+                <Login onSuccess={_onLoginSuccess} message={internalMessage} url={url} />
             </Suspense>
         );
     }

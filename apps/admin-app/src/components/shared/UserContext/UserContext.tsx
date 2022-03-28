@@ -2,10 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 
 export interface IUserContext {
-    id: number;
-    name: string;
+    id: string;
+    whoAmI: RecordIdentity_whoAmI;
     permissions: {[name: string]: boolean};
 }
 

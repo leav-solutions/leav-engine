@@ -10,7 +10,7 @@ import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
-    <AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} storage={window.sessionStorage} />,
+    <AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} />,
     document.getElementById('root') as HTMLElement
 );
 

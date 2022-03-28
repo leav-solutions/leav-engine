@@ -35,7 +35,8 @@ const mockI18n = {
     language: 'fr',
     options: {
         fallbackLng: ['en']
-    }
+    },
+    changeLanguage: jest.fn()
 };
 
 module.exports = {
