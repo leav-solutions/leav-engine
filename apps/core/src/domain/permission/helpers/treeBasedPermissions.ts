@@ -14,7 +14,7 @@ import {IGetInheritedTreeBasedPermissionParams, IGetTreeBasedPermissionParams} f
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
-import getPermissionsCacheKey from './getPermissionsCacheKey';
+import getPermissionCacheKey from './getPermissionCacheKey';
 import {ECacheType, ICacheService} from '../../../infra/cache/cacheService';
 
 interface IDeps {
@@ -34,7 +34,7 @@ export interface ITreeBasedPermissionHelper {
     getInheritedTreeBasedPermission(params: IGetInheritedTreeBasedPermissionParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
-export default function(deps: IDeps): ITreeBasedPermissionHelper {
+export default function (deps: IDeps): ITreeBasedPermissionHelper {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
@@ -140,9 +140,8 @@ export default function(deps: IDeps): ITreeBasedPermissionHelper {
             return values.length ? acc + `${acc.length ? '_' : ''}${values.join('_')}` : acc;
         }, '');
 
-        const cacheKey = getPermissionsCacheKey(ctx.groupsId, type, applyTo, action, key);
+        const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
         const permFromCache = (await cacheService.getData(ECacheType.RAM, [cacheKey]))[0];
-
         let perm: boolean;
 
         if (permFromCache !== null) {
@@ -153,7 +152,7 @@ export default function(deps: IDeps): ITreeBasedPermissionHelper {
                       ctx.groupsId.map(async groupId => {
                           const groupNodeId = await treeRepo.getNodesByRecord({
                               treeId: 'users_groups',
-                              record: {id: groupId, library: 'user_groups'},
+                              record: {id: groupId, library: 'users_groups'},
                               ctx
                           });
 

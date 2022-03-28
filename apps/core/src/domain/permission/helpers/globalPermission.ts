@@ -12,7 +12,7 @@ import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {ECacheType, ICacheService} from '../../../infra/cache/cacheService';
-import getPermissionsCacheKey from './getPermissionsCacheKey';
+import getPermissionCacheKey from './getPermissionCacheKey';
 
 interface IGetGlobalPermissionParams {
     type: PermissionTypes;
@@ -52,7 +52,7 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICacheService;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
     'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
     'core.infra.attribute': attributeRepo = null,
@@ -65,9 +65,8 @@ export default function({
             {type, applyTo, userId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
             ctx
         ): Promise<boolean> {
-            const cacheKey = getPermissionsCacheKey(ctx.groupsId, type, applyTo, action, '');
+            const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, '');
             const permFromCache = (await cacheService.getData(ECacheType.RAM, [cacheKey]))[0];
-
             let perm: boolean;
 
             if (permFromCache !== null) {
@@ -78,7 +77,7 @@ export default function({
                           ctx.groupsId.map(async groupId => {
                               const groupNodeId = await treeRepo.getNodesByRecord({
                                   treeId: 'users_groups',
-                                  record: {id: groupId, library: 'user_groups'},
+                                  record: {id: groupId, library: 'users_groups'},
                                   ctx
                               });
 
@@ -99,14 +98,12 @@ export default function({
                     ctx
                 });
 
-                perm = perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});
-
                 if (perm !== null) {
                     await cacheService.storeData(ECacheType.RAM, cacheKey, perm.toString());
                 }
             }
 
-            return perm;
+            return perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});
         },
         async getInheritedGlobalPermission(
             {type, applyTo, userGroupNodeId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},

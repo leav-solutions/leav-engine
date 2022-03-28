@@ -35,9 +35,12 @@ export default function ({config = null, 'core.infra.redis': redis = null}: IDep
         async getData(cacheType: ECacheType, keys: string[], path?: string): Promise<string[]> {
             if (cacheType === ECacheType.DISK) {
                 const data = [];
+
                 for (const k of keys) {
-                    data.push((await cacache.get(`${config.diskCache.directory}/${path}`, k)).data.toString());
+                    const value = await cacache.get(`${config.diskCache.directory}/${path}`, k);
+                    data.push(value.data.toString());
                 }
+
                 return data;
             } else if (cacheType === ECacheType.RAM) {
                 return redis.MGET(keys);
@@ -49,7 +52,17 @@ export default function ({config = null, 'core.infra.redis': redis = null}: IDep
                     await cacache.rm.entry(`${config.diskCache.directory}/${path}`, k);
                 }
             } else if (cacheType === ECacheType.RAM) {
-                await redis.DEL(keys);
+                for (const k of keys) {
+                    let cursor = 0;
+
+                    do {
+                        const res = await redis.SCAN(cursor, {MATCH: k});
+                        cursor = res.cursor;
+                        if (res.keys.length) {
+                            await redis.DEL(res.keys);
+                        }
+                    } while (cursor !== 0);
+                }
             }
         },
         async deleteAll(cacheType: ECacheType, path?: string): Promise<void> {

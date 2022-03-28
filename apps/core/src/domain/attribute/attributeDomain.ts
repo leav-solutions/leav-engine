@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -13,10 +14,11 @@ import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
-import {AppPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
+import {ECacheType, ICacheService} from '../../infra/cache/cacheService';
 
 export interface IAttributeDomain {
     getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
@@ -45,6 +47,7 @@ interface IDeps {
     'core.infra.library'?: ILibraryRepo;
     'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
+    'core.infra.cache.cacheService'?: ICacheService;
     config?: any;
 }
 
@@ -55,7 +58,8 @@ export default function ({
     'core.infra.library': libraryRepo = null,
     'core.utils': utils = null,
     'core.infra.tree': treeRepo = null,
-    config = null
+    config = null,
+    'core.infra.cache.cacheService': cacheService = null
 }: IDeps = {}): IAttributeDomain {
     return {
         async getLibraryAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
@@ -171,6 +175,24 @@ export default function ({
                         return {from: Number(valuesObj.from), to: Number(valuesObj.to)};
                     }
                 );
+            }
+
+            // If permissions conf changed we clean cache related to this attribute.
+            if (
+                isExistingAttr &&
+                JSON.stringify(attrData.permissions_conf?.permissionTreeAttributes) !==
+                    JSON.stringify(attrProps.permissions_conf?.permissionTreeAttributes)
+            ) {
+                const keyAttr = getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.ATTRIBUTE,
+                    applyTo: attrProps.id
+                });
+                const keyRecAttr = getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.RECORD_ATTRIBUTE,
+                    applyTo: attrProps.id
+                });
+
+                await cacheService.deleteData(ECacheType.RAM, [keyAttr, keyRecAttr]);
             }
 
             const attr = isExistingAttr

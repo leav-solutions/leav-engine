@@ -19,6 +19,13 @@ import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import permissionDomain from './permissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
+import {ICacheService} from '../../infra/cache/cacheService';
+
+const mockCacheService: Mockify<ICacheService> = {
+    getData: global.__mockPromise([null]),
+    storeData: global.__mockPromise(),
+    deleteData: global.__mockPromise()
+};
 
 describe('PermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -52,7 +59,8 @@ describe('PermissionDomain', () => {
 
             const permDomain = permissionDomain({
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
-                'core.infra.permission': mockPermRepo as IPermissionRepo
+                'core.infra.permission': mockPermRepo as IPermissionRepo,
+                'core.infra.cache.cacheService': mockCacheService as ICacheService
             });
 
             const newPerm = await permDomain.savePermission(

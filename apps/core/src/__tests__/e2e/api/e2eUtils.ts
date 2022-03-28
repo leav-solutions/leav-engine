@@ -15,7 +15,8 @@ async function _getAuthToken() {
         {
             userId: '1',
             login: 'admin',
-            role: 'admin'
+            role: 'admin',
+            groupsId: ['1']
         },
         conf.auth.key,
         {
