@@ -6,6 +6,7 @@ import {init as initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {initAmqp} from '../../../infra/amqp';
 import {initDb} from '../../../infra/db/db';
+import {initRedis} from '../../../infra/cache/redis';
 
 export async function setup() {
     try {
@@ -18,8 +19,13 @@ export async function setup() {
 
         // Init AMQP
         const amqpConn = await initAmqp({config: conf});
+        const redisClient = await initRedis({config: conf});
 
-        const {coreContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
+        const {coreContainer} = await initDI({
+            translator,
+            'core.infra.amqp': amqpConn,
+            'core.infra.redis': redisClient
+        });
         const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
         await dbUtils.clearDatabase();
