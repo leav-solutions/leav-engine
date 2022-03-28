@@ -3,9 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
 import {isAllowedQuery} from 'queries/permissions/isAllowedQuery';
+import {getMe} from 'queries/users/me';
 import React from 'react';
 import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor} from '_tests/testUtils';
+import {act, render, screen} from '_tests/testUtils';
 import App from '.';
 
 jest.mock('../Home', () => {
@@ -24,6 +25,35 @@ test('Renders app', async () => {
     const mocks: MockedResponse[] = [
         {
             request: {
+                query: getMe,
+                variables: {}
+            },
+            result: {
+                data: {
+                    me: {
+                        login: 'admin',
+                        whoAmI: {
+                            id: '1',
+                            library: {
+                                id: 'users',
+                                label: {
+                                    en: 'Users',
+                                    fr: 'Utilisateurs'
+                                },
+                                __typename: 'Library'
+                            },
+                            label: 'admin',
+                            color: null,
+                            preview: null,
+                            __typename: 'RecordIdentity'
+                        },
+                        __typename: 'User'
+                    }
+                }
+            }
+        },
+        {
+            request: {
                 query: isAllowedQuery,
                 variables: {
                     type: PermissionTypes.app,
@@ -34,15 +64,15 @@ test('Renders app', async () => {
                 data: {
                     isAllowed: Object.values(PermissionsActions)
                         .filter(a => !!a.match(/^app_/))
-                        .map(action => ({name: action, allowed: true}))
+                        .map(action => ({name: action, allowed: true, __typename: 'PermissionAction'}))
                 }
             }
         }
     ];
 
     await act(async () => {
-        render(<App />, {apolloMocks: mocks});
+        render(<App />, {apolloMocks: mocks, cacheSettings: {possibleTypes: {Record: ['User']}}});
     });
 
-    expect(await waitFor(() => screen.findByText('Home'))).toBeInTheDocument();
+    expect(await screen.findByText('Home')).toBeInTheDocument();
 });

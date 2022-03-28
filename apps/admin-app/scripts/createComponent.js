@@ -5,7 +5,7 @@
 const fs = require('fs');
 const prog = require('commander');
 
-const _getFuncCompContent = name =>
+const _getComponentContent = name =>
     `import React from 'react';
 
 interface I${name}Props {
@@ -20,41 +20,26 @@ function ${name}({}: I${name}Props): JSX.Element {
 
 export default ${name};`;
 
-const _getClassCompContent = name =>
+const _getTestContent = name =>
     `import React from 'react';
+import {act, screen, render} from '_tests/testUtils';
+import ${name} from './${name}';
 
-interface I${name}Props {
+describe('${name}', () => {
+    test('Render test', async () => {
+        await act(async () => {
+            render(<${name} />);
+        });
 
-}
-
-interface I${name}State {
-
-}
-
-class ${name} extends React.Component<I${name}Props, I${name}State> {
-    constructor(props: I${name}Props) {
-        super(props);
-    }
-
-    public render() {
-        return (
-            <div></div>
-        );
-    }
-}
-
-export default ${name};`;
+        //TODO: Add some real tests
+        expect(screen.getByText('${name}')).toBeInTheDocument();
+    });
+});`;
 
 prog.version('0.1.0')
-    .usage('[options] <compName>')
-    .option('-P, --parent <parent>', 'Parent folder (where the components will be created)')
-    .option('-t, --type [type]', 'Component type (functional or class)', /^(func|class)$/i)
-    .action(name => {
-        if (!prog.parent) {
-            console.log('Missing --parent argument');
-        }
-
-        const destDir = __dirname + '/../src/components/' + prog.parent + '/';
+    .usage('<parent folder> <compName>')
+    .action((parent, name) => {
+        const destDir = __dirname + '/../src/components/' + parent + '/';
 
         const compFolder = destDir + name;
 
@@ -79,7 +64,7 @@ prog.version('0.1.0')
         // Create component file
         const compFile = compFolder + `/${name}.tsx`;
         if (!fs.existsSync(compFile)) {
-            const fileContent = prog.type === 'class' ? _getClassCompContent(name) : _getFuncCompContent(name);
+            const fileContent = prog.type === 'class' ? _getClassCompContent(name) : _getComponentContent(name);
 
             fs.writeFileSync(compFile, fileContent);
         }
@@ -87,17 +72,7 @@ prog.version('0.1.0')
         // Create component test file
         const testFile = compFolder + `/${name}.test.tsx`;
         if (!fs.existsSync(testFile)) {
-            const fileContent = `import React from 'react';
-import {render} from 'enzyme';
-import ${name} from './${name}';
-
-describe('${name}', () => {
-    test('Snapshot test', async () => {
-        const comp = render(<${name} />);
-
-        expect(comp).toMatchSnapshot();
-    });
-});`;
+            const fileContent = _getTestContent(name);
 
             fs.writeFileSync(testFile, fileContent);
         }

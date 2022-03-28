@@ -7,7 +7,6 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
-import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {addWildcardToFilters} from '../../../utils/utils';
@@ -30,7 +29,6 @@ interface IAttributesFilters {
 const Attributes = (props: IAttributesProps): JSX.Element => {
     const {t} = useTranslation();
     const {history} = props;
-    const {lang} = useLang();
     const [filters, setFilters] = useState<IAttributesFilters>({});
     const userData = useUserData();
 
@@ -59,7 +57,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Header size="large">
-                        <Icon name="folder outline" />
+                        <Icon name="cubes" />
                         {t('attributes.title')}
                     </Header>
                 </Grid.Column>

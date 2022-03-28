@@ -4,17 +4,8 @@
 import React from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
 import styled from 'styled-components';
-import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
-import Attributes from '../../attributes/Attributes';
-import EditAttribute from '../../attributes/EditAttribute';
-import EditLibrary from '../../libraries/EditLibrary';
-import Libraries from '../../libraries/Libraries';
-import AppPermissions from '../../permissions/AppPermissions';
-import Plugins from '../../plugins';
-import ProtectedRoute from '../../shared/ProtectedRoute';
-import EditTree from '../../trees/EditTree';
-import Trees from '../../trees/Trees';
-import MainMenu from '../MainMenu';
+import AppMenu from '../AppMenu';
+import Routes from '../Routes';
 
 const LeftCol = styled.div`
     position: fixed;
@@ -24,62 +15,21 @@ const LeftCol = styled.div`
 `;
 
 const Content = styled.div`
-    margin-left: 250px;
+    /* margin-left: 250px; */
     padding: 20px;
-    min-height: 100vh;
+    margin-top: 3em;
+    /* min-height: 100vh; */
 `;
 
 function Home(): JSX.Element {
     return (
         <Router>
             <div className="wrapper height100">
-                <LeftCol>
-                    <MainMenu />
-                </LeftCol>
+                {/* <LeftCol> */}
+                <AppMenu />
+                {/* </LeftCol> */}
                 <Content className="content flex-col height100" style={{overflowX: 'scroll'}}>
-                    <ProtectedRoute
-                        permissions={[PermissionsActions.app_access_libraries]}
-                        path="/libraries"
-                        component={Libraries}
-                        exact
-                    />
-                    <ProtectedRoute
-                        permissions={[PermissionsActions.app_access_libraries]}
-                        path="/libraries/edit/:id?"
-                        component={EditLibrary}
-                        exact
-                    />
-                    <ProtectedRoute
-                        permissions={[PermissionsActions.app_access_attributes]}
-                        path="/attributes"
-                        component={Attributes}
-                        exact
-                    />
-                    <ProtectedRoute
-                        permissions={[PermissionsActions.app_access_attributes]}
-                        path="/attributes/edit/:id?"
-                        component={EditAttribute}
-                        exact
-                    />
-                    <ProtectedRoute
-                        permissions={[PermissionsActions.app_access_trees]}
-                        path="/trees"
-                        component={Trees}
-                        exact
-                    />
-                    <ProtectedRoute
-                        permissions={[PermissionsActions.app_access_trees]}
-                        path="/trees/edit/:id?"
-                        component={EditTree}
-                        exact
-                    />
-                    <ProtectedRoute
-                        permissions={[PermissionsActions.app_access_permissions]}
-                        path="/permissions"
-                        component={AppPermissions}
-                        exact
-                    />
-                    <ProtectedRoute path="/plugins" component={Plugins} exact />
+                    <Routes />
                 </Content>
             </div>
         </Router>

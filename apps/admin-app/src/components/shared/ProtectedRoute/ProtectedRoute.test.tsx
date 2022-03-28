@@ -12,8 +12,17 @@ import ProtectedRoute from './ProtectedRoute';
 describe('ProtectedRoute', () => {
     const TestComp = () => <div>Test</div>;
     const defaultContext: IUserContext = {
-        id: 1,
-        name: 'Test User',
+        id: '1',
+        whoAmI: {
+            id: '1',
+            label: 'Test User',
+            library: {
+                id: 'my_lib',
+                label: {fr: 'My lib'}
+            },
+            color: null,
+            preview: null
+        },
         permissions: {
             [PermissionsActions.app_access_attributes]: true,
             [PermissionsActions.app_edit_attribute]: true

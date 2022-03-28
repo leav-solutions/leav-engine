@@ -1,6 +1,6 @@
 {
     "admin": {
-        "title": "Administration",
+        "title": "Accueil",
         "submit": "Valider",
         "save": "Enregistrer",
         "cancel": "Annuler",
@@ -20,7 +20,18 @@
         "id": "Identifiant",
         "isSystem": "Système",
         "settings": "Paramètres",
-        "go_back_home": "Retourner à l'accueil"
+        "go_back_home": "Retourner à l'accueil",
+        "logout": "Se déconnecter",
+        "choose-lang": "Langue"
+    },
+    "dashboard": {
+        "title": "Administration de LEAV Engine"
+    },
+    "general": {
+        "title": "Général",
+        "infos": "Informations",
+        "admin_permissions": "Permissions administration",
+        "version": "LEAV Engine v{{version}}"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
@@ -215,10 +226,11 @@
     },
     "plugins": {
         "title": "Plugins",
-        "label": "nom",
-        "description": "description",
-        "version": "version",
-        "author": "auteur"
+        "label": "Nom",
+        "description": "Description",
+        "version": "Version",
+        "author": "Auteur",
+        "no_plugins": "Aucun plugin installé"
     },
     "records": {
         "add_value": "Ajouter une valeur",

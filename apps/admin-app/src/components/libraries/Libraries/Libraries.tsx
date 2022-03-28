@@ -46,7 +46,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Header size="large">
-                        <Icon name="folder outline" />
+                        <Icon name="database" />
                         {t('libraries.title')}
                     </Header>
                 </Grid.Column>

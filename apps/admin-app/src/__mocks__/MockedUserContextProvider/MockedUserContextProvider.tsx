@@ -11,8 +11,17 @@ interface IProps {
 }
 function MockedUserContextProvider({permissions, children}: IProps) {
     const userData: IUserContext = {
-        id: 1,
-        name: 'Test',
+        id: '1',
+        whoAmI: {
+            id: '1',
+            label: 'Test',
+            library: {
+                id: 'users',
+                label: {fr: 'Users'}
+            },
+            color: null,
+            preview: null
+        },
         permissions:
             permissions ??
             Object.values(PermissionsActions)
