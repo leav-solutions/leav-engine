@@ -50,7 +50,7 @@ function ErrorDisplay({
             icon: 'minus circle',
             message: t('errors.access_denied_details'),
             actionButton: showActionButton ? (
-                <Button type="primary" onClick={_handleBackHomeClick}>
+                <Button primary onClick={_handleBackHomeClick}>
                     {t('admin.go_back_home')}
                 </Button>
             ) : null

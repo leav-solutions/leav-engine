@@ -36,15 +36,7 @@ function LangSwitcher(): JSX.Element {
             <Icon name="flag outline" />
             {t('admin.choose-lang')} :
             {availableLangs.map(l => (
-                <Button
-                    type="text"
-                    name={l}
-                    key={l}
-                    style={{padding: '0 5px'}}
-                    onClick={_handleLangChange(l)}
-                    inverted
-                    size="big"
-                >
+                <Button name={l} key={l} style={{padding: '0 5px'}} onClick={_handleLangChange(l)} inverted size="big">
                     {unicodeFlagByLang[l] ?? l}
                 </Button>
             ))}
