@@ -196,8 +196,26 @@ export default function ({
     const _cleanCacheOnTreeEdition = async (treeId: string, permissionsConf: ITreeNodePermissionsConf) => {
         // clean permissions cached
         if (treeId === 'users_groups') {
-            await cacheService.deleteData(ECacheType.RAM, [`${PERMISSIONS_CACHE_HEADER}:*`]);
-        } else if (typeof permissionsConf !== 'undefined') {
+            return cacheService.deleteData(ECacheType.RAM, [`${PERMISSIONS_CACHE_HEADER}:*`]);
+        }
+        const keyTree = getPermissionCachePatternKey({
+            permissionType: PermissionTypes.TREE,
+            applyTo: treeId
+        });
+
+        const keyTreeLibrary = getPermissionCachePatternKey({
+            permissionType: PermissionTypes.TREE_LIBRARY,
+            applyTo: treeId
+        });
+
+        const keyTreeNode = getPermissionCachePatternKey({
+            permissionType: PermissionTypes.TREE_NODE,
+            applyTo: treeId
+        });
+
+        await cacheService.deleteData(ECacheType.RAM, [keyTree, keyTreeLibrary, keyTreeNode]);
+
+        if (typeof permissionsConf !== 'undefined') {
             for (const [libId, treePermissionConf] of Object.entries(permissionsConf)) {
                 const libraryKeyPattern = getPermissionCachePatternKey({
                     permissionType: PermissionTypes.LIBRARY,
@@ -264,22 +282,7 @@ export default function ({
                 JSON.stringify(treeData.permissions_conf?.permissionTreeAttributes) !==
                     JSON.stringify(treeProps.permissions_conf?.permissionTreeAttributes)
             ) {
-                const keyTree = getPermissionCachePatternKey({
-                    permissionType: PermissionTypes.TREE,
-                    applyTo: treeData.id
-                });
-
-                const keyTreeLibrary = getPermissionCachePatternKey({
-                    permissionType: PermissionTypes.TREE_LIBRARY,
-                    applyTo: treeData.id
-                });
-
-                const keyTreeNode = getPermissionCachePatternKey({
-                    permissionType: PermissionTypes.TREE_NODE,
-                    applyTo: treeData.id
-                });
-
-                await cacheService.deleteData(ECacheType.RAM, [keyTree, keyTreeLibrary, keyTreeNode]);
+                await _cleanCacheOnTreeEdition(treeData.id, treeProps.permissions_conf); // FIXME: old or/and new permissions conf?
             }
 
             // Save
@@ -298,15 +301,18 @@ export default function ({
                 throw new PermissionError(action);
             }
 
-            const trees = await this.getTrees({params: {filters: {id}}, ctx});
+            // Check is existing tree
+            const treeProps = await _getTreeProps(id, ctx);
 
-            if (!trees.list.length) {
+            if (!treeProps) {
                 throw new ValidationError({id: Errors.UNKNOWN_TREE});
             }
 
-            if (trees.list.pop().system) {
+            if (treeProps.system) {
                 throw new ValidationError({id: Errors.SYSTEM_TREE_DELETION});
             }
+
+            await _cleanCacheOnTreeEdition(treeProps.id, treeProps.permissions_conf);
 
             return treeRepo.deleteTree({id, ctx});
         },

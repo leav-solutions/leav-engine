@@ -81,6 +81,7 @@ describe('PermissionDomain', () => {
             );
 
             expect(mockPermRepo.savePermission.mock.calls.length).toBe(1);
+            expect(mockCacheService.deleteData).toBeCalledTimes(3);
 
             expect(newPerm).toMatchObject(permData);
         });

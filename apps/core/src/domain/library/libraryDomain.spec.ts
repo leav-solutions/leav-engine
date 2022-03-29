@@ -18,11 +18,18 @@ import {LibraryBehavior} from '../../_types/library';
 import {AppPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain from './libraryDomain';
+import {ICacheService} from '../../infra/cache/cacheService';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
 const mockConfig: Mockify<Config.IConfig> = {
     eventsManager: eventsManagerMockConfig as Config.IEventsManager
+};
+
+const mockCacheService: Mockify<ICacheService> = {
+    getData: global.__mockPromise([null]),
+    storeData: global.__mockPromise(),
+    deleteData: global.__mockPromise()
 };
 
 describe('LibraryDomain', () => {
@@ -371,7 +378,10 @@ describe('LibraryDomain', () => {
         describe('Update library', () => {
             test('Should update a library', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                    getLibraries: global.__mockPromise({
+                        list: [{id: 'test', system: false, permissions_conf: {permissionTreeAttributes: ['fake']}}],
+                        totalCount: 0
+                    }),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
@@ -412,11 +422,13 @@ describe('LibraryDomain', () => {
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICacheService,
                     'core.utils': mockUtils as IUtils
                 });
 
                 const updatedLib = await libDomain.saveLibrary({id: 'test'}, ctx);
 
+                expect(mockCacheService.deleteData).toBeCalled();
                 expect(mockLibRepo.createLibrary.mock.calls.length).toBe(0);
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
