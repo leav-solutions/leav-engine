@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import useAuthToken from 'hooks/useAuthToken';
+import {useAuthToken} from '@leav/utils';
 import React, {Suspense, useState} from 'react';
 import Login from '../../shared/Login';
 import App from '../App';

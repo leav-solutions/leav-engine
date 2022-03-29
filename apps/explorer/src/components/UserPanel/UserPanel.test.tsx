@@ -3,12 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import * as useLang from 'hooks/LangHook/LangHook';
-import * as useAuthToken from 'hooks/useAuthToken/useAuthToken';
 import React from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import {act, render, screen} from '_tests/testUtils';
 import UserPanel from './UserPanel';
 
+const mockDeleteToken = jest.fn();
+jest.mock('@leav/utils', () => ({
+    useAuthToken: jest.fn(() => ({
+        getToken: jest.fn(),
+        saveToken: jest.fn(),
+        deleteToken: mockDeleteToken
+    }))
+}));
 describe('UserPanel', () => {
     test('Should display some menu items', async () => {
         await act(async () => {
@@ -23,14 +30,6 @@ describe('UserPanel', () => {
     });
 
     test('On click on logout, log out and redirect to home', async () => {
-        const mockDeleteToken = jest.fn();
-
-        jest.spyOn(useAuthToken, 'default').mockImplementation(() => ({
-            getToken: jest.fn(),
-            saveToken: jest.fn(),
-            deleteToken: mockDeleteToken
-        }));
-
         const mockedLocation = {...window.location, replace: jest.fn()};
         delete window.location;
         window.location = mockedLocation;
