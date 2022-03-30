@@ -18,7 +18,7 @@ import {AppPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
-import {ECacheType, ICacheService} from '../../infra/cache/cacheService';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 
 export interface IAttributeDomain {
     getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
@@ -47,7 +47,7 @@ interface IDeps {
     'core.infra.library'?: ILibraryRepo;
     'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
-    'core.infra.cache.cacheService'?: ICacheService;
+    'core.infra.cache.cacheService'?: ICachesService;
     config?: any;
 }
 
@@ -192,7 +192,7 @@ export default function ({
                     applyTo: attrProps.id
                 });
 
-                await cacheService.deleteData(ECacheType.RAM, [keyAttr, keyRecAttr]);
+                await cacheService.getCache(ECacheType.RAM).deleteData([keyAttr, keyRecAttr]);
             }
 
             const attr = isExistingAttr

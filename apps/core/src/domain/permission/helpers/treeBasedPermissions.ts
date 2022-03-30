@@ -15,7 +15,7 @@ import {IDefaultPermissionHelper} from './defaultPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import getPermissionCacheKey from './getPermissionCacheKey';
-import {ECacheType, ICacheService} from '../../../infra/cache/cacheService';
+import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
@@ -25,7 +25,7 @@ interface IDeps {
     'core.infra.tree'?: ITreeRepo;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.value'?: IValueRepo;
-    'core.infra.cache.cacheService'?: ICacheService;
+    'core.infra.cache.cacheService'?: ICachesService;
     config?: IConfig;
 }
 
@@ -141,7 +141,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
         }, '');
 
         const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
-        const permFromCache = (await cacheService.getData(ECacheType.RAM, [cacheKey]))[0];
+        const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
         let perm: boolean;
 
         if (permFromCache !== null) {
@@ -149,19 +149,13 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
         } else {
             const userGroupsPaths = !!ctx.groupsId
                 ? await Promise.all(
-                      ctx.groupsId.map(async groupId => {
-                          const groupNodeId = await treeRepo.getNodesByRecord({
+                      ctx.groupsId.map(async groupId =>
+                          treeRepo.getElementAncestors({
                               treeId: 'users_groups',
-                              record: {id: groupId, library: 'users_groups'},
+                              nodeId: groupId,
                               ctx
-                          });
-
-                          return treeRepo.getElementAncestors({
-                              treeId: 'users_groups',
-                              nodeId: groupNodeId[0],
-                              ctx
-                          });
-                      })
+                          })
+                      )
                   )
                 : [];
 
@@ -192,9 +186,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
                     : globalPerm || treePerm;
             }, null);
 
-            if (perm !== null) {
-                await cacheService.storeData(ECacheType.RAM, cacheKey, perm.toString());
-            }
+            await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, perm.toString());
         }
 
         return perm;

@@ -8,7 +8,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IQueryInfos} from '_types/queryInfos';
 import {Action} from '../../_types/import';
-import {ICacheService, ECacheType} from '../../infra/cache/cacheService';
+import {ICacheService, ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import * as Config from '_types/config';
 import fs from 'fs';
 import path from 'path';
@@ -122,40 +122,41 @@ describe('importDomain', () => {
         };
 
         const mockCacheService: Mockify<ICacheService> = {
-            getData: global.__mockPromise(),
+            getData: jest
+                .fn()
+                .mockReturnValue(
+                    Promise.resolve([
+                        JSON.stringify({
+                            library: 'users_groups',
+                            recordIds: ['1'],
+                            links: []
+                        })
+                    ])
+                )
+                .mockReturnValueOnce([
+                    JSON.stringify({
+                        library: 'test_import',
+                        recordIds: ['1'],
+                        links: [
+                            {
+                                attribute: 'advanced_link',
+                                values: [
+                                    {
+                                        value: '1'
+                                    }
+                                ],
+                                action: Action.REPLACE
+                            }
+                        ]
+                    })
+                ]),
             storeData: global.__mockPromise(),
             deleteAll: global.__mockPromise()
         };
 
-        when(mockCacheService.getData)
-            .calledWith(ECacheType.DISK, ['0'], 'test.json-links')
-            .mockReturnValue([
-                JSON.stringify({
-                    library: 'test_import',
-                    recordIds: ['1'],
-                    links: [
-                        {
-                            attribute: 'advanced_link',
-                            values: [
-                                {
-                                    value: '1'
-                                }
-                            ],
-                            action: Action.REPLACE
-                        }
-                    ]
-                })
-            ]);
-
-        when(mockCacheService.getData)
-            .calledWith(ECacheType.DISK, ['1'], 'test.json-links')
-            .mockReturnValue([
-                JSON.stringify({
-                    library: 'users_groups',
-                    recordIds: ['1'],
-                    links: []
-                })
-            ]);
+        const mockCachesService: Mockify<ICachesService> = {
+            getCache: jest.fn().mockReturnValue(mockCacheService)
+        };
 
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
@@ -163,7 +164,7 @@ describe('importDomain', () => {
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            'core.infra.cache.cacheService': mockCacheService as ICacheService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService
         });
 
         await imprtDomain.import('test.json', ctx);
@@ -254,13 +255,17 @@ describe('importDomain', () => {
             deleteAll: global.__mockPromise()
         };
 
+        const mockCachesService: Mockify<ICachesService> = {
+            getCache: jest.fn().mockReturnValue(mockCacheService)
+        };
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            'core.infra.cache.cacheService': mockCacheService as ICacheService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService
         });
 
         try {
@@ -317,12 +322,16 @@ describe('importDomain', () => {
             deleteAll: global.__mockPromise()
         };
 
+        const mockCachesService: Mockify<ICachesService> = {
+            getCache: jest.fn().mockReturnValue(mockCacheService)
+        };
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.tree': mockTreeDomain as ITreeDomain,
-            'core.infra.cache.cacheService': mockCacheService as ICacheService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService
         });
 
         try {

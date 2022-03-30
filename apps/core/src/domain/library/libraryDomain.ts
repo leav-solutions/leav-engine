@@ -33,7 +33,7 @@ import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
-import {ECacheType, ICacheService} from '../../infra/cache/cacheService';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -55,7 +55,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
     'core.domain.helpers.validate'?: IValidateHelper;
-    'core.infra.cache.cacheService'?: ICacheService;
+    'core.infra.cache.cacheService'?: ICachesService;
 }
 
 export default function ({
@@ -231,7 +231,7 @@ export default function ({
                     applyTo: libData.id
                 });
 
-                await cacheService.deleteData(ECacheType.RAM, [keyLib, keyRec]);
+                await cacheService.getCache(ECacheType.RAM).deleteData([keyLib, keyRec]);
             }
 
             const lib = existingLib

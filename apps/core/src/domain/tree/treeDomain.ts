@@ -36,8 +36,8 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import validateFilesParent from './helpers/validateFilesParent';
-import {ECacheType, ICacheService} from '../../infra/cache/cacheService';
-import {PERMISSIONS_CACHE_HEADER} from '../permission/helpers/getPermissionCacheKey';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 
 export interface ITreeDomain {
@@ -147,7 +147,7 @@ interface IDeps {
     'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
     'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
-    'core.infra.cache.cacheService'?: ICacheService;
+    'core.infra.cache.cacheService'?: ICachesService;
 }
 
 export default function ({
@@ -193,56 +193,59 @@ export default function ({
             !treeProps.libraries?.[parent.library]?.allowedChildren.includes('__all__') &&
             !treeProps.libraries?.[parent.library]?.allowedChildren.includes(element.library));
 
-    const _cleanCacheOnTreeEdition = async (treeId: string, permissionsConf: ITreeNodePermissionsConf) => {
+    const _cleanCacheOnTreeEdition = async (
+        treeId: string,
+        permissionsConf: ITreeNodePermissionsConf
+    ): Promise<void> => {
         // clean permissions cached
         if (treeId === 'users_groups') {
-            return cacheService.deleteData(ECacheType.RAM, [`${PERMISSIONS_CACHE_HEADER}:*`]);
+            return cacheService.getCache(ECacheType.RAM).deleteData([`${PERMISSIONS_CACHE_HEADER}:*`]);
         }
-        const keyTree = getPermissionCachePatternKey({
-            permissionType: PermissionTypes.TREE,
-            applyTo: treeId
-        });
 
-        const keyTreeLibrary = getPermissionCachePatternKey({
-            permissionType: PermissionTypes.TREE_LIBRARY,
-            applyTo: treeId
-        });
-
-        const keyTreeNode = getPermissionCachePatternKey({
-            permissionType: PermissionTypes.TREE_NODE,
-            applyTo: treeId
-        });
-
-        await cacheService.deleteData(ECacheType.RAM, [keyTree, keyTreeLibrary, keyTreeNode]);
+        const keys = [
+            getPermissionCachePatternKey({
+                permissionType: PermissionTypes.TREE,
+                applyTo: treeId
+            }),
+            getPermissionCachePatternKey({
+                permissionType: PermissionTypes.TREE_LIBRARY,
+                applyTo: treeId
+            }),
+            getPermissionCachePatternKey({
+                permissionType: PermissionTypes.TREE_NODE,
+                applyTo: treeId
+            })
+        ];
 
         if (typeof permissionsConf !== 'undefined') {
             for (const [libId, treePermissionConf] of Object.entries(permissionsConf)) {
-                const libraryKeyPattern = getPermissionCachePatternKey({
-                    permissionType: PermissionTypes.LIBRARY,
-                    applyTo: libId
-                });
-                const recordKeyPattern = getPermissionCachePatternKey({
-                    permissionType: PermissionTypes.RECORD,
-                    applyTo: libId
-                });
-
-                await cacheService.deleteData(ECacheType.RAM, [libraryKeyPattern, recordKeyPattern]);
+                keys.push(
+                    getPermissionCachePatternKey({
+                        permissionType: PermissionTypes.LIBRARY,
+                        applyTo: libId
+                    }),
+                    getPermissionCachePatternKey({
+                        permissionType: PermissionTypes.RECORD,
+                        applyTo: libId
+                    })
+                );
 
                 for (const attributeId of treePermissionConf.permissionTreeAttributes) {
-                    const attributeKeyPattern = getPermissionCachePatternKey({
-                        permissionType: PermissionTypes.ATTRIBUTE,
-                        applyTo: attributeId
-                    });
-
-                    const attrRecordKeyPattern = getPermissionCachePatternKey({
-                        permissionType: PermissionTypes.RECORD_ATTRIBUTE,
-                        applyTo: attributeId
-                    });
-
-                    await cacheService.deleteData(ECacheType.RAM, [attributeKeyPattern, attrRecordKeyPattern]);
+                    keys.push(
+                        getPermissionCachePatternKey({
+                            permissionType: PermissionTypes.ATTRIBUTE,
+                            applyTo: attributeId
+                        }),
+                        getPermissionCachePatternKey({
+                            permissionType: PermissionTypes.RECORD_ATTRIBUTE,
+                            applyTo: attributeId
+                        })
+                    );
                 }
             }
         }
+
+        await cacheService.getCache(ECacheType.RAM).deleteData(keys);
     };
 
     return {

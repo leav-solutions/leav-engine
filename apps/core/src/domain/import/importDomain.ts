@@ -7,7 +7,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
-import {ICacheService, ECacheType} from '../../infra/cache/cacheService';
+import {ICachesService, ECacheType} from '../../infra/cache/cacheService';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
@@ -43,7 +43,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
-    'core.infra.cache.cacheService'?: ICacheService;
+    'core.infra.cache.cacheService'?: ICachesService;
     config?: Config.IConfig;
 }
 
@@ -379,12 +379,13 @@ export default function ({
 
                     // caching element links
                     // TODO: Improvement: if no links no cache.
-                    await cacheService.storeData(
-                        ECacheType.DISK,
-                        index.toString(),
-                        JSON.stringify({library: element.library, recordIds, links: element.links}),
-                        cacheDataPath
-                    );
+                    await cacheService
+                        .getCache(ECacheType.DISK)
+                        .storeData(
+                            index.toString(),
+                            JSON.stringify({library: element.library, recordIds, links: element.links}),
+                            cacheDataPath
+                        );
 
                     if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
                         lastCacheIndex = index;
@@ -415,7 +416,7 @@ export default function ({
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
                 const cacheStringifiedObject = (
-                    await cacheService.getData(ECacheType.DISK, [cacheKey.toString()], cacheDataPath)
+                    await cacheService.getCache(ECacheType.DISK).getData([cacheKey.toString()], cacheDataPath)
                 )[0];
                 const element = JSON.parse(cacheStringifiedObject);
                 for (const link of element.links) {
@@ -424,7 +425,7 @@ export default function ({
             }
 
             // Delete cache.
-            await cacheService.deleteAll(ECacheType.DISK, cacheDataPath);
+            await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
 
             return true;
         },

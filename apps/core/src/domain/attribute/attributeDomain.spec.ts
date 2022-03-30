@@ -15,12 +15,16 @@ import {AppPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain from './attributeDomain';
-import {ICacheService} from '../../infra/cache/cacheService';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
     storeData: global.__mockPromise(),
     deleteData: global.__mockPromise()
+};
+
+const mockCachesService: Mockify<ICachesService> = {
+    getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
 describe('attributeDomain', () => {
@@ -346,7 +350,7 @@ describe('attributeDomain', () => {
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 config: mockConf
             });
 

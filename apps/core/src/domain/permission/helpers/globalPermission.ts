@@ -11,7 +11,7 @@ import {ITreeValue} from '_types/value';
 import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {IDefaultPermissionHelper} from './defaultPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
-import {ECacheType, ICacheService} from '../../../infra/cache/cacheService';
+import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import getPermissionCacheKey from './getPermissionCacheKey';
 
 interface IGetGlobalPermissionParams {
@@ -49,7 +49,7 @@ interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
-    'core.infra.cache.cacheService'?: ICacheService;
+    'core.infra.cache.cacheService'?: ICachesService;
 }
 
 export default function ({
@@ -66,7 +66,7 @@ export default function ({
             ctx
         ): Promise<boolean> {
             const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, '');
-            const permFromCache = (await cacheService.getData(ECacheType.RAM, [cacheKey]))[0];
+            const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
             let perm: boolean;
 
             if (permFromCache !== null) {
@@ -74,19 +74,13 @@ export default function ({
             } else {
                 const userGroupsPaths = !!ctx.groupsId
                     ? await Promise.all(
-                          ctx.groupsId.map(async groupId => {
-                              const groupNodeId = await treeRepo.getNodesByRecord({
+                          ctx.groupsId.map(async groupId =>
+                              treeRepo.getElementAncestors({
                                   treeId: 'users_groups',
-                                  record: {id: groupId, library: 'users_groups'},
+                                  nodeId: groupId,
                                   ctx
-                              });
-
-                              return treeRepo.getElementAncestors({
-                                  treeId: 'users_groups',
-                                  nodeId: groupNodeId[0],
-                                  ctx
-                              });
-                          })
+                              })
+                          )
                       )
                     : [];
 
@@ -98,12 +92,11 @@ export default function ({
                     ctx
                 });
 
-                if (perm !== null) {
-                    await cacheService.storeData(ECacheType.RAM, cacheKey, perm.toString());
-                }
+                perm = perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});
+                await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, perm.toString());
             }
 
-            return perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});
+            return perm;
         },
         async getInheritedGlobalPermission(
             {type, applyTo, userGroupNodeId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},

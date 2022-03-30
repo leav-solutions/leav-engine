@@ -113,7 +113,7 @@ export default function ({
                                 attribute: 'user_groups',
                                 ctx
                             })
-                        ).map(g => g.value.record.id);
+                        ).map(g => g.value.id);
 
                         // Generate token
                         const token = jwt.sign(

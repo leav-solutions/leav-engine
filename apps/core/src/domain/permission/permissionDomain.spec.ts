@@ -19,12 +19,16 @@ import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import permissionDomain from './permissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
-import {ICacheService} from '../../infra/cache/cacheService';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
     storeData: global.__mockPromise(),
     deleteData: global.__mockPromise()
+};
+
+const mockCachesService: Mockify<ICachesService> = {
+    getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
 describe('PermissionDomain', () => {
@@ -60,7 +64,7 @@ describe('PermissionDomain', () => {
             const permDomain = permissionDomain({
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.infra.permission': mockPermRepo as IPermissionRepo,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const newPerm = await permDomain.savePermission(

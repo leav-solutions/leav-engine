@@ -19,12 +19,16 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import treeDomain from './treeDomain';
-import {ICacheService} from '../../infra/cache/cacheService';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
     storeData: global.__mockPromise(),
     deleteData: global.__mockPromise()
+};
+
+const mockCachesService: Mockify<ICachesService> = {
+    getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
 describe('treeDomain', () => {
@@ -108,7 +112,7 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const newTree = await domain.saveTree(mockTree, ctx);
@@ -203,10 +207,8 @@ describe('treeDomain', () => {
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
-
-            // domain.getTrees = global.__mockPromise({list: [mockTree], totalCount: 1});
 
             await domain.deleteTree(mockTree.id, ctx);
 
@@ -358,7 +360,7 @@ describe('treeDomain', () => {
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             await domain.addElement({
@@ -559,7 +561,7 @@ describe('treeDomain', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
                 'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             await domain.moveElement({
@@ -738,7 +740,7 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             await domain.deleteElement({

@@ -30,7 +30,7 @@ import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
 import {ITreeNodePermissionDomain} from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
-import {ECacheType, ICacheService} from '../../infra/cache/cacheService';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {
     IGetActionsByTypeParams,
     IGetInheritedPermissionsParams,
@@ -79,7 +79,7 @@ interface IDeps {
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
     'core.domain.permission.treeLibrary'?: ITreeLibraryPermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
-    'core.infra.cache.cacheService'?: ICacheService;
+    'core.infra.cache.cacheService'?: ICachesService;
     translator?: i18n;
     config?: IConfig;
 }
@@ -149,7 +149,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 );
             }
 
-            await cacheService.deleteData(ECacheType.RAM, keys);
+            await cacheService.getCache(ECacheType.RAM).deleteData(keys);
         }
     };
 

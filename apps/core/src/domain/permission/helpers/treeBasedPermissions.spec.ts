@@ -10,11 +10,15 @@ import {IGetTreeBasedPermissionParams} from '../_types';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import treeBasedPermissions from './treeBasedPermissions';
-import {ICacheService} from '../../../infra/cache/cacheService';
+import {ICachesService, ICacheService} from '../../../infra/cache/cacheService';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
     storeData: global.__mockPromise()
+};
+
+const mockCachesService: Mockify<ICachesService> = {
+    getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
 describe('TreePermissionDomain', () => {
@@ -288,7 +292,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(params, ctx);
@@ -309,7 +313,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(
@@ -336,7 +340,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(params, ctx);
@@ -358,7 +362,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(
@@ -403,7 +407,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueNoCatRepo as IValueRepo,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(
@@ -438,7 +442,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.tree': mockTreeMultipleRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
                 'core.infra.value': mockValueMultipleRepo as IValueRepo,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(
@@ -480,7 +484,7 @@ describe('TreePermissionDomain', () => {
                 'core.infra.tree': mockTreeMultipleRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
                 'core.infra.value': mockValueMultipleRepo as IValueRepo,
-                'core.infra.cache.cacheService': mockCacheService as ICacheService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(

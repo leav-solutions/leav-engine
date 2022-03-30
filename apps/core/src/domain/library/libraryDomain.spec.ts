@@ -18,7 +18,7 @@ import {LibraryBehavior} from '../../_types/library';
 import {AppPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain from './libraryDomain';
-import {ICacheService} from '../../infra/cache/cacheService';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
@@ -30,6 +30,10 @@ const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
     storeData: global.__mockPromise(),
     deleteData: global.__mockPromise()
+};
+
+const mockCachesService: Mockify<ICachesService> = {
+    getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
 describe('LibraryDomain', () => {
@@ -422,7 +426,7 @@ describe('LibraryDomain', () => {
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                    'core.infra.cache.cacheService': mockCacheService as ICacheService,
+                    'core.infra.cache.cacheService': mockCachesService as ICachesService,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -484,6 +488,7 @@ describe('LibraryDomain', () => {
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCachesService as ICachesService,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -500,6 +505,7 @@ describe('LibraryDomain', () => {
 
                 const defaultAttributes = getDefaultAttributes(updatedLib.behavior, updatedLib.id);
 
+                expect(mockCacheService.deleteData).toBeCalledTimes(0);
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].libId).toEqual('test');

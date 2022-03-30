@@ -17,6 +17,8 @@ import {
 import {IQueryInfos} from '_types/queryInfos';
 import {TreePaths} from '_types/tree';
 
+export const PERMISSIONS_CACHE_HEADER = 'permissions';
+
 export interface IPermissionTarget {
     attributeId?: string;
     recordId?: string;
