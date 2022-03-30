@@ -40,10 +40,11 @@ const DefinePermissionsViewLoadTree = ({
     }
 
     const treeData = data.trees.list[0];
+    const treeLabel = localizedLabel(treeData.label, availableLanguages);
 
     return (
         <>
-            <Header as="h4">{localizedLabel(treeData.label, availableLanguages)}</Header>
+            <Header as="h4">{treeLabel}</Header>
             <TreeStructure
                 key={treeData.id}
                 tree={treeData}
@@ -51,7 +52,10 @@ const DefinePermissionsViewLoadTree = ({
                 selection={selectedNode ? [selectedNode] : null}
                 readOnly
                 withFakeRoot
-                fakeRootLabel={t('permissions.any_record')}
+                fakeRootLabel={t('permissions.any_entity', {
+                    entityName: treeLabel,
+                    interpolation: {escapeValue: false}
+                })}
             />
         </>
     );

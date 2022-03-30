@@ -22,16 +22,22 @@ const Wrapper = styled.div`
 
 const Column = styled.div<IColumnProps>`
     position: relative;
-    padding-left: 1em;
+    padding: 1em;
     flex-direction: column;
     display: flex;
     text-align: center;
     border-right: 1px solid #999999;
     width: ${props => 100 / props.columnsNumber + '%'}
 
+    &:first-child {
+        padding-left: 0;
+    }
+
     &:last-child {
         border-right: none;
+        padding-right: 0;
     }
+
 `;
 
 function ColumnsDisplay({columnsContent, columnsNumber}: IColumnsDisplayProps): JSX.Element {

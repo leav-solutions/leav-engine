@@ -8,20 +8,21 @@ import {getPermissionsQuery} from '../../../queries/permissions/getPermissionsQu
 import {savePermissionsQuery} from '../../../queries/permissions/savePermissionMutation';
 import {GET_PERMISSIONS, GET_PERMISSIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS';
 import {GET_PERMISSIONS_ACTIONS, GET_PERMISSIONS_ACTIONSVariables} from '../../../_gqlTypes/GET_PERMISSIONS_ACTIONS';
-import {PermissionsTreeTargetInput, PermissionTypes} from '../../../_gqlTypes/globalTypes';
+import {PermissionsActions, PermissionsTreeTargetInput, PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import {
     SAVE_PERMISSION,
     SAVE_PERMISSIONVariables,
     SAVE_PERMISSION_savePermission_actions
 } from '../../../_gqlTypes/SAVE_PERMISSION';
 import Loading from '../../shared/Loading';
-import EditPermissionsView from '../EditPermissionsView';
+import EditPermissionsView from './EditPermissionsView';
 
 interface IEditPermissionParams {
     type: PermissionTypes;
     applyTo?: string | null;
     usersGroup?: string | null;
     permissionTreeTarget?: PermissionsTreeTargetInput | null;
+    actions?: PermissionsActions[];
 }
 
 interface IEditPermissionsProps {
@@ -39,7 +40,11 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
         notifyOnNetworkStatusChange: true
     });
 
-    const getPermsVariables = {...permParams, actions: (dataActions?.permissionsActionsByType ?? []).map(a => a.name)};
+    const actionsToEdit = (dataActions?.permissionsActionsByType ?? []).filter(
+        p => !permParams.actions || permParams.actions?.includes(p.name)
+    );
+
+    const getPermsVariables = {...permParams, actions: actionsToEdit.map(a => a.name)};
 
     const {loading, error, data} = useQuery<GET_PERMISSIONS, GET_PERMISSIONSVariables>(getPermissionsQuery, {
         variables: getPermsVariables,
@@ -76,7 +81,7 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
     return (
         <EditPermissionsView
             onChange={_onSave}
-            actions={dataActions?.permissionsActionsByType ?? []}
+            actions={actionsToEdit}
             permissions={data.perm}
             inheritedPermissions={data.inheritPerm}
             readOnly={readOnly}
