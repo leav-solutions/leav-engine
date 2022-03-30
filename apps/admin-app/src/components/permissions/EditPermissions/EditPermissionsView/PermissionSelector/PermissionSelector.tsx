@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 interface IPermissionSelectorProps {
     value: boolean | null;
-    heritValue: boolean;
+    inheritValue: boolean;
     onChange: (permValue: boolean | null) => void;
     as: any;
     forbiddenColor: string;
@@ -18,7 +18,7 @@ interface IPermissionSelectorProps {
 
 function PermissionSelector({
     value,
-    heritValue,
+    inheritValue,
     as,
     onChange,
     forbiddenColor,
@@ -39,7 +39,7 @@ function PermissionSelector({
     };
 
     const inputVal = permValToInputVal(value);
-    const bgColor = value !== null ? bgColors[inputVal] : hexToRgba(bgColors[permValToInputVal(heritValue)], 40);
+    const bgColor = value !== null ? bgColors[inputVal] : hexToRgba(bgColors[permValToInputVal(inheritValue)], 40);
 
     const Wrapper = styled(as)`
         background: ${bgColor};
@@ -51,6 +51,7 @@ function PermissionSelector({
     return (
         <Wrapper>
             <Input
+                aria-label="permission-selector"
                 type="range"
                 min="0"
                 max="2"

@@ -176,7 +176,9 @@
         "library_tab_name": "Bibliothèque",
         "attribute_tab_name": "Attribut",
         "tree_tab_name": "Arbre",
+        "default": "Par défaut",
         "any_record": "Tous les éléments",
+        "any_entity": "Tou(te)s {{entityName}}",
         "app_access_libraries": "Accéder aux bibliothèques",
         "app_create_library": "Créer une bibliothèque",
         "app_edit_library": "Éditer une bibliothèque",
@@ -195,10 +197,27 @@
         "app_delete_form": "Supprimer un formulaire",
         "app_access_permissions": "Accéder aux permissions",
         "app_edit_permission": "Éditer les permissions",
+        "app_manage_global_preferences": "Gérer les préférences globales",
         "access_attribute": "Voir l'attribut",
         "create_value": "Créer une valeur",
         "edit_value": "Éditer une valeur",
-        "delete_value": "Supprimer une valeur"
+        "delete_value": "Supprimer une valeur",
+        "type": {
+            "app": "Composants",
+            "attribute": "Attribut",
+            "library": "Bibliothèque",
+            "record": "Entités",
+            "tree": "Classement"
+        },
+        "group": {
+            "library": "Bibliothèque",
+            "entities": "Entités",
+            "libraries": "Bibliothèques",
+            "attributes": "Attributs",
+            "trees": "Classements",
+            "permissions": "Permissions",
+            "preferences": "Préférences"
+        }
     },
     "login": {
         "header": "Authentification",

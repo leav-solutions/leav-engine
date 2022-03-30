@@ -177,6 +177,8 @@
         "attribute_tab_name": "Attribute",
         "tree_tab_name": "Tree",
         "any_record": "Any records",
+        "default": "Default",
+        "any_entity": "Any {{entityName}}",
         "app_access_libraries": "Access libraries",
         "app_create_library": "Create library",
         "app_edit_library": "Edit library",
@@ -195,10 +197,27 @@
         "app_delete_form": "Delete form",
         "app_access_permissions": "Access permissions",
         "app_edit_permission": "Edit permission",
+        "app_manage_global_preferences": "Manage global preferences",
         "access_attribute": "Access attribute",
         "create_value": "Create value",
         "edit_value": "Edit value",
-        "delete_value": "Delete value"
+        "delete_value": "Delete value",
+        "type": {
+            "app": "Components",
+            "attribute": "Attribute",
+            "library": "Library",
+            "record": "Records",
+            "tree": "Classifying"
+        },
+        "group": {
+            "library": "Library",
+            "entities": "Entities",
+            "libraries": "Libraries",
+            "attributes": "Attributes",
+            "trees": "Classifying",
+            "permissions": "Permissions",
+            "preferences": "Preferences"
+        }
     },
     "login": {
         "header": "Authentification",

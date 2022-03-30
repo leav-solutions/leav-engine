@@ -5,6 +5,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {IGroupedPermissionsActions} from '_types/permissions';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
 import {
@@ -13,6 +14,7 @@ import {
 } from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {
     AttributeType,
+    PermissionsActions,
     PermissionsRelation,
     PermissionTypes,
     Treepermissions_confInput
@@ -73,6 +75,16 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
         setlibPermsConf({...libPermsConf, [data.name]: data.value});
     };
 
+    const groupedLibraryPermissions: IGroupedPermissionsActions = {
+        library: [PermissionsActions.admin_library, PermissionsActions.access_library],
+        entities: [
+            PermissionsActions.access_record,
+            PermissionsActions.create_record,
+            PermissionsActions.edit_record,
+            PermissionsActions.delete_record
+        ]
+    };
+
     const permsConf = library.permissions_conf || defaultPermsConf;
     const panes = permsConf.permissionTreeAttributes.map(a => ({
         key: a.id,
@@ -99,13 +111,14 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
 
     panes.unshift({
         key: 'libPermissions',
-        menuItem: t('permissions.library_tab_name'),
+        menuItem: t('permissions.default'),
         render: () => (
             <Tab.Pane key="libPermissions" className="grow flex-col height100">
                 {
                     <DefinePermByUserGroupView
                         type={PermissionTypes.library}
                         key="libPermissions"
+                        actions={groupedLibraryPermissions}
                         applyTo={library.id}
                         readOnly={readonly}
                     />
