@@ -13,25 +13,11 @@ export default function (
 ): string {
     let k = `${PERMISSIONS_CACHE_HEADER}`;
 
-    if (typeof groupsId !== 'undefined' && groupsId?.length) {
-        k = k + `:${groupsId.sort().join('+')}`;
-    }
-
-    if (typeof permissionType !== 'undefined') {
-        k = k + `:${permissionType}`;
-    }
-
-    if (typeof applyTo !== 'undefined' && applyTo !== '') {
-        k = k + `:${applyTo}`;
-    }
-
-    if (typeof permissionAction !== 'undefined') {
-        k = k + `:${permissionAction}`;
-    }
-
-    if (typeof key !== 'undefined' && key !== '') {
-        k = k + `:${key}`;
-    }
+    k += !!groupsId && groupsId?.length ? `:${groupsId.sort().join('+')}` : ':';
+    k += !!permissionType ? `:${permissionType}` : ':';
+    k += !!applyTo && applyTo !== '' ? `:${applyTo}` : ':';
+    k += !!permissionAction ? `:${permissionAction}` : ':';
+    k += !!key && key !== '' ? `:${key}` : ':';
 
     return k;
 }

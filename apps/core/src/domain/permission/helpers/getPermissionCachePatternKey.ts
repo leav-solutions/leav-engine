@@ -19,35 +19,11 @@ export default function ({
 }): string {
     let k = `${PERMISSIONS_CACHE_HEADER}`;
 
-    if (typeof groupsId !== 'undefined' && groupsId?.length) {
-        k = k + `:${groupsId.sort().join('+')}`;
-    } else {
-        k = k + '*';
-    }
-
-    if (typeof permissionType !== 'undefined') {
-        k = k + `:${permissionType}`;
-    } else {
-        k = k + '*';
-    }
-
-    if (typeof applyTo !== 'undefined' && applyTo !== '') {
-        k = k + `:${applyTo}`;
-    } else {
-        k = k + '*';
-    }
-
-    if (typeof permissionAction !== 'undefined') {
-        k = k + `:${permissionAction}`;
-    } else {
-        k = k + '*';
-    }
-
-    if (typeof key !== 'undefined' && key !== '') {
-        k = k + `:${key}`;
-    } else {
-        k = k + '*';
-    }
+    k += !!groupsId && groupsId?.length ? `:${groupsId.sort().join('+')}` : ':*';
+    k += !!permissionType ? `:${permissionType}` : ':*';
+    k += !!applyTo && applyTo !== '' ? `:${applyTo}` : ':*';
+    k += !!permissionAction ? `:${permissionAction}` : ':*';
+    k += !!key && key !== '' ? `:${key}` : ':*';
 
     return k;
 }
