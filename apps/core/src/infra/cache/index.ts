@@ -4,4 +4,4 @@
 export {initRedis} from './redis';
 export {default as diskService} from './diskService';
 export {default as ramService} from './ramService';
-export {default} from './cacheService';
+export {default as cacheService} from './cacheService';

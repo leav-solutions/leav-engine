@@ -93,7 +93,10 @@ export default function ({
                 });
 
                 perm = perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});
-                await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, perm.toString());
+
+                if (perm !== null) {
+                    await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, perm.toString());
+                }
             }
 
             return perm;
