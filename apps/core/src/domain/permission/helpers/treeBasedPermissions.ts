@@ -186,7 +186,9 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
                     : globalPerm || treePerm;
             }, null);
 
-            await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, perm.toString());
+            if (perm !== null) {
+                await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, perm.toString());
+            }
         }
 
         return perm;

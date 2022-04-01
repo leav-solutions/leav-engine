@@ -110,7 +110,6 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 const rootElem = await dbService.execute({
                     query: aql`
                         INSERT {
-                            _key: '1',
                             created_at: ${moment().unix()},
                             modified_at: ${moment().unix()},
                             created_by: '1',

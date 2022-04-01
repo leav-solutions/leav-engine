@@ -105,7 +105,7 @@ export default function ({
                             return res.status(401).send('Invalid credentials');
                         }
 
-                        // get groups id
+                        // get groups node id
                         const groupsId = (
                             await valueDomain.getValues({
                                 library: 'users',
