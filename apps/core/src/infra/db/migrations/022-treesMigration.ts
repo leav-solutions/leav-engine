@@ -78,7 +78,7 @@ export default function ({
                         let nodeEntity: IDbDocument;
 
                         // Create a node entity
-                        if (tree.id === 'users_groups') {
+                        if (tree.id === 'users_groups' && edge._to === 'users_groups/1') {
                             nodeEntity = (
                                 await dbService.execute({
                                     query: aql`INSERT {_key: '1'} IN ${nodeCollec} RETURN NEW`,
