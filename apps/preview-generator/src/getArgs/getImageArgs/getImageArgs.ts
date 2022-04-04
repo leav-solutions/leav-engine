@@ -45,6 +45,8 @@ const _getMainCommand = async (
     const colorspaceArgs = ['-colorspace', 'srgb'];
     let stripArgs = [];
 
+    const isPdfLike = ['ai', 'pdf'].includes(ext);
+
     if (first) {
         const colorspace = await getColorspace(input);
 
@@ -60,7 +62,7 @@ const _getMainCommand = async (
             }
         }
 
-        if (colorspace === Colorspaces.CMYK) {
+        if (colorspace === Colorspaces.CMYK && !isPdfLike) {
             profileArgs = [
                 ...profileArgs,
                 '-profile', // use profile option
@@ -89,9 +91,10 @@ const _getMainCommand = async (
 
     const args: string[] = [
         ...densityArgs,
+        ...(isPdfLike ? colorspaceArgs : []),
         inputFile,
         ...profileArgs,
-        ...colorspaceArgs,
+        ...(!isPdfLike ? colorspaceArgs : []),
         ...clippingPathArgs,
         ...resizeArgs,
         ...densityOutArgs,

@@ -75,6 +75,7 @@ const _countPage = async (pdfFile: string) => {
             'gs',
             [
                 '-q',
+                '-dNOSAFER', // to avoid permission denied error
                 '-dNODISPLAY', // only display the command result
                 '-dBATCH', // quit ghostscript after the command
                 '-c',
@@ -85,7 +86,7 @@ const _countPage = async (pdfFile: string) => {
     });
 
     if (errorCountPage) {
-        const errorId = handleError(errorCountPage);
+        const errorId = handleError(`${resultCountPage} ${errorCountPage}`);
 
         throw new ErrorPreview({
             error: 602,
