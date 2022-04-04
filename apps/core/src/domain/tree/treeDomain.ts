@@ -257,6 +257,10 @@ export default function ({
     };
 
     const _cleanCacheRelatedToTree = async (treeId: string, ctx: IQueryInfos): Promise<void> => {
+        if (treeId === 'users_groups') {
+            return cacheService.getCache(ECacheType.RAM).deleteData([`${PERMISSIONS_CACHE_HEADER}:*`]);
+        }
+
         const attributes = (await attributeDomain.getAttributes({params: {filters: {linked_tree: treeId}}, ctx})).list;
 
         const libraries = (await libraryDomain.getLibraries({ctx})).list
