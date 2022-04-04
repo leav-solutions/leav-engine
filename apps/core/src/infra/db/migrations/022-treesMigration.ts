@@ -75,13 +75,25 @@ export default function ({
                             continue;
                         }
 
+                        let nodeEntity: IDbDocument;
+
                         // Create a node entity
-                        const nodeEntity: IDbDocument = (
-                            await dbService.execute({
-                                query: aql`INSERT {} IN ${nodeCollec} RETURN NEW`,
-                                ctx
-                            })
-                        )[0];
+                        if (tree.id === 'users_groups' && edge._to === 'users_groups/1') {
+                            nodeEntity = (
+                                await dbService.execute({
+                                    query: aql`INSERT {_key: '1'} IN ${nodeCollec} RETURN NEW`,
+                                    ctx
+                                })
+                            )[0];
+                        } else {
+                            nodeEntity = (
+                                await dbService.execute({
+                                    query: aql`INSERT {} IN ${nodeCollec} RETURN NEW`,
+                                    ctx
+                                })
+                            )[0];
+                        }
+
                         nodesMapping[edge._to] = nodesMapping[edge._to] ?? nodeEntity._id;
 
                         // Link this entity to the record

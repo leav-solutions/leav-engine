@@ -8,11 +8,22 @@ import {IQueryInfos} from '_types/queryInfos';
 import {LibraryPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import globalPermissions from './globalPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
+import {ICachesService, ICacheService} from '../../../infra/cache/cacheService';
+
+const mockCacheService: Mockify<ICacheService> = {
+    getData: global.__mockPromise([null]),
+    storeData: global.__mockPromise()
+};
+
+const mockCachesService: Mockify<ICachesService> = {
+    getCache: jest.fn().mockReturnValue(mockCacheService)
+};
 
 describe('globalPermissionsHelper', () => {
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'permissionDomainTest'
+        queryId: 'permissionDomainTest',
+        groupsId: ['1']
     };
 
     const defaultPerm = false;
@@ -79,7 +90,8 @@ describe('globalPermissionsHelper', () => {
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await permHelper.getGlobalPermission(
@@ -105,7 +117,8 @@ describe('globalPermissionsHelper', () => {
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
-                'core.infra.tree': mockTreeRepo as ITreeRepo
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await permHelper.getGlobalPermission(

@@ -86,7 +86,7 @@ export default function ({
                 app.set('port', config.server.port);
                 app.set('host', config.server.host);
                 app.use(express.json({limit: config.server.uploadLimit}));
-                app.use(express.urlencoded({limit: config.server.uploadLimit}));
+                app.use(express.urlencoded({extended: true, limit: config.server.uploadLimit}));
                 app.use(graphqlUploadExpress());
 
                 // CORS
@@ -152,11 +152,14 @@ export default function ({
                         try {
                             const payload = await authApp.validateToken(req.headers.authorization);
 
-                            return {
+                            const ctx: IQueryInfos = {
                                 userId: payload.userId,
                                 lang: (req.query.lang as string) ?? config.lang.default,
-                                queryId: req.body.requestId || uuidv4()
+                                queryId: req.body.requestId || uuidv4(),
+                                groupsId: payload.groupsId
                             };
+
+                            return ctx;
                         } catch (e) {
                             console.error(e);
                             throw new AuthenticationError('you must be logged in');

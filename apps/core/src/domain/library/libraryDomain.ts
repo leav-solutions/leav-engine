@@ -4,6 +4,7 @@
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -21,7 +22,7 @@ import {Errors} from '../../_types/errors';
 import {EventType} from '../../_types/event';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
-import {AppPermissionsActions} from '../../_types/permissions';
+import {AppPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import checkSavePermission from './helpers/checkSavePermission';
@@ -32,6 +33,7 @@ import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -53,6 +55,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
     'core.domain.helpers.validate'?: IValidateHelper;
+    'core.infra.cache.cacheService'?: ICachesService;
 }
 
 export default function ({
@@ -66,6 +69,7 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
     'core.domain.helpers.validate': validateHelper = null,
+    'core.infra.cache.cacheService': cacheService = null,
     translator: translator
 }: IDeps = {}): ILibraryDomain {
     return {
@@ -210,6 +214,24 @@ export default function ({
             const mergedValidationErrors = validationErrors.reduce((acc, cur) => ({...acc, ...cur}), {});
             if (Object.keys(mergedValidationErrors).length) {
                 throw new ValidationError(mergedValidationErrors);
+            }
+
+            // If permissions conf changed we clean cache related to this library.
+            if (
+                existingLib &&
+                JSON.stringify(libData.permissions_conf?.permissionTreeAttributes) !==
+                    JSON.stringify(libs.list[0].permissions_conf?.permissionTreeAttributes)
+            ) {
+                const keyLib = getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.LIBRARY,
+                    applyTo: libData.id
+                });
+                const keyRec = getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.RECORD,
+                    applyTo: libData.id
+                });
+
+                await cacheService.getCache(ECacheType.RAM).deleteData([keyLib, keyRec]);
             }
 
             const lib = existingLib

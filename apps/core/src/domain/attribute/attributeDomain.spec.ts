@@ -15,6 +15,17 @@ import {AppPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain from './attributeDomain';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
+
+const mockCacheService: Mockify<ICacheService> = {
+    getData: global.__mockPromise([null]),
+    storeData: global.__mockPromise(),
+    deleteData: global.__mockPromise()
+};
+
+const mockCachesService: Mockify<ICachesService> = {
+    getCache: jest.fn().mockReturnValue(mockCacheService)
+};
 
 describe('attributeDomain', () => {
     const ctx: IQueryInfos = {
@@ -326,7 +337,10 @@ describe('attributeDomain', () => {
 
         test('Should update an attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
-                getAttributes: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
+                getAttributes: global.__mockPromise({
+                    list: [{id: 'test', system: false, permissions_conf: {permissionTreeAttributes: ['fake']}}],
+                    totalCount: 0
+                }),
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
@@ -336,6 +350,7 @@ describe('attributeDomain', () => {
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
                 'core.utils': mockUtils as IUtils,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 config: mockConf
             });
 
@@ -352,17 +367,17 @@ describe('attributeDomain', () => {
                 ctx
             });
 
+            expect(mockCacheService.deleteData).toBeCalled();
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
             expect(mockAppPermDomain.getAppPermission).toBeCalled();
             expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
                 AppPermissionsActions.EDIT_ATTRIBUTE
             );
-
             expect(updatedLib).toMatchObject({id: 'test', system: false});
         });
 
-        test.only('Should read data from DB for fields not specified in save', async function () {
+        test('Should read data from DB for fields not specified in save', async function () {
             const attrData = {...mockAttrAdvVersionable};
 
             const mockAttrRepo: Mockify<IAttributeRepo> = {

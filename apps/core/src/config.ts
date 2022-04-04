@@ -54,6 +54,10 @@ export const validateConfig = (conf: IConfig) => {
             type: Joi.string().required(),
             prefetch: Joi.number().required()
         }),
+        redis: Joi.object().keys({
+            host: Joi.string().required(),
+            port: Joi.string().required()
+        }),
         filesManager: Joi.object().keys({
             queues: Joi.object().keys({
                 events: Joi.string().required(),

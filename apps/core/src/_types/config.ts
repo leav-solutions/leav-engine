@@ -14,6 +14,7 @@ export interface IConfig {
     logs: ILogs;
     permissions: IPermissions;
     amqp: IAmqp;
+    redis: IRedis;
     filesManager: IFilesManager;
     indexationManager: IIndexationManager;
     eventsManager: IEventsManager;
@@ -68,6 +69,11 @@ export interface IAmqp {
     exchange: string;
     type: string;
     prefetch?: number;
+}
+
+export interface IRedis {
+    host: string;
+    port: number;
 }
 
 export interface IFilesManager {

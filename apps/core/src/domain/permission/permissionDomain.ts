@@ -18,16 +18,19 @@ import {
     RecordAttributePermissionsActions,
     RecordPermissionsActions,
     TreeNodePermissionsActions,
-    TreePermissionsActions
+    TreePermissionsActions,
+    PermissionsActions
 } from '../../_types/permissions';
 import {IAppPermissionDomain} from './appPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
+import getPermissionCachePatternKey from './helpers/getPermissionCachePatternKey';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
 import {ITreeNodePermissionDomain} from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {
     IGetActionsByTypeParams,
     IGetInheritedPermissionsParams,
@@ -76,6 +79,7 @@ interface IDeps {
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
     'core.domain.permission.treeLibrary'?: ITreeLibraryPermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
+    'core.infra.cache.cacheService'?: ICachesService;
     translator?: i18n;
     config?: IConfig;
 }
@@ -93,8 +97,61 @@ export default function (deps: IDeps = {}): IPermissionDomain {
         'core.domain.permission.treeNode': treeNodePermissionDomain = null,
         'core.domain.permission.treeLibrary': treeLibraryPermissionDomain = null,
         'core.infra.permission': permissionRepo = null,
+        'core.infra.cache.cacheService': cacheService = null,
         config = null
     }: IDeps = deps;
+
+    const _cleanCacheOnSavingPermissions = async (permData: IPermission) => {
+        // clean permissions cached
+        for (const [name, v] of Object.entries(permData.actions)) {
+            const keys = [];
+
+            keys.push(
+                getPermissionCachePatternKey({
+                    permissionType: permData.type,
+                    applyTo: permData.applyTo,
+                    permissionAction: name as PermissionsActions
+                })
+            );
+
+            if (permData.type === PermissionTypes.TREE) {
+                keys.push(
+                    getPermissionCachePatternKey({
+                        permissionType: PermissionTypes.TREE_LIBRARY,
+                        applyTo: permData.applyTo,
+                        permissionAction: name as PermissionsActions
+                    }),
+                    getPermissionCachePatternKey({
+                        permissionType: PermissionTypes.TREE_NODE,
+                        applyTo: permData.applyTo,
+                        permissionAction: name as PermissionsActions
+                    })
+                );
+            }
+
+            if (permData.type === PermissionTypes.LIBRARY) {
+                keys.push(
+                    getPermissionCachePatternKey({
+                        permissionType: PermissionTypes.RECORD,
+                        applyTo: permData.applyTo,
+                        permissionAction: name as PermissionsActions
+                    })
+                );
+            }
+
+            if (permData.type === PermissionTypes.ATTRIBUTE) {
+                keys.push(
+                    getPermissionCachePatternKey({
+                        permissionType: PermissionTypes.RECORD_ATTRIBUTE,
+                        applyTo: permData.applyTo,
+                        permissionAction: name as PermissionsActions
+                    })
+                );
+            }
+
+            await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+        }
+    };
 
     const savePermission = async (permData: IPermission, ctx: IQueryInfos): Promise<IPermission> => {
         // Does user have the permission to save permissions?
@@ -108,6 +165,8 @@ export default function (deps: IDeps = {}): IPermissionDomain {
         if (!canSavePermission) {
             throw new PermissionError(action);
         }
+
+        await _cleanCacheOnSavingPermissions(permData);
 
         return permissionRepo.savePermission({permData, ctx});
     };

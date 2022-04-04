@@ -1,35 +1,45 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import cacache from 'cacache';
-import {IConfig} from '_types/config';
-import fs from 'fs';
+export interface ICachesService {
+    getCache?(type: ECacheType): ICacheService;
+}
 
 export interface ICacheService {
-    storeData?(type: string, key: string, data: string): Promise<void>;
-    getData?(dataType: string, key: string): Promise<string>;
-    deleteData?(dataType: string, key: string): Promise<void>;
-    deleteAll?(dataType: string): Promise<void>;
+    storeData?(key: string, data: string, path?: string): Promise<void>;
+    getData?(keys: string[], path?: string): Promise<string[]>;
+    deleteData?(keys: string[], path?: string): Promise<void>;
+    deleteAll?(path?: string): Promise<void>;
 }
 
 interface IDeps {
-    config?: IConfig;
+    'core.infra.cache.ramService'?: ICacheService;
+    'core.infra.cache.diskService'?: ICacheService;
 }
 
-export default function ({config = null}: IDeps): ICacheService {
+export enum ECacheType {
+    DISK = 'DISK',
+    RAM = 'RAM'
+}
+
+export default function ({
+    'core.infra.cache.ramService': ramService = null,
+    'core.infra.cache.diskService': diskService = null
+}: IDeps): ICachesService {
     return {
-        async storeData(dataType: string, key: string, data: string): Promise<void> {
-            await cacache.put(`${config.diskCache.directory}/${dataType}`, key, data);
-        },
-        async getData(dataType: string, key: string): Promise<string> {
-            const data = await cacache.get(`${config.diskCache.directory}/${dataType}`, key);
-            return data.data.toString();
-        },
-        async deleteData(dataType: string, key: string): Promise<void> {
-            await cacache.rm.entry(`${config.diskCache.directory}/${dataType}`, key);
-        },
-        async deleteAll(dataType: string): Promise<void> {
-            return fs.promises.rmdir(`${config.diskCache.directory}/${dataType}`, {recursive: true});
+        getCache(type: ECacheType): ICacheService {
+            let cacheService: ICacheService;
+
+            switch (type) {
+                case ECacheType.DISK:
+                    cacheService = diskService;
+                    break;
+                case ECacheType.RAM:
+                    cacheService = ramService;
+                    break;
+            }
+
+            return cacheService;
         }
     };
 }

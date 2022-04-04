@@ -105,12 +105,23 @@ export default function ({
                             return res.status(401).send('Invalid credentials');
                         }
 
+                        // get groups node id
+                        const groupsId = (
+                            await valueDomain.getValues({
+                                library: 'users',
+                                recordId: user.id,
+                                attribute: 'user_groups',
+                                ctx
+                            })
+                        ).map(g => g.value.id);
+
                         // Generate token
                         const token = jwt.sign(
                             {
                                 userId: user.id,
                                 login: user.login,
-                                role: 'admin'
+                                role: 'admin',
+                                groupsId
                             },
                             config.auth.key,
                             {

@@ -52,6 +52,8 @@ x-env-core: &env-core
   SERVER_HOST: "0.0.0.0"
   SERVER_PORT: 4001
   SERVER_UPLOAD_LIMIT: "15000mb"
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
@@ -344,6 +346,21 @@ services:
       - traefik.enable=true
       - traefik.backend=redis
       - traefik.port=6379
+
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+    - REDIS_HOSTS=local:redis:6379
+    ports:
+    - "8081:8081"
+    labels:
+      - traefik.enable=true
+      - traefik.backend=redis
+      - traefik.frontend.rule=Host:redis.leav.localhost
+      - traefik.port=3000
 
   elasticsearch:
     image: *elastisearch_image

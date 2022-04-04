@@ -152,6 +152,25 @@ describe('Permissions', () => {
             expect(resIsAllowed.data.data.isAllowed[0].allowed).toBe(false);
             expect(resIsAllowed.data.errors).toBeUndefined();
 
+            // Call isAllowed a second time to check result from cache.
+            const resIsAllowedCached = await makeGraphQlCall(`query {
+                isAllowed(
+                    type: record_attribute,
+                    actions: [edit_value],
+                    applyTo: "${testLibId}",
+                    target: {recordId: "${testLibRecordId}", attributeId: "${testPermAttrId}"}
+                ) {
+                    name
+                    allowed
+                }
+            }`);
+
+            expect(resIsAllowedCached.status).toBe(200);
+            expect(resIsAllowedCached.data.data.isAllowed).toBeDefined();
+            expect(resIsAllowedCached.data.data.isAllowed[0].name).toBe('edit_value');
+            expect(resIsAllowedCached.data.data.isAllowed[0].allowed).toBe(false);
+            expect(resIsAllowedCached.data.errors).toBeUndefined();
+
             // Apply permission
             const res = await makeGraphQlCall(`mutation {
                 saveValue(

@@ -15,7 +15,12 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {IList, IPaginationParams, SortOrder} from '../../_types/list';
-import {AppPermissionsActions, TreeNodePermissionsActions, TreePermissionsActions} from '../../_types/permissions';
+import {
+    AppPermissionsActions,
+    PermissionTypes,
+    TreeNodePermissionsActions,
+    TreePermissionsActions
+} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {
     IGetCoreTreesParams,
@@ -30,6 +35,10 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import validateFilesParent from './helpers/validateFilesParent';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
+import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
+import {ILibraryDomain} from '../library/libraryDomain';
 
 export interface ITreeDomain {
     isNodePresent(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
@@ -134,10 +143,12 @@ interface IDeps {
     'core.domain.permission.app'?: IAppPermissionDomain;
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
+    'core.domain.library'?: ILibraryDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
     'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
+    'core.infra.cache.cacheService'?: ICachesService;
 }
 
 export default function ({
@@ -146,10 +157,12 @@ export default function ({
     'core.domain.permission.app': appPermissionDomain = null,
     'core.domain.permission.tree': treePermissionDomain = null,
     'core.domain.permission.treeNode': treeNodePermissionDomain = null,
+    'core.domain.library': libraryDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
     'core.infra.tree': treeRepo = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    'core.infra.cache.cacheService': cacheService = null
 }: IDeps = {}): ITreeDomain {
     async function _getTreeProps(treeId: string, ctx: IQueryInfos): Promise<ITree | null> {
         const trees = await treeRepo.getTrees({params: {filters: {id: treeId}, strictFilters: true}, ctx});
@@ -182,6 +195,113 @@ export default function ({
             !treeProps.libraries?.[parent.library]?.allowedChildren.includes('__all__') &&
             !treeProps.libraries?.[parent.library]?.allowedChildren.includes(element.library));
 
+    const _clearLibraries = async (libraries: string[]): Promise<void> => {
+        const keys = [];
+
+        for (const libId of libraries) {
+            keys.push(
+                getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.LIBRARY,
+                    applyTo: libId
+                }),
+                getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.RECORD,
+                    applyTo: libId
+                })
+            );
+        }
+
+        await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+    };
+
+    const _clearTrees = async (trees: string[]): Promise<void> => {
+        const keys = [];
+
+        for (const treeId of trees) {
+            keys.push(
+                getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.TREE,
+                    applyTo: treeId
+                }),
+                getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.TREE_LIBRARY,
+                    applyTo: treeId
+                }),
+                getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.TREE_NODE,
+                    applyTo: treeId
+                })
+            );
+        }
+
+        await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+    };
+
+    const _clearAttributes = async (attributes: string[]): Promise<void> => {
+        const keys = [];
+
+        for (const attributeId of attributes) {
+            keys.push(
+                getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.ATTRIBUTE,
+                    applyTo: attributeId
+                }),
+                getPermissionCachePatternKey({
+                    permissionType: PermissionTypes.RECORD_ATTRIBUTE,
+                    applyTo: attributeId
+                })
+            );
+        }
+
+        await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+    };
+
+    const _cleanCacheRelatedToTree = async (treeId: string, ctx: IQueryInfos): Promise<void> => {
+        if (treeId === 'users_groups') {
+            return cacheService.getCache(ECacheType.RAM).deleteData([`${PERMISSIONS_CACHE_HEADER}:*`]);
+        }
+
+        const attributes = (await attributeDomain.getAttributes({params: {filters: {linked_tree: treeId}}, ctx})).list;
+
+        const libraries = (await libraryDomain.getLibraries({ctx})).list
+            .filter(l => !!l.permissions_conf)
+            .filter(library => {
+                let isUsingAttributes = false;
+                for (const attrs of library.permissions_conf?.permissionTreeAttributes) {
+                    isUsingAttributes = !!attributes.filter(a => attrs.includes(a.id)).length || isUsingAttributes;
+                }
+                return isUsingAttributes;
+            });
+
+        await _clearLibraries(libraries.map(l => l.id));
+
+        const trees = (await treeRepo.getTrees({ctx})).list
+            .filter(tree => !!tree.permissions_conf)
+            .filter(tree => {
+                let isUsingAttributes = false;
+                for (const [lib, treePermissionsConf] of Object.entries(tree.permissions_conf)) {
+                    isUsingAttributes =
+                        !!attributes.filter(a => treePermissionsConf.permissionTreeAttributes.includes(a.id)).length ||
+                        isUsingAttributes;
+                }
+                return isUsingAttributes;
+            });
+
+        await _clearTrees(trees.map(t => t.id));
+
+        const attribs = (await attributeDomain.getAttributes({ctx})).list
+            .filter(a => !!a.permissions_conf)
+            .filter(attribute => {
+                let isUsingAttributes = false;
+                for (const attrs of attribute.permissions_conf?.permissionTreeAttributes) {
+                    isUsingAttributes = !!attributes.filter(a => attrs.includes(a.id)).length || isUsingAttributes;
+                }
+                return isUsingAttributes;
+            });
+
+        await _clearAttributes(attribs.map(a => a.id));
+    };
+
     return {
         async saveTree(treeData: Partial<ITree>, ctx: IQueryInfos): Promise<ITree> {
             // Check is existing tree
@@ -213,6 +333,14 @@ export default function ({
             // Validate tree data
             await treeDataValidationHelper.validate(dataToSave as ITree, ctx);
 
+            // If permissions conf changed we clean cache related to this tree.
+            if (
+                isExistingTree &&
+                JSON.stringify(treeData.permissions_conf) !== JSON.stringify(treeProps.permissions_conf)
+            ) {
+                await _clearTrees([treeData.id]);
+            }
+
             // Save
             const savedTree = isExistingTree
                 ? await treeRepo.updateTree({treeData: dataToSave as ITree, ctx})
@@ -229,15 +357,18 @@ export default function ({
                 throw new PermissionError(action);
             }
 
-            const trees = await this.getTrees({params: {filters: {id}}, ctx});
+            // Check is existing tree
+            const treeProps = await _getTreeProps(id, ctx);
 
-            if (!trees.list.length) {
+            if (!treeProps) {
                 throw new ValidationError({id: Errors.UNKNOWN_TREE});
             }
 
-            if (trees.list.pop().system) {
+            if (treeProps.system) {
                 throw new ValidationError({id: Errors.SYSTEM_TREE_DELETION});
             }
+
+            await _cleanCacheRelatedToTree(treeProps.id, ctx);
 
             return treeRepo.deleteTree({id, ctx});
         },
@@ -416,6 +547,8 @@ export default function ({
                 throw new ValidationError(errors);
             }
 
+            await _cleanCacheRelatedToTree(treeId, ctx);
+
             return treeRepo.moveElement({treeId, nodeId, parentTo, order, ctx});
         },
         async deleteElement({treeId, nodeId, deleteChildren = true, ctx}): Promise<ITreeNodeLight> {
@@ -444,6 +577,8 @@ export default function ({
             if (!canDetach) {
                 throw new PermissionError(TreeNodePermissionsActions.DETACH);
             }
+
+            await _cleanCacheRelatedToTree(treeId, ctx);
 
             return treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
         },
