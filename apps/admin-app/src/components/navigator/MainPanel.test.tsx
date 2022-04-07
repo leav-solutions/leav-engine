@@ -5,8 +5,8 @@ import {MockedProvider} from '@apollo/client/testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {mockAttrSimple} from '__mocks__/attributes';
 import {wait} from '../../utils/testUtils';
-import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
 import MainPanel, {QUERY_LIBRARY_CONFIG} from './MainPanel';
 import {ActionTypes, initialState} from './NavigatorReducer';
 
@@ -162,16 +162,8 @@ describe('<MainPanel />', () => {
             selectedRootQuery: 'querytest',
             selectedRootAttributes: [
                 {
+                    ...mockAttrSimple,
                     id: 'a1',
-                    type: AttributeType.simple,
-                    format: AttributeFormat.text,
-                    system: false,
-                    linked_library: null,
-                    linked_tree: null,
-                    multiple_values: false,
-                    permissions_conf: null,
-                    versions_conf: null,
-                    metadata_fields: null,
                     label: {
                         fr: 'labela1'
                     },

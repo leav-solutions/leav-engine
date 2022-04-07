@@ -5,19 +5,17 @@ import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Accordion, Form, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
-import {
-    GET_ATTRIBUTES_attributes_list,
-    GET_ATTRIBUTES_attributes_list_TreeAttribute
-} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES_attributes_list_TreeAttribute} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsRelation, PermissionTypes, Treepermissions_confInput} from '../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../permissions/DefineTreePermissionsView';
 
 interface IPermissionsContentProps {
-    attribute: GET_ATTRIBUTES_attributes_list;
+    attribute: GET_ATTRIBUTE_BY_ID_attributes_list;
     treeAttributes: GET_ATTRIBUTES_attributes_list_TreeAttribute[];
     onSubmitSettings: (conf: Treepermissions_confInput) => void;
     readonly: boolean;

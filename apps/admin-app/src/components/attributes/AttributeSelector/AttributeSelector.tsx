@@ -4,7 +4,6 @@
 import {useQuery} from '@apollo/client';
 import React from 'react';
 import {FormDropdownProps} from 'semantic-ui-react';
-import {AttributeType} from '_gqlTypes/globalTypes';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {
     GET_ATTRIBUTES,

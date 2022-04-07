@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import '@testing-library/jest-dom';
 import {render, screen, waitFor} from '@testing-library/react';
-import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
+import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import React from 'react';
 import {mockAttrSimple} from '__mocks__/attributes';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
@@ -29,7 +29,7 @@ const renderWithAttributesMock = (children: JSX.Element) => {
     const mocks = [
         {
             request: {
-                query: getAttributesQuery,
+                query: getAttributeByIdQuery,
                 variables: {
                     id: formElem1.settings.attribute
                 }

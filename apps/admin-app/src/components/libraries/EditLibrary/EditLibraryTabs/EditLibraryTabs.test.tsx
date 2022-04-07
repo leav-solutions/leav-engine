@@ -4,13 +4,13 @@
 import {shallow} from 'enzyme';
 import {History, Location} from 'history';
 import React from 'react';
+import {mockAttrSimple} from '__mocks__/attributes';
 import {mockLibrary} from '__mocks__/libraries';
 import EditLibraryTabs from '.';
 import {
     GET_LIB_BY_ID_libraries_list,
     GET_LIB_BY_ID_libraries_list_attributes
 } from '../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeFormat, AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {Mockify} from '../../../../_types/Mockify';
 
 jest.mock('../../../../hooks/useUserData', () => ({
@@ -27,18 +27,10 @@ describe('EditLibraryForm', () => {
 
     const attributes: Mockify<GET_LIB_BY_ID_libraries_list_attributes[]> = [
         {
+            ...mockAttrSimple,
             id: 'test_attr',
-            type: AttributeType.simple,
-            format: AttributeFormat.text,
-            system: false,
             label: {fr: 'Test', en: 'Test'},
-            description: {fr: 'Test', en: 'Test'},
-            linked_tree: null,
-            permissions_conf: null,
-            multiple_values: false,
-            metadata_fields: null,
-            versions_conf: null,
-            linked_library: null
+            description: {fr: 'Test', en: 'Test'}
         }
     ];
 

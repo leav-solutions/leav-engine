@@ -4,14 +4,14 @@
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {History, Location} from 'history';
+import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import React, {useMemo} from 'react';
 import {match} from 'react-router';
-import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {
-    GET_ATTRIBUTES,
-    GET_ATTRIBUTESVariables,
-    GET_ATTRIBUTES_attributes_list
-} from '../../../_gqlTypes/GET_ATTRIBUTES';
+    GET_ATTRIBUTE_BY_ID,
+    GET_ATTRIBUTE_BY_IDVariables,
+    GET_ATTRIBUTE_BY_ID_attributes_list
+} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
@@ -20,7 +20,7 @@ export interface IEditAttributeMatchParams {
     id: string;
 }
 
-export type onAttributePostSaveFunc = (attrData: GET_ATTRIBUTES_attributes_list) => void;
+export type onAttributePostSaveFunc = (attrData: GET_ATTRIBUTE_BY_ID_attributes_list) => void;
 
 interface IEditAttributeProps {
     match?: match<IEditAttributeMatchParams>;
@@ -41,12 +41,13 @@ function EditAttribute({
 }: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
-    const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
-        variables: {id: attrId}
+    const {loading, error, data} = useQuery<GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables>(getAttributeByIdQuery, {
+        variables: {id: attrId},
+        skip: !attrId
     });
 
     const _renderEditAttributeTabs = useMemo(
-        () => (attribute?: GET_ATTRIBUTES_attributes_list, locationGiven?: Location) => (
+        () => (attribute?: GET_ATTRIBUTE_BY_ID_attributes_list, locationGiven?: Location) => (
             <EditAttributeTabs
                 attribute={attribute}
                 onPostSave={onPostSave}
@@ -67,7 +68,7 @@ function EditAttribute({
     }
 
     if (error) {
-        return <div className="error">ERROR</div>;
+        return <ErrorDisplay message={error.message} />;
     }
 
     if (!data || !data.attributes || !data.attributes.list.length) {

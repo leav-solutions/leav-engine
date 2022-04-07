@@ -6,13 +6,12 @@ import {useTranslation} from 'react-i18next';
 import {Checkbox, Dropdown, Input, Table} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
-import {AttributeDetails} from '../../../_gqlTypes/AttributeDetails';
 import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 
 interface IAttributesListProps {
-    attributes: AttributeDetails[] | null;
+    attributes: GET_ATTRIBUTES_attributes_list[] | null;
     onRowClick: (attribute: GET_ATTRIBUTES_attributes_list) => void;
     onFiltersUpdate?: (filters: any) => void;
     loading: boolean;

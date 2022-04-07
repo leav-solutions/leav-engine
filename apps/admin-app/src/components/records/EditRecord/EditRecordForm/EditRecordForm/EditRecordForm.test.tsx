@@ -2,129 +2,72 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
+import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {act, render, screen} from '_tests/testUtils';
+import {mockAttrAdv, mockAttrSimple, mockAttrSimpleLink} from '__mocks__/attributes';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {
     GET_LIB_BY_ID_libraries_list,
     GET_LIB_BY_ID_libraries_list_attributes
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
+import {AttributeFormat, LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
 
 const lang = ['fr'];
 
-const attributes = [
+const attributes: GET_ATTRIBUTE_BY_ID_attributes_list[] = [
     {
+        ...mockAttrAdv,
         id: 'avance',
-        type: 'advanced',
-        format: 'text',
-        system: false,
-        label: {fr: 'avance', en: 'advanced'},
-        description: null,
-        linked_library: null,
-        linked_tree: null,
-        multiple_values: false,
-        metadata_fields: null,
-        permissions_conf: null,
-        versions_conf: {versionable: false, mode: 'smart', trees: []}
+        label: {fr: 'avance', en: 'advanced'}
     },
     {
+        ...mockAttrSimple,
         id: 'test',
-        type: 'simple',
-        format: 'text',
-        system: false,
-        label: {fr: 'test', en: 'test'},
-        description: null,
-        linked_library: null,
-        linked_tree: null,
-        multiple_values: false,
-        metadata_fields: null,
-        permissions_conf: null,
-        versions_conf: {versionable: false, mode: 'smart', trees: []}
+        label: {fr: 'test', en: 'test'}
     },
     {
+        ...mockAttrAdv,
         id: 'prix',
-        type: 'advanced',
-        format: 'numeric',
-        system: false,
-        label: {en: 'price', fr: 'prix'},
-        description: null,
-        linked_library: null,
-        linked_tree: null,
-        multiple_values: true,
-        metadata_fields: null,
-        permissions_conf: null,
-        versions_conf: {versionable: false, mode: 'smart', trees: []}
+        format: AttributeFormat.numeric,
+        label: {en: 'price', fr: 'prix'}
     },
     {
+        ...mockAttrSimple,
         id: 'id',
-        type: 'simple',
-        format: 'text',
         system: true,
-        label: {fr: 'Identifiant', en: 'Identifier'},
-        description: null,
-        linked_library: null,
-        linked_tree: null,
-        multiple_values: false,
-        metadata_fields: null,
-        permissions_conf: null,
-        versions_conf: {versionable: false, mode: null, trees: []}
+        label: {fr: 'Identifiant', en: 'Identifier'}
     },
     {
+        ...mockAttrSimple,
         id: 'created_at',
-        type: 'simple',
-        format: 'numeric',
+        format: AttributeFormat.numeric,
         system: true,
-        label: {fr: 'Date de création', en: 'Creation date'},
-        description: null,
-        linked_library: null,
-        linked_tree: null,
-        multiple_values: false,
-        metadata_fields: null,
-        permissions_conf: null,
-        versions_conf: {versionable: false, mode: null, trees: []}
+        label: {fr: 'Date de création', en: 'Creation date'}
     },
     {
+        ...mockAttrSimpleLink,
         id: 'created_by',
-        type: 'simple_link',
-        format: 'text',
         system: true,
         label: {fr: 'Créé par', en: 'Created by'},
-        description: null,
-        linked_library: 'users',
-        linked_tree: null,
-        multiple_values: false,
-        metadata_fields: null,
-        permissions_conf: null,
+        linked_library: {id: 'users'},
         versions_conf: {versionable: false, mode: null, trees: []}
     },
     {
+        ...mockAttrSimple,
         id: 'modified_at',
-        type: 'simple',
-        format: 'numeric',
+        format: AttributeFormat.numeric,
         system: true,
         label: {fr: 'Date de modification', en: 'Modification date'},
-        description: null,
-        linked_library: null,
-        linked_tree: null,
-        multiple_values: false,
-        metadata_fields: null,
-        permissions_conf: null,
         versions_conf: {versionable: false, mode: null, trees: []}
     },
     {
+        ...mockAttrSimpleLink,
         id: 'modified_by',
-        type: 'simple_link',
-        format: 'text',
         system: true,
         label: {fr: 'Modifié par', en: 'Modified by'},
-        description: null,
-        linked_library: 'users',
-        linked_tree: null,
-        multiple_values: false,
-        metadata_fields: null,
-        permissions_conf: null,
+        linked_library: {id: 'users'},
         versions_conf: {versionable: false, mode: null, trees: []}
     }
 ];

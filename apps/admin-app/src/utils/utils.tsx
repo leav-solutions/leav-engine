@@ -10,10 +10,10 @@ import {join} from 'path';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
 import {
-    GET_ATTRIBUTES_attributes_list,
-    GET_ATTRIBUTES_attributes_list_LinkAttribute,
-    GET_ATTRIBUTES_attributes_list_TreeAttribute
-} from '../_gqlTypes/GET_ATTRIBUTES';
+    GET_ATTRIBUTE_BY_ID_attributes_list,
+    GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
+    GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
+} from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeType, AvailableLanguage} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {IErrorByField} from '../_types/errors';
@@ -191,9 +191,9 @@ export function versionObjToGraphql(version: {[treeName: string]: string}): Arra
 }
 
 export function isLinkAttribute(
-    attribute: GET_ATTRIBUTES_attributes_list,
+    attribute: GET_ATTRIBUTE_BY_ID_attributes_list,
     strict: boolean = true
-): attribute is GET_ATTRIBUTES_attributes_list_LinkAttribute {
+): attribute is GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute {
     const linkTypes = [AttributeType.advanced_link, AttributeType.simple_link];
 
     if (!strict) {
@@ -204,8 +204,8 @@ export function isLinkAttribute(
 }
 
 export function isTreeAttribute(
-    attribute: GET_ATTRIBUTES_attributes_list
-): attribute is GET_ATTRIBUTES_attributes_list_TreeAttribute {
+    attribute: GET_ATTRIBUTE_BY_ID_attributes_list
+): attribute is GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {
     return attribute.type === AttributeType.tree;
 }
 

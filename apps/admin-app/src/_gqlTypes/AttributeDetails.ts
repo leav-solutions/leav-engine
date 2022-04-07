@@ -49,6 +49,11 @@ export interface AttributeDetails_StandardAttribute_versions_conf {
     trees: string[] | null;
 }
 
+export interface AttributeDetails_StandardAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface AttributeDetails_StandardAttribute {
     id: string;
     type: AttributeType;
@@ -60,6 +65,7 @@ export interface AttributeDetails_StandardAttribute {
     metadata_fields: AttributeDetails_StandardAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_StandardAttribute_permissions_conf | null;
     versions_conf: AttributeDetails_StandardAttribute_versions_conf | null;
+    libraries: AttributeDetails_StandardAttribute_libraries[] | null;
 }
 
 export interface AttributeDetails_LinkAttribute_metadata_fields {
@@ -99,6 +105,11 @@ export interface AttributeDetails_LinkAttribute_versions_conf {
     trees: string[] | null;
 }
 
+export interface AttributeDetails_LinkAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface AttributeDetails_LinkAttribute_linked_library {
     id: string;
 }
@@ -114,6 +125,7 @@ export interface AttributeDetails_LinkAttribute {
     metadata_fields: AttributeDetails_LinkAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_LinkAttribute_permissions_conf | null;
     versions_conf: AttributeDetails_LinkAttribute_versions_conf | null;
+    libraries: AttributeDetails_LinkAttribute_libraries[] | null;
     linked_library: AttributeDetails_LinkAttribute_linked_library | null;
     reverse_link: string | null;
 }
@@ -155,6 +167,11 @@ export interface AttributeDetails_TreeAttribute_versions_conf {
     trees: string[] | null;
 }
 
+export interface AttributeDetails_TreeAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface AttributeDetails_TreeAttribute_linked_tree {
     id: string;
 }
@@ -170,6 +187,7 @@ export interface AttributeDetails_TreeAttribute {
     metadata_fields: AttributeDetails_TreeAttribute_metadata_fields[] | null;
     permissions_conf: AttributeDetails_TreeAttribute_permissions_conf | null;
     versions_conf: AttributeDetails_TreeAttribute_versions_conf | null;
+    libraries: AttributeDetails_TreeAttribute_libraries[] | null;
     linked_tree: AttributeDetails_TreeAttribute_linked_tree | null;
 }
 

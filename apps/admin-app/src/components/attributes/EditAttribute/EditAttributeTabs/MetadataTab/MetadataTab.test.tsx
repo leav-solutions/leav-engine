@@ -7,7 +7,6 @@ import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeFormat, AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
 import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
@@ -22,7 +21,7 @@ jest.mock(
 );
 
 describe('MetadataTab', () => {
-    const attribute: GET_ATTRIBUTES_attributes_list = {
+    const attribute = {
         ...mockAttrAdv,
         label: {fr: 'Test 1', en: null}
     };

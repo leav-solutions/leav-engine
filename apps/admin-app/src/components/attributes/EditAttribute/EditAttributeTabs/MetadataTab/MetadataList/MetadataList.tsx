@@ -4,12 +4,12 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Table} from 'semantic-ui-react';
+import {
+    GET_ATTRIBUTE_BY_ID_attributes_list,
+    GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields
+} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
-import {
-    GET_ATTRIBUTES_attributes_list,
-    GET_ATTRIBUTES_attributes_list_StandardAttribute_metadata_fields
-} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 import ConfirmedButton from '../../../../../shared/ConfirmedButton';
 import DeleteButton from '../../../../../shared/DeleteButton';
@@ -17,7 +17,7 @@ import AttributeCreationModal from '../../../../AttributeCreationModal';
 import AttributesSelectionModal from '../../../../AttributesSelectionModal';
 
 interface IMetadataListProps {
-    fields: GET_ATTRIBUTES_attributes_list_StandardAttribute_metadata_fields[];
+    fields: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields[];
     readonly: boolean;
     onChange: (newList: string[]) => void;
 }
@@ -47,7 +47,7 @@ function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Ele
     const _handleDelete = (fieldToDelete: string) =>
         onChange(fields.filter(f => f.id !== fieldToDelete).map(f => f.id));
 
-    const _handleAddNewField = (fieldToAdd: GET_ATTRIBUTES_attributes_list) => {
+    const _handleAddNewField = (fieldToAdd: GET_ATTRIBUTE_BY_ID_attributes_list) => {
         onChange([...fields.map(f => f.id), fieldToAdd.id]);
         _closeNewAttrModal();
     };
@@ -94,7 +94,7 @@ function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Ele
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {fields.map((f: GET_ATTRIBUTES_attributes_list_StandardAttribute_metadata_fields) => {
+                    {fields.map((f: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields) => {
                         const _onDelete = () => _handleDelete(f.id);
                         const fieldLabel = localizedLabel(f.label, lang);
                         return (

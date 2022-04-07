@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DragObjectWithType} from 'react-dnd';
-import {GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {FormElementTypes} from '../../../../../../../../_gqlTypes/globalTypes';
 import {IKeyValue} from '../../../../../../../../_types/shared';
 
@@ -59,7 +59,7 @@ export enum FormElementSettingsInputTypes {
 export interface IFormElementSettings {
     name: string;
     inputType: FormElementSettingsInputTypes;
-    getInputSettings?: (attributeProps: GET_ATTRIBUTES_attributes_list) => IKeyValue<any>;
+    getInputSettings?: (attributeProps: GET_ATTRIBUTE_BY_ID_attributes_list) => IKeyValue<any>;
     options?: string[];
     defaultValue?: any;
 }

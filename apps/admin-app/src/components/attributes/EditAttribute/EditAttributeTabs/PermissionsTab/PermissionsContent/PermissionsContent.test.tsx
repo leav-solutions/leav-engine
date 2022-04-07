@@ -4,7 +4,6 @@
 import {mount, shallow} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {PermissionsRelation} from '../../../../../../_gqlTypes/globalTypes';
 import {mockAttrSimple, mockAttrTree} from '../../../../../../__mocks__/attributes';
 import PermissionsContent from './PermissionsContent';
@@ -28,7 +27,7 @@ describe('PermissionsContent', () => {
         {...mockAttrTree, id: 'tree1', label: {fr: 'Tree Attr1'}},
         {...mockAttrTree, id: 'tree2', label: {fr: 'Tree Attr 2'}}
     ];
-    const attribute: GET_ATTRIBUTES_attributes_list = {
+    const attribute = {
         ...mockAttrSimple,
         label: {fr: 'Test 1', en: null},
         permissions_conf: {

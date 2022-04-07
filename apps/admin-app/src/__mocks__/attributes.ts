@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    GET_ATTRIBUTES_attributes_list,
-    GET_ATTRIBUTES_attributes_list_LinkAttribute,
-    GET_ATTRIBUTES_attributes_list_TreeAttribute
-} from '../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute} from '../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
+import {
+    GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
+    GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
+} from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../_gqlTypes/globalTypes';
 
-const base: GET_ATTRIBUTES_attributes_list = {
+const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     id: 'test_attribute',
     label: {
         fr: 'Mon Attribut',
@@ -28,7 +28,8 @@ const base: GET_ATTRIBUTES_attributes_list = {
     reverse_link: null,
     permissions_conf: null,
     versions_conf: {versionable: false, mode: ValueVersionMode.smart, trees: null},
-    metadata_fields: null
+    metadata_fields: null,
+    libraries: null
 };
 
 export const mockAttrSimple = {...base, id: 'simple_attribute'};
@@ -61,14 +62,14 @@ export const mockAttrSimpleLinkWithValuesList = {
     }
 };
 
-export const mockAttrAdvLink: GET_ATTRIBUTES_attributes_list_LinkAttribute = {
+export const mockAttrAdvLink: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute = {
     ...base,
     id: 'adv_link_attribute',
     type: AttributeType.advanced_link,
     linked_library: {id: 'test_lib'},
     reverse_link: null
 };
-export const mockAttrAdvLinkMultiVal: GET_ATTRIBUTES_attributes_list_LinkAttribute = {
+export const mockAttrAdvLinkMultiVal: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute = {
     ...mockAttrAdvLink,
     multiple_values: true
 };
@@ -101,13 +102,13 @@ export const mockAttrAdvLinkWithValuesList: GET_ATTRIBUTES_VALUES_LIST_attribute
     }
 };
 
-export const mockAttrTree: GET_ATTRIBUTES_attributes_list_TreeAttribute = {
+export const mockAttrTree: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute = {
     ...base,
     id: 'tree_attribute',
     type: AttributeType.tree,
     linked_tree: {id: 'test_tree'}
 };
-export const mockAttrTreeMultival: GET_ATTRIBUTES_attributes_list_TreeAttribute = {
+export const mockAttrTreeMultival: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute = {
     ...mockAttrTree,
     multiple_values: true
 };

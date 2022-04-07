@@ -49,6 +49,11 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf {
     trees: string[] | null;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_linked_library {
     id: string;
 }
@@ -94,6 +99,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
     metadata_fields: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf | null;
+    libraries: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_libraries[] | null;
     linked_library: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_linked_library | null;
     reverse_link: string | null;
     values_list: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list | null;
@@ -134,6 +140,11 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
     trees: string[] | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_linked_tree {
@@ -214,6 +225,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute {
     metadata_fields: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf | null;
+    libraries: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_libraries[] | null;
     linked_tree: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_linked_tree | null;
     values_list: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list | null;
 }
@@ -255,6 +267,11 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf {
     trees: string[] | null;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
@@ -289,6 +306,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     metadata_fields: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields[] | null;
     permissions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf | null;
     versions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf | null;
+    libraries: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries[] | null;
     values_list: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list | null;
 }
 

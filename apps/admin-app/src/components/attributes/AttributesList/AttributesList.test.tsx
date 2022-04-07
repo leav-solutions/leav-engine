@@ -4,7 +4,7 @@
 import {MockedProvider} from '@apollo/client/testing';
 import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeFormat, AttributeType} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import AttributesList from './AttributesList';
@@ -12,7 +12,7 @@ import AttributesList from './AttributesList';
 jest.mock('../../../hooks/useLang');
 
 describe('AttributesList', () => {
-    const attributes: GET_ATTRIBUTES_attributes_list[] = [
+    const attributes: GET_ATTRIBUTE_BY_ID_attributes_list[] = [
         {
             ...mockAttrSimple,
             id: 'attr1',
