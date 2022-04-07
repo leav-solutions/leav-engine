@@ -2,9 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {getLibrariesWithAttributesQuery} from 'queries/libraries/getLibrariesWithAttributesQuery';
+import {saveLibAttributesMutation} from 'queries/libraries/saveLibAttributesMutation';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {fireEvent, render, screen} from '_tests/testUtils';
+import {fireEvent, render, screen, within} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
 import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
@@ -139,5 +141,116 @@ describe('InfosForm', () => {
 
         expect(screen.getByRole('option', {name: /advanced$/})).toHaveAttribute('aria-selected', 'true');
         expect(screen.getByRole('listbox', {name: 'type'})).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    test('Manage libraries linked to attribute', async () => {
+        let saveLibCalled = false;
+        const mocks = [
+            {
+                request: {
+                    query: getLibrariesWithAttributesQuery,
+                    variables: {}
+                },
+                result: {
+                    data: {
+                        libraries: {
+                            totalCount: 1,
+                            list: [
+                                {
+                                    id: 'products',
+                                    label: {
+                                        en: '',
+                                        fr: 'Produits'
+                                    },
+                                    gqlNames: {
+                                        query: 'products',
+                                        type: 'products',
+                                        list: 'productsList',
+                                        filter: 'productsFilter',
+                                        searchableFields: 'productsSearchableFields',
+                                        __typename: 'LibraryGraphqlNames'
+                                    },
+                                    attributes: [
+                                        {
+                                            id: 'id',
+                                            label: {
+                                                fr: 'Identifiant',
+                                                en: 'Identifier'
+                                            },
+                                            __typename: 'StandardAttribute'
+                                        }
+                                    ],
+                                    __typename: 'Library'
+                                },
+                                {
+                                    id: 'categories',
+                                    label: {
+                                        en: '',
+                                        fr: 'Categories'
+                                    },
+                                    gqlNames: {
+                                        query: 'categories',
+                                        type: 'categories',
+                                        list: 'categoriesList',
+                                        filter: 'categoriesFilter',
+                                        searchableFields: 'categoriesSearchableFields',
+                                        __typename: 'LibraryGraphqlNames'
+                                    },
+                                    attributes: [
+                                        {
+                                            id: 'id',
+                                            label: {
+                                                fr: 'Identifiant',
+                                                en: 'Identifier'
+                                            },
+                                            __typename: 'StandardAttribute'
+                                        }
+                                    ],
+                                    __typename: 'Library'
+                                }
+                            ],
+                            __typename: 'LibrariesList'
+                        }
+                    }
+                }
+            },
+            {
+                request: {
+                    query: saveLibAttributesMutation,
+                    variables: {
+                        libId: 'categories',
+                        attributes: ['id', attribute.id]
+                    }
+                },
+                result: () => {
+                    saveLibCalled = true;
+
+                    return {};
+                }
+            }
+        ];
+        await act(async () => {
+            render(
+                <InfosForm
+                    attribute={attribute}
+                    readonly={false}
+                    onSubmitInfos={onSubmit}
+                    onCheckIdExists={onCheckIdExists}
+                    forcedType={AttributeType.advanced}
+                />,
+                {apolloMocks: mocks}
+            );
+        });
+
+        const librariesWrapper = await screen.findByRole('combobox', {name: 'linked-libraries'});
+
+        expect(await within(librariesWrapper).findByText('Produits')).toBeInTheDocument();
+
+        await act(async () => {
+            await userEvent.type(within(librariesWrapper).getByRole('textbox'), 'categ', {delay: 5});
+            userEvent.click(within(librariesWrapper).getByText('Categories'));
+        });
+
+        expect(saveLibCalled).toBe(true);
     });
 });

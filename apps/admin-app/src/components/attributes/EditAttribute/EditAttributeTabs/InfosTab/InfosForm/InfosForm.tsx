@@ -22,6 +22,7 @@ import LibrariesSelector from '../../../../../libraries/LibrariesSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import TreesSelector from '../../../../../trees/TreesSelector';
 import {AttributeInfosFormValues} from '../_types';
+import AttributeLibraries from './AttributeLibraries';
 
 interface IInfosFormProps {
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list | null;
@@ -423,6 +424,20 @@ function InfosForm({
                                 </>
                             )}
                         </Form.Group>
+                    )}
+                    {!isNewAttribute && (
+                        <AttributeLibraries
+                            attribute={attribute}
+                            fluid
+                            selection
+                            width="10"
+                            multiple
+                            disabled={values.system || readonly}
+                            label={t('attributes.linked_libraries')}
+                            placeholder={t('attributes.linked_libraries')}
+                            name="libraries"
+                            aria-label="linked-libraries"
+                        />
                     )}
                     {!readonly && isNewAttribute && (
                         <Form.Group inline>
