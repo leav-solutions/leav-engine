@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {IUtils} from 'utils/utils';
+import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAttribute, IGetCoreAttributesParams} from '../../_types/attribute';
@@ -17,8 +18,17 @@ export interface IAttributeRepo {
     updateAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
     createAttribute({attrData, ctx}: {attrData: IAttributeForRepo; ctx: IQueryInfos}): Promise<IAttribute>;
     deleteAttribute({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): Promise<IAttribute>;
+
+    /**
+     * Retrieve attributes linked to library
+     */
     getLibraryAttributes({libraryId, ctx}: {libraryId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
     getLibraryFullTextAttributes({libraryId, ctx}: {libraryId: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
+
+    /**
+     * Retrieve libraries linked to attribute
+     */
+    getAttributeLibraries(params: {attributeId: string; ctx: IQueryInfos}): Promise<ILibrary[]>;
 }
 
 export const ATTRIB_COLLECTION_NAME = 'core_attributes';
@@ -42,10 +52,9 @@ export default function ({
 }: IDeps = {}): IAttributeRepo {
     return {
         async getLibraryAttributes({libraryId, ctx}): Promise<IAttribute[]> {
-            // TODO: use aql template tag, and find out why it doesn't work :)
-            const query = `
+            const query = aql`
                 FOR v
-                IN 1 OUTBOUND '${LIB_COLLECTION_NAME}/${libraryId}'
+                IN 1 OUTBOUND ${`${LIB_COLLECTION_NAME}/${libraryId}`}
                 ${LIB_ATTRIB_COLLECTION_NAME}
                 RETURN v
             `;
@@ -53,6 +62,17 @@ export default function ({
             const res = await dbService.execute({query, ctx});
 
             return res.map(a => dbUtils.cleanup<IAttribute>(a));
+        },
+        async getAttributeLibraries({attributeId, ctx}): Promise<ILibrary[]> {
+            const query = aql`
+                FOR lib IN 1 INBOUND ${`${ATTRIB_COLLECTION_NAME}/${attributeId}`}
+                ${LIB_ATTRIB_COLLECTION_NAME}
+                RETURN lib
+            `;
+
+            const res = await dbService.execute({query, ctx});
+
+            return res.map(library => dbUtils.cleanup<ILibrary>(library));
         },
         async getLibraryFullTextAttributes({libraryId, ctx}): Promise<IAttribute[]> {
             const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);

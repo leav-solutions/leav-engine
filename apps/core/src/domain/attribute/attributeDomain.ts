@@ -2,23 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
-import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
+import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import {IDateRangeValue} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeFormats, IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AppPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
+import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 
 export interface IAttributeDomain {
     getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
@@ -36,8 +37,18 @@ export interface IAttributeDomain {
     deleteAttribute({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
     getInputTypes({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): IOAllowedTypes;
     getOutputTypes({attrData, ctx}: {attrData: IAttribute; ctx: IQueryInfos}): IOAllowedTypes;
+
+    /**
+     * Retrieve attributes linked to library
+     */
     getLibraryAttributes(libraryId: string, ctx: IQueryInfos): Promise<IAttribute[]>;
+
     getLibraryFullTextAttributes(libraryId: string, ctx: IQueryInfos): Promise<IAttribute[]>;
+
+    /**
+     * Retrieve libraries linked to attribute
+     */
+    getAttributeLibraries(params: {attributeId: string; ctx: IQueryInfos}): Promise<ILibrary[]>;
 }
 
 interface IDeps {
@@ -70,6 +81,12 @@ export default function ({
             }
 
             return attributeRepo.getLibraryAttributes({libraryId, ctx});
+        },
+        async getAttributeLibraries({attributeId, ctx}): Promise<ILibrary[]> {
+            // Validate attribute
+            await this.getAttributeProperties({id: attributeId, ctx});
+
+            return attributeRepo.getAttributeLibraries({attributeId, ctx});
         },
         async getLibraryFullTextAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
             const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});

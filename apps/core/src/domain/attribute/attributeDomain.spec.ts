@@ -6,16 +6,17 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
+import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AppPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain from './attributeDomain';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -124,6 +125,45 @@ describe('attributeDomain', () => {
             expect(mockAttrRepo.getLibraryAttributes.mock.calls.length).toBe(1);
             expect(mockAttrRepo.getLibraryAttributes.mock.calls[0][0].libraryId).toBe('test');
             expect(libAttrs).toEqual(attrs);
+        });
+
+        test('Should throw if unknown library', async function () {
+            const mockLibRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise([])
+            };
+
+            const attrDomain = attributeDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+
+            await expect(attrDomain.getLibraryAttributes('test', ctx)).rejects.toThrow();
+        });
+    });
+
+    describe('getAttributeLibraries', () => {
+        test('Should return libraries linked to attributes', async () => {
+            const libraries: ILibrary[] = [
+                {
+                    id: 'products',
+                    label: {en: 'Products', fr: 'Produits'}
+                },
+                {
+                    id: 'categories',
+                    label: {en: 'Categories', fr: 'Catégories'}
+                }
+            ];
+
+            const mockAttributeRepo: Mockify<IAttributeRepo> = {
+                getAttributeLibraries: global.__mockPromise(libraries),
+                getAttributes: global.__mockPromise({list: [{...mockAttrSimple, id: 'test'}]})
+            };
+
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttributeRepo as IAttributeRepo
+            });
+            const attributeLibraries = await attrDomain.getAttributeLibraries({attributeId: 'test', ctx});
+
+            expect(mockAttributeRepo.getAttributeLibraries.mock.calls.length).toBe(1);
+            expect(mockAttributeRepo.getAttributeLibraries.mock.calls[0][0].attributeId).toBe('test');
+            expect(attributeLibraries).toEqual(libraries);
         });
 
         test('Should throw if unknown library', async function () {

@@ -107,10 +107,64 @@ describe('AttributeRepo', () => {
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
 
             // First call is to insert library
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatch(/IN 1 OUTBOUND/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/IN 1 OUTBOUND/);
             expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
 
             expect(libAttrs).toEqual(mockCleanupRes);
+        });
+    });
+
+    describe('getAttributeLibraries', () => {
+        test('Should get libraries linked to attribute through graph query', async function () {
+            const mockQueryRes = [
+                {
+                    _key: 'products',
+                    _id: 'core_libraries/products',
+                    _rev: '_WSfp4UC--_',
+                    label: {en: 'Products', fr: 'Produits'}
+                },
+                {
+                    _key: 'categories',
+                    _id: 'core_libraries/categories',
+                    _rev: '_WSfp4UC--_',
+                    label: {en: 'Categories', fr: 'Catégories'}
+                }
+            ];
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(mockQueryRes)
+            };
+
+            const mockCleanupRes = [
+                {
+                    id: 'products',
+                    label: {en: 'Products', fr: 'Produits'}
+                },
+                {
+                    id: 'categories',
+                    label: {en: 'Categories', fr: 'Catégories'}
+                }
+            ];
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+            };
+
+            const repo = attributeRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            const attributeLibraries = await repo.getAttributeLibraries({
+                attributeId: 'label',
+                ctx
+            });
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+
+            // First call is to insert library
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/IN 1 INBOUND/);
+            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
+
+            expect(attributeLibraries).toEqual(mockCleanupRes);
         });
     });
 
