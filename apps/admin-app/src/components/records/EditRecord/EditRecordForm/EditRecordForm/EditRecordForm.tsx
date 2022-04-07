@@ -4,6 +4,7 @@
 import {useMutation, useQuery} from '@apollo/client';
 import {NetworkStatus} from 'apollo-client';
 import React, {useCallback, useEffect} from 'react';
+import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../hooks/useLang';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {deleteValueQuery} from '../../../../../queries/values/deleteValueMutation';
@@ -11,7 +12,6 @@ import {saveValueQuery} from '../../../../../queries/values/saveValueMutation';
 import {isLinkAttribute, versionObjToGraphql} from '../../../../../utils';
 import {isLinkValue, isTreeValue} from '../../../../../utils/utils';
 import {DELETE_VALUE, DELETE_VALUEVariables} from '../../../../../_gqlTypes/DELETE_VALUE';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {
     GET_LIB_BY_ID_libraries_list,
     GET_LIB_BY_ID_libraries_list_attributes
@@ -131,7 +131,7 @@ const EditRecordForm = ({
     const _getInput = (attribute: GET_LIB_BY_ID_libraries_list_attributes) => {
         const values = recordData[attribute.id];
 
-        if (isLinkAttribute(attribute as GET_ATTRIBUTES_attributes_list, false)) {
+        if (isLinkAttribute(attribute as GET_ATTRIBUTE_BY_ID_attributes_list, false)) {
             const _handleLinkChange = (value: ILinkValue | ITreeLinkValue) => {
                 if (
                     (isLinkValue(value) && value.linkValue === null) ||

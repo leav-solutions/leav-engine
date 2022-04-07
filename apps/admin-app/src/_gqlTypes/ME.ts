@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {AvailableLanguage} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: ME
 // ====================================================
@@ -37,4 +39,8 @@ export interface ME_me {
 
 export interface ME {
     me: ME_me | null;
+}
+
+export interface MEVariables {
+    lang?: AvailableLanguage[] | null;
 }

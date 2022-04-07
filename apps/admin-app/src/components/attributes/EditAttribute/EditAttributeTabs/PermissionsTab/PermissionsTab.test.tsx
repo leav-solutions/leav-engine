@@ -8,7 +8,6 @@ import {act} from 'react-dom/test-utils';
 import {wait} from 'utils/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType, PermissionsRelation, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {mockAttrAdv, mockAttrSimple} from '../../../../../__mocks__/attributes';
 import {attributesPossibleTypes} from '../../../../../__mocks__/fragmentMatchers/attributesFragmentMatchers';
@@ -24,7 +23,7 @@ jest.mock(
 );
 
 describe('PermissionsTab', () => {
-    const attribute: GET_ATTRIBUTES_attributes_list = {
+    const attribute = {
         ...mockAttrSimple,
         label: {fr: 'Test 1', en: null}
     };

@@ -17,6 +17,70 @@ initialize {
       "children": Array [
         Node {
           "attribs": Object {
+            "aria-atomic": "true",
+            "aria-live": "polite",
+            "class": "text",
+            "role": "alert",
+          },
+          "children": Array [],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": Object {
+              "aria-hidden": "true",
+              "class": "dropdown icon",
+            },
+            "children": Array [],
+            "name": "i",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": Object {
+                "class": "menu transition",
+              },
+              "children": Array [],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-atomic": undefined,
+            "aria-live": undefined,
+            "class": undefined,
+            "role": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-atomic": undefined,
+            "aria-live": undefined,
+            "class": undefined,
+            "role": undefined,
+          },
+        },
+        Node {
+          "attribs": Object {
             "aria-hidden": "true",
             "class": "dropdown icon",
           },
@@ -42,7 +106,33 @@ initialize {
             },
           },
           "parent": [Circular],
-          "prev": null,
+          "prev": Node {
+            "attribs": Object {
+              "aria-atomic": "true",
+              "aria-live": "polite",
+              "class": "text",
+              "role": "alert",
+            },
+            "children": Array [],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-atomic": undefined,
+              "aria-live": undefined,
+              "class": undefined,
+              "role": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-atomic": undefined,
+              "aria-live": undefined,
+              "class": undefined,
+              "role": undefined,
+            },
+          },
           "type": "tag",
           "x-attribsNamespace": Object {
             "aria-hidden": undefined,
@@ -72,7 +162,33 @@ initialize {
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": [Circular],
             "parent": [Circular],
-            "prev": null,
+            "prev": Node {
+              "attribs": Object {
+                "aria-atomic": "true",
+                "aria-live": "polite",
+                "class": "text",
+                "role": "alert",
+              },
+              "children": Array [],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-atomic": undefined,
+                "aria-live": undefined,
+                "class": undefined,
+                "role": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-atomic": undefined,
+                "aria-live": undefined,
+                "class": undefined,
+                "role": undefined,
+              },
+            },
             "type": "tag",
             "x-attribsNamespace": Object {
               "aria-hidden": undefined,
@@ -134,6 +250,70 @@ initialize {
           "children": Array [
             Node {
               "attribs": Object {
+                "aria-atomic": "true",
+                "aria-live": "polite",
+                "class": "text",
+                "role": "alert",
+              },
+              "children": Array [],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "dropdown icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": Node {
+                  "attribs": Object {
+                    "class": "menu transition",
+                  },
+                  "children": Array [],
+                  "name": "div",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": [Circular],
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-atomic": undefined,
+                "aria-live": undefined,
+                "class": undefined,
+                "role": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-atomic": undefined,
+                "aria-live": undefined,
+                "class": undefined,
+                "role": undefined,
+              },
+            },
+            Node {
+              "attribs": Object {
                 "aria-hidden": "true",
                 "class": "dropdown icon",
               },
@@ -159,7 +339,33 @@ initialize {
                 },
               },
               "parent": [Circular],
-              "prev": null,
+              "prev": Node {
+                "attribs": Object {
+                  "aria-atomic": "true",
+                  "aria-live": "polite",
+                  "class": "text",
+                  "role": "alert",
+                },
+                "children": Array [],
+                "name": "div",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-atomic": undefined,
+                  "aria-live": undefined,
+                  "class": undefined,
+                  "role": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-atomic": undefined,
+                  "aria-live": undefined,
+                  "class": undefined,
+                  "role": undefined,
+                },
+              },
               "type": "tag",
               "x-attribsNamespace": Object {
                 "aria-hidden": undefined,
@@ -189,7 +395,33 @@ initialize {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
-                "prev": null,
+                "prev": Node {
+                  "attribs": Object {
+                    "aria-atomic": "true",
+                    "aria-live": "polite",
+                    "class": "text",
+                    "role": "alert",
+                  },
+                  "children": Array [],
+                  "name": "div",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": [Circular],
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "aria-atomic": undefined,
+                    "aria-live": undefined,
+                    "class": undefined,
+                    "role": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "aria-atomic": undefined,
+                    "aria-live": undefined,
+                    "class": undefined,
+                    "role": undefined,
+                  },
+                },
                 "type": "tag",
                 "x-attribsNamespace": Object {
                   "aria-hidden": undefined,
@@ -250,6 +482,70 @@ initialize {
     "children": Array [
       Node {
         "attribs": Object {
+          "aria-atomic": "true",
+          "aria-live": "polite",
+          "class": "text",
+          "role": "alert",
+        },
+        "children": Array [],
+        "name": "div",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": Node {
+          "attribs": Object {
+            "aria-hidden": "true",
+            "class": "dropdown icon",
+          },
+          "children": Array [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": Object {
+              "class": "menu transition",
+            },
+            "children": Array [],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+        "parent": [Circular],
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "aria-atomic": undefined,
+          "aria-live": undefined,
+          "class": undefined,
+          "role": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "aria-atomic": undefined,
+          "aria-live": undefined,
+          "class": undefined,
+          "role": undefined,
+        },
+      },
+      Node {
+        "attribs": Object {
           "aria-hidden": "true",
           "class": "dropdown icon",
         },
@@ -275,7 +571,33 @@ initialize {
           },
         },
         "parent": [Circular],
-        "prev": null,
+        "prev": Node {
+          "attribs": Object {
+            "aria-atomic": "true",
+            "aria-live": "polite",
+            "class": "text",
+            "role": "alert",
+          },
+          "children": Array [],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-atomic": undefined,
+            "aria-live": undefined,
+            "class": undefined,
+            "role": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-atomic": undefined,
+            "aria-live": undefined,
+            "class": undefined,
+            "role": undefined,
+          },
+        },
         "type": "tag",
         "x-attribsNamespace": Object {
           "aria-hidden": undefined,
@@ -305,7 +627,33 @@ initialize {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": [Circular],
           "parent": [Circular],
-          "prev": null,
+          "prev": Node {
+            "attribs": Object {
+              "aria-atomic": "true",
+              "aria-live": "polite",
+              "class": "text",
+              "role": "alert",
+            },
+            "children": Array [],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-atomic": undefined,
+              "aria-live": undefined,
+              "class": undefined,
+              "role": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-atomic": undefined,
+              "aria-live": undefined,
+              "class": undefined,
+              "role": undefined,
+            },
+          },
           "type": "tag",
           "x-attribsNamespace": Object {
             "aria-hidden": undefined,

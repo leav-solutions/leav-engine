@@ -4,13 +4,10 @@
 import {useLazyQuery, useMutation} from '@apollo/client';
 import {History} from 'history';
 import React from 'react';
+import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-import {
-    GET_ATTRIBUTES,
-    GET_ATTRIBUTESVariables,
-    GET_ATTRIBUTES_attributes_list
-} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {IFormError} from '../../../../../_types/errors';
@@ -19,7 +16,7 @@ import InfosForm from './InfosForm';
 import {AttributeInfosFormValues} from './_types';
 
 interface IInfosTabProps {
-    attribute?: GET_ATTRIBUTES_attributes_list;
+    attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
     onPostSave?: onAttributePostSaveFunc;
     forcedType?: AttributeType;
     history?: History;

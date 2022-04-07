@@ -56,6 +56,11 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versi
     trees: string[] | null;
 }
 
+export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute {
     id: string;
     type: AttributeType;
@@ -67,6 +72,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute {
     metadata_fields: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_permissions_conf | null;
     versions_conf: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versions_conf | null;
+    libraries: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_libraries[] | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_metadata_fields {
@@ -106,6 +112,11 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_
     trees: string[] | null;
 }
 
+export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_linked_library {
     id: string;
 }
@@ -121,6 +132,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute {
     metadata_fields: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissions_conf | null;
     versions_conf: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_conf | null;
+    libraries: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_libraries[] | null;
     linked_library: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_linked_library | null;
     reverse_link: string | null;
 }
@@ -162,6 +174,11 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_versions_
     trees: string[] | null;
 }
 
+export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_linked_tree {
     id: string;
 }
@@ -177,6 +194,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute {
     metadata_fields: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_metadata_fields[] | null;
     permissions_conf: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_permissions_conf | null;
     versions_conf: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_versions_conf | null;
+    libraries: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_libraries[] | null;
     linked_tree: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_linked_tree | null;
 }
 

@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import Loading from 'components/shared/Loading';
-import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
+import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
-import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
+import {GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
@@ -35,7 +35,7 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
         dispatch
     } = useFormBuilderReducer();
 
-    const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
+    const {loading, error, data} = useQuery<GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables>(getAttributeByIdQuery, {
         variables: {
             id: String(elementInSettings.settings?.attribute)
         }

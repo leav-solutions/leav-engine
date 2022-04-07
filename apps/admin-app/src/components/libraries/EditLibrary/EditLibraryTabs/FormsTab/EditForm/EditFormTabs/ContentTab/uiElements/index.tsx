@@ -2,7 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {GET_ATTRIBUTES_attributes_list, GET_ATTRIBUTES_attributes_list_LinkAttribute} from '_gqlTypes/GET_ATTRIBUTES';
+import {
+    GET_ATTRIBUTE_BY_ID_attributes_list,
+    GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute
+} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {ISettingsAttributeProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsAttribute';
 import {ISettingsFieldSelectProps} from '../FormLayout/SettingsEdition/SettingsField/SettingsInput/SettingsSelect';
@@ -118,14 +121,14 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
                 name: 'columns',
                 inputType: FormElementSettingsInputTypes.ATTRIBUTE_SELECTION_MULTIPLE,
                 getInputSettings: (
-                    attributeProps: GET_ATTRIBUTES_attributes_list
+                    attributeProps: GET_ATTRIBUTE_BY_ID_attributes_list
                 ): SettingsFieldSpecificProps<ISettingsAttributeProps> => ({
                     multiple: true,
                     filters: {
                         // Links and trees are forbidden due to technical issues on the front to handle them
                         type: [AttributeType.simple, AttributeType.advanced]
                     },
-                    library: (attributeProps as GET_ATTRIBUTES_attributes_list_LinkAttribute).linked_library.id
+                    library: (attributeProps as GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute).linked_library.id
                 })
             },
             {

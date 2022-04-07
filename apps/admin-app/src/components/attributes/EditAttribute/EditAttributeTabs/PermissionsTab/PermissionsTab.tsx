@@ -3,21 +3,20 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DataProxy, useMutation, useQuery} from '@apollo/client';
 import React from 'react';
+import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '_gqlTypes/GET_ATTRIBUTES';
+import {
+    GET_ATTRIBUTE_BY_ID_attributes_list,
+    GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
+} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
-import {
-    GET_ATTRIBUTES,
-    GET_ATTRIBUTESVariables,
-    GET_ATTRIBUTES_attributes_list,
-    GET_ATTRIBUTES_attributes_list_TreeAttribute
-} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import Loading from '../../../../shared/Loading';
 import PermissionsContent from './PermissionsContent';
 
 interface IPermissionsTabProps {
-    attribute: GET_ATTRIBUTES_attributes_list;
+    attribute: GET_ATTRIBUTE_BY_ID_attributes_list;
     readonly: boolean;
 }
 
@@ -74,7 +73,7 @@ function PermissionsTab({attribute, readonly}: IPermissionsTabProps): JSX.Elemen
             readonly={readonly}
             treeAttributes={
                 !!data && data.attributes
-                    ? (data.attributes.list as GET_ATTRIBUTES_attributes_list_TreeAttribute[])
+                    ? (data.attributes.list as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute[])
                     : []
             }
             onSubmitSettings={_handleSubmitSettings}

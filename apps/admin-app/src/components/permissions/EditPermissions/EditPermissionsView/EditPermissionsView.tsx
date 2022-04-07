@@ -87,7 +87,7 @@ const EditPermissionsView = ({
                                 <PermissionSelector
                                     as={Table.Cell}
                                     value={permissionsByName[a.name] ?? null}
-                                    heritValue={heritPermByName[a.name]}
+                                    inheritValue={heritPermByName[a.name]}
                                     onChange={_onPermUpdate}
                                     forbiddenColor={permissionForbiddenColor}
                                     allowedColor={permissionAllowedColor}

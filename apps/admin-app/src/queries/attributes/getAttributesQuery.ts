@@ -2,14 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
-import {attributeDetailsFragment} from './attributeFragments';
-
-// This const is useful to refer this query in refetchQueries on mutations.
-// Warning, Using it in gql template below will cause the CLI types generator to fail
-export const getAttributesQueryName = 'GET_ATTRIBUTES';
 
 export const getAttributesQuery = gql`
-    ${attributeDetailsFragment}
     query GET_ATTRIBUTES(
         $id: ID
         $label: String
@@ -34,7 +28,23 @@ export const getAttributesQuery = gql`
         ) {
             totalCount
             list {
-                ...AttributeDetails
+                id
+                label
+                type
+                format
+                system
+                multiple_values
+                ... on LinkAttribute {
+                    linked_library {
+                        id
+                    }
+                    reverse_link
+                }
+                ... on TreeAttribute {
+                    linked_tree {
+                        id
+                    }
+                }
             }
         }
     }

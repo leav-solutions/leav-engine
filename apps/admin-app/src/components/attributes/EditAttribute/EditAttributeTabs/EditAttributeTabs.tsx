@@ -5,9 +5,9 @@ import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
+import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
-import {GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
 import {onAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
@@ -18,7 +18,7 @@ import PermissionsTab from './PermissionsTab';
 import ValuesListTab from './ValuesListTab';
 
 interface IEditAttributeTabsProps {
-    attribute?: GET_ATTRIBUTES_attributes_list;
+    attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
     onPostSave?: onAttributePostSaveFunc;
     forcedType?: AttributeType;
     history?: History;

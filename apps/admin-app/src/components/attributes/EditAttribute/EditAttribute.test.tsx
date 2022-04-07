@@ -1,21 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {wait} from 'utils/testUtils';
 import {render, screen} from '_tests/testUtils';
-import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {mockAttrAdv} from '../../../__mocks__/attributes';
-import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import EditAttribute from './EditAttribute';
 
 jest.mock(
     './EditAttributeTabs',
     () =>
         function EditAttributeTabs() {
-            return <div>Edit attribute tabs</div>;
+            return <div>EditAttributeTabs</div>;
         }
 );
 
@@ -24,7 +21,7 @@ describe('EditAttribute', () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: getAttributeByIdQuery,
                     variables: {id: 'test_attr'}
                 },
                 result: {
@@ -45,31 +42,17 @@ describe('EditAttribute', () => {
             }
         ];
 
-        let comp;
+        render(<EditAttribute attributeId="test_attr" />, {apolloMocks: mocks});
 
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <EditAttribute attributeId="test_attr" />
-                </MockedProviderWithFragments>
-            );
-        });
-
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('EditAttributeTabs')).toHaveLength(1);
+        expect(screen.getByText(/loading/)).toBeInTheDocument();
+        expect(await screen.findByText('EditAttributeTabs')).toBeInTheDocument();
     });
 
     test('Error state', async () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: getAttributeByIdQuery,
                     variables: {id: 'test_attr'}
                 },
                 error: new Error('boom!')
@@ -78,29 +61,17 @@ describe('EditAttribute', () => {
 
         let comp;
 
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <EditAttribute attributeId="test_attr" />
-                </MockedProviderWithFragments>
-            );
-        });
+        render(<EditAttribute attributeId="test_attr" />, {apolloMocks: mocks});
 
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('div.error')).toHaveLength(1);
+        expect(screen.getByText(/loading/)).toBeInTheDocument();
+        expect(await screen.findByText(/error/)).toBeInTheDocument();
     });
 
     test('Unknown attribute', async () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery,
+                    query: getAttributeByIdQuery,
                     variables: {id: 'test_attr'}
                 },
                 result: {
@@ -123,15 +94,10 @@ describe('EditAttribute', () => {
     });
 
     test('If no ID provided, display tabs directly (new attribute)', async () => {
-        let comp;
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <EditAttribute />
-                </MockedProviderWithFragments>
-            );
+            render(<EditAttribute />);
         });
 
-        expect(comp.find('EditAttributeTabs')).toHaveLength(1);
+        expect(screen.getByText('EditAttributeTabs')).toBeInTheDocument();
     });
 });

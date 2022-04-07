@@ -35,6 +35,11 @@ export const attributeDetailsFragment = gql`
             mode
             trees
         }
+        libraries {
+            id
+            label
+        }
+
         ... on LinkAttribute {
             linked_library {
                 id
