@@ -135,7 +135,8 @@
         "values_list": "Liste de valeurs",
         "add_value": "Ajouter une valeur",
         "date_range_from": "Du",
-        "date_range_to": "Au"
+        "date_range_to": "Au",
+        "linked_libraries": "Bibliothèques associées"
     },
     "trees": {
         "title": "Arbres",
