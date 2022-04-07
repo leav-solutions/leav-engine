@@ -20,8 +20,8 @@ import {
     AttributeFormats,
     AttributeTypes,
     IAttribute,
-    IValuesListConf,
-    IGetCoreAttributesParams
+    IGetCoreAttributesParams,
+    IValuesListConf
 } from '../../../_types/attribute';
 import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import {AttributeCondition} from '../../../_types/record';
@@ -77,6 +77,8 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                       )
                   )
                 : null,
+        libraries: (attributeData, _, ctx) =>
+            attributeDomain.getAttributeLibraries({attributeId: attributeData.id, ctx}),
         permissions: (
             attributeData: IAttribute,
             {record}: {record: {id: string; library: string}},
@@ -125,6 +127,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                 input_types: ActionListIOTypes!,
                 output_types: ActionListIOTypes!,
                 metadata_fields: [StandardAttribute!],
+                libraries: [Library!],
 
                 # Permissions for this attribute.
                 # If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
@@ -416,33 +419,20 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                                 return attributeData.values_list;
                             }
 
-                            // Here, values is a list of "[id_record]/[id_library]". Return tree node instead
+                            // Here, values is a list of tree nodes
                             return {
                                 ...attributeData.values_list,
                                 values: (
                                     await Promise.all(
-                                        (attributeData.values_list.values as string[]).map(async treeElem => {
-                                            const [library, id] = treeElem.split('/');
-                                            const record = await recordDomain.find({
-                                                params: {
-                                                    library,
-                                                    filters: [
-                                                        {field: 'id', condition: AttributeCondition.EQUAL, value: id}
-                                                    ]
-                                                },
-                                                ctx
-                                            });
-                                            const isInTree = await treeDomain.isRecordPresent({
+                                        (attributeData.values_list.values as string[]).map(async nodeId => {
+                                            const isInTree = await treeDomain.isNodePresent({
                                                 treeId: attributeData.linked_tree,
-                                                record: {
-                                                    library,
-                                                    id
-                                                },
+                                                nodeId,
                                                 ctx
                                             });
-                                            const ret =
-                                                record.list.length && isInTree ? {record: record.list[0]} : null;
-                                            return ret;
+
+                                            // Add treeId to the tree node for further resolvers
+                                            return isInTree ? {id: nodeId, treeId: attributeData.linked_tree} : null;
                                         })
                                     )
                                 ).filter(r => r !== null)

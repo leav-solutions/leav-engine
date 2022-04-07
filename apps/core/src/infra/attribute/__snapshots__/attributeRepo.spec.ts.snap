@@ -44,13 +44,35 @@ Object {
 }
 `;
 
+exports[`AttributeRepo getAttributeLibraries Should get libraries linked to attribute through graph query 1`] = `
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "value0": "core_attributes/label",
+    "value1": "core_edge_libraries_attributes",
+  },
+  "query": "
+                FOR lib IN 1 INBOUND @value0
+                @value1
+                RETURN lib
+            ",
+}
+`;
+
 exports[`AttributeRepo getLibraryAttributes Should get library attributes through graph query 1`] = `
-"
+Object {
+  "_source": [Function],
+  "bindVars": Object {
+    "value0": "core_libraries/users",
+    "value1": "core_edge_libraries_attributes",
+  },
+  "query": "
                 FOR v
-                IN 1 OUTBOUND 'core_libraries/users'
-                core_edge_libraries_attributes
+                IN 1 OUTBOUND @value0
+                @value1
                 RETURN v
-            "
+            ",
+}
 `;
 
 exports[`AttributeRepo getLibraryFullTextAttributes Should get library full text attributes through graph query 1`] = `
