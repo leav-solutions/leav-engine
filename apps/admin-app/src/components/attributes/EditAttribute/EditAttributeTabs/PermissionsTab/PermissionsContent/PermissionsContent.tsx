@@ -29,6 +29,17 @@ const FormGroupWithMargin = styled(Form.Group)`
     margin-top: 10px;
 `;
 
+const Wrapper = styled.div`
+    display: grid;
+    grid-template-rows: auto 1fr;
+`;
+
+const GridTab = styled(Tab)`
+    display: grid;
+    grid-template-rows: 3rem 1fr;
+`;
+GridTab.displayName = 'Tab';
+
 function PermissionsContent({
     attribute,
     onSubmitSettings,
@@ -71,7 +82,7 @@ function PermissionsContent({
             key: a.id,
             menuItem: localizedLabel(a.label, lang),
             render: () => (
-                <Tab.Pane key={a.id} className="grow flex-col height100">
+                <Tab.Pane key={a.id} className="grow">
                     {((a as unknown) as GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute)
                         .linked_tree ? (
                         <DefineTreePermissionsView
@@ -92,7 +103,7 @@ function PermissionsContent({
         key: 'libPermissions',
         menuItem: t('permissions.attribute_tab_name'),
         render: () => (
-            <Tab.Pane key="libPermissions" className="grow flex-col height100">
+            <Tab.Pane key="libPermissions" className="grow">
                 {
                     <DefinePermByUserGroupView
                         type={PermissionTypes.attribute}
@@ -106,7 +117,7 @@ function PermissionsContent({
     });
 
     return (
-        <>
+        <Wrapper>
             <AccordionWithMargin fluid styled>
                 <Accordion.Title index={0} active={settingsExpanded} onClick={onClickToggle}>
                     <Icon name="dropdown" />
@@ -162,8 +173,8 @@ function PermissionsContent({
                     </Form>
                 </Accordion.Content>
             </AccordionWithMargin>
-            <Tab panes={panes} className="grow flex-col height100" />
-        </>
+            <GridTab panes={panes} />
+        </Wrapper>
     );
 }
 

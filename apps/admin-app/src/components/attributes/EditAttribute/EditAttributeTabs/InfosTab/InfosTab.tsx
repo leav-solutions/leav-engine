@@ -11,13 +11,13 @@ import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../../../_gqlTypes/
 import {AttributeType} from '../../../../../_gqlTypes/globalTypes';
 import {SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables} from '../../../../../_gqlTypes/SAVE_ATTRIBUTE';
 import {IFormError} from '../../../../../_types/errors';
-import {onAttributePostSaveFunc} from '../../EditAttribute';
+import {OnAttributePostSaveFunc} from '../../EditAttribute';
 import InfosForm from './InfosForm';
 import {AttributeInfosFormValues} from './_types';
 
 interface IInfosTabProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
-    onPostSave?: onAttributePostSaveFunc;
+    onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
     history?: History;
 }

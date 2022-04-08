@@ -7,6 +7,7 @@ import {History, Location} from 'history';
 import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import React, {useMemo} from 'react';
 import {match} from 'react-router';
+import styled from 'styled-components';
 import {
     GET_ATTRIBUTE_BY_ID,
     GET_ATTRIBUTE_BY_IDVariables,
@@ -20,13 +21,18 @@ export interface IEditAttributeMatchParams {
     id: string;
 }
 
-export type onAttributePostSaveFunc = (attrData: GET_ATTRIBUTE_BY_ID_attributes_list) => void;
+export type OnAttributePostSaveFunc = (attrData: GET_ATTRIBUTE_BY_ID_attributes_list) => void;
+
+const Wrapper = styled.div`
+    display: grid;
+    grid-template-rows: auto 1fr;
+`;
 
 interface IEditAttributeProps {
     match?: match<IEditAttributeMatchParams>;
     history?: History;
     attributeId?: string | null;
-    onPostSave?: onAttributePostSaveFunc;
+    onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
     location?: Location;
 }
@@ -75,7 +81,7 @@ function EditAttribute({
         return <ErrorDisplay message="Unknown attribute" />;
     }
 
-    return _renderEditAttributeTabs(data.attributes.list[0], location);
+    return <Wrapper className="grow">{_renderEditAttributeTabs(data.attributes.list[0], location)}</Wrapper>;
 }
 
 export default EditAttribute;

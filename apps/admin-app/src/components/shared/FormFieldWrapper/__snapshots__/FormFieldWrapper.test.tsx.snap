@@ -11,6 +11,7 @@ exports[`FormFieldWrapper Snapshot test 1`] = `
       className="ui input"
     >
       <input
+        aria-describedby={null}
         onChange={[Function]}
         type="text"
       />
