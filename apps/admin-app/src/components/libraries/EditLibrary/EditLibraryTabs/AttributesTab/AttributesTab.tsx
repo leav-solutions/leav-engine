@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
+import EditAttributeModal from 'components/attributes/EditAttributeModal';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Icon, Modal} from 'semantic-ui-react';
+import {Button, Icon} from 'semantic-ui-react';
 import {SAVE_LIBRARY_ATTRIBUTES, SAVE_LIBRARY_ATTRIBUTESVariables} from '_gqlTypes/SAVE_LIBRARY_ATTRIBUTES';
 import {getLibByIdQuery} from '../../../../../queries/libraries/getLibraryById';
 import {saveLibAttributesMutation} from '../../../../../queries/libraries/saveLibAttributesMutation';
@@ -12,7 +13,6 @@ import {GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRI
 import {GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import AttributesList from '../../../../attributes/AttributesList';
 import AttributesSelectionModal from '../../../../attributes/AttributesSelectionModal';
-import EditAttribute from '../../../../attributes/EditAttribute';
 import UnlinkLibAttribute from '../../../UnlinkLibAttribute';
 
 interface IAttributesTabProps {
@@ -22,20 +22,23 @@ interface IAttributesTabProps {
 
 const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | null => {
     const {t} = useTranslation();
-    const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);
+    const [attributeModalDisplay, setAttributeModalDisplay] = useState<{visible: boolean; attribute?: string}>({
+        visible: false
+    });
+
     const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
     const [saveLibAttr] = useMutation<SAVE_LIBRARY_ATTRIBUTES, SAVE_LIBRARY_ATTRIBUTESVariables>(
         saveLibAttributesMutation
     );
 
-    const onRowClick = () => null;
-
-    const _openNewAttrModal = () => {
-        setShowNewAttrModal(true);
+    const _handleRowClick = (attribute: GET_ATTRIBUTES_attributes_list) => {
+        setAttributeModalDisplay({visible: true, attribute: attribute.id});
     };
 
-    const _closeNewAttrModal = () => {
-        setShowNewAttrModal(false);
+    const _handleCloseAttributeModal = () => setAttributeModalDisplay({visible: false});
+
+    const _openNewAttrModal = () => {
+        setAttributeModalDisplay({visible: true});
     };
 
     const _openAddExistingAttrModal = () => {
@@ -61,7 +64,7 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
         const attributesList = library.attributes ? [...library.attributes.map(a => a.id), newAttr.id] : [newAttr.id];
 
         await saveAttributes(attributesList);
-        _closeNewAttrModal();
+        _handleCloseAttributeModal();
     };
 
     const _onClickUnlink = async (attributesList: string[]) => {
@@ -81,23 +84,22 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
         library && (
             <div>
                 {!readonly && (
-                    <Button icon labelPosition="left" size="medium" onClick={_openNewAttrModal}>
-                        <Icon name="plus" />
-                        {t('attributes.new')}
-                    </Button>
-                )}
-
-                {!readonly && (
-                    <Button icon labelPosition="left" size="medium" onClick={_openAddExistingAttrModal}>
-                        <Icon name="plus" />
-                        {t('libraries.link_existing_attribute')}
-                    </Button>
+                    <>
+                        <Button icon labelPosition="left" size="medium" onClick={_openNewAttrModal}>
+                            <Icon name="plus" />
+                            {t('attributes.new')}
+                        </Button>
+                        <Button icon labelPosition="left" size="medium" onClick={_openAddExistingAttrModal}>
+                            <Icon name="plus" />
+                            {t('libraries.link_existing_attribute')}
+                        </Button>
+                    </>
                 )}
 
                 <AttributesList
                     loading={false}
                     attributes={library ? library.attributes : []}
-                    onRowClick={onRowClick}
+                    onRowClick={_handleRowClick}
                     withFilters={false}
                     actions={
                         !readonly ? (
@@ -108,24 +110,22 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
                     }
                 />
 
-                {!readonly && (
-                    <Modal size="large" open={showNewAttrModal} onClose={_closeNewAttrModal} centered>
-                        <Modal.Header>{t('attributes.new')}</Modal.Header>
-                        <Modal.Content>
-                            <EditAttribute attributeId={null} onPostSave={_onNewAttributeSaved} />
-                        </Modal.Content>
-                    </Modal>
-                )}
-
-                {library.attributes ? (
+                {!!library.attributes && showAddExistingAttrModal && (
                     <AttributesSelectionModal
                         openModal={showAddExistingAttrModal}
                         onClose={_closeAddExistingAttrModal}
                         onSubmit={onExistingAttrAdded}
                         selection={library.attributes.map(a => a.id)}
                     />
-                ) : (
-                    <></>
+                )}
+
+                {attributeModalDisplay.visible && (
+                    <EditAttributeModal
+                        open={true}
+                        onClose={_handleCloseAttributeModal}
+                        onPostSave={attributeModalDisplay.attribute ? null : _onNewAttributeSaved}
+                        attribute={attributeModalDisplay.attribute}
+                    />
                 )}
             </div>
         )

@@ -5,11 +5,12 @@ import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
 import {AttributeType} from '../../../../_gqlTypes/globalTypes';
-import {onAttributePostSaveFunc} from '../EditAttribute';
+import {OnAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
 import EmbeddedFieldsTab from './EmbeddedFieldsTab';
 import InfosTab from './InfosTab';
@@ -19,11 +20,17 @@ import ValuesListTab from './ValuesListTab';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
-    onPostSave?: onAttributePostSaveFunc;
+    onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
     history?: History;
     location?: Location;
 }
+
+const GridTab = styled(Tab)`
+    display: grid;
+    grid-template-rows: 4rem 1fr;
+`;
+GridTab.displayName = 'Tab';
 
 function EditAttributeTabs({
     attribute,
@@ -73,7 +80,7 @@ function EditAttributeTabs({
                 menuItem: t('attributes.permissions'),
                 render: () => {
                     return (
-                        <Tab.Pane key="permissions" className="grow flex-col height100">
+                        <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
                             <PermissionsTab attribute={attribute} readonly={false} />
                         </Tab.Pane>
                     );
@@ -136,11 +143,10 @@ function EditAttributeTabs({
     return (
         <>
             <Header className="no-grow">{headerLabel}</Header>
-            <Tab
+            <GridTab
                 onTabChange={_handleOnTabChange}
                 menu={{secondary: true, pointing: true}}
                 panes={panes}
-                className="grow flex-col height100"
                 activeIndex={activeIndex}
             />
         </>

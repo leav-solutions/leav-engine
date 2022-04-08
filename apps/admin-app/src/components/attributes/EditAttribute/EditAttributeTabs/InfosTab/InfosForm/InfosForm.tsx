@@ -6,6 +6,7 @@ import {Formik, FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Icon, Message} from 'semantic-ui-react';
+import styled from 'styled-components';
 import * as yup from 'yup';
 import {GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 import {
@@ -60,6 +61,22 @@ const defaultAttributeData: AttributeInfosFormValues = {
     libraries: []
 };
 
+const FormWrapper = styled(Form)`
+    && {
+        position: unset;
+    }
+`;
+
+const FormFooter = styled.div`
+    border-top: 1px solid #dddddd;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1em;
+    text-align: right;
+`;
+
 function InfosForm({
     attribute,
     readonly,
@@ -70,6 +87,7 @@ function InfosForm({
 }: IInfosFormProps): JSX.Element {
     const {t} = useTranslation();
     const {lang: userLang, availableLangs, defaultLang} = useLang();
+
     const isNewAttribute = attribute === null;
     const initialValues: AttributeInfosFormValues =
         attribute !== null
@@ -206,248 +224,262 @@ function InfosForm({
             }
         };
 
+        const _handleKeyPress = (e: React.KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                submitForm();
+            }
+        };
+
         return (
-            <>
-                <Form onSubmit={handleSubmit} aria-label="infos-form">
-                    <Form.Group grouped>
-                        <label>{t('attributes.label')}</label>
-                        {availableLangs.map(lang => (
-                            <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
-                                <Form.Input
-                                    label={`${lang} ${lang === defaultLang ? '*' : ''}`}
-                                    width="4"
-                                    name={`label.${lang}`}
-                                    aria-label={`label.${lang}`}
-                                    disabled={readonly}
-                                    onChange={_handleLabelChange}
-                                    onBlur={_handleBlur}
-                                    value={values.label?.[lang] ?? ''}
-                                />
-                            </FormFieldWrapper>
-                        ))}
-                    </Form.Group>
-                    <Form.Group grouped>
-                        <label>{t('attributes.description')}</label>
-                        {availableLangs.map(lang => (
-                            <FormFieldWrapper key={lang} error={_getErrorByField(`description.${lang}`)}>
-                                <Form.Input
-                                    label={`${lang}`}
-                                    value={values.description?.[lang] ?? ''}
-                                    width="4"
-                                    name={`description.${lang}`}
-                                    aria-label={`description.${lang}`}
-                                    disabled={readonly}
-                                    onChange={_handleChange}
-                                    onBlur={_handleBlur}
-                                />
-                            </FormFieldWrapper>
-                        ))}
-                    </Form.Group>
-                    <FormFieldWrapper error={_getErrorByField('id')}>
-                        <Form.Input
-                            label={t('attributes.ID')}
-                            width="4"
-                            disabled={!isNewAttribute || readonly}
-                            name="id"
-                            aria-label="id"
-                            onChange={_handleChange}
-                            onBlur={_handleBlur}
-                            value={values.id}
-                        />
-                    </FormFieldWrapper>
-                    <FormFieldWrapper error={_getErrorByField('type')}>
+            <FormWrapper onSubmit={handleSubmit} aria-label="infos-form">
+                <Form.Group grouped>
+                    <label>{t('attributes.label')}</label>
+                    {availableLangs.map(lang => (
+                        <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
+                            <Form.Input
+                                label={`${lang} ${lang === defaultLang ? '*' : ''}`}
+                                width="4"
+                                name={`label.${lang}`}
+                                aria-label={`label.${lang}`}
+                                disabled={readonly}
+                                onChange={_handleLabelChange}
+                                onBlur={_handleBlur}
+                                onKeyPress={_handleKeyPress}
+                                value={values.label?.[lang] ?? ''}
+                            />
+                        </FormFieldWrapper>
+                    ))}
+                </Form.Group>
+                <Form.Group grouped>
+                    <label>{t('attributes.description')}</label>
+                    {availableLangs.map(lang => (
+                        <FormFieldWrapper key={lang} error={_getErrorByField(`description.${lang}`)}>
+                            <Form.Input
+                                label={`${lang}`}
+                                value={values.description?.[lang] ?? ''}
+                                width="4"
+                                name={`description.${lang}`}
+                                aria-label={`description.${lang}`}
+                                disabled={readonly}
+                                onChange={_handleChange}
+                                onBlur={_handleBlur}
+                                onKeyPress={_handleKeyPress}
+                            />
+                        </FormFieldWrapper>
+                    ))}
+                </Form.Group>
+                <FormFieldWrapper error={_getErrorByField('id')}>
+                    <Form.Input
+                        label={t('attributes.ID')}
+                        width="4"
+                        disabled={!isNewAttribute || readonly}
+                        name="id"
+                        aria-label="id"
+                        onChange={_handleChange}
+                        onBlur={_handleBlur}
+                        value={values.id}
+                    />
+                </FormFieldWrapper>
+                <FormFieldWrapper error={_getErrorByField('type')}>
+                    <Form.Select
+                        label={t('attributes.type')}
+                        width="4"
+                        disabled={!isNewAttribute || values.system || readonly || (isNewAttribute && !!forcedType)}
+                        name="type"
+                        aria-label="type"
+                        onChange={_handleChangeWithSubmit}
+                        options={Object.keys(AttributeType).map(attrType => {
+                            return {
+                                text: t('attributes.types.' + attrType),
+                                value: attrType
+                            };
+                        })}
+                        value={values.type}
+                    />
+                </FormFieldWrapper>
+                {allowFormat && (
+                    <FormFieldWrapper error={_getErrorByField('format')}>
                         <Form.Select
-                            label={t('attributes.type')}
+                            label={t('attributes.format')}
+                            disabled={!isNewAttribute || values.system || readonly}
                             width="4"
-                            disabled={!isNewAttribute || values.system || readonly || (isNewAttribute && !!forcedType)}
-                            name="type"
-                            aria-label="type"
+                            name="format"
+                            aria-label="format"
                             onChange={_handleChangeWithSubmit}
-                            options={Object.keys(AttributeType).map(attrType => {
-                                return {
-                                    text: t('attributes.types.' + attrType),
-                                    value: attrType
-                                };
-                            })}
-                            value={values.type}
+                            options={Object.keys(AttributeFormat).map(f => ({
+                                text: t('attributes.formats.' + f),
+                                value: f
+                            }))}
+                            value={values.format || ''}
                         />
                     </FormFieldWrapper>
-                    {allowFormat && (
-                        <FormFieldWrapper error={_getErrorByField('format')}>
-                            <Form.Select
-                                label={t('attributes.format')}
-                                disabled={!isNewAttribute || values.system || readonly}
-                                width="4"
-                                name="format"
-                                aria-label="format"
-                                onChange={_handleChangeWithSubmit}
-                                options={Object.keys(AttributeFormat).map(f => ({
-                                    text: t('attributes.formats.' + f),
-                                    value: f
-                                }))}
-                                value={values.format || ''}
-                            />
-                        </FormFieldWrapper>
-                    )}
-                    {isLinkAttribute && (
-                        <FormFieldWrapper error={_getErrorByField('linked_library')}>
-                            <LibrariesSelector
-                                disabled={values.system || readonly}
-                                lang={userLang}
-                                fluid
-                                selection
-                                multiple={false}
-                                label={t('attributes.linked_library')}
-                                placeholder={t('attributes.linked_library')}
-                                width="4"
-                                name="linked_library"
-                                aria-label="linked_library"
-                                onChange={_handleLinkedLibraryChange}
-                                value={values.linked_library || ''}
-                            />
-                        </FormFieldWrapper>
-                    )}
-                    {isLinkAttribute && !!values.linked_library && (
-                        <FormFieldWrapper error={_getErrorByField('reverse_link')}>
-                            <AttributeSelector
-                                filters={{
-                                    libraries: [values.linked_library],
-                                    type: [AttributeType.advanced_link, AttributeType.simple_link]
-                                }}
-                                excludeReverseLinks
-                                disabled={values.system || readonly}
-                                lang={userLang}
-                                fluid
-                                selection
-                                clearable
-                                multiple={false}
-                                label={t('attributes.reverse_link')}
-                                placeholder={t('attributes.linked_attribute')}
-                                width="4"
-                                name="reverse_link"
-                                aria-label="reverse_link"
-                                onChange={_handleChangeWithSubmit}
-                                value={values.reverse_link || ''}
-                            />
-                        </FormFieldWrapper>
-                    )}
-                    {values.type === AttributeType.tree && (
-                        <FormFieldWrapper error={_getErrorByField('versions_conf')}>
-                            <TreesSelector
-                                fluid
-                                selection
-                                multiple={false}
-                                width="4"
-                                disabled={values.system || readonly}
-                                label={t('attributes.linked_tree')}
-                                placeholder={t('attributes.linked_tree')}
-                                name="linked_tree"
-                                aria-label="linked_tree"
-                                value={values.linked_tree || ''}
-                                onChange={_handleChangeWithSubmit}
-                            />
-                        </FormFieldWrapper>
-                    )}
-                    {allowMultipleValues && (
-                        <FormFieldWrapper error={_getErrorByField('multiple_values')}>
+                )}
+                {isLinkAttribute && (
+                    <FormFieldWrapper error={_getErrorByField('linked_library')}>
+                        <LibrariesSelector
+                            disabled={values.system || readonly}
+                            lang={userLang}
+                            fluid
+                            selection
+                            multiple={false}
+                            label={t('attributes.linked_library')}
+                            placeholder={t('attributes.linked_library')}
+                            width="4"
+                            name="linked_library"
+                            aria-label="linked_library"
+                            onChange={_handleLinkedLibraryChange}
+                            value={values.linked_library || ''}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {isLinkAttribute && !!values.linked_library && (
+                    <FormFieldWrapper error={_getErrorByField('reverse_link')}>
+                        <AttributeSelector
+                            filters={{
+                                libraries: [values.linked_library],
+                                type: [AttributeType.advanced_link, AttributeType.simple_link]
+                            }}
+                            excludeReverseLinks
+                            disabled={values.system || readonly}
+                            lang={userLang}
+                            fluid
+                            selection
+                            clearable
+                            multiple={false}
+                            label={t('attributes.reverse_link')}
+                            placeholder={t('attributes.linked_attribute')}
+                            width="4"
+                            name="reverse_link"
+                            aria-label="reverse_link"
+                            onChange={_handleChangeWithSubmit}
+                            value={values.reverse_link || ''}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {values.type === AttributeType.tree && (
+                    <FormFieldWrapper error={_getErrorByField('versions_conf')}>
+                        <TreesSelector
+                            fluid
+                            selection
+                            multiple={false}
+                            width="4"
+                            disabled={values.system || readonly}
+                            label={t('attributes.linked_tree')}
+                            placeholder={t('attributes.linked_tree')}
+                            name="linked_tree"
+                            aria-label="linked_tree"
+                            value={values.linked_tree || ''}
+                            onChange={_handleChangeWithSubmit}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {allowMultipleValues && (
+                    <FormFieldWrapper error={_getErrorByField('multiple_values')}>
+                        <Form.Checkbox
+                            label={t('attributes.allow_multiple_values')}
+                            disabled={values.system || readonly}
+                            width="8"
+                            toggle
+                            name="multiple_values"
+                            aria-label="multiple_values"
+                            onChange={_handleChangeWithSubmit}
+                            onBlur={_handleBlur}
+                            checked={!!values.multiple_values}
+                        />
+                    </FormFieldWrapper>
+                )}
+                {allowVersionable && (
+                    <Form.Group grouped>
+                        <label>{t('attributes.values_versions')}</label>
+                        <FormFieldWrapper error={_getErrorByField('versions_conf.versionable')}>
                             <Form.Checkbox
-                                label={t('attributes.allow_multiple_values')}
+                                label={t('attributes.versionable')}
                                 disabled={values.system || readonly}
                                 width="8"
                                 toggle
-                                name="multiple_values"
-                                aria-label="multiple_values"
+                                name="versions_conf.versionable"
+                                aria-label="versions_conf.versionable"
                                 onChange={_handleChangeWithSubmit}
-                                onBlur={_handleBlur}
-                                checked={!!values.multiple_values}
+                                checked={isVersionable}
                             />
                         </FormFieldWrapper>
-                    )}
-                    {allowVersionable && (
-                        <Form.Group grouped>
-                            <label>{t('attributes.values_versions')}</label>
-                            <FormFieldWrapper error={_getErrorByField('versions_conf.versionable')}>
-                                <Form.Checkbox
-                                    label={t('attributes.versionable')}
-                                    disabled={values.system || readonly}
-                                    width="8"
-                                    toggle
-                                    name="versions_conf.versionable"
-                                    aria-label="versions_conf.versionable"
-                                    onChange={_handleChangeWithSubmit}
-                                    checked={isVersionable}
-                                />
-                            </FormFieldWrapper>
-                            {isVersionable && (
-                                <>
-                                    <FormFieldWrapper error={_getErrorByField('versions_conf.mode')}>
-                                        <Form.Select
-                                            label={t('attributes.versions_mode')}
-                                            disabled={values.system || readonly}
-                                            width="4"
-                                            name="versions_conf.mode"
-                                            aria-label="versions_conf.mode"
-                                            onChange={_handleChangeWithSubmit}
-                                            options={[
-                                                {
-                                                    text: t('attributes.versions_mode_simple'),
-                                                    value: ValueVersionMode.simple
-                                                },
-                                                {
-                                                    text: t('attributes.versions_mode_smart'),
-                                                    value: ValueVersionMode.smart
-                                                }
-                                            ]}
-                                            value={
-                                                !!values.versions_conf && values.versions_conf.mode
-                                                    ? values.versions_conf.mode
-                                                    : ValueVersionMode.smart
+                        {isVersionable && (
+                            <>
+                                <FormFieldWrapper error={_getErrorByField('versions_conf.mode')}>
+                                    <Form.Select
+                                        label={t('attributes.versions_mode')}
+                                        disabled={values.system || readonly}
+                                        width="4"
+                                        name="versions_conf.mode"
+                                        aria-label="versions_conf.mode"
+                                        onChange={_handleChangeWithSubmit}
+                                        options={[
+                                            {
+                                                text: t('attributes.versions_mode_simple'),
+                                                value: ValueVersionMode.simple
+                                            },
+                                            {
+                                                text: t('attributes.versions_mode_smart'),
+                                                value: ValueVersionMode.smart
                                             }
-                                        />
-                                    </FormFieldWrapper>
-                                    <FormFieldWrapper error={_getErrorByField('versions_conf.trees')}>
-                                        <TreesSelector
-                                            fluid
-                                            selection
-                                            width="4"
-                                            multiple
-                                            disabled={values.system || readonly}
-                                            label={t('attributes.versions_trees')}
-                                            placeholder={t('attributes.versions_trees')}
-                                            value={values.versions_conf ? values.versions_conf.trees || [] : []}
-                                            name="versions_conf.trees"
-                                            aria-label="versions_conf.trees"
-                                            onChange={_handleChangeWithSubmit}
-                                            filters={{type: [AttributeType.tree]}}
-                                        />
-                                    </FormFieldWrapper>
-                                </>
-                            )}
-                        </Form.Group>
-                    )}
-                    {!isNewAttribute && (
-                        <AttributeLibraries
-                            attribute={attribute}
-                            fluid
-                            selection
-                            width="10"
-                            multiple
-                            disabled={values.system || readonly}
-                            label={t('attributes.linked_libraries')}
-                            placeholder={t('attributes.linked_libraries')}
-                            name="libraries"
-                            aria-label="linked-libraries"
-                        />
-                    )}
-                    {!readonly && isNewAttribute && (
-                        <Form.Group inline>
-                            <Form.Button type="submit" data-test-id="attribute-infos-submit-btn">
-                                {t('admin.submit')}
-                            </Form.Button>
-                        </Form.Group>
-                    )}
-                </Form>
-            </>
+                                        ]}
+                                        value={
+                                            !!values.versions_conf && values.versions_conf.mode
+                                                ? values.versions_conf.mode
+                                                : ValueVersionMode.smart
+                                        }
+                                    />
+                                </FormFieldWrapper>
+                                <FormFieldWrapper error={_getErrorByField('versions_conf.trees')}>
+                                    <TreesSelector
+                                        fluid
+                                        selection
+                                        width="4"
+                                        multiple
+                                        disabled={values.system || readonly}
+                                        label={t('attributes.versions_trees')}
+                                        placeholder={t('attributes.versions_trees')}
+                                        value={values.versions_conf ? values.versions_conf.trees || [] : []}
+                                        name="versions_conf.trees"
+                                        aria-label="versions_conf.trees"
+                                        onChange={_handleChangeWithSubmit}
+                                        filters={{type: [AttributeType.tree]}}
+                                    />
+                                </FormFieldWrapper>
+                            </>
+                        )}
+                    </Form.Group>
+                )}
+                {!isNewAttribute && (
+                    <AttributeLibraries
+                        attribute={attribute}
+                        fluid
+                        selection
+                        width="10"
+                        multiple
+                        disabled={values.system || readonly}
+                        label={t('attributes.linked_libraries')}
+                        placeholder={t('attributes.linked_libraries')}
+                        name="libraries"
+                        aria-label="linked-libraries"
+                    />
+                )}
+                {!readonly && isNewAttribute && (
+                    <FormFooter>
+                        <Form.Button
+                            type="submit"
+                            primary
+                            icon
+                            data-test-id="attribute-infos-submit-btn"
+                            style={{float: 'right'}}
+                            labelPosition="left"
+                        >
+                            <Icon name="save outline" />
+                            {t('admin.submit')}
+                        </Form.Button>
+                    </FormFooter>
+                )}
+            </FormWrapper>
         );
     };
 
@@ -464,10 +496,11 @@ function InfosForm({
             <Formik
                 initialValues={initialValues}
                 onSubmit={_handleSubmit}
-                render={_renderForm}
                 validateOnChange
                 validationSchema={validationSchema}
-            />
+            >
+                {_renderForm}
+            </Formik>
         </>
     );
 }

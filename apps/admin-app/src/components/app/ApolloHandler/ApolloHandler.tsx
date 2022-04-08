@@ -147,6 +147,11 @@ const ApolloHandler = ({token, children, onTokenInvalid}: IApolloHandlerProps): 
                     fields: {
                         gqlNames: {
                             merge: true
+                        },
+                        attributes: {
+                            merge(existing, incoming) {
+                                return incoming;
+                            }
                         }
                     }
                 }
