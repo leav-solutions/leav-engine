@@ -1,16 +1,18 @@
 {
     "errors": {
         "CANNOT_SAVE_METADATA": "Cannot save metadata on simple attribute",
+        "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Element already present in ancestors",
         "ELEMENT_ALREADY_PRESENT": "Element already present",
         "ELEMENT_NOT_IN_TREE": "Element {{element}} not present in tree {{tree}}",
+        "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Element with same path already present",
         "ERROR": "Error",
         "FORBIDDEN_ID": "The specified Id is forbidden",
         "FORMAT_ERROR": "Invalid format: {{details}}",
         "INVALID_ACTION_TYPE": "Last action is invalid: expected action with output types including {{expected}}, received {{received}}",
         "INVALID_ATTRIBUTES": "Invalid attributes: {{attributes}}",
         "INVALID_DATE_RANGE": "Start date must be less than end date",
+        "INVALID_ENDPOINT_FORMAT": "Invalid endpoint format",
         "INVALID_FILE_FORMAT": "Invalid file format: {{received}}. Expected format: {{expected}}",
-        "INVALID_VARIABLE_FUNCTION": "Invalid variable function: {{functionName}}.",
         "INVALID_FILTER_CONDITION_VALUE" : "Condition/value filter are not compatible: {{libraries}}",
         "INVALID_FILTER_FIELDS": "Invalid filter's fields",
         "INVALID_FILTERS_EXPRESSION": "Invalid Filters expression order",
@@ -19,7 +21,9 @@
         "INVALID_MAPPING": "Invalid mapping",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "These libraries are not bound to the tree",
         "INVALID_SORT_FIELDS": "Invalid sort fields",
+        "INVALID_VARIABLE_FUNCTION": "Invalid variable function: {{functionName}}.",
         "INVALID_VERSION": "Invalid version: ",
+        "LIBRARY_FORBIDDEN_AS_CHILD": "Library forbidden as child",
         "METADATA_PERMISSION_ERROR": "Forbidden action on fields {{fields}}",
         "MISSING_FIELDS": "Missing fields : {{fields}}",
         "MISSING_LIBRARY_ID": "Missing library ID",
@@ -29,6 +33,7 @@
         "MULTIPLE_VALUES_NOT_ALLOWED": "Multiple values not allowed for this attribute type",
         "NON_FILES_LIBRARY": "Cannot bind a non-files library",
         "PAGINATION_OFFSET_AND_CURSOR": "Cannot use offset and cursor at the same time",
+        "PROTECTED_ENDPOINT": "This endpoint is not allowed: {{endpoint}}",
         "REQUIRED_ATTRIBUTE_FORMAT": "Attribute's format must be specified",
         "REQUIRED_ATTRIBUTE_LABEL": "Attribute's label for default language ({{lang}}) must be specified",
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Attribute's linked library must be specified",
@@ -39,6 +44,7 @@
         "SYSTEM_TREE_DELETION": "Cannot delete system tree",
         "TOO_MUCH_LIBRARIES_ON_FILES_TREE": "Cannot bind more than one library on a files tree",
         "UNBINDED_ATTRIBUTES": "Attributes must be binded to library: {{attributes}}",
+        "UNKNOWN_APPLICATION": "Unknown application: {{application}}",
         "UNKNOWN_ATTRIBUTE": "Unknown attribute: {{attribute}}",
         "UNKNOWN_ATTRIBUTES": "Unknown attributes: {{attributes}}",
         "UNKNOWN_ELEMENT": "Unknown element",
@@ -55,10 +61,7 @@
         "UNKNOWN_TREES": "Unknown trees : {{trees}}",
         "UNKNOWN_VALUE": "Unknown value",
         "UNKNOWN_VERSION_TREE": "Unknown tree {{tree}}",
-        "UNKNOWN_VIEW": "Unknown view",
-        "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Element already present in ancestors",
-        "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Element with same path already present",
-        "LIBRARY_FORBIDDEN_AS_CHILD": "Library forbidden as child"
+        "UNKNOWN_VIEW": "Unknown view"
     },
     "actions": {
         "names": {
@@ -127,6 +130,8 @@
         "edit_value": "Edit value",
         "access_tree": "Access",
         "detach": "Detach",
-        "edit_children": "Edit children"
+        "edit_children": "Edit children",
+        "admin_application": "Administrate application",
+        "access_application": "Access application"
     }
 }

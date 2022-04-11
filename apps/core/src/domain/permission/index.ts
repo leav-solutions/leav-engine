@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export {default as admin} from './adminPermissionDomain';
+export {default as application} from './applicationPermissionDomain';
 export {default as attribute} from './attributePermissionDomain';
 export {default as library} from './libraryPermissionDomain';
 export {default} from './permissionDomain';

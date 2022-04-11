@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     AdminPermissionsActions,
+    ApplicationPermissionsActions,
     AttributePermissionsActions,
     IPermissionsTreeTarget,
     ITreePermissionsConf,
@@ -90,6 +91,13 @@ export interface IGetTreeLibraryPermissionParams {
     ctx: IQueryInfos;
 }
 
+export interface IGetApplicationPermissionParams {
+    action: ApplicationPermissionsActions;
+    applicationId: string;
+    userId: string;
+    ctx: IQueryInfos;
+}
+
 export interface IGetDefaultTreeLibraryPermissionParams {
     type?: PermissionTypes;
     applyTo?: string;
@@ -126,6 +134,13 @@ export interface IGetInheritedLibraryPermissionParams {
 export interface IGetInheritedTreePermissionParams {
     action: TreePermissionsActions;
     treeId: string;
+    userGroupId: string;
+    ctx: IQueryInfos;
+}
+
+export interface IGetInheritedApplicationPermissionParams {
+    action: ApplicationPermissionsActions;
+    applicationId: string;
     userGroupId: string;
     ctx: IQueryInfos;
 }

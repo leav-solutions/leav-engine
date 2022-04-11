@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`applicationRepo createApplication Create new application 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`applicationRepo createApplication Create new application 2`] = `
+Object {
+  "@value1": "core_applications",
+  "value0": Object {
+    "_key": "test_application",
+    "color": "orange",
+    "component": "explorer",
+    "description": "Super application",
+    "endpoint": "my-application",
+    "label": Object {
+      "fr": "Test",
+    },
+    "libraries": Array [
+      "products",
+      "categories",
+    ],
+    "system": true,
+  },
+}
+`;
+
+exports[`applicationRepo deleteApplication Delete application 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`applicationRepo deleteApplication Delete application 2`] = `
+Object {
+  "@value1": "core_applications",
+  "value0": Object {
+    "_key": "test_application",
+  },
+}
+`;
+
+exports[`applicationRepo updateApplication Update application 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+
+exports[`applicationRepo updateApplication Update application 2`] = `
+Object {
+  "@value1": "core_applications",
+  "value0": Object {
+    "_key": "test_application",
+    "color": "orange",
+    "component": "explorer",
+    "description": "Super application",
+    "endpoint": "my-application",
+    "label": Object {
+      "fr": "Test",
+    },
+    "libraries": Array [
+      "products",
+      "categories",
+    ],
+    "system": true,
+  },
+}
+`;

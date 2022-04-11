@@ -30,5 +30,6 @@ declare global {
     interface ICoreEntityFilterOptions {
         id?: string;
         label?: string;
+        system?: boolean;
     }
 }

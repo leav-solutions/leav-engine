@@ -23,6 +23,13 @@ export interface IUtils {
     isIdValid(id: string): boolean;
 
     /**
+     * Validate endpoint format: must be only alphanum characters and dashes
+     *
+     * @param id
+     */
+    isEndpointValid(id: string): boolean;
+
+    /**
      * Rethrow an error prefixed by optional message.
      * The same given error is re-thrown so stacktrace is keeped intact
      *
@@ -90,6 +97,13 @@ export default function({translator = null}: IUtilsDeps = {}): IUtils {
             }
 
             return /^[a-z0-9_]+$/.test(id);
+        },
+        isEndpointValid(id: string): boolean {
+            if (!id) {
+                return false;
+            }
+
+            return /^[a-z0-9-]+$/.test(id);
         },
         rethrow(err: Error, message?: string): void {
             if (message) {

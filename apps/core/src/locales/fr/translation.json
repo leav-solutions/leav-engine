@@ -1,15 +1,17 @@
 {
     "errors": {
         "CANNOT_SAVE_METADATA": "Impossible de sauvegarder des métadonnées sur un attribut simple",
+        "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Cet élément est déjà présent parmis ses ancêtres",
         "ELEMENT_ALREADY_PRESENT": "Cet élément est déjà présent",
         "ELEMENT_NOT_IN_TREE": "Élément {{element}} non présent dans l’arbre {{tree}}",
+        "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Un élement identique avec le même chemin est déjà présent",
         "ERROR": "Erreur",
         "FORBIDDEN_ID": "L'Id spécifiée est interdit",
         "FORMAT_ERROR": "Format invalide: {{details}}",
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",
         "INVALID_DATE_RANGE": "La date de début doit être inférieur à la date de fin",
-        "INVALID_VARIABLE_FUNCTION": "Nom de fonction de variable inconnu : {{functionName}}",
+        "INVALID_ENDPOINT_FORMAT": "Format de chemin non valide",
         "INVALID_FILE_FORMAT": "Format de fichier non valide: {{received}}. Format attendu: {{expected}}",
         "INVALID_FILTER_CONDITION_VALUE" : "La condition d'un filtre n'est pas compatible avec sa valeur associée",
         "INVALID_FILTER_FIELDS": "Les champs d'un filtre ne sont pas valides",
@@ -19,6 +21,8 @@
         "INVALID_MAPPING": "Mapping incorrect",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "Ces bibliothèques ne sont pas liées à cet arbre: {{libraries}}",
         "INVALID_SORT_FIELDS": "Les champs de tri ne sont pas valides",
+        "INVALID_VARIABLE_FUNCTION": "Nom de fonction de variable inconnu : {{functionName}}",
+        "LIBRARY_FORBIDDEN_AS_CHILD": "Librairie non autorisée pour les parents sélectionnés",
         "METADATA_PERMISSION_ERROR": "Action interdite sur les champs {{fields}}",
         "MISSING_FIELDS": "Champs manquants : {{fields}}",
         "MISSING_LIBRARY_ID": "ID bibliothèque manquant",
@@ -27,7 +31,8 @@
         "MISSING_TARGET": "Cible manquante",
         "MULTIPLE_VALUES_NOT_ALLOWED": "Valeurs multiples non autorisées sur ce type d'attribut",
         "NON_FILES_LIBRARY": "Impossible de lier une bibliothèque non-fichiers",
-        "PAGINATION_OFFSET_AND_CURSOR": "Cannot use offset and cursor at the same time",
+        "PAGINATION_OFFSET_AND_CURSOR": "Impossible d'utiliser un offset et un curseur en même temps",
+        "PROTECTED_ENDPOINT": "Ce chemin n'est pas autorisé: {{endpoint}}",
         "REQUIRED_ATTRIBUTE_FORMAT": "Format d'attribut non spécifié",
         "REQUIRED_ATTRIBUTE_LABEL": "Libellé pour la langue par défaut ({{lang}}) non spécifié",
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Librairie liée non spécifiée",
@@ -38,6 +43,7 @@
         "SYSTEM_TREE_DELETION": "Impossible de supprimer un arbre système",
         "TOO_MUCH_LIBRARIES_ON_FILES_TREE": "Impossible de lier plus d'une bibliothèque à un arbre de fichiers",
         "UNBINDED_ATTRIBUTES": "Ces attributs doivent être liés à la bibliothèque: {{attributes}}",
+        "UNKNOWN_APPLICATION": "Application inconnue: {{application}}",
         "UNKNOWN_ATTRIBUTE": "Attribut inconnu: {{attribute}}",
         "UNKNOWN_ATTRIBUTES": "Attributs inconnus: {{attributes}}",
         "UNKNOWN_ELEMENT": "Élément inconnu",
@@ -54,10 +60,7 @@
         "UNKNOWN_TREES": "Arbres inconnus : {{trees}}",
         "UNKNOWN_VALUE": "Valeur inconnue",
         "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}",
-        "UNKNOWN_VIEW": "Vue inconnue",
-        "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Cet élément est déjà présent parmis ses ancêtres",
-        "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Un élement identique avec le même chemin est déjà présent",
-        "LIBRARY_FORBIDDEN_AS_CHILD": "Librairie non autorisée pour les parents sélectionnés"
+        "UNKNOWN_VIEW": "Vue inconnue"
     },
     "actions": {
         "names" : {
@@ -128,6 +131,8 @@
         "edit_value": "Modifier une valeur",
         "access_tree": "Accéder",
         "detach": "Détacher",
-        "edit_children": "Modifier les enfants"
+        "edit_children": "Modifier les enfants",
+        "admin_application": "Administrer l'application",
+        "access_application": "Accéder à l'application"
     }
 }

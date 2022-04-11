@@ -11,6 +11,7 @@ import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
 import {
     AdminPermissionsActions,
+    ApplicationPermissionsActions,
     AttributePermissionsActions,
     ILabeledPermissionsAction,
     IPermission,
@@ -23,6 +24,7 @@ import {
     TreePermissionsActions
 } from '../../_types/permissions';
 import {IAdminPermissionDomain} from './adminPermissionDomain';
+import {IApplicationPermissionDomain} from './applicationPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import getPermissionCachePatternKey from './helpers/getPermissionCachePatternKey';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
@@ -78,6 +80,7 @@ interface IDeps {
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
     'core.domain.permission.treeLibrary'?: ITreeLibraryPermissionDomain;
+    'core.domain.permission.application'?: IApplicationPermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.cache.cacheService'?: ICachesService;
     translator?: i18n;
@@ -96,6 +99,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
         'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.treeNode': treeNodePermissionDomain = null,
         'core.domain.permission.treeLibrary': treeLibraryPermissionDomain = null,
+        'core.domain.permission.application': applicationPermissionDomain = null,
         'core.infra.permission': permissionRepo = null,
         'core.infra.cache.cacheService': cacheService = null,
         config = null
@@ -143,6 +147,16 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 keys.push(
                     getPermissionCachePatternKey({
                         permissionType: PermissionTypes.RECORD_ATTRIBUTE,
+                        applyTo: permData.applyTo,
+                        permissionAction: name as PermissionsActions
+                    })
+                );
+            }
+
+            if (permData.type === PermissionTypes.APPLICATION) {
+                keys.push(
+                    getPermissionCachePatternKey({
+                        permissionType: PermissionTypes.APPLICATION,
                         applyTo: permData.applyTo,
                         permissionAction: name as PermissionsActions
                     })
@@ -282,6 +296,16 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 });
                 break;
             }
+            case PermissionTypes.APPLICATION: {
+                action = action as ApplicationPermissionsActions;
+                perm = await applicationPermissionDomain.getInheritedApplicationPermission({
+                    action,
+                    applicationId: applyTo,
+                    userGroupId,
+                    ctx
+                });
+                break;
+            }
         }
 
         return perm;
@@ -394,6 +418,15 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
+            case PermissionTypes.APPLICATION:
+                action = action as ApplicationPermissionsActions;
+                perm = await applicationPermissionDomain.getApplicationPermission({
+                    action,
+                    applicationId: applyTo,
+                    userId,
+                    ctx
+                });
+                break;
         }
 
         return perm;
@@ -426,6 +459,9 @@ export default function (deps: IDeps = {}): IPermissionDomain {
             case PermissionTypes.TREE_LIBRARY:
             case PermissionTypes.TREE_NODE:
                 perms = Object.values(TreeNodePermissionsActions);
+                break;
+            case PermissionTypes.APPLICATION:
+                perms = Object.values(ApplicationPermissionsActions);
                 break;
         }
 

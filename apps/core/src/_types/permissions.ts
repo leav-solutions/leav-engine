@@ -11,7 +11,8 @@ export enum PermissionTypes {
     ATTRIBUTE = 'attribute',
     TREE = 'tree',
     TREE_NODE = 'tree_node',
-    TREE_LIBRARY = 'tree_library'
+    TREE_LIBRARY = 'tree_library',
+    APPLICATION = 'application'
 }
 
 export enum LibraryPermissionsActions {
@@ -51,6 +52,10 @@ export enum TreeNodePermissionsActions {
     EDIT_CHILDREN = 'edit_children'
 }
 
+export enum ApplicationPermissionsActions {
+    ADMIN_APPLICATION = 'admin_application',
+    ACCESS_APPLICATION = 'access_application'
+}
 export enum AdminPermissionsActions {
     ACCESS_LIBRARIES = 'admin_access_libraries',
     CREATE_LIBRARY = 'admin_create_library',
@@ -80,7 +85,8 @@ export type PermissionsActions =
     | AdminPermissionsActions
     | AttributePermissionsActions
     | TreePermissionsActions
-    | TreeNodePermissionsActions;
+    | TreeNodePermissionsActions
+    | ApplicationPermissionsActions;
 
 export interface ILabeledPermissionsAction {
     label: ISystemTranslation;
