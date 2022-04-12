@@ -6,7 +6,7 @@ import {ISystemTranslation} from './systemTranslation';
 export enum PermissionTypes {
     RECORD = 'record',
     RECORD_ATTRIBUTE = 'record_attribute',
-    APP = 'app',
+    ADMIN = 'admin',
     LIBRARY = 'library',
     ATTRIBUTE = 'attribute',
     TREE = 'tree',
@@ -51,29 +51,33 @@ export enum TreeNodePermissionsActions {
     EDIT_CHILDREN = 'edit_children'
 }
 
-export enum AppPermissionsActions {
-    ACCESS_LIBRARIES = 'app_access_libraries',
-    CREATE_LIBRARY = 'app_create_library',
-    EDIT_LIBRARY = 'app_edit_library',
-    DELETE_LIBRARY = 'app_delete_library',
-    ACCESS_ATTRIBUTES = 'app_access_attributes',
-    CREATE_ATTRIBUTE = 'app_create_attribute',
-    EDIT_ATTRIBUTE = 'app_edit_attribute',
-    DELETE_ATTRIBUTE = 'app_delete_attribute',
-    ACCESS_TREES = 'app_access_trees',
-    CREATE_TREE = 'app_create_tree',
-    EDIT_TREE = 'app_edit_tree',
-    DELETE_TREE = 'app_delete_tree',
-    ACCESS_PERMISSIONS = 'app_access_permissions',
-    EDIT_PERMISSION = 'app_edit_permission',
-    MANAGE_GLOBAL_PREFERENCES = 'app_manage_global_preferences'
+export enum AdminPermissionsActions {
+    ACCESS_LIBRARIES = 'admin_access_libraries',
+    CREATE_LIBRARY = 'admin_create_library',
+    EDIT_LIBRARY = 'admin_edit_library',
+    DELETE_LIBRARY = 'admin_delete_library',
+    ACCESS_ATTRIBUTES = 'admin_access_attributes',
+    CREATE_ATTRIBUTE = 'admin_create_attribute',
+    EDIT_ATTRIBUTE = 'admin_edit_attribute',
+    DELETE_ATTRIBUTE = 'admin_delete_attribute',
+    ACCESS_TREES = 'admin_access_trees',
+    CREATE_TREE = 'admin_create_tree',
+    EDIT_TREE = 'admin_edit_tree',
+    DELETE_TREE = 'admin_delete_tree',
+    ACCESS_PERMISSIONS = 'admin_access_permissions',
+    EDIT_PERMISSION = 'admin_edit_permission',
+    MANAGE_GLOBAL_PREFERENCES = 'admin_manage_global_preferences',
+    ACCESS_APPLICATIONS = 'admin_access_applications',
+    CREATE_APPLICATION = 'admin_create_application',
+    EDIT_APPLICATION = 'admin_edit_application',
+    DELETE_APPLICATION = 'admin_delete_application'
 }
 
 export type PermissionsActions =
     | LibraryPermissionsActions
     | RecordPermissionsActions
     | RecordAttributePermissionsActions
-    | AppPermissionsActions
+    | AdminPermissionsActions
     | AttributePermissionsActions
     | TreePermissionsActions
     | TreeNodePermissionsActions;

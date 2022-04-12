@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IQueryInfos} from '_types/queryInfos';
-import {AppPermissionsActions} from '../../../_types/permissions';
+import {AdminPermissionsActions} from '../../../_types/permissions';
 
 export default async (
     existingLib: boolean,
     userId: string,
-    deps: {appPermissionDomain: IAppPermissionDomain},
+    deps: {adminPermissionDomain: IAdminPermissionDomain},
     ctx: IQueryInfos
-): Promise<{canSave: boolean; action: AppPermissionsActions}> => {
-    const action = existingLib ? AppPermissionsActions.EDIT_LIBRARY : AppPermissionsActions.CREATE_LIBRARY;
-    const canSaveLibrary = await deps.appPermissionDomain.getAppPermission({action, userId, ctx});
+): Promise<{canSave: boolean; action: AdminPermissionsActions}> => {
+    const action = existingLib ? AdminPermissionsActions.EDIT_LIBRARY : AdminPermissionsActions.CREATE_LIBRARY;
+    const canSaveLibrary = await deps.adminPermissionDomain.getAdminPermission({action, userId, ctx});
     if (!canSaveLibrary) {
         return {canSave: false, action};
     }

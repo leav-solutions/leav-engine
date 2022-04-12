@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
 import {IGlobalPermissionHelper} from './helpers/globalPermission';
-import {IGetAppPermissionParams, IGetInheritedAppPermissionParams} from './_types';
+import {IGetAdminPermissionParams, IGetInheritedAdminPermissionParams} from './_types';
 
-export interface IAppPermissionDomain {
-    getAppPermission({action, userId, ctx}: IGetAppPermissionParams): Promise<boolean>;
-    getInheritedAppPermission({action, userGroupId, ctx}: IGetInheritedAppPermissionParams): Promise<boolean>;
+export interface IAdminPermissionDomain {
+    getAdminPermission({action, userId, ctx}: IGetAdminPermissionParams): Promise<boolean>;
+    getInheritedAdminPermission({action, userGroupId, ctx}: IGetInheritedAdminPermissionParams): Promise<boolean>;
 }
 
 interface IDeps {
@@ -16,11 +16,11 @@ interface IDeps {
 
 export default function ({
     'core.domain.permission.helpers.globalPermission': globalPermHelper = null
-}: IDeps = {}): IAppPermissionDomain {
-    const getAppPermission = async ({action, userId, ctx}: IGetAppPermissionParams): Promise<boolean> => {
+}: IDeps = {}): IAdminPermissionDomain {
+    const getAdminPermission = async ({action, userId, ctx}: IGetAdminPermissionParams): Promise<boolean> => {
         return globalPermHelper.getGlobalPermission(
             {
-                type: PermissionTypes.APP,
+                type: PermissionTypes.ADMIN,
                 action,
                 userId
             },
@@ -28,14 +28,14 @@ export default function ({
         );
     };
 
-    const getInheritedAppPermission = async ({
+    const getInheritedAdminPermission = async ({
         action,
         userGroupId,
         ctx
-    }: IGetInheritedAppPermissionParams): Promise<boolean> => {
+    }: IGetInheritedAdminPermissionParams): Promise<boolean> => {
         return globalPermHelper.getInheritedGlobalPermission(
             {
-                type: PermissionTypes.APP,
+                type: PermissionTypes.ADMIN,
                 action,
                 userGroupNodeId: userGroupId
             },
@@ -44,7 +44,7 @@ export default function ({
     };
 
     return {
-        getAppPermission,
-        getInheritedAppPermission
+        getAdminPermission,
+        getInheritedAdminPermission
     };
 }

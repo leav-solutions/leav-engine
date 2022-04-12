@@ -7,21 +7,22 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
 import {
-    AppPermissionsActions,
+    AdminPermissionsActions,
     AttributePermissionsActions,
     ILabeledPermissionsAction,
     IPermission,
     LibraryPermissionsActions,
+    PermissionsActions,
     PermissionTypes,
     RecordAttributePermissionsActions,
     RecordPermissionsActions,
     TreeNodePermissionsActions,
-    TreePermissionsActions,
-    PermissionsActions
+    TreePermissionsActions
 } from '../../_types/permissions';
-import {IAppPermissionDomain} from './appPermissionDomain';
+import {IAdminPermissionDomain} from './adminPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import getPermissionCachePatternKey from './helpers/getPermissionCachePatternKey';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
@@ -30,7 +31,6 @@ import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
 import {ITreeNodePermissionDomain} from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {
     IGetActionsByTypeParams,
     IGetInheritedPermissionsParams,
@@ -70,7 +70,7 @@ export interface IPermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
@@ -88,7 +88,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
     const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
 
     const {
-        'core.domain.permission.app': appPermissionDomain = null,
+        'core.domain.permission.admin': adminPermissionDomain = null,
         'core.domain.permission.record': recordPermissionDomain = null,
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.domain.permission.attribute': attributePermissionDomain = null,
@@ -155,8 +155,8 @@ export default function (deps: IDeps = {}): IPermissionDomain {
 
     const savePermission = async (permData: IPermission, ctx: IQueryInfos): Promise<IPermission> => {
         // Does user have the permission to save permissions?
-        const action = AppPermissionsActions.EDIT_PERMISSION;
-        const canSavePermission = await appPermissionDomain.getAppPermission({
+        const action = AdminPermissionsActions.EDIT_PERMISSION;
+        const canSavePermission = await adminPermissionDomain.getAdminPermission({
             action,
             userId: ctx.userId,
             ctx
@@ -240,9 +240,9 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
-            case PermissionTypes.APP:
-                action = action as AppPermissionsActions;
-                perm = await appPermissionDomain.getInheritedAppPermission({
+            case PermissionTypes.ADMIN:
+                action = action as AdminPermissionsActions;
+                perm = await adminPermissionDomain.getInheritedAdminPermission({
                     action,
                     userGroupId,
                     ctx
@@ -351,9 +351,9 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 });
 
                 break;
-            case PermissionTypes.APP:
-                action = action as AppPermissionsActions;
-                perm = await appPermissionDomain.getAppPermission({
+            case PermissionTypes.ADMIN:
+                action = action as AdminPermissionsActions;
+                perm = await adminPermissionDomain.getAdminPermission({
                     action,
                     userId,
                     ctx
@@ -406,8 +406,8 @@ export default function (deps: IDeps = {}): IPermissionDomain {
     }: IGetActionsByTypeParams): ILabeledPermissionsAction[] => {
         let perms = [];
         switch (type) {
-            case PermissionTypes.APP:
-                perms = Object.values(AppPermissionsActions);
+            case PermissionTypes.ADMIN:
+                perms = Object.values(AdminPermissionsActions);
                 break;
             case PermissionTypes.LIBRARY:
                 perms = Object.values(LibraryPermissionsActions);

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -15,7 +15,7 @@ import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeFormats, IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
-import {AppPermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
@@ -54,7 +54,7 @@ export interface IAttributeDomain {
 interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
     'core.domain.actionsList'?: IActionsListDomain;
-    'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.infra.library'?: ILibraryRepo;
     'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
@@ -62,10 +62,10 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
-    'core.domain.permission.app': appPermissionDomain = null,
+    'core.domain.permission.admin': adminPermissionDomain = null,
     'core.infra.library': libraryRepo = null,
     'core.utils': utils = null,
     'core.infra.tree': treeRepo = null,
@@ -154,9 +154,9 @@ export default function ({
 
             // Check permissions
             const action = isExistingAttr
-                ? AppPermissionsActions.EDIT_ATTRIBUTE
-                : AppPermissionsActions.CREATE_ATTRIBUTE;
-            const canSavePermission = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
+                ? AdminPermissionsActions.EDIT_ATTRIBUTE
+                : AdminPermissionsActions.CREATE_ATTRIBUTE;
+            const canSavePermission = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
                 throw new PermissionError(action);
@@ -220,8 +220,8 @@ export default function ({
         },
         async deleteAttribute({id, ctx}): Promise<IAttribute> {
             // Check permissions
-            const action = AppPermissionsActions.DELETE_ATTRIBUTE;
-            const canSavePermission = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
+            const action = AdminPermissionsActions.DELETE_ATTRIBUTE;
+            const canSavePermission = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSavePermission) {
                 throw new PermissionError(action);

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
-import {AppPermissionsActions, PermissionTypes} from '../../../_types/permissions';
+import {AdminPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import permissionByUserGroupsHelper from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import {ISimplePermissionHelper} from './simplePermission';
@@ -75,8 +75,8 @@ describe('getPermissionByUserGroups', () => {
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
-            type: PermissionTypes.APP,
-            action: AppPermissionsActions.CREATE_ATTRIBUTE,
+            type: PermissionTypes.ADMIN,
+            action: AdminPermissionsActions.CREATE_ATTRIBUTE,
             userGroupsPaths: mockUserGroups,
             ctx
         });
@@ -101,8 +101,8 @@ describe('getPermissionByUserGroups', () => {
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
-            type: PermissionTypes.APP,
-            action: AppPermissionsActions.CREATE_ATTRIBUTE,
+            type: PermissionTypes.ADMIN,
+            action: AdminPermissionsActions.CREATE_ATTRIBUTE,
             userGroupsPaths: mockUserGroups,
             ctx
         });
@@ -124,8 +124,8 @@ describe('getPermissionByUserGroups', () => {
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
-            type: PermissionTypes.APP,
-            action: AppPermissionsActions.CREATE_ATTRIBUTE,
+            type: PermissionTypes.ADMIN,
+            action: AdminPermissionsActions.CREATE_ATTRIBUTE,
             userGroupsPaths: mockUserGroups,
             ctx
         });
@@ -147,8 +147,8 @@ describe('getPermissionByUserGroups', () => {
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
-            type: PermissionTypes.APP,
-            action: AppPermissionsActions.CREATE_ATTRIBUTE,
+            type: PermissionTypes.ADMIN,
+            action: AdminPermissionsActions.CREATE_ATTRIBUTE,
             userGroupsPaths: [],
             ctx
         });
@@ -168,8 +168,8 @@ describe('getPermissionByUserGroups', () => {
         });
 
         const perm = await permByGroupHelper.getPermissionByUserGroups({
-            type: PermissionTypes.APP,
-            action: AppPermissionsActions.CREATE_ATTRIBUTE,
+            type: PermissionTypes.ADMIN,
+            action: AdminPermissionsActions.CREATE_ATTRIBUTE,
             userGroupsPaths: mockUserGroups,
             ctx
         });

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
-import {AppPermissionsActions} from '../../_types/permissions';
-import appPermissionDomain from './appPermissionDomain';
+import {AdminPermissionsActions} from '../../_types/permissions';
+import adminPermissionDomain from './adminPermissionDomain';
 import {IGlobalPermissionHelper} from './helpers/globalPermission';
 
 describe('PermissionDomain', () => {
@@ -20,12 +20,12 @@ describe('PermissionDomain', () => {
     };
     describe('getAppPermission', () => {
         test('Return app permission', async () => {
-            const permDomain = appPermissionDomain({
+            const permDomain = adminPermissionDomain({
                 'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
             });
 
-            const perm = await permDomain.getAppPermission({
-                action: AppPermissionsActions.ACCESS_ATTRIBUTES,
+            const perm = await permDomain.getAdminPermission({
+                action: AdminPermissionsActions.ACCESS_ATTRIBUTES,
                 userId: '12345',
                 ctx
             });
@@ -36,12 +36,12 @@ describe('PermissionDomain', () => {
 
     describe('getInheritedAppPermission', () => {
         test('Return herited admin permission', async () => {
-            const permDomain = appPermissionDomain({
+            const permDomain = adminPermissionDomain({
                 'core.domain.permission.helpers.globalPermission': mockGlobalPermHelper as IGlobalPermissionHelper
             });
 
-            const perm = await permDomain.getInheritedAppPermission({
-                action: AppPermissionsActions.ACCESS_ATTRIBUTES,
+            const perm = await permDomain.getInheritedAdminPermission({
+                action: AdminPermissionsActions.ACCESS_ATTRIBUTES,
                 userGroupId: '12345',
                 ctx
             });

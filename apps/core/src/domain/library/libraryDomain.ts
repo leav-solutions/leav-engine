@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
-import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
-import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
+import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -17,13 +16,15 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
 import {Errors} from '../../_types/errors';
 import {EventType} from '../../_types/event';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
-import {AppPermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
+import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {IRecordDomain} from '../record/recordDomain';
 import checkSavePermission from './helpers/checkSavePermission';
 import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
@@ -33,7 +34,6 @@ import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -47,7 +47,7 @@ interface IDeps {
     config?: Config.IConfig;
     'core.infra.library'?: ILibraryRepo;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.utils'?: IUtils;
     translator?: i18n;
     'core.infra.tree'?: ITreeRepo;
@@ -62,7 +62,7 @@ export default function ({
     config = null,
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission.app': appPermissionDomain = null,
+    'core.domain.permission.admin': adminPermissionDomain = null,
     'core.infra.tree': treeRepo = null,
     'core.utils': utils = null,
     'core.domain.eventsManager': eventsManager = null,
@@ -157,7 +157,7 @@ export default function ({
                 : [];
 
             // Check permissions
-            const permCheck = await checkSavePermission(existingLib, ctx.userId, {appPermissionDomain}, ctx);
+            const permCheck = await checkSavePermission(existingLib, ctx.userId, {adminPermissionDomain}, ctx);
             if (!permCheck.canSave) {
                 throw new PermissionError(permCheck.action);
             }
@@ -290,8 +290,8 @@ export default function ({
         },
         async deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary> {
             // Check permissions
-            const action = AppPermissionsActions.DELETE_LIBRARY;
-            const canSaveLibrary = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
+            const action = AdminPermissionsActions.DELETE_LIBRARY;
+            const canSaveLibrary = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveLibrary) {
                 throw new PermissionError(action);

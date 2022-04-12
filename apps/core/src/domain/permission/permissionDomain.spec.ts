@@ -6,20 +6,20 @@ import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {
-    AppPermissionsActions,
+    AdminPermissionsActions,
     PermissionTypes,
     RecordAttributePermissionsActions,
     RecordPermissionsActions
 } from '../../_types/permissions';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import {IAppPermissionDomain} from './appPermissionDomain';
+import {IAdminPermissionDomain} from './adminPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
 import permissionDomain from './permissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -37,9 +37,9 @@ describe('PermissionDomain', () => {
         queryId: 'permissionDomainTest'
     };
 
-    const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
-        getAppPermission: global.__mockPromise(true),
-        getInheritedAppPermission: global.__mockPromise(true)
+    const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+        getAdminPermission: global.__mockPromise(true),
+        getInheritedAdminPermission: global.__mockPromise(true)
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -62,7 +62,7 @@ describe('PermissionDomain', () => {
             };
 
             const permDomain = permissionDomain({
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.permission': mockPermRepo as IPermissionRepo,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
@@ -94,18 +94,18 @@ describe('PermissionDomain', () => {
     describe('isAllowed', () => {
         test('Return admin permission', async () => {
             const permsHelperDomain = permissionDomain({
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain
             });
 
             const perm = await permsHelperDomain.isAllowed({
-                type: PermissionTypes.APP,
-                action: AppPermissionsActions.CREATE_ATTRIBUTE,
+                type: PermissionTypes.ADMIN,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 ctx
             });
 
             expect(perm).toBe(true);
-            expect(mockAppPermDomain.getAppPermission).toHaveBeenCalled();
+            expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
         });
 
         test('Return library permission', async () => {
@@ -119,7 +119,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.LIBRARY,
-                action: AppPermissionsActions.CREATE_ATTRIBUTE,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 applyTo: 'test_lib',
                 ctx
@@ -140,7 +140,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.ATTRIBUTE,
-                action: AppPermissionsActions.CREATE_ATTRIBUTE,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 applyTo: 'test_attr',
                 ctx
@@ -161,7 +161,7 @@ describe('PermissionDomain', () => {
 
             const perm = await permsHelperDomain.isAllowed({
                 type: PermissionTypes.RECORD,
-                action: AppPermissionsActions.CREATE_ATTRIBUTE,
+                action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                 userId: '123',
                 applyTo: 'test_lib',
                 target: {
@@ -187,7 +187,7 @@ describe('PermissionDomain', () => {
             await expect(
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD,
-                    action: AppPermissionsActions.CREATE_ATTRIBUTE,
+                    action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                     userId: '123',
                     applyTo: 'test_lib',
                     ctx
@@ -198,7 +198,7 @@ describe('PermissionDomain', () => {
             await expect(
                 permsHelperDomain.isAllowed({
                     type: PermissionTypes.RECORD,
-                    action: AppPermissionsActions.CREATE_ATTRIBUTE,
+                    action: AdminPermissionsActions.CREATE_ATTRIBUTE,
                     userId: '123',
                     applyTo: 'test_lib',
                     target: {},
@@ -291,10 +291,10 @@ describe('PermissionDomain', () => {
             const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
 
             // Register actions
-            permsDomain.registerActions(PermissionTypes.APP, ['test_perm']);
+            permsDomain.registerActions(PermissionTypes.ADMIN, ['test_perm']);
 
             // Retrieve actions
-            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP});
+            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.ADMIN});
 
             expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
         });
@@ -303,17 +303,17 @@ describe('PermissionDomain', () => {
             const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
 
             // Register actions
-            permsDomain.registerActions(PermissionTypes.APP, ['test_perm'], ['my_lib_name']);
-            permsDomain.registerActions(PermissionTypes.APP, ['other_test_perm'], ['my_other_lib_name']);
+            permsDomain.registerActions(PermissionTypes.ADMIN, ['test_perm'], ['my_lib_name']);
+            permsDomain.registerActions(PermissionTypes.ADMIN, ['other_test_perm'], ['my_other_lib_name']);
 
             // Retrieve actions
-            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP, applyOn: 'my_lib_name'});
+            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.ADMIN, applyOn: 'my_lib_name'});
 
             expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
             expect(permsByType.findIndex(p => p.name === 'other_test_perm')).toBe(-1);
 
             const otherPermsByType = permsDomain.getActionsByType({
-                type: PermissionTypes.APP,
+                type: PermissionTypes.ADMIN,
                 applyOn: 'my_other_lib_name'
             });
 
@@ -325,10 +325,10 @@ describe('PermissionDomain', () => {
             const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
 
             // Register actions
-            permsDomain.registerActions(PermissionTypes.APP, ['test_perm'], ['my_lib_name']);
+            permsDomain.registerActions(PermissionTypes.ADMIN, ['test_perm'], ['my_lib_name']);
 
             // Retrieve actions
-            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.APP, skipApplyOn: true});
+            const permsByType = permsDomain.getActionsByType({type: PermissionTypes.ADMIN, skipApplyOn: true});
 
             expect(permsByType.findIndex(p => p.name === 'test_perm')).toBeGreaterThanOrEqual(0);
         });
