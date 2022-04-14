@@ -4,6 +4,11 @@
 import {ReadStream} from 'fs-capacitor';
 import {IValueMetadata, IValueVersion} from './value';
 
+export enum ImportType {
+    STANDARD = 'STANDARD',
+    LINK = 'LINK'
+}
+
 export enum Action {
     ADD = 'add',
     REPLACE = 'replace',
@@ -17,6 +22,7 @@ export interface IMatch {
 }
 
 export interface IValue {
+    library?: string; // only for tree attributes
     value: string | IMatch[];
     metadata?: IValueMetadata;
     version?: IValueVersion;

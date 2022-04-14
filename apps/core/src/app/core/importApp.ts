@@ -4,7 +4,7 @@
 import {GraphQLUpload} from 'graphql-upload';
 import {IImportDomain} from 'domain/import/importDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {IElement, IFile, IFileUpload} from '_types/import';
+import {IElement, IFile, IFileUpload, ImportType} from '_types/import';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
@@ -27,9 +27,15 @@ interface IImportParams {
 
 interface IImportExcelParams {
     file: Promise<IFileUpload>;
-    library: string;
-    mapping: string[];
-    key: string | null;
+    sheets?: Array<{
+        type: ImportType;
+        library: string;
+        dataLine: number;
+        mapping: Array<string | null>;
+        key?: string; // or attributeId on sheet of links
+        linkAttribute?: string;
+        keyTo?: string;
+    } | null>;
 }
 
 export default function ({'core.domain.import': importDomain = null, config = null}: IDeps = {}): ICoreImportApp {
@@ -84,9 +90,24 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                 typeDefs: `
                     scalar Upload
 
+                    enum ImportType {
+                        STANDARD
+                        LINK
+                    }
+
+                    input SheetInput {
+                        type: ImportType!
+                        library: String!,
+                        dataLine: Int!,
+                        mapping: [String],
+                        key: String,
+                        linkAttribute: String,
+                        keyTo: String,
+                    }
+
                     extend type Mutation {
                         import(file: Upload!): Boolean!
-                        importExcel(file: Upload!, library: String!, mapping: [String]!, key: String): Boolean!
+                        importExcel(file: Upload!, sheets: [SheetInput]): Boolean!
                     }
                 `,
                 resolvers: {
@@ -114,11 +135,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
 
                             return true;
                         },
-                        async importExcel(
-                            _,
-                            {file, library, mapping, key}: IImportExcelParams,
-                            ctx: IQueryInfos
-                        ): Promise<boolean> {
+                        async importExcel(_, {file, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean> {
                             const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['xlsx'];
@@ -128,7 +145,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const storedFileName = await _storeUploadFile(fileData);
 
                             try {
-                                await importDomain.importExcel({filename: storedFileName, library, mapping, key}, ctx);
+                                await importDomain.importExcel({filename: storedFileName, sheets}, ctx);
                             } finally {
                                 // Delete remaining import file.
                                 await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);

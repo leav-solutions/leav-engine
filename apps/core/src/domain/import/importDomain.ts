@@ -14,9 +14,9 @@ import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
 import ValidationError from '../../errors/ValidationError';
-import {IAttribute} from '../../_types/attribute';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {Action, IData, IElement, IMatch, ITree} from '../../_types/import';
+import {Action, IData, IElement, IMatch, ITree, ImportType, IValue as IImportValue} from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {ITreeElement} from '../../_types/tree';
@@ -27,14 +27,20 @@ export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 
 export interface IImportExcelParams {
     filename: string;
-    library: string;
-    mapping: string[];
-    key?: string | null;
+    sheets?: Array<{
+        type: ImportType;
+        library: string;
+        dataLine: number;
+        mapping: Array<string | null>;
+        key?: string; // or attributeId on sheet of links
+        linkAttribute?: string;
+        keyTo?: string;
+    } | null>;
 }
 
 export interface IImportDomain {
     import(filename: string, ctx: IQueryInfos): Promise<boolean>;
-    importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean>;
+    importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
 interface IDeps {
@@ -60,7 +66,7 @@ export default function ({
         library: string,
         attribute: IAttribute,
         recordId: string,
-        value: IValue,
+        value: IImportValue,
         ctx: IQueryInfos,
         valueId?: string
     ): Promise<void> => {
@@ -69,18 +75,31 @@ export default function ({
         if (isMatch) {
             const recordsList = await recordDomain.find({
                 params: {
-                    library: attribute.linked_library,
-                    filters: _matchesToFilters(value.value)
+                    library: attribute.type === AttributeTypes.TREE ? value.library : attribute.linked_library,
+                    filters: _matchesToFilters(value.value as IMatch[])
                 },
                 ctx
             });
 
             value.value = recordsList.list[0]?.id;
-        }
 
-        if (isMatch && typeof value.value === 'undefined') {
-            // TODO: Throw
-            return;
+            if (attribute.type === AttributeTypes.TREE) {
+                const node = await treeDomain.getNodesByRecord({
+                    treeId: attribute.linked_tree,
+                    record: {
+                        id: value.value,
+                        library: value.library
+                    },
+                    ctx
+                });
+
+                value.value = node[0];
+            }
+
+            if (typeof value.value === 'undefined') {
+                // TODO: Throw
+                return;
+            }
         }
 
         await valueDomain.saveValue({
@@ -353,6 +372,14 @@ export default function ({
         validate(data, JSON.parse(schema.toString()), {throwAll: true});
     };
 
+    const _extractArgs = (mapping: string): {[arg: string]: string} => {
+        return mapping
+            .split('-')
+            .slice(1)
+            .map(e => e.replace(/\s+/g, ' ').trim().split(' '))
+            .reduce((a, v) => ({...a, [v[0]]: v[1]}), {});
+    };
+
     return {
         async import(filename: string, ctx: IQueryInfos): Promise<boolean> {
             await _jsonSchemaValidation(filename);
@@ -429,63 +456,160 @@ export default function ({
 
             return true;
         },
-        async importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
+        async importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean> {
             const buffer = await _getFileDataBuffer(filename);
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer);
-            const data: string[][] = [];
+            const data: string[][][] = [];
 
-            workbook.eachSheet(s => {
+            workbook.eachSheet((s, i) => {
                 s.eachRow(r => {
-                    let elem = (r.values as string[]).slice(1);
-                    // replace empty item by null
-                    elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
-                    data.push(elem);
+                    let elems = (r.values as any[]).slice(1);
+
+                    elems = Array.from(elems, e => {
+                        if (typeof e === 'undefined') {
+                            return null; // we replace empty cell value by null
+                        } else if (typeof e === 'object') {
+                            return e.result; // if cell value is a formula
+                        }
+
+                        return e;
+                    });
+
+                    if (typeof data[i - 1] === 'undefined') {
+                        data[i - 1] = [];
+                    }
+
+                    data[i - 1].push(elems);
                 });
             });
-
-            // delete first row of columns name
-            data.shift();
 
             const JSONFilename = filename.slice(0, filename.lastIndexOf('.')) + '.json';
             const writeStream = fs.createWriteStream(`${config.import.directory}/${JSONFilename}`, {
                 flags: 'a' // 'a' means appending (old data will be preserved)
             });
 
-            const writeLine = line => writeStream.write(`\n${line}`);
+            const writeLine = (line: string) => writeStream.write(`\n${line}`);
 
             // Header of file.
             writeLine(`{
                 "elements": [
               `);
 
-            for (const [index, d] of data.entries()) {
-                const matches =
-                    key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
-                        ? [
-                              {
-                                  attribute: key,
-                                  value: String(d[mapping.indexOf(key)])
-                              }
-                          ]
-                        : [];
+            for (const [indexSheet, dataSheet] of data.entries()) {
+                if (sheets?.[indexSheet] !== null) {
+                    let {type, library, dataLine, mapping, key, linkAttribute, keyTo} = sheets?.[indexSheet] || {};
 
-                const element = {
-                    library,
-                    matches,
-                    data: d
-                        .filter((_, i) => mapping[i])
-                        .map((e, i) => ({
-                            attribute: mapping.filter(m => m !== null)[i],
-                            values: [{value: String(e)}],
-                            action: Action.REPLACE
-                        }))
-                        .filter(e => e.attribute !== 'id'),
-                    links: []
-                };
+                    if (typeof sheets === 'undefined') {
+                        const args = _extractArgs(dataSheet[0][0]);
 
-                // Adding element to JSON file.
-                writeLine(JSON.stringify(element) + (index !== data.length - 1 ? ',' : ''));
+                        type = ImportType[args.type];
+                        library = args.library;
+                        dataLine = Number(args.dataLine);
+                        key = args.key;
+                        mapping = dataSheet[0].map(cell => _extractArgs(cell).id);
+                        // may be undefined if standard import
+                        linkAttribute = args.linkAttribute;
+                        keyTo = args.keyTo;
+
+                        // if type is not specified we ignore this sheet
+                        if (typeof type === 'undefined') {
+                            continue;
+                        }
+
+                        if (
+                            (type === ImportType.LINK &&
+                                (typeof key === 'undefined' ||
+                                    typeof linkAttribute === 'undefined' ||
+                                    typeof keyTo === 'undefined' ||
+                                    !mapping.includes(keyTo))) ||
+                            (typeof key !== 'undefined' && !mapping.includes(key)) ||
+                            typeof library === 'undefined' ||
+                            typeof dataLine === 'undefined' ||
+                            typeof mapping === 'undefined'
+                        ) {
+                            throw new Error(`Sheet n° ${indexSheet}: Missing mapping parameters`);
+                        }
+                    }
+
+                    // Delete all lines before data (names, mapping, etc).
+                    for (let i = 0; i < Number(dataLine) - 1; i++) {
+                        dataSheet.shift();
+                    }
+
+                    for (const [index, line] of dataSheet.entries()) {
+                        let matches = [];
+                        let eData = [];
+                        let eLinks = [];
+
+                        if (key && !!line[mapping.indexOf(key)]) {
+                            matches = [
+                                {
+                                    attribute: key,
+                                    value: String(line[mapping.indexOf(key)])
+                                }
+                            ];
+                        }
+
+                        if (type === ImportType.STANDARD) {
+                            eData = line
+                                .filter((_, i) => mapping[i])
+                                .map((e, i) => ({
+                                    attribute: mapping.filter(m => m)[i],
+                                    values: [{value: String(e)}],
+                                    action: Action.REPLACE
+                                }))
+                                .filter(e => e.attribute !== 'id');
+                        }
+
+                        if (type === ImportType.LINK) {
+                            let keyToValueLibrary: string;
+                            let keyToValue = String(line[mapping.indexOf(keyTo)]);
+
+                            // If linkAttribute is a tree attribute
+                            if (keyToValue.includes('/')) {
+                                [keyToValueLibrary, keyToValue] = keyToValue.split('/');
+                            }
+
+                            eLinks = [
+                                {
+                                    attribute: linkAttribute,
+                                    values: [
+                                        {
+                                            ...(!!keyToValueLibrary && {library: keyToValueLibrary}),
+                                            value: [{attribute: keyTo, value: keyToValue}],
+                                            metadata: Object.assign(
+                                                {},
+                                                ...line
+                                                    .filter(
+                                                        (_, i) =>
+                                                            mapping[i] && mapping[i] !== key && mapping[i] !== keyTo
+                                                    )
+                                                    .map((value, i) => ({
+                                                        [mapping.filter(m => m && m !== key && m !== keyTo)[i]]: value
+                                                    }))
+                                            )
+                                        }
+                                    ],
+                                    action: 'add'
+                                }
+                            ];
+                        }
+
+                        const element = {
+                            library,
+                            matches,
+                            data: eData,
+                            links: eLinks
+                        };
+
+                        // Adding element to JSON file.
+                        writeLine(
+                            JSON.stringify(element) +
+                                (index !== dataSheet.length - 1 || indexSheet !== data.length - 1 ? ',' : '')
+                        );
+                    }
+                }
             }
 
             // End of file.

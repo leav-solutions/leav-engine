@@ -25,6 +25,10 @@
       "description": "Single value object to process, either textual value or list of matches to find an element",
       "type": "object",
       "properties": {
+        "library": {
+          "type": "string",
+          "description": "Library key (only for tree attributes)"
+        },
         "value": {
           "oneOf": [
             {
