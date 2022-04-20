@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InboxOutlined, KeyOutlined, LoadingOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {Checkbox, message, Result, Select, Space, Steps, Table, Typography, Upload} from 'antd';
+import {Checkbox, message, Result, Select, Space, Steps, Table, Typography, Upload, Tabs} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import React, {useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -23,6 +23,7 @@ import {INotification, NotificationChannel, NotificationPriority, NotificationTy
 const {Step} = Steps;
 const {Dragger} = Upload;
 const {Title} = Typography;
+const {TabPane} = Tabs;
 
 export interface IImportModalProps {
     open: boolean;
@@ -45,9 +46,24 @@ const CenteredWrapper = styled.div`
     text-align: center;
 `;
 
+export enum ImportType {
+    STANDARD = 'STANDARD',
+    LINK = 'LINK'
+}
+
+interface ISheet {
+    name: string;
+    data: Array<{[id: string]: string}>;
+    mapping?: Array<string | null>;
+    type?: ImportType;
+    library?: string;
+    key?: string;
+    linkAttribute?: string;
+    keyTo?: string;
+}
+
 export interface IInitialState {
-    data: Array<{[attributeName: string]: any}>;
-    mapping: string[];
+    sheets: ISheet[];
     key: string | null;
     file: File | null;
     keyChecked: boolean;
@@ -56,8 +72,7 @@ export interface IInitialState {
 }
 
 const initialState: IInitialState = {
-    data: [],
-    mapping: [],
+    sheets: [],
     key: null,
     file: null,
     keyChecked: false,
@@ -75,7 +90,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
         };
     };
     const [state, dispatch] = useReducer(importReducer, initialState);
-    const {data, mapping, key, file, keyChecked, currentStep, okBtn} = state;
+    const {sheets, key, file, keyChecked, currentStep, okBtn} = state;
 
     const appDispatch = useAppDispatch();
 
@@ -115,36 +130,83 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
     const _runImport = async () => {
         dispatch({currentStep: ImportSteps.PROCESSING});
 
-        if (file) {
-            await runImport({
-                variables: {
-                    file,
-                    library,
-                    mapping,
-                    key: keyChecked ? key : null
-                }
-            });
-        }
+        // FIXME:
+        // if (file) {
+        //     await runImport({
+        //         variables: {
+        //             file,
+        //             library,
+        //             mapping,
+        //             key: keyChecked ? key : null
+        //         }
+        //     });
+        // }
+    };
+
+    const _extractArgs = (mapping: string): {[arg: string]: string} => {
+        return mapping
+            .split('-')
+            .slice(1)
+            .map(e => e.replace(/\s+/g, ' ').trim().split(' '))
+            .reduce((a, v) => ({...a, [v[0]]: v[1]}), {});
     };
 
     const _setFileData = content => {
         const workbook = XLSX.read(content, {type: 'binary'});
-        let d = [];
 
-        for (const sheet in workbook.Sheets) {
-            if (workbook.Sheets.hasOwnProperty(sheet)) {
+        const s: ISheet[] = [];
+
+        for (const sheetName in workbook.Sheets) {
+            if (workbook.Sheets.hasOwnProperty(sheetName)) {
                 // Use the sheet_to_json method to convert excel to json data
-                d = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
-                break; // because only the first sheet is taken
+                const sheetData: Array<{[id: string]: string}> = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+                const firstRowCells = Object.keys(workbook.Sheets[sheetName]).filter(k => !!k.match(/\b[A-Z]1\b/g)); // match only first line cells (A1, B1, etc.)
+                const isMapped = !!workbook.Sheets[sheetName][firstRowCells[0]].c;
+
+                // Mapping is present.
+                if (isMapped) {
+                    const line1 = [];
+
+                    for (const flc of firstRowCells) {
+                        line1.push(workbook.Sheets[sheetName][flc].c?.[0]?.t?.replace(/\n/g, ' ') || null); // get first line comments and del \n
+                    }
+
+                    console.debug('comments', line1);
+
+                    const sConfig = _extractArgs(line1[0]);
+                    const sType = sConfig.type;
+                    const sLibrary = sConfig.library;
+                    const sKey = sConfig.key;
+                    const sLinkAttribute = sConfig.linkAttribute;
+                    const sKeyTo = sConfig.keyTo;
+                    const sMapping = line1.map(c => (c ? _extractArgs(c).id : null));
+
+                    s.push({
+                        name: sheetName,
+                        type: ImportType[sType],
+                        library: sLibrary,
+                        key: sKey,
+                        linkAttribute: sLinkAttribute,
+                        keyTo: sKeyTo,
+                        data: sheetData.length ? sheetData : null, // FIXME: ?
+                        mapping: sMapping
+                    });
+                } else {
+                    s.push({
+                        name: sheetName,
+                        data: sheetData.length ? sheetData : null // FIXME: ?
+                    });
+                }
             }
         }
 
-        if (!d.length) {
+        if (!s.length || s.every(sheet => sheet.data === null)) {
             message.error(t('import.empty_file'));
             return false;
         }
 
-        dispatch({data: d, mapping: Array(Object.keys(d[0]).length).fill(null)});
+        dispatch({sheets: s});
         return true;
     };
 
@@ -192,20 +254,20 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
             : 'global.close'
     );
 
-    const _onMappingSelect = (idx, id) => {
-        mapping[idx] = id;
-        dispatch({
-            mapping: [...mapping],
-            okBtn: mapping.length === Object.keys(data[0]).length && (!keyChecked || !!key),
-            key: !!key && mapping.includes(key) ? key : null,
-            keyChecked: !!key && mapping.includes(key)
-        });
-    };
+    // const _onMappingSelect = (idx, id) => {
+    //     mapping[idx] = id;
+    //     dispatch({
+    //         mapping: [...mapping],
+    //         okBtn: mapping.length === Object.keys(data[0]).length && (!keyChecked || !!key),
+    //         key: !!key && mapping.includes(key) ? key : null,
+    //         keyChecked: !!key && mapping.includes(key)
+    //     });
+    // };
 
-    const _onClear = idx => {
-        mapping[idx] = null;
-        dispatch({mapping: [...mapping]});
-    };
+    // const _onClear = idx => {
+    //     mapping[idx] = null;
+    //     dispatch({mapping: [...mapping]});
+    // };
 
     return (
         <Modal
@@ -243,88 +305,101 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
                     </Dragger>
                 )}
                 {currentStep === ImportSteps.CONFIG && (
-                    <Space direction="vertical" align="center">
-                        <Table
-                            title={() => <Title level={5}>{t('import.data_overview')}</Title>}
-                            bordered={false}
-                            tableLayout={'fixed'}
-                            columns={Object.keys(data[0]).map((s, i) => ({title: s, dataIndex: s}))}
-                            dataSource={data.slice(0, 3).map((r, i) => ({...r, key: i}))}
-                            size="small"
-                            pagination={{hideOnSinglePage: true}}
-                        />
-                        <Table
-                            title={() => <Title level={5}>{t('import.mapping')}</Title>}
-                            tableLayout={'fixed'}
-                            bordered={false}
-                            columns={Object.keys(data[0]).map(s => ({title: s, dataIndex: s}))}
-                            dataSource={[
-                                Object.assign(
-                                    {key: 'mapping_attributes'},
-                                    ...Object.keys(data[0]).map((col, idx) => ({
-                                        [col]: (
+                    <Tabs type="card">
+                        {sheets.map((sheet, sheetIndex) => {
+                            return (
+                                <TabPane tab={sheet.name} key={sheetIndex}>
+                                    <Space direction="vertical" align="center">
+                                        <Table
+                                            title={() => <Title level={5}>{t('import.data_overview')}</Title>}
+                                            bordered={false}
+                                            tableLayout={'fixed'}
+                                            columns={Object.keys(sheet.data[0]).map((m, i) => ({
+                                                title: m,
+                                                dataIndex: i
+                                            }))}
+                                            dataSource={sheet.data.slice(0, 3).map((r, i) => ({...r, key: i}))}
+                                            size="small"
+                                            pagination={{hideOnSinglePage: true}}
+                                        />
+                                        {/* <Table
+                                            title={() => <Title level={5}>{t('import.mapping')}</Title>}
+                                            tableLayout={'fixed'}
+                                            bordered={false}
+                                            columns={Object.keys(data[0]).map(s => ({title: s, dataIndex: s}))}
+                                            dataSource={[
+                                                Object.assign(
+                                                    {key: 'mapping_attributes'},
+                                                    ...Object.keys(data[0]).map((col, idx) => ({
+                                                        [col]: (
+                                                            <Select
+                                                                style={{width: '100%'}}
+                                                                placeholder={t('import.attribute_selection')}
+                                                                value={mapping[idx]}
+                                                                allowClear
+                                                                onClear={() => _onClear(idx)}
+                                                                onSelect={id => _onMappingSelect(idx, id)}
+                                                            >
+                                                                {attributes.map(a => (
+                                                                    <Select.Option key={a.id} value={a.id}>
+                                                                        {a.label || a.id}
+                                                                    </Select.Option>
+                                                                ))}
+                                                            </Select>
+                                                        )
+                                                    }))
+                                                )
+                                            ]}
+                                            size="small"
+                                            pagination={{hideOnSinglePage: true}}
+                                        />
+                                        <Space direction="vertical" align="center">
+                                            <Space direction="horizontal" align="baseline">
+                                                <Checkbox
+                                                    defaultChecked={keyChecked}
+                                                    checked={keyChecked}
+                                                    onChange={e =>
+                                                        dispatch({
+                                                            keyChecked: e.target.checked,
+                                                            okBtn:
+                                                                mapping.length === Object.keys(data[0]).length &&
+                                                                (!e.target.checked || !!key)
+                                                        })
+                                                    }
+                                                />
+                                                <Title level={5}>
+                                                    {t('import.key')} <KeyOutlined />
+                                                </Title>
+                                            </Space>
                                             <Select
-                                                style={{width: '100%'}}
-                                                placeholder={t('import.attribute_selection')}
-                                                value={mapping[idx]}
-                                                allowClear
-                                                onClear={() => _onClear(idx)}
-                                                onSelect={id => _onMappingSelect(idx, id)}
+                                                disabled={!keyChecked}
+                                                placeholder={'Select a key'}
+                                                value={!!key ? key : undefined}
+                                                onSelect={k =>
+                                                    dispatch({
+                                                        key: k,
+                                                        okBtn:
+                                                            mapping.length === Object.keys(data[0]).length &&
+                                                            (!keyChecked || !!k)
+                                                    })
+                                                }
                                             >
-                                                {attributes.map(a => (
-                                                    <Select.Option key={a.id} value={a.id}>
-                                                        {a.label || a.id}
-                                                    </Select.Option>
-                                                ))}
+                                                {attributes
+                                                    .filter(a => mapping.includes(a.id))
+                                                    .map(a => {
+                                                        return (
+                                                            <Select.Option key={a.id} value={a.id}>
+                                                                {a.label || a.id}
+                                                            </Select.Option>
+                                                        );
+                                                    })}
                                             </Select>
-                                        )
-                                    }))
-                                )
-                            ]}
-                            size="small"
-                            pagination={{hideOnSinglePage: true}}
-                        />
-                        <Space direction="vertical" align="center">
-                            <Space direction="horizontal" align="baseline">
-                                <Checkbox
-                                    defaultChecked={keyChecked}
-                                    checked={keyChecked}
-                                    onChange={e =>
-                                        dispatch({
-                                            keyChecked: e.target.checked,
-                                            okBtn:
-                                                mapping.length === Object.keys(data[0]).length &&
-                                                (!e.target.checked || !!key)
-                                        })
-                                    }
-                                />
-                                <Title level={5}>
-                                    {t('import.key')} <KeyOutlined />
-                                </Title>
-                            </Space>
-                            <Select
-                                disabled={!keyChecked}
-                                placeholder={'Select a key'}
-                                value={!!key ? key : undefined}
-                                onSelect={k =>
-                                    dispatch({
-                                        key: k,
-                                        okBtn: mapping.length === Object.keys(data[0]).length && (!keyChecked || !!k)
-                                    })
-                                }
-                            >
-                                {attributes
-                                    .filter(a => mapping.includes(a.id))
-                                    .map(a => {
-                                        return (
-                                            <Select.Option key={a.id} value={a.id}>
-                                                {a.label || a.id}
-                                            </Select.Option>
-                                        );
-                                    })}
-                            </Select>
-                        </Space>
-                    </Space>
+                                        </Space> */}
+                                    </Space>
+                                </TabPane>
+                            );
+                        })}
+                    </Tabs>
                 )}
                 {currentStep === ImportSteps.PROCESSING && (
                     <CenteredWrapper data-test-id="processing">{t('global.processing') + '...'}</CenteredWrapper>

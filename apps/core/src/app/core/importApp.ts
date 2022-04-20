@@ -30,7 +30,6 @@ interface IImportExcelParams {
     sheets?: Array<{
         type: ImportType;
         library: string;
-        dataLine: number;
         mapping: Array<string | null>;
         key?: string; // or attributeId on sheet of links
         linkAttribute?: string;
@@ -98,7 +97,6 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                     input SheetInput {
                         type: ImportType!
                         library: String!,
-                        dataLine: Int!,
                         mapping: [String],
                         key: String,
                         linkAttribute: String,

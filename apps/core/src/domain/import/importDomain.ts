@@ -30,7 +30,6 @@ export interface IImportExcelParams {
     sheets?: Array<{
         type: ImportType;
         library: string;
-        dataLine: number;
         mapping: Array<string | null>;
         key?: string; // or attributeId on sheet of links
         linkAttribute?: string;
@@ -498,16 +497,23 @@ export default function ({
 
             for (const [indexSheet, dataSheet] of data.entries()) {
                 if (sheets?.[indexSheet] !== null) {
-                    let {type, library, dataLine, mapping, key, linkAttribute, keyTo} = sheets?.[indexSheet] || {};
+                    let {type, library, mapping, key, linkAttribute, keyTo} = sheets?.[indexSheet] || {};
 
                     if (typeof sheets === 'undefined') {
-                        const args = _extractArgs(dataSheet[0][0]);
+                        const comments = [];
+                        workbook.worksheets[indexSheet]
+                            .getRow(1)
+                            .eachCell(c =>
+                                comments.push((c.note as ExcelJS.Comment)?.texts?.[0].text?.replace(/\n/g, ' '))
+                            );
+
+                        const args = _extractArgs(comments[0]);
 
                         type = ImportType[args.type];
                         library = args.library;
-                        dataLine = Number(args.dataLine);
                         key = args.key;
-                        mapping = dataSheet[0].map(cell => _extractArgs(cell).id);
+                        mapping = comments.map(comm => _extractArgs(comm).id || null);
+
                         // may be undefined if standard import
                         linkAttribute = args.linkAttribute;
                         keyTo = args.keyTo;
@@ -525,17 +531,14 @@ export default function ({
                                     !mapping.includes(keyTo))) ||
                             (typeof key !== 'undefined' && !mapping.includes(key)) ||
                             typeof library === 'undefined' ||
-                            typeof dataLine === 'undefined' ||
                             typeof mapping === 'undefined'
                         ) {
                             throw new Error(`Sheet n° ${indexSheet}: Missing mapping parameters`);
                         }
                     }
 
-                    // Delete all lines before data (names, mapping, etc).
-                    for (let i = 0; i < Number(dataLine) - 1; i++) {
-                        dataSheet.shift();
-                    }
+                    // Delete columns' name line.
+                    dataSheet.shift();
 
                     for (const [index, line] of dataSheet.entries()) {
                         let matches = [];
