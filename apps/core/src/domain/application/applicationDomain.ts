@@ -4,9 +4,8 @@
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
 import {IUtils} from 'utils/utils';
-import {IApplication} from '_types/application';
+import {IApplication, IGetCoreApplicationsParams} from '_types/application';
 import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
@@ -20,7 +19,7 @@ export interface IApplicationDomain {
     /**
      * Get applications list, filtered or not
      */
-    getApplications(params: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IApplication>>;
+    getApplications(params: {params?: IGetCoreApplicationsParams; ctx: IQueryInfos}): Promise<IList<IApplication>>;
 
     /**
      * Save application.
@@ -36,7 +35,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.infra.application': applicationRepo = null,
     'core.utils': utils = null

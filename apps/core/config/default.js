@@ -92,5 +92,8 @@ module.exports = {
     },
     preview: {
         directory: process.env.PREVIEWS_DIRECTORY || '/results'
+    },
+    applications: {
+        rootFolder: process.env.APPLICATIONS_FOLDER || 'applications'
     }
 };

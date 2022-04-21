@@ -1,17 +1,21 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {appRootPath} from '@leav/app-root-path/src';
 import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
 import {ApolloServer, AuthenticationError} from 'apollo-server-express';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import {IApplicationDomain} from 'domain/application/applicationDomain';
 import express, {NextFunction, Request, Response} from 'express';
 import {execute, GraphQLFormattedError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
+import * as path from 'path';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {IConfig} from '_types/config';
+import {IRequestWithContext} from '_types/express';
 import {IQueryInfos} from '_types/queryInfos';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 
@@ -23,14 +27,16 @@ interface IDeps {
     config?: IConfig;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.auth'?: IAuthApp;
+    'core.domain.application'?: IApplicationDomain;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
+    'core.domain.application': applicationDomain = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null
 }: IDeps = {}): IServer {
@@ -105,11 +111,6 @@ export default function ({
                     // TODO: temporary disabled, we have to send token with explorer
                     // authApp.checkToken,
                     express.static(config.preview.directory)
-                );
-                app.use(
-                    `${config.export.directory}`,
-                    // authApp.checkToken, // FIXME: enable auth?
-                    express.static(config.export.directory)
                 );
 
                 // Handling errors
@@ -189,8 +190,84 @@ export default function ({
 
                 await server.start();
 
+                const rootPath = appRootPath();
+
                 server.applyMiddleware({app, path: '/graphql', cors: true});
 
+                // Handle all other routes => serve applications
+                app.get(
+                    ['/:endpoint', '/:endpoint/*'],
+                    async (req: IRequestWithContext, res, next) => {
+                        const endpoint = req.params.endpoint;
+                        if (endpoint === 'login') {
+                            return next();
+                        }
+
+                        try {
+                            const payload = await authApp.validateToken(req.headers.authorization);
+
+                            const ctx: IQueryInfos = {
+                                userId: payload.userId,
+                                lang: (req.query.lang as string) ?? config.lang.default,
+                                queryId: req.body.requestId || uuidv4(),
+                                groupsId: []
+                            };
+
+                            req.ctx = ctx;
+                            next();
+                        } catch {
+                            res.redirect(`/login?dest=/${endpoint}/`);
+                        }
+                    },
+                    async (req: IRequestWithContext, res, next) => {
+                        try {
+                            // Get available applications
+                            const {endpoint} = req.params;
+                            let applicationId;
+
+                            if (endpoint === 'login') {
+                                applicationId = 'login';
+                            } else {
+                                const applications = await applicationDomain.getApplications({
+                                    params: {
+                                        filters: {
+                                            endpoint
+                                        }
+                                    },
+                                    ctx: req.ctx
+                                });
+
+                                if (!applications.list.length) {
+                                    throw new Error('No matching application');
+                                }
+
+                                const requestApplication = applications.list[0];
+                                applicationId = requestApplication.id;
+                            }
+
+                            const appFolder = path.resolve(rootPath, config.applications.rootFolder, applicationId);
+
+                            // Request will be handled by express as if it was a regular request to the app folder itself
+                            // Thus, we remove the app endpoint from URL.
+                            // We don't need the query params to render static files.
+                            // Hence, affect path only (=url without query params) to url
+                            const newPath = req.path.replace(new RegExp(`^\/${endpoint}`), '') || '/';
+                            req.url = newPath;
+                            express.static(appFolder, {
+                                extensions: ['html']
+                            })(req, res, next);
+                        } catch (err) {
+                            next(err);
+                        }
+                    },
+                    async (err, req, res, next) => {
+                        console.error({err});
+                        res.status(err.statusCode ?? 500).json({
+                            status: false,
+                            error: err.message
+                        });
+                    }
+                );
                 await new Promise<void>(resolve => app.listen(config.server.port, resolve));
                 logger.info(`🚀 Server ready at http://localhost:${config.server.port}${server.graphqlPath}`);
             } catch (e) {

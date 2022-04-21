@@ -25,6 +25,7 @@ export interface IConfig {
     import: IImport;
     plugins: IKeyValue<IKeyValue<any>>;
     preview: IPreview;
+    applications: IApplicationsConfig;
 }
 
 export interface IServer {
@@ -121,4 +122,8 @@ export interface IDiskCache {
 
 export interface IPreview {
     directory: string;
+}
+
+export interface IApplicationsConfig {
+    rootFolder: string;
 }

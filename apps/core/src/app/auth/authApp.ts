@@ -4,13 +4,13 @@
 import * as bcrypt from 'bcryptjs';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {Express, NextFunction, Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import * as winston from 'winston';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
-import {Express, Response, Request, NextFunction} from 'express';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -27,7 +27,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.app.graphql': graphqlApp = null,
@@ -129,6 +129,12 @@ export default function ({
                                 expiresIn: config.auth.tokenExpiration
                             }
                         );
+
+                        res.cookie('accessToken', token, {
+                            httpOnly: true,
+                            sameSite: 'none',
+                            domain: new URL(req.get('origin')).host
+                        });
 
                         return res.status(200).json({
                             token
