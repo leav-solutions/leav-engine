@@ -1,0 +1,19 @@
+{
+    "login": {
+        "header": "Identification",
+        "login": "Identifiant",
+        "password": "Mot de passe",
+        "submit": "Valider",
+        "apologize_header": "Nous sommes désolés,",
+        "apologize": "nous ne pouvons vous authentifier :"
+    },
+    "error": {
+        "bad_credentials": "Identifiant ou mot de passe incorrect",
+        "no_server_response": "Le serveur ne répond pas",
+        "session_expired": "Votre session a expiré."
+    },
+    "loading": {
+        "header": "Juste un instant,",
+        "text": "Nous sommes en train de vous identifier..."
+    }
+}

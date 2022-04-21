@@ -12,6 +12,7 @@ x-arango-image: &arango_image "arangodb:3.7"
 x-dir-core: &dir-core /app/apps/core
 x-dir-admin: &dir-admin /app/apps/admin-app
 x-dir-explorer: &dir-explorer /app/apps/explorer
+x-dir-login: &dir-login /app/apps/login
 x-dir-automate_scan: &dir-automate_scan /app/apps/automate-scan
 x-dir-preview_generator: &dir-preview_generator /app/apps/preview-generator
 x-dir-sync_scan: &dir-sync_scan /app/apps/sync-scan
@@ -21,6 +22,7 @@ x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_mo
 x-volume-core-modules: &volume-core-modules node_modules_core:/app/apps/core/node_modules
 x-volume-admin-modules: &volume-admin-modules node_modules_admin-app:/app/apps/admin-app/node_modules
 x-volume-explorer-modules: &volume-explorer-modules node_modules_explorer:/app/apps/explorer/node_modules
+x-volume-login-modules: &volume-login-modules node_modules_login:/app/apps/login/node_modules
 x-volume-preview_generator-modules: &volume-preview_generator-modules node_modules_preview-generator:/app/apps/preview-generator/node_modules
 x-volume-automate_scan-modules: &volume-automate_scan-modules node_modules_automate-scan:/app/apps/automate-scan/node_modules
 x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/app/apps/sync-scan/node_modules
@@ -96,6 +98,9 @@ x-env-admin-app: &env-admin-app
 x-env-explorer: &env-explorer
   APP_ROOT_PATH: *dir-explorer
 
+x-env-login: &env-login
+  APP_ROOT_PATH: *dir-login
+
 x-env-preview-generator: &env-preview-generator
   NODE_ENV: development
   INPUT_ROOT_PATH: /files
@@ -132,6 +137,7 @@ services:
       - *volume-core-modules
       - *volume-admin-modules
       - *volume-explorer-modules
+      - *volume-login-modules
       - *volume-preview_generator-modules
       - *volume-automate_scan-modules
       - *volume-sync_scan-modules
@@ -209,6 +215,30 @@ services:
       - *volume-shared-modules
       - *volume-explorer-modules
     working_dir: *dir-explorer
+    command: [
+        sh,
+        -c,
+        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start"
+      ]
+
+  login:
+    image: *node_image
+    stdin_open: true
+    labels:
+      - traefik.enable=true
+      - traefik.backend=login
+      - traefik.port=3000
+      - traefik.frontend.rule=Host:login.leav.localhost
+    environment:
+      <<: *env-react
+      <<: *env-login
+    volumes:
+      - *mount_point-repo
+      - *mount_point-scripts
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-login-modules
+    working_dir: *dir-login
     command: [
         sh,
         -c,
@@ -403,6 +433,8 @@ volumes:
   node_modules_admin-app:
     driver: local
   node_modules_explorer:
+    driver: local
+  node_modules_login:
     driver: local
   node_modules_preview-generator:
     driver: local
