@@ -4287,6 +4287,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/react@npm:13.1.1":
+  version: 13.1.1
+  resolution: "@testing-library/react@npm:13.1.1"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    "@testing-library/dom": ^8.5.0
+    "@types/react-dom": ^18.0.0
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 9a0043be5623630936e6badcd87bcbed14d6d6c64c2b16413b66de90c36670bbd6766b7fc6c09cfc67aa6c1c49d8123ed97d3897c4103836c77de40349b187c6
+  languageName: node
+  linkType: hard
+
 "@testing-library/user-event@npm:13.0.4":
   version: 13.0.4
   resolution: "@testing-library/user-event@npm:13.0.4"
@@ -5155,6 +5169,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 5261c5aeaa86a39a9bcf5997a391c9fb38a00dc4cb64fb025dfc2ec7664ce17621f8f5e79f612734ad7948972b86b096113edff64ecd5b4090d68c773f399239
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:18.0.1":
+  version: 18.0.1
+  resolution: "@types/react-dom@npm:18.0.1"
+  dependencies:
+    "@types/react": "*"
+  checksum: 6c183e2e50240b77ed767cd968fe061ef4f2b47f84da5ec9e412a767d68c9a004d1f6ccca4295a5aa2c3ee723377e59006a2031f3767c00d8ac9e240a51bb142
   languageName: node
   linkType: hard
 
@@ -7713,6 +7736,53 @@ __metadata:
   languageName: node
   linkType: hard
 
+"apollo@npm:2.33.10, apollo@npm:^2.32.1":
+  version: 2.33.10
+  resolution: "apollo@npm:2.33.10"
+  dependencies:
+    "@apollographql/apollo-tools": ^0.5.3
+    "@oclif/command": 1.8.16
+    "@oclif/config": 1.18.3
+    "@oclif/errors": 1.3.5
+    "@oclif/plugin-autocomplete": 0.3.0
+    "@oclif/plugin-help": 3.3.1
+    "@oclif/plugin-not-found": 1.2.6
+    "@oclif/plugin-plugins": 1.10.11
+    "@oclif/plugin-warn-if-update-available": 1.7.3
+    apollo-codegen-core: ^0.40.8
+    apollo-codegen-flow: ^0.38.8
+    apollo-codegen-scala: ^0.39.8
+    apollo-codegen-swift: ^0.40.8
+    apollo-codegen-typescript: ^0.40.8
+    apollo-env: ^0.10.1
+    apollo-graphql: ^0.9.6
+    apollo-language-server: ^1.26.8
+    chalk: 2.4.2
+    cli-ux: 5.6.7
+    env-ci: 5.5.0
+    gaze: 1.1.3
+    git-parse: 1.0.5
+    git-rev-sync: 3.0.1
+    git-url-parse: 11.5.0
+    glob: 7.2.0
+    global-agent: 2.2.0
+    graphql: 14.0.2 - 14.2.0 || ^14.3.1 || ^15.0.0
+    graphql-tag: 2.12.4
+    listr: 0.14.3
+    lodash.identity: 3.0.0
+    lodash.pickby: 4.6.0
+    mkdirp: 1.0.4
+    moment: 2.29.1
+    strip-ansi: 5.2.0
+    table: 6.8.0
+    tty: 1.0.1
+    vscode-uri: 1.0.6
+  bin:
+    apollo: bin/run
+  checksum: 1cd0803c1329032b9e8c3bd4fefe7065bae67cc65226f3803770ce25f363beae7504332afad60bdb1f82518c130cee84bcdf253f58cb7c5bdb2e1bec077069fa
+  languageName: node
+  linkType: hard
+
 "apollo@npm:2.33.9":
   version: 2.33.9
   resolution: "apollo@npm:2.33.9"
@@ -7757,53 +7827,6 @@ __metadata:
   bin:
     apollo: bin/run
   checksum: 8fdabb746d41fc293d599a0456e91d18de23ad70fdb47754fa61784ae594d9741086125ab3e6de0fd7ff03cf980f74c47f46664a3e9051d53e8ee0db197b18d5
-  languageName: node
-  linkType: hard
-
-"apollo@npm:^2.32.1":
-  version: 2.33.10
-  resolution: "apollo@npm:2.33.10"
-  dependencies:
-    "@apollographql/apollo-tools": ^0.5.3
-    "@oclif/command": 1.8.16
-    "@oclif/config": 1.18.3
-    "@oclif/errors": 1.3.5
-    "@oclif/plugin-autocomplete": 0.3.0
-    "@oclif/plugin-help": 3.3.1
-    "@oclif/plugin-not-found": 1.2.6
-    "@oclif/plugin-plugins": 1.10.11
-    "@oclif/plugin-warn-if-update-available": 1.7.3
-    apollo-codegen-core: ^0.40.8
-    apollo-codegen-flow: ^0.38.8
-    apollo-codegen-scala: ^0.39.8
-    apollo-codegen-swift: ^0.40.8
-    apollo-codegen-typescript: ^0.40.8
-    apollo-env: ^0.10.1
-    apollo-graphql: ^0.9.6
-    apollo-language-server: ^1.26.8
-    chalk: 2.4.2
-    cli-ux: 5.6.7
-    env-ci: 5.5.0
-    gaze: 1.1.3
-    git-parse: 1.0.5
-    git-rev-sync: 3.0.1
-    git-url-parse: 11.5.0
-    glob: 7.2.0
-    global-agent: 2.2.0
-    graphql: 14.0.2 - 14.2.0 || ^14.3.1 || ^15.0.0
-    graphql-tag: 2.12.4
-    listr: 0.14.3
-    lodash.identity: 3.0.0
-    lodash.pickby: 4.6.0
-    mkdirp: 1.0.4
-    moment: 2.29.1
-    strip-ansi: 5.2.0
-    table: 6.8.0
-    tty: 1.0.1
-    vscode-uri: 1.0.6
-  bin:
-    apollo: bin/run
-  checksum: 1cd0803c1329032b9e8c3bd4fefe7065bae67cc65226f3803770ce25f363beae7504332afad60bdb1f82518c130cee84bcdf253f58cb7c5bdb2e1bec077069fa
   languageName: node
   linkType: hard
 
@@ -10938,6 +10961,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cookie-parser@npm:1.4.6":
+  version: 1.4.6
+  resolution: "cookie-parser@npm:1.4.6"
+  dependencies:
+    cookie: 0.4.1
+    cookie-signature: 1.0.6
+  checksum: 1e5a63aa82e8eb4e02d2977c6902983dee87b02e87ec5ec43ac3cb1e72da354003716570cd5190c0ad9e8a454c9d3237f4ad6e2f16d0902205a96a1c72b77ba5
+  languageName: node
+  linkType: hard
+
 "cookie-signature@npm:1.0.6":
   version: 1.0.6
   resolution: "cookie-signature@npm:1.0.6"
@@ -11095,6 +11128,7 @@ __metadata:
     bcryptjs: ^2.4.3
     cacache: 15.3.0
     commander: ^2.20.0
+    cookie-parser: 1.4.6
     deep-extend: ^0.5.1
     exceljs: 4.2.0
     express: 4.17.2
@@ -24248,6 +24282,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"portal@workspace:apps/portal":
+  version: 0.0.0-use.local
+  resolution: "portal@workspace:apps/portal"
+  dependencies:
+    "@apollo/client": 3.5.10
+    "@testing-library/jest-dom": 5.16.4
+    "@testing-library/react": 13.1.1
+    "@testing-library/user-event": 13.5.0
+    "@types/jest": 27.4.1
+    "@types/node": 16.11.27
+    "@types/react": 18.0.5
+    "@types/react-dom": 18.0.1
+    antd: 4.19.5
+    apollo: 2.33.10
+    i18next: 21.6.16
+    react: 18.0.0
+    react-dom: 18.0.0
+    react-i18next: 11.16.7
+    react-scripts: 5.0.1
+    styled-components: 5.3.5
+    typescript: 4.6.3
+    web-vitals: 2.1.4
+  peerDependencies:
+    react: ^17.0.0
+    react-dom: ^17.0.0
+    styled-components: ^5.0.0
+  languageName: unknown
+  linkType: soft
+
 "portfinder@npm:^1.0.26, portfinder@npm:^1.0.28":
   version: 1.0.28
   resolution: "portfinder@npm:1.0.28"
@@ -27295,6 +27358,25 @@ __metadata:
     react-native:
       optional: true
   checksum: ed9701036b4e0f446db0381d27162c82418e2244117f6a52b91c7603c6b5e9cb68434a7f625b4cf7287a7650b999916473dcbdf6ab7fc5dedbeaddc2fd03fc3c
+  languageName: node
+  linkType: hard
+
+"react-i18next@npm:11.16.7":
+  version: 11.16.7
+  resolution: "react-i18next@npm:11.16.7"
+  dependencies:
+    "@babel/runtime": ^7.14.5
+    html-escaper: ^2.0.2
+    html-parse-stringify: ^3.0.1
+  peerDependencies:
+    i18next: ">= 19.0.0"
+    react: ">= 16.8.0"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 666594e20dcff000294e904b6ea36f4e5fa2d3b7cebf8c78f04ec3b96ff52d9ad2931adb0d6865ccbd870cc8a782f76a77dfc134653647c8fd73c4217a65e0e6
   languageName: node
   linkType: hard
 
@@ -31960,6 +32042,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:4.6.3":
+  version: 4.6.3
+  resolution: "typescript@npm:4.6.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 255bb26c8cb846ca689dd1c3a56587af4f69055907aa2c154796ea28ee0dea871535b1c78f85a6212c77f2657843a269c3a742d09d81495b97b914bf7920415b
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^3.6.4, typescript@npm:^3.8.3, typescript@npm:^3.9.7":
   version: 3.9.10
   resolution: "typescript@npm:3.9.10"
@@ -32007,6 +32099,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: fde897357ff6bb729323dc6d58753193d0d8e3d90ea66081f9a4eb798e1056a3a47a49c666a7bccdf93e37780ed0913b78de83a766c6da85b73bad3ed34470d0
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@4.6.3#~builtin<compat/typescript>":
+  version: 4.6.3
+  resolution: "typescript@patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: fe6bdc1afb2f145ddb7b0a3a31f96352209f6a5704d97f038414ea22ff9d8dd42f32cfb6652e30458d7d958d2d4e85de2df11c574899c6f750a6b3c0e90a3a76
   languageName: node
   linkType: hard
 

@@ -1,0 +1,14 @@
+{
+    "header_title": "LEAV Engine",
+    "search_placeholder": "Rechercher...",
+    "userdata_error": "Impossible de récupérer les données de l'utilisateur",
+    "logout": "Déconnexion",
+    "choose_lang": "Langue",
+    "favorites": "Mes applis favorites",
+    "other_applications": "Autres applis",
+    "consulted_apps": "Dernières applis consultées",
+    "error": {
+        "network_error_occurred": "Une erreur réseau est survenue",
+        "error_occurred": "Une erreur est survenue"
+    }
+}

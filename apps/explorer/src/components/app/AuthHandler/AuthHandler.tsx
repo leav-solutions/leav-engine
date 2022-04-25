@@ -33,19 +33,19 @@ function AuthHandler({url}: IAuthHandlerProps): JSX.Element {
         return <Login onSuccess={recordToken} message={internalMessage} url={url} />;
     };
 
-    if (token) {
-        return (
-            <Suspense fallback={'Loader'}>
-                <App token={token} onTokenInvalid={deleteToken} />
-            </Suspense>
-        );
-    } else {
-        return (
-            <Suspense fallback={'Loader'}>
-                <Login onSuccess={recordToken} message={internalMessage} url={url} />
-            </Suspense>
-        );
-    }
+    // if (token) {
+    return (
+        <Suspense fallback={'Loader'}>
+            <App token={token} onTokenInvalid={deleteToken} />
+        </Suspense>
+    );
+    // } else {
+    //     return (
+    //         <Suspense fallback={'Loader'}>
+    //             <Login onSuccess={recordToken} message={internalMessage} url={url} />
+    //         </Suspense>
+    //     );
+    // }
 }
 
 export default AuthHandler;

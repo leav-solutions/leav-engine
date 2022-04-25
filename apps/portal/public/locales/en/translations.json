@@ -1,0 +1,14 @@
+{
+    "header_title": "LEAV Engine",
+    "search_placeholder": "Search...",
+    "userdata_error": "Could not retrieve user data",
+    "logout": "Logout",
+    "choose_lang": "Language",
+    "favorites": "My favorite apps",
+    "other_applications": "Other apps",
+    "consulted_apps": "Last consulted apps",
+    "error": {
+        "network_error_occurred": "Network error occurred",
+        "error_occured": "Error occurred"
+    }
+}
