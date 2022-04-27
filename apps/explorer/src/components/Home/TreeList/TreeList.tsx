@@ -5,6 +5,7 @@ import {ShareAltOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {PageHeader, Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
+import {useApplicationContext} from 'context/ApplicationContext';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -14,7 +15,7 @@ import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
-import {getTreeLink, localizedTranslation} from 'utils';
+import {getTreeLink, isTreeInApp, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import {IBaseNotification, NotificationType} from '../../../_types/types';
@@ -33,6 +34,7 @@ interface IListItem {
 function TreeList(): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
+    const currentApp = useApplicationContext();
 
     const dispatch = useAppDispatch();
 
@@ -61,6 +63,7 @@ function TreeList(): JSX.Element {
     const favoriteIds = userDataQuery.data?.userData?.data[FAVORITE_TREES_KEY] ?? [];
 
     const list: IListItem[] = treeList
+        .filter(tree => isTreeInApp(currentApp, tree.id))
         .map(tree => ({
             key: tree.id,
             id: tree.id,

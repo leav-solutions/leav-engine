@@ -8,6 +8,7 @@ import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {IApplicationDomain} from 'domain/application/applicationDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import express, {Express} from 'express';
 import {GraphQLResolveInfo} from 'graphql';
 import path from 'path';
@@ -20,6 +21,7 @@ import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
+import {ITree} from '_types/tree';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 
 export interface IApplicationApp {
@@ -33,6 +35,7 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
+    'core.domain.tree'?: ITreeDomain;
     config?: any;
 }
 
@@ -42,6 +45,7 @@ export default function({
     'core.domain.application': applicationDomain = null,
     'core.domain.permission': permissionDomain = null,
     'core.domain.library': libraryDomain,
+    'core.domain.tree': treeDomain,
     config = null
 }: IDeps = {}): IApplicationApp {
     return {
@@ -60,6 +64,7 @@ export default function({
                     label(lang: [AvailableLanguage!]): SystemTranslation,
                     description: SystemTranslation
                     libraries: [Library!]!
+                    trees: [Tree!]!
                     color: String,
                     icon: String,
                     component: String,
@@ -71,7 +76,8 @@ export default function({
                     id: ID!
                     label: SystemTranslation,
                     description: SystemTranslationOptional,
-                    libraries: [String],
+                    libraries: [String!],
+                    trees: [String!],
                     color: String,
                     icon: String,
                     component: String,
@@ -145,6 +151,9 @@ export default function({
                     Application: {
                         async libraries(parent: IApplication, _, ctx: IQueryInfos): Promise<ILibrary[]> {
                             return Promise.all(parent.libraries.map(l => libraryDomain.getLibraryProperties(l, ctx)));
+                        },
+                        async trees(parent: IApplication, _, ctx: IQueryInfos): Promise<ITree[]> {
+                            return Promise.all(parent.trees.map(t => treeDomain.getTreeProperties(t, ctx)));
                         },
                         permissions: (
                             appData: IApplication,

@@ -187,12 +187,13 @@ services:
       - traefik.enable=true
       - traefik.backend=admin-app
       - traefik.port=3000
-      - traefik.app.frontend.rule=Host:core.leav.localhost;PathPrefix:/admin
+      - traefik.app.frontend.rule=Host:core.leav.localhost;Path:/admin,/admin/{route:.*}
       - traefik.ws.frontend.rule=Host:admin.leav.localhost
     environment:
       <<: *env-react
       <<: *env-admin-app
       PUBLIC_URL: http://core.leav.localhost/admin
+      REACT_APP_APPLICATION_ID: admin
       WDS_SOCKET_HOST: admin.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:
@@ -215,11 +216,13 @@ services:
       - traefik.enable=true
       - traefik.backend=explorer
       - traefik.port=3000
-      - traefik.app.frontend.rule=Host:core.leav.localhost;PathPrefix:/explorer
+      - traefik.app.frontend.rule=Host:core.leav.localhost;Path:/explorer,/explorer/{route:.*}
       - traefik.ws.frontend.rule=Host:explorer.leav.localhost
     environment:
       <<: *env-react
       <<: *env-explorer
+      REACT_APP_ENDPOINT: /explorer
+      REACT_APP_APPLICATION_ID: explorer
       PUBLIC_URL: http://core.leav.localhost/explorer
       WDS_SOCKET_HOST: explorer.leav.localhost
       WDS_SOCKET_PORT: 80

@@ -4,8 +4,11 @@
 import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import ApplicationContext from 'context/ApplicationContext';
 import React, {PropsWithChildren, ReactElement} from 'react';
 import {RootState} from 'redux/store';
+import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 
@@ -13,6 +16,7 @@ interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];
     storeState?: Partial<RootState>;
     cacheSettings?: InMemoryCacheConfig;
+    currentApp?: GET_APPLICATION_BY_ID_applications_list;
     [key: string]: any;
 }
 
@@ -22,10 +26,20 @@ interface IProvidersProps {
     cacheSettings?: InMemoryCacheConfig;
 }
 
-const Providers = ({children, apolloMocks, storeState, cacheSettings}: PropsWithChildren<IProvidersProps>) => {
+const Providers = ({
+    children,
+    apolloMocks,
+    storeState,
+    cacheSettings,
+    currentApp
+}: PropsWithChildren<IProvidersProps>) => {
     return (
         <MockedProviderWithFragments mocks={apolloMocks} cacheSettings={cacheSettings}>
-            <MockStore state={storeState}>{children ?? <></>}</MockStore>
+            <MockStore state={storeState}>
+                <ApplicationContext.Provider value={currentApp ?? mockApplicationDetails}>
+                    {children ?? <></>}
+                </ApplicationContext.Provider>
+            </MockStore>
         </MockedProviderWithFragments>
     );
 };

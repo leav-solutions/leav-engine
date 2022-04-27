@@ -21,26 +21,27 @@ import {useAppDispatch} from 'redux/store';
 import {INotification, NotificationChannel, NotificationType} from '_types/types';
 
 interface IApolloHandlerProps {
-    token: string;
-    onTokenInvalid: (message?: string) => void;
     children: ReactNode;
 }
 
-export const UNAUTHORIZED = 'Unauthorized';
+export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
-function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): JSX.Element {
+const _redirectToLogin = () =>
+    window.location.replace(`${process.env.REACT_APP_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+
+function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
 
-    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(process.env.REACT_APP_API_URL, token);
+    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(process.env.REACT_APP_API_URL);
 
     if (loading) {
         return <Spin />;
     }
 
     if (error) {
-        if (error.includes(UNAUTHORIZED)) {
-            onTokenInvalid();
+        if (error.includes(UNAUTHENTICATED)) {
+            _redirectToLogin();
             return <></>;
         }
 
@@ -49,6 +50,13 @@ function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): 
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
     const _handleApolloError = onError(({graphQLErrors, networkError}) => {
+        if (
+            (networkError as ServerError)?.statusCode === 401 ||
+            (graphQLErrors ?? []).some(err => err.extensions.code === 'UNAUTHENTICATED')
+        ) {
+            _redirectToLogin();
+        }
+
         if (graphQLErrors) {
             graphQLErrors.map(({message, locations, path, extensions}) => {
                 const errorContent = t('error.graphql_error_occurred', {
@@ -85,10 +93,6 @@ function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): 
         }
 
         if (networkError) {
-            if ((networkError as ServerError).statusCode === 401) {
-                onTokenInvalid();
-            }
-
             const errorContent = t('error.network_error_occurred');
 
             const notification: INotification = {
@@ -114,15 +118,7 @@ function ApolloHandler({token, children, onTokenInvalid}: IApolloHandlerProps): 
     });
 
     const gqlClient = new ApolloClient({
-        link: ApolloLink.from([
-            _handleApolloError,
-            createUploadLink({
-                uri: process.env.REACT_APP_API_URL,
-                headers: {
-                    Authorization: token
-                }
-            })
-        ]),
+        link: ApolloLink.from([_handleApolloError, createUploadLink({uri: process.env.REACT_APP_API_URL})]),
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up
             // with the ID attribute (eg. in the getRecordPropertiesQuery).

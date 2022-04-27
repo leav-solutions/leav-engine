@@ -8,6 +8,7 @@ export interface IApplication extends ICoreEntity {
     system?: boolean;
     description: ISystemTranslation;
     libraries: string[];
+    trees: string[];
     color?: string;
     icon?: string;
     component: string;

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import * as useLang from 'hooks/LangHook/LangHook';
+import * as useAuth from 'hooks/useAuth/useAuth';
 import React from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import {act, render, screen} from '_tests/testUtils';
@@ -30,6 +31,12 @@ describe('UserPanel', () => {
     });
 
     test('On click on logout, log out and redirect to home', async () => {
+        const mockLogout = jest.fn();
+
+        jest.spyOn(useAuth, 'default').mockImplementation(() => ({
+            logout: mockLogout
+        }));
+
         const mockedLocation = {...window.location, replace: jest.fn()};
         delete window.location;
         window.location = mockedLocation;
@@ -48,7 +55,7 @@ describe('UserPanel', () => {
             userEvent.click(logoutLink);
         });
 
-        expect(mockDeleteToken).toHaveBeenCalled();
+        expect(mockLogout).toHaveBeenCalled();
         expect(window.location.replace).toHaveBeenCalledWith('/');
     });
 

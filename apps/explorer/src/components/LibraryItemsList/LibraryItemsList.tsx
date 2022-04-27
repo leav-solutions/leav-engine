@@ -271,7 +271,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
 
             searchDispatch({
                 type: SearchActionTypes.SET_TOTAL_COUNT,
-                totalCount: data[library.gqlNames.query]?.totalCount
+                totalCount: data?.[library.gqlNames.query]?.totalCount
             });
 
             searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});

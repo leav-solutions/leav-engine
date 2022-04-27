@@ -7,6 +7,7 @@ import {PageHeader, Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
+import {useApplicationContext} from 'context/ApplicationContext';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -17,7 +18,7 @@ import {Link} from 'react-router-dom';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
-import {getLibraryLink, localizedTranslation} from 'utils';
+import {getLibraryLink, isLibraryInApp, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import {IBaseNotification, NotificationType} from '../../../_types/types';
@@ -43,6 +44,7 @@ const Wrapper = styled.div`
 function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
+    const currentApp = useApplicationContext();
 
     const dispatch = useAppDispatch();
     const [importActiveLibrary, setImportActiveLibrary] = useState<string>();
@@ -70,6 +72,7 @@ function LibrariesList(): JSX.Element {
     const favoriteIds = userDataQuery.data?.userData?.data[FAVORITE_LIBRARIES_KEY] ?? [];
 
     const list: IListItem[] = libraries
+        .filter(library => isLibraryInApp(currentApp, library.id))
         .map(library => ({
             key: library.id,
             id: library.id,

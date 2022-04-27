@@ -43,7 +43,8 @@
     "graphql-upload": "11.0.0",
     "graphql": "15",
     "explorer:babel-jest": "24",
-    "explorer:jest": "24"
+    "explorer:jest": "24",
+    "react-error-overlay": "6.0.9"
   },
   "lint-staged": {
     "*.{ts, js, tsx, jsx}": [
