@@ -10,9 +10,11 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import express, {Express} from 'express';
+import glob from 'glob';
 import {GraphQLResolveInfo} from 'graphql';
 import path from 'path';
 import {v4 as uuidv4} from 'uuid';
+import winston from 'winston';
 import {IApplication} from '_types/application';
 import {IGetCoreAttributesParams} from '_types/attribute';
 import {IRequestWithContext} from '_types/express';
@@ -36,6 +38,7 @@ interface IDeps {
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.utils.logger'?: winston.Winston;
     config?: any;
 }
 
@@ -46,6 +49,7 @@ export default function({
     'core.domain.permission': permissionDomain = null,
     'core.domain.library': libraryDomain,
     'core.domain.tree': treeDomain,
+    'core.utils.logger': logger = null,
     config = null
 }: IDeps = {}): IApplicationApp {
     return {
@@ -150,10 +154,12 @@ export default function({
                     },
                     Application: {
                         async libraries(parent: IApplication, _, ctx: IQueryInfos): Promise<ILibrary[]> {
-                            return Promise.all(parent.libraries.map(l => libraryDomain.getLibraryProperties(l, ctx)));
+                            return Promise.all(
+                                (parent?.libraries ?? []).map(l => libraryDomain.getLibraryProperties(l, ctx))
+                            );
                         },
                         async trees(parent: IApplication, _, ctx: IQueryInfos): Promise<ITree[]> {
-                            return Promise.all(parent.trees.map(t => treeDomain.getTreeProperties(t, ctx)));
+                            return Promise.all((parent?.trees ?? []).map(t => treeDomain.getTreeProperties(t, ctx)));
                         },
                         permissions: (
                             appData: IApplication,
@@ -241,27 +247,40 @@ export default function({
                         const rootPath = appRootPath();
                         const appFolder = path.resolve(rootPath, config.applications.rootFolder, applicationId);
 
+                        req.ctx.applicationId = applicationId;
+
                         // Request will be handled by express as if it was a regular request to the app folder itself
                         // Thus, we remove the app endpoint from URL.
                         // We don't need the query params to render static files.
                         // Hence, affect path only (=url without query params) to url
+
+                        // Try to locate a file at given path. If not found, serve root path of the app,
+                        // considering it will be handle it client-side (eg. SPAs)
                         const newPath = req.path.replace(new RegExp(`^\/${endpoint}`), '') || '/';
-                        req.url = newPath;
+
+                        const files: string[] = await new Promise((resolve, reject) =>
+                            glob(`${appFolder}${newPath}`, (err, matches) => {
+                                if (err) {
+                                    return reject(err);
+                                }
+                                resolve(matches);
+                            })
+                        );
+                        const doesPathExists = !!files.length;
+                        req.url = doesPathExists ? newPath : '/';
                         express.static(appFolder, {
-                            extensions: ['html']
+                            extensions: ['html'],
+                            fallthrough: false
                         })(req, res, next);
 
-                        try {
-                            applicationDomain.updateConsultationHistory({applicationId, ctx: req.ctx});
-                        } catch (err) {
-                            console.error('Could not update application consultation history:', err);
-                        }
+                        next();
                     } catch (err) {
                         next(err);
                     }
                 },
+                async (req: IRequestWithContext, res, next) => {},
                 async (err, req, res, next) => {
-                    console.error({err});
+                    logger.error(err);
                     res.status(err.statusCode ?? 500).json({
                         status: false,
                         error: err.message

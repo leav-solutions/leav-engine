@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Supplied env variables:
+# - LEAV_API_URL
+# - LEAV_CORE_URL
+# - LEAV_LOGIN_ENDPOINT
+# - LEAV_DEFAULT_LANG
+# - LEAV_AVAILABLE_LANG
+# - LEAV_APP_ENDPOINT
+# - LEAV_APP_APPLICATION_ID
+echo 'Building application...'
+SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")   # Get the directory name
+SCRIPT_DIR=$(realpath "${SCRIPT_DIR}")    # Resolve its full path if need be
+export REACT_APP_ENDPOINT=$LEAV_ENDPOINT
+export REACT_APP_APPLICATION_ID=$LEAV_APPLICATION_ID
+export REACT_APP_API_URL=$LEAV_API_URL
+export REACT_APP_DEFAULT_LANG=$LEAV_DEFAULT_LANG
+export REACT_APP_AVAILABLE_LANG=$LEAV_AVAILABLE_LANG
+export REACT_APP_LOGIN_ENDPOINT=$LEAV_LOGIN_ENDPOINT
+export REACT_APP_ENDPOINT=$LEAV_APP_ENDPOINT
+export REACT_APP_APPLICATION_ID=$LEAV_APP_APPLICATION_ID
+export PUBLIC_URL=/$LEAV_APP_ENDPOINT
+
+export SKIP_PREFLIGHT_CHECK=true
+yarn workspace explorer build
+
+echo 'Installing application...'
+BUILD_DIR=$SCRIPT_DIR/build
+rm -rf $LEAV_DEST_FOLDER
+mv $BUILD_DIR $LEAV_DEST_FOLDER
+
+echo 'Done.'

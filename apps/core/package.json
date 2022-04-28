@@ -46,7 +46,6 @@
     "@types/winston": "^2.3.9",
     "apollo-server-testing": "^2.7.0",
     "axios": "^0.19.0",
-    "glob": "^7.1.6",
     "jest": "25",
     "jest-cli": "25",
     "jest-when": "3.5.1",
@@ -63,6 +62,7 @@
     "watch": "^1.0.2"
   },
   "dependencies": {
+    "glob": "7.1.6",
     "@elastic/elasticsearch": "^7.10.0",
     "@leav/app-root-path": "workspace:libs/app-root-path",
     "@leav/config-manager": "workspace:libs/config-manager",

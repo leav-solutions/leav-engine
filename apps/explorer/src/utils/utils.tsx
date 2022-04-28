@@ -28,8 +28,9 @@ export function getRecordIdentityCacheKey(libId: string, recordId: string): stri
 }
 
 export function getFileUrl(filepath: string) {
-    const url = process.env.REACT_APP_CORE_URL;
-    return url + filepath;
+    // Assets are served from the same origin as the application. Just return the filepath but keep this function
+    // in case it becomes more complicated
+    return filepath;
 }
 
 export const getInvertColor = (color: string): string => {

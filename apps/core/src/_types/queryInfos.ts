@@ -10,4 +10,5 @@ export interface IQueryInfos {
     version?: IValueVersion;
     treeId?: string;
     groupsId?: string[];
+    applicationId?: string;
 }
