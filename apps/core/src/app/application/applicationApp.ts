@@ -188,6 +188,7 @@ export default function({
             // Serve applications from their endpoint
             app.get(
                 ['/:endpoint', '/:endpoint/*'],
+                // Check authentication and parse token
                 async (req: IRequestWithContext, res, next) => {
                     const endpoint = req.params.endpoint;
                     if (endpoint === 'login') {
@@ -210,6 +211,7 @@ export default function({
                         res.redirect(`/login?dest=${req.originalUrl}`);
                     }
                 },
+                // Serve application
                 async (req: IRequestWithContext, res, next) => {
                     try {
                         // Get available applications
@@ -248,6 +250,12 @@ export default function({
                         express.static(appFolder, {
                             extensions: ['html']
                         })(req, res, next);
+
+                        try {
+                            applicationDomain.updateConsultationHistory({applicationId, ctx: req.ctx});
+                        } catch (err) {
+                            console.error('Could not update application consultation history:', err);
+                        }
                     } catch (err) {
                         next(err);
                     }

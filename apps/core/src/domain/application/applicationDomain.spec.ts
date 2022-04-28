@@ -1,7 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {CONSULTED_APPS_KEY} from '@leav/utils';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {IUserDataDomain} from 'domain/userData/userDataDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
 import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
@@ -10,7 +12,7 @@ import {SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockApplication} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import applicationDomain from './applicationDomain';
+import applicationDomain, {MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
 
 describe('applicationDomain', () => {
     beforeEach(() => jest.clearAllMocks());
@@ -42,7 +44,7 @@ describe('applicationDomain', () => {
             expect(attr).toMatchObject({id: 'test_application'});
         });
 
-        test('Should throw if unknown application', async function () {
+        test('Should throw if unknown application', async function() {
             const mockAppRepo: Mockify<IApplicationRepo> = {
                 getApplications: global.__mockPromise({list: [], totalCount: 0})
             };
@@ -287,6 +289,75 @@ describe('applicationDomain', () => {
             expect(mockAdminPermissionDomainNotAllowed.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_APPLICATION
             );
+        });
+    });
+
+    describe('updateConsulationHistory', () => {
+        test('Save consulted app to history', async () => {
+            const mockUserDataDomain: Mockify<IUserDataDomain> = {
+                getUserData: global.__mockPromise({[CONSULTED_APPS_KEY]: []}),
+                saveUserData: jest.fn()
+            };
+
+            const appDomain = applicationDomain({
+                'core.domain.userData': mockUserDataDomain as IUserDataDomain
+            });
+
+            await appDomain.updateConsultationHistory({
+                applicationId: mockApplication.id,
+                ctx: mockCtx
+            });
+
+            expect(mockUserDataDomain.saveUserData).toBeCalled();
+            expect(mockUserDataDomain.saveUserData.mock.calls[0][1]).toEqual([mockApplication.id]);
+        });
+
+        test('Dedup history', async () => {
+            const mockUserDataDomain: Mockify<IUserDataDomain> = {
+                getUserData: global.__mockPromise({
+                    [CONSULTED_APPS_KEY]: ['some_app', 'another_app', mockApplication.id, 'last_app']
+                }),
+                saveUserData: jest.fn()
+            };
+
+            const appDomain = applicationDomain({
+                'core.domain.userData': mockUserDataDomain as IUserDataDomain
+            });
+
+            await appDomain.updateConsultationHistory({
+                applicationId: mockApplication.id,
+                ctx: mockCtx
+            });
+
+            expect(mockUserDataDomain.saveUserData).toBeCalled();
+            expect(mockUserDataDomain.saveUserData.mock.calls[0][1]).toEqual([
+                mockApplication.id,
+                'some_app',
+                'another_app',
+                'last_app'
+            ]);
+        });
+
+        test('Limit history size', async () => {
+            const mockUserDataDomain: Mockify<IUserDataDomain> = {
+                getUserData: global.__mockPromise({
+                    [CONSULTED_APPS_KEY]: new Array(MAX_CONSULTATION_HISTORY_SIZE).fill('').map((e, i) => i)
+                }),
+                saveUserData: jest.fn()
+            };
+
+            const appDomain = applicationDomain({
+                'core.domain.userData': mockUserDataDomain as IUserDataDomain
+            });
+
+            await appDomain.updateConsultationHistory({
+                applicationId: mockApplication.id,
+                ctx: mockCtx
+            });
+
+            expect(mockUserDataDomain.saveUserData).toBeCalled();
+            expect(mockUserDataDomain.saveUserData.mock.calls[0][1][0]).toBe(mockApplication.id);
+            expect(mockUserDataDomain.saveUserData.mock.calls[0][1]).toHaveLength(MAX_CONSULTATION_HISTORY_SIZE);
         });
     });
 });

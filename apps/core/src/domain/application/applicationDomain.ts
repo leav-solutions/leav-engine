@@ -1,7 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {CONSULTED_APPS_KEY} from '@leav/utils';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {IUserDataDomain} from 'domain/userData/userDataDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
 import {IUtils} from 'utils/utils';
 import {IApplication, IGetCoreApplicationsParams} from '_types/application';
@@ -13,6 +15,8 @@ import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 
 const protectedEndpoints = ['login', 'portal'];
+export const MAX_CONSULTATION_HISTORY_SIZE = 10;
+
 export interface IApplicationDomain {
     getApplicationProperties(params: {id: string; ctx: IQueryInfos}): Promise<IApplication>;
 
@@ -26,17 +30,20 @@ export interface IApplicationDomain {
      * If application doesn't exist => create a new one, otherwise update existing
      */
     saveApplication(params: {applicationData: IApplication; ctx: IQueryInfos}): Promise<IApplication>;
-    deleteApplication({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IApplication>;
+    deleteApplication(params: {id: string; ctx: IQueryInfos}): Promise<IApplication>;
+    updateConsultationHistory(params: {applicationId: string; ctx: IQueryInfos}): Promise<void>;
 }
 
 interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
+    'core.domain.userData'?: IUserDataDomain;
     'core.infra.application'?: IApplicationRepo;
     'core.utils'?: IUtils;
 }
 
 export default function({
     'core.domain.permission.admin': adminPermissionDomain = null,
+    'core.domain.userData': userDataDomain = null,
     'core.infra.application': applicationRepo = null,
     'core.utils': utils = null
 }: IDeps = {}): IApplicationDomain {
@@ -145,6 +152,22 @@ export default function({
             }
 
             return applicationRepo.deleteApplication({id, ctx});
+        },
+        async updateConsultationHistory({applicationId, ctx}): Promise<void> {
+            // Retrieve user data
+            const consultedApps = await userDataDomain.getUserData([CONSULTED_APPS_KEY], false, ctx);
+
+            // Compute new history:
+            // - Add last consulted app to the beginning of the list
+            // - Use a Set to deduplicate array
+            // - Limit size to MAX_CONSULTATION_HISTORY_SIZE
+            const newHistory = [...new Set([applicationId, ...(consultedApps.data[CONSULTED_APPS_KEY] ?? [])])].slice(
+                0,
+                MAX_CONSULTATION_HISTORY_SIZE
+            );
+
+            // Save new history
+            await userDataDomain.saveUserData(CONSULTED_APPS_KEY, newHistory, false, ctx);
         }
     };
 }
