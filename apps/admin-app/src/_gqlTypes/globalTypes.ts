@@ -58,7 +58,8 @@ export enum LibraryBehavior {
 }
 
 export enum PermissionTypes {
-    app = 'app',
+    admin = 'admin',
+    application = 'application',
     attribute = 'attribute',
     library = 'library',
     record = 'record',
@@ -69,33 +70,38 @@ export enum PermissionTypes {
 }
 
 export enum PermissionsActions {
+    access_application = 'access_application',
     access_attribute = 'access_attribute',
     access_library = 'access_library',
     access_record = 'access_record',
     access_tree = 'access_tree',
+    admin_access_applications = 'admin_access_applications',
+    admin_access_attributes = 'admin_access_attributes',
+    admin_access_libraries = 'admin_access_libraries',
+    admin_access_permissions = 'admin_access_permissions',
+    admin_access_trees = 'admin_access_trees',
+    admin_application = 'admin_application',
+    admin_create_application = 'admin_create_application',
+    admin_create_attribute = 'admin_create_attribute',
+    admin_create_library = 'admin_create_library',
+    admin_create_tree = 'admin_create_tree',
+    admin_delete_application = 'admin_delete_application',
+    admin_delete_attribute = 'admin_delete_attribute',
+    admin_delete_library = 'admin_delete_library',
+    admin_delete_tree = 'admin_delete_tree',
+    admin_edit_application = 'admin_edit_application',
+    admin_edit_attribute = 'admin_edit_attribute',
+    admin_edit_library = 'admin_edit_library',
+    admin_edit_permission = 'admin_edit_permission',
+    admin_edit_tree = 'admin_edit_tree',
     admin_library = 'admin_library',
-    app_access_attributes = 'app_access_attributes',
-    app_access_libraries = 'app_access_libraries',
-    app_access_permissions = 'app_access_permissions',
-    app_access_trees = 'app_access_trees',
-    app_create_attribute = 'app_create_attribute',
-    app_create_library = 'app_create_library',
-    app_create_tree = 'app_create_tree',
-    app_delete_attribute = 'app_delete_attribute',
-    app_delete_library = 'app_delete_library',
-    app_delete_tree = 'app_delete_tree',
-    app_edit_attribute = 'app_edit_attribute',
-    app_edit_library = 'app_edit_library',
-    app_edit_permission = 'app_edit_permission',
-    app_edit_tree = 'app_edit_tree',
-    app_manage_global_preferences = 'app_manage_global_preferences',
+    admin_manage_global_preferences = 'admin_manage_global_preferences',
     create_record = 'create_record',
     delete_record = 'delete_record',
     detach = 'detach',
     edit_children = 'edit_children',
     edit_record = 'edit_record',
-    edit_value = 'edit_value',
-    fake_plugin_permission = 'fake_plugin_permission'
+    edit_value = 'edit_value'
 }
 
 export enum PermissionsRelation {

@@ -35,7 +35,7 @@ const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | n
 
     const libLabel = library.label !== null ? library.label.fr || library.label.en || library.id : library.id;
 
-    return userData.permissions[PermissionsActions.app_delete_library] ? (
+    return userData.permissions[PermissionsActions.admin_delete_library] ? (
         <ConfirmedButton action={_handleDelete} confirmMessage={t('libraries.confirm_delete', {libLabel})}>
             <DeleteButton disabled={!!library.system} />
         </ConfirmedButton>

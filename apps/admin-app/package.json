@@ -4,6 +4,8 @@
   "dependencies": {
     "@apollo/client": "3.3.7",
     "@reduxjs/toolkit": "1.7.1",
+    "@types/react": "16.9.17",
+    "@types/react-dom": "16.9.4",
     "dayjs": "1.10.6",
     "fomantic-ui-css": "2.8.8",
     "formik": "1.5.8",
@@ -60,8 +62,6 @@
     "@types/lodash": "4.14.156",
     "@types/node": "14.14.31",
     "@types/node-fetch": "2.1.4",
-    "@types/react": "16.9.17",
-    "@types/react-dom": "16.9.4",
     "@types/react-router": "5.1.8",
     "@types/react-router-dom": "5.1.5",
     "@types/react-rte": "0.16.1",
@@ -88,5 +88,6 @@
   "browserslist": [],
   "jest": {
     "resetMocks": false
-  }
+  },
+  "homepage": "."
 }

@@ -18,7 +18,7 @@ jest.mock('../../../../hooks/useUserData', () => ({
     default: jest.fn(() => ({
         id: 1,
         name: 'Test',
-        permissions: {app_access_forms: true}
+        permissions: {admin_access_forms: true}
     }))
 }));
 

@@ -4,7 +4,9 @@
 import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import ApplicationContext from 'context/ApplicationContext';
 import React, {PropsWithChildren, ReactElement} from 'react';
+import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import MockedUserContextProvider from '__mocks__/MockedUserContextProvider';
@@ -24,7 +26,11 @@ const Providers = ({children, apolloMocks, cacheSettings}: PropsWithChildren<IPr
     return (
         <MockedProviderWithFragments mocks={apolloMocks} cacheSettings={cacheSettings}>
             <MockedLangContextProvider>
-                <MockedUserContextProvider>{children as ReactElement}</MockedUserContextProvider>
+                <MockedUserContextProvider>
+                    <ApplicationContext.Provider value={mockApplicationDetails}>
+                        {children as ReactElement}
+                    </ApplicationContext.Provider>
+                </MockedUserContextProvider>
             </MockedLangContextProvider>
         </MockedProviderWithFragments>
     );

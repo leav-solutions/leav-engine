@@ -56,14 +56,14 @@ test('Renders app', async () => {
             request: {
                 query: isAllowedQuery,
                 variables: {
-                    type: PermissionTypes.app,
-                    actions: Object.values(PermissionsActions).filter(a => !!a.match(/^app_/))
+                    type: PermissionTypes.admin,
+                    actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/))
                 }
             },
             result: {
                 data: {
                     isAllowed: Object.values(PermissionsActions)
-                        .filter(a => !!a.match(/^app_/))
+                        .filter(a => !!a.match(/^admin_/))
                         .map(action => ({name: action, allowed: true, __typename: 'PermissionAction'}))
                 }
             }

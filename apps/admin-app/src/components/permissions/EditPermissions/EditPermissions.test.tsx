@@ -13,8 +13,8 @@ import EditPermissions from './EditPermissions';
 jest.mock('../../../hooks/useLang');
 describe('EditPermissions', () => {
     const permParams: GET_PERMISSIONSVariables = {
-        type: PermissionTypes.app,
-        actions: [PermissionsActions.app_create_library, PermissionsActions.app_edit_library],
+        type: PermissionTypes.admin,
+        actions: [PermissionsActions.admin_create_library, PermissionsActions.admin_edit_library],
         usersGroup: '1234567'
     };
     test('Display and edit permissions', async () => {
@@ -31,28 +31,28 @@ describe('EditPermissions', () => {
                         permissionsActionsByType: [
                             {
                                 __typename: 'LabeledPermissionsActions',
-                                name: PermissionsActions.app_create_library,
+                                name: PermissionsActions.admin_create_library,
                                 label: {
                                     fr: 'Crea Lib'
                                 }
                             },
                             {
                                 __typename: 'LabeledPermissionsActions',
-                                name: PermissionsActions.app_edit_library,
+                                name: PermissionsActions.admin_edit_library,
                                 label: {
                                     fr: 'Edit Lib'
                                 }
                             },
                             {
                                 __typename: 'LabeledPermissionsActions',
-                                name: PermissionsActions.app_access_libraries,
+                                name: PermissionsActions.admin_access_libraries,
                                 label: {
                                     fr: 'Access Lib'
                                 }
                             },
                             {
                                 __typename: 'LabeledPermissionsActions',
-                                name: PermissionsActions.app_delete_library,
+                                name: PermissionsActions.admin_delete_library,
                                 label: {
                                     fr: 'Delete Lib'
                                 }
@@ -72,24 +72,24 @@ describe('EditPermissions', () => {
                         perm: [
                             {
                                 __typename: 'PermissionAction',
-                                name: PermissionsActions.app_create_library,
+                                name: PermissionsActions.admin_create_library,
                                 allowed: true
                             },
                             {
                                 __typename: 'PermissionAction',
-                                name: PermissionsActions.app_edit_library,
+                                name: PermissionsActions.admin_edit_library,
                                 allowed: null
                             }
                         ],
                         inheritPerm: [
                             {
                                 __typename: 'HeritedPermissionAction',
-                                name: PermissionsActions.app_create_library,
+                                name: PermissionsActions.admin_create_library,
                                 allowed: true
                             },
                             {
                                 __typename: 'HeritedPermissionAction',
-                                name: PermissionsActions.app_edit_library,
+                                name: PermissionsActions.admin_edit_library,
                                 allowed: true
                             }
                         ]
@@ -103,7 +103,7 @@ describe('EditPermissions', () => {
                     variables: {
                         permData: {
                             type: 'app',
-                            actions: [{name: 'app_create_library', allowed: false}],
+                            actions: [{name: 'admin_create_library', allowed: false}],
                             usersGroup: '1234567'
                         }
                     }
@@ -125,24 +125,24 @@ describe('EditPermissions', () => {
                         perm: [
                             {
                                 __typename: 'PermissionAction',
-                                name: PermissionsActions.app_create_library,
+                                name: PermissionsActions.admin_create_library,
                                 allowed: false
                             },
                             {
                                 __typename: 'PermissionAction',
-                                name: PermissionsActions.app_edit_library,
+                                name: PermissionsActions.admin_edit_library,
                                 allowed: null
                             }
                         ],
                         inheritPerm: [
                             {
                                 __typename: 'HeritedPermissionAction',
-                                name: PermissionsActions.app_create_library,
+                                name: PermissionsActions.admin_create_library,
                                 allowed: true
                             },
                             {
                                 __typename: 'HeritedPermissionAction',
-                                name: PermissionsActions.app_edit_library,
+                                name: PermissionsActions.admin_edit_library,
                                 allowed: true
                             }
                         ]

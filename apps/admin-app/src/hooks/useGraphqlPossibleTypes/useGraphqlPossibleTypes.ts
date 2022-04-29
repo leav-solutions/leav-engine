@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PossibleTypesMap} from '@apollo/client';
 import {IntrospectionResultData} from 'apollo-cache-inmemory';
-import {UNAUTHORIZED} from 'components/app/ApolloHandler/ApolloHandler';
+import {UNAUTHENTICATED} from 'components/app/ApolloHandler/ApolloHandler';
 import {useCallback, useEffect, useState} from 'react';
 
 export interface IUseGraphqlPossibleTypes {
@@ -12,7 +12,7 @@ export interface IUseGraphqlPossibleTypes {
     possibleTypes: PossibleTypesMap;
 }
 
-export default function (url: string, token: string): IUseGraphqlPossibleTypes {
+export default function (url: string): IUseGraphqlPossibleTypes {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>();
     const [possibleTypes, setPossibleTypes] = useState<PossibleTypesMap>();
@@ -24,8 +24,7 @@ export default function (url: string, token: string): IUseGraphqlPossibleTypes {
             const res = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: token
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     variables: {},
@@ -45,11 +44,14 @@ export default function (url: string, token: string): IUseGraphqlPossibleTypes {
                 })
             });
 
-            if (res.status === 401) {
-                throw new Error(UNAUTHORIZED);
+            const resBody = await res.json();
+
+            const resErrors = resBody.errors ?? [];
+            if (resErrors.length && resErrors.some(err => err.extensions.code === UNAUTHENTICATED)) {
+                throw new Error(UNAUTHENTICATED);
             }
 
-            const resData: IntrospectionResultData = (await res.json()).data;
+            const resData: IntrospectionResultData = resBody.data;
             const fetchedPossibleTypes: PossibleTypesMap = resData.__schema.types.reduce((allTypes, type) => {
                 if (!type.possibleTypes) {
                     return allTypes;
@@ -67,7 +69,7 @@ export default function (url: string, token: string): IUseGraphqlPossibleTypes {
             setIsLoading(false);
             setError(String(err));
         }
-    }, [url, token]);
+    }, [url]);
 
     useEffect(() => {
         _fetchPossibleTypes();

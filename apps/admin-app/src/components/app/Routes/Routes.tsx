@@ -20,32 +20,37 @@ function Routes(): JSX.Element {
             <Route path="/" component={Dashboard} exact />
             <Route path="/general" component={General} exact />
             <ProtectedRoute
-                permissions={[PermissionsActions.app_access_libraries]}
+                permissions={[PermissionsActions.admin_access_libraries]}
                 path="/libraries"
                 component={Libraries}
                 exact
             />
             <ProtectedRoute
-                permissions={[PermissionsActions.app_access_libraries]}
+                permissions={[PermissionsActions.admin_access_libraries]}
                 path="/libraries/edit/:id?"
                 component={EditLibrary}
                 exact
             />
             <ProtectedRoute
-                permissions={[PermissionsActions.app_access_attributes]}
+                permissions={[PermissionsActions.admin_access_attributes]}
                 path="/attributes"
                 component={Attributes}
                 exact
             />
             <ProtectedRoute
-                permissions={[PermissionsActions.app_access_attributes]}
+                permissions={[PermissionsActions.admin_access_attributes]}
                 path="/attributes/edit/:id?"
                 component={EditAttribute}
                 exact
             />
-            <ProtectedRoute permissions={[PermissionsActions.app_access_trees]} path="/trees" component={Trees} exact />
             <ProtectedRoute
-                permissions={[PermissionsActions.app_access_trees]}
+                permissions={[PermissionsActions.admin_access_trees]}
+                path="/trees"
+                component={Trees}
+                exact
+            />
+            <ProtectedRoute
+                permissions={[PermissionsActions.admin_access_trees]}
                 path="/trees/edit/:id?"
                 component={EditTree}
                 exact

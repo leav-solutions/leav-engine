@@ -30,20 +30,20 @@ import {ErrorTypes} from '_types/errors';
 import Loading from '../../shared/Loading';
 
 interface IApolloHandlerProps {
-    token: string;
-    onTokenInvalid: (message?: string) => void;
     children: ReactNode;
 }
 
-export const UNAUTHORIZED = 'Unauthorized';
+export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
-const ApolloHandler = ({token, children, onTokenInvalid}: IApolloHandlerProps): JSX.Element => {
+const _redirectToLogin = () =>
+    window.location.replace(`${process.env.REACT_APP_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+
+const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
     const dispatch = useDispatch();
     const {t} = useTranslation();
 
     const {loading: possibleTypesLoading, error: possibleTypesError, possibleTypes} = useGraphqlPossibleTypes(
-        process.env.REACT_APP_API_URL,
-        token
+        process.env.REACT_APP_API_URL
     );
 
     if (possibleTypesLoading) {
@@ -51,8 +51,8 @@ const ApolloHandler = ({token, children, onTokenInvalid}: IApolloHandlerProps): 
     }
 
     if (possibleTypesError) {
-        if (possibleTypesError.includes(UNAUTHORIZED)) {
-            onTokenInvalid();
+        if (possibleTypesError.includes(UNAUTHENTICATED)) {
+            _redirectToLogin();
             return <></>;
         }
 
@@ -67,6 +67,13 @@ const ApolloHandler = ({token, children, onTokenInvalid}: IApolloHandlerProps): 
         let title: string;
         let content: string;
         let icon: SemanticICONS;
+        if (
+            (networkError as ServerError).statusCode === 401 ||
+            (graphQLErrors ?? []).some(err => err.extensions.code === UNAUTHENTICATED)
+        ) {
+            _redirectToLogin();
+        }
+
         if (graphQLErrors) {
             graphQLErrors.map(graphqlError => {
                 const {message, extensions} = graphqlError;
@@ -87,10 +94,6 @@ const ApolloHandler = ({token, children, onTokenInvalid}: IApolloHandlerProps): 
                 }
             });
         } else if (networkError) {
-            if ((networkError as ServerError).statusCode === 401) {
-                return onTokenInvalid('login.error.session_expired');
-            }
-
             title = t('errors.network_error');
             icon = 'plug';
         }
@@ -109,10 +112,7 @@ const ApolloHandler = ({token, children, onTokenInvalid}: IApolloHandlerProps): 
         link: ApolloLink.from([
             _handleApolloError,
             new HttpLink({
-                uri: process.env.REACT_APP_API_URL,
-                headers: {
-                    Authorization: token
-                }
+                uri: process.env.REACT_APP_API_URL
             })
         ]),
         cache: new InMemoryCache({

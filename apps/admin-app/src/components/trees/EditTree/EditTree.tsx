@@ -43,7 +43,7 @@ const EditTree = ({match, history, location}: IEditTreeProps): JSX.Element => {
             history={history}
             location={location}
             tree={data?.trees?.list[0] ?? null}
-            readonly={!userData.permissions[PermissionsActions.app_edit_tree]}
+            readonly={!userData.permissions[PermissionsActions.admin_edit_tree]}
         />
     );
 };

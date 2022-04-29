@@ -46,7 +46,7 @@ function useMenuItems(): IMenuItem[] {
     ];
 
     const filteredItems = userData.permissions
-        ? menuItems.filter(item => !item.protected || userData.permissions![`app_access_${item.id}`])
+        ? menuItems.filter(item => !item.protected || userData.permissions![`admin_access_${item.id}`])
         : [];
 
     return filteredItems;
