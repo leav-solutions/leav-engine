@@ -31,6 +31,8 @@ const AppsButton = styled(Button)`
 `;
 
 const CustomMenu = styled(Menu)`
+    max-height: 80vh;
+    overflow-y: auto;
     li {
         display: grid;
         grid-template-columns: 3rem 300px;

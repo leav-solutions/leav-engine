@@ -197,21 +197,22 @@ export default function({
                 // Check authentication and parse token
                 async (req: IRequestWithContext, res, next) => {
                     const endpoint = req.params.endpoint;
+                    const ctx: IQueryInfos = {
+                        userId: null,
+                        lang: (req.query.lang as string) ?? config.lang.default,
+                        queryId: req.body.requestId || uuidv4(),
+                        groupsId: []
+                    };
+                    req.ctx = ctx;
+
                     if (endpoint === 'login') {
                         return next();
                     }
 
                     try {
                         const payload = await authApp.validateRequestToken(req);
+                        req.ctx.userId = payload.userId;
 
-                        const ctx: IQueryInfos = {
-                            userId: payload.userId,
-                            lang: (req.query.lang as string) ?? config.lang.default,
-                            queryId: req.body.requestId || uuidv4(),
-                            groupsId: []
-                        };
-
-                        req.ctx = ctx;
                         next();
                     } catch {
                         res.redirect(`/login?dest=${req.originalUrl}`);
@@ -224,8 +225,8 @@ export default function({
                         const {endpoint} = req.params;
                         let applicationId;
 
-                        if (endpoint === 'login') {
-                            applicationId = 'login';
+                        if (['portal', 'login'].includes(endpoint)) {
+                            applicationId = endpoint;
                         } else {
                             const applications = await applicationDomain.getApplications({
                                 params: {
@@ -278,7 +279,16 @@ export default function({
                         next(err);
                     }
                 },
-                async (req: IRequestWithContext, res, next) => {},
+                async (req: IRequestWithContext, res, next) => {
+                    try {
+                        applicationDomain.updateConsultationHistory({
+                            applicationId: req.ctx.applicationId,
+                            ctx: req.ctx
+                        });
+                    } catch (err) {
+                        logger.error(`Cannot update applications consultation history: ${err}`);
+                    }
+                },
                 async (err, req, res, next) => {
                     logger.error(err);
                     res.status(err.statusCode ?? 500).json({

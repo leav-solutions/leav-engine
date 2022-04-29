@@ -62,7 +62,6 @@
     "watch": "^1.0.2"
   },
   "dependencies": {
-    "glob": "7.1.6",
     "@elastic/elasticsearch": "^7.10.0",
     "@leav/app-root-path": "workspace:libs/app-root-path",
     "@leav/config-manager": "workspace:libs/config-manager",
@@ -81,6 +80,7 @@
     "deep-extend": "^0.5.1",
     "exceljs": "4.2.0",
     "express": "4.17.2",
+    "glob": "7.1.6",
     "graphql": "^14.4.2",
     "graphql-errors": "^2.1.0",
     "graphql-extensions": "0.0.10",
