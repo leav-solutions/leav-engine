@@ -5,7 +5,7 @@ import {useQuery} from '@apollo/client';
 import {getInvertColor, localizedTranslation, stringToColor} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import {useApplicationContext} from 'context/ApplicationContext';
+import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import useLang from 'hooks/useLang';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import React from 'react';
@@ -57,7 +57,7 @@ const AppItem = styled(List.Item)`
 function ApplicationsSwitcher(): JSX.Element {
     const {lang} = useLang();
     const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery);
-    const currentApp = useApplicationContext();
+    const currentApp = useCurrentApplicationContext();
 
     let content: JSX.Element;
 

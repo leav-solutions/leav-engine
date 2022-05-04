@@ -18,12 +18,14 @@
         "expanded": "Expand",
         "reduce": "Shrink",
         "label": "Label",
+        "description": "Description",
         "id": "ID",
         "isSystem": "System",
         "settings": "Settings",
         "go_back_home": "Go back home",
         "logout": "Log out",
-        "choose-lang": "Language"
+        "choose-lang": "Language",
+        "permissions": "Permissions"
     },
     "dashboard": {
         "title": "LEAV Engine administration"
@@ -70,7 +72,7 @@
     },
     "attributes": {
         "title": "Attributes",
-        "new": "New attribut",
+        "new": "New attribute",
         "label": "Label",
         "description": "Description",
         "ID": "ID",
@@ -208,7 +210,9 @@
             "attribute": "Attribute",
             "library": "Library",
             "record": "Records",
-            "tree": "Classifying"
+            "tree": "Classifying",
+            "admin": "Administration",
+            "application": "Application"
         },
         "group": {
             "library": "Library",
@@ -217,7 +221,8 @@
             "attributes": "Attributes",
             "trees": "Classifying",
             "permissions": "Permissions",
-            "preferences": "Preferences"
+            "preferences": "Preferences",
+            "application": "Application"
         }
     },
     "login": {
@@ -311,6 +316,16 @@
     },
     "applications": {
         "title": "Applications",
-        "current_app_error": "Couldn't load current application (ID: \"{{appId}}\")"
+        "current_app_error": "Couldn't load current application (ID: \"{{appId}}\")",
+        "new": "New application",
+        "endpoint": "Endpoint",
+        "confirm_delete": "Do you really want to delete application {{appLabel}}?",
+        "information": "Information",
+        "libraries": "Accessible libraries",
+        "all_libraries": "All libraries",
+        "trees": "Accessible trees",
+        "all_trees": "All trees",
+        "select_component": "Select a component",
+        "component": "Component"
     }
 }

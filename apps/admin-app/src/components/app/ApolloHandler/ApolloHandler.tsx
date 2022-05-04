@@ -68,7 +68,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
         let content: string;
         let icon: SemanticICONS;
         if (
-            (networkError as ServerError).statusCode === 401 ||
+            (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? []).some(err => err.extensions.code === UNAUTHENTICATED)
         ) {
             _redirectToLogin();

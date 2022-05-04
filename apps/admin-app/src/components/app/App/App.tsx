@@ -12,7 +12,7 @@
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
-import ApplicationContext from 'context/ApplicationContext';
+import ApplicationContext from 'context/CurrentApplicationContext';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {getMe} from 'queries/users/me';
 import React, {useState} from 'react';

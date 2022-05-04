@@ -4,7 +4,7 @@
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import {useApplicationContext} from 'context/ApplicationContext';
+import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import {History} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -25,7 +25,7 @@ interface ITreesProps {
 const Trees = ({history}: ITreesProps): JSX.Element => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const currentApp = useApplicationContext();
+    const currentApp = useCurrentApplicationContext();
 
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
     const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {

@@ -4,8 +4,8 @@
 import React, {useContext} from 'react';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 
-const ApplicationContext = React.createContext<GET_APPLICATION_BY_ID_applications_list>(null);
+const CurrentApplicationContext = React.createContext<GET_APPLICATION_BY_ID_applications_list>(null);
 
-export const useApplicationContext = () => useContext(ApplicationContext);
+export const useCurrentApplicationContext = () => useContext(CurrentApplicationContext);
 
-export default ApplicationContext;
+export default CurrentApplicationContext;

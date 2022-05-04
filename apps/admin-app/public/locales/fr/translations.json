@@ -17,12 +17,14 @@
         "expanded": "Agrandir",
         "reduce": "Réduire",
         "label": "Libellé",
+        "description": "Description",
         "id": "Identifiant",
         "isSystem": "Système",
         "settings": "Paramètres",
         "go_back_home": "Retourner à l'accueil",
         "logout": "Se déconnecter",
-        "choose-lang": "Langue"
+        "choose-lang": "Langue",
+        "permissions": "Permissions"
     },
     "dashboard": {
         "title": "Administration de LEAV Engine"
@@ -208,7 +210,9 @@
             "attribute": "Attribut",
             "library": "Bibliothèque",
             "record": "Entités",
-            "tree": "Classement"
+            "tree": "Classement",
+            "admin": "Administration",
+            "application": "Application"
         },
         "group": {
             "library": "Bibliothèque",
@@ -217,7 +221,8 @@
             "attributes": "Attributs",
             "trees": "Classements",
             "permissions": "Permissions",
-            "preferences": "Préférences"
+            "preferences": "Préférences",
+            "application": "Application"
         }
     },
     "login": {
@@ -311,6 +316,16 @@
     },
     "applications": {
         "title": "Applications",
-        "current_app_error": "Impossible de charger l'application courante (identifiant: \"{{appId}}\")"
+        "current_app_error": "Impossible de charger l'application courante (identifiant: \"{{appId}}\")",
+        "new": "Nouvelle application",
+        "endpoint": "Point d'accès",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer l'application {{appLabel}}?",
+        "information": "Informations",
+        "libraries": "Bibliothèques accessibles",
+        "all_libraries": "Toutes les bibliothèques",
+        "trees": "Arbres accessibles",
+        "all_trees": "Tous les arbres",
+        "select_component": "Sélectionner un composant",
+        "component": "Composant"
     }
 }

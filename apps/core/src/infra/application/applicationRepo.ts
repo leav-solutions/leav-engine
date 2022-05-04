@@ -1,9 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {appRootPath} from '@leav/app-root-path';
 import {aql} from 'arangojs';
+import {readdir} from 'fs/promises';
+import path from 'path';
 import {IUtils} from 'utils/utils';
-import {IApplication} from '_types/application';
+import {IApplication, IApplicationComponent} from '_types/application';
+import {IConfig} from '_types/config';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '../../_types/shared';
@@ -15,6 +19,7 @@ export interface IApplicationRepo {
     updateApplication(params: {applicationData: IApplication; ctx: IQueryInfos}): Promise<IApplication>;
     createApplication(params: {applicationData: IApplication; ctx: IQueryInfos}): Promise<IApplication>;
     deleteApplication(params: {id: string; ctx: IQueryInfos}): Promise<IApplication>;
+    getAvailableComponents(params: {ctx: IQueryInfos}): Promise<IApplicationComponent[]>;
 }
 
 export const APPLICATIONS_COLLECTION_NAME = 'core_applications';
@@ -23,12 +28,14 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.utils'?: IUtils;
+    config?: IConfig;
 }
 
 export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    config = null
 }: IDeps = {}): IApplicationRepo {
     return {
         async getApplications({params, ctx}): Promise<IList<IApplication>> {
@@ -45,6 +52,7 @@ export default function({
             return dbUtils.findCoreEntity<IApplication>({
                 ...initializedParams,
                 collectionName: APPLICATIONS_COLLECTION_NAME,
+                nonStrictFields: ['label', 'id', 'endpoint'],
                 ctx
             });
         },
@@ -81,6 +89,31 @@ export default function({
 
             // Return deleted attribute
             return dbUtils.cleanup(res.pop());
+        },
+        async getAvailableComponents(): Promise<IApplicationComponent[]> {
+            const rootPath = appRootPath();
+            const appRootFolder = path.resolve(rootPath, config.applications.rootFolder, 'components');
+
+            const appsFolders = await readdir(appRootFolder);
+
+            const components: IApplicationComponent[] = await Promise.all(
+                appsFolders.map(async appFolder => {
+                    const appPath = path.resolve(appRootFolder, appFolder);
+                    const appPackageJson = await import(path.resolve(appPath, 'package.json'));
+
+                    return {
+                        id: appPackageJson.name,
+                        description: appPackageJson.description,
+                        version: appPackageJson.version
+                    };
+                })
+            );
+
+            // List all apps in this folder
+
+            // Return infos from their package.json
+
+            return components;
         }
     };
 }

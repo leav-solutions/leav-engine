@@ -4,8 +4,9 @@
 import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
-import ApplicationContext from 'context/ApplicationContext';
+import ApplicationContext from 'context/CurrentApplicationContext';
 import React, {PropsWithChildren, ReactElement} from 'react';
+import {MemoryRouter} from 'react-router-dom';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
@@ -28,7 +29,7 @@ const Providers = ({children, apolloMocks, cacheSettings}: PropsWithChildren<IPr
             <MockedLangContextProvider>
                 <MockedUserContextProvider>
                     <ApplicationContext.Provider value={mockApplicationDetails}>
-                        {children as ReactElement}
+                        <MemoryRouter>{children as ReactElement}</MemoryRouter>
                     </ApplicationContext.Provider>
                 </MockedUserContextProvider>
             </MockedLangContextProvider>

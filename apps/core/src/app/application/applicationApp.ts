@@ -15,7 +15,7 @@ import {GraphQLResolveInfo} from 'graphql';
 import path from 'path';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
-import {IApplication} from '_types/application';
+import {IApplication, IApplicationComponent} from '_types/application';
 import {IGetCoreAttributesParams} from '_types/attribute';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
@@ -76,6 +76,12 @@ export default function({
                     permissions: ApplicationPermissions
                 }
 
+                type ApplicationComponent {
+                    id: ID!
+                    description: String,
+                    version: String
+                }
+
                 input ApplicationInput {
                     id: ID!
                     label: SystemTranslation,
@@ -119,6 +125,7 @@ export default function({
                         pagination: Pagination,
                         sort: SortApplications
                     ): ApplicationsList
+                    applicationsComponents: [ApplicationComponent!]!
                 }
 
                 extend type Mutation {
@@ -138,6 +145,9 @@ export default function({
                                 params: {filters, pagination, sort},
                                 ctx
                             });
+                        },
+                        async applicationsComponents(_, args: {}, ctx: IQueryInfos): Promise<IApplicationComponent[]> {
+                            return applicationDomain.getAvailableComponents({ctx});
                         }
                     },
                     Mutation: {
@@ -246,7 +256,12 @@ export default function({
                         }
 
                         const rootPath = appRootPath();
-                        const appFolder = path.resolve(rootPath, config.applications.rootFolder, applicationId);
+                        const appFolder = path.resolve(
+                            rootPath,
+                            config.applications.rootFolder,
+                            'installed',
+                            applicationId
+                        );
 
                         req.ctx.applicationId = applicationId;
 

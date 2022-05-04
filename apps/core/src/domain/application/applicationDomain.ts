@@ -6,7 +6,7 @@ import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IUserDataDomain} from 'domain/userData/userDataDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
 import {IUtils} from 'utils/utils';
-import {IApplication, IGetCoreApplicationsParams} from '_types/application';
+import {IApplication, IApplicationComponent, IGetCoreApplicationsParams} from '_types/application';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -32,6 +32,7 @@ export interface IApplicationDomain {
     saveApplication(params: {applicationData: IApplication; ctx: IQueryInfos}): Promise<IApplication>;
     deleteApplication(params: {id: string; ctx: IQueryInfos}): Promise<IApplication>;
     updateConsultationHistory(params: {applicationId: string; ctx: IQueryInfos}): Promise<void>;
+    getAvailableComponents(params: {ctx: IQueryInfos}): Promise<IApplicationComponent[]>;
 }
 
 interface IDeps {
@@ -115,7 +116,7 @@ export default function({
             }
 
             if (!utils.isEndpointValid(appToSave.endpoint)) {
-                errors.id = Errors.INVALID_ENDPOINT_FORMAT;
+                errors.endpoint = Errors.INVALID_ENDPOINT_FORMAT;
             }
 
             if (protectedEndpoints.includes(applicationData.endpoint)) {
@@ -168,6 +169,9 @@ export default function({
 
             // Save new history
             await userDataDomain.saveUserData(CONSULTED_APPS_KEY, newHistory, false, ctx);
+        },
+        async getAvailableComponents({ctx}): Promise<IApplicationComponent[]> {
+            return applicationRepo.getAvailableComponents({ctx});
         }
     };
 }

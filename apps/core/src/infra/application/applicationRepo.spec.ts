@@ -2,7 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
+import fs from 'fs/promises';
 import {IDbUtils} from 'infra/db/dbUtils';
+import path from 'path';
+import {IConfig} from '_types/config';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import applicationRepo from './applicationRepo';
 
@@ -24,6 +27,7 @@ describe('applicationRepo', () => {
         endpoint: 'my-application',
         description: {fr: 'Super application'},
         libraries: ['products', 'categories'],
+        trees: ['files', 'categories'],
         color: 'orange',
         component: 'explorer'
     };
@@ -129,6 +133,50 @@ describe('applicationRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^REMOVE/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+        });
+    });
+
+    describe('getAvailableComponents', () => {
+        const mockConfig: Mockify<IConfig> = {
+            applications: {rootFolder: '/some/path'}
+        };
+
+        afterAll(() => {
+            jest.resetAllMocks();
+        });
+
+        test('Return components found on directory', async () => {
+            jest.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
+            jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['explorer', 'admin'] as any[]);
+
+            jest.mock(
+                '/some/path/components/explorer/package.json',
+                () => ({
+                    name: 'explorer',
+                    description: 'explorer description',
+                    version: '42'
+                }),
+                {virtual: true}
+            );
+
+            jest.mock(
+                '/some/path/components/admin/package.json',
+                () => ({
+                    name: 'admin',
+                    description: 'admin description',
+                    version: '42'
+                }),
+                {virtual: true}
+            );
+
+            const repo = applicationRepo({config: mockConfig as IConfig});
+
+            const components = await repo.getAvailableComponents({ctx: mockCtx});
+
+            expect(components).toEqual([
+                {id: 'explorer', description: 'explorer description', version: '42'},
+                {id: 'admin', description: 'admin description', version: '42'}
+            ]);
         });
     });
 });

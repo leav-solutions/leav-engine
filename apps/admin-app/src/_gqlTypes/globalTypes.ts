@@ -17,6 +17,13 @@ export enum ActionIOTypes {
     string = 'string'
 }
 
+export enum ApplicationSortableFields {
+    component = 'component',
+    endpoint = 'endpoint',
+    id = 'id',
+    system = 'system'
+}
+
 export enum AttributeFormat {
     boolean = 'boolean',
     date = 'date',
@@ -109,6 +116,11 @@ export enum PermissionsRelation {
     or = 'or'
 }
 
+export enum SortOrder {
+    asc = 'asc',
+    desc = 'desc'
+}
+
 export enum TreeBehavior {
     files = 'files',
     standard = 'standard'
@@ -133,6 +145,26 @@ export interface ActionsListConfigurationInput {
     saveValue?: ActionConfigurationInput[] | null;
     getValue?: ActionConfigurationInput[] | null;
     deleteValue?: ActionConfigurationInput[] | null;
+}
+
+export interface ApplicationInput {
+    id: string;
+    label?: SystemTranslation | null;
+    description?: SystemTranslation | null;
+    libraries?: string[] | null;
+    trees?: string[] | null;
+    color?: string | null;
+    icon?: string | null;
+    component?: string | null;
+    endpoint?: string | null;
+}
+
+export interface ApplicationsFiltersInput {
+    id?: string | null;
+    label?: string | null;
+    system?: boolean | null;
+    endpoint?: string | null;
+    component?: string | null;
 }
 
 export interface AttributeInput {
@@ -252,6 +284,11 @@ export interface RecordIdentityConfInput {
     label?: string | null;
     color?: string | null;
     preview?: string | null;
+}
+
+export interface SortApplications {
+    field: ApplicationSortableFields;
+    order?: SortOrder | null;
 }
 
 export interface TreeElementInput {

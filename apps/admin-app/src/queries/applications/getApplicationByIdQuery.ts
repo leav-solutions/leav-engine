@@ -13,6 +13,7 @@ export const getApplicationByIdQuery = gql`
                 endpoint
                 color
                 icon
+                component
                 libraries {
                     id
                 }
@@ -21,6 +22,7 @@ export const getApplicationByIdQuery = gql`
                 }
                 permissions {
                     access_application
+                    admin_application
                 }
             }
         }

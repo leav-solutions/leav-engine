@@ -3,10 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {GET_APPLICATION_COMPONENTS_applicationsComponents} from '_gqlTypes/GET_APPLICATION_COMPONENTS';
 
 export const mockApplication: GET_APPLICATIONS_applications_list = {
-    id: 'my-app',
+    id: 'myapp',
     label: {
+        fr: 'My App',
         en: 'My App'
     },
     description: {
@@ -19,6 +21,7 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
 
 export const mockApplicationDetails: GET_APPLICATION_BY_ID_applications_list = {
     ...mockApplication,
+    component: 'explorer',
     libraries: [
         {
             id: 'libA'
@@ -36,6 +39,20 @@ export const mockApplicationDetails: GET_APPLICATION_BY_ID_applications_list = {
         }
     ],
     permissions: {
-        access_application: true
+        access_application: true,
+        admin_application: true
     }
 };
+
+export const mockApplicationsComponents: GET_APPLICATION_COMPONENTS_applicationsComponents[] = [
+    {
+        id: 'admin-app',
+        description: 'Administration app',
+        version: '0.1.0'
+    },
+    {
+        id: 'explorer',
+        description: 'Generic application to explore your data',
+        version: '0.1.0'
+    }
+];

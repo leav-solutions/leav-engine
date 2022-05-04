@@ -27,3 +27,9 @@ export interface IApplicationFilterOptions extends ICoreEntityFilterOptions {
 export interface IGetCoreApplicationsParams extends IGetCoreEntitiesParams {
     filters?: IApplicationFilterOptions;
 }
+
+export interface IApplicationComponent {
+    id: string;
+    description: string;
+    version: string;
+}

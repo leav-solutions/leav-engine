@@ -10,6 +10,7 @@ export const mockApplication: IApplication = {
     endpoint: 'my-application',
     description: {fr: 'Super application'},
     libraries: ['products', 'categories'],
+    trees: ['files', 'categories'],
     color: 'orange',
     icon: 'some-icon',
     component: 'explorer'

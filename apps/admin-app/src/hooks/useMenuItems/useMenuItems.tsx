@@ -38,6 +38,12 @@ function useMenuItems(): IMenuItem[] {
             protected: true
         },
         {
+            id: 'applications',
+            label: t('applications.title'),
+            icon: <Icon name="th" />,
+            protected: true
+        },
+        {
             id: 'general',
             label: t('general.title'),
             icon: 'cogs',

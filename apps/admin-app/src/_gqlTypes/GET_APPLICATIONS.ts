@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {ApplicationsFiltersInput, SortApplications} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: GET_APPLICATIONS
 // ====================================================
@@ -25,4 +27,9 @@ export interface GET_APPLICATIONS_applications {
 
 export interface GET_APPLICATIONS {
     applications: GET_APPLICATIONS_applications | null;
+}
+
+export interface GET_APPLICATIONSVariables {
+    filters?: ApplicationsFiltersInput | null;
+    sort?: SortApplications | null;
 }

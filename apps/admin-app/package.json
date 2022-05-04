@@ -1,5 +1,6 @@
 {
   "name": "admin-app",
+  "description": "Administration app",
   "version": "0.1.0",
   "dependencies": {
     "@apollo/client": "3.3.7",

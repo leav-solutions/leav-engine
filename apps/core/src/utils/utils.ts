@@ -98,12 +98,12 @@ export default function({translator = null}: IUtilsDeps = {}): IUtils {
 
             return /^[a-z0-9_]+$/.test(id);
         },
-        isEndpointValid(id: string): boolean {
-            if (!id) {
+        isEndpointValid(endpoint: string): boolean {
+            if (!endpoint) {
                 return false;
             }
 
-            return /^[a-z0-9-]+$/.test(id);
+            return /^[a-z0-9-]+$/.test(endpoint);
         },
         rethrow(err: Error, message?: string): void {
             if (message) {
