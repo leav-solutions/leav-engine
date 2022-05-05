@@ -5,10 +5,14 @@ import {localizedTranslation} from '@leav/utils';
 import GridTab from 'components/shared/GridTab';
 import {useEditApplicationContext} from 'context/EditApplicationContext';
 import useLang from 'hooks/useLang';
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Header, Tab} from 'semantic-ui-react';
+import {useHistory, useLocation} from 'react-router';
+import {Header, Icon, Tab, TabProps} from 'semantic-ui-react';
+import {enforceInitialSlash} from 'utils';
+import {ApplicationInstallStatus} from '_gqlTypes/globalTypes';
 import InfosTab from './InfosTab';
+import InstallTab from './InstallTab';
 import PermissionsTab from './PermissionsTab';
 
 function EditApplicationTabs(): JSX.Element {
@@ -16,6 +20,11 @@ function EditApplicationTabs(): JSX.Element {
     const {application} = useEditApplicationContext();
     const {lang} = useLang();
     const isNewApp = !application;
+    const location = useLocation();
+    const history = useHistory();
+
+    // Retrieve active tab from URL
+    const tabName = location.hash.replace('#', '');
 
     const panes = [
         {
@@ -30,22 +39,56 @@ function EditApplicationTabs(): JSX.Element {
     ];
 
     if (!isNewApp) {
-        panes.push({
-            key: 'permissions',
-            menuItem: t('admin.permissions'),
-            render: () => (
-                <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
-                    <PermissionsTab />
-                </Tab.Pane>
-            )
-        });
+        panes.push(
+            {
+                key: 'permissions',
+                menuItem: t('admin.permissions'),
+                render: () => (
+                    <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
+                        <PermissionsTab />
+                    </Tab.Pane>
+                )
+            },
+            {
+                key: 'install',
+                menuItem: t('applications.install'),
+                render: () => (
+                    <Tab.Pane key="install" className="">
+                        <InstallTab />
+                    </Tab.Pane>
+                )
+            }
+        );
     }
 
+    const [activeIndex, setActiveIndex] = useState<number>(tabName ? panes.findIndex(p => tabName === p.key) : 0);
+
+    const _handleTabChange = (_, data: TabProps) => {
+        if (data.panes && data.activeIndex !== undefined) {
+            setActiveIndex(Number(data.activeIndex.toString()));
+            history.replace(`#${data.panes[data.activeIndex].key}`);
+        }
+    };
+
     const headerLabel = application?.label ? localizedTranslation(application.label, lang) : t('applications.new');
+    const isAppReady = !isNewApp && application?.install?.status === ApplicationInstallStatus.SUCCESS;
     return (
         <>
-            <Header content={headerLabel} />
-            <GridTab menu={{secondary: true, pointing: true}} panes={panes} />
+            <Header>
+                <Header.Content>{headerLabel}</Header.Content>
+                {isAppReady && (
+                    <Header.Subheader as="a" href={enforceInitialSlash(application.endpoint)}>
+                        <Icon name="external alternate" />
+                        {t('applications.open_application')}
+                    </Header.Subheader>
+                )}
+            </Header>
+            <GridTab
+                menu={{secondary: true, pointing: true}}
+                panes={panes}
+                onTabChange={_handleTabChange}
+                activeIndex={activeIndex}
+            />
         </>
     );
 }

@@ -9,9 +9,15 @@ import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import useLang from 'hooks/useLang';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import React from 'react';
-import {Button, List, Popup} from 'semantic-ui-react';
+import {Button, List, Sidebar} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {enforceInitialSlash} from 'utils';
 import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
+
+const AppSidebar = styled(Sidebar)`
+    background: #ffffff;
+    padding: 0.5em 1em;
+`;
 
 const AppIcon = styled.span<{color: string}>`
     display: inline-block;
@@ -34,6 +40,8 @@ const AppList = styled(List)`
 const AppItem = styled(List.Item)`
     display: flex;
     padding: 0.5em 0;
+    border-bottom: 1px solid #dddddd;
+    align-items: center;
 
     .header,
     .description {
@@ -58,6 +66,7 @@ function ApplicationsSwitcher(): JSX.Element {
     const {lang} = useLang();
     const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery);
     const currentApp = useCurrentApplicationContext();
+    const [isSidebarVisible, setSidebarVisible] = React.useState(false);
 
     let content: JSX.Element;
 
@@ -73,7 +82,7 @@ function ApplicationsSwitcher(): JSX.Element {
 
     if (!loading && !error) {
         content = (
-            <AppList relaxed>
+            <AppList relaxed divided>
                 {apps
                     .filter(app => app.id !== currentApp.id)
                     .map(app => {
@@ -86,12 +95,8 @@ function ApplicationsSwitcher(): JSX.Element {
                             .join('')
                             .toUpperCase();
 
-                        let endpoint = app.endpoint;
-                        if (endpoint[0] !== '/') {
-                            endpoint = '/' + endpoint;
-                        }
                         return (
-                            <AppItem as="a" href={endpoint} key={app.id}>
+                            <AppItem as="a" href={enforceInitialSlash(app.endpoint)} key={app.id}>
                                 <AppIcon color={app.color ?? stringToColor(label)} className="ui avatar">
                                     {initials}
                                 </AppIcon>
@@ -106,17 +111,36 @@ function ApplicationsSwitcher(): JSX.Element {
         );
     }
 
+    const _handleToggleSidebar = () => {
+        setSidebarVisible(!isSidebarVisible);
+    };
+
+    const _handleHideSidebar = () => {
+        setSidebarVisible(false);
+    };
+
     return (
-        <Popup
-            flowing
-            pinned
-            on="click"
-            trigger={
-                <Button icon="th large" aria-label="applications" style={{boxShadow: 'none'}} basic circular inverted />
-            }
-            content={content}
-            position="bottom right"
-        />
+        <>
+            <Button
+                icon="th large"
+                aria-label="applications"
+                style={{boxShadow: 'none'}}
+                basic
+                circular
+                inverted
+                onClick={_handleToggleSidebar}
+            />
+            <AppSidebar
+                animation="overlay"
+                onHide={_handleHideSidebar}
+                vertical
+                direction="right"
+                width="wide"
+                visible={isSidebarVisible}
+            >
+                {content}
+            </AppSidebar>
+        </>
     );
 }
 

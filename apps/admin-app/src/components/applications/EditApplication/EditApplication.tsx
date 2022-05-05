@@ -52,12 +52,12 @@ function EditApplication({match: routerMatch}: IEditApplicationProps): JSX.Eleme
     }
 
     const appData = data?.applications?.list[0];
+    const isReadOnly =
+        typeof appData?.permissions?.admin_application !== 'undefined' ? !appData.permissions.admin_application : false;
 
     return (
         <Wrapper>
-            <EditApplicationContext.Provider
-                value={{application: appData ?? null, readonly: !appData.permissions.admin_application}}
-            >
+            <EditApplicationContext.Provider value={{application: appData ?? null, readonly: isReadOnly}}>
                 <EditApplicationTabs />
             </EditApplicationContext.Provider>
         </Wrapper>

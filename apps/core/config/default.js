@@ -5,6 +5,8 @@ module.exports = {
     server: {
         host: process.env.SERVER_HOST || 'localhost',
         port: process.env.SERVER_PORT || 4001,
+        publicUrl: process.env.SERVER_PUBLIC_URL || 'http://localhost:4001',
+        apiEndpoint: process.env.API_ENDPOINT || 'graphql',
         /**
          * Controls the maximum request body size. If this is a number,
          * then the value specifies the number of bytes; if it is a string,

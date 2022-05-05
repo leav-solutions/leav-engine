@@ -26,6 +26,12 @@ function GeneralAdminPermissionsTab(): JSX.Element {
             PermissionsActions.admin_delete_tree,
             PermissionsActions.admin_edit_tree
         ],
+        applications: [
+            PermissionsActions.admin_access_applications,
+            PermissionsActions.admin_create_application,
+            PermissionsActions.admin_delete_application,
+            PermissionsActions.admin_edit_application
+        ],
         permissions: [PermissionsActions.admin_access_permissions, PermissionsActions.admin_edit_permission],
         preferences: [PermissionsActions.admin_manage_global_preferences]
     };

@@ -8,6 +8,8 @@
         }
     },
     "ignore":[
+        "**/[!*.(ts|js|tsx|jsx)]",
+        "apps/core/applications/installed",
         ".git",
         ".*",
         "config",

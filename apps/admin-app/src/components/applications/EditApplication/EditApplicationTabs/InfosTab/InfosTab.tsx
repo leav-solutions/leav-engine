@@ -19,7 +19,7 @@ function InfosTab(): JSX.Element {
     const history = useHistory();
     const isNewApp = !application;
 
-    const [saveApplication, {error}] = useMutation<SAVE_APPLICATION, SAVE_APPLICATIONVariables>(
+    const [saveApplication, {error, loading}] = useMutation<SAVE_APPLICATION, SAVE_APPLICATIONVariables>(
         saveApplicationMutation,
         {
             // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
@@ -85,6 +85,7 @@ function InfosTab(): JSX.Element {
         <InfosForm
             onSubmitInfos={_handleSubmit}
             onCheckIdIsUnique={_handleCheckIdIsUnique}
+            loading={loading}
             errors={(formErrors as unknown) as IFormError}
         />
     );

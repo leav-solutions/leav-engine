@@ -55,6 +55,7 @@ x-env-core: &env-core
   APP_ROOT_PATH: *dir-core
   SERVER_HOST: "0.0.0.0"
   SERVER_PORT: 4001
+  SERVER_PUBLIC_URL: http://core.leav.localhost
   SERVER_UPLOAD_LIMIT: "15000mb"
   REDIS_HOST: redis
   REDIS_PORT: 6379

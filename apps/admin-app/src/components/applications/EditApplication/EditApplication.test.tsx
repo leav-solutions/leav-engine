@@ -21,6 +21,12 @@ jest.mock('./EditApplicationTabs/PermissionsTab', () => {
     };
 });
 
+jest.mock('./EditApplicationTabs/InstallTab', () => {
+    return function InstallTab() {
+        return <div>InstallTab</div>;
+    };
+});
+
 describe('EditApplication', () => {
     type matchType = match<IEditApplicationMatchParams>;
     test('Edit existing app', async () => {
@@ -65,5 +71,68 @@ describe('EditApplication', () => {
         expect(screen.getByText(/applications.new/)).toBeInTheDocument();
         expect(screen.getByText('InfosTab')).toBeInTheDocument();
         expect(screen.queryByText(/admin.permissions/)).not.toBeInTheDocument();
+    });
+
+    test('If app is correctly installed, display a link to open it', async () => {
+        const mockMatch: Mockify<matchType> = {
+            params: {id: mockApplicationDetails.id}
+        };
+
+        const mocks = [
+            {
+                request: {
+                    query: getApplicationByIdQuery,
+                    variables: {
+                        id: mockApplicationDetails.id
+                    }
+                },
+                result: {
+                    data: {
+                        applications: {
+                            list: [mockApplicationDetails]
+                        }
+                    }
+                }
+            }
+        ];
+
+        render(<EditApplication match={mockMatch as matchType} />, {apolloMocks: mocks});
+
+        expect(screen.getByText(/loading/)).toBeInTheDocument();
+
+        expect(await screen.findByRole('link', {name: /open/})).toBeInTheDocument();
+    });
+
+    test('Retrieve active tab from URL', async () => {
+        const mockMatch: Mockify<matchType> = {
+            params: {id: mockApplicationDetails.id}
+        };
+
+        const mocks = [
+            {
+                request: {
+                    query: getApplicationByIdQuery,
+                    variables: {
+                        id: mockApplicationDetails.id
+                    }
+                },
+                result: {
+                    data: {
+                        applications: {
+                            list: [mockApplicationDetails]
+                        }
+                    }
+                }
+            }
+        ];
+
+        render(<EditApplication match={mockMatch as matchType} />, {
+            apolloMocks: mocks,
+            routerProps: {
+                initialEntries: ['/applications/edit/' + mockApplicationDetails.id + '#install']
+            }
+        });
+
+        expect(await screen.findByText('InstallTab')).toBeInTheDocument();
     });
 });

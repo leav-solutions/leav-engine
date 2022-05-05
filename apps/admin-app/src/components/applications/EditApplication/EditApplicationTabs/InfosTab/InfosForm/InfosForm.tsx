@@ -19,6 +19,7 @@ import ComponentSelector from './ComponentSelector';
 
 interface IInfosFormProps {
     onSubmitInfos: (dataToSave: ApplicationInfosFormValues) => void;
+    loading: boolean;
     errors?: IFormError;
     onCheckIdIsUnique: (value: string) => Promise<boolean>;
 }
@@ -43,12 +44,22 @@ const FormFooter = styled.div`
     right: 0;
     padding: 1em;
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 `;
 
-function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps): JSX.Element {
+const InstallMessage = styled.div`
+    margin-right 1em;
+    color: #999;
+`;
+
+function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFormProps): JSX.Element {
     const {t} = useTranslation();
     const {application, readonly} = useEditApplicationContext();
     const {availableLangs, defaultLang} = useLang();
+    const isReadOnly = readonly || loading;
+
     const defaultApplicationData: ApplicationInfosFormValues = {
         id: '',
         color: '',
@@ -182,7 +193,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps):
                                     width="4"
                                     name={`label.${lang}`}
                                     aria-label={`label.${lang}`}
-                                    disabled={readonly}
+                                    disabled={isReadOnly}
                                     onChange={_handleLabelChange}
                                     onBlur={_handleBlur}
                                     onKeyPress={_handleKeyPress}
@@ -201,7 +212,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps):
                                     width="4"
                                     name={`description.${lang}`}
                                     aria-label={`description.${lang}`}
-                                    disabled={readonly}
+                                    disabled={isReadOnly}
                                     onChange={_handleChange}
                                     onBlur={_handleBlur}
                                     onKeyPress={_handleKeyPress}
@@ -213,7 +224,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps):
                         <Form.Input
                             label={t('admin.id')}
                             width="4"
-                            disabled={!isNewApp || readonly}
+                            disabled={!isNewApp || isReadOnly}
                             name="id"
                             aria-label="id"
                             onChange={_handleChange}
@@ -228,7 +239,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps):
                             fluid
                             selection
                             width="4"
-                            disabled={readonly}
+                            disabled={isReadOnly}
                             name="component"
                             aria-label="id"
                             onChange={_handleChangeWithSubmit}
@@ -240,7 +251,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps):
                         <Form.Input
                             label={t('applications.endpoint')}
                             width="4"
-                            disabled={readonly}
+                            disabled={isReadOnly}
                             name="endpoint"
                             aria-label="endpoint"
                             onChange={_handleChangeWithSubmit}
@@ -256,7 +267,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps):
                             selection
                             multiple
                             width="4"
-                            disabled={readonly}
+                            disabled={isReadOnly}
                             name="libraries"
                             aria-label="id"
                             onChange={_handleChangeWithSubmit}
@@ -272,7 +283,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps):
                             selection
                             multiple
                             width="4"
-                            disabled={readonly}
+                            disabled={isReadOnly}
                             name="trees"
                             aria-label="id"
                             onChange={_handleChangeWithSubmit}
@@ -283,10 +294,12 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique}: IInfosFormProps):
                 </FormBody>
                 {!readonly && isNewApp && (
                     <FormFooter>
+                        {isNewApp && loading && <InstallMessage>{t('applications.install_pending')}</InstallMessage>}
                         <Form.Button
                             type="submit"
                             primary
                             icon
+                            loading={loading}
                             data-test-id="attribute-infos-submit-btn"
                             style={{float: 'right'}}
                             labelPosition="left"

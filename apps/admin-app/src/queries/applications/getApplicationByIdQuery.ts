@@ -24,6 +24,10 @@ export const getApplicationByIdQuery = gql`
                     access_application
                     admin_application
                 }
+                install {
+                    status
+                    lastCallResult
+                }
             }
         }
     }

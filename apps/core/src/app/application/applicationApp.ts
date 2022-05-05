@@ -15,7 +15,6 @@ import {GraphQLResolveInfo} from 'graphql';
 import path from 'path';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
-import {IApplication, IApplicationComponent} from '_types/application';
 import {IGetCoreAttributesParams} from '_types/attribute';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
@@ -24,6 +23,12 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
+import {
+    ApplicationInstallStatus,
+    IApplication,
+    IApplicationComponent,
+    IApplicationInstall
+} from '../../_types/application';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 
 export interface IApplicationApp {
@@ -62,6 +67,17 @@ export default function({
                         .join(' ')}
                 }
 
+                enum ApplicationInstallStatus {
+                    ${Object.values(ApplicationInstallStatus)
+                        .map(status => `${status}`)
+                        .join(' ')}
+                }
+
+                type ApplicationInstall {
+                    status: ApplicationInstallStatus!,
+                    lastCallResult: String
+                }
+
                 type Application {
                     id: ID!
                     system: Boolean
@@ -73,7 +89,8 @@ export default function({
                     icon: String,
                     component: String,
                     endpoint: String,
-                    permissions: ApplicationPermissions
+                    permissions: ApplicationPermissions,
+                    install: ApplicationInstall
                 }
 
                 type ApplicationComponent {
@@ -131,6 +148,7 @@ export default function({
                 extend type Mutation {
                     saveApplication(application: ApplicationInput!): Application!
                     deleteApplication(id: ID!): Application!
+                    installApplication(id: ID!): ApplicationInstall!
                 }
             `,
                 resolvers: {
@@ -160,6 +178,9 @@ export default function({
                         },
                         async deleteApplication(_, {id}, ctx): Promise<IApplication> {
                             return applicationDomain.deleteApplication({id, ctx});
+                        },
+                        async installApplication(_, {id}, ctx): Promise<IApplicationInstall> {
+                            return applicationDomain.runInstall({applicationId: id, ctx});
                         }
                     },
                     Application: {

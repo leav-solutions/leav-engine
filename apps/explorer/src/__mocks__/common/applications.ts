@@ -19,6 +19,9 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
 
 export const mockApplicationDetails: GET_APPLICATION_BY_ID_applications_list = {
     ...mockApplication,
+    permissions: {
+        access_application: true
+    },
     libraries: [
         {
             id: 'libA'

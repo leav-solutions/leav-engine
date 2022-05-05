@@ -31,6 +31,8 @@ export interface IConfig {
 export interface IServer {
     host: string;
     port: number;
+    publicUrl: string;
+    apiEndpoint: string;
     uploadLimit: number | string;
 }
 

@@ -12,6 +12,7 @@ import {
     addWildcardToFilters,
     arrayPick,
     arrayToObj,
+    enforceInitialSlash,
     formatIDString,
     getFieldError,
     getInvertColor,
@@ -336,6 +337,13 @@ describe('utils', () => {
             expect(isTreeInApp(mockApplicationDetails, 'treeB')).toBe(true);
             expect(isTreeInApp(mockApplicationDetails, 'treeC')).toBe(false);
             expect(isTreeInApp({...mockApplicationDetails, trees: []}, 'treeC')).toBe(true);
+        });
+    });
+
+    describe('enforceInitialSlash', () => {
+        test('Add initial slash if not present', async () => {
+            expect(enforceInitialSlash('/foo/bar')).toBe('/foo/bar');
+            expect(enforceInitialSlash('foo/bar')).toBe('/foo/bar');
         });
     });
 });

@@ -4,6 +4,18 @@
 import {IGetCoreEntitiesParams} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 
+export enum ApplicationInstallStatus {
+    NONE = 'NONE',
+    RUNNING = 'RUNNING',
+    ERROR = 'ERROR',
+    SUCCESS = 'SUCCESS'
+}
+
+export interface IApplicationInstall {
+    status: ApplicationInstallStatus;
+    lastCallResult?: string;
+}
+
 export interface IApplication extends ICoreEntity {
     system?: boolean;
     description: ISystemTranslation;
@@ -13,6 +25,7 @@ export interface IApplication extends ICoreEntity {
     icon?: string;
     component: string;
     endpoint: string;
+    install?: IApplicationInstall;
 }
 
 /**

@@ -182,25 +182,6 @@
         "default": "Par défaut",
         "any_record": "Tous les éléments",
         "any_entity": "Tou(te)s {{entityName}}",
-        "admin_access_libraries": "Accéder aux bibliothèques",
-        "admin_create_library": "Créer une bibliothèque",
-        "admin_edit_library": "Éditer une bibliothèque",
-        "admin_delete_library": "Supprimer une bibliothèque",
-        "admin_access_attributes": "Accéder aux attributs",
-        "admin_create_attribute": "Créer un attribut",
-        "admin_edit_attribute": "Éditer un attribut",
-        "admin_delete_attribute": "Supprimer un attribut",
-        "admin_access_trees": "Accéder aux arbres",
-        "admin_create_tree": "Créer un arbre",
-        "admin_edit_tree": "Éditer un arbre",
-        "admin_delete_tree": "Supprimer un arbre",
-        "admin_access_forms": "Accéder aux formulaires",
-        "admin_create_form": "Créer un formulaire",
-        "admin_edit_form": "Éditer un formulaire",
-        "admin_delete_form": "Supprimer un formulaire",
-        "admin_access_permissions": "Accéder aux permissions",
-        "admin_edit_permission": "Éditer les permissions",
-        "admin_manage_global_preferences": "Gérer les préférences globales",
         "access_attribute": "Voir l'attribut",
         "create_value": "Créer une valeur",
         "edit_value": "Éditer une valeur",
@@ -222,6 +203,7 @@
             "trees": "Classements",
             "permissions": "Permissions",
             "preferences": "Préférences",
+            "applications": "Applications",
             "application": "Application"
         }
     },
@@ -326,6 +308,17 @@
         "trees": "Arbres accessibles",
         "all_trees": "Tous les arbres",
         "select_component": "Sélectionner un composant",
-        "component": "Composant"
+        "component": "Composant",
+        "install_pending": "Installation de l'application, veuillez patienter...",
+        "install": "Installation",
+        "status_label": "Statut",
+        "reinstall": "Relancer l'installation",
+        "open_application": "Ouvrir l'application",
+        "statuses": {
+            "NONE": "Aucun",
+            "RUNNING":"En cours",
+            "SUCCESS":"Réussi",
+            "ERROR":"Erreur"
+        }
     }
 }

@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {ApplicationInstallStatus} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: GET_APPLICATION_BY_ID
 // ====================================================
@@ -23,6 +25,11 @@ export interface GET_APPLICATION_BY_ID_applications_list_permissions {
     admin_application: boolean;
 }
 
+export interface GET_APPLICATION_BY_ID_applications_list_install {
+    status: ApplicationInstallStatus;
+    lastCallResult: string | null;
+}
+
 export interface GET_APPLICATION_BY_ID_applications_list {
     id: string;
     label: SystemTranslation | null;
@@ -34,6 +41,7 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     libraries: GET_APPLICATION_BY_ID_applications_list_libraries[];
     trees: GET_APPLICATION_BY_ID_applications_list_trees[];
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions | null;
+    install: GET_APPLICATION_BY_ID_applications_list_install | null;
 }
 
 export interface GET_APPLICATION_BY_ID_applications {

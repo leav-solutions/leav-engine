@@ -1,5 +1,6 @@
 {
     "name": "explorer",
+    "description": "Generic application to explore your data",
     "version": "0.1.0",
     "private": true,
     "dependencies": {

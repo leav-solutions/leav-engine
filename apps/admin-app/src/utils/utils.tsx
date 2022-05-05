@@ -327,3 +327,11 @@ export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId
     const appTrees = app?.trees ?? [];
     return !appTrees.length || !!appTrees.find(appTree => appTree.id === treeId);
 };
+
+export const enforceInitialSlash = (url: string): string => {
+    if (url.startsWith('/')) {
+        return url;
+    }
+
+    return `/${url}`;
+};

@@ -17,6 +17,13 @@ export enum ActionIOTypes {
     string = 'string'
 }
 
+export enum ApplicationInstallStatus {
+    ERROR = 'ERROR',
+    NONE = 'NONE',
+    RUNNING = 'RUNNING',
+    SUCCESS = 'SUCCESS'
+}
+
 export enum ApplicationSortableFields {
     component = 'component',
     endpoint = 'endpoint',

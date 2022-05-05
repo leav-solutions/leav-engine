@@ -52,7 +52,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const _handleApolloError = onError(({graphQLErrors, networkError}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
-            (graphQLErrors ?? []).some(err => err.extensions.code === 'UNAUTHENTICATED')
+            (graphQLErrors ?? [])?.some(err => err.extensions.code === 'UNAUTHENTICATED')
         ) {
             _redirectToLogin();
         }

@@ -6,6 +6,7 @@ import {MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import ApplicationContext from 'context/CurrentApplicationContext';
 import React, {PropsWithChildren, ReactElement} from 'react';
+import {MemoryRouterProps} from 'react-router';
 import {MemoryRouter} from 'react-router-dom';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
@@ -15,21 +16,23 @@ import MockedUserContextProvider from '__mocks__/MockedUserContextProvider';
 interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];
     cacheSettings?: InMemoryCacheConfig;
+    routerProps?: MemoryRouterProps;
     [key: string]: any;
 }
 
 interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];
     cacheSettings?: InMemoryCacheConfig;
+    routerProps?: MemoryRouterProps;
 }
 
-const Providers = ({children, apolloMocks, cacheSettings}: PropsWithChildren<IProvidersProps>) => {
+const Providers = ({children, apolloMocks, cacheSettings, routerProps}: PropsWithChildren<IProvidersProps>) => {
     return (
         <MockedProviderWithFragments mocks={apolloMocks} cacheSettings={cacheSettings}>
             <MockedLangContextProvider>
                 <MockedUserContextProvider>
                     <ApplicationContext.Provider value={mockApplicationDetails}>
-                        <MemoryRouter>{children as ReactElement}</MemoryRouter>
+                        <MemoryRouter {...routerProps}>{children as ReactElement}</MemoryRouter>
                     </ApplicationContext.Provider>
                 </MockedUserContextProvider>
             </MockedLangContextProvider>

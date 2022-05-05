@@ -5,11 +5,18 @@ import {CONSULTED_APPS_KEY} from '@leav/utils';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IUserDataDomain} from 'domain/userData/userDataDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
+import {IApplicationService} from 'infra/application/applicationService';
 import {IUtils} from 'utils/utils';
-import {IApplication, IApplicationComponent, IGetCoreApplicationsParams} from '_types/application';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {
+    ApplicationInstallStatus,
+    IApplication,
+    IApplicationComponent,
+    IApplicationInstall,
+    IGetCoreApplicationsParams
+} from '../../_types/application';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -33,12 +40,14 @@ export interface IApplicationDomain {
     deleteApplication(params: {id: string; ctx: IQueryInfos}): Promise<IApplication>;
     updateConsultationHistory(params: {applicationId: string; ctx: IQueryInfos}): Promise<void>;
     getAvailableComponents(params: {ctx: IQueryInfos}): Promise<IApplicationComponent[]>;
+    runInstall(params: {applicationId: string; ctx: IQueryInfos}): Promise<IApplicationInstall>;
 }
 
 interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.userData'?: IUserDataDomain;
     'core.infra.application'?: IApplicationRepo;
+    'core.infra.application.service'?: IApplicationService;
     'core.utils'?: IUtils;
 }
 
@@ -46,6 +55,7 @@ export default function({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.userData': userDataDomain = null,
     'core.infra.application': applicationRepo = null,
+    'core.infra.application.service': applicationService = null,
     'core.utils': utils = null
 }: IDeps = {}): IApplicationDomain {
     return {
@@ -81,9 +91,13 @@ export default function({
 
             const isExistingApp = apps.list.length;
 
-            const defaultParams = {
+            const defaultParams: Partial<IApplication> = {
                 id: '',
-                system: false
+                system: false,
+                install: {
+                    status: ApplicationInstallStatus.NONE,
+                    lastCallResult: null
+                }
             };
 
             const appProps: IApplication = apps.list[0] ?? null;
@@ -128,9 +142,15 @@ export default function({
             }
 
             // If doesn't exist, we create it. Otherwise, update it
-            return isExistingApp
+            const savedApp = await (isExistingApp
                 ? applicationRepo.updateApplication({applicationData: appToSave, ctx})
-                : applicationRepo.createApplication({applicationData: appToSave, ctx});
+                : applicationRepo.createApplication({applicationData: appToSave, ctx}));
+
+            if (!isExistingApp) {
+                await this.runInstall({applicationId: savedApp.id, ctx});
+            }
+
+            return savedApp;
         },
         async deleteApplication({id, ctx}) {
             const apps = await applicationRepo.getApplications({
@@ -172,6 +192,22 @@ export default function({
         },
         async getAvailableComponents({ctx}): Promise<IApplicationComponent[]> {
             return applicationRepo.getAvailableComponents({ctx});
+        },
+        async runInstall({applicationId, ctx}) {
+            const appProps = await this.getApplicationProperties({id: applicationId, ctx});
+
+            await applicationRepo.updateApplication({
+                applicationData: {...appProps, install: {status: ApplicationInstallStatus.RUNNING, lastCallResult: ''}},
+                ctx
+            });
+            const installResult = await applicationService.runInstall({application: appProps, ctx});
+
+            await applicationRepo.updateApplication({
+                applicationData: {...appProps, install: installResult},
+                ctx
+            });
+
+            return installResult;
         }
     };
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Copyright LEAV Solutions 2017
 # This file is released under LGPL V3
 # License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -11,18 +11,24 @@
 # - LEAV_AVAILABLE_LANG
 # - LEAV_APP_ENDPOINT
 # - LEAV_APP_APPLICATION_ID
-echo 'Building application...'
 
-echo LEAV_APPLICATION_ID $LEAV_APPLICATION_ID
-echo LEAV_API_URL $LEAV_API_URL
-echo LEAV_DEFAULT_LANG $LEAV_DEFAULT_LANG
-echo LEAV_AVAILABLE_LANG $LEAV_AVAILABLE_LANG
-echo LEAV_LOGIN_ENDPOINT $LEAV_LOGIN_ENDPOINT
-echo LEAV_APP_ENDPOINT $LEAV_APP_ENDPOINT
-echo LEAV_DEST_FOLDER $LEAV_DEST_FOLDER
+checkExitCode () {
+    code=$?
+    if ! [ $code = 0 ]; then
+        echo "Something went wrong, exiting with code $code"
+        exit 1
+    fi
+}
 
-SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")   # Get the directory name
-SCRIPT_DIR=$(realpath "${SCRIPT_DIR}")    # Resolve its full path if need be
+echo 'Injecting these variables:'
+echo REACT_APP_APPLICATION_ID: $LEAV_APPLICATION_ID
+echo REACT_APP_API_URL: $LEAV_API_URL
+echo REACT_APP_DEFAULT_LANG: $LEAV_DEFAULT_LANG
+echo REACT_APP_AVAILABLE_LANG: $LEAV_AVAILABLE_LANG
+echo REACT_APP_LOGIN_ENDPOINT: $LEAV_LOGIN_ENDPOINT
+echo REACT_APP_ENDPOINT: $LEAV_APP_ENDPOINT
+echo PUBLIC_URL: /$LEAV_APP_ENDPOINT
+
 export REACT_APP_APPLICATION_ID=$LEAV_APPLICATION_ID
 export REACT_APP_API_URL=$LEAV_API_URL
 export REACT_APP_DEFAULT_LANG=$LEAV_DEFAULT_LANG
@@ -31,12 +37,15 @@ export REACT_APP_LOGIN_ENDPOINT=$LEAV_LOGIN_ENDPOINT
 export REACT_APP_ENDPOINT=$LEAV_APP_ENDPOINT
 export PUBLIC_URL=/$LEAV_APP_ENDPOINT
 
+echo 'Building application...'
 export SKIP_PREFLIGHT_CHECK=true
 yarn workspace admin-app build
+checkExitCode
 
 echo 'Installing application...'
-BUILD_DIR=$SCRIPT_DIR/build
-rm -rf $LEAV_DEST_FOLDER
+BUILD_DIR=./build
 mv $BUILD_DIR $LEAV_DEST_FOLDER
+checkExitCode
 
-echo 'Done.'
+echo 'All good!'
+exit 0
