@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ApplicationInstallStatus} from '../../../../_types/application';
 import {makeGraphQlCall} from '../e2eUtils';
 
 describe('Applications', () => {
@@ -10,12 +11,12 @@ describe('Applications', () => {
                     id: "test_app",
                     label: {fr: "Test app"},
                     endpoint: "my-app",
-                    component: "explorer"
+                    module: "explorer"
                 }) {
                     id
                     label
                     endpoint
-                    component
+                    module
                     permissions {
                         access_application
                     }
@@ -26,17 +27,27 @@ describe('Applications', () => {
         expect(res.data.errors).toBeUndefined();
 
         expect(res.data.data.saveApplication.id).toBe('test_app');
-        expect(res.data.data.saveApplication.component).toBe('explorer');
+        expect(res.data.data.saveApplication.module).toBe('explorer');
         expect(res.data.data.saveApplication.permissions.access_application).toBeDefined();
 
         // Check if new app is in applications list
-        const appsRes = await makeGraphQlCall('{ applications { list { id permissions {access_application}} } }');
+        const appsRes = await makeGraphQlCall(`{
+            applications {
+                list {
+                    id
+                    install {status}
+                    permissions {access_application}
+                }
+            }
+        }`);
 
         expect(appsRes.status).toBe(200);
         expect(appsRes.data.errors).toBeUndefined();
 
-        expect(appsRes.data.data.applications.list.filter(app => app.id === 'test_app').length).toBe(1);
-        expect(appsRes.data.data.applications.list[0].permissions.access_application).toBeDefined();
+        const testAppRes = appsRes.data.data.applications.list.find(app => app.id === 'test_app');
+        expect(testAppRes).toBeDefined();
+        expect(testAppRes.install.status).toBe(ApplicationInstallStatus.SUCCESS);
+        expect(testAppRes.permissions.access_application).toBeDefined();
     });
 
     test('Get applications list', async () => {

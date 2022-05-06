@@ -33,9 +33,5 @@ module.exports = {
     logs: {
         transport: ['console']
     },
-    redis: {
-        host: 'redis',
-        port: 6379
-    },
     debug: true
 };

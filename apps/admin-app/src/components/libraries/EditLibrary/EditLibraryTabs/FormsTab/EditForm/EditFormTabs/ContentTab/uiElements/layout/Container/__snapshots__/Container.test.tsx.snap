@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Container Snapshot test 1`] = `
-initialize {
+LoadedCheerio {
+  "length": 0,
   "options": Object {
     "decodeEntities": true,
     "xml": false,

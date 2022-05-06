@@ -82,7 +82,6 @@ export interface ITreeRepo {
      */
     isRecordPresent(params: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<boolean>;
 
-    /* eslint-disable jsdoc/check-indentation */
     /**
      * Return the whole tree in the form:
      * [
@@ -155,7 +154,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
 }
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): ITreeRepo {

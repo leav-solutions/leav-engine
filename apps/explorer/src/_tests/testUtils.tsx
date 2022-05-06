@@ -24,6 +24,7 @@ interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];
     storeState?: Partial<RootState>;
     cacheSettings?: InMemoryCacheConfig;
+    currentApp?: GET_APPLICATION_BY_ID_applications_list;
 }
 
 const Providers = ({

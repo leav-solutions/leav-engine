@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive} from '@leav/utils';
-import {Button, Form, Input, Popover, Space} from 'antd';
+import {Button, Form, Input, InputRef, Popover, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
@@ -301,7 +301,7 @@ function StandardFieldValue({
     };
 
     const _handleValueCopy = (value: AnyPrimitive | IDateRangeValue) => {
-        (inputRef as MutableRefObject<Input>)?.current?.focus();
+        (inputRef as MutableRefObject<InputRef>)?.current?.focus();
 
         _handleValueChange(value);
     };

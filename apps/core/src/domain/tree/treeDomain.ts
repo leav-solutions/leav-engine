@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-/* eslint-disable jsdoc/check-indentation */
 
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
@@ -86,7 +85,6 @@ export interface ITreeDomain {
         ctx: IQueryInfos;
     }): Promise<ITreeNodeLight>;
 
-    /* eslint-disable jsdoc/check-indentation */
     /**
      * Return the whole tree in the form:
      * [
@@ -151,7 +149,7 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,

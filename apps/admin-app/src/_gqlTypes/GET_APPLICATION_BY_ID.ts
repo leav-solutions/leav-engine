@@ -37,7 +37,7 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     endpoint: string | null;
     color: string | null;
     icon: string | null;
-    component: string | null;
+    module: string | null;
     libraries: GET_APPLICATION_BY_ID_applications_list_libraries[];
     trees: GET_APPLICATION_BY_ID_applications_list_trees[];
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions | null;

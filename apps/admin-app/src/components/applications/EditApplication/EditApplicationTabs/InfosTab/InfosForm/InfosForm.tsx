@@ -15,7 +15,7 @@ import {formatIDString, getFieldError} from '../../../../../../utils';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import {ApplicationInfosFormValues} from '../_types';
-import ComponentSelector from './ComponentSelector';
+import ModuleSelector from './ModuleSelector';
 
 interface IInfosFormProps {
     onSubmitInfos: (dataToSave: ApplicationInfosFormValues) => void;
@@ -64,7 +64,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
         id: '',
         color: '',
         icon: null,
-        component: '',
+        module: '',
         label: availableLangs.reduce((acc, cur) => {
             acc[cur] = '';
             return acc;
@@ -108,7 +108,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
         id: idValidator,
         color: yup.string().nullable(),
         icon: yup.string().nullable(),
-        component: yup.string().required(),
+        module: yup.string().required(),
         label: yup.object().shape({
             [defaultLang]: yup.string().required()
         }),
@@ -232,19 +232,19 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                             value={values.id}
                         />
                     </FormFieldWrapper>
-                    <FormFieldWrapper error={_getErrorByField('component')}>
-                        <ComponentSelector
-                            label={t('applications.component')}
-                            placeholder={t('applications.select_component')}
+                    <FormFieldWrapper error={_getErrorByField('module')}>
+                        <ModuleSelector
+                            label={t('applications.module')}
+                            placeholder={t('applications.select_module')}
                             fluid
                             selection
                             width="4"
                             disabled={isReadOnly}
-                            name="component"
+                            name="module"
                             aria-label="id"
                             onChange={_handleChangeWithSubmit}
                             onBlur={_handleBlur}
-                            value={values.component}
+                            value={values.module}
                         />
                     </FormFieldWrapper>
                     <FormFieldWrapper error={_getErrorByField('endpoint')}>

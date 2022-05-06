@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, FormFieldTypes, FormUIElementTypes, ICommonFieldsSettings, Override} from '@leav/utils';
-import {Checkbox, DatePicker, Input} from 'antd';
+import {Checkbox, DatePicker, InputRef} from 'antd';
 import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {MutableRefObject} from 'react';
+import {ValueInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements, RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 import {
@@ -16,7 +17,6 @@ import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from './uiElements/StandardField/standardFieldReducer/standardFieldReducer';
-import {ValueInput} from '_gqlTypes/globalTypes';
 
 export interface IValueToSubmit {
     attribute: string;
@@ -109,6 +109,6 @@ export interface IStandardInputProps {
     inputRef: MutableRefObject<InputRefPossibleTypes>;
 }
 
-export type InputRefPossibleTypes = Input | typeof DatePicker | typeof Checkbox;
+export type InputRefPossibleTypes = InputRef | typeof DatePicker | typeof Checkbox;
 
 export type StandardValueTypes = AnyPrimitive | IDateRangeValue;

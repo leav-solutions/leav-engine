@@ -102,7 +102,7 @@ describe('EditPermissions', () => {
                     query: savePermissionsQuery,
                     variables: {
                         permData: {
-                            type: 'app',
+                            type: 'admin',
                             actions: [{name: 'admin_create_library', allowed: false}],
                             usersGroup: '1234567'
                         }

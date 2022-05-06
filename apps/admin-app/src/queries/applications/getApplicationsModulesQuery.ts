@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
 
-export const getApplicationComponentsQuery = gql`
-    query GET_APPLICATION_COMPONENTS {
-        applicationsComponents {
+export const getApplicationModulesQuery = gql`
+    query GET_APPLICATION_MODULES {
+        applicationsModules {
             id
             description
             version

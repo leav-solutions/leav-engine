@@ -8,7 +8,7 @@ export const saveApplicationMutation = gql`
         saveApplication(application: $application) {
             id
             color
-            component
+            module
             description
             endpoint
             label

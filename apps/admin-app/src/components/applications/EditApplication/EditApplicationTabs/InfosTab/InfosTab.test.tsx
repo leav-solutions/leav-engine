@@ -4,11 +4,11 @@
 import userEvent from '@testing-library/user-event';
 import EditApplicationContext from 'context/EditApplicationContext';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
-import {getApplicationComponentsQuery} from 'queries/applications/getApplicationsComponentsQuery';
+import {getApplicationModulesQuery} from 'queries/applications/getApplicationsModulesQuery';
 import {saveApplicationMutation} from 'queries/applications/saveApplicationMutation';
 import React from 'react';
 import {act, render, screen, waitFor} from '_tests/testUtils';
-import {mockApplicationDetails, mockApplicationsComponents} from '__mocks__/common/applications';
+import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
 import InfosTab from './InfosTab';
 
 describe('InfosTab', () => {
@@ -17,12 +17,12 @@ describe('InfosTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationComponentsQuery,
+                    query: getApplicationModulesQuery,
                     variables: {}
                 },
                 result: {
                     data: {
-                        applicationsComponents: mockApplicationsComponents
+                        applicationsComponents: mockApplicationsModules
                     }
                 }
             },
@@ -85,12 +85,12 @@ describe('InfosTab', () => {
         const mocks = [
             {
                 request: {
-                    query: getApplicationComponentsQuery,
+                    query: getApplicationModulesQuery,
                     variables: {}
                 },
                 result: {
                     data: {
-                        applicationsComponents: mockApplicationsComponents
+                        applicationsComponents: mockApplicationsModules
                     }
                 }
             }
@@ -138,12 +138,12 @@ describe('InfosTab', () => {
             checkIdUnicityMock,
             {
                 request: {
-                    query: getApplicationComponentsQuery,
+                    query: getApplicationModulesQuery,
                     variables: {}
                 },
                 result: {
                     data: {
-                        applicationsComponents: mockApplicationsComponents
+                        applicationsComponents: mockApplicationsModules
                     }
                 }
             },
@@ -189,7 +189,7 @@ describe('InfosTab', () => {
 
         // Select a component
         userEvent.click(screen.getByRole('combobox', {name: /component/}));
-        userEvent.click(await screen.findByText(mockApplicationsComponents[0].description));
+        userEvent.click(await screen.findByText(mockApplicationsModules[0].description));
 
         userEvent.click(screen.getByRole('button', {name: /submit/}));
 

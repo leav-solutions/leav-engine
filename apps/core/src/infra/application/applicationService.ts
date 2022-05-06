@@ -7,7 +7,13 @@ import fs from 'fs/promises';
 import path from 'path';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {ApplicationInstallStatus, IApplication, IApplicationInstall} from '../../_types/application';
+import {
+    ApplicationInstallStatus,
+    APPS_INSTANCES_FOLDER,
+    APPS_MODULES_FOLDER,
+    IApplication,
+    IApplicationInstall
+} from '../../_types/application';
 
 export interface IApplicationService {
     runInstall(params: {application: IApplication; ctx: IQueryInfos}): Promise<IApplicationInstall>;
@@ -52,13 +58,13 @@ export default function({config}: IDeps = {}): IApplicationService {
             const appFolder = path.resolve(
                 rootPath,
                 config.applications.rootFolder,
-                'components',
-                application.component
+                APPS_MODULES_FOLDER,
+                application.module
             );
             const destinationFolder = path.resolve(
                 rootPath,
                 config.applications.rootFolder,
-                'installed',
+                APPS_INSTANCES_FOLDER,
                 application.id
             );
             const scriptPath = `${appFolder}/${APPLICATION_INSTALL_SCRIPT_NAME}`;

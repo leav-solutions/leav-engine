@@ -75,4 +75,4 @@ magick-*
 /imports
 /cache
 
-apps/core/applications/installed
+apps/core/applications/instances

@@ -6,6 +6,7 @@ import fs from 'fs/promises';
 import {IDbUtils} from 'infra/db/dbUtils';
 import path from 'path';
 import {IConfig} from '_types/config';
+import {APPS_MODULES_FOLDER} from '../../_types/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import applicationRepo from './applicationRepo';
 
@@ -18,7 +19,7 @@ describe('applicationRepo', () => {
         description: 'Super application',
         libraries: ['products', 'categories'],
         color: 'orange',
-        component: 'explorer'
+        module: 'explorer'
     };
     const applicationData = {
         id: 'test_application',
@@ -29,7 +30,7 @@ describe('applicationRepo', () => {
         libraries: ['products', 'categories'],
         trees: ['files', 'categories'],
         color: 'orange',
-        component: 'explorer'
+        module: 'explorer'
     };
 
     describe('getApplications', () => {
@@ -136,7 +137,7 @@ describe('applicationRepo', () => {
         });
     });
 
-    describe('getAvailableComponents', () => {
+    describe('getAvailableModules', () => {
         const mockConfig: Mockify<IConfig> = {
             applications: {rootFolder: '/some/path'}
         };
@@ -145,12 +146,12 @@ describe('applicationRepo', () => {
             jest.resetAllMocks();
         });
 
-        test('Return components found on directory', async () => {
-            jest.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
-            jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['explorer', 'admin'] as any[]);
+        test('Return modules found on directory', async () => {
+            const pathSpy = jest.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
+            const fsSpy = jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['explorer', 'admin'] as any[]);
 
             jest.mock(
-                '/some/path/components/explorer/package.json',
+                `/some/path/${APPS_MODULES_FOLDER}/explorer/package.json`,
                 () => ({
                     name: 'explorer',
                     description: 'explorer description',
@@ -160,7 +161,7 @@ describe('applicationRepo', () => {
             );
 
             jest.mock(
-                '/some/path/components/admin/package.json',
+                `/some/path/${APPS_MODULES_FOLDER}/admin/package.json`,
                 () => ({
                     name: 'admin',
                     description: 'admin description',
@@ -171,12 +172,15 @@ describe('applicationRepo', () => {
 
             const repo = applicationRepo({config: mockConfig as IConfig});
 
-            const components = await repo.getAvailableComponents({ctx: mockCtx});
+            const modules = await repo.getAvailableModules({ctx: mockCtx});
 
-            expect(components).toEqual([
+            expect(modules).toEqual([
                 {id: 'explorer', description: 'explorer description', version: '42'},
                 {id: 'admin', description: 'admin description', version: '42'}
             ]);
+
+            pathSpy.mockRestore();
+            fsSpy.mockRestore();
         });
     });
 });

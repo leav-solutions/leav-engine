@@ -25,9 +25,10 @@ import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
 import {
     ApplicationInstallStatus,
+    APPS_INSTANCES_FOLDER,
     IApplication,
-    IApplicationComponent,
-    IApplicationInstall
+    IApplicationInstall,
+    IApplicationModule
 } from '../../_types/application';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 
@@ -47,7 +48,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.app.auth': authApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.domain.application': applicationDomain = null,
@@ -87,13 +88,13 @@ export default function({
                     trees: [Tree!]!
                     color: String,
                     icon: String,
-                    component: String,
+                    module: String,
                     endpoint: String,
                     permissions: ApplicationPermissions,
                     install: ApplicationInstall
                 }
 
-                type ApplicationComponent {
+                type ApplicationModule {
                     id: ID!
                     description: String,
                     version: String
@@ -107,7 +108,7 @@ export default function({
                     trees: [String!],
                     color: String,
                     icon: String,
-                    component: String,
+                    module: String,
                     endpoint: String,
                 }
 
@@ -116,7 +117,7 @@ export default function({
                     label: String,
                     system: Boolean,
                     endpoint: String,
-                    component: String
+                    module: String
                 }
 
                 type ApplicationsList {
@@ -128,7 +129,7 @@ export default function({
                     id
                     system
                     endpoint
-                    component
+                    module
                 }
 
                 input SortApplications {
@@ -142,7 +143,7 @@ export default function({
                         pagination: Pagination,
                         sort: SortApplications
                     ): ApplicationsList
-                    applicationsComponents: [ApplicationComponent!]!
+                    applicationsModules: [ApplicationModule!]!
                 }
 
                 extend type Mutation {
@@ -164,8 +165,8 @@ export default function({
                                 ctx
                             });
                         },
-                        async applicationsComponents(_, args: {}, ctx: IQueryInfos): Promise<IApplicationComponent[]> {
-                            return applicationDomain.getAvailableComponents({ctx});
+                        async applicationsModules(_, args: {}, ctx: IQueryInfos): Promise<IApplicationModule[]> {
+                            return applicationDomain.getAvailableModules({ctx});
                         }
                     },
                     Mutation: {
@@ -224,6 +225,7 @@ export default function({
         registerRoute(app): void {
             // Serve applications from their endpoint
             app.get(
+                // TODO namespace endpoints
                 ['/:endpoint', '/:endpoint/*'],
                 // Check authentication and parse token
                 async (req: IRequestWithContext, res, next) => {
@@ -280,7 +282,7 @@ export default function({
                         const appFolder = path.resolve(
                             rootPath,
                             config.applications.rootFolder,
-                            'installed',
+                            APPS_INSTANCES_FOLDER,
                             applicationId
                         );
 

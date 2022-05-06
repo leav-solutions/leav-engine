@@ -59,7 +59,7 @@ function ApplicationSwitcher(): JSX.Element {
     const [{lang}] = useLang();
     const currentApp = useApplicationContext();
 
-    const {loading, error, data} = useQuery<GET_APPLICATIONS, GET_APPLICATIONSVariables>(getApplicationsQuery);
+    const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery);
 
     const menuItems: ItemType[] = loading
         ? skeletonItems

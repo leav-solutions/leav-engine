@@ -22,7 +22,7 @@ checkExitCode () {
 
 if [ "$NODE_ENV" = "test" ]; then
     exit 0;
-}
+fi
 
 echo 'Injecting these variables:'
 echo REACT_APP_APPLICATION_ID: $LEAV_APPLICATION_ID
@@ -43,7 +43,7 @@ export PUBLIC_URL=/$LEAV_APP_ENDPOINT
 
 echo 'Building application...'
 export SKIP_PREFLIGHT_CHECK=true
-yarn workspace admin-app build
+yarn workspace portal build
 checkExitCode
 
 echo 'Installing application...'

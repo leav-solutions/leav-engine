@@ -13,5 +13,5 @@ export const mockApplication: IApplication = {
     trees: ['files', 'categories'],
     color: 'orange',
     icon: 'some-icon',
-    component: 'explorer'
+    module: 'explorer'
 };

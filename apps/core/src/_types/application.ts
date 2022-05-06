@@ -4,6 +4,9 @@
 import {IGetCoreEntitiesParams} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 
+export const APPS_MODULES_FOLDER = 'modules';
+export const APPS_INSTANCES_FOLDER = 'instances';
+
 export enum ApplicationInstallStatus {
     NONE = 'NONE',
     RUNNING = 'RUNNING',
@@ -23,7 +26,7 @@ export interface IApplication extends ICoreEntity {
     trees: string[];
     color?: string;
     icon?: string;
-    component: string;
+    module: string;
     endpoint: string;
     install?: IApplicationInstall;
 }
@@ -41,7 +44,7 @@ export interface IGetCoreApplicationsParams extends IGetCoreEntitiesParams {
     filters?: IApplicationFilterOptions;
 }
 
-export interface IApplicationComponent {
+export interface IApplicationModule {
     id: string;
     description: string;
     version: string;

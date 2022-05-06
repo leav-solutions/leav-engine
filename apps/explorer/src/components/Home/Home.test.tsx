@@ -8,6 +8,7 @@ import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import {act, render, screen, within} from '_tests/testUtils';
+import {mockApplicationDetails} from '__mocks__/common/applications';
 import Home from './Home';
 import {FAVORITE_LIBRARIES_KEY} from './LibrariesList/LibrariesList';
 import {FAVORITE_TREES_KEY} from './TreeList/TreeList';
@@ -165,13 +166,19 @@ describe('Home', () => {
         }
     ];
 
+    const currentApp = {
+        ...mockApplicationDetails,
+        libraries: [],
+        trees: []
+    };
+
     test('Display libraries and tree lists', async () => {
         await act(async () => {
             render(
                 <MemoryRouter>
                     <Home />
                 </MemoryRouter>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks, currentApp}
             );
         });
 
@@ -191,7 +198,7 @@ describe('Home', () => {
                 <MemoryRouter>
                     <Home />
                 </MemoryRouter>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks, currentApp}
             );
         });
 
@@ -214,7 +221,7 @@ describe('Home', () => {
                 <MemoryRouter>
                     <Home />
                 </MemoryRouter>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks, currentApp}
             );
         });
 
@@ -237,7 +244,7 @@ describe('Home', () => {
                 <MemoryRouter>
                     <Home />
                 </MemoryRouter>,
-                {apolloMocks: mocks}
+                {apolloMocks: mocks, currentApp}
             );
         });
 

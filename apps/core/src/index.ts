@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import fs from 'fs';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import * as Config from '_types/config';
 import {getConfig, validateConfig} from './config';
-import {init as initDI} from './depsManager';
+import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
-import {initDb} from './infra/db/db';
-import {initPlugins} from './pluginsLoader';
 import {initAmqp} from './infra/amqp';
 import {initRedis} from './infra/cache';
-import fs from 'fs';
+import {initDb} from './infra/db/db';
+import {initPlugins} from './pluginsLoader';
 
-(async function () {
+(async function() {
     let conf: Config.IConfig;
 
     try {

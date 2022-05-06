@@ -13,7 +13,7 @@ export const getApplicationByIdQuery = gql`
                 endpoint
                 color
                 icon
-                component
+                module
                 libraries {
                     id
                 }

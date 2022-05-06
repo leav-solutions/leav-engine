@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import fs from 'fs';
+import fsremaned from 'fs';
 import path from 'path';
 import {getConfig} from '../../../config';
-import {init as initDI} from '../../../depsManager';
+import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {initAmqp} from '../../../infra/amqp';
 import {initRedis} from '../../../infra/cache/redis';
@@ -20,7 +20,7 @@ const _setupFakePlugin = async () => {
     const relativePath = path.relative(pluginsFolder, fakePluginSrc);
 
     try {
-        await fs.promises.symlink(relativePath, fakePluginDest);
+        await fsremaned.promises.symlink(relativePath, fakePluginDest);
     } catch (e) {
         // It's ok, already exists
         if (e.code === 'EEXIST') {
@@ -52,12 +52,12 @@ export const init = async (conf: IConfig): Promise<any> => {
 };
 
 const _createRequiredDirectories = async conf => {
-    if (!fs.existsSync(conf.import.directory)) {
-        await fs.promises.mkdir(conf.import.directory);
+    if (!fsremaned.existsSync(conf.import.directory)) {
+        await fsremaned.promises.mkdir(conf.import.directory);
     }
 
-    if (!fs.existsSync(conf.diskCache.directory)) {
-        await fs.promises.mkdir(conf.diskCache.directory);
+    if (!fsremaned.existsSync(conf.diskCache.directory)) {
+        await fsremaned.promises.mkdir(conf.diskCache.directory);
     }
 };
 

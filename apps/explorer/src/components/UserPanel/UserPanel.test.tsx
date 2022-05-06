@@ -37,7 +37,7 @@ describe('UserPanel', () => {
             logout: mockLogout
         }));
 
-        const mockedLocation = {...window.location, replace: jest.fn()};
+        const mockedLocation = {...window.location, reload: jest.fn()};
         delete window.location;
         window.location = mockedLocation;
 
@@ -56,7 +56,6 @@ describe('UserPanel', () => {
         });
 
         expect(mockLogout).toHaveBeenCalled();
-        expect(window.location.replace).toHaveBeenCalledWith('/');
     });
 
     test('Can switch language', async () => {

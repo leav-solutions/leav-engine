@@ -13,8 +13,8 @@ import ValidationError from '../../errors/ValidationError';
 import {
     ApplicationInstallStatus,
     IApplication,
-    IApplicationComponent,
     IApplicationInstall,
+    IApplicationModule,
     IGetCoreApplicationsParams
 } from '../../_types/application';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
@@ -39,7 +39,7 @@ export interface IApplicationDomain {
     saveApplication(params: {applicationData: IApplication; ctx: IQueryInfos}): Promise<IApplication>;
     deleteApplication(params: {id: string; ctx: IQueryInfos}): Promise<IApplication>;
     updateConsultationHistory(params: {applicationId: string; ctx: IQueryInfos}): Promise<void>;
-    getAvailableComponents(params: {ctx: IQueryInfos}): Promise<IApplicationComponent[]>;
+    getAvailableModules(params: {ctx: IQueryInfos}): Promise<IApplicationModule[]>;
     runInstall(params: {applicationId: string; ctx: IQueryInfos}): Promise<IApplicationInstall>;
 }
 
@@ -190,8 +190,8 @@ export default function({
             // Save new history
             await userDataDomain.saveUserData(CONSULTED_APPS_KEY, newHistory, false, ctx);
         },
-        async getAvailableComponents({ctx}): Promise<IApplicationComponent[]> {
-            return applicationRepo.getAvailableComponents({ctx});
+        async getAvailableModules({ctx}): Promise<IApplicationModule[]> {
+            return applicationRepo.getAvailableModules({ctx});
         },
         async runInstall({applicationId, ctx}) {
             const appProps = await this.getApplicationProperties({id: applicationId, ctx});

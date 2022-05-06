@@ -5,12 +5,12 @@ import React from 'react';
 import {Dropdown, DropdownProps, Form, Header} from 'semantic-ui-react';
 import {GET_APPLICATION_COMPONENTS_applicationsComponents} from '_gqlTypes/GET_APPLICATION_COMPONENTS';
 
-interface IComponentsSelectorFieldProps extends DropdownProps {
-    components: GET_APPLICATION_COMPONENTS_applicationsComponents[];
+interface IModuleSelectorFieldProps extends DropdownProps {
+    modules: GET_APPLICATION_COMPONENTS_applicationsComponents[];
 }
 
-const ComponentSelectorField = ({components, ...fieldProps}: IComponentsSelectorFieldProps): JSX.Element => {
-    const options = (components ?? []).map(comp => ({
+const ModuleSelectorField = ({modules, ...fieldProps}: IModuleSelectorFieldProps): JSX.Element => {
+    const options = (modules ?? []).map(comp => ({
         key: comp.id,
         value: comp.id,
         text: comp.id,
@@ -28,4 +28,4 @@ const ComponentSelectorField = ({components, ...fieldProps}: IComponentsSelector
     );
 };
 
-export default ComponentSelectorField;
+export default ModuleSelectorField;

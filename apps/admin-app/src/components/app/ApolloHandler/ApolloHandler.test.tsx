@@ -40,7 +40,7 @@ describe('ApolloHandler', () => {
 
         await act(async () => {
             render(
-                <ApolloHandler token={'token'} onTokenInvalid={jest.fn()}>
+                <ApolloHandler>
                     <MockComponent />
                 </ApolloHandler>
             );

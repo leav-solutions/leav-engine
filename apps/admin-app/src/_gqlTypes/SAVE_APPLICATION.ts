@@ -15,7 +15,7 @@ import {ApplicationInput} from './globalTypes';
 export interface SAVE_APPLICATION_saveApplication {
     id: string;
     color: string | null;
-    component: string | null;
+    module: string | null;
     description: SystemTranslation | null;
     endpoint: string | null;
     label: SystemTranslation | null;

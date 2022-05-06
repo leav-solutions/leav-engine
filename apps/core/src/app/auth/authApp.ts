@@ -155,7 +155,7 @@ export default function({
 
             // In development, we allow token to be passed in the header instead of the cookie
             // (for easier testing and tooling)
-            if (!token && process.env.NODE_ENV === 'development') {
+            if (!token && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
                 token = req.headers.authorization;
             }
 

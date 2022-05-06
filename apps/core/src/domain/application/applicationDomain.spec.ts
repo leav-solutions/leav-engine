@@ -96,10 +96,13 @@ describe('applicationDomain', () => {
                     'core.infra.application': mockAppRepo as IApplicationRepo,
                     'core.utils': mockUtils as IUtils
                 });
+                appDomain.runInstall = jest.fn();
+
                 const createdApp = await appDomain.saveApplication({applicationData: mockApplication, ctx: mockCtx});
 
                 expect(mockAppRepo.createApplication).toBeCalled();
                 expect(mockAppRepo.updateApplication).not.toBeCalled();
+                expect(appDomain.runInstall).toBeCalled();
                 expect(createdApp).toEqual(mockApplication);
             });
 
@@ -295,7 +298,7 @@ describe('applicationDomain', () => {
     describe('updateConsulationHistory', () => {
         test('Save consulted app to history', async () => {
             const mockUserDataDomain: Mockify<IUserDataDomain> = {
-                getUserData: global.__mockPromise({[CONSULTED_APPS_KEY]: []}),
+                getUserData: global.__mockPromise({data: {[CONSULTED_APPS_KEY]: []}}),
                 saveUserData: jest.fn()
             };
 
@@ -315,7 +318,9 @@ describe('applicationDomain', () => {
         test('Dedup history', async () => {
             const mockUserDataDomain: Mockify<IUserDataDomain> = {
                 getUserData: global.__mockPromise({
-                    [CONSULTED_APPS_KEY]: ['some_app', 'another_app', mockApplication.id, 'last_app']
+                    data: {
+                        [CONSULTED_APPS_KEY]: ['some_app', 'another_app', mockApplication.id, 'last_app']
+                    }
                 }),
                 saveUserData: jest.fn()
             };
@@ -341,7 +346,9 @@ describe('applicationDomain', () => {
         test('Limit history size', async () => {
             const mockUserDataDomain: Mockify<IUserDataDomain> = {
                 getUserData: global.__mockPromise({
-                    [CONSULTED_APPS_KEY]: new Array(MAX_CONSULTATION_HISTORY_SIZE).fill('').map((e, i) => i)
+                    data: {
+                        [CONSULTED_APPS_KEY]: new Array(MAX_CONSULTATION_HISTORY_SIZE).fill('').map((e, i) => i)
+                    }
                 }),
                 saveUserData: jest.fn()
             };
