@@ -499,26 +499,32 @@ export default function ({
                 if (sheets?.[indexSheet] !== null) {
                     let {type, library, mapping, key, linkAttribute, keyTo} = sheets?.[indexSheet] || {};
 
+                    // on mapping in file
                     if (typeof sheets === 'undefined') {
                         const comments = [];
                         workbook.worksheets[indexSheet]
                             .getRow(1)
                             .eachCell(c =>
-                                comments.push((c.note as ExcelJS.Comment)?.texts?.[0].text?.replace(/\n/g, ' '))
+                                comments.push((c.note as ExcelJS.Comment)?.texts?.[0].text?.replace(/\n/g, ' ') || null)
                             );
+
+                        // if mapping parameters not specified we ignore this sheet
+                        if (comments[0] === null) {
+                            continue;
+                        }
 
                         const args = _extractArgs(comments[0]);
 
                         type = ImportType[args.type];
                         library = args.library;
                         key = args.key;
-                        mapping = comments.map(comm => _extractArgs(comm).id || null);
+                        mapping = comments.map(comm => (comm ? _extractArgs(comm).id : null));
 
                         // may be undefined if standard import
                         linkAttribute = args.linkAttribute;
                         keyTo = args.keyTo;
 
-                        // if type is not specified we ignore this sheet
+                        // if sheet type is not specified we ignore this sheet
                         if (typeof type === 'undefined') {
                             continue;
                         }

@@ -2,9 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InboxOutlined, KeyOutlined, LoadingOutlined} from '@ant-design/icons';
-import {useMutation, useQuery} from '@apollo/client';
+import {useLazyQuery, useMutation} from '@apollo/client';
 import {Checkbox, message, Result, Select, Space, Steps, Table, Typography, Upload, Tabs} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
+import {lte} from 'lodash';
 import React, {useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addNotification} from 'redux/notifications';
@@ -16,7 +19,12 @@ import {getAttributesByLibQuery} from '../../../../graphQL/queries/attributes/ge
 import {importExcel} from '../../../../graphQL/queries/import/importExcel';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../../utils';
-import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {
+    GET_ATTRIBUTES_BY_LIB,
+    GET_ATTRIBUTES_BY_LIBVariables,
+    GET_ATTRIBUTES_BY_LIB_attributes_list,
+    GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute
+} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {IMPORT, IMPORTVariables} from '../../../../_gqlTypes/IMPORT';
 import {INotification, NotificationChannel, NotificationPriority, NotificationType} from '../../../../_types/types';
 
@@ -53,29 +61,30 @@ export enum ImportType {
 
 interface ISheet {
     name: string;
-    data: Array<{[id: string]: string}>;
-    mapping?: Array<string | null>;
+    columns: string[];
+    data: Array<{[col: string]: string}>;
+    keyChecked: boolean;
+    attributes: GET_ATTRIBUTES_BY_LIB_attributes_list[];
+    mapping: Array<string | null>;
     type?: ImportType;
     library?: string;
     key?: string;
     linkAttribute?: string;
     keyTo?: string;
+    keyToColumnIndex?: number;
+    keyToAttributes?: GET_ATTRIBUTES_BY_LIB_attributes_list[];
 }
 
 export interface IInitialState {
     sheets: ISheet[];
-    key: string | null;
     file: File | null;
-    keyChecked: boolean;
     currentStep: ImportSteps;
     okBtn: boolean;
 }
 
 const initialState: IInitialState = {
     sheets: [],
-    key: null,
     file: null,
-    keyChecked: false,
     currentStep: ImportSteps.SELECT_FILE,
     okBtn: false
 };
@@ -90,23 +99,33 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
         };
     };
     const [state, dispatch] = useReducer(importReducer, initialState);
-    const {sheets, key, file, keyChecked, currentStep, okBtn} = state;
+    const {sheets, file, currentStep, okBtn} = state;
 
     const appDispatch = useAppDispatch();
 
     const [{lang}] = useLang();
 
+    // get libraries list
+    const librariesListQuery = useGetLibrariesListQuery();
+
+    if (librariesListQuery.error) {
+        return <ErrorDisplay message={librariesListQuery.error?.message} />;
+    }
+
+    const libraries = librariesListQuery.data?.libraries?.list ?? [];
+
     // Retrieve attributes list
-    const {data: attrsList} = useQuery<GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables>(getAttributesByLibQuery, {
-        variables: {
-            library
+    const [runGetAttributes, {data: attrsList}] = useLazyQuery<GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables>(
+        getAttributesByLibQuery,
+        {
+            onError: error => <ErrorDisplay message={error?.message} />
         }
-    });
+    );
 
     const attributes =
         attrsList?.attributes?.list
             .filter(a => a.type === AttributeType.simple || a.type === AttributeType.advanced)
-            .map(a => ({id: a.id, label: localizedTranslation(a?.label, lang) ?? a.id})) || [];
+            .map(a => ({id: a.id, label: localizedTranslation(a.label, lang) || a.id})) || [];
 
     const [runImport, {error: importError}] = useMutation<IMPORT, IMPORTVariables>(importExcel, {
         fetchPolicy: 'no-cache',
@@ -130,7 +149,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
     const _runImport = async () => {
         dispatch({currentStep: ImportSteps.PROCESSING});
 
-        // FIXME:
+        // TODO: update mutation
         // if (file) {
         //     await runImport({
         //         variables: {
@@ -143,7 +162,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
         // }
     };
 
-    const _extractArgs = (mapping: string): {[arg: string]: string} => {
+    const _extractArgsFromComment = (mapping: string): {[arg: string]: string} => {
         return mapping
             .split('-')
             .slice(1)
@@ -151,7 +170,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
             .reduce((a, v) => ({...a, [v[0]]: v[1]}), {});
     };
 
-    const _setFileData = content => {
+    const _setFileData = async content => {
         const workbook = XLSX.read(content, {type: 'binary'});
 
         const s: ISheet[] = [];
@@ -159,43 +178,63 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
         for (const sheetName in workbook.Sheets) {
             if (workbook.Sheets.hasOwnProperty(sheetName)) {
                 // Use the sheet_to_json method to convert excel to json data
-                const sheetData: Array<{[id: string]: string}> = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                const sheetData: Array<{[col: string]: string}> = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+                    blankrows: false,
+                    defval: null
+                });
 
-                const firstRowCells = Object.keys(workbook.Sheets[sheetName]).filter(k => !!k.match(/\b[A-Z]1\b/g)); // match only first line cells (A1, B1, etc.)
-                const isMapped = !!workbook.Sheets[sheetName][firstRowCells[0]].c;
+                // if sheet is empty we skip it
+                if (!sheetData.length) {
+                    continue;
+                }
+
+                // get columns' name
+                const sheetColumns = Object.keys(sheetData[0]);
+
+                const firstRowAddresses = Object.keys(workbook.Sheets[sheetName]).filter(k => !!k.match(/\b[A-Z]1\b/g)); // match only first line cells (A1, B1, etc.)
+                const isMapped = !!workbook.Sheets[sheetName][firstRowAddresses[0]].c;
 
                 // Mapping is present.
                 if (isMapped) {
-                    const line1 = [];
+                    const comments = [];
 
-                    for (const flc of firstRowCells) {
-                        line1.push(workbook.Sheets[sheetName][flc].c?.[0]?.t?.replace(/\n/g, ' ') || null); // get first line comments and del \n
+                    for (const address of firstRowAddresses) {
+                        comments.push(workbook.Sheets[sheetName][address].c?.[0]?.t?.replace(/\n/g, ' ') || null); // get first line comments and delete "\n" characters
                     }
 
-                    console.debug('comments', line1);
+                    const params = _extractArgsFromComment(comments[0]);
 
-                    const sConfig = _extractArgs(line1[0]);
-                    const sType = sConfig.type;
-                    const sLibrary = sConfig.library;
-                    const sKey = sConfig.key;
-                    const sLinkAttribute = sConfig.linkAttribute;
-                    const sKeyTo = sConfig.keyTo;
-                    const sMapping = line1.map(c => (c ? _extractArgs(c).id : null));
+                    const sType = params.type;
+                    const sLibrary = params.library;
+                    const sKey = params.key;
+                    const sLinkAttribute = params.linkAttribute;
+                    const sKeyTo = params.keyTo;
+                    const sMapping = comments.map(c => (c ? _extractArgsFromComment(c).id : null));
+
+                    const {data} = await runGetAttributes({variables: {library: sLibrary}});
+                    const attrs = data?.attributes?.list;
 
                     s.push({
                         name: sheetName,
+                        attributes: attrs,
+                        keyChecked: false,
+                        columns: sheetColumns,
                         type: ImportType[sType],
                         library: sLibrary,
                         key: sKey,
                         linkAttribute: sLinkAttribute,
                         keyTo: sKeyTo,
-                        data: sheetData.length ? sheetData : null, // FIXME: ?
+                        data: sheetData.length ? sheetData : null,
                         mapping: sMapping
                     });
                 } else {
                     s.push({
                         name: sheetName,
-                        data: sheetData.length ? sheetData : null // FIXME: ?
+                        columns: sheetColumns,
+                        attributes: [],
+                        mapping: [],
+                        keyChecked: false,
+                        data: sheetData.length ? sheetData : null
                     });
                 }
             }
@@ -207,6 +246,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
         }
 
         dispatch({sheets: s});
+
         return true;
     };
 
@@ -219,8 +259,8 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
             const reader = new FileReader();
             reader.readAsBinaryString(fileToImport);
 
-            reader.onload = e => {
-                const res = _setFileData(reader.result);
+            reader.onload = async e => {
+                const res = await _setFileData(reader.result);
                 if (res) {
                     dispatch({file: fileToImport});
                 }
@@ -234,8 +274,8 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
     const _onOk = async () => {
         switch (currentStep) {
             case ImportSteps.SELECT_FILE:
-                dispatch({okBtn: false});
                 dispatch({currentStep: ImportSteps.CONFIG});
+                refreshOkBtn();
                 break;
             case ImportSteps.CONFIG:
                 await _runImport();
@@ -254,20 +294,116 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
             : 'global.close'
     );
 
-    // const _onMappingSelect = (idx, id) => {
-    //     mapping[idx] = id;
-    //     dispatch({
-    //         mapping: [...mapping],
-    //         okBtn: mapping.length === Object.keys(data[0]).length && (!keyChecked || !!key),
-    //         key: !!key && mapping.includes(key) ? key : null,
-    //         keyChecked: !!key && mapping.includes(key)
-    //     });
-    // };
+    const _onMappingSelect = (sheetIndex: number, mIndex: number, id: string | null) => {
+        const mapping = sheets[sheetIndex].mapping;
+        mapping[mIndex] = id;
 
-    // const _onClear = idx => {
-    //     mapping[idx] = null;
-    //     dispatch({mapping: [...mapping]});
-    // };
+        const key =
+            !!sheets[sheetIndex].key && sheets[sheetIndex].mapping.includes(sheets[sheetIndex].key)
+                ? sheets[sheetIndex].key
+                : null;
+
+        const keyTo = mIndex === sheets[sheetIndex].keyToColumnIndex ? id : sheets[sheetIndex].keyTo;
+
+        changeSheetProperty(sheetIndex, {
+            mapping,
+            key,
+            keyChecked: !!key,
+            keyTo
+        });
+    };
+
+    const _onLibrarySelect = async (sheetIndex: number, lib: string) => {
+        const {data} = await runGetAttributes({variables: {library: lib}});
+        const attrs = data?.attributes?.list;
+
+        changeSheetProperty(sheetIndex, {
+            library: lib,
+            attributes: attrs,
+            mapping: [],
+            key: null,
+            keyChecked: false,
+            linkAttribute: null,
+            keyTo: null,
+            keyToAttributes: null,
+            keyToColumnIndex: null
+        });
+    };
+
+    const _onImportTypeSelect = (sheetIndex: number, type: ImportType) => {
+        changeSheetProperty(sheetIndex, {
+            type,
+            linkAttribute: null,
+            keyTo: null,
+            keyToAttributes: null,
+            keyToColumnIndex: null
+        });
+    };
+
+    const _onLinkAttributeSelect = async (sheetIndex: number, linkAttribute: string) => {
+        const {data} = await runGetAttributes({
+            variables: {
+                library: (sheets[sheetIndex].attributes.find(
+                    a => a.id === linkAttribute
+                ) as GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute).linked_library.id
+            }
+        });
+
+        const attrs = data?.attributes?.list;
+
+        const mapping = sheets[sheetIndex].mapping;
+        if (sheets[sheetIndex].keyToColumnIndex !== null) {
+            mapping[sheets[sheetIndex].keyToColumnIndex] = null;
+        }
+
+        changeSheetProperty(sheetIndex, {
+            linkAttribute,
+            mapping,
+            keyTo: null,
+            keyToColumnIndex: null,
+            keyToAttributes: attrs
+        });
+    };
+
+    const _onKeyCheckedChange = (sheetIndex: number, checked: boolean) => {
+        changeSheetProperty(sheetIndex, {key: null, keyChecked: checked});
+    };
+
+    const _onKeyToCheckedChange = (sheetIndex: number, checked: boolean, columnIndex: number) => {
+        const mapping = sheets[sheetIndex].mapping;
+        mapping[columnIndex] = null;
+
+        if (sheets[sheetIndex].keyToColumnIndex !== null) {
+            mapping[sheets[sheetIndex].keyToColumnIndex] = null;
+        }
+
+        changeSheetProperty(sheetIndex, {keyToColumnIndex: checked ? columnIndex : null, keyTo: null, mapping});
+    };
+
+    const changeSheetProperty = (sheetIndex: number, values: Partial<ISheet>) => {
+        sheets[sheetIndex] = {...sheets[sheetIndex], ...values};
+        dispatch({sheets: [...sheets]});
+        refreshOkBtn();
+    };
+
+    const isLinkAttribute = (attribute: GET_ATTRIBUTES_BY_LIB_attributes_list): boolean =>
+        attribute.type === AttributeType.simple_link ||
+        attribute.type === AttributeType.advanced_link ||
+        attribute.type === AttributeType.tree;
+
+    const refreshOkBtn = () => {
+        const mappingOk = (s: ISheet) => s.mapping.length === Object.keys(s.data[0]).length;
+        const keyOk = (s: ISheet) => !s.keyChecked || !!s.key;
+        const keyToOk = (s: ISheet) => (s.type === ImportType.LINK ? !!s.linkAttribute && !!s.keyTo : true);
+
+        dispatch({
+            okBtn: sheets.every(s => mappingOk(s) && keyOk(s) && keyToOk(s))
+        });
+    };
+
+    const _onSelectKey = (sheetIndex: number, key: string) => {
+        changeSheetProperty(sheetIndex, {key});
+    };
 
     return (
         <Modal
@@ -310,39 +446,114 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
                             return (
                                 <TabPane tab={sheet.name} key={sheetIndex}>
                                     <Space direction="vertical" align="center">
+                                        <Space direction="horizontal" align="baseline">
+                                            <Title level={5}>Library</Title>
+                                            <Select
+                                                style={{width: 160}}
+                                                defaultValue={sheet.library}
+                                                placeholder={'Library'}
+                                                onChange={value => _onLibrarySelect(sheetIndex, value)}
+                                            >
+                                                {libraries.map(l => (
+                                                    <Select.Option value={l.id}>
+                                                        {localizedTranslation(l.label, lang) || l.id}
+                                                    </Select.Option>
+                                                ))}
+                                            </Select>
+                                            <Title level={5}>Type d'import</Title>
+                                            <Select
+                                                style={{width: 160}}
+                                                defaultValue={sheet.type}
+                                                placeholder={"Type d'import"}
+                                                onChange={value => _onImportTypeSelect(sheetIndex, value)}
+                                            >
+                                                <Select.Option value={ImportType.STANDARD}>Standard</Select.Option>
+                                                <Select.Option value={ImportType.LINK}>Link</Select.Option>
+                                            </Select>
+                                            {sheet.type === ImportType.LINK && (
+                                                <>
+                                                    <Title level={5}>Attribut de liaison</Title>
+                                                    <Select
+                                                        style={{width: 160}}
+                                                        defaultValue={sheet.linkAttribute}
+                                                        value={sheet.linkAttribute}
+                                                        placeholder={'Attribute de liaison'}
+                                                        onChange={value => _onLinkAttributeSelect(sheetIndex, value)}
+                                                    >
+                                                        {sheet.attributes.filter(isLinkAttribute).map(a => (
+                                                            <Select.Option key={a.id} value={a.id}>
+                                                                {localizedTranslation(a.label, lang) || a.id}
+                                                            </Select.Option>
+                                                        ))}
+                                                    </Select>
+                                                </>
+                                            )}
+                                        </Space>
                                         <Table
                                             title={() => <Title level={5}>{t('import.data_overview')}</Title>}
-                                            bordered={false}
                                             tableLayout={'fixed'}
-                                            columns={Object.keys(sheet.data[0]).map((m, i) => ({
-                                                title: m,
-                                                dataIndex: i
+                                            columns={Object.keys(sheet.data[0]).map((c, i) => ({
+                                                title: (
+                                                    <>
+                                                        {c}
+                                                        {sheet.type === ImportType.LINK && (
+                                                            <Checkbox
+                                                                defaultChecked={sheet.keyToColumnIndex === i}
+                                                                checked={sheet.keyToColumnIndex === i}
+                                                                onChange={e =>
+                                                                    _onKeyToCheckedChange(
+                                                                        sheetIndex,
+                                                                        e.target.checked,
+                                                                        i
+                                                                    )
+                                                                }
+                                                            >
+                                                                Clé de liaison
+                                                            </Checkbox>
+                                                        )}
+                                                    </>
+                                                ),
+                                                dataIndex: c
                                             }))}
                                             dataSource={sheet.data.slice(0, 3).map((r, i) => ({...r, key: i}))}
                                             size="small"
                                             pagination={{hideOnSinglePage: true}}
-                                        />
-                                        {/* <Table
+                                        ></Table>
+                                        <Table
                                             title={() => <Title level={5}>{t('import.mapping')}</Title>}
+                                            showHeader={false}
                                             tableLayout={'fixed'}
-                                            bordered={false}
-                                            columns={Object.keys(data[0]).map(s => ({title: s, dataIndex: s}))}
+                                            columns={Object.keys(sheet.data[0]).map(c => ({
+                                                title: c,
+                                                dataIndex: c
+                                            }))}
                                             dataSource={[
                                                 Object.assign(
                                                     {key: 'mapping_attributes'},
-                                                    ...Object.keys(data[0]).map((col, idx) => ({
+                                                    ...Object.keys(sheet.data[0]).map((col, idx) => ({
                                                         [col]: (
                                                             <Select
                                                                 style={{width: '100%'}}
-                                                                placeholder={t('import.attribute_selection')}
-                                                                value={mapping[idx]}
+                                                                placeholder={
+                                                                    sheet.keyToColumnIndex === idx
+                                                                        ? 'Clé de liaison'
+                                                                        : 'Ne pas importer'
+                                                                }
+                                                                value={sheet.mapping?.[idx]}
                                                                 allowClear
-                                                                onClear={() => _onClear(idx)}
-                                                                onSelect={id => _onMappingSelect(idx, id)}
+                                                                onClear={() => _onMappingSelect(sheetIndex, idx, null)}
+                                                                onSelect={id => _onMappingSelect(sheetIndex, idx, id)}
                                                             >
-                                                                {attributes.map(a => (
+                                                                {(sheet.keyToColumnIndex !== idx
+                                                                    ? sheet.attributes.filter(
+                                                                          a =>
+                                                                              a.type === AttributeType.simple ||
+                                                                              a.type === AttributeType.advanced
+                                                                      )
+                                                                    : sheet.keyToAttributes
+                                                                ).map(a => (
                                                                     <Select.Option key={a.id} value={a.id}>
-                                                                        {a.label || a.id}
+                                                                        {localizedTranslation(a.label, lang) || a.id}
                                                                     </Select.Option>
                                                                 ))}
                                                             </Select>
@@ -356,36 +567,22 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
                                         <Space direction="vertical" align="center">
                                             <Space direction="horizontal" align="baseline">
                                                 <Checkbox
-                                                    defaultChecked={keyChecked}
-                                                    checked={keyChecked}
-                                                    onChange={e =>
-                                                        dispatch({
-                                                            keyChecked: e.target.checked,
-                                                            okBtn:
-                                                                mapping.length === Object.keys(data[0]).length &&
-                                                                (!e.target.checked || !!key)
-                                                        })
-                                                    }
+                                                    defaultChecked={sheet.keyChecked}
+                                                    checked={sheet.keyChecked}
+                                                    onChange={e => _onKeyCheckedChange(sheetIndex, e.target.checked)}
                                                 />
                                                 <Title level={5}>
-                                                    {t('import.key')} <KeyOutlined />
+                                                    {"Sélection d'une clé d'import" || t('import.key')} <KeyOutlined />
                                                 </Title>
                                             </Space>
                                             <Select
-                                                disabled={!keyChecked}
-                                                placeholder={'Select a key'}
-                                                value={!!key ? key : undefined}
-                                                onSelect={k =>
-                                                    dispatch({
-                                                        key: k,
-                                                        okBtn:
-                                                            mapping.length === Object.keys(data[0]).length &&
-                                                            (!keyChecked || !!k)
-                                                    })
-                                                }
+                                                disabled={!sheet.keyChecked}
+                                                placeholder={"Clé d'import"}
+                                                value={sheet.key}
+                                                onSelect={k => _onSelectKey(sheetIndex, k)}
                                             >
                                                 {attributes
-                                                    .filter(a => mapping.includes(a.id))
+                                                    .filter(a => sheet.mapping.includes(a.id))
                                                     .map(a => {
                                                         return (
                                                             <Select.Option key={a.id} value={a.id}>
@@ -394,7 +591,7 @@ function ImportModal({onClose, open, library}: IImportModalProps): JSX.Element {
                                                         );
                                                     })}
                                             </Select>
-                                        </Space> */}
+                                        </Space>
                                     </Space>
                                 </TabPane>
                             );
