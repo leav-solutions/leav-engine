@@ -8,7 +8,6 @@ Object {
   "value0": Object {
     "_key": "test_application",
     "color": "orange",
-    "component": "explorer",
     "description": "Super application",
     "endpoint": "my-application",
     "label": Object {
@@ -18,6 +17,7 @@ Object {
       "products",
       "categories",
     ],
+    "module": "explorer",
     "system": true,
   },
 }
@@ -42,7 +42,6 @@ Object {
   "value0": Object {
     "_key": "test_application",
     "color": "orange",
-    "component": "explorer",
     "description": "Super application",
     "endpoint": "my-application",
     "label": Object {
@@ -52,6 +51,7 @@ Object {
       "products",
       "categories",
     ],
+    "module": "explorer",
     "system": true,
   },
 }
