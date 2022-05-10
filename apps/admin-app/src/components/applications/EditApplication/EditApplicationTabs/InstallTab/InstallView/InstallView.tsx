@@ -37,20 +37,21 @@ function InstallView({onInstall, loading}: IInstallViewProps): JSX.Element {
     };
 
     const _handleClick = () => onInstall();
+    const installStatus = application?.install?.status ?? ApplicationInstallStatus.NONE;
 
     return (
         <>
             <InstallHeader size="small">
                 <div>
-                    {t('applications.status_label')}: {t(`applications.statuses.${application?.install.status}`)}{' '}
-                    {iconByStatus[application?.install.status]}
+                    {t('applications.status_label')}: {t(`applications.statuses.${installStatus}`)}{' '}
+                    {iconByStatus[installStatus]}
                 </div>
                 <Button primary icon loading={loading} labelPosition="left" onClick={_handleClick}>
                     <Icon name="redo alternate" />
                     {t('applications.reinstall')}
                 </Button>
             </InstallHeader>
-            {!loading && <Result inverted>{application?.install.lastCallResult}</Result>}
+            {!loading && <Result inverted>{application?.install?.lastCallResult}</Result>}
         </>
     );
 }

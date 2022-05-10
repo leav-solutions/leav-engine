@@ -7,6 +7,7 @@ import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {IApplicationDomain} from 'domain/application/applicationDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IApplicationPermissionDomain} from 'domain/permission/applicationPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import express, {Express} from 'express';
@@ -24,6 +25,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
+import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
     ApplicationInstallStatus,
     APPS_INSTANCES_FOLDER,
@@ -44,6 +46,7 @@ interface IDeps {
     'core.domain.application'?: IApplicationDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.domain.permission'?: IPermissionDomain;
+    'core.domain.permission.application'?: IApplicationPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.utils.logger'?: winston.Winston;
@@ -56,6 +59,7 @@ export default function ({
     'core.app.graphql': graphqlApp = null,
     'core.domain.application': applicationDomain = null,
     'core.domain.permission': permissionDomain = null,
+    'core.domain.permission.application': applicationPermissionDomain = null,
     'core.domain.library': libraryDomain,
     'core.domain.tree': treeDomain,
     'core.utils.logger': logger = null,
@@ -278,11 +282,23 @@ export default function ({
                             });
 
                             if (!applications.list.length) {
-                                throw new Error(`No matching application for endpoint ${endpoint}`);
+                                throw new ApplicationError(ApplicationErrorType.UNKNOWN_APP_ERROR, endpoint);
                             }
 
                             const requestApplication = applications.list[0];
                             applicationId = requestApplication.id;
+                        }
+
+                        // Check permissions
+                        const canAccess = await applicationPermissionDomain.getApplicationPermission({
+                            action: ApplicationPermissionsActions.ACCESS_APPLICATION,
+                            applicationId,
+                            userId: req.ctx.userId,
+                            ctx: req.ctx
+                        });
+
+                        if (!canAccess) {
+                            throw new ApplicationError(ApplicationErrorType.FORBIDDEN_ERROR, endpoint);
                         }
 
                         const rootPath = appRootPath();
@@ -336,11 +352,12 @@ export default function ({
                     }
                 },
                 async (err, req, res, next) => {
-                    logger.error(err);
-                    res.status(err.statusCode ?? 500).json({
-                        status: false,
-                        error: err.message
-                    });
+                    if (err instanceof ApplicationError && err.appEndpoint !== 'portal') {
+                        res.redirect(`/${APPS_URL_PREFIX}/portal?err=${err.type}&app=${err.appEndpoint}`);
+                    } else {
+                        logger.error(`[${req.ctx.queryId}] ${err}`);
+                        res.status(err.statusCode ?? 500).send(err.type ?? 'Internal server error');
+                    }
                 }
             );
 

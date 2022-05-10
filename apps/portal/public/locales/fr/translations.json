@@ -9,6 +9,8 @@
     "consulted_apps": "Dernières applis consultées",
     "error": {
         "network_error_occurred": "Une erreur réseau est survenue",
-        "error_occurred": "Une erreur est survenue"
+        "error_occurred": "Une erreur est survenue",
+        "unknown_app": "Le chemin d'accès \"{{app}}\" n'existe pas",
+        "forbidden": "Vous n'êtes pas autorisé à accéder à l'application \"{{app}}\""
     }
 }
