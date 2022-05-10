@@ -9,6 +9,7 @@ import get from 'lodash/get';
 import {join} from 'path';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
+import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {
     GET_ATTRIBUTE_BY_ID_attributes_list,
     GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
@@ -316,3 +317,21 @@ export function pick<T extends object, K extends keyof T>(obj: T, keys: K | K[])
  * It works exactly the same at runtime.
  */
 export const gqlUnchecked = gql;
+
+export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, libraryId: string): boolean => {
+    const appLibraries = app?.libraries ?? [];
+    return !appLibraries.length || !!appLibraries.find(appLib => appLib.id === libraryId);
+};
+
+export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
+    const appTrees = app?.trees ?? [];
+    return !appTrees.length || !!appTrees.find(appTree => appTree.id === treeId);
+};
+
+export const enforceInitialSlash = (url: string): string => {
+    if (url.startsWith('/')) {
+        return url;
+    }
+
+    return `/${url}`;
+};

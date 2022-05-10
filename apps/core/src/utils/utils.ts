@@ -7,6 +7,7 @@ import moment from 'moment';
 import {IActionsListConfig} from '_types/actionsList';
 import {Errors, IExtendedErrorMsg} from '_types/errors';
 import {LibraryBehavior} from '_types/library';
+import {APPS_URL_PREFIX} from '../_types/application';
 import {AttributeTypes, IAttribute} from '../_types/attribute';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
@@ -21,6 +22,13 @@ export interface IUtils {
      * @param id
      */
     isIdValid(id: string): boolean;
+
+    /**
+     * Validate endpoint format: must be only alphanum characters and dashes
+     *
+     * @param id
+     */
+    isEndpointValid(id: string): boolean;
 
     /**
      * Rethrow an error prefixed by optional message.
@@ -70,13 +78,15 @@ export interface IUtils {
     decomposeValueEdgeDestination(value: string): {library: string; id: string};
 
     translateError(error: Errors | IExtendedErrorMsg | string, lang: string): string;
+
+    getFullApplicationEndpoint(endpoint: string): string;
 }
 
 export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function({translator = null}: IUtilsDeps = {}): IUtils {
+export default function ({translator = null}: IUtilsDeps = {}): IUtils {
     return {
         libNameToQueryName(name: string): string {
             return flow([camelCase, trimEnd])(name);
@@ -90,6 +100,13 @@ export default function({translator = null}: IUtilsDeps = {}): IUtils {
             }
 
             return /^[a-z0-9_]+$/.test(id);
+        },
+        isEndpointValid(endpoint: string): boolean {
+            if (!endpoint) {
+                return false;
+            }
+
+            return /^[a-z0-9-]+$/.test(endpoint);
         },
         rethrow(err: Error, message?: string): void {
             if (message) {
@@ -171,6 +188,9 @@ export default function({translator = null}: IUtilsDeps = {}): IUtils {
                 lng: lang,
                 interpolation: {escapeValue: false}
             });
+        },
+        getFullApplicationEndpoint(endpoint: string): string {
+            return `${APPS_URL_PREFIX}/${endpoint}`;
         }
     };
 }

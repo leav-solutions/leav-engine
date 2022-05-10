@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Input} from 'antd';
+import {Input, InputRef} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import React, {MutableRefObject, useEffect} from 'react';
 
@@ -11,7 +11,7 @@ function TextInput({state, fieldValue, onFocus, onChange, onPressEnter, inputRef
     useEffect(() => {
         // Handle focusing via click on label (not standard focus via click on input)
         if (isEditing) {
-            (inputRef as MutableRefObject<Input>).current.focus();
+            (inputRef as MutableRefObject<InputRef>).current.focus();
         }
     }, [isEditing, inputRef]);
 
@@ -28,7 +28,7 @@ function TextInput({state, fieldValue, onFocus, onChange, onPressEnter, inputRef
     return (
         <Input
             key="editing"
-            ref={inputRef as MutableRefObject<Input>}
+            ref={inputRef as MutableRefObject<InputRef>}
             className={`field-wrapper ${editingValue ? 'has-value' : ''}`}
             value={String(editingValue)}
             onFocus={onFocus}

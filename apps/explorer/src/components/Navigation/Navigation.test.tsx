@@ -8,6 +8,7 @@ import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import React from 'react';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
+import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockInitialState} from '__mocks__/common/mockRedux/mockInitialState';
 import {mockRecord} from '__mocks__/common/record';
 import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
@@ -226,6 +227,10 @@ describe('Navigation', () => {
             possibleTypes: {
                 Record: ['RecordLib']
             }
+        },
+        currentApp: {
+            ...mockApplicationDetails,
+            trees: []
         }
     };
 

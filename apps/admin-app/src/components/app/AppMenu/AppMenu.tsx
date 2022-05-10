@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import ApplicationsSwitcher from 'components/applications/ApplicationsSwitcher';
 import RecordCard from 'components/shared/RecordCard';
 import useMenuItems from 'hooks/useMenuItems';
 import useUserData from 'hooks/useUserData';
@@ -45,9 +46,14 @@ const AppMenu = (): JSX.Element => {
                         </Menu.Item>
                     ))}
                 </Menu.Menu>
-                <Menu.Item position="right" onClick={_toggleUserPanel}>
-                    <RecordCard record={userData.whoAmI} withLibrary={false} />
-                </Menu.Item>
+                <Menu.Menu position="right">
+                    <Menu.Item>
+                        <ApplicationsSwitcher />
+                    </Menu.Item>
+                    <Menu.Item position="right" onClick={_toggleUserPanel}>
+                        <RecordCard record={userData.whoAmI} withLibrary={false} />
+                    </Menu.Item>
+                </Menu.Menu>
             </StyledMenu>
             <UserPanel visible={userPanelVisible} onHide={_toggleUserPanel} />
         </>

@@ -36,6 +36,7 @@ const RowWrapper = styled.div<IRowProps>`
     place-items: flex-start;
     align-items: center;
     max-width: ${themingVar['@leav-navigation-column-width']};
+    overflow: hidden;
 
     grid-template-columns: ${props => (props.isActive ? '1rem auto auto 1rem' : 'auto auto 1rem')};
     padding: 1rem;

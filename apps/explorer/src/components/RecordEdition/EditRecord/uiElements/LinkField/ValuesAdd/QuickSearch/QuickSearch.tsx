@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery} from '@apollo/client';
-import {Input} from 'antd';
-import Search from 'antd/lib/input/Search';
+import {Input, InputRef} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
@@ -25,7 +24,7 @@ interface IQuickSearchProps {
 
 function QuickSearch({library, onResult, onClear, pagination}: IQuickSearchProps): JSX.Element {
     const {t} = useTranslation();
-    const searchInputRef = useRef<Input>();
+    const searchInputRef = useRef<InputRef>();
     const [search, setSearch] = useState<string>('');
 
     const [runSearch, {loading, error}] = useLazyQuery<
@@ -71,7 +70,7 @@ function QuickSearch({library, onResult, onClear, pagination}: IQuickSearchProps
     }
 
     return (
-        <Search
+        <Input.Search
             placeholder={t('record_edition.search_elements')}
             onSearch={_handleSearchSubmit}
             loading={loading}

@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getConfig} from '../../../config';
-import {init as initDI} from '../../../depsManager';
+import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {initAmqp} from '../../../infra/amqp';
-import {initDb} from '../../../infra/db/db';
 import {initRedis} from '../../../infra/cache/redis';
+import {initDb} from '../../../infra/db/db';
 
 export async function setup() {
     try {

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Input} from 'antd';
+import {Input, InputRef} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
 import React, {MutableRefObject} from 'react';
 
@@ -20,7 +20,7 @@ function EncryptedInput({state, fieldValue, onChange, onPressEnter, inputRef}: I
     return (
         <Input.Password
             className="nested-input"
-            ref={inputRef as MutableRefObject<Input>}
+            ref={inputRef as MutableRefObject<InputRef>}
             value={String(editingValue)}
             onChange={_handleChange}
             onKeyPress={_handleKeyPress}

@@ -9,28 +9,34 @@ import {IGroupedPermissionsActions} from '_types/permissions';
 function GeneralAdminPermissionsTab(): JSX.Element {
     const groupedPermissionsActions: IGroupedPermissionsActions = {
         libraries: [
-            PermissionsActions.app_access_libraries,
-            PermissionsActions.app_create_library,
-            PermissionsActions.app_delete_library,
-            PermissionsActions.app_edit_library
+            PermissionsActions.admin_access_libraries,
+            PermissionsActions.admin_create_library,
+            PermissionsActions.admin_delete_library,
+            PermissionsActions.admin_edit_library
         ],
         attributes: [
-            PermissionsActions.app_access_attributes,
-            PermissionsActions.app_create_attribute,
-            PermissionsActions.app_delete_attribute,
-            PermissionsActions.app_edit_attribute
+            PermissionsActions.admin_access_attributes,
+            PermissionsActions.admin_create_attribute,
+            PermissionsActions.admin_delete_attribute,
+            PermissionsActions.admin_edit_attribute
         ],
         trees: [
-            PermissionsActions.app_access_trees,
-            PermissionsActions.app_create_tree,
-            PermissionsActions.app_delete_tree,
-            PermissionsActions.app_edit_tree
+            PermissionsActions.admin_access_trees,
+            PermissionsActions.admin_create_tree,
+            PermissionsActions.admin_delete_tree,
+            PermissionsActions.admin_edit_tree
         ],
-        permissions: [PermissionsActions.app_access_permissions, PermissionsActions.app_edit_permission],
-        preferences: [PermissionsActions.app_manage_global_preferences]
+        applications: [
+            PermissionsActions.admin_access_applications,
+            PermissionsActions.admin_create_application,
+            PermissionsActions.admin_delete_application,
+            PermissionsActions.admin_edit_application
+        ],
+        permissions: [PermissionsActions.admin_access_permissions, PermissionsActions.admin_edit_permission],
+        preferences: [PermissionsActions.admin_manage_global_preferences]
     };
 
-    return <DefinePermByUserGroupView type={PermissionTypes.app} actions={groupedPermissionsActions} />;
+    return <DefinePermByUserGroupView type={PermissionTypes.admin} actions={groupedPermissionsActions} />;
 }
 
 export default GeneralAdminPermissionsTab;

@@ -17,7 +17,7 @@ interface IPermissionsActionsGroupSelectorProps {
 
 // Add a wrapper to avoid to pass down the "isSelected" prop to the List.Item
 const ListItem = styled(({isSelected, ...rest}: {isSelected: boolean} & ListItemProps) => <List.Item {...rest} />)`
-    &&&& {
+    &&&&& {
         background-color: ${props => (props.isSelected ? '#DEF4FF' : 'none')};
         text-align: left;
         margin: 0.5em 0;

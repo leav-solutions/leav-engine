@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -13,7 +13,7 @@ import ValidationError from '../../errors/ValidationError';
 import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {AppPermissionsActions} from '../../_types/permissions';
+import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain from './attributeDomain';
@@ -39,12 +39,12 @@ describe('attributeDomain', () => {
         }
     };
 
-    const mockAppPermDomain = {
-        getAppPermission: global.__mockPromise(true)
+    const mockAdminPermDomain = {
+        getAdminPermission: global.__mockPromise(true)
     };
 
-    const mockAppPermDomainForbidden = {
-        getAppPermission: global.__mockPromise(false)
+    const mockAdminPermDomainForbidden = {
+        getAdminPermission: global.__mockPromise(false)
     };
 
     beforeEach(() => {
@@ -298,7 +298,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -317,9 +317,9 @@ describe('attributeDomain', () => {
 
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(1);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
-            expect(mockAppPermDomain.getAppPermission).toBeCalled();
-            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
-                AppPermissionsActions.CREATE_ATTRIBUTE
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.CREATE_ATTRIBUTE
             );
 
             expect(newAttr).toMatchObject({
@@ -343,7 +343,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -388,7 +388,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 config: mockConf
@@ -410,9 +410,9 @@ describe('attributeDomain', () => {
             expect(mockCacheService.deleteData).toBeCalled();
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
-            expect(mockAppPermDomain.getAppPermission).toBeCalled();
-            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
-                AppPermissionsActions.EDIT_ATTRIBUTE
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.EDIT_ATTRIBUTE
             );
             expect(updatedLib).toMatchObject({id: 'test', system: false});
         });
@@ -432,7 +432,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -489,7 +489,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -543,7 +543,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -579,7 +579,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -606,7 +606,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -634,7 +634,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomainForbidden as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomainForbidden as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -660,7 +660,7 @@ describe('attributeDomain', () => {
 
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -703,7 +703,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 config: mockConf
@@ -728,7 +728,7 @@ describe('attributeDomain', () => {
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 config: mockConf
@@ -789,7 +789,7 @@ describe('attributeDomain', () => {
 
                 const attrDomain = attributeDomain({
                     'core.infra.attribute': mockAttrRepo as IAttributeRepo,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.utils': mockUtils as IUtils,
                     config: mockConf
                 });
@@ -821,7 +821,7 @@ describe('attributeDomain', () => {
 
                 const attrDomain = attributeDomain({
                     'core.infra.attribute': mockAttrRepo as IAttributeRepo,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.actionsList': mockALDomain as IActionsListDomain,
                     'core.utils': mockUtils as IUtils,
                     config: mockConf
@@ -850,16 +850,16 @@ describe('attributeDomain', () => {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise(attrData)};
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain
             });
             attrDomain.getAttributes = global.__mockPromise({list: [attrData], totalCount: 1});
 
             const deleteRes = await attrDomain.deleteAttribute({id: attrData.id, ctx});
 
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(1);
-            expect(mockAppPermDomain.getAppPermission).toBeCalled();
-            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
-                AppPermissionsActions.DELETE_ATTRIBUTE
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.DELETE_ATTRIBUTE
             );
         });
 
@@ -883,7 +883,7 @@ describe('attributeDomain', () => {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
-                'core.domain.permission.app': mockAppPermDomainForbidden as IAppPermissionDomain
+                'core.domain.permission.admin': mockAdminPermDomainForbidden as IAdminPermissionDomain
             });
             attrDomain.getAttributes = global.__mockPromise({list: [], totalCount: 0});
 

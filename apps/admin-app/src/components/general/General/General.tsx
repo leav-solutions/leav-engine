@@ -28,7 +28,7 @@ function General(): JSX.Element {
         }
     ];
 
-    if (userData.permissions[PermissionsActions.app_access_permissions]) {
+    if (userData.permissions[PermissionsActions.admin_access_permissions]) {
         panes.push({
             key: 'admin_permissions',
             menuItem: t('general.admin_permissions'),

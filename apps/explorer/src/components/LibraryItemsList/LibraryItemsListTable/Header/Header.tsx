@@ -153,7 +153,7 @@ const Header = ({id, children, type}: IHeaderProps) => {
         <Wrapper isHover={isHover} isInfoColumn={infosCol === id} id={id}>
             {children}
             <Dropdown
-                placement="bottomCenter"
+                placement="bottom"
                 trigger={['click']}
                 overlay={
                     <Menu
@@ -161,19 +161,21 @@ const Header = ({id, children, type}: IHeaderProps) => {
                         onMouseEnter={() => setIsHover(true)}
                         onMouseLeave={() => setIsHover(false)}
                     >
-                        <Menu.Item onClick={() => handleAsc(id, type)}>
+                        <Menu.Item key="sort-ascend" onClick={() => handleAsc(id, type)}>
                             {t('items_list.table.header-cell-menu.sort-ascend')}
                         </Menu.Item>
-                        <Menu.Item onClick={() => handleDesc(id, type)}>
+                        <Menu.Item key="sort-descend" onClick={() => handleDesc(id, type)}>
                             {t('items_list.table.header-cell-menu.sort-descend')}
                         </Menu.Item>
-                        <Menu.Item onClick={cancelSort}>{t('items_list.table.header-cell-menu.cancel-sort')}</Menu.Item>
+                        <Menu.Item key="cancel-sort" onClick={cancelSort}>
+                            {t('items_list.table.header-cell-menu.cancel-sort')}
+                        </Menu.Item>
                         {infosCol !== id && (
-                            <Menu.Item onClick={() => handleHideColumn(id)}>
+                            <Menu.Item key="hide-column" onClick={() => handleHideColumn(id)}>
                                 {t('items_list.table.header-cell-menu.hide-column')}
                             </Menu.Item>
                         )}
-                        <Menu.Item onClick={() => setOpenChangeColumns(true)}>
+                        <Menu.Item key="choose-columns" onClick={() => setOpenChangeColumns(true)}>
                             {t('items_list.table.header-cell-menu.choose-columns')}
                         </Menu.Item>
                     </Menu>

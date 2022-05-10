@@ -38,7 +38,7 @@ const DeleteTree = ({tree, filters}: IDeleteTreeProps): JSX.Element | null => {
 
     const treeLabel = localizedLabel(tree.label, availableLanguages);
 
-    return !!tree && userData.permissions[PermissionsActions.app_delete_tree] ? (
+    return !!tree && userData.permissions[PermissionsActions.admin_delete_tree] ? (
         <ConfirmedButton action={_handleDelete} confirmMessage={t('trees.confirm_delete', {treeLabel})}>
             <DeleteButton disabled={tree.system} />
         </ConfirmedButton>

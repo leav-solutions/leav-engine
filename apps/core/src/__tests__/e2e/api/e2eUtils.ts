@@ -83,6 +83,22 @@ export async function gqlSaveLibrary(id: string, label: string, additionalAttrib
     return saveLibRes.data.data;
 }
 
+export async function gqlSaveApplication(id: string, label: string, endpoint: string) {
+    const saveAppRes = await makeGraphQlCall(
+        `mutation {
+            saveApplication(application: {
+                id: "${id}",
+                label: {fr: "${label}"},
+                endpoint: "${endpoint}",
+                module: "explorer"
+            }) { id }
+        }`,
+        true
+    );
+
+    return saveAppRes.data.data;
+}
+
 export async function gqlSaveAttribute(params: {
     id: string;
     type: AttributeTypes;

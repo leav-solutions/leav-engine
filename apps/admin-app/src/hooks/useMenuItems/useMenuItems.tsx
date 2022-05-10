@@ -38,6 +38,12 @@ function useMenuItems(): IMenuItem[] {
             protected: true
         },
         {
+            id: 'applications',
+            label: t('applications.title'),
+            icon: <Icon name="th" />,
+            protected: true
+        },
+        {
             id: 'general',
             label: t('general.title'),
             icon: 'cogs',
@@ -46,7 +52,7 @@ function useMenuItems(): IMenuItem[] {
     ];
 
     const filteredItems = userData.permissions
-        ? menuItems.filter(item => !item.protected || userData.permissions![`app_access_${item.id}`])
+        ? menuItems.filter(item => !item.protected || userData.permissions![`admin_access_${item.id}`])
         : [];
 
     return filteredItems;

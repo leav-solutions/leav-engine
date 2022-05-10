@@ -59,7 +59,7 @@ const _registerModules = async (
     return container;
 };
 
-export async function init(additionalModulesToRegister?: {
+export async function initDI(additionalModulesToRegister?: {
     [registerKey: string]: any;
 }): Promise<{coreContainer: AwilixContainer; pluginsContainer: AwilixContainer}> {
     const srcFolder = __dirname;

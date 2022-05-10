@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useAuthToken} from '@leav/utils';
+import useAuth from 'hooks/useAuth';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon, Menu, Sidebar} from 'semantic-ui-react';
@@ -14,11 +14,10 @@ interface IUserPanelProps {
 
 function UserPanel({visible, onHide}: IUserPanelProps): JSX.Element {
     const {t} = useTranslation();
-    const {deleteToken} = useAuthToken();
+    const {logout} = useAuth();
 
     const _handleLogout = () => {
-        deleteToken();
-        window.location.replace('/');
+        logout();
     };
 
     return (

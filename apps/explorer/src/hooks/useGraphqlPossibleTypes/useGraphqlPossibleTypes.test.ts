@@ -50,7 +50,7 @@ describe('useGraphqlPossibleTypes', () => {
                 })
         } as Response);
 
-        const hook = renderHook(() => useGraphqlPossibleTypes('myUrl', 'myToken'));
+        const hook = renderHook(() => useGraphqlPossibleTypes('myUrl'));
         const {result} = hook;
 
         expect(result.current.loading).toBe(true);
@@ -65,7 +65,7 @@ describe('useGraphqlPossibleTypes', () => {
     test('Return loading then error', async () => {
         jest.spyOn(global, 'fetch').mockRejectedValue('Boom!');
 
-        const hook = renderHook(() => useGraphqlPossibleTypes('myUrl', 'myToken'));
+        const hook = renderHook(() => useGraphqlPossibleTypes('myUrl'));
         const {result} = hook;
 
         expect(result.current.loading).toBe(true);

@@ -4,6 +4,7 @@
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
+import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import {History} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -12,7 +13,7 @@ import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
-import {addWildcardToFilters} from '../../../utils/utils';
+import {addWildcardToFilters, isTreeInApp} from '../../../utils/utils';
 import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import TreesList from '../TreesList';
@@ -24,6 +25,8 @@ interface ITreesProps {
 const Trees = ({history}: ITreesProps): JSX.Element => {
     const {t} = useTranslation();
     const {lang} = useLang();
+    const currentApp = useCurrentApplicationContext();
+
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
     const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
         variables: {...addWildcardToFilters(filters), lang}
@@ -45,6 +48,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
     };
 
     const _handleRowClick = (tree: GET_TREES_trees_list) => history.push('/trees/edit/' + tree.id);
+    const trees = (data?.trees?.list ?? []).filter(tree => isTreeInApp(currentApp, tree.id));
 
     return (
         <>
@@ -55,11 +59,13 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
                         {t('trees.title')}
                     </Header>
                 </Grid.Column>
-                {userData.permissions[PermissionsActions.app_create_tree] && (
+                {userData.permissions[PermissionsActions.admin_create_tree] && (
                     <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
                         <Button icon labelPosition="left" size="medium" as={Link} to={'/trees/edit/'}>
-                            <Icon name="plus" />
-                            {t('trees.new')}
+                            <>
+                                <Icon name="plus" />
+                                {t('trees.new')}
+                            </>
                         </Button>
                     </Grid.Column>
                 )}
@@ -68,7 +74,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
             {error && <ErrorDisplay message={error.message} />}
             {!loading && !error && (
                 <TreesList
-                    trees={data && data.trees ? data.trees.list : null}
+                    trees={trees}
                     onRowClick={_handleRowClick}
                     onFiltersUpdate={_onFiltersUpdate}
                     filters={filters}

@@ -362,7 +362,8 @@
         "graphql_error_occurred": "An error ocurred: {{error}}",
         "network_error_occurred": "An network error occurred",
         "PERMISSION_ERROR": "You are not allowed to perform this action",
-        "INTERNAL_ERROR": "An internal error occurred"
+        "INTERNAL_ERROR": "An internal error occurred",
+        "page_not_found": "Page not found"
     },
     "language": {
         "fr": "French",
@@ -415,5 +416,9 @@
     },
     "floating_menu": {
         "more_actions": "More"
+    },
+    "applications": {
+        "title": "Applications",
+        "current_app_error": "Couldn't load current application (ID: \"{{appId}}\")"
     }
 }

@@ -3,8 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
 import {ApolloServer, AuthenticationError} from 'apollo-server-express';
+import {IApplicationApp} from 'app/application/applicationApp';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import cookieParser from 'cookie-parser';
 import express, {NextFunction, Request, Response} from 'express';
 import {execute, GraphQLFormattedError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
@@ -23,14 +25,16 @@ interface IDeps {
     config?: IConfig;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.auth'?: IAuthApp;
+    'core.app.application'?: IApplicationApp;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
+    'core.app.application': applicationApp = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null
 }: IDeps = {}): IServer {
@@ -88,6 +92,7 @@ export default function ({
                 app.use(express.json({limit: config.server.uploadLimit}));
                 app.use(express.urlencoded({extended: true, limit: config.server.uploadLimit}));
                 app.use(graphqlUploadExpress());
+                app.use(cookieParser());
 
                 // CORS
                 app.use((req, res, next) => {
@@ -105,11 +110,6 @@ export default function ({
                     // TODO: temporary disabled, we have to send token with explorer
                     // authApp.checkToken,
                     express.static(config.preview.directory)
-                );
-                app.use(
-                    `${config.export.directory}`,
-                    // authApp.checkToken, // FIXME: enable auth?
-                    express.static(config.export.directory)
                 );
 
                 // Handling errors
@@ -148,9 +148,9 @@ export default function ({
 
                         return formattedResp;
                     },
-                    context: async ({req}): Promise<IQueryInfos> => {
+                    context: async ({req, res}): Promise<IQueryInfos> => {
                         try {
-                            const payload = await authApp.validateToken(req.headers.authorization);
+                            const payload = await authApp.validateRequestToken(req);
 
                             const ctx: IQueryInfos = {
                                 userId: payload.userId,
@@ -161,7 +161,6 @@ export default function ({
 
                             return ctx;
                         } catch (e) {
-                            console.error(e);
                             throw new AuthenticationError('you must be logged in');
                         }
                     },
@@ -190,6 +189,7 @@ export default function ({
                 await server.start();
 
                 server.applyMiddleware({app, path: '/graphql', cors: true});
+                applicationApp.registerRoute(app);
 
                 await new Promise<void>(resolve => app.listen(config.server.port, resolve));
                 logger.info(`🚀 Server ready at http://localhost:${config.server.port}${server.graphqlPath}`);

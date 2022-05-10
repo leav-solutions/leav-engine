@@ -23,7 +23,7 @@ const Content = styled.div`
 
 function Home(): JSX.Element {
     return (
-        <Router>
+        <Router basename={`${process.env.REACT_APP_ENDPOINT ?? '/'}`}>
             <div className="wrapper height100">
                 {/* <LeftCol> */}
                 <AppMenu />

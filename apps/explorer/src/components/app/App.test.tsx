@@ -27,7 +27,7 @@ jest.mock(
 test('renders PageHeader', async () => {
     let component: any;
     await act(async () => {
-        component = mount(<App token="" onTokenInvalid={jest.fn} />);
+        component = mount(<App />);
     });
 
     expect(component.find('ThemeHandler')).toBeTruthy();

@@ -10,7 +10,9 @@ interface IDeleteButtonProps {
 }
 
 function DeleteButton({disabled, onClick}: IDeleteButtonProps): JSX.Element {
-    return <Button className="delete" circular icon="trash" disabled={disabled} onClick={onClick} />;
+    return (
+        <Button aria-label="delete" className="delete" circular icon="trash" disabled={disabled} onClick={onClick} />
+    );
 }
 
 export default DeleteButton;

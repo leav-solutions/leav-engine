@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
-import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -12,13 +12,13 @@ import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
 import {AttributeTypes} from '../../_types/attribute';
 import {LibraryBehavior} from '../../_types/library';
-import {AppPermissionsActions, PermissionsRelations} from '../../_types/permissions';
+import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain from './libraryDomain';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
@@ -42,12 +42,12 @@ describe('LibraryDomain', () => {
         queryId: 'libraryDomainTest'
     };
 
-    const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
-        getAppPermission: global.__mockPromise(true)
+    const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+        getAdminPermission: global.__mockPromise(true)
     };
 
-    const mockAppPermForbiddenDomain: Mockify<IAppPermissionDomain> = {
-        getAppPermission: global.__mockPromise(false)
+    const mockAdminPermForbiddenDomain: Mockify<IAdminPermissionDomain> = {
+        getAdminPermission: global.__mockPromise(false)
     };
 
     const mockTreeRepo: Mockify<ITreeRepo> = {
@@ -189,7 +189,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
@@ -219,9 +219,9 @@ describe('LibraryDomain', () => {
 
                 expect(newLib).toMatchObject({id: 'test', system: false});
 
-                expect(mockAppPermDomain.getAppPermission).toBeCalled();
-                expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
-                    AppPermissionsActions.CREATE_LIBRARY
+                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                    AdminPermissionsActions.CREATE_LIBRARY
                 );
             });
 
@@ -253,7 +253,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtilsInvalidID as IUtils
                 });
@@ -302,7 +302,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
@@ -361,7 +361,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
@@ -424,7 +424,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.infra.cache.cacheService': mockCachesService as ICachesService,
                     'core.utils': mockUtils as IUtils
@@ -439,9 +439,9 @@ describe('LibraryDomain', () => {
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
-                expect(mockAppPermDomain.getAppPermission).toBeCalled();
-                expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
-                    AppPermissionsActions.EDIT_LIBRARY
+                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                    AdminPermissionsActions.EDIT_LIBRARY
                 );
             });
 
@@ -486,7 +486,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.infra.cache.cacheService': mockCachesService as ICachesService,
                     'core.utils': mockUtils as IUtils
@@ -515,9 +515,9 @@ describe('LibraryDomain', () => {
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
-                expect(mockAppPermDomain.getAppPermission).toBeCalled();
-                expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
-                    AppPermissionsActions.EDIT_LIBRARY
+                expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                    AdminPermissionsActions.EDIT_LIBRARY
                 );
             });
 
@@ -562,7 +562,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
@@ -624,7 +624,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
@@ -686,7 +686,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
@@ -727,7 +727,7 @@ describe('LibraryDomain', () => {
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
@@ -776,7 +776,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelperBadView as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
@@ -827,7 +827,7 @@ describe('LibraryDomain', () => {
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                    'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                    'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtils as IUtils
                 });
@@ -857,7 +857,7 @@ describe('LibraryDomain', () => {
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain
             });
 
             libDomain.getLibraries = global.__mockPromise({list: [libData], totalCount: 1});
@@ -866,9 +866,9 @@ describe('LibraryDomain', () => {
 
             expect(mockLibRepo.deleteLibrary.mock.calls.length).toBe(1);
 
-            expect(mockAppPermDomain.getAppPermission).toBeCalled();
-            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(
-                AppPermissionsActions.DELETE_LIBRARY
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.DELETE_LIBRARY
             );
         });
 
@@ -914,7 +914,7 @@ describe('LibraryDomain', () => {
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain
+                'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain
             });
 
             libDomain.getLibraries = global.__mockPromise([libData]);
@@ -939,7 +939,7 @@ describe('LibraryDomain', () => {
                 config: mockConfig as Config.IConfig,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils

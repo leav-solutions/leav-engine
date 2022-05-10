@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {i18n} from 'i18next';
 import {TreeNode} from 'react-sortable-tree';
+import {mockApplicationDetails} from '__mocks__/common/applications';
 import {PermissionsActions} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
 import {Mockify} from '../_types/Mockify';
@@ -11,6 +12,7 @@ import {
     addWildcardToFilters,
     arrayPick,
     arrayToObj,
+    enforceInitialSlash,
     formatIDString,
     getFieldError,
     getInvertColor,
@@ -18,7 +20,9 @@ import {
     getRecordIdentityCacheKey,
     getSysTranslationQueryLanguage,
     getTreeNodeKey,
+    isLibraryInApp,
     isLinkAttribute,
+    isTreeInApp,
     localizedLabel,
     omit,
     permsArrayToObject,
@@ -315,6 +319,31 @@ describe('utils', () => {
 
         test('Should return array of objects if given multiple keys', async () => {
             expect(pick(obj, ['a', 'c'])).toEqual({a: 1, c: 3});
+        });
+    });
+
+    describe('isLibraryInApp', () => {
+        test('Check if library is available in current app', async () => {
+            expect(isLibraryInApp(mockApplicationDetails, 'libA')).toBe(true);
+            expect(isLibraryInApp(mockApplicationDetails, 'libB')).toBe(true);
+            expect(isLibraryInApp(mockApplicationDetails, 'libC')).toBe(false);
+            expect(isLibraryInApp({...mockApplicationDetails, libraries: []}, 'libC')).toBe(true);
+        });
+    });
+
+    describe('isTreeInApp', () => {
+        test('Check if tree is available in current app', async () => {
+            expect(isTreeInApp(mockApplicationDetails, 'treeA')).toBe(true);
+            expect(isTreeInApp(mockApplicationDetails, 'treeB')).toBe(true);
+            expect(isTreeInApp(mockApplicationDetails, 'treeC')).toBe(false);
+            expect(isTreeInApp({...mockApplicationDetails, trees: []}, 'treeC')).toBe(true);
+        });
+    });
+
+    describe('enforceInitialSlash', () => {
+        test('Add initial slash if not present', async () => {
+            expect(enforceInitialSlash('/foo/bar')).toBe('/foo/bar');
+            expect(enforceInitialSlash('foo/bar')).toBe('/foo/bar');
         });
     });
 });

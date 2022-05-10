@@ -34,8 +34,8 @@ describe('User Data', () => {
         const perm = await makeGraphQlCall(`mutation {
             savePermission(
                 permission: {
-                  type: app
-                  actions: [{ name: app_manage_global_preferences, allowed: true }]
+                  type: admin
+                  actions: [{ name: admin_manage_global_preferences, allowed: true }]
                 }
               ) {
                 type
@@ -47,12 +47,12 @@ describe('User Data', () => {
         }`);
 
         expect(perm.status).toBe(200);
-        expect(perm.data.data.savePermission.type).toBe('app');
+        expect(perm.data.data.savePermission.type).toBe('admin');
         expect(perm.data.errors).toBeUndefined();
         expect(perm.data.data.savePermission.actions).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    name: 'app_manage_global_preferences',
+                    name: 'admin_manage_global_preferences',
                     allowed: true
                 })
             ])
@@ -90,8 +90,8 @@ describe('User Data', () => {
         const perm = await makeGraphQlCall(`mutation {
             savePermission(
                 permission: {
-                  type: app
-                  actions: [{ name: app_manage_global_preferences, allowed: false }]
+                  type: admin
+                  actions: [{ name: admin_manage_global_preferences, allowed: false }]
                 }
               ) {
                 type
@@ -103,12 +103,12 @@ describe('User Data', () => {
         }`);
 
         expect(perm.status).toBe(200);
-        expect(perm.data.data.savePermission.type).toBe('app');
+        expect(perm.data.data.savePermission.type).toBe('admin');
         expect(perm.data.errors).toBeUndefined();
         expect(perm.data.data.savePermission.actions).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    name: 'app_manage_global_preferences',
+                    name: 'admin_manage_global_preferences',
                     allowed: false
                 })
             ])

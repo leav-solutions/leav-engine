@@ -19,7 +19,7 @@ describe('ActionsGroupSelector', () => {
                     }}
                     onSelect={onSelect}
                     selectedGroup={null}
-                    type={PermissionTypes.app}
+                    type={PermissionTypes.admin}
                 />
             );
 

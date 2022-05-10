@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {BulbOutlined, CloseOutlined, SearchOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {Button, Divider, Input, Space, Spin} from 'antd';
-import Search from 'antd/lib/input/Search';
+import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import SearchModal from 'components/SearchModal';
@@ -74,7 +73,7 @@ const FooterWrapper = styled(Space)`
     justify-content: flex-end;
 `;
 
-const SearchInput = styled(Search)`
+const SearchInput = styled(Input.Search)`
     flex-grow: 1;
     margin-right: 1em;
 `;
@@ -99,7 +98,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const [filteredValuesList, setFilteredValuesList] = useState<ValueFromList[]>(valuesList);
 
     const wrapperRef = useRef<HTMLDivElement>();
-    const searchInputRef = useRef<Input>();
+    const searchInputRef = useRef<InputRef>();
 
     const [selectedValues, setSelectedValues] = useState<ValueFromList[]>([]);
     const [isSearchModalVisible, setIsSearchModalVisible] = useState<boolean>(false);

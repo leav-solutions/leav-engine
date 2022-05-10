@@ -367,7 +367,8 @@
         "graphql_error_occurred": "Une erreur est survenue: {{error}}",
         "network_error_occurred": "Une erreur de connexion est survenue",
         "PERMISSION_ERROR": "Vous n'êtes pas autorisé à effectuer cette action",
-        "INTERNAL_ERROR": "Une erreur interne est survenue"
+        "INTERNAL_ERROR": "Une erreur interne est survenue",
+        "page_not_found": "La page demandée n'existe pas"
     },
     "language": {
         "fr": "Français",
@@ -420,5 +421,9 @@
     },
     "floating_menu": {
         "more_actions": "Plus"
+    },
+    "applications": {
+        "title": "Applications",
+        "current_app_error": "Impossible de charger l'application courante (identifiant: \"{{appId}}\")"
     }
 }

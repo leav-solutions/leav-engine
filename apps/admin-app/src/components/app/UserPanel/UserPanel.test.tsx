@@ -9,13 +9,9 @@ import {AvailableLanguage} from '_gqlTypes/globalTypes';
 import {act, render, screen} from '_tests/testUtils';
 import UserPanel from './UserPanel';
 
-const mockDeleteToken = jest.fn();
-jest.mock('@leav/utils', () => ({
-    useAuthToken: jest.fn(() => ({
-        getToken: jest.fn(),
-        saveToken: jest.fn(),
-        deleteToken: mockDeleteToken
-    }))
+const mockLogout = jest.fn();
+jest.mock('hooks/useAuth', () => () => ({
+    logout: mockLogout
 }));
 
 describe('UserPanel', () => {
@@ -52,8 +48,7 @@ describe('UserPanel', () => {
             userEvent.click(logoutLink);
         });
 
-        expect(mockDeleteToken).toHaveBeenCalled();
-        expect(window.location.replace).toHaveBeenCalledWith('/');
+        expect(mockLogout).toHaveBeenCalled();
     });
 
     test('Can switch language', async () => {

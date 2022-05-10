@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormFieldTypes, FormUIElementTypes} from '@leav/utils';
-import {Input} from 'antd';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {mockFormElementContainer, mockFormElementInput, mockRecordForm} from '__mocks__/common/form';
 import Container from '../../uiElements/Container';
+import StandardField from '../../uiElements/StandardField';
 import {extractFormElements} from './extractFormElements';
 
 describe('extractFormElements', () => {
@@ -64,7 +64,7 @@ describe('extractFormElements', () => {
                     attribute: null,
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
-                    uiElement: Input
+                    uiElement: StandardField
                 },
                 {
                     ...mockFormElementContainer,
@@ -98,12 +98,12 @@ describe('extractFormElements', () => {
                     attribute: null,
                     type: FormElementTypes.field,
                     uiElementType: FormFieldTypes.TEXT_INPUT,
-                    uiElement: Input
+                    uiElement: StandardField
                 }
             ]
         };
 
         // Test on stringified objext due to failure caused by some object references
-        expect(JSON.stringify(convertForm)).toBe(JSON.stringify(expectation));
+        expect(convertForm).toEqual(expectation);
     });
 });

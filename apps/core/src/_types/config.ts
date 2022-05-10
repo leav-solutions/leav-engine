@@ -25,11 +25,14 @@ export interface IConfig {
     import: IImport;
     plugins: IKeyValue<IKeyValue<any>>;
     preview: IPreview;
+    applications: IApplicationsConfig;
 }
 
 export interface IServer {
     host: string;
     port: number;
+    publicUrl: string;
+    apiEndpoint: string;
     uploadLimit: number | string;
 }
 
@@ -121,4 +124,8 @@ export interface IDiskCache {
 
 export interface IPreview {
     directory: string;
+}
+
+export interface IApplicationsConfig {
+    rootFolder: string;
 }

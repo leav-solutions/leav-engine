@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-/* eslint-disable jsdoc/check-indentation */
 
-import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
 import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -13,10 +12,11 @@ import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
 import {IList, IPaginationParams, SortOrder} from '../../_types/list';
 import {
-    AppPermissionsActions,
+    AdminPermissionsActions,
     PermissionTypes,
     TreeNodePermissionsActions,
     TreePermissionsActions
@@ -32,13 +32,12 @@ import {
     TreePaths
 } from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
+import {ILibraryDomain} from '../library/libraryDomain';
+import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
+import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import validateFilesParent from './helpers/validateFilesParent';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
-import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
-import {ILibraryDomain} from '../library/libraryDomain';
 
 export interface ITreeDomain {
     isNodePresent(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
@@ -86,7 +85,6 @@ export interface ITreeDomain {
         ctx: IQueryInfos;
     }): Promise<ITreeNodeLight>;
 
-    /* eslint-disable jsdoc/check-indentation */
     /**
      * Return the whole tree in the form:
      * [
@@ -140,7 +138,7 @@ export interface ITreeDomain {
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
     'core.domain.library'?: ILibraryDomain;
@@ -151,10 +149,10 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission.app': appPermissionDomain = null,
+    'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.permission.tree': treePermissionDomain = null,
     'core.domain.permission.treeNode': treeNodePermissionDomain = null,
     'core.domain.library': libraryDomain = null,
@@ -308,8 +306,8 @@ export default function ({
             const isExistingTree = await _isExistingTree(treeData.id, ctx);
 
             // Check permissions
-            const action = isExistingTree ? AppPermissionsActions.EDIT_TREE : AppPermissionsActions.CREATE_TREE;
-            const canSaveTree = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
+            const action = isExistingTree ? AdminPermissionsActions.EDIT_TREE : AdminPermissionsActions.CREATE_TREE;
+            const canSaveTree = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);
@@ -350,8 +348,8 @@ export default function ({
         },
         async deleteTree(id: string, ctx: IQueryInfos): Promise<ITree> {
             // Check permissions
-            const action = AppPermissionsActions.DELETE_TREE;
-            const canSaveTree = await appPermissionDomain.getAppPermission({action, userId: ctx.userId, ctx});
+            const action = AdminPermissionsActions.DELETE_TREE;
+            const canSaveTree = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
 
             if (!canSaveTree) {
                 throw new PermissionError(action);

@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import ApplicationSwitcher from 'components/ApplicationSwitcher';
 import React from 'react';
 import styled from 'styled-components';
 import {default as themingVar, default as themingVars} from '../../themingVar';
@@ -15,6 +16,7 @@ interface ITopBarProps {
 const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
+    align-items: center;
     height: ${themingVar['@leav-header-height']};
 
     color: white;
@@ -65,7 +67,7 @@ function TopBar({userPanelVisible, toggleUserPanelVisible}: ITopBarProps): JSX.E
             <WrapperHeaderNotification key="lib-name">
                 <HeaderNotification />
             </WrapperHeaderNotification>
-
+            <ApplicationSwitcher />
             <MenuItemUser key={userPanelKey} onClick={handleUserPanelClick} isActive={userPanelVisible}>
                 <UserMenu />
             </MenuItemUser>

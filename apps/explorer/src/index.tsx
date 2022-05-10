@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import App from 'components/app';
 import React from 'react';
 import {ThemeSwitcherProvider} from 'react-css-theme-switcher';
 import ReactDOM from 'react-dom';
-import AuthHandler from './components/app/AuthHandler';
 import './i18n';
 import './index.less';
 import * as serviceWorker from './serviceWorker';
@@ -16,7 +16,7 @@ const themes = {
 
 ReactDOM.render(
     <ThemeSwitcherProvider themeMap={themes} defaultTheme="light">
-        <AuthHandler url={process.env.REACT_APP_AUTH_URL || ''} />
+        <App />
     </ThemeSwitcherProvider>,
     document.getElementById('root')
 );

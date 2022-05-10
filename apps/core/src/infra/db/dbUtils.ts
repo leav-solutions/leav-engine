@@ -33,6 +33,7 @@ export interface IFindCoreEntityParams {
     customFilterConditions?: IKeyValue<
         (filterKey: string, filterVal: string | boolean | string[], strictFilters: boolean) => GeneratedAqlQuery
     >;
+    nonStrictFields?: string[];
     ctx: IQueryInfos;
 }
 
@@ -52,7 +53,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.utils.logger': logger = null,
     'core.infra.plugins': pluginsRepo = null,
@@ -85,7 +86,8 @@ export default function ({
     function _getFilterCondition(
         filterKey: string,
         filterVal: string | boolean | string[],
-        strictFilters: boolean
+        strictFilters: boolean,
+        nonStrictFields?: string[]
     ): GeneratedAqlQuery {
         const queryParts = [];
 
@@ -104,7 +106,7 @@ export default function ({
             } else {
                 // Filter with a "like" on ID or exact value in other fields
                 queryParts.push(
-                    filterKey === '_key' && !strictFilters
+                    (nonStrictFields ?? []).includes(filterKey) && !strictFilters
                         ? aql`LIKE(el.${filterKey}, ${filterVal}, true)`
                         : aql`el.${filterKey} == ${filterVal}`
                 );
@@ -230,6 +232,7 @@ export default function ({
                 pagination = null,
                 sort = null,
                 customFilterConditions = {},
+                nonStrictFields = ['label', '_key'],
                 ctx = {}
             } = params;
 
@@ -250,7 +253,7 @@ export default function ({
                         typeof customFilterConditions[filterKey] !== 'undefined'
                             ? customFilterConditions[filterKey]
                             : _getFilterCondition;
-                    const conds = filterCondsFunc(filterKey, filterVal, strictFilters);
+                    const conds = filterCondsFunc(filterKey, filterVal, strictFilters, nonStrictFields);
 
                     if (conds.query) {
                         queryParts.push(aql`FILTER`, conds);

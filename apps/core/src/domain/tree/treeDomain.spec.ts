@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAppPermissionDomain} from 'domain/permission/appPermissionDomain';
+import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
 import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -10,8 +10,9 @@ import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {LibraryBehavior} from '../../_types/library';
-import {AppPermissionsActions, PermissionsRelations} from '../../_types/permissions';
+import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permissions';
 import {ITree} from '../../_types/tree';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -19,7 +20,6 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import treeDomain from './treeDomain';
-import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -37,12 +37,12 @@ describe('treeDomain', () => {
         queryId: 'treeDomainTest'
     };
 
-    const mockAppPermDomain: Mockify<IAppPermissionDomain> = {
-        getAppPermission: global.__mockPromise(true)
+    const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+        getAdminPermission: global.__mockPromise(true)
     };
 
-    const mockAppPermForbiddenDomain: Mockify<IAppPermissionDomain> = {
-        getAppPermission: global.__mockPromise(false)
+    const mockAdminPermForbiddenDomain: Mockify<IAdminPermissionDomain> = {
+        getAdminPermission: global.__mockPromise(false)
     };
 
     const treeDataValidationHelper: Mockify<ITreeDataValidationHelper> = {
@@ -72,7 +72,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -83,8 +83,10 @@ describe('treeDomain', () => {
 
             expect(newTree).toMatchObject(mockTree);
 
-            expect(mockAppPermDomain.getAppPermission).toBeCalled();
-            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.CREATE_TREE);
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.CREATE_TREE
+            );
         });
 
         test('Should update existing tree', async () => {
@@ -107,7 +109,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
@@ -120,8 +122,10 @@ describe('treeDomain', () => {
 
             expect(newTree).toMatchObject(mockTree);
 
-            expect(mockAppPermDomain.getAppPermission).toBeCalled();
-            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.EDIT_TREE);
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.EDIT_TREE
+            );
         });
 
         test('Should throw if forbidden action', async () => {
@@ -134,7 +138,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -159,7 +163,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': failingDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -183,7 +187,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -229,7 +233,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain
@@ -241,8 +245,10 @@ describe('treeDomain', () => {
 
             expect(treeRepo.deleteTree.mock.calls.length).toBe(1);
 
-            expect(mockAppPermDomain.getAppPermission).toBeCalled();
-            expect(mockAppPermDomain.getAppPermission.mock.calls[0][0].action).toBe(AppPermissionsActions.DELETE_TREE);
+            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                AdminPermissionsActions.DELETE_TREE
+            );
         });
 
         test('Should throw if unknown tree', async function () {
@@ -254,7 +260,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain
             });
 
             // domain.getTrees = global.__mockPromise({list: [], totalCount: 0});
@@ -272,7 +278,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermDomain as IAppPermissionDomain
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain
             });
 
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
@@ -289,7 +295,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
-                'core.domain.permission.app': mockAppPermForbiddenDomain as IAppPermissionDomain
+                'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain
             });
 
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(PermissionError);

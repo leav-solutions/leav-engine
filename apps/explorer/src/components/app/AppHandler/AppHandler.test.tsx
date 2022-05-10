@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import {getApplicationByIdQuery} from 'graphQL/queries/applications/getApplicationByIdQuery';
+import {getMe} from 'graphQL/queries/userData/me';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
+import {render, screen} from '_tests/testUtils';
+import {mockApplicationDetails} from '__mocks__/common/applications';
 import AppHandler from './AppHandler';
 
 jest.mock(
@@ -17,16 +18,62 @@ jest.mock(
 
 describe('AppHandler', () => {
     test('Should contain Router', async () => {
-        let comp: any;
+        process.env.REACT_APP_APPLICATION_ID = mockApplicationDetails.id;
 
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <AppHandler />
-                </MockedProviderWithFragments>
-            );
-        });
+        const mocks = [
+            {
+                request: {
+                    query: getMe,
+                    variables: {}
+                },
+                result: {
+                    data: {
+                        me: {
+                            login: 'admin',
+                            id: '1',
+                            whoAmI: {
+                                id: '1',
+                                label: 'admin',
+                                color: null,
+                                library: {
+                                    id: 'users',
+                                    label: {
+                                        en: 'Users',
+                                        fr: 'Utilisateurs'
+                                    },
+                                    gqlNames: {
+                                        query: 'users',
+                                        type: 'User',
+                                        __typename: 'LibraryGraphqlNames'
+                                    },
+                                    __typename: 'Library'
+                                },
+                                preview: null,
+                                __typename: 'RecordIdentity'
+                            },
+                            __typename: 'User'
+                        }
+                    }
+                }
+            },
+            {
+                request: {
+                    query: getApplicationByIdQuery,
+                    variables: {
+                        id: mockApplicationDetails.id
+                    }
+                },
+                result: {
+                    data: {
+                        applications: {
+                            list: [mockApplicationDetails]
+                        }
+                    }
+                }
+            }
+        ];
+        render(<AppHandler />, {apolloMocks: mocks});
 
-        expect(comp.find('Router')).toHaveLength(1);
+        expect(await screen.findByText('Router')).toBeInTheDocument();
     });
 });

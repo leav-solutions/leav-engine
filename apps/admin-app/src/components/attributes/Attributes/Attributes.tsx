@@ -61,7 +61,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
                         {t('attributes.title')}
                     </Header>
                 </Grid.Column>
-                {userData.permissions[PermissionsActions.app_create_attribute] && (
+                {userData.permissions[PermissionsActions.admin_create_attribute] && (
                     <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
                         <Button icon labelPosition="left" size="medium" as={Link} to={'/attributes/edit/'}>
                             <Icon name="plus" />
@@ -78,7 +78,7 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
                     onFiltersUpdate={_onFiltersUpdate}
                     filters={filters}
                     actions={
-                        userData.permissions[PermissionsActions.app_delete_attribute] ? (
+                        userData.permissions[PermissionsActions.admin_delete_attribute] ? (
                             <DeleteAttribute key="delete_attr" filters={filters} />
                         ) : (
                             <></>

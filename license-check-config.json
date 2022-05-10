@@ -8,6 +8,8 @@
         }
     },
     "ignore":[
+        "**/[!*.(ts|js|tsx|jsx)]",
+        "apps/core/applications/instances",
         ".git",
         ".*",
         "config",
@@ -31,6 +33,9 @@
         "cache",
         "files",
         "previews",
-        "**/*.icc"
+        "**/*.icc",
+        "**/.env",
+        "**/build",
+        "**/dist"
     ]
 }

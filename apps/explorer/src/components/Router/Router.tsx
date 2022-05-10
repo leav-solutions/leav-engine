@@ -23,7 +23,7 @@ function Router(): JSX.Element {
 
     return (
         <>
-            <BrowserRouter>
+            <BrowserRouter basename={`${process.env.REACT_APP_ENDPOINT ?? '/'}`}>
                 <Layout style={{height: '100vh'}}>
                     <Sider
                         theme="light"

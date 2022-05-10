@@ -17,12 +17,14 @@
         "expanded": "Agrandir",
         "reduce": "Réduire",
         "label": "Libellé",
+        "description": "Description",
         "id": "Identifiant",
         "isSystem": "Système",
         "settings": "Paramètres",
         "go_back_home": "Retourner à l'accueil",
         "logout": "Se déconnecter",
-        "choose-lang": "Langue"
+        "choose-lang": "Langue",
+        "permissions": "Permissions"
     },
     "dashboard": {
         "title": "Administration de LEAV Engine"
@@ -180,25 +182,6 @@
         "default": "Par défaut",
         "any_record": "Tous les éléments",
         "any_entity": "Tou(te)s {{entityName}}",
-        "app_access_libraries": "Accéder aux bibliothèques",
-        "app_create_library": "Créer une bibliothèque",
-        "app_edit_library": "Éditer une bibliothèque",
-        "app_delete_library": "Supprimer une bibliothèque",
-        "app_access_attributes": "Accéder aux attributs",
-        "app_create_attribute": "Créer un attribut",
-        "app_edit_attribute": "Éditer un attribut",
-        "app_delete_attribute": "Supprimer un attribut",
-        "app_access_trees": "Accéder aux arbres",
-        "app_create_tree": "Créer un arbre",
-        "app_edit_tree": "Éditer un arbre",
-        "app_delete_tree": "Supprimer un arbre",
-        "app_access_forms": "Accéder aux formulaires",
-        "app_create_form": "Créer un formulaire",
-        "app_edit_form": "Éditer un formulaire",
-        "app_delete_form": "Supprimer un formulaire",
-        "app_access_permissions": "Accéder aux permissions",
-        "app_edit_permission": "Éditer les permissions",
-        "app_manage_global_preferences": "Gérer les préférences globales",
         "access_attribute": "Voir l'attribut",
         "create_value": "Créer une valeur",
         "edit_value": "Éditer une valeur",
@@ -208,7 +191,9 @@
             "attribute": "Attribut",
             "library": "Bibliothèque",
             "record": "Entités",
-            "tree": "Classement"
+            "tree": "Classement",
+            "admin": "Administration",
+            "application": "Application"
         },
         "group": {
             "library": "Bibliothèque",
@@ -217,7 +202,9 @@
             "attributes": "Attributs",
             "trees": "Classements",
             "permissions": "Permissions",
-            "preferences": "Préférences"
+            "preferences": "Préférences",
+            "applications": "Applications",
+            "application": "Application"
         }
     },
     "login": {
@@ -307,6 +294,31 @@
             "header3": "Titre 3",
             "ul": "Liste",
             "ol": "Liste numéroté"
+        }
+    },
+    "applications": {
+        "title": "Applications",
+        "current_app_error": "Impossible de charger l'application courante (identifiant: \"{{appId}}\")",
+        "new": "Nouvelle application",
+        "endpoint": "Point d'accès",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer l'application {{appLabel}}?",
+        "information": "Informations",
+        "libraries": "Bibliothèques accessibles",
+        "all_libraries": "Toutes les bibliothèques",
+        "trees": "Arbres accessibles",
+        "all_trees": "Tous les arbres",
+        "select_module": "Sélectionner un module",
+        "module": "Module",
+        "install_pending": "Installation de l'application, veuillez patienter...",
+        "install": "Installation",
+        "status_label": "Statut",
+        "reinstall": "Relancer l'installation",
+        "open_application": "Ouvrir l'application",
+        "statuses": {
+            "NONE": "Aucun",
+            "RUNNING":"En cours",
+            "SUCCESS":"Réussi",
+            "ERROR":"Erreur"
         }
     }
 }

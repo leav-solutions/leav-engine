@@ -6,7 +6,7 @@ import {IUserDataRepo} from 'infra/userData/userDataRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUserData} from '_types/userData';
 import PermissionError from '../../errors/PermissionError';
-import {AppPermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 
 export interface IUserDataDomain {
     saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
@@ -28,27 +28,27 @@ export default function ({
             if (
                 global &&
                 !(await permissionDomain.isAllowed({
-                    type: PermissionTypes.APP,
-                    action: AppPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
+                    type: PermissionTypes.ADMIN,
+                    action: AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
                     userId: ctx.userId,
                     ctx
                 }))
             ) {
-                throw new PermissionError(AppPermissionsActions.MANAGE_GLOBAL_PREFERENCES);
+                throw new PermissionError(AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES);
             }
 
             return userDataRepo.saveUserData(key, value, global, ctx);
         },
         async getUserData(keys: string[], global: boolean = false, ctx: IQueryInfos): Promise<IUserData> {
             const isAllowed = await permissionDomain.isAllowed({
-                type: PermissionTypes.APP,
-                action: AppPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
+                type: PermissionTypes.ADMIN,
+                action: AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES,
                 userId: ctx.userId,
                 ctx
             });
 
             if (global && !isAllowed) {
-                throw new PermissionError(AppPermissionsActions.MANAGE_GLOBAL_PREFERENCES);
+                throw new PermissionError(AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES);
             }
 
             const res = await userDataRepo.getUserData(keys, global, ctx);

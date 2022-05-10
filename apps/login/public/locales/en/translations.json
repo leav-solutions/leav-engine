@@ -1,0 +1,19 @@
+{
+    "login": {
+        "header": "Sign in",
+        "login": "ID",
+        "password": "Password",
+        "submit": "Submit",
+        "apologize_header": "We're sorry,",
+        "apologize": "we were not able to authenticate you :"
+    },
+    "error": {
+        "bad_credentials": "Incorrect ID or password",
+        "no_server_response": "Server is not responding",
+        "session_expired": "Your session has expired"
+    },
+    "loading": {
+        "header": "Just a second,",
+        "text": "we are authenticating you..."
+    }
+}

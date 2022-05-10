@@ -7,21 +7,24 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
 import {
-    AppPermissionsActions,
+    AdminPermissionsActions,
+    ApplicationPermissionsActions,
     AttributePermissionsActions,
     ILabeledPermissionsAction,
     IPermission,
     LibraryPermissionsActions,
+    PermissionsActions,
     PermissionTypes,
     RecordAttributePermissionsActions,
     RecordPermissionsActions,
     TreeNodePermissionsActions,
-    TreePermissionsActions,
-    PermissionsActions
+    TreePermissionsActions
 } from '../../_types/permissions';
-import {IAppPermissionDomain} from './appPermissionDomain';
+import {IAdminPermissionDomain} from './adminPermissionDomain';
+import {IApplicationPermissionDomain} from './applicationPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import getPermissionCachePatternKey from './helpers/getPermissionCachePatternKey';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
@@ -30,7 +33,6 @@ import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
 import {ITreeNodePermissionDomain} from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {
     IGetActionsByTypeParams,
     IGetInheritedPermissionsParams,
@@ -70,7 +72,7 @@ export interface IPermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission.app'?: IAppPermissionDomain;
+    'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
@@ -78,6 +80,7 @@ interface IDeps {
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
     'core.domain.permission.treeLibrary'?: ITreeLibraryPermissionDomain;
+    'core.domain.permission.application'?: IApplicationPermissionDomain;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.cache.cacheService'?: ICachesService;
     translator?: i18n;
@@ -88,7 +91,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
     const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
 
     const {
-        'core.domain.permission.app': appPermissionDomain = null,
+        'core.domain.permission.admin': adminPermissionDomain = null,
         'core.domain.permission.record': recordPermissionDomain = null,
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.domain.permission.attribute': attributePermissionDomain = null,
@@ -96,6 +99,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
         'core.domain.permission.tree': treePermissionDomain = null,
         'core.domain.permission.treeNode': treeNodePermissionDomain = null,
         'core.domain.permission.treeLibrary': treeLibraryPermissionDomain = null,
+        'core.domain.permission.application': applicationPermissionDomain = null,
         'core.infra.permission': permissionRepo = null,
         'core.infra.cache.cacheService': cacheService = null,
         config = null
@@ -149,14 +153,24 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 );
             }
 
+            if (permData.type === PermissionTypes.APPLICATION) {
+                keys.push(
+                    getPermissionCachePatternKey({
+                        permissionType: PermissionTypes.APPLICATION,
+                        applyTo: permData.applyTo,
+                        permissionAction: name as PermissionsActions
+                    })
+                );
+            }
+
             await cacheService.getCache(ECacheType.RAM).deleteData(keys);
         }
     };
 
     const savePermission = async (permData: IPermission, ctx: IQueryInfos): Promise<IPermission> => {
         // Does user have the permission to save permissions?
-        const action = AppPermissionsActions.EDIT_PERMISSION;
-        const canSavePermission = await appPermissionDomain.getAppPermission({
+        const action = AdminPermissionsActions.EDIT_PERMISSION;
+        const canSavePermission = await adminPermissionDomain.getAdminPermission({
             action,
             userId: ctx.userId,
             ctx
@@ -240,9 +254,9 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
-            case PermissionTypes.APP:
-                action = action as AppPermissionsActions;
-                perm = await appPermissionDomain.getInheritedAppPermission({
+            case PermissionTypes.ADMIN:
+                action = action as AdminPermissionsActions;
+                perm = await adminPermissionDomain.getInheritedAdminPermission({
                     action,
                     userGroupId,
                     ctx
@@ -277,6 +291,16 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                     action: action as TreeNodePermissionsActions,
                     treeId,
                     libraryId,
+                    userGroupId,
+                    ctx
+                });
+                break;
+            }
+            case PermissionTypes.APPLICATION: {
+                action = action as ApplicationPermissionsActions;
+                perm = await applicationPermissionDomain.getInheritedApplicationPermission({
+                    action,
+                    applicationId: applyTo,
                     userGroupId,
                     ctx
                 });
@@ -351,9 +375,9 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 });
 
                 break;
-            case PermissionTypes.APP:
-                action = action as AppPermissionsActions;
-                perm = await appPermissionDomain.getAppPermission({
+            case PermissionTypes.ADMIN:
+                action = action as AdminPermissionsActions;
+                perm = await adminPermissionDomain.getAdminPermission({
                     action,
                     userId,
                     ctx
@@ -394,6 +418,15 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                     ctx
                 });
                 break;
+            case PermissionTypes.APPLICATION:
+                action = action as ApplicationPermissionsActions;
+                perm = await applicationPermissionDomain.getApplicationPermission({
+                    action,
+                    applicationId: applyTo,
+                    userId,
+                    ctx
+                });
+                break;
         }
 
         return perm;
@@ -406,8 +439,8 @@ export default function (deps: IDeps = {}): IPermissionDomain {
     }: IGetActionsByTypeParams): ILabeledPermissionsAction[] => {
         let perms = [];
         switch (type) {
-            case PermissionTypes.APP:
-                perms = Object.values(AppPermissionsActions);
+            case PermissionTypes.ADMIN:
+                perms = Object.values(AdminPermissionsActions);
                 break;
             case PermissionTypes.LIBRARY:
                 perms = Object.values(LibraryPermissionsActions);
@@ -426,6 +459,9 @@ export default function (deps: IDeps = {}): IPermissionDomain {
             case PermissionTypes.TREE_LIBRARY:
             case PermissionTypes.TREE_NODE:
                 perms = Object.values(TreeNodePermissionsActions);
+                break;
+            case PermissionTypes.APPLICATION:
+                perms = Object.values(ApplicationPermissionsActions);
                 break;
         }
 

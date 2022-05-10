@@ -4,6 +4,7 @@
 import {gql} from 'graphql-tag';
 import {i18n, TFunction} from 'i18next';
 import {pick} from 'lodash';
+import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {AttributeFormat, AttributeType, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
@@ -27,8 +28,9 @@ export function getRecordIdentityCacheKey(libId: string, recordId: string): stri
 }
 
 export function getFileUrl(filepath: string) {
-    const url = process.env.REACT_APP_CORE_URL;
-    return url + filepath;
+    // Assets are served from the same origin as the application. Just return the filepath but keep this function
+    // in case it becomes more complicated
+    return filepath;
 }
 
 export const getInvertColor = (color: string): string => {
@@ -348,3 +350,13 @@ export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): s
         ...value,
         interpolation: {escapeValue: false}
     });
+
+export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, libraryId: string): boolean => {
+    const appLibraries = app?.libraries ?? [];
+    return !appLibraries.length || !!appLibraries.find(appLib => appLib.id === libraryId);
+};
+
+export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
+    const appTrees = app?.trees ?? [];
+    return !appTrees.length || !!appTrees.find(appTree => appTree.id === treeId);
+};

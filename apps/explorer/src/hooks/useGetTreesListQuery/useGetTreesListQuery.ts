@@ -3,8 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {QueryResult, useQuery} from '@apollo/client';
+import {useApplicationContext} from 'context/ApplicationContext';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {useState} from 'react';
+import {isTreeInApp} from 'utils';
 import {GET_TREE_LIST_QUERY, GET_TREE_LIST_QUERYVariables} from '_gqlTypes/GET_TREE_LIST_QUERY';
 
 export type IUseGetTreesListQueryHook = QueryResult<GET_TREE_LIST_QUERY>;
@@ -18,6 +20,7 @@ export interface IUseGetTreesListQueryHookParams {
 export default function useGetTreesListQuery(params: IUseGetTreesListQueryHookParams = {}): IUseGetTreesListQueryHook {
     const [queryData, setQueryData] = useState<GET_TREE_LIST_QUERY>();
     const {treeId, onlyAllowed = true, skip = false} = params;
+    const currentApp = useApplicationContext();
 
     const variables: GET_TREE_LIST_QUERYVariables = {};
 
@@ -32,7 +35,9 @@ export default function useGetTreesListQuery(params: IUseGetTreesListQueryHookPa
             const cleanData: GET_TREE_LIST_QUERY = {
                 ...data,
                 trees: {
-                    list: data.trees.list.filter(tree => !onlyAllowed || tree.permissions.access_tree)
+                    list: data.trees.list.filter(
+                        tree => (!onlyAllowed || tree.permissions.access_tree) && isTreeInApp(currentApp, tree.id)
+                    )
                 }
             };
 

@@ -17,6 +17,12 @@ const VisibilityHandler = styled.div<{isActive: boolean}>`
     display: ${p => (p.isActive ? 'block' : 'none')};
 `;
 
+const Wrapper = styled.div`
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+`;
+
 function Workspace(): JSX.Element {
     const dispatch = useAppDispatch();
     const {panel, entityId} = useParams<{panel: WorkspacePanels; entityId?: string}>();
@@ -41,7 +47,7 @@ function Workspace(): JSX.Element {
     }, [activePanel, dispatch]);
 
     return (
-        <>
+        <Wrapper>
             <VisibilityHandler isActive={isHomeActive} className={WorkspacePanels.HOME}>
                 <Home />
             </VisibilityHandler>
@@ -51,7 +57,7 @@ function Workspace(): JSX.Element {
             <VisibilityHandler isActive={isTreeActive} className={WorkspacePanels.TREE}>
                 <Navigation tree={treeId} key={treeId} />
             </VisibilityHandler>
-        </>
+        </Wrapper>
     );
 }
 

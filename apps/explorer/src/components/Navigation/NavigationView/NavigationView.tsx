@@ -9,7 +9,7 @@ import Column from './Column';
 
 const Page = styled.div`
     width: auto;
-    height: calc(100vh - 6rem);
+    height: calc(100vh - 3rem);
     display: flex;
     flex-flow: row nowrap;
     overflow-x: scroll;

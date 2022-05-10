@@ -4,7 +4,7 @@ module.exports = {
     env: {browser: true, node: true, es6: true},
     parser: '@typescript-eslint/parser',
     parserOptions: {tsconfigRootDir: __dirname},
-    plugins: ['@typescript-eslint', 'eslint-plugin-jsdoc', 'react-app'],
+    plugins: ['@typescript-eslint', 'react-app'],
     settings: {react: {version: 'latest'}},
     rules: {
         '@typescript-eslint/adjacent-overload-signatures': 'error',
@@ -66,9 +66,6 @@ module.exports = {
         'import/no-extraneous-dependencies': 'off',
         'import/no-internal-modules': 'off',
         'import/order': 'off',
-        'jsdoc/check-alignment': 'error',
-        'jsdoc/check-indentation': 'error',
-        'jsdoc/newline-after-description': 'error',
         'linebreak-style': ['error', 'unix'],
         'max-classes-per-file': ['error', 1],
         'max-len': 'off',

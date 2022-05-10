@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
-    AppPermissionsActions,
+    AdminPermissionsActions,
+    ApplicationPermissionsActions,
     AttributePermissionsActions,
     IPermissionsTreeTarget,
     ITreePermissionsConf,
@@ -55,14 +56,14 @@ export interface IGetPermissionByUserGroupsParams {
     ctx: IQueryInfos;
 }
 
-export interface IGetAppPermissionParams {
-    action: AppPermissionsActions;
+export interface IGetAdminPermissionParams {
+    action: AdminPermissionsActions;
     userId: string;
     ctx: IQueryInfos;
 }
 
-export interface IGetInheritedAppPermissionParams {
-    action: AppPermissionsActions;
+export interface IGetInheritedAdminPermissionParams {
+    action: AdminPermissionsActions;
     userGroupId: string;
     ctx: IQueryInfos;
 }
@@ -87,6 +88,13 @@ export interface IGetTreeLibraryPermissionParams {
     libraryId: string;
     userId: string;
     getDefaultPermission?: (params?: IGetDefaultTreeLibraryPermissionParams) => boolean | null;
+    ctx: IQueryInfos;
+}
+
+export interface IGetApplicationPermissionParams {
+    action: ApplicationPermissionsActions;
+    applicationId: string;
+    userId: string;
     ctx: IQueryInfos;
 }
 
@@ -126,6 +134,13 @@ export interface IGetInheritedLibraryPermissionParams {
 export interface IGetInheritedTreePermissionParams {
     action: TreePermissionsActions;
     treeId: string;
+    userGroupId: string;
+    ctx: IQueryInfos;
+}
+
+export interface IGetInheritedApplicationPermissionParams {
+    action: ApplicationPermissionsActions;
+    applicationId: string;
     userGroupId: string;
     ctx: IQueryInfos;
 }

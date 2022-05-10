@@ -33,7 +33,6 @@ interface IListItem {
 function TreeList(): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
-
     const dispatch = useAppDispatch();
 
     const treeListQuery = useGetTreesListQuery();

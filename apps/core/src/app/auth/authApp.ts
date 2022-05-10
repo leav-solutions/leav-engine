@@ -4,34 +4,28 @@
 import * as bcrypt from 'bcryptjs';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {Express, NextFunction, Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
-import * as winston from 'winston';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
+import {ACCESS_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {IGraphqlApp} from '../graphql/graphqlApp';
-import {Express, Response, Request, NextFunction} from 'express';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
-    validateToken(token: string): Promise<jwt.JwtPayload>;
+    validateRequestToken(req: Request): Promise<jwt.JwtPayload>;
     registerRoute(app: Express): void;
-    checkToken(req: Request, res: Response, next: NextFunction): Promise<Response>;
 }
 
 interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.record'?: IRecordDomain;
-    'core.app.graphql'?: IGraphqlApp;
-    'core.utils.logger'?: winston.Winston;
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
-    'core.app.graphql': graphqlApp = null,
-    'core.utils.logger': logger = null,
     config = null
 }: IDeps = {}): IAuthApp {
     return {
@@ -45,8 +39,6 @@ export default function ({
                 resolvers: {
                     Query: {
                         async me(parent, args, ctx, info): Promise<IRecord> {
-                            const queryFields = graphqlApp.getQueryFields(info);
-
                             const users = await recordDomain.find({
                                 params: {
                                     library: 'users',
@@ -130,6 +122,12 @@ export default function ({
                             }
                         );
 
+                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, token, {
+                            httpOnly: true,
+                            sameSite: 'none',
+                            domain: req.headers.host
+                        });
+
                         return res.status(200).json({
                             token
                         });
@@ -138,8 +136,33 @@ export default function ({
                     }
                 }
             );
+
+            app.post(
+                '/auth/logout',
+                (req: Request, res: Response): Response => {
+                    res.cookie(ACCESS_TOKEN_COOKIE_NAME, '', {
+                        expires: new Date(0),
+                        httpOnly: true,
+                        sameSite: 'none',
+                        domain: req.headers.host
+                    });
+                    return res.status(200).end();
+                }
+            );
         },
-        async validateToken(token: string): Promise<jwt.JwtPayload> {
+        async validateRequestToken(req: Request): Promise<jwt.JwtPayload> {
+            let token = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
+
+            // In development, we allow token to be passed in the header instead of the cookie
+            // (for easier testing and tooling)
+            if (!token && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
+                token = req.headers.authorization;
+            }
+
+            if (!token) {
+                throw new Error('No token provided');
+            }
+
             // Token validation checking
             const payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
 
@@ -165,22 +188,6 @@ export default function ({
             }
 
             return payload;
-        },
-        async checkToken(req: Request, res: Response, next: NextFunction): Promise<Response> {
-            // Get user's token from headers
-            const token = req.headers.authorization;
-
-            if (!token) {
-                return res.status(401).send('No token provided');
-            }
-
-            try {
-                // Token validation checking
-                await this.validateToken(token);
-                next();
-            } catch (err) {
-                return res.status(401).json('Invalid token');
-            }
         }
     };
 }

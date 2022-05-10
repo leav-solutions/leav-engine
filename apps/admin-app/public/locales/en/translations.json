@@ -18,12 +18,14 @@
         "expanded": "Expand",
         "reduce": "Shrink",
         "label": "Label",
+        "description": "Description",
         "id": "ID",
         "isSystem": "System",
         "settings": "Settings",
         "go_back_home": "Go back home",
         "logout": "Log out",
-        "choose-lang": "Language"
+        "choose-lang": "Language",
+        "permissions": "Permissions"
     },
     "dashboard": {
         "title": "LEAV Engine administration"
@@ -70,7 +72,7 @@
     },
     "attributes": {
         "title": "Attributes",
-        "new": "New attribut",
+        "new": "New attribute",
         "label": "Label",
         "description": "Description",
         "ID": "ID",
@@ -180,35 +182,14 @@
         "any_record": "Any records",
         "default": "Default",
         "any_entity": "Any {{entityName}}",
-        "app_access_libraries": "Access libraries",
-        "app_create_library": "Create library",
-        "app_edit_library": "Edit library",
-        "app_delete_library": "Delete library",
-        "app_access_attributes": "Access attributes",
-        "app_create_attribute": "Create attribute",
-        "app_edit_attribute": "Edit attribute",
-        "app_delete_attribute": "Delete attribute",
-        "app_access_trees": "Access trees",
-        "app_create_tree": "Create tree",
-        "app_edit_tree": "Edit tree",
-        "app_delete_tree": "Delete tree",
-        "app_access_forms": "Access forms",
-        "app_create_form": "Create form",
-        "app_edit_form": "Edit form",
-        "app_delete_form": "Delete form",
-        "app_access_permissions": "Access permissions",
-        "app_edit_permission": "Edit permission",
-        "app_manage_global_preferences": "Manage global preferences",
-        "access_attribute": "Access attribute",
-        "create_value": "Create value",
-        "edit_value": "Edit value",
-        "delete_value": "Delete value",
         "type": {
             "app": "Components",
             "attribute": "Attribute",
             "library": "Library",
             "record": "Records",
-            "tree": "Classifying"
+            "tree": "Classifying",
+            "admin": "Administration",
+            "application": "Application"
         },
         "group": {
             "library": "Library",
@@ -217,7 +198,9 @@
             "attributes": "Attributes",
             "trees": "Classifying",
             "permissions": "Permissions",
-            "preferences": "Preferences"
+            "preferences": "Preferences",
+            "applications": "Applications",
+            "application": "Application"
         }
     },
     "login": {
@@ -307,6 +290,31 @@
             "header3": "Header 3",
             "ul": "List",
             "ol": "Ordered List"
+        }
+    },
+    "applications": {
+        "title": "Applications",
+        "current_app_error": "Couldn't load current application (ID: \"{{appId}}\")",
+        "new": "New application",
+        "endpoint": "Endpoint",
+        "confirm_delete": "Do you really want to delete application {{appLabel}}?",
+        "information": "Information",
+        "libraries": "Accessible libraries",
+        "all_libraries": "All libraries",
+        "trees": "Accessible trees",
+        "all_trees": "All trees",
+        "select_module": "Select a module",
+        "module": "Module",
+        "install_pending": "Installing app, please wait...",
+        "install": "Install",
+        "status_label": "Status",
+        "reinstall": "Restart installation",
+        "open_application": "Open application",
+        "statuses": {
+            "NONE": "None",
+            "RUNNING": "Running",
+            "SUCCESS": "Success",
+            "ERROR": "Error"
         }
     }
 }

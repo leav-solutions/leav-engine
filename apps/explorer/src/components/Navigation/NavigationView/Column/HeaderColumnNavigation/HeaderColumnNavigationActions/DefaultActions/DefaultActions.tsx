@@ -343,11 +343,16 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                                     {!!parent && (
                                         <>
                                             {!isDetail && (
-                                                <Menu.Item icon={<InfoCircleOutlined />} onClick={_handleClickDetails}>
+                                                <Menu.Item
+                                                    key="details"
+                                                    icon={<InfoCircleOutlined />}
+                                                    onClick={_handleClickDetails}
+                                                >
                                                     {t('navigation.actions.details')}
                                                 </Menu.Item>
                                             )}
                                             <Menu.Item
+                                                key="edit"
                                                 icon={<ExpandAltOutlined />}
                                                 onClick={_handleOpenEditRecordModal}
                                             >
@@ -355,17 +360,29 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                                             </Menu.Item>
                                         </>
                                     )}
-                                    <Menu.Item icon={<SearchOutlined />} onClick={_handleClickClassifiedIn}>
+                                    <Menu.Item
+                                        key="classified_in"
+                                        icon={<SearchOutlined />}
+                                        onClick={_handleClickClassifiedIn}
+                                    >
                                         {t('navigation.actions.classified_in')}
                                     </Menu.Item>
                                     {canEditChildren && (
                                         <>
                                             <Menu.Divider />
-                                            <Menu.Item icon={<OrderedListOutlined />} onClick={_handleClickOrder}>
+                                            <Menu.Item
+                                                key="order"
+                                                icon={<OrderedListOutlined />}
+                                                onClick={_handleClickOrder}
+                                            >
                                                 {t('navigation.actions.order')}
                                             </Menu.Item>
                                             {canDetach && (
-                                                <Menu.Item icon={<DeleteOutlined />} onClick={_handleClickDetach}>
+                                                <Menu.Item
+                                                    key="detach"
+                                                    icon={<DeleteOutlined />}
+                                                    onClick={_handleClickDetach}
+                                                >
                                                     {t('navigation.actions.detach')}
                                                 </Menu.Item>
                                             )}
