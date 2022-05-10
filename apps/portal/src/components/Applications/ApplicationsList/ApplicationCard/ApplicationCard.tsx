@@ -40,7 +40,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
     const description = localizedTranslation(application.description, lang);
 
     const _handleClick = () => {
-        window.location.assign(application.endpoint);
+        window.location.assign(application.url);
     };
 
     const _toggleFavorite = (e: SyntheticEvent) => {

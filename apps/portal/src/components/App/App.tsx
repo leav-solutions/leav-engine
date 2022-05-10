@@ -9,8 +9,9 @@ import Loading from 'components/shared/Loading';
 import UserMenu from 'components/UserMenu';
 import LangContext from 'context/LangContext';
 import UserContext from 'context/UserContext';
+import useRedirectionError from 'hooks/useRedirectionError';
 import {getMe} from 'queries/me/me';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ME} from '_gqlTypes/ME';
@@ -49,6 +50,12 @@ function App(): JSX.Element {
     const userLang = i18n.language.split('-')[0];
     const fallbackLang = i18n.options.fallbackLng ? i18n.options.fallbackLng[0] : '';
     const [lang, setLang] = useState<string[]>([userLang, fallbackLang]);
+
+    const handleRedirectionError = useRedirectionError();
+
+    useEffect(() => {
+        handleRedirectionError();
+    }, []);
 
     const _handleLanguageChange = (newLang: string): void => {
         i18n.changeLanguage(newLang);

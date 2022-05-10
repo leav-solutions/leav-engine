@@ -120,7 +120,7 @@ describe('Applications', () => {
 
         userEvent.click(screen.getByText('My first app'));
 
-        expect(window.location.assign).toBeCalledWith(mockApplication.endpoint);
+        expect(window.location.assign).toBeCalledWith(mockApplication.url);
     });
 
     test('Can filter applications list', async () => {
