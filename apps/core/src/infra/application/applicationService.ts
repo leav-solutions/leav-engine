@@ -5,6 +5,7 @@ import {appRootPath} from '@leav/app-root-path';
 import {exec} from 'child_process';
 import fs from 'fs/promises';
 import path from 'path';
+import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {
@@ -22,10 +23,11 @@ export interface IApplicationService {
 export const APPLICATION_INSTALL_SCRIPT_NAME = 'app_install.sh';
 
 interface IDeps {
+    'core.utils'?: IUtils;
     config?: IConfig;
 }
 
-export default function({config}: IDeps = {}): IApplicationService {
+export default function ({'core.utils': utils = null, config}: IDeps = {}): IApplicationService {
     const _execCommand = (scriptPath: string, env: {}): Promise<{exitCode: number; out: string}> => {
         return new Promise((resolve, reject) => {
             const child = exec(scriptPath, {env: {...process.env, ...env}, cwd: path.dirname(scriptPath)});
@@ -84,8 +86,8 @@ export default function({config}: IDeps = {}): IApplicationService {
                 LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
                 LEAV_DEFAULT_LANG: config.lang.default,
                 LEAV_AVAILABLE_LANG: config.lang.available.join(','),
-                LEAV_LOGIN_ENDPOINT: 'login',
-                LEAV_APP_ENDPOINT: application.endpoint,
+                LEAV_LOGIN_ENDPOINT: utils.getFullApplicationEndpoint('login'),
+                LEAV_APP_ENDPOINT: utils.getFullApplicationEndpoint(application.endpoint),
                 LEAV_APPLICATION_ID: application.id,
                 LEAV_DEST_FOLDER: destinationFolder
             };

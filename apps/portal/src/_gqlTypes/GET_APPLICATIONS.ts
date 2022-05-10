@@ -15,13 +15,19 @@ export interface GET_APPLICATIONS_applications_list_libraries {
     label: SystemTranslation | null;
 }
 
+export interface GET_APPLICATIONS_applications_list_permissions {
+    access_application: boolean;
+}
+
 export interface GET_APPLICATIONS_applications_list {
     id: string;
-    label: SystemTranslation | null;
+    label: SystemTranslation;
     description: SystemTranslation | null;
-    endpoint: string | null;
+    endpoint: string;
+    url: string;
     color: string | null;
     libraries: GET_APPLICATIONS_applications_list_libraries[];
+    permissions: GET_APPLICATIONS_applications_list_permissions;
 }
 
 export interface GET_APPLICATIONS_applications {

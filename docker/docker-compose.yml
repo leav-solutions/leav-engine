@@ -72,7 +72,7 @@ x-env-react: &env-react
   REACT_APP_API_URL: http://core.leav.localhost/graphql
   REACT_APP_DEFAULT_LANG: fr
   REACT_APP_AVAILABLE_LANG: fr,en
-  REACT_APP_LOGIN_ENDPOINT: /login
+  REACT_APP_LOGIN_ENDPOINT: /app/login
   SKIP_PREFLIGHT_CHECK: "true"
   TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling # To reduce CPU usage of TSC's file watching
   ESLINT_NO_DEV_ERRORS: "true" # To keep compiling on eslint errors
@@ -187,13 +187,13 @@ services:
       - traefik.enable=true
       - traefik.backend=admin-app
       - traefik.port=3000
-      - traefik.app.frontend.rule=Host:core.leav.localhost;Path:/admin,/admin/{route:.*}
+      - traefik.app.frontend.rule=Host:core.leav.localhost;Path:/app/admin,/app/admin/{route:.*}
       - traefik.ws.frontend.rule=Host:admin.leav.localhost
     environment:
       <<: *env-react
       <<: *env-admin-app
-      PUBLIC_URL: http://core.leav.localhost/admin
-      REACT_APP_ENDPOINT: /admin
+      PUBLIC_URL: http://core.leav.localhost/app/admin
+      REACT_APP_ENDPOINT: /app/admin
       REACT_APP_APPLICATION_ID: admin
       WDS_SOCKET_HOST: admin.leav.localhost
       WDS_SOCKET_PORT: 80
@@ -217,14 +217,14 @@ services:
       - traefik.enable=true
       - traefik.backend=explorer
       - traefik.port=3000
-      - traefik.app.frontend.rule=Host:core.leav.localhost;Path:/explorer,/explorer/{route:.*}
+      - traefik.app.frontend.rule=Host:core.leav.localhost;Path:/app/explorer,/app/explorer/{route:.*}
       - traefik.ws.frontend.rule=Host:explorer.leav.localhost
     environment:
       <<: *env-react
       <<: *env-explorer
-      REACT_APP_ENDPOINT: /explorer
+      REACT_APP_ENDPOINT: /app/explorer
       REACT_APP_APPLICATION_ID: explorer
-      PUBLIC_URL: http://core.leav.localhost/explorer
+      PUBLIC_URL: http://core.leav.localhost/app/explorer
       WDS_SOCKET_HOST: explorer.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:
@@ -247,11 +247,11 @@ services:
       - traefik.enable=true
       - traefik.backend=login
       - traefik.port=3000
-      - traefik.frontend.rule=Host:core.leav.localhost;PathPrefix:/login
+      - traefik.frontend.rule=Host:core.leav.localhost;PathPrefix:/app/login
     environment:
       <<: *env-react
       <<: *env-login
-      PUBLIC_URL: http://core.leav.localhost/login
+      PUBLIC_URL: http://core.leav.localhost/app/login
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -272,12 +272,12 @@ services:
       - traefik.enable=true
       - traefik.backend=portal
       - traefik.port=3000
-      - traefik.app.frontend.rule=Host:core.leav.localhost;PathPrefix:/portal
+      - traefik.app.frontend.rule=Host:core.leav.localhost;PathPrefix:/app/portal
       - traefik.ws.frontend.rule=Host:portal.leav.localhost
     environment:
       <<: *env-react
       <<: *env-portal
-      PUBLIC_URL: http://core.leav.localhost/portal
+      PUBLIC_URL: http://core.leav.localhost/app/portal
       WDS_SOCKET_HOST: portal.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:

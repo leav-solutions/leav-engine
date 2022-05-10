@@ -11,6 +11,7 @@ export const getApplicationByIdQuery = gql`
                 label
                 description
                 endpoint
+                url
                 color
                 icon
                 module

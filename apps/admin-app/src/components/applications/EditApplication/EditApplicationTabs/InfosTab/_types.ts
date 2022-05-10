@@ -5,6 +5,6 @@ import {Override} from '@leav/utils';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 
 export type ApplicationInfosFormValues = Override<
-    Omit<GET_APPLICATION_BY_ID_applications_list, 'permissions' | 'install'>,
+    Omit<GET_APPLICATION_BY_ID_applications_list, 'permissions' | 'install' | 'url'>,
     {libraries: string[]; trees: string[]}
 >;

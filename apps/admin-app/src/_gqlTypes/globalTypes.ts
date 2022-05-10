@@ -25,9 +25,9 @@ export enum ApplicationInstallStatus {
 }
 
 export enum ApplicationSortableFields {
-    component = 'component',
     endpoint = 'endpoint',
     id = 'id',
+    module = 'module',
     system = 'system'
 }
 
@@ -162,7 +162,7 @@ export interface ApplicationInput {
     trees?: string[] | null;
     color?: string | null;
     icon?: string | null;
-    component?: string | null;
+    module?: string | null;
     endpoint?: string | null;
 }
 
@@ -171,7 +171,7 @@ export interface ApplicationsFiltersInput {
     label?: string | null;
     system?: boolean | null;
     endpoint?: string | null;
-    component?: string | null;
+    module?: string | null;
 }
 
 export interface AttributeInput {

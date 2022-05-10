@@ -11,13 +11,8 @@ interface IAppLinkProps {
 }
 
 function AppLink({app, label, children}: IAppLinkProps): JSX.Element {
-    let endpoint = app.endpoint;
-    if (endpoint[0] !== '/') {
-        endpoint = '/' + endpoint;
-    }
-
     return (
-        <a href={endpoint} aria-label={label}>
+        <a href={app.url} aria-label={label}>
             {children}
         </a>
     );

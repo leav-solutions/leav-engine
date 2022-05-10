@@ -13,6 +13,7 @@ import express, {Express} from 'express';
 import glob from 'glob';
 import {GraphQLResolveInfo} from 'graphql';
 import path from 'path';
+import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
 import {IGetCoreAttributesParams} from '_types/attribute';
@@ -26,6 +27,7 @@ import {ITree} from '_types/tree';
 import {
     ApplicationInstallStatus,
     APPS_INSTANCES_FOLDER,
+    APPS_URL_PREFIX,
     IApplication,
     IApplicationInstall,
     IApplicationModule
@@ -45,6 +47,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.utils.logger'?: winston.Winston;
+    'core.utils'?: IUtils;
     config?: any;
 }
 
@@ -56,6 +59,7 @@ export default function ({
     'core.domain.library': libraryDomain,
     'core.domain.tree': treeDomain,
     'core.utils.logger': logger = null,
+    'core.utils': utils = null,
     config = null
 }: IDeps = {}): IApplicationApp {
     return {
@@ -80,17 +84,18 @@ export default function ({
                 }
 
                 type Application {
-                    id: ID!
-                    system: Boolean
-                    label(lang: [AvailableLanguage!]): SystemTranslation,
-                    description: SystemTranslation
-                    libraries: [Library!]!
-                    trees: [Tree!]!
+                    id: ID!,
+                    system: Boolean!,
+                    label(lang: [AvailableLanguage!]): SystemTranslation!,
+                    description: SystemTranslation,
+                    libraries: [Library!]!,
+                    trees: [Tree!]!,
                     color: String,
                     icon: String,
-                    module: String,
-                    endpoint: String,
-                    permissions: ApplicationPermissions,
+                    module: String!,
+                    endpoint: String!,
+                    url: String!,
+                    permissions: ApplicationPermissions!,
                     install: ApplicationInstall
                 }
 
@@ -213,6 +218,9 @@ export default function ({
 
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
+                        },
+                        url: (appData: IApplication, _, ctx: IQueryInfos): string => {
+                            return applicationDomain.getApplicationUrl({application: appData, ctx});
                         }
                     }
                 }
@@ -225,8 +233,7 @@ export default function ({
         registerRoute(app): void {
             // Serve applications from their endpoint
             app.get(
-                // TODO namespace endpoints
-                ['/:endpoint', '/:endpoint/*'],
+                [`/${APPS_URL_PREFIX}/:endpoint`, `/${APPS_URL_PREFIX}/:endpoint/*`],
                 // Check authentication and parse token
                 async (req: IRequestWithContext, res, next) => {
                     const endpoint = req.params.endpoint;
@@ -248,7 +255,7 @@ export default function ({
 
                         next();
                     } catch {
-                        res.redirect(`/login?dest=${req.originalUrl}`);
+                        res.redirect(`/${APPS_URL_PREFIX}/login?dest=${req.originalUrl}`);
                     }
                 },
                 // Serve application
@@ -295,7 +302,8 @@ export default function ({
 
                         // Try to locate a file at given path. If not found, serve root path of the app,
                         // considering it will be handle it client-side (eg. SPAs)
-                        const newPath = req.path.replace(new RegExp(`^\/${endpoint}`), '') || '/';
+                        const newPath =
+                            req.path.replace(new RegExp(`^\/${utils.getFullApplicationEndpoint(endpoint)}`), '') || '/';
 
                         const files: string[] = await new Promise((resolve, reject) =>
                             glob(`${appFolder}${newPath}`, (err, matches) => {
@@ -337,7 +345,7 @@ export default function ({
             );
 
             app.get('/', (req, res) => {
-                res.redirect('/portal');
+                res.redirect(`/${APPS_URL_PREFIX}/portal`);
             });
         }
     };

@@ -11,6 +11,7 @@ export const getApplicationsQuery = gql`
                 label
                 description
                 endpoint
+                url
                 color
                 icon
             }

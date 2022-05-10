@@ -13,6 +13,7 @@ export const getApplicationsQuery = gql`
                 endpoint
                 color
                 icon
+                url
             }
         }
     }

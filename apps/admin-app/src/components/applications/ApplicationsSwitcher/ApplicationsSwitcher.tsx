@@ -11,7 +11,6 @@ import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import React from 'react';
 import {Button, List, Sidebar} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {enforceInitialSlash} from 'utils';
 import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 
 const AppSidebar = styled(Sidebar)`
@@ -96,7 +95,7 @@ function ApplicationsSwitcher(): JSX.Element {
                             .toUpperCase();
 
                         return (
-                            <AppItem as="a" href={enforceInitialSlash(app.endpoint)} key={app.id}>
+                            <AppItem as="a" href={app.url} key={app.id}>
                                 <AppIcon color={app.color ?? stringToColor(label)} className="ui avatar">
                                     {initials}
                                 </AppIcon>
@@ -133,7 +132,6 @@ function ApplicationsSwitcher(): JSX.Element {
             <AppSidebar
                 animation="overlay"
                 onHide={_handleHideSidebar}
-                vertical
                 direction="right"
                 width="wide"
                 visible={isSidebarVisible}

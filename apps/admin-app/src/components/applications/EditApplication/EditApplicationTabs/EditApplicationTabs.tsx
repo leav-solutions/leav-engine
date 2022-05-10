@@ -9,7 +9,6 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory, useLocation} from 'react-router';
 import {Header, Icon, Tab, TabProps} from 'semantic-ui-react';
-import {enforceInitialSlash} from 'utils';
 import {ApplicationInstallStatus} from '_gqlTypes/globalTypes';
 import InfosTab from './InfosTab';
 import InstallTab from './InstallTab';
@@ -77,7 +76,7 @@ function EditApplicationTabs(): JSX.Element {
             <Header>
                 <Header.Content>{headerLabel}</Header.Content>
                 {isAppReady && (
-                    <Header.Subheader as="a" href={enforceInitialSlash(application.endpoint)}>
+                    <Header.Subheader as="a" href={application.url}>
                         <Icon name="external alternate" />
                         {t('applications.open_application')}
                     </Header.Subheader>

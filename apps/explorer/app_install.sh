@@ -22,7 +22,7 @@ checkExitCode () {
 
 if [ "$NODE_ENV" = "test" ]; then
     exit 0;
-}
+fi
 
 echo 'Injecting these variables:'
 echo REACT_APP_APPLICATION_ID $LEAV_APPLICATION_ID

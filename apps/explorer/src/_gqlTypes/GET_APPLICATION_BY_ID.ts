@@ -24,14 +24,15 @@ export interface GET_APPLICATION_BY_ID_applications_list_permissions {
 
 export interface GET_APPLICATION_BY_ID_applications_list {
     id: string;
-    label: any | null;
+    label: any;
     description: any | null;
-    endpoint: string | null;
+    endpoint: string;
+    url: string;
     color: string | null;
     icon: string | null;
     libraries: GET_APPLICATION_BY_ID_applications_list_libraries[];
     trees: GET_APPLICATION_BY_ID_applications_list_trees[];
-    permissions: GET_APPLICATION_BY_ID_applications_list_permissions | null;
+    permissions: GET_APPLICATION_BY_ID_applications_list_permissions;
 }
 
 export interface GET_APPLICATION_BY_ID_applications {

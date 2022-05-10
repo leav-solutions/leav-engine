@@ -22,7 +22,7 @@ describe('InfosTab', () => {
                 },
                 result: {
                     data: {
-                        applicationsComponents: mockApplicationsModules
+                        applicationsModules: mockApplicationsModules
                     }
                 }
             },
@@ -35,7 +35,7 @@ describe('InfosTab', () => {
                             id: 'myapp',
                             label: {fr: 'My App', en: 'My App'},
                             description: {en: 'My description'},
-                            component: 'admin-app',
+                            module: 'admin-app',
                             endpoint: 'my-app',
                             libraries: ['libA', 'libB'],
                             trees: ['treeA', 'treeB']
@@ -69,10 +69,10 @@ describe('InfosTab', () => {
         expect(screen.getAllByRole('textbox', {name: /label/})).toHaveLength(2);
         expect(screen.getAllByRole('textbox', {name: /description/})).toHaveLength(2);
 
-        // Select a component
-        const componentSelector = screen.getByRole('combobox', {name: /component/});
-        expect(componentSelector).toBeInTheDocument();
-        userEvent.click(componentSelector);
+        // Select a module
+        const moduleSelector = screen.getByRole('combobox', {name: /module/});
+        expect(moduleSelector).toBeInTheDocument();
+        userEvent.click(moduleSelector);
 
         await act(async () => {
             userEvent.click(await screen.findByText(/admin-app/));
@@ -90,7 +90,7 @@ describe('InfosTab', () => {
                 },
                 result: {
                     data: {
-                        applicationsComponents: mockApplicationsModules
+                        applicationsModules: mockApplicationsModules
                     }
                 }
             }
@@ -105,11 +105,9 @@ describe('InfosTab', () => {
             );
         });
 
-        screen
-            .getAllByRole('textbox', {name: /id|label|description|endpoint|component|trees|libraries/})
-            .forEach(elem => {
-                expect(elem).toBeDisabled();
-            });
+        screen.getAllByRole('textbox', {name: /id|label|description|endpoint|module|trees|libraries/}).forEach(elem => {
+            expect(elem).toBeDisabled();
+        });
     });
 
     test('Display form for a new app, edit value and submit', async () => {
@@ -143,7 +141,7 @@ describe('InfosTab', () => {
                 },
                 result: {
                     data: {
-                        applicationsComponents: mockApplicationsModules
+                        applicationsModules: mockApplicationsModules
                     }
                 }
             },
@@ -156,7 +154,7 @@ describe('InfosTab', () => {
                             id: 'myapp',
                             label: {fr: 'MyApp', en: ''},
                             description: {fr: '', en: ''},
-                            component: 'admin-app',
+                            module: 'admin-app',
                             endpoint: 'my-app',
                             libraries: [],
                             trees: []
@@ -187,8 +185,8 @@ describe('InfosTab', () => {
         userEvent.type(screen.getByRole('textbox', {name: /label.fr/}), 'MyApp');
         userEvent.type(screen.getByRole('textbox', {name: /endpoint/}), 'my-app');
 
-        // Select a component
-        userEvent.click(screen.getByRole('combobox', {name: /component/}));
+        // Select a module
+        userEvent.click(screen.getByRole('combobox', {name: /module/}));
         userEvent.click(await screen.findByText(mockApplicationsModules[0].description));
 
         userEvent.click(screen.getByRole('button', {name: /submit/}));

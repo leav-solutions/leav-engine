@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import useLang from 'hooks/useLang';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
@@ -15,7 +16,7 @@ function Applications(): JSX.Element {
     const {lang} = useLang();
     const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery, {
         onCompleted: dataRes => {
-            const apps = dataRes?.applications.list ?? [];
+            const apps = (dataRes?.applications.list ?? []).filter(app => app.permissions.access_application);
             setApplications(apps);
         }
     });
@@ -28,12 +29,15 @@ function Applications(): JSX.Element {
     }
 
     if (error) {
-        return <div>Boom!</div>;
-        // return <ErrorDisplay message={error.message} />;
+        return <ErrorDisplay message={error.message} />;
     }
 
     const _handleSearch = (search: string) => {
         const filteredApps = allApps.filter(app => {
+            if (!app.permissions.access_application) {
+                return false;
+            }
+
             const label = localizedTranslation(app.label, lang);
             const description = localizedTranslation(app.description, lang);
 

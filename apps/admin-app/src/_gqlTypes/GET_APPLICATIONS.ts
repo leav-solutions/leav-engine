@@ -14,11 +14,12 @@ import {ApplicationsFiltersInput, SortApplications} from './globalTypes';
 
 export interface GET_APPLICATIONS_applications_list {
     id: string;
-    label: SystemTranslation | null;
+    label: SystemTranslation;
     description: SystemTranslation | null;
-    endpoint: string | null;
+    endpoint: string;
     color: string | null;
     icon: string | null;
+    url: string;
 }
 
 export interface GET_APPLICATIONS_applications {

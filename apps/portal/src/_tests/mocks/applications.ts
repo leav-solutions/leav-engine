@@ -12,6 +12,7 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
         en: 'My description'
     },
     endpoint: 'my-app',
+    url: 'http://example.com/app/my-app',
     color: 'orange',
     libraries: [
         {
@@ -20,5 +21,8 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
                 en: 'My Library'
             }
         }
-    ]
+    ],
+    permissions: {
+        access_application: true
+    }
 };

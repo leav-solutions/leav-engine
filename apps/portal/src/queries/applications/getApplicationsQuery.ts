@@ -11,10 +11,14 @@ export const getApplicationsQuery = gql`
                 label
                 description
                 endpoint
+                url
                 color
                 libraries {
                     id
                     label
+                }
+                permissions {
+                    access_application
                 }
             }
         }

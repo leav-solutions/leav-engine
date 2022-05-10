@@ -12,9 +12,10 @@
 
 export interface GET_APPLICATIONS_applications_list {
     id: string;
-    label: any | null;
+    label: any;
     description: any | null;
-    endpoint: string | null;
+    endpoint: string;
+    url: string;
     color: string | null;
     icon: string | null;
 }

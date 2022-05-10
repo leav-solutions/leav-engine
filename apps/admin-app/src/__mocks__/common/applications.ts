@@ -19,6 +19,7 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
         en: 'My description'
     },
     endpoint: 'my-app',
+    url: 'http://example.com/app/my-app',
     color: 'orange',
     icon: null
 };

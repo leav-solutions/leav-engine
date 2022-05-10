@@ -6,6 +6,7 @@ import {ISystemTranslation} from './systemTranslation';
 
 export const APPS_MODULES_FOLDER = 'modules';
 export const APPS_INSTANCES_FOLDER = 'instances';
+export const APPS_URL_PREFIX = 'app';
 
 export enum ApplicationInstallStatus {
     NONE = 'NONE',

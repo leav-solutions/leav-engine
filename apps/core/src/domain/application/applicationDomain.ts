@@ -7,6 +7,7 @@ import {IUserDataDomain} from 'domain/userData/userDataDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
 import {IApplicationService} from 'infra/application/applicationService';
 import {IUtils} from 'utils/utils';
+import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -41,6 +42,7 @@ export interface IApplicationDomain {
     updateConsultationHistory(params: {applicationId: string; ctx: IQueryInfos}): Promise<void>;
     getAvailableModules(params: {ctx: IQueryInfos}): Promise<IApplicationModule[]>;
     runInstall(params: {applicationId: string; ctx: IQueryInfos}): Promise<IApplicationInstall>;
+    getApplicationUrl(params: {application: IApplication; ctx: IQueryInfos}): string;
 }
 
 interface IDeps {
@@ -49,14 +51,16 @@ interface IDeps {
     'core.infra.application'?: IApplicationRepo;
     'core.infra.application.service'?: IApplicationService;
     'core.utils'?: IUtils;
+    config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.userData': userDataDomain = null,
     'core.infra.application': applicationRepo = null,
     'core.infra.application.service': applicationService = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    config = null
 }: IDeps = {}): IApplicationDomain {
     return {
         async getApplicationProperties({id, ctx}) {
@@ -208,6 +212,9 @@ export default function({
             });
 
             return installResult;
+        },
+        getApplicationUrl({application}) {
+            return `${config.server.publicUrl}/${utils.getFullApplicationEndpoint(application.endpoint)}`;
         }
     };
 }

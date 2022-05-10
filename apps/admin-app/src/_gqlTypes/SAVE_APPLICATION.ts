@@ -15,11 +15,11 @@ import {ApplicationInput} from './globalTypes';
 export interface SAVE_APPLICATION_saveApplication {
     id: string;
     color: string | null;
-    module: string | null;
+    module: string;
     description: SystemTranslation | null;
-    endpoint: string | null;
-    label: SystemTranslation | null;
-    system: boolean | null;
+    endpoint: string;
+    label: SystemTranslation;
+    system: boolean;
     icon: string | null;
 }
 
