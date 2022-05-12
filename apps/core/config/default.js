@@ -28,7 +28,11 @@ module.exports = {
         scheme: 'jwt',
         key: process.env.AUTH_KEY,
         algorithm: 'HS256',
-        tokenExpiration: process.env.TOKEN_TTL || '7d'
+        tokenExpiration: process.env.TOKEN_TTL || '7d',
+        cookie: {
+            sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
+            secure: process.env.AUTH_COOKIE_SECURE || false
+        }
     },
     lang: {
         available: process.env.LANG_AVAILABLE || ['fr', 'en'],

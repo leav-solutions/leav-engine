@@ -23,7 +23,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     config = null
@@ -124,7 +124,8 @@ export default function({
 
                         res.cookie(ACCESS_TOKEN_COOKIE_NAME, token, {
                             httpOnly: true,
-                            sameSite: 'none',
+                            sameSite: config.auth.cookie.sameSite,
+                            secure: config.auth.cookie.secure,
                             domain: req.headers.host
                         });
 

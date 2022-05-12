@@ -14,9 +14,7 @@ export const validateConfig = (conf: IConfig) => {
             port: Joi.number().required(),
             publicUrl: Joi.string().required(),
             apiEndpoint: Joi.string().required(),
-            uploadLimit: Joi.alternatives()
-                .try(Joi.string(), Joi.number())
-                .required()
+            uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required()
         }),
         db: Joi.object().keys({
             url: Joi.string().required(),
@@ -32,19 +30,19 @@ export const validateConfig = (conf: IConfig) => {
             scheme: Joi.string().required(),
             key: Joi.string(),
             algorithm: Joi.string().required(),
-            tokenExpiration: Joi.string().required()
+            tokenExpiration: Joi.string().required(),
+            cookie: {
+                sameSite: Joi.string().valid('none', 'lax', 'strict'),
+                secure: Joi.boolean()
+            }
         }),
         lang: Joi.object().keys({
-            available: Joi.array()
-                .items(Joi.string())
-                .required(),
+            available: Joi.array().items(Joi.string()).required(),
             default: Joi.string().required()
         }),
         logs: Joi.object().keys({
             level: Joi.string().required(),
-            transport: Joi.array()
-                .items(Joi.string())
-                .required(),
+            transport: Joi.array().items(Joi.string()).required(),
             destinationFile: Joi.string()
         }),
         permissions: Joi.object().keys({
@@ -103,9 +101,7 @@ export const validateConfig = (conf: IConfig) => {
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required()
         }),
-        plugins: Joi.object()
-            .keys()
-            .unknown(),
+        plugins: Joi.object().keys().unknown(),
         preview: Joi.object().keys({
             directory: Joi.string().required()
         }),

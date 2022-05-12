@@ -50,6 +50,10 @@ export interface IAuth {
     key: string;
     algorithm: string;
     tokenExpiration: string;
+    cookie: {
+        sameSite: 'none' | 'lax' | 'strict';
+        secure: boolean;
+    };
 }
 
 export interface ILang {
