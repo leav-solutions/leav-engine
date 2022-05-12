@@ -2,13 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
+import {IApplicationService} from 'infra/application/applicationService';
 import {IDbService} from '../dbService';
+import {IDbUtils} from '../dbUtils';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
+    'core.infra.application.service'?: IApplicationService;
 }
 
-export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}) {
+export default function ({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.infra.application.service': applicationService = null
+}: IDeps = {}) {
     return {
         async run(ctx) {
             if (!(await dbService.collectionExists('core_applications'))) {
@@ -76,7 +84,15 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
 
                     // If not, create it
                     if (!existingApp.length) {
-                        await dbService.execute({query: aql`INSERT ${app} INTO core_applications`, ctx});
+                        const installRes = await applicationService.runInstall({
+                            application: {...app, id: app._key},
+                            ctx
+                        });
+                        const appData = {...app, install: installRes};
+                        await dbService.execute({
+                            query: aql`INSERT ${appData} INTO core_applications RETURN NEW`,
+                            ctx
+                        });
                     }
                 })
             );
