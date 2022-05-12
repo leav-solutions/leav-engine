@@ -108,7 +108,8 @@ export default function ({
                     endpoint: String!,
                     url: String!,
                     permissions: ApplicationPermissions!,
-                    install: ApplicationInstall
+                    install: ApplicationInstall,
+                    settings: JSONObject
                 }
 
                 type ApplicationModule {
@@ -128,6 +129,7 @@ export default function ({
                     icon: String,
                     module: String,
                     endpoint: String,
+                    settings: JSONObject
                 }
 
                 input ApplicationsFiltersInput {

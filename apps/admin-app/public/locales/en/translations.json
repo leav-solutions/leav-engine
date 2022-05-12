@@ -320,6 +320,7 @@
         "types": {
             "internal": "Internal",
             "external": "External"
-        }
+        },
+        "settings": "Settings"
     }
 }

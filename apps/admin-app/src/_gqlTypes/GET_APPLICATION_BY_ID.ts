@@ -44,6 +44,7 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     trees: GET_APPLICATION_BY_ID_applications_list_trees[];
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;
     install: GET_APPLICATION_BY_ID_applications_list_install | null;
+    settings: JSONObject | null;
 }
 
 export interface GET_APPLICATION_BY_ID_applications {

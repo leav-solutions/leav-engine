@@ -5,15 +5,8 @@ import {useMutation} from '@apollo/client';
 import {useEditApplicationContext} from 'context/EditApplicationContext';
 import {installApplicationMutation} from 'queries/applications/installApplicationMutation';
 import React from 'react';
-import {Segment} from 'semantic-ui-react';
-import styled from 'styled-components';
 import {INSTALL_APPLICATION, INSTALL_APPLICATIONVariables} from '_gqlTypes/INSTALL_APPLICATION';
 import InstallView from './InstallView';
-
-const Result = styled(Segment)`
-    font-family: Monaco, Menlo, Ubuntu Mono, Consolas, source-code-pro, monospace;
-    white-space: pre-wrap;
-`;
 
 function InstallTab(): JSX.Element {
     const {application} = useEditApplicationContext();

@@ -171,6 +171,7 @@ export interface ApplicationInput {
     icon?: string | null;
     module?: string | null;
     endpoint?: string | null;
+    settings?: JSONObject | null;
 }
 
 export interface ApplicationsFiltersInput {
