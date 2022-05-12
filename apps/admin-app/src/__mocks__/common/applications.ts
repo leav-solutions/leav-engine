@@ -58,6 +58,9 @@ export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ID_applicat
         __typename: 'ApplicationInstall',
         status: ApplicationInstallStatus.SUCCESS,
         lastCallResult: 'all good!'
+    },
+    settings: {
+        foo: 'bar'
     }
 };
 

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IGetCoreEntitiesParams} from './shared';
+import {IGetCoreEntitiesParams, IKeyValue} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 
 export const APPS_MODULES_FOLDER = 'modules';
@@ -36,6 +36,7 @@ export interface IApplication extends ICoreEntity {
     module: string;
     endpoint: string;
     install?: IApplicationInstall;
+    settings?: IKeyValue<any>;
 }
 
 /**

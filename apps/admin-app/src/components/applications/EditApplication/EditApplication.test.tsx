@@ -28,6 +28,12 @@ jest.mock('./EditApplicationTabs/InstallTab', () => {
     };
 });
 
+jest.mock('./EditApplicationTabs/SettingsTab', () => {
+    return function SettingsTab() {
+        return <div>SettingsTab</div>;
+    };
+});
+
 describe('EditApplication', () => {
     type matchType = match<IEditApplicationMatchParams>;
     test('Edit existing app', async () => {
@@ -60,6 +66,7 @@ describe('EditApplication', () => {
         expect(await screen.findByText(mockApplicationDetails.label.en)).toBeInTheDocument();
         expect(screen.getByText('InfosTab')).toBeInTheDocument();
         expect(screen.getByText(/admin.permissions/)).toBeInTheDocument();
+        expect(screen.getByText(/settings/)).toBeInTheDocument();
     });
 
     test('Edit new app', async () => {

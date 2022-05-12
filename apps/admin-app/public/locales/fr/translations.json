@@ -324,6 +324,7 @@
         "types": {
             "internal": "Interne",
             "external": "Externe"
-        }
+        },
+        "settings": "Configuration"
     }
 }

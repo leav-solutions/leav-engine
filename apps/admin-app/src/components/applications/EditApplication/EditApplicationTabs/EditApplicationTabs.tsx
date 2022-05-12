@@ -13,6 +13,7 @@ import {ApplicationInstallStatus, ApplicationType} from '_gqlTypes/globalTypes';
 import InfosTab from './InfosTab';
 import InstallTab from './InstallTab';
 import PermissionsTab from './PermissionsTab';
+import SettingsTab from './SettingsTab';
 
 function EditApplicationTabs(): JSX.Element {
     const {t} = useTranslation();
@@ -43,6 +44,16 @@ function EditApplicationTabs(): JSX.Element {
             render: () => (
                 <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
                     <PermissionsTab />
+                </Tab.Pane>
+            )
+        },
+        {
+            key: 'settings',
+            menuItem: t('applications.settings'),
+            displayCondition: !isNewApp,
+            render: () => (
+                <Tab.Pane key="settings" style={{padding: 0}}>
+                    <SettingsTab />
                 </Tab.Pane>
             )
         },

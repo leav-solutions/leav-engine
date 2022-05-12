@@ -30,6 +30,7 @@ export const getApplicationByIdQuery = gql`
                     status
                     lastCallResult
                 }
+                settings
             }
         }
     }

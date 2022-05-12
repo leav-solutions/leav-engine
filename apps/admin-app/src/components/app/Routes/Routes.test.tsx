@@ -24,6 +24,18 @@ jest.mock('../Dashboard', () => {
     };
 });
 
+jest.mock('components/applications/Applications', () => {
+    return function Applications() {
+        return <div>Applications</div>;
+    };
+});
+
+jest.mock('components/applications/EditApplication', () => {
+    return function EditApplication() {
+        return <div>EditApplication</div>;
+    };
+});
+
 describe('Routes', () => {
     test('Render test', async () => {
         await act(async () => {

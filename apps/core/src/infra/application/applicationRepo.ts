@@ -61,7 +61,7 @@ export default function ({
 
             const col = dbService.db.collection(APPLICATIONS_COLLECTION_NAME);
             const res = await dbService.execute({
-                query: aql`UPDATE ${docToInsert} IN ${col} RETURN NEW`,
+                query: aql`UPDATE ${docToInsert} IN ${col} OPTIONS { mergeObjects: false } RETURN NEW`,
                 ctx
             });
 
