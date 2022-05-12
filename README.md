@@ -140,4 +140,30 @@ More infos: https://docs.docker.com/compose/reference/logs/
 
 ---
 
+## Applications
+### Adding new modules
+When creating a new application, the core will be looking in the `apps/core/applications/modules` folder to check available modules.
+Name, description and version will be retrieved from `package.json`.
+
+If you want to add your own module, just drop your folder right there.
+
+### Installation
+On application creation, the core will check for a script called `app_install.sh` . It must be present at the root of your module.
+
+This script will be executed first on creation and on demand afterwards. Make sure running the script multiple times will not cause any errors or damages.
+
+**This script is responsible for doing everything it takes to have an instance ready to run (eg. building JS files)** and **copying required files in the instance folder**. When accessing the application, the core will serve the `index.html` file of this app folder.
+
+A few environment variables are available in the script with all settings required to build the app:
+
+- `LEAV_API_URL`: full URL of the GraphQL API (eg: https://your-domain.com/graphql)
+- `LEAV_DEFAULT_LANG`: default language, configured in core configuration
+- `LEAV_AVAILABLE_LANG`: available languages, configured in core configuration
+- `LEAV_LOGIN_ENDPOINT`: global login endpoint
+- `LEAV_APP_ENDPOINT`: app endpoint
+- `LEAV_APPLICATION_ID`: app ID
+- `LEAV_DEST_FOLDER`: destination folder. All files needed to run the instance must land here.
+
+---
+
 Have fun!
