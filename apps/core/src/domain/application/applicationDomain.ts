@@ -180,7 +180,10 @@ export default function({
                 throw new ValidationError({id: {msg: Errors.UNKNOWN_APPLICATION, vars: {application: id}}});
             }
 
-            return applicationRepo.deleteApplication({id, ctx});
+            await applicationService.uninstall({applicationId: id, ctx});
+            const deletedApp = await applicationRepo.deleteApplication({id, ctx});
+
+            return deletedApp;
         },
         async updateConsultationHistory({applicationId, ctx}): Promise<void> {
             // Retrieve user data

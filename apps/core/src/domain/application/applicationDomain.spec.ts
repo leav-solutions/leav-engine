@@ -5,6 +5,7 @@ import {CONSULTED_APPS_KEY} from '@leav/utils';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IUserDataDomain} from 'domain/userData/userDataDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
+import {IApplicationService} from 'infra/application/applicationService';
 import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -44,7 +45,7 @@ describe('applicationDomain', () => {
             expect(attr).toMatchObject({id: 'test_application'});
         });
 
-        test('Should throw if unknown application', async function() {
+        test('Should throw if unknown application', async function () {
             const mockAppRepo: Mockify<IApplicationRepo> = {
                 getApplications: global.__mockPromise({list: [], totalCount: 0})
             };
@@ -248,13 +249,19 @@ describe('applicationDomain', () => {
                 deleteApplication: global.__mockPromise(mockApplication)
             };
 
+            const mockApplicationService: Mockify<IApplicationService> = {
+                uninstall: jest.fn()
+            };
+
             const appDomain = applicationDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
-                'core.infra.application': mockAppRepo as IApplicationRepo
+                'core.infra.application': mockAppRepo as IApplicationRepo,
+                'core.infra.application.service': mockApplicationService as IApplicationService
             });
             const deletedApp = await appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx});
 
             expect(mockAppRepo.deleteApplication).toBeCalled();
+            expect(mockApplicationService.uninstall).toBeCalled();
             expect(deletedApp).toEqual(mockApplication);
         });
 

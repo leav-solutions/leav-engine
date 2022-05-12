@@ -18,6 +18,7 @@ import {
 
 export interface IApplicationService {
     runInstall(params: {application: IApplication; ctx: IQueryInfos}): Promise<IApplicationInstall>;
+    uninstall(params: {applicationId: string; ctx: IQueryInfos}): Promise<boolean>;
 }
 
 export const APPLICATION_INSTALL_SCRIPT_NAME = 'app_install.sh';
@@ -54,6 +55,10 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
         });
     };
 
+    const _getDestinationFolder = (applicationId: string, rootPath: string): string => {
+        return path.resolve(rootPath, config.applications.rootFolder, APPS_INSTANCES_FOLDER, applicationId);
+    };
+
     return {
         async runInstall({application}): Promise<IApplicationInstall> {
             const rootPath = appRootPath();
@@ -62,12 +67,6 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
                 config.applications.rootFolder,
                 APPS_MODULES_FOLDER,
                 application.module
-            );
-            const destinationFolder = path.resolve(
-                rootPath,
-                config.applications.rootFolder,
-                APPS_INSTANCES_FOLDER,
-                application.id
             );
             const scriptPath = `${appFolder}/${APPLICATION_INSTALL_SCRIPT_NAME}`;
 
@@ -89,7 +88,7 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
                 LEAV_LOGIN_ENDPOINT: utils.getFullApplicationEndpoint('login'),
                 LEAV_APP_ENDPOINT: utils.getFullApplicationEndpoint(application.endpoint),
                 LEAV_APPLICATION_ID: application.id,
-                LEAV_DEST_FOLDER: destinationFolder
+                LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
             };
 
             try {
@@ -99,6 +98,15 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
             } catch (err) {
                 return {status: ApplicationInstallStatuses.ERROR, lastCallResult: String(err)};
             }
+        },
+        async uninstall({applicationId}) {
+            // Remove destination folder
+            const rootPath = appRootPath();
+            const destinationFolder = _getDestinationFolder(applicationId, rootPath);
+
+            await fs.rm(destinationFolder, {recursive: true, force: true});
+
+            return true;
         }
     };
 }
