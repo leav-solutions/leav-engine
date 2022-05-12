@@ -76,3 +76,4 @@ magick-*
 /cache
 
 apps/core/applications/instances
+apps/core/config/local.js

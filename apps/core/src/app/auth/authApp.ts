@@ -6,6 +6,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {Express, NextFunction, Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
+import ms from 'ms';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../_types/auth';
@@ -107,6 +108,8 @@ export default function ({
                             })
                         ).map(g => g.value.id);
 
+                        const tokenExpiration = String(config.auth.tokenExpiration);
+
                         // Generate token
                         const token = jwt.sign(
                             {
@@ -118,15 +121,19 @@ export default function ({
                             config.auth.key,
                             {
                                 algorithm: config.auth.algorithm,
-                                expiresIn: config.auth.tokenExpiration
+                                expiresIn: tokenExpiration
                             }
                         );
 
+                        // We need the milliseconds value to set cookie expiration
+                        // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
+                        const cookieExpires = ms(tokenExpiration);
                         res.cookie(ACCESS_TOKEN_COOKIE_NAME, token, {
                             httpOnly: true,
                             sameSite: config.auth.cookie.sameSite,
                             secure: config.auth.cookie.secure,
-                            domain: req.headers.host
+                            domain: req.headers.host,
+                            expires: new Date(Date.now() + cookieExpires)
                         });
 
                         return res.status(200).json({
