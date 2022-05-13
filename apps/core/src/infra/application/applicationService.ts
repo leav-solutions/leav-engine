@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
 import {exec} from 'child_process';
+import {R_OK} from 'constants';
 import fs from 'fs/promises';
 import path from 'path';
 import {IUtils} from 'utils/utils';
@@ -18,10 +19,11 @@ import {
 
 export interface IApplicationService {
     runInstall(params: {application: IApplication; ctx: IQueryInfos}): Promise<IApplicationInstall>;
-    uninstall(params: {applicationId: string; ctx: IQueryInfos}): Promise<boolean>;
+    runUninstall(params: {application: IApplication; ctx: IQueryInfos}): Promise<boolean>;
 }
 
 export const APPLICATION_INSTALL_SCRIPT_NAME = 'app_install.sh';
+export const APPLICATION_UNINSTALL_SCRIPT_NAME = 'app_uninstall.sh';
 
 interface IDeps {
     'core.utils'?: IUtils;
@@ -99,11 +101,36 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
                 return {status: ApplicationInstallStatuses.ERROR, lastCallResult: String(err)};
             }
         },
-        async uninstall({applicationId}) {
-            // Remove destination folder
+        async runUninstall({application}) {
             const rootPath = appRootPath();
-            const destinationFolder = _getDestinationFolder(applicationId, rootPath);
+            const appFolder = path.resolve(
+                rootPath,
+                config.applications.rootFolder,
+                APPS_MODULES_FOLDER,
+                application.module
+            );
+            const destinationFolder = _getDestinationFolder(application.id, rootPath);
 
+            // Check if an uninstall script exists. If so, run it before removing the folder
+            const scriptPath = `${appFolder}/${APPLICATION_UNINSTALL_SCRIPT_NAME}`;
+
+            let doesScriptExist: boolean;
+            try {
+                await fs.access(scriptPath, R_OK);
+                doesScriptExist = true;
+            } catch (err) {
+                doesScriptExist = false;
+            }
+
+            if (doesScriptExist) {
+                const leavEnv = {
+                    LEAV_APPLICATION_ID: application.id,
+                    LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
+                };
+                await _execCommand(`${scriptPath}`, leavEnv);
+            }
+
+            // Remove destination folder
             await fs.rm(destinationFolder, {recursive: true, force: true});
 
             return true;
