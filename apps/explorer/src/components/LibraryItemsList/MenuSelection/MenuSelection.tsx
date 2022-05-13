@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
-import {Dropdown, Menu, Button} from 'antd';
+import {Button, Dropdown, Menu} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -77,16 +77,22 @@ function MenuSelection(): JSX.Element {
         <span data-testid="dropdown-menu-selection">
             <Dropdown
                 overlay={
-                    <Menu>
-                        {!selectionMode && (
-                            <Menu.Item onClick={selectAll}>
-                                {t('items-menu-dropdown.select-all', {nb: searchState.totalCount})}
-                            </Menu.Item>
-                        )}
-                        <Menu.Item onClick={selectVisible}>
-                            {t('items-menu-dropdown.select-visible', {nb: searchState.records.length})}
-                        </Menu.Item>
-                    </Menu>
+                    <Menu
+                        items={[
+                            !selectionMode
+                                ? {
+                                      key: 'select',
+                                      onClick: selectAll,
+                                      label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
+                                  }
+                                : null,
+                            {
+                                key: 'select',
+                                onClick: selectVisible,
+                                label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
+                            }
+                        ]}
+                    ></Menu>
                 }
             >
                 <Button type={'text'} icon={<DownOutlined />}>

@@ -80,13 +80,18 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                     <Dropdown
                         placement="bottomRight"
                         overlay={
-                            <Menu className="floating-menu-overlay">
-                                {moreActions.map(moreAction => (
-                                    <Menu.Item key={moreAction.title}>
-                                        {moreAction.icon} {moreAction.title}
-                                    </Menu.Item>
-                                ))}
-                            </Menu>
+                            <Menu
+                                className="floating-menu-overlay"
+                                items={moreActions.map(moreAction => ({
+                                    key: moreAction.title,
+                                    onClick: moreAction.onClick,
+                                    label: (
+                                        <>
+                                            {moreAction.icon} {moreAction.title}
+                                        </>
+                                    )
+                                }))}
+                            ></Menu>
                         }
                     >
                         <Button

@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dropdown, Menu} from 'antd';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import useSearchReducer from 'hooks/useSearchReducer';
-import {TreeConditionFilter, IFilterTree} from '../../../../_types/types';
-import {getTreeConditionOptions} from '../FiltersOptions';
-import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
+import {IFilterTree, TreeConditionFilter} from '../../../../_types/types';
 import FilterDropdownButton from '../FilterDropdownButton';
+import {getTreeConditionOptions} from '../FiltersOptions';
 
 interface IFilterTreeConditionProps {
     filter: IFilterTree;
@@ -36,13 +36,13 @@ const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
     };
 
     const menu = (
-        <Menu>
-            {conditionOptions.map(condition => (
-                <Menu.Item key={condition.value} onClick={() => handleOperatorChange(condition.value)}>
-                    {condition.text}
-                </Menu.Item>
-            ))}
-        </Menu>
+        <Menu
+            items={conditionOptions.map(condition => ({
+                key: condition.value,
+                onClick: () => handleOperatorChange(condition.value),
+                label: condition.text
+            }))}
+        />
     );
 
     return (

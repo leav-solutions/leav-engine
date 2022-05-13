@@ -232,15 +232,13 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
             <Dropdown
                 overlay={
-                    <Menu>
-                        <Menu.Item disabled={!view.owner} onClick={_handleEdit}>
-                            {t('global.edit')}
-                        </Menu.Item>
-                        <Menu.Item onClick={_handleDuplicate}>{t('global.duplicate')}</Menu.Item>
-                        <Menu.Item disabled={!view.owner} onClick={_handleDelete}>
-                            {t('view.delete')}
-                        </Menu.Item>
-                    </Menu>
+                    <Menu
+                        items={[
+                            {key: 'edit', disabled: !view.owner, onClick: _handleEdit, label: t('global.edit')},
+                            {key: 'duplicate', onClick: _handleDuplicate, label: t('global.duplicate')},
+                            {key: 'delete', disabled: !view.owner, onClick: _handleDelete, label: t('view.delete')}
+                        ]}
+                    ></Menu>
                 }
             >
                 <CustomButton onClick={e => e.stopPropagation()} icon={<EllipsisOutlined />} />

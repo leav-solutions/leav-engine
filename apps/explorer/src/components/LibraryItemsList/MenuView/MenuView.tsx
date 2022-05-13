@@ -161,16 +161,29 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
     };
 
     const menu = (
-        <Menu>
-            <Menu.ItemGroup title={t('view.add-view.title')}>
-                <Menu.Item onClick={() => _handleAddView(ViewTypes.list)} icon={<MenuOutlined />}>
-                    {t('view.type-list')}
-                </Menu.Item>
-                <Menu.Item onClick={() => _handleAddView(ViewTypes.cards)} icon={<AppstoreFilled />}>
-                    {t('view.type-cards')}
-                </Menu.Item>
-            </Menu.ItemGroup>
-        </Menu>
+        <Menu
+            items={[
+                {
+                    key: 'add-group',
+                    type: 'group',
+                    label: t('view.add-view.title'),
+                    children: [
+                        {
+                            key: 'list',
+                            onClick: () => _handleAddView(ViewTypes.list),
+                            icon: <MenuOutlined />,
+                            label: t('view.type-list')
+                        },
+                        {
+                            key: 'cards',
+                            onClick: () => _handleAddView(ViewTypes.cards),
+                            icon: <AppstoreFilled />,
+                            label: t('view.type-cards')
+                        }
+                    ]
+                }
+            ]}
+        />
     );
 
     const _toggleShowFilters = () => {

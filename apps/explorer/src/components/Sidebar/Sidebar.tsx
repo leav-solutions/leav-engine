@@ -4,7 +4,7 @@
 import {DatabaseOutlined, HomeOutlined, ShareAltOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {Menu, Spin} from 'antd';
-import SubMenu from 'antd/lib/menu/SubMenu';
+import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {FAVORITE_LIBRARIES_KEY} from 'components/Home/LibrariesList/LibrariesList';
 import {FAVORITE_TREES_KEY} from 'components/Home/TreeList/TreeList';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
@@ -161,94 +161,127 @@ function Sidebar(): JSX.Element {
 
     const _handleClickHome = () => _goTo('/');
 
-    const libsMenu =
-        librariesList.loading || favoritesList.loading ? (
-            <Menu.Item>
-                <Spin />
-            </Menu.Item>
-        ) : librariesList.error || favoritesList.error ? (
-            <ErrorDisplay message={(librariesList.error || favoritesList.error).message} />
-        ) : (
-            <>
-                {Object.keys(groupedLibraries).map(libraryGroupKey => {
-                    if (!groupedLibraries[libraryGroupKey].length) {
-                        return null;
-                    }
+    let libsMenuItems: ItemType[] = [];
 
-                    return (
-                        <Menu.ItemGroup
-                            key={`${libraryGroupKey}_libraries`}
-                            title={t(`sidebar.${libraryGroupKey}_libraries`)}
-                        >
-                            {groupedLibraries[libraryGroupKey].map(lib => {
-                                const isFavorite = libraryFavorites.includes(lib.id);
-                                const _handleFavoriteClick = e => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    _handleToggleFavorite(isFavorite, lib.id, 'library');
-                                };
+    if (librariesList.loading || favoritesList.loading) {
+        libsMenuItems = [
+            {
+                key: 'libs-loading',
+                label: <Spin />
+            }
+        ];
+    } else if (librariesList.error || favoritesList.error) {
+        libsMenuItems = [
+            {
+                key: 'libs-error',
+                label: <ErrorDisplay message={(librariesList.error || favoritesList.error).message} />
+            }
+        ];
+    } else {
+        libsMenuItems = Object.keys(groupedLibraries).map(libraryGroupKey => {
+            if (!groupedLibraries[libraryGroupKey].length) {
+                return null;
+            }
 
-                                return (
-                                    <Menu.Item key={`library.${lib.id}`} icon={<DatabaseOutlined />}>
-                                        <MenuItemContent>
-                                            <Link onClick={() => _goTo(getLibraryLink(lib.id))}>
-                                                {localizedTranslation(lib.label, lang)}
-                                            </Link>
-                                            <FavoriteStar onClick={_handleFavoriteClick} isFavorite={isFavorite}>
-                                                {isFavorite ? <StarFilled /> : <StarOutlined />}
-                                            </FavoriteStar>
-                                        </MenuItemContent>
-                                    </Menu.Item>
-                                );
-                            })}
-                        </Menu.ItemGroup>
-                    );
-                })}
-            </>
-        );
+            return {
+                key: `${libraryGroupKey}_libraries`,
+                type: 'group',
+                label: t(`sidebar.${libraryGroupKey}_libraries`),
+                children: groupedLibraries[libraryGroupKey].map(lib => {
+                    const isFavorite = libraryFavorites.includes(lib.id);
+                    const _handleFavoriteClick = e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        _handleToggleFavorite(isFavorite, lib.id, 'library');
+                    };
 
-    const treesMenu =
-        treesList.loading || favoritesList.loading ? (
-            <Menu.Item>
-                <Spin />
-            </Menu.Item>
-        ) : treesList.error || favoritesList.error ? (
-            <ErrorDisplay message={(treesList.error || favoritesList.error).message} />
-        ) : (
-            <>
-                {Object.keys(groupedTrees).map(treeGroupKey => {
-                    if (!groupedTrees[treeGroupKey].length) {
-                        return null;
-                    }
+                    return {
+                        key: `library.${lib.id}`,
+                        icon: <DatabaseOutlined />,
+                        label: (
+                            <MenuItemContent>
+                                <Link onClick={() => _goTo(getLibraryLink(lib.id))}>
+                                    {localizedTranslation(lib.label, lang)}
+                                </Link>
+                                <FavoriteStar onClick={_handleFavoriteClick} isFavorite={isFavorite}>
+                                    {isFavorite ? <StarFilled /> : <StarOutlined />}
+                                </FavoriteStar>
+                            </MenuItemContent>
+                        )
+                    };
+                })
+            };
+        });
+    }
 
-                    return (
-                        <Menu.ItemGroup key={`${treeGroupKey}_trees`} title={t(`sidebar.${treeGroupKey}_trees`)}>
-                            {groupedTrees[treeGroupKey].map(tree => {
-                                const isFavorite = treeFavorites.includes(tree.id);
-                                const _handleFavoriteClick = e => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    _handleToggleFavorite(isFavorite, tree.id, 'tree');
-                                };
+    let treesMenuItems: ItemType[] = [];
+    if (treesList.loading || favoritesList.loading) {
+        treesMenuItems = [
+            {
+                key: 'trees-loading',
+                label: <Spin />
+            }
+        ];
+    } else if (treesList.error || favoritesList.error) {
+        treesMenuItems = [
+            {
+                key: 'trees-error',
+                label: <ErrorDisplay message={(librariesList.error || favoritesList.error).message} />
+            }
+        ];
+    } else {
+        treesMenuItems = Object.keys(groupedTrees).map(treeGroupKey => {
+            if (!groupedTrees[treeGroupKey].length) {
+                return null;
+            }
 
-                                return (
-                                    <Menu.Item key={`tree.${tree.id}`} icon={<ShareAltOutlined />}>
-                                        <MenuItemContent>
-                                            <Link onClick={() => _goTo(getTreeLink(tree.id))}>
-                                                {localizedTranslation(tree.label, lang)}
-                                            </Link>
-                                            <FavoriteStar onClick={_handleFavoriteClick} isFavorite={isFavorite}>
-                                                {isFavorite ? <StarFilled /> : <StarOutlined />}
-                                            </FavoriteStar>
-                                        </MenuItemContent>
-                                    </Menu.Item>
-                                );
-                            })}
-                        </Menu.ItemGroup>
-                    );
-                })}
-            </>
-        );
+            return {
+                key: `${treeGroupKey}_trees`,
+                type: 'group',
+                label: t(`sidebar.${treeGroupKey}_trees`),
+                children: groupedTrees[treeGroupKey].map(tree => {
+                    const isFavorite = treeFavorites.includes(tree.id);
+                    const _handleFavoriteClick = e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        _handleToggleFavorite(isFavorite, tree.id, 'tree');
+                    };
+
+                    return {
+                        key: `tree.${tree.id}`,
+                        icon: <ShareAltOutlined />,
+                        label: (
+                            <MenuItemContent>
+                                <Link onClick={() => _goTo(getTreeLink(tree.id))}>
+                                    {localizedTranslation(tree.label, lang)}
+                                </Link>
+                                <FavoriteStar onClick={_handleFavoriteClick} isFavorite={isFavorite}>
+                                    {isFavorite ? <StarFilled /> : <StarOutlined />}
+                                </FavoriteStar>
+                            </MenuItemContent>
+                        )
+                    };
+                })
+            };
+        });
+    }
+
+    const menuItems: ItemType[] = [
+        {
+            key: 'library',
+            icon: <DatabaseOutlined onClick={_goToActiveLibrary} />,
+            label: !!activeLibrary?.name ? activeLibrary.name : t('sidebar.library'),
+            onTitleClick: _goToActiveLibrary,
+            children: libsMenuItems
+        },
+        {
+            icon: <ShareAltOutlined onClick={_goToActiveTree} />,
+            label: !!activeTree?.label ? activeTree.label : t('sidebar.tree'),
+            key: 'tree',
+            onTitleClick: _goToActiveTree,
+            children: treesMenuItems
+        }
+    ];
 
     return (
         <>
@@ -260,24 +293,8 @@ function Sidebar(): JSX.Element {
                     style={{width: '100%'}}
                     selectedKeys={[activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]}
                     activeKey={activePanel}
-                >
-                    <SubMenu
-                        icon={<DatabaseOutlined onClick={_goToActiveLibrary} />}
-                        title={!!activeLibrary?.name ? activeLibrary.name : t('sidebar.library')}
-                        key="library"
-                        onTitleClick={_goToActiveLibrary}
-                    >
-                        {libsMenu}
-                    </SubMenu>
-                    <SubMenu
-                        icon={<ShareAltOutlined onClick={_goToActiveTree} />}
-                        title={!!activeTree?.label ? activeTree.label : t('sidebar.tree')}
-                        key="tree"
-                        onTitleClick={_goToActiveTree}
-                    >
-                        {treesMenu}
-                    </SubMenu>
-                </Menu>
+                    items={menuItems}
+                />
             </NavWrapper>
         </>
     );

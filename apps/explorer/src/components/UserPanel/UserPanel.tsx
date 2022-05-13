@@ -7,12 +7,19 @@ import AvailableSoon from 'components/shared/AvailableSoon';
 import useAuth from 'hooks/useAuth';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import LangSwitcher from './LangSwitcher';
 
 interface IUserPanelProps {
     userPanelVisible: boolean;
     hideUserPanel: () => void;
 }
+
+const CustomMenu = styled(Menu)`
+    .anticon {
+        margin-right: 0.5em;
+    }
+`;
 
 function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Element {
     const {t} = useTranslation();
@@ -31,39 +38,60 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
             getContainer={false}
             bodyStyle={{padding: 0}}
         >
-            <Menu
+            <CustomMenu
                 style={{
                     height: '100%'
                 }}
                 mode="inline"
-            >
-                <Menu.Item disabled key="tasks">
-                    <CarryOutOutlined />
-                    {t('menu.user_menu.tasks')}
-                    <AvailableSoon />
-                </Menu.Item>
-                <Menu.Item disabled key="shortcuts">
-                    <DoubleRightOutlined />
-                    {t('menu.user_menu.shortcuts')}
-                    <AvailableSoon />
-                </Menu.Item>
-                <Menu.Item disabled key="events">
-                    <ExclamationCircleOutlined />
-                    {t('menu.user_menu.events')}
-                    <AvailableSoon />
-                </Menu.Item>
+                items={[
+                    {
+                        disabled: true,
+                        key: 'tasks',
+                        label: (
+                            <>
+                                <CarryOutOutlined />
+                                {t('menu.user_menu.tasks')}
+                                <AvailableSoon />
+                            </>
+                        )
+                    },
+                    {
+                        disabled: true,
+                        key: 'shortcuts',
+                        label: (
+                            <>
+                                <DoubleRightOutlined />
+                                {t('menu.user_menu.shortcuts')}
+                                <AvailableSoon />
+                            </>
+                        )
+                    },
+                    {
+                        disabled: true,
+                        key: 'events',
+                        label: (
+                            <>
+                                <ExclamationCircleOutlined />
+                                {t('menu.user_menu.events')}
+                                <AvailableSoon />
+                            </>
+                        )
+                    },
 
-                <Menu.Item key="lang-switcher">
-                    <LangSwitcher />
-                </Menu.Item>
-
-                <Menu.Item onClick={_handleLogout} key="logout">
-                    <LogoutOutlined />
-                    {t('menu.user_menu.logout')}
-                </Menu.Item>
-            </Menu>
+                    {key: 'lang-switcher', label: <LangSwitcher />},
+                    {
+                        onClick: _handleLogout,
+                        key: 'logout',
+                        label: (
+                            <>
+                                <LogoutOutlined />
+                                {t('menu.user_menu.logout')}
+                            </>
+                        )
+                    }
+                ]}
+            />
         </Drawer>
     );
 }
-
 export default UserPanel;

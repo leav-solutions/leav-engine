@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import {useApolloClient, useMutation, useQuery} from '@apollo/client';
 import {Dropdown, Menu, message} from 'antd';
+import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
@@ -250,6 +251,45 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
     const canEditChildren = parent ? parent.permissions.edit_children : activeTree.permissions.edit_children;
     const canDetach = !!parent && parent.permissions.detach;
 
+    const treeActionsMenuItems: Array<ItemType & {displayCondition: boolean}> = [
+        {
+            key: 'details',
+            icon: <InfoCircleOutlined />,
+            onClick: _handleClickDetails,
+            label: t('navigation.actions.details'),
+            displayCondition: !!parent && !isDetail
+        },
+        {
+            key: 'edit',
+            icon: <ExpandAltOutlined />,
+            onClick: _handleOpenEditRecordModal,
+            label: t('navigation.actions.edit'),
+            displayCondition: !!parent
+        },
+        {
+            key: 'classified_in',
+            icon: <SearchOutlined />,
+            onClick: _handleClickClassifiedIn,
+            label: t('navigation.actions.classified_in'),
+            displayCondition: true
+        },
+        {key: 'divider', type: 'divider', displayCondition: canEditChildren},
+        {
+            key: 'order',
+            icon: <OrderedListOutlined />,
+            onClick: _handleClickOrder,
+            label: t('navigation.actions.order'),
+            displayCondition: canEditChildren
+        },
+        {
+            key: 'detach',
+            icon: <DeleteOutlined />,
+            onClick: _handleClickDetach,
+            label: t('navigation.actions.detach'),
+            displayCondition: canEditChildren && canDetach
+        }
+    ].filter(item => item.displayCondition);
+
     return (
         <>
             {searchModalVisible && (
@@ -285,32 +325,26 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                                 <>
                                     <Dropdown // Add by search
                                         overlay={
-                                            <Menu>
-                                                {treeLibraries?.trees.list[0].libraries.map(library => (
-                                                    <Menu.Item
-                                                        key={library.library.id}
-                                                        onClick={() => showSearch(library.library.id)}
-                                                    >
-                                                        {localizedTranslation(library.library.label, lang)}
-                                                    </Menu.Item>
-                                                ))}
-                                            </Menu>
+                                            <Menu
+                                                items={treeLibraries?.trees.list[0].libraries.map(library => ({
+                                                    key: library.library.id,
+                                                    onClick: () => showSearch(library.library.id),
+                                                    label: localizedTranslation(library.library.label, lang)
+                                                }))}
+                                            ></Menu>
                                         }
                                     >
                                         <StandardBtn icon={<PlusCircleOutlined />} />
                                     </Dropdown>
                                     <Dropdown // Add by creation
                                         overlay={
-                                            <Menu>
-                                                {treeLibraries?.trees.list[0].libraries.map(library => (
-                                                    <Menu.Item
-                                                        key={library.library.id}
-                                                        onClick={_handleOpenCreateRecordModal(library.library.id)}
-                                                    >
-                                                        {localizedTranslation(library.library.label, lang)}
-                                                    </Menu.Item>
-                                                ))}
-                                            </Menu>
+                                            <Menu
+                                                items={treeLibraries?.trees.list[0].libraries.map(library => ({
+                                                    key: library.library.id,
+                                                    onClick: _handleOpenCreateRecordModal(library.library.id),
+                                                    label: localizedTranslation(library.library.label, lang)
+                                                }))}
+                                            ></Menu>
                                         }
                                     >
                                         <StandardBtn icon={<PlusOutlined />} />
@@ -336,61 +370,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                     )}
 
                     <span data-testid="dropdown-tree-actions">
-                        <Dropdown
-                            placement="bottomRight"
-                            overlay={
-                                <Menu>
-                                    {!!parent && (
-                                        <>
-                                            {!isDetail && (
-                                                <Menu.Item
-                                                    key="details"
-                                                    icon={<InfoCircleOutlined />}
-                                                    onClick={_handleClickDetails}
-                                                >
-                                                    {t('navigation.actions.details')}
-                                                </Menu.Item>
-                                            )}
-                                            <Menu.Item
-                                                key="edit"
-                                                icon={<ExpandAltOutlined />}
-                                                onClick={_handleOpenEditRecordModal}
-                                            >
-                                                {t('navigation.actions.edit')}
-                                            </Menu.Item>
-                                        </>
-                                    )}
-                                    <Menu.Item
-                                        key="classified_in"
-                                        icon={<SearchOutlined />}
-                                        onClick={_handleClickClassifiedIn}
-                                    >
-                                        {t('navigation.actions.classified_in')}
-                                    </Menu.Item>
-                                    {canEditChildren && (
-                                        <>
-                                            <Menu.Divider />
-                                            <Menu.Item
-                                                key="order"
-                                                icon={<OrderedListOutlined />}
-                                                onClick={_handleClickOrder}
-                                            >
-                                                {t('navigation.actions.order')}
-                                            </Menu.Item>
-                                            {canDetach && (
-                                                <Menu.Item
-                                                    key="detach"
-                                                    icon={<DeleteOutlined />}
-                                                    onClick={_handleClickDetach}
-                                                >
-                                                    {t('navigation.actions.detach')}
-                                                </Menu.Item>
-                                            )}
-                                        </>
-                                    )}
-                                </Menu>
-                            }
-                        >
+                        <Dropdown placement="bottomRight" overlay={<Menu items={treeActionsMenuItems} />}>
                             <StandardBtn icon={<IconEllipsisVertical />} />
                         </Dropdown>
                     </span>

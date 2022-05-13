@@ -13,16 +13,28 @@ function MenuItemActions(): JSX.Element {
     const [visible, setVisible] = useState<boolean>(false);
 
     const menu = (
-        <Menu>
-            <Menu.Item disabled>
-                {t('items_list.table.header-cell-menu.sort-advance')}
-                <AvailableSoon />
-            </Menu.Item>
-            <Menu.Item disabled>
-                {t('items_list.table.header-cell-menu.regroup')}
-                <AvailableSoon />
-            </Menu.Item>
-        </Menu>
+        <Menu
+            items={[
+                {
+                    key: 'sort-advanced',
+                    disabled: true,
+                    label: (
+                        <>
+                            {t('items_list.table.header-cell-menu.sort-advance')} <AvailableSoon />
+                        </>
+                    )
+                },
+                {
+                    key: 'regroup',
+                    disabled: true,
+                    label: (
+                        <>
+                            {t('items_list.table.header-cell-menu.regroup')} <AvailableSoon />
+                        </>
+                    )
+                }
+            ]}
+        ></Menu>
     );
 
     const _handleVisibleChange = () => setVisible(!visible);

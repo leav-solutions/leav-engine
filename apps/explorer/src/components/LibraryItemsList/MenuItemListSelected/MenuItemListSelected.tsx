@@ -185,17 +185,23 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
             <div>
                 <Dropdown
                     overlay={
-                        <Menu>
-                            <Menu.Item onClick={selectVisible}>
-                                {t('items-menu-dropdown.select-visible', {nb: searchState.records.length})}
-                            </Menu.Item>
-                            {!selectionMode && (
-                                <Menu.Item onClick={selectAll}>
-                                    {t('items-menu-dropdown.select-all', {nb: searchState.totalCount})}
-                                </Menu.Item>
-                            )}
-                            <Menu.Item onClick={unselectAll}>{t('menu-selection.unselect-all')}</Menu.Item>
-                        </Menu>
+                        <Menu
+                            items={[
+                                {
+                                    key: 'select-visible',
+                                    onClick: selectVisible,
+                                    label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
+                                },
+                                !selectionMode
+                                    ? {
+                                          key: 'select-all',
+                                          onClick: selectAll,
+                                          label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
+                                      }
+                                    : null,
+                                {key: 'unselect-all', onClick: unselectAll, label: t('menu-selection.unselect-all')}
+                            ]}
+                        />
                     }
                 >
                     <DropdownButton>
@@ -215,7 +221,6 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                 {!selectionMode && (
                     <>
                         <ActionsMenu />
-
                         <div>
                             <Button icon={<DeleteOutlined />} onClick={_handleClickDelete}>
                                 {t('global.delete')}
