@@ -180,8 +180,9 @@ export default function ({
                 throw new ValidationError({id: {msg: Errors.UNKNOWN_APPLICATION, vars: {application: id}}});
             }
 
-            if (apps.list[0].type === ApplicationTypes.INTERNAL) {
-                await applicationService.uninstall({applicationId: id, ctx});
+            const appProps = apps.list[0];
+            if (appProps.type === ApplicationTypes.INTERNAL) {
+                await applicationService.runUninstall({application: appProps, ctx});
             }
 
             const deletedApp = await applicationRepo.deleteApplication({id, ctx});

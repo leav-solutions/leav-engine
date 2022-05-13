@@ -164,6 +164,17 @@ A few environment variables are available in the script with all settings requir
 - `LEAV_APPLICATION_ID`: app ID
 - `LEAV_DEST_FOLDER`: destination folder. All files needed to run the instance must land here.
 
+### Uninstallation
+Before deleting an application, the core will check for a script called `app_uninstall.sh`.
+It must be present at the root of your module.
+This script is responsible for cleaning up everything it needs before the core deletes the instance folder.
+**This script is optional**.
+
+A few environment variables are available in the script:
+- `LEAV_APPLICATION_ID`: Application ID
+- `LEAV_DEST_FOLDER`: instance folder
+
+
 ---
 
 Have fun!

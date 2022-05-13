@@ -250,7 +250,7 @@ describe('applicationDomain', () => {
             };
 
             const mockApplicationService: Mockify<IApplicationService> = {
-                uninstall: jest.fn()
+                runUninstall: jest.fn()
             };
 
             const appDomain = applicationDomain({
@@ -261,7 +261,7 @@ describe('applicationDomain', () => {
             const deletedApp = await appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx});
 
             expect(mockAppRepo.deleteApplication).toBeCalled();
-            expect(mockApplicationService.uninstall).toBeCalled();
+            expect(mockApplicationService.runUninstall).toBeCalled();
             expect(deletedApp).toEqual(mockApplication);
         });
 
@@ -272,7 +272,7 @@ describe('applicationDomain', () => {
             };
 
             const mockApplicationService: Mockify<IApplicationService> = {
-                uninstall: jest.fn()
+                runUninstall: jest.fn()
             };
 
             const appDomain = applicationDomain({
@@ -283,7 +283,7 @@ describe('applicationDomain', () => {
             await appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx});
 
             expect(mockAppRepo.deleteApplication).toBeCalled();
-            expect(mockApplicationService.uninstall).not.toBeCalled();
+            expect(mockApplicationService.runUninstall).not.toBeCalled();
         });
 
         test("Throws if application doesn't exist", async () => {

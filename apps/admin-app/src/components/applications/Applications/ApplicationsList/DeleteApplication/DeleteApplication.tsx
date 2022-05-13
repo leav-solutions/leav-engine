@@ -21,6 +21,7 @@ const DeleteApplication = ({application}: IDeleteApplicationProps): JSX.Element 
     const {t} = useTranslation();
     const {lang} = useLang();
     const [deleteAttr] = useMutation<DELETE_APPLICATION, DELETE_APPLICATIONVariables>(deleteApplicationQuery, {
+        onError: () => undefined,
         update: (cache, {data: {deleteApplication}}) => {
             deleteFromCache(cache, (deleteApplication as unknown) as StoreObject);
         }
