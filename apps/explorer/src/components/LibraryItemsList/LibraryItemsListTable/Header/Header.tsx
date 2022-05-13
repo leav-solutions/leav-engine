@@ -109,8 +109,6 @@ const Header = ({id, children, type}: IHeaderProps) => {
     const [openChangeColumns, setOpenChangeColumns] = useState(false);
     const [isHover, setIsHover] = useState<boolean>(false);
 
-    id = infosCol === id ? 'id' : id;
-
     const handleSort = (attId: string, order: SortOrder, attType: AttributeType) => {
         const newSortField = getSortFieldByAttributeType(attId, attType);
 
@@ -160,25 +158,36 @@ const Header = ({id, children, type}: IHeaderProps) => {
                         style={{transform: 'translateY(-8px)'}} // move overlay to avoid trigger css transition
                         onMouseEnter={() => setIsHover(true)}
                         onMouseLeave={() => setIsHover(false)}
-                    >
-                        <Menu.Item key="sort-ascend" onClick={() => handleAsc(id, type)}>
-                            {t('items_list.table.header-cell-menu.sort-ascend')}
-                        </Menu.Item>
-                        <Menu.Item key="sort-descend" onClick={() => handleDesc(id, type)}>
-                            {t('items_list.table.header-cell-menu.sort-descend')}
-                        </Menu.Item>
-                        <Menu.Item key="cancel-sort" onClick={cancelSort}>
-                            {t('items_list.table.header-cell-menu.cancel-sort')}
-                        </Menu.Item>
-                        {infosCol !== id && (
-                            <Menu.Item key="hide-column" onClick={() => handleHideColumn(id)}>
-                                {t('items_list.table.header-cell-menu.hide-column')}
-                            </Menu.Item>
-                        )}
-                        <Menu.Item key="choose-columns" onClick={() => setOpenChangeColumns(true)}>
-                            {t('items_list.table.header-cell-menu.choose-columns')}
-                        </Menu.Item>
-                    </Menu>
+                        items={[
+                            {
+                                key: 'sort-ascend',
+                                onClick: () => handleAsc(id, type),
+                                label: t('items_list.table.header-cell-menu.sort-ascend')
+                            },
+                            {
+                                key: 'sort-descend',
+                                onClick: () => handleDesc(id, type),
+                                label: t('items_list.table.header-cell-menu.sort-descend')
+                            },
+                            {
+                                key: 'cancel-sort',
+                                onClick: cancelSort,
+                                label: t('items_list.table.header-cell-menu.cancel-sort')
+                            },
+                            id !== infosCol
+                                ? {
+                                      key: 'hide-column',
+                                      onClick: () => handleHideColumn(id),
+                                      label: t('items_list.table.header-cell-menu.hide-column')
+                                  }
+                                : null,
+                            {
+                                key: 'choose-columns',
+                                onClick: () => setOpenChangeColumns(true),
+                                label: t('items_list.table.header-cell-menu.choose-columns')
+                            }
+                        ]}
+                    ></Menu>
                 }
             >
                 <DropdownContent>

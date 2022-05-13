@@ -15,9 +15,13 @@ const MenuWrapper = styled(Menu)`
     min-width: 11em;
 `;
 
-const DisplaySizeWrapper = styled(Menu.Item)`
+const DisplaySizeWrapper = styled.div`
     display: flex;
     justify-content: space-between;
+
+    &&& {
+        background: none;
+    }
 `;
 
 function DisplayOptions(): JSX.Element {
@@ -56,42 +60,60 @@ function DisplayOptions(): JSX.Element {
 
     const _handleVisibleChange = () => setVisible(!visible);
 
+    const menu = (
+        <MenuWrapper
+            items={[
+                {
+                    key: 'display_size',
+                    label: (
+                        <DisplaySizeWrapper>
+                            <Button
+                                shape="circle"
+                                disabled={searchState.display.size === ViewSizes.SMALL}
+                                onClick={() => _handleChangeSize(SizeAction.LESS)}
+                                size="small"
+                            >
+                                -
+                            </Button>
+                            {` ${sizes[searchState.display.size]} `}
+                            <Button
+                                shape="circle"
+                                disabled={searchState.display.size === ViewSizes.BIG}
+                                onClick={() => _handleChangeSize(SizeAction.MORE)}
+                                size="small"
+                            >
+                                +
+                            </Button>
+                        </DisplaySizeWrapper>
+                    )
+                },
+                {
+                    type: 'divider',
+                    key: 'divider'
+                },
+                {
+                    key: 'display_list',
+                    label: t('view.type-list'),
+                    onClick: () => _handleChangeType(ViewTypes.list),
+                    icon: <MenuOutlined />
+                },
+                {
+                    key: 'display_cards',
+                    label: t('view.type-cards'),
+                    onClick: () => _handleChangeType(ViewTypes.cards),
+                    icon: <AppstoreFilled />
+                }
+            ]}
+        />
+    );
+
     return (
         <Dropdown
             visible={visible}
             onVisibleChange={_handleVisibleChange}
             trigger={['click']}
             placement="bottomRight"
-            overlay={
-                <MenuWrapper>
-                    <DisplaySizeWrapper>
-                        <Button
-                            shape="circle"
-                            disabled={searchState.display.size === ViewSizes.SMALL}
-                            onClick={() => _handleChangeSize(SizeAction.LESS)}
-                            size="small"
-                        >
-                            -
-                        </Button>
-                        {` ${sizes[searchState.display.size]} `}
-                        <Button
-                            shape="circle"
-                            disabled={searchState.display.size === ViewSizes.BIG}
-                            onClick={() => _handleChangeSize(SizeAction.MORE)}
-                            size="small"
-                        >
-                            +
-                        </Button>
-                    </DisplaySizeWrapper>
-                    <Menu.Divider />
-                    <Menu.Item onClick={() => _handleChangeType(ViewTypes.list)} icon={<MenuOutlined />}>
-                        {t('view.type-list')}
-                    </Menu.Item>
-                    <Menu.Item onClick={() => _handleChangeType(ViewTypes.cards)} icon={<AppstoreFilled />}>
-                        {t('view.type-cards')}
-                    </Menu.Item>
-                </MenuWrapper>
-            }
+            overlay={menu}
         >
             <Button>
                 <IconViewType type={searchState.display.type} />

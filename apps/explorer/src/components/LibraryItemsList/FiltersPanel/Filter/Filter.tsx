@@ -225,12 +225,20 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     };
 
     const filterOptions = (
-        <Menu>
-            <Menu.Item onClick={toggleActiveStatus}>
-                {filter.active ? t('filters.deactivate') : t('filters.activate')}
-            </Menu.Item>
-            <Menu.Item onClick={handleDelete}>{t('global.delete')}</Menu.Item>
-        </Menu>
+        <Menu
+            items={[
+                {
+                    key: 'deactivate',
+                    label: filter.active ? t('filters.deactivate') : t('filters.activate'),
+                    onClick: toggleActiveStatus
+                },
+                {
+                    key: 'delete',
+                    label: t('global.delete'),
+                    onClick: handleDelete
+                }
+            ]}
+        />
     );
 
     const InputByFormat = useCallback(

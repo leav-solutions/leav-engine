@@ -2,11 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dropdown, Menu} from 'antd';
+import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/BooleanFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React, {Fragment} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {checkTypeIsLink} from 'utils';
@@ -84,21 +85,26 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             (filter.type === FilterType.ATTRIBUTE && format === (filter as IFilterAttribute).attribute.format)
     );
 
-    const menu = (
-        <Menu>
-            {conditionOptionsByType
-                .filter(c => c.value !== AttributeConditionFilter.THROUGH || showthroughCondition)
-                .map(condition => (
-                    <Fragment key={condition.value}>
-                        {condition.value === AttributeConditionFilter.THROUGH && <Menu.Divider />}
-                        <Menu.Item onClick={() => _handleConditionChange(condition.value)}>
-                            {condition.textByFormat?.[(filter as IFilterAttribute)?.attribute?.format] ??
-                                condition?.text}
-                        </Menu.Item>
-                    </Fragment>
-                ))}
-        </Menu>
-    );
+    const menuItems: ItemType[] = conditionOptionsByType
+        .filter(c => c.value !== AttributeConditionFilter.THROUGH || showthroughCondition)
+        .reduce((items: ItemType[], condition): ItemType[] => {
+            if (condition.value === AttributeConditionFilter.THROUGH) {
+                items.push({
+                    key: 'through-divider',
+                    type: 'divider'
+                });
+            }
+
+            items.push({
+                key: condition.value,
+                label: condition.textByFormat?.[(filter as IFilterAttribute)?.attribute?.format] ?? condition?.text,
+                onClick: () => _handleConditionChange(condition.value)
+            });
+
+            return items;
+        }, []);
+
+    const menu = <Menu items={menuItems} />;
 
     if (showStandardCondition) {
         const conditionOption = conditionOptionsByType.filter(c => c.value === filter.condition)[0];

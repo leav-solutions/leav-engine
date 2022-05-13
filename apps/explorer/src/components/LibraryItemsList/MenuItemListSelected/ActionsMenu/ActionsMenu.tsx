@@ -37,13 +37,15 @@ function ActionsMenu(): JSX.Element {
         <>
             <Dropdown
                 overlay={
-                    <Menu>
-                        {actions.map(a => (
-                            <Menu.Item icon={a.icon} key={a.key} title={a.title} onClick={_handleClick(a.key)}>
-                                {a.title}
-                            </Menu.Item>
-                        ))}
-                    </Menu>
+                    <Menu
+                        items={actions.map(a => ({
+                            icon: a.icon,
+                            key: a.key,
+                            title: a.title,
+                            label: a.title,
+                            onClick: _handleClick(a.key)
+                        }))}
+                    ></Menu>
                 }
             >
                 <Button>

@@ -3,22 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
+import AvailableSoon from 'components/shared/AvailableSoon';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
-import {useAppDispatch} from 'redux/store';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
-import themingVar from '../../../themingVar';
-import Filter from './Filter/Filter';
 import {setDisplaySide} from 'redux/display';
+import {useAppDispatch} from 'redux/store';
+import styled from 'styled-components';
 import {TypeSideItem} from '_types/types';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
-import {getRequestFromFilters} from './getRequestFromFilter';
-import AvailableSoon from 'components/shared/AvailableSoon';
-
+import themingVar from '../../../themingVar';
+import Filter from './Filter/Filter';
 import './Filters.css';
+import {getRequestFromFilters} from './getRequestFromFilter';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -144,17 +143,31 @@ function FiltersPanel(): JSX.Element {
             <Header>
                 <Dropdown
                     overlay={
-                        <Menu>
-                            <Menu.Item disabled={allFiltersDisabled} onClick={disableFilters}>
-                                {t('filters.disable-filters')}
-                            </Menu.Item>
-                            <Menu.Item disabled={!searchState.filters.length} onClick={resetFilters}>
-                                {t('filters.remove-filters')}
-                            </Menu.Item>
-                            <Menu.Item disabled={true}>
-                                {t('filters.add-condition')} <AvailableSoon />
-                            </Menu.Item>
-                        </Menu>
+                        <Menu
+                            items={[
+                                {
+                                    key: 'disable',
+                                    disabled: allFiltersDisabled,
+                                    onClick: disableFilters,
+                                    label: t('filters.disable-filters')
+                                },
+                                {
+                                    key: 'remove',
+                                    disabled: !searchState.filters.length,
+                                    onClick: resetFilters,
+                                    label: t('filters.remove-filters')
+                                },
+                                {
+                                    key: 'add',
+                                    disabled: true,
+                                    label: (
+                                        <>
+                                            {t('filters.add-condition')} <AvailableSoon />
+                                        </>
+                                    )
+                                }
+                            ]}
+                        ></Menu>
                     }
                 >
                     <Button type={'text'}>

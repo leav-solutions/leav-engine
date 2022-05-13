@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {BranchesOutlined, DatabaseOutlined, NumberOutlined} from '@ant-design/icons';
+import {BranchesOutlined, NumberOutlined} from '@ant-design/icons';
 import {Badge, Dropdown, Input, Menu} from 'antd';
+import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {defaultLinkAttributeFilterFormat} from 'constants/constants';
 import {
     ILibraryDetailExtendedAttributeChild,
@@ -40,12 +41,14 @@ import {
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter';
 
-const ElementsListWrapper = styled(Menu.ItemGroup)`
-    max-height: 75vh;
-    overflow-y: auto;
+const CustomMenu = styled(Menu)`
+    & .elements-wrapper {
+        max-height: 75vh;
+        overflow-y: auto;
 
-    .ant-dropdown-menu-item-group-title {
-        display: none;
+        > .ant-dropdown-menu-item-group-title {
+            display: none;
+        }
     }
 `;
 
@@ -245,63 +248,91 @@ function FiltersDropdown({
         });
     };
 
-    const menu = (
-        <Menu>
-            <Menu.Item>
-                <Input.Search placeholder={t('global.search')} onChange={_handleSearchChange} />
-            </Menu.Item>
-            <Menu.Divider />
-            <ElementsListWrapper>
-                {filteredTrees.length && (
-                    <Menu.ItemGroup title={t('filters.trees-group')}>
-                        {filteredTrees.map(tree => (
-                            <Menu.Item
-                                icon={<BranchesOutlined />}
-                                key={tree.id}
-                                onClick={() => addFilter(getTreeFilter(tree))}
-                            >
-                                {isFilterUsed(tree.id) ? (
-                                    <Badge color={'blue'} text={tree.localizedLabel} />
-                                ) : (
-                                    tree.localizedLabel
-                                )}
-                            </Menu.Item>
-                        ))}
-                    </Menu.ItemGroup>
-                )}
-                {filteredAttributes.length && (
-                    <Menu.ItemGroup title={t('filters.attributes-group')}>
-                        {filteredAttributes.map(attribute => (
-                            <Menu.Item
-                                icon={<NumberOutlined />}
-                                key={attribute.id}
-                                onClick={() => addFilter(getAttributeFilter(attribute))}
-                            >
-                                {isFilterUsed(attribute.id) ? (
-                                    <Badge color={'blue'} text={attribute.localizedLabel} />
-                                ) : (
-                                    attribute.localizedLabel
-                                )}
-                            </Menu.Item>
-                        ))}
-                    </Menu.ItemGroup>
-                )}
-                {filteredLibraries.length && (
-                    <Menu.ItemGroup title={t('filters.libraries-group')}>
-                        {filteredLibraries.map(l => (
-                            <Menu.Item
-                                icon={<DatabaseOutlined />}
-                                key={l.library.id}
-                                onClick={() => addFilter(getLibraryFilter(l.library))}
-                            >
-                                {l.library.localizedLabel}
-                            </Menu.Item>
-                        ))}
-                    </Menu.ItemGroup>
-                )}
-            </ElementsListWrapper>
-        </Menu>
-    );
+    const menuItems: ItemType[] = [
+        {
+            key: 'search',
+            label: <Input.Search placeholder={t('global.search')} onChange={_handleSearchChange} />
+        },
+        {
+            key: 'divider',
+            type: 'divider'
+        }
+    ];
+
+    let menuElements = [];
+    if (filteredTrees.length > 0) {
+        menuElements = [
+            ...menuElements,
+            {
+                key: 'trees-group',
+                type: 'group',
+                label: t('filters.trees-group'),
+                children: filteredTrees.map(tree => ({
+                    key: tree.id,
+                    icon: <BranchesOutlined />,
+                    onClick: () => addFilter(getTreeFilter(tree)),
+                    label: isFilterUsed(tree.id) ? (
+                        <Badge color={'blue'} text={tree.localizedLabel} />
+                    ) : (
+                        tree.localizedLabel
+                    )
+                }))
+            }
+        ];
+    }
+
+    if (filteredAttributes.length > 0) {
+        menuElements = [
+            ...menuElements,
+            {
+                key: 'attributes-group',
+                type: 'group',
+                label: t('filters.attributes-group'),
+                children: filteredAttributes.map(attribute => ({
+                    key: attribute.id,
+                    icon: <NumberOutlined />,
+                    onClick: () => addFilter(getAttributeFilter(attribute)),
+                    label: isFilterUsed(attribute.id) ? (
+                        <Badge color={'blue'} text={attribute.localizedLabel} />
+                    ) : (
+                        attribute.localizedLabel
+                    )
+                }))
+            }
+        ];
+    }
+
+    if (filteredLibraries.length > 0) {
+        menuElements = [
+            ...menuElements,
+            {
+                key: 'libraries-group',
+                type: 'group',
+                label: t('filters.libraries-group'),
+                children: filteredLibraries.map(({library}) => ({
+                    key: library.id,
+                    icon: <NumberOutlined />,
+                    onClick: () => addFilter(getLibraryFilter(library)),
+                    label: isFilterUsed(library.id) ? (
+                        <Badge color={'blue'} text={library.localizedLabel} />
+                    ) : (
+                        library.localizedLabel
+                    )
+                }))
+            }
+        ];
+    }
+
+    menuItems.push({
+        key: 'elements-wrapper',
+        type: 'group',
+        children: menuElements,
+        label: null,
+        className: 'elements-wrapper',
+        style: {maxHeight: '75vh', overflowY: 'auto'}
+    });
+
+    const menu = <CustomMenu items={menuItems} />;
 
     return (
         <Dropdown
