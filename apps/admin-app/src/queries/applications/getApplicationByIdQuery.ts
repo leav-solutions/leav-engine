@@ -9,6 +9,7 @@ export const getApplicationByIdQuery = gql`
             list {
                 id
                 label
+                type
                 description
                 endpoint
                 url

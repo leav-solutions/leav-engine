@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {Override} from '@leav/utils';
 import LibrariesSelector from 'components/libraries/LibrariesSelector';
 import TreesSelector from 'components/trees/TreesSelector';
 import {useEditApplicationContext} from 'context/EditApplicationContext';
@@ -10,6 +11,7 @@ import {useTranslation} from 'react-i18next';
 import {Form, FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
+import {ApplicationType} from '_gqlTypes/globalTypes';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
@@ -62,6 +64,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
 
     const defaultApplicationData: ApplicationInfosFormValues = {
         id: '',
+        type: ApplicationType.internal,
         color: '',
         icon: null,
         module: '',
@@ -104,24 +107,27 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdIsUnique);
     }
 
-    const validationSchema: yup.ObjectSchema<ApplicationInfosFormValues> = yup.object().shape({
-        id: idValidator,
-        color: yup.string().nullable(),
-        icon: yup.string().nullable(),
-        module: yup.string().required(),
-        label: yup.object().shape({
-            [defaultLang]: yup.string().required()
-        }),
-        description: yup
-            .object()
-            .shape({
-                [defaultLang]: yup.string()
-            })
-            .nullable(),
-        endpoint: yup.string().required(),
-        libraries: yup.array(yup.string()),
-        trees: yup.array(yup.string())
-    });
+    const validationSchema: yup.ObjectSchema<Override<ApplicationInfosFormValues, {type: string}>> = yup
+        .object()
+        .shape({
+            id: idValidator,
+            type: yup.string().oneOf(Object.values(ApplicationType)),
+            color: yup.string().nullable(),
+            icon: yup.string().nullable(),
+            module: yup.string(),
+            label: yup.object().shape({
+                [defaultLang]: yup.string().required()
+            }),
+            description: yup
+                .object()
+                .shape({
+                    [defaultLang]: yup.string()
+                })
+                .nullable(),
+            endpoint: yup.string().required(),
+            libraries: yup.array(yup.string()),
+            trees: yup.array(yup.string())
+        });
 
     const _renderForm = ({
         handleSubmit,
@@ -189,7 +195,8 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                         {availableLangs.map(lang => (
                             <FormFieldWrapper key={lang} error={_getErrorByField(`label.${lang}`)}>
                                 <Form.Input
-                                    label={`${lang} ${lang === defaultLang ? '*' : ''}`}
+                                    required={lang === defaultLang}
+                                    label={lang}
                                     width="4"
                                     name={`label.${lang}`}
                                     aria-label={`label.${lang}`}
@@ -207,7 +214,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                         {availableLangs.map(lang => (
                             <FormFieldWrapper key={lang} error={_getErrorByField(`description.${lang}`)}>
                                 <Form.Input
-                                    label={`${lang}`}
+                                    label={lang}
                                     value={values.description?.[lang] ?? ''}
                                     width="4"
                                     name={`description.${lang}`}
@@ -222,6 +229,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                     </Form.Group>
                     <FormFieldWrapper error={_getErrorByField('id')}>
                         <Form.Input
+                            required
                             label={t('admin.id')}
                             width="4"
                             disabled={!isNewApp || isReadOnly}
@@ -232,23 +240,45 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                             value={values.id}
                         />
                     </FormFieldWrapper>
-                    <FormFieldWrapper error={_getErrorByField('module')}>
-                        <ModuleSelector
-                            label={t('applications.module')}
-                            placeholder={t('applications.select_module')}
-                            fluid
-                            selection
+                    <FormFieldWrapper error={_getErrorByField('type')}>
+                        <Form.Select
+                            required
+                            label={t('applications.type')}
                             width="4"
-                            disabled={isReadOnly}
-                            name="module"
-                            aria-label="id"
+                            disabled={!isNewApp || isReadOnly}
+                            name="type"
+                            aria-label="type"
                             onChange={_handleChangeWithSubmit}
-                            onBlur={_handleBlur}
-                            value={values.module}
+                            options={Object.keys(ApplicationType).map(appType => {
+                                return {
+                                    text: t('applications.types.' + appType),
+                                    value: appType
+                                };
+                            })}
+                            value={values.type}
                         />
                     </FormFieldWrapper>
+                    {values.type === ApplicationType.internal && (
+                        <FormFieldWrapper error={_getErrorByField('module')}>
+                            <ModuleSelector
+                                required
+                                label={t('applications.module')}
+                                placeholder={t('applications.select_module')}
+                                fluid
+                                selection
+                                width="4"
+                                disabled={isReadOnly}
+                                name="module"
+                                aria-label="id"
+                                onChange={_handleChangeWithSubmit}
+                                onBlur={_handleBlur}
+                                value={values.module}
+                            />
+                        </FormFieldWrapper>
+                    )}
                     <FormFieldWrapper error={_getErrorByField('endpoint')}>
                         <Form.Input
+                            required
                             label={t('applications.endpoint')}
                             width="4"
                             disabled={isReadOnly}
@@ -259,38 +289,42 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                             value={values.endpoint}
                         />
                     </FormFieldWrapper>
-                    <FormFieldWrapper error={_getErrorByField('libraries')}>
-                        <LibrariesSelector
-                            label={t('applications.libraries')}
-                            placeholder={t('applications.all_libraries')}
-                            fluid
-                            selection
-                            multiple
-                            width="4"
-                            disabled={isReadOnly}
-                            name="libraries"
-                            aria-label="id"
-                            onChange={_handleChangeWithSubmit}
-                            onBlur={_handleBlur}
-                            value={values.libraries}
-                        />
-                    </FormFieldWrapper>
-                    <FormFieldWrapper error={_getErrorByField('trees')}>
-                        <TreesSelector
-                            label={t('applications.trees')}
-                            placeholder={t('applications.all_trees')}
-                            fluid
-                            selection
-                            multiple
-                            width="4"
-                            disabled={isReadOnly}
-                            name="trees"
-                            aria-label="id"
-                            onChange={_handleChangeWithSubmit}
-                            onBlur={_handleBlur}
-                            value={values.trees}
-                        />
-                    </FormFieldWrapper>
+                    {values.type === ApplicationType.internal && (
+                        <>
+                            <FormFieldWrapper error={_getErrorByField('libraries')}>
+                                <LibrariesSelector
+                                    label={t('applications.libraries')}
+                                    placeholder={t('applications.all_libraries')}
+                                    fluid
+                                    selection
+                                    multiple
+                                    width="4"
+                                    disabled={isReadOnly}
+                                    name="libraries"
+                                    aria-label="id"
+                                    onChange={_handleChangeWithSubmit}
+                                    onBlur={_handleBlur}
+                                    value={values.libraries}
+                                />
+                            </FormFieldWrapper>
+                            <FormFieldWrapper error={_getErrorByField('trees')}>
+                                <TreesSelector
+                                    label={t('applications.trees')}
+                                    placeholder={t('applications.all_trees')}
+                                    fluid
+                                    selection
+                                    multiple
+                                    width="4"
+                                    disabled={isReadOnly}
+                                    name="trees"
+                                    aria-label="id"
+                                    onChange={_handleChangeWithSubmit}
+                                    onBlur={_handleBlur}
+                                    value={values.trees}
+                                />
+                            </FormFieldWrapper>
+                        </>
+                    )}
                 </FormBody>
                 {!readonly && isNewApp && (
                     <FormFooter>

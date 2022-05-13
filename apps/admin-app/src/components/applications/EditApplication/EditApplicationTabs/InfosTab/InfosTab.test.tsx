@@ -7,6 +7,7 @@ import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQu
 import {getApplicationModulesQuery} from 'queries/applications/getApplicationsModulesQuery';
 import {saveApplicationMutation} from 'queries/applications/saveApplicationMutation';
 import React from 'react';
+import {ApplicationType} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
 import InfosTab from './InfosTab';
@@ -192,5 +193,25 @@ describe('InfosTab', () => {
         userEvent.click(screen.getByRole('button', {name: /submit/}));
 
         await waitFor(() => expect(saveCalled).toBe(true));
+    });
+
+    test('If external app, do not display some fields', async () => {
+        await act(async () => {
+            render(
+                <EditApplicationContext.Provider
+                    value={{application: {...mockApplicationDetails, type: ApplicationType.external}, readonly: false}}
+                >
+                    <InfosTab />
+                </EditApplicationContext.Provider>
+            );
+        });
+
+        expect(screen.getByRole('textbox', {name: /id/})).toBeInTheDocument();
+        expect(screen.getAllByRole('textbox', {name: /label/})).toHaveLength(2);
+        expect(screen.getAllByRole('textbox', {name: /description/})).toHaveLength(2);
+        expect(screen.getByRole('textbox', {name: /endpoint/})).toBeInTheDocument();
+        expect(screen.queryByRole('combobox', {name: /module/})).not.toBeInTheDocument();
+        expect(screen.queryByRole('combobox', {name: /libraries/})).not.toBeInTheDocument();
+        expect(screen.queryByRole('combobox', {name: /trees/})).not.toBeInTheDocument();
     });
 });

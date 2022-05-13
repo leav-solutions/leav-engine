@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApplicationInstallStatus} from '../../../../_types/application';
+import {ApplicationInstallStatuses} from '../../../../_types/application';
 import {makeGraphQlCall} from '../e2eUtils';
 
 describe('Applications', () => {
@@ -46,7 +46,7 @@ describe('Applications', () => {
 
         const testAppRes = appsRes.data.data.applications.list.find(app => app.id === 'test_app');
         expect(testAppRes).toBeDefined();
-        expect(testAppRes.install.status).toBe(ApplicationInstallStatus.SUCCESS);
+        expect(testAppRes.install.status).toBe(ApplicationInstallStatuses.SUCCESS);
         expect(testAppRes.permissions.access_application).toBeDefined();
     });
 

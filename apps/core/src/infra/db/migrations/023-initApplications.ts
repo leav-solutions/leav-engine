@@ -19,6 +19,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 {
                     _key: 'admin',
                     system: true,
+                    type: 'internal',
                     module: 'admin-app',
                     label: {fr: 'Administration', en: 'Administration'},
                     description: {fr: "Application d'administration", en: 'Administration app'},
@@ -29,6 +30,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 {
                     _key: 'explorer',
                     system: false,
+                    type: 'internal',
                     module: 'explorer',
                     label: {fr: 'Explorateur', en: 'Explorer'},
                     description: {fr: 'Explorateur générique', en: 'Generic explorer'},
@@ -39,6 +41,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 {
                     _key: 'login',
                     system: true,
+                    type: 'internal',
                     module: 'login',
                     label: {fr: 'Login', en: 'Login'},
                     description: {fr: "Application d'authentification", en: 'Authentication app'},
@@ -49,6 +52,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                 {
                     _key: 'portal',
                     system: true,
+                    type: 'internal',
                     module: 'portal',
                     label: {fr: 'Portail', en: 'Portal'},
                     description: {fr: "Portail d'accès à toutes les applications", en: 'All applications portal'},

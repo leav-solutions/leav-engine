@@ -7,12 +7,14 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import path from 'path';
 import {IConfig} from '_types/config';
 import {APPS_MODULES_FOLDER} from '../../_types/application';
+import {mockApplication} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import applicationRepo from './applicationRepo';
 
 describe('applicationRepo', () => {
     const docAppData = {
         _key: 'test_application',
+        type: 'internal',
         system: true,
         label: {fr: 'Test'},
         endpoint: 'my-application',
@@ -22,6 +24,7 @@ describe('applicationRepo', () => {
         module: 'explorer'
     };
     const applicationData = {
+        ...mockApplication,
         id: 'test_application',
         system: true,
         label: {fr: 'Test'},

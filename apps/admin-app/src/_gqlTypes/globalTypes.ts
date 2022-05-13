@@ -28,7 +28,13 @@ export enum ApplicationSortableFields {
     endpoint = 'endpoint',
     id = 'id',
     module = 'module',
-    system = 'system'
+    system = 'system',
+    type = 'type'
+}
+
+export enum ApplicationType {
+    external = 'external',
+    internal = 'internal'
 }
 
 export enum AttributeFormat {
@@ -157,6 +163,7 @@ export interface ActionsListConfigurationInput {
 export interface ApplicationInput {
     id: string;
     label?: SystemTranslation | null;
+    type?: ApplicationType | null;
     description?: SystemTranslation | null;
     libraries?: string[] | null;
     trees?: string[] | null;
@@ -169,6 +176,7 @@ export interface ApplicationInput {
 export interface ApplicationsFiltersInput {
     id?: string | null;
     label?: string | null;
+    type?: ApplicationType | null;
     system?: boolean | null;
     endpoint?: string | null;
     module?: string | null;

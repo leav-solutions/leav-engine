@@ -6,8 +6,9 @@ import Loading from 'components/shared/Loading';
 import useLang from 'hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Input, Table} from 'semantic-ui-react';
+import {Dropdown, Input, Table} from 'semantic-ui-react';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {ApplicationType} from '_gqlTypes/globalTypes';
 
 interface IApplicationsListProps {
     applications: GET_APPLICATIONS_applications_list[] | null;
@@ -44,6 +45,12 @@ const ApplicationsList = ({
     const availableLanguages = useLang().lang;
     const actionsList: React.ReactNode[] = actions ? (!Array.isArray(actions) ? [actions] : actions) : [];
 
+    const types = Object.keys(ApplicationType).map(type => ({
+        key: type,
+        value: type,
+        text: t('applications.types.' + type)
+    }));
+
     return (
         <Table selectable striped>
             <Table.Header>
@@ -51,6 +58,7 @@ const ApplicationsList = ({
                     <Table.HeaderCell width={4}>{t('admin.label')}</Table.HeaderCell>
                     <Table.HeaderCell width={4}>{t('admin.id')}</Table.HeaderCell>
                     <Table.HeaderCell width={1}>{t('applications.endpoint')}</Table.HeaderCell>
+                    <Table.HeaderCell width={1}>{t('applications.type')}</Table.HeaderCell>
                     <Table.HeaderCell width={1} />
                 </Table.Row>
                 {withFilters && (
@@ -88,6 +96,19 @@ const ApplicationsList = ({
                                 onChange={_handleFilterChange}
                             />
                         </Table.HeaderCell>
+                        <Table.HeaderCell>
+                            <Dropdown
+                                fluid
+                                multiple
+                                search
+                                selection
+                                options={types}
+                                placeholder={t('attributes.type') + '...'}
+                                name="type"
+                                value={filters.type || []}
+                                onChange={_handleFilterChange}
+                            />
+                        </Table.HeaderCell>
                         <Table.HeaderCell />
                     </Table.Row>
                 )}
@@ -109,6 +130,7 @@ const ApplicationsList = ({
                                 <Table.Cell>{appLabel}</Table.Cell>
                                 <Table.Cell>{app.id}</Table.Cell>
                                 <Table.Cell>{app.endpoint}</Table.Cell>
+                                <Table.Cell>{t('applications.types.' + app.type)}</Table.Cell>
                                 <Table.Cell textAlign="right" width={1} className="actions">
                                     {actionsList.map(child =>
                                         React.cloneElement(child as React.ReactElement<any>, {application: app})

@@ -14,7 +14,7 @@ import utils from './utils';
 
 describe('Utils', () => {
     describe('libNameToQueryName', () => {
-        test('Should format a string to camelCase', async function() {
+        test('Should format a string to camelCase', async function () {
             const utilsModule = utils();
             expect(utilsModule.libNameToQueryName('not camel_case string!')).toEqual('notCamelCaseString');
             expect(utilsModule.libNameToQueryName('Users & Groups')).toEqual('usersGroups');
@@ -22,7 +22,7 @@ describe('Utils', () => {
         });
     });
     describe('libNameToTypeName', () => {
-        test('Should format a string to CamelCase, upper first with no trailing "s"', async function() {
+        test('Should format a string to CamelCase, upper first with no trailing "s"', async function () {
             const utilsModule = utils();
             expect(utilsModule.libNameToTypeName('not camel_case string!')).toEqual('NotCamelCaseString');
             expect(utilsModule.libNameToTypeName('Users & Groups')).toEqual('UsersGroup');
@@ -84,15 +84,24 @@ describe('Utils', () => {
         test('Check endpoint format is correct', async () => {
             const utilsModule = utils();
 
-            expect(utilsModule.isEndpointValid('correct-endpoint')).toEqual(true);
-            expect(utilsModule.isEndpointValid('correct-42-endpoint')).toEqual(true);
-            expect(utilsModule.isEndpointValid('invalid endpoint')).toEqual(false);
-            expect(utilsModule.isEndpointValid('invalid_endpoint')).toEqual(false);
-            expect(utilsModule.isEndpointValid('Invalid-endpoint')).toEqual(false);
-            expect(utilsModule.isEndpointValid('Invalid_endpoint')).toEqual(false);
-            expect(utilsModule.isEndpointValid('')).toEqual(false);
-            expect(utilsModule.isEndpointValid(null)).toEqual(false);
-            expect(utilsModule.isEndpointValid(undefined)).toEqual(false);
+            // Internal endpoint
+            expect(utilsModule.isEndpointValid('correct-endpoint', false)).toEqual(true);
+            expect(utilsModule.isEndpointValid('correct-42-endpoint', false)).toEqual(true);
+            expect(utilsModule.isEndpointValid('invalid endpoint', false)).toEqual(false);
+            expect(utilsModule.isEndpointValid('invalid_endpoint', false)).toEqual(false);
+            expect(utilsModule.isEndpointValid('Invalid-endpoint', false)).toEqual(false);
+            expect(utilsModule.isEndpointValid('Invalid_endpoint', false)).toEqual(false);
+            expect(utilsModule.isEndpointValid('', false)).toEqual(false);
+            expect(utilsModule.isEndpointValid(null, false)).toEqual(false);
+            expect(utilsModule.isEndpointValid(undefined, false)).toEqual(false);
+
+            // External URL
+            expect(utilsModule.isEndpointValid('http://www.google.com', true)).toEqual(true);
+            expect(utilsModule.isEndpointValid('http://google.com', true)).toEqual(true);
+            expect(utilsModule.isEndpointValid('https://google.com', true)).toEqual(true);
+            expect(utilsModule.isEndpointValid('http://localhost', true)).toEqual(true);
+            expect(utilsModule.isEndpointValid('google.com', true)).toEqual(false);
+            expect(utilsModule.isEndpointValid('localhost', true)).toEqual(false);
         });
     });
 
