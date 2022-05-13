@@ -9,7 +9,7 @@ import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import useLang from 'hooks/useLang';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import React from 'react';
-import {Button, List, Sidebar} from 'semantic-ui-react';
+import {Button, Icon, List, Sidebar} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 
@@ -18,10 +18,10 @@ const AppSidebar = styled(Sidebar)`
     padding: 0.5em 1em;
 `;
 
-const AppIcon = styled.span<{color: string}>`
+const AppIcon = styled.span<{color?: string}>`
     display: inline-block;
-    background: ${props => props.color};
-    color: ${props => getInvertColor(props.color)};
+    background: ${props => props.color ?? ''};
+    color: ${props => (props.color ? getInvertColor(props.color) : '#000000')};
     width: 2em;
     height: 2em;
     border-radius: 50%;
@@ -79,11 +79,28 @@ function ApplicationsSwitcher(): JSX.Element {
 
     const apps = data?.applications?.list ?? [];
 
+    // Hardcoded IDs for portal and login will be removed when they'll be configured
+    const portalApp = apps.find(app => app.id === 'portal');
+    const loginApp = apps.find(app => app.id === 'login');
+    const portalLabel = localizedTranslation(portalApp?.label, lang);
+
     if (!loading && !error) {
         content = (
             <AppList relaxed divided>
+                {!!portalApp && (
+                    <AppItem as="a" href={portalApp.url} key={portalApp.id}>
+                        <AppIcon className="ui avatar">
+                            <Icon name="home" size="big" />
+                        </AppIcon>
+                        <List.Content>
+                            <List.Header>{portalLabel}</List.Header>
+                        </List.Content>
+                    </AppItem>
+                )}
                 {apps
-                    .filter(app => app.id !== currentApp.id)
+                    // Do not display current app in the list
+                    // Portal and login are also filtered out.
+                    .filter(app => app.id !== currentApp.id && ![portalApp?.id, loginApp?.id].includes(app.id))
                     .map(app => {
                         const label = localizedTranslation(app.label, lang);
                         const description = localizedTranslation(app.description, lang);
