@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {IApplicationService} from 'infra/application/applicationService';
+import {IApplication} from '_types/application';
 import {IDbService} from '../dbService';
 import {IDbUtils} from '../dbUtils';
 
@@ -85,7 +86,8 @@ export default function ({
                     // If not, create it
                     if (!existingApp.length) {
                         const installRes = await applicationService.runInstall({
-                            application: {...app, id: app._key},
+                            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                            application: {...app, id: app._key} as IApplication,
                             ctx
                         });
                         const appData = {...app, install: installRes};

@@ -16,3 +16,17 @@ export const mockApplication: IApplication = {
     icon: 'some-icon',
     module: 'explorer'
 };
+
+export const mockApplicationExternal: IApplication = {
+    id: 'test_application',
+    type: ApplicationTypes.EXTERNAL,
+    system: true,
+    label: {fr: 'Test'},
+    endpoint: 'http://example.com',
+    description: {fr: 'Super application'},
+    libraries: null,
+    trees: null,
+    color: 'orange',
+    icon: 'some-icon',
+    module: null
+};

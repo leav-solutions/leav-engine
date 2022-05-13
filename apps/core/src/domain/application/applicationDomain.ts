@@ -55,7 +55,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.userData': userDataDomain = null,
     'core.infra.application': applicationRepo = null,
@@ -180,7 +180,10 @@ export default function({
                 throw new ValidationError({id: {msg: Errors.UNKNOWN_APPLICATION, vars: {application: id}}});
             }
 
-            await applicationService.uninstall({applicationId: id, ctx});
+            if (apps.list[0].type === ApplicationTypes.INTERNAL) {
+                await applicationService.uninstall({applicationId: id, ctx});
+            }
+
             const deletedApp = await applicationRepo.deleteApplication({id, ctx});
 
             return deletedApp;

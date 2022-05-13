@@ -11,7 +11,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
-import {mockApplication} from '../../__tests__/mocks/application';
+import {mockApplication, mockApplicationExternal} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import applicationDomain, {MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
 
@@ -263,6 +263,27 @@ describe('applicationDomain', () => {
             expect(mockAppRepo.deleteApplication).toBeCalled();
             expect(mockApplicationService.uninstall).toBeCalled();
             expect(deletedApp).toEqual(mockApplication);
+        });
+
+        test('Do not uninstall external application', async () => {
+            const mockAppRepo: Mockify<IApplicationRepo> = {
+                getApplications: global.__mockPromise({list: [mockApplicationExternal], totalCount: 1}),
+                deleteApplication: global.__mockPromise(mockApplicationExternal)
+            };
+
+            const mockApplicationService: Mockify<IApplicationService> = {
+                uninstall: jest.fn()
+            };
+
+            const appDomain = applicationDomain({
+                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.infra.application': mockAppRepo as IApplicationRepo,
+                'core.infra.application.service': mockApplicationService as IApplicationService
+            });
+            await appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx});
+
+            expect(mockAppRepo.deleteApplication).toBeCalled();
+            expect(mockApplicationService.uninstall).not.toBeCalled();
         });
 
         test("Throws if application doesn't exist", async () => {
