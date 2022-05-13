@@ -19,6 +19,7 @@ Object {
     ],
     "module": "explorer",
     "system": true,
+    "type": "internal",
   },
 }
 `;
@@ -53,6 +54,7 @@ Object {
     ],
     "module": "explorer",
     "system": true,
+    "type": "internal",
   },
 }
 `;

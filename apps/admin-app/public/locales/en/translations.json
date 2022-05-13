@@ -310,11 +310,16 @@
         "status_label": "Status",
         "reinstall": "Restart installation",
         "open_application": "Open application",
+        "type": "Type",
         "statuses": {
             "NONE": "None",
             "RUNNING": "Running",
             "SUCCESS": "Success",
             "ERROR": "Error"
+        },
+        "types": {
+            "internal": "Internal",
+            "external": "External"
         }
     }
 }

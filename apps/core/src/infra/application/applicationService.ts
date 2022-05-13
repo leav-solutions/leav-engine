@@ -9,7 +9,7 @@ import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {
-    ApplicationInstallStatus,
+    ApplicationInstallStatuses,
     APPS_INSTANCES_FOLDER,
     APPS_MODULES_FOLDER,
     IApplication,
@@ -76,7 +76,7 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
                 await fd.close();
             } catch (err) {
                 return {
-                    status: ApplicationInstallStatus.ERROR,
+                    status: ApplicationInstallStatuses.ERROR,
                     lastCallResult: err.message
                 };
             }
@@ -95,9 +95,9 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
             try {
                 const res = await _execCommand(`${scriptPath}`, leavEnv);
 
-                return {status: ApplicationInstallStatus.SUCCESS, lastCallResult: String(res.out)};
+                return {status: ApplicationInstallStatuses.SUCCESS, lastCallResult: String(res.out)};
             } catch (err) {
-                return {status: ApplicationInstallStatus.ERROR, lastCallResult: String(err)};
+                return {status: ApplicationInstallStatuses.ERROR, lastCallResult: String(err)};
             }
         }
     };

@@ -9,7 +9,7 @@ import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory, useLocation} from 'react-router';
 import {Header, Icon, Tab, TabProps} from 'semantic-ui-react';
-import {ApplicationInstallStatus} from '_gqlTypes/globalTypes';
+import {ApplicationInstallStatus, ApplicationType} from '_gqlTypes/globalTypes';
 import InfosTab from './InfosTab';
 import InstallTab from './InstallTab';
 import PermissionsTab from './PermissionsTab';
@@ -29,36 +29,34 @@ function EditApplicationTabs(): JSX.Element {
         {
             key: 'infos',
             menuItem: t('applications.information'),
+            displayCondition: true,
             render: () => (
                 <Tab.Pane key="info" className="grow">
                     <InfosTab />
                 </Tab.Pane>
             )
+        },
+        {
+            key: 'permissions',
+            menuItem: t('admin.permissions'),
+            displayCondition: !isNewApp,
+            render: () => (
+                <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
+                    <PermissionsTab />
+                </Tab.Pane>
+            )
+        },
+        {
+            key: 'install',
+            menuItem: t('applications.install'),
+            displayCondition: !isNewApp && application.type === ApplicationType.internal,
+            render: () => (
+                <Tab.Pane key="install" className="">
+                    <InstallTab />
+                </Tab.Pane>
+            )
         }
-    ];
-
-    if (!isNewApp) {
-        panes.push(
-            {
-                key: 'permissions',
-                menuItem: t('admin.permissions'),
-                render: () => (
-                    <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
-                        <PermissionsTab />
-                    </Tab.Pane>
-                )
-            },
-            {
-                key: 'install',
-                menuItem: t('applications.install'),
-                render: () => (
-                    <Tab.Pane key="install" className="">
-                        <InstallTab />
-                    </Tab.Pane>
-                )
-            }
-        );
-    }
+    ].filter(p => p.displayCondition);
 
     const [activeIndex, setActiveIndex] = useState<number>(tabName ? panes.findIndex(p => tabName === p.key) : 0);
 

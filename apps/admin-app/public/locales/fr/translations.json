@@ -314,11 +314,16 @@
         "status_label": "Statut",
         "reinstall": "Relancer l'installation",
         "open_application": "Ouvrir l'application",
+        "type": "Type",
         "statuses": {
             "NONE": "Aucun",
             "RUNNING":"En cours",
             "SUCCESS":"Réussi",
             "ERROR":"Erreur"
+        },
+        "types": {
+            "internal": "Interne",
+            "external": "Externe"
         }
     }
 }

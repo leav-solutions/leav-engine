@@ -8,21 +8,27 @@ export const APPS_MODULES_FOLDER = 'modules';
 export const APPS_INSTANCES_FOLDER = 'instances';
 export const APPS_URL_PREFIX = 'app';
 
-export enum ApplicationInstallStatus {
+export enum ApplicationInstallStatuses {
     NONE = 'NONE',
     RUNNING = 'RUNNING',
     ERROR = 'ERROR',
     SUCCESS = 'SUCCESS'
 }
 
+export enum ApplicationTypes {
+    INTERNAL = 'internal',
+    EXTERNAL = 'external'
+}
+
 export interface IApplicationInstall {
-    status: ApplicationInstallStatus;
+    status: ApplicationInstallStatuses;
     lastCallResult?: string;
 }
 
 export interface IApplication extends ICoreEntity {
     system?: boolean;
     description: ISystemTranslation;
+    type: ApplicationTypes;
     libraries: string[];
     trees: string[];
     color?: string;

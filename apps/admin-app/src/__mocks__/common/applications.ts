@@ -6,11 +6,12 @@ import {IEditApplicationContextData} from 'context/EditApplicationContext/EditAp
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {GET_APPLICATION_MODULES_applicationsModules} from '_gqlTypes/GET_APPLICATION_MODULES';
-import {ApplicationInstallStatus} from '_gqlTypes/globalTypes';
+import {ApplicationInstallStatus, ApplicationType} from '_gqlTypes/globalTypes';
 import {mockLibrary} from '__mocks__/libraries';
 
 export const mockApplication: GET_APPLICATIONS_applications_list = {
     id: 'myapp',
+    type: ApplicationType.internal,
     label: {
         fr: 'My App',
         en: 'My App'

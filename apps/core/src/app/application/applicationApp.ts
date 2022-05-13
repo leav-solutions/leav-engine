@@ -27,7 +27,8 @@ import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
 import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
-    ApplicationInstallStatus,
+    ApplicationInstallStatuses,
+    ApplicationTypes,
     APPS_INSTANCES_FOLDER,
     APPS_URL_PREFIX,
     IApplication,
@@ -77,8 +78,14 @@ export default function ({
                 }
 
                 enum ApplicationInstallStatus {
-                    ${Object.values(ApplicationInstallStatus)
+                    ${Object.values(ApplicationInstallStatuses)
                         .map(status => `${status}`)
+                        .join(' ')}
+                }
+
+                enum ApplicationType {
+                    ${Object.values(ApplicationTypes)
+                        .map(type => `${type}`)
                         .join(' ')}
                 }
 
@@ -90,6 +97,7 @@ export default function ({
                 type Application {
                     id: ID!,
                     system: Boolean!,
+                    type: ApplicationType!,
                     label(lang: [AvailableLanguage!]): SystemTranslation!,
                     description: SystemTranslation,
                     libraries: [Library!]!,
@@ -112,6 +120,7 @@ export default function ({
                 input ApplicationInput {
                     id: ID!
                     label: SystemTranslation,
+                    type: ApplicationType,
                     description: SystemTranslationOptional,
                     libraries: [String!],
                     trees: [String!],
@@ -124,6 +133,7 @@ export default function ({
                 input ApplicationsFiltersInput {
                     id: ID,
                     label: String,
+                    type: [ApplicationType],
                     system: Boolean,
                     endpoint: String,
                     module: String
@@ -137,6 +147,7 @@ export default function ({
                 enum ApplicationSortableFields {
                     id
                     system
+                    type
                     endpoint
                     module
                 }

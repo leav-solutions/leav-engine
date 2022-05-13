@@ -9,6 +9,7 @@ export const getApplicationsQuery = gql`
             list {
                 id
                 label
+                type
                 description
                 endpoint
                 color

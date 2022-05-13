@@ -12,7 +12,8 @@ import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {
-    ApplicationInstallStatus,
+    ApplicationInstallStatuses,
+    ApplicationTypes,
     IApplication,
     IApplicationInstall,
     IApplicationModule,
@@ -54,7 +55,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.userData': userDataDomain = null,
     'core.infra.application': applicationRepo = null,
@@ -98,8 +99,9 @@ export default function ({
             const defaultParams: Partial<IApplication> = {
                 id: '',
                 system: false,
+                type: ApplicationTypes.INTERNAL,
                 install: {
-                    status: ApplicationInstallStatus.NONE,
+                    status: ApplicationInstallStatuses.NONE,
                     lastCallResult: null
                 }
             };
@@ -112,6 +114,8 @@ export default function ({
                       ...applicationData
                   }
                 : {...defaultParams, ...applicationData};
+
+            const isExternalApp = appToSave.type === ApplicationTypes.EXTERNAL;
 
             const errors: ErrorFieldDetail<IApplication> = {};
 
@@ -133,7 +137,7 @@ export default function ({
                 errors.id = Errors.INVALID_ID_FORMAT;
             }
 
-            if (!utils.isEndpointValid(appToSave.endpoint)) {
+            if (!utils.isEndpointValid(appToSave.endpoint, isExternalApp)) {
                 errors.endpoint = Errors.INVALID_ENDPOINT_FORMAT;
             }
 
@@ -150,7 +154,7 @@ export default function ({
                 ? applicationRepo.updateApplication({applicationData: appToSave, ctx})
                 : applicationRepo.createApplication({applicationData: appToSave, ctx}));
 
-            if (!isExistingApp) {
+            if (!isExistingApp && savedApp.type === ApplicationTypes.INTERNAL) {
                 await this.runInstall({applicationId: savedApp.id, ctx});
             }
 
@@ -201,7 +205,10 @@ export default function ({
             const appProps = await this.getApplicationProperties({id: applicationId, ctx});
 
             await applicationRepo.updateApplication({
-                applicationData: {...appProps, install: {status: ApplicationInstallStatus.RUNNING, lastCallResult: ''}},
+                applicationData: {
+                    ...appProps,
+                    install: {status: ApplicationInstallStatuses.RUNNING, lastCallResult: ''}
+                },
                 ctx
             });
             const installResult = await applicationService.runInstall({application: appProps, ctx});
@@ -214,7 +221,16 @@ export default function ({
             return installResult;
         },
         getApplicationUrl({application}) {
-            return `${config.server.publicUrl}/${utils.getFullApplicationEndpoint(application.endpoint)}`;
+            if (application.type === ApplicationTypes.INTERNAL) {
+                return `${config.server.publicUrl}/${utils.getFullApplicationEndpoint(application.endpoint)}`;
+            }
+
+            // External application: make sure URL starts with http or https
+            const url = application.endpoint.match(/^http(s)?:\/\//i)
+                ? application.endpoint
+                : `http://${application.endpoint}`;
+
+            return url;
         }
     };
 }

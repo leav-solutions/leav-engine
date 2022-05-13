@@ -24,11 +24,11 @@ export interface IUtils {
     isIdValid(id: string): boolean;
 
     /**
-     * Validate endpoint format: must be only alphanum characters and dashes
+     * Validate endpoint format: if external, can be any URL, if internal must be only alphanum characters and dashes
      *
      * @param id
      */
-    isEndpointValid(id: string): boolean;
+    isEndpointValid(id: string, isExternal: boolean): boolean;
 
     /**
      * Rethrow an error prefixed by optional message.
@@ -101,11 +101,22 @@ export default function ({translator = null}: IUtilsDeps = {}): IUtils {
 
             return /^[a-z0-9_]+$/.test(id);
         },
-        isEndpointValid(endpoint: string): boolean {
+        isEndpointValid(endpoint, isExternal) {
             if (!endpoint) {
                 return false;
             }
 
+            // External app: any URL
+            if (isExternal) {
+                try {
+                    new URL(endpoint);
+                    return true;
+                } catch (err) {
+                    return false;
+                }
+            }
+
+            // Internal app: simple endpoint
             return /^[a-z0-9-]+$/.test(endpoint);
         },
         rethrow(err: Error, message?: string): void {

@@ -4,6 +4,7 @@
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import React from 'react';
 import {match} from 'react-router';
+import {ApplicationType} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
 import {Mockify} from '_types/Mockify';
 import {mockApplicationDetails} from '__mocks__/common/applications';
@@ -134,5 +135,38 @@ describe('EditApplication', () => {
         });
 
         expect(await screen.findByText('InstallTab')).toBeInTheDocument();
+    });
+
+    test('If external app, do not display install tab', async () => {
+        const mockMatch: Mockify<matchType> = {
+            params: {id: mockApplicationDetails.id}
+        };
+
+        const mocks = [
+            {
+                request: {
+                    query: getApplicationByIdQuery,
+                    variables: {
+                        id: mockApplicationDetails.id
+                    }
+                },
+                result: {
+                    data: {
+                        applications: {
+                            list: [{...mockApplicationDetails, type: ApplicationType.external}]
+                        }
+                    }
+                }
+            }
+        ];
+
+        render(<EditApplication match={mockMatch as matchType} />, {apolloMocks: mocks});
+
+        expect(screen.getByText(/loading/)).toBeInTheDocument();
+
+        expect(await screen.findByText(mockApplicationDetails.label.en)).toBeInTheDocument();
+        expect(screen.getByText('InfosTab')).toBeInTheDocument();
+        expect(screen.getByText(/admin.permissions/)).toBeInTheDocument();
+        expect(screen.queryByText(/applications.install/)).not.toBeInTheDocument();
     });
 });

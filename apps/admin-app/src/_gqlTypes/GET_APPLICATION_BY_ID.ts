@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationInstallStatus} from './globalTypes';
+import {ApplicationType, ApplicationInstallStatus} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATION_BY_ID
@@ -33,6 +33,7 @@ export interface GET_APPLICATION_BY_ID_applications_list_install {
 export interface GET_APPLICATION_BY_ID_applications_list {
     id: string;
     label: SystemTranslation;
+    type: ApplicationType;
     description: SystemTranslation | null;
     endpoint: string;
     url: string;
