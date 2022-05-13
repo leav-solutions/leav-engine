@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AppstoreOutlined} from '@ant-design/icons';
+import {AppstoreOutlined, HomeOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
 import {localizedTranslation, stringToColor} from '@leav/utils';
-import {Avatar, Button, Dropdown, Menu, Skeleton, Tooltip, Typography} from 'antd';
+import {Avatar, Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -59,12 +59,21 @@ function ApplicationSwitcher(): JSX.Element {
     const [{lang}] = useLang();
     const currentApp = useApplicationContext();
 
+    const [isVisible, setIsVisible] = useState(false);
+
     const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery);
+
+    const apps = data?.applications?.list ?? [];
+
+    // Hardcoded IDs for portal and login will be removed when they'll be configured
+    const portalApp = apps.find(app => app.id === 'portal');
+    const loginApp = apps.find(app => app.id === 'login');
+    const portalLabel = localizedTranslation(portalApp?.label, lang);
 
     const menuItems: ItemType[] = loading
         ? skeletonItems
-        : (data?.applications.list ?? [])
-              .filter(app => app.id !== currentApp.id)
+        : apps
+              .filter(app => app.id !== currentApp.id && ![portalApp?.id, loginApp?.id].includes(app.id))
               .map(app => {
                   const label = localizedTranslation(app.label, lang);
                   const description = localizedTranslation(app.description, lang);
@@ -107,8 +116,33 @@ function ApplicationSwitcher(): JSX.Element {
 
     const dropdownContent = error ? <ErrorDisplay message={error.message} /> : AppsMenu;
 
+    if (portalApp) {
+        menuItems.unshift({
+            key: portalApp.id,
+            icon: (
+                <AppLink app={portalApp} label={portalLabel}>
+                    <Avatar
+                        size="default"
+                        style={{marginRight: '1em', background: 'none', color: themingVar['@default-text-color']}}
+                        icon={<HomeOutlined />}
+                    />
+                </AppLink>
+            ),
+            label: (
+                <AppLink app={portalApp} label={portalLabel}>
+                    <Typography.Paragraph ellipsis={{rows: 1, tooltip: portalLabel}}>
+                        {portalLabel}
+                    </Typography.Paragraph>
+                </AppLink>
+            )
+        });
+    }
+
+    const _handleOpen = () => setIsVisible(true);
+    const _handleClose = () => setIsVisible(false);
+
     return (
-        <Dropdown overlay={dropdownContent} trigger={['click']}>
+        <>
             <Tooltip title={t('applications.title')} placement="left">
                 <AppsButton
                     name="applications"
@@ -117,9 +151,22 @@ function ApplicationSwitcher(): JSX.Element {
                     size="large"
                     icon={<AppstoreOutlined style={{fontSize: '1.5em'}} />}
                     aria-label="applications"
+                    onClick={_handleOpen}
                 />
             </Tooltip>
-        </Dropdown>
+            <Drawer
+                visible={isVisible}
+                onClose={_handleClose}
+                placement="right"
+                closable={false}
+                getContainer={false}
+                bodyStyle={{padding: 0}}
+            >
+                {dropdownContent}
+                {/* <Dropdown overlay={dropdownContent} trigger={['click']}>
+            </Dropdown> */}
+            </Drawer>
+        </>
     );
 }
 
