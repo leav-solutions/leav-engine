@@ -48,6 +48,7 @@ checkExitCode
 
 echo 'Installing application...'
 BUILD_DIR=./build
+
 # Make sure destination is clean
 rm -rf $LEAV_DEST_FOLDER
 checkExitCode
