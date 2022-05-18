@@ -42,7 +42,7 @@ export const validateConfig = (conf: IConfig) => {
         }),
         logs: Joi.object().keys({
             level: Joi.string().required(),
-            transport: Joi.array().items(Joi.string()).required(),
+            transport: Joi.string().required(),
             destinationFile: Joi.string()
         }),
         permissions: Joi.object().keys({

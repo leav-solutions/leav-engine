@@ -63,7 +63,7 @@ export interface ILang {
 
 export interface ILogs {
     level: string;
-    transport: string[];
+    transport: string;
     destinationFile?: string;
 }
 

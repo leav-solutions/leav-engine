@@ -30,7 +30,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
@@ -138,6 +138,7 @@ export default function({
 
                 const server = new ApolloServer({
                     debug: config.debug,
+                    introspection: true,
                     plugins: [require('apollo-tracing').plugin(), ApolloServerPluginCacheControlDisabled()],
                     formatResponse: (resp, ctx) => {
                         const formattedResp = {...resp};
