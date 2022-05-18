@@ -10,6 +10,39 @@
 // GraphQL query operation: GET_APPLICATION_BY_ID
 // ====================================================
 
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library_gqlNames {
+    query: string;
+    type: string;
+}
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library {
+    id: string;
+    label: any | null;
+    gqlNames: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library_gqlNames;
+}
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview {
+    tiny: string | null;
+    small: string | null;
+    medium: string | null;
+    big: string | null;
+    huge: string | null;
+    pages: string | null;
+}
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI {
+    id: string;
+    label: string | null;
+    color: string | null;
+    library: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library;
+    preview: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview | null;
+}
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon {
+    id: string;
+    whoAmI: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI;
+}
+
 export interface GET_APPLICATION_BY_ID_applications_list_libraries {
     id: string;
 }
@@ -29,7 +62,7 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     endpoint: string;
     url: string;
     color: string | null;
-    icon: string | null;
+    icon: GET_APPLICATION_BY_ID_applications_list_icon | null;
     libraries: GET_APPLICATION_BY_ID_applications_list_libraries[];
     trees: GET_APPLICATION_BY_ID_applications_list_trees[];
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;

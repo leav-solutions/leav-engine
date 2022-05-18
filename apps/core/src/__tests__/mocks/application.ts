@@ -13,7 +13,9 @@ export const mockApplication: IApplication = {
     libraries: ['products', 'categories'],
     trees: ['files', 'categories'],
     color: 'orange',
-    icon: 'some-icon',
+    icon: {
+        id: '123456'
+    },
     module: 'explorer'
 };
 
@@ -27,6 +29,8 @@ export const mockApplicationExternal: IApplication = {
     libraries: null,
     trees: null,
     color: 'orange',
-    icon: 'some-icon',
+    icon: {
+        id: '123456'
+    },
     module: null
 };

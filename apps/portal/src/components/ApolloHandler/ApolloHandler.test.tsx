@@ -9,6 +9,8 @@ import ApolloHandler from './ApolloHandler';
 
 console.error = jest.fn();
 
+jest.mock('hooks/useGraphqlPossibleTypes');
+
 const gqlUnchecked = gql;
 describe('ApolloHandler', () => {
     test('should fail and display message', async () => {

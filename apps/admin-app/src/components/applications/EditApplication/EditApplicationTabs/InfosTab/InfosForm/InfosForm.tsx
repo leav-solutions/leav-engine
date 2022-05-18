@@ -12,9 +12,11 @@ import {Form, FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
 import {ApplicationType} from '_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
+import FileSelector from '../../../../../shared/FileSelector';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import {ApplicationInfosFormValues} from '../_types';
 import ModuleSelector from './ModuleSelector';
@@ -107,13 +109,27 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdIsUnique);
     }
 
+    // @ts-ignore
     const validationSchema: yup.ObjectSchema<Override<ApplicationInfosFormValues, {type: string}>> = yup
         .object()
         .shape({
             id: idValidator,
             type: yup.string().oneOf(Object.values(ApplicationType)),
             color: yup.string().nullable(),
-            icon: yup.string().nullable(),
+            icon: yup
+                .object()
+                .shape({
+                    whoAmI: yup
+                        .object({
+                            id: yup.string(),
+                            label: yup.string().nullable(),
+                            color: yup.string().nullable(),
+                            library: yup.object().shape({id: yup.string(), label: yup.object()}),
+                            preview: yup.object().nullable()
+                        })
+                        .nullable()
+                })
+                .nullable(),
             module: yup.string(),
             label: yup.object().shape({
                 [defaultLang]: yup.string().required()
@@ -164,6 +180,13 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
             if (!isNewApp) {
                 submitForm();
             }
+        };
+
+        const _handleIconChange = async (selectedIcon: RecordIdentity_whoAmI) => {
+            _handleChangeWithSubmit(null, {
+                name: 'icon',
+                value: {whoAmI: selectedIcon}
+            });
         };
 
         const _getErrorByField = (fieldName: string): string =>
@@ -321,6 +344,13 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                                     onChange={_handleChangeWithSubmit}
                                     onBlur={_handleBlur}
                                     value={values.trees}
+                                />
+                            </FormFieldWrapper>
+                            <FormFieldWrapper error={_getErrorByField('icon.whoAmI')}>
+                                <FileSelector
+                                    onChange={_handleIconChange}
+                                    value={values.icon?.whoAmI ?? null}
+                                    label={t('applications.icon')}
                                 />
                             </FormFieldWrapper>
                         </>

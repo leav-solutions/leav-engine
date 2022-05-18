@@ -10,15 +10,9 @@
 // GraphQL query operation: ME
 // ====================================================
 
-export interface ME_me_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface ME_me_whoAmI_library {
     id: string;
     label: SystemTranslation | null;
-    gqlNames: ME_me_whoAmI_library_gqlNames;
 }
 
 export interface ME_me_whoAmI_preview {
@@ -27,7 +21,6 @@ export interface ME_me_whoAmI_preview {
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
 }
 
 export interface ME_me_whoAmI {

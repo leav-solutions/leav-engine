@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IRecord} from './record';
 import {IGetCoreEntitiesParams, IKeyValue} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 
@@ -32,7 +33,7 @@ export interface IApplication extends ICoreEntity {
     libraries: string[];
     trees: string[];
     color?: string;
-    icon?: string;
+    icon?: IRecord;
     module: string;
     endpoint: string;
     install?: IApplicationInstall;

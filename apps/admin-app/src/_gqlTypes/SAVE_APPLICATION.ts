@@ -6,11 +6,35 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationInput} from './globalTypes';
+import {ApplicationInput, AvailableLanguage} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_APPLICATION
 // ====================================================
+
+export interface SAVE_APPLICATION_saveApplication_icon_whoAmI_library {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_APPLICATION_saveApplication_icon_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
+export interface SAVE_APPLICATION_saveApplication_icon_whoAmI {
+    id: string;
+    library: SAVE_APPLICATION_saveApplication_icon_whoAmI_library;
+    label: string | null;
+    color: string | null;
+    preview: SAVE_APPLICATION_saveApplication_icon_whoAmI_preview | null;
+}
+
+export interface SAVE_APPLICATION_saveApplication_icon {
+    whoAmI: SAVE_APPLICATION_saveApplication_icon_whoAmI;
+}
 
 export interface SAVE_APPLICATION_saveApplication {
     id: string;
@@ -20,7 +44,7 @@ export interface SAVE_APPLICATION_saveApplication {
     endpoint: string;
     label: SystemTranslation;
     system: boolean;
-    icon: string | null;
+    icon: SAVE_APPLICATION_saveApplication_icon | null;
 }
 
 export interface SAVE_APPLICATION {
@@ -29,4 +53,5 @@ export interface SAVE_APPLICATION {
 
 export interface SAVE_APPLICATIONVariables {
     application: ApplicationInput;
+    lang?: AvailableLanguage[] | null;
 }

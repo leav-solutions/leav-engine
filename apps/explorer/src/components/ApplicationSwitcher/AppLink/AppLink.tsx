@@ -2,13 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {ReactNode} from 'react';
-import styled from 'styled-components';
+import styled, {CSSObject} from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 
 interface IAppLinkProps {
     app: GET_APPLICATIONS_applications_list;
     label: string;
     children: ReactNode;
+    style?: CSSObject;
 }
 
 const Wrapper = styled.a`
@@ -20,9 +21,9 @@ const Wrapper = styled.a`
     line-height: 1.3em;
 `;
 
-function AppLink({app, label, children}: IAppLinkProps): JSX.Element {
+function AppLink({app, label, children, style}: IAppLinkProps): JSX.Element {
     return (
-        <Wrapper href={app.url} aria-label={label}>
+        <Wrapper href={app.url} aria-label={label} style={style}>
             {children}
         </Wrapper>
     );

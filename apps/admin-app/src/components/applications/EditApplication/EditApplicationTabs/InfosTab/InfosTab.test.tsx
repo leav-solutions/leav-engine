@@ -12,6 +12,12 @@ import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
 import InfosTab from './InfosTab';
 
+jest.mock('components/shared/FileSelector', () => {
+    return function FileSelector() {
+        return <div>FileSelector</div>;
+    };
+});
+
 describe('InfosTab', () => {
     test('Display form, edit value and submit on blur', async () => {
         let saveCalled = false;
@@ -39,7 +45,8 @@ describe('InfosTab', () => {
                             module: 'admin-app',
                             endpoint: 'my-app',
                             libraries: ['libA', 'libB'],
-                            trees: ['treeA', 'treeB']
+                            trees: ['treeA', 'treeB'],
+                            icon: null
                         }
                     }
                 },
@@ -158,7 +165,8 @@ describe('InfosTab', () => {
                             module: 'admin-app',
                             endpoint: 'my-app',
                             libraries: [],
-                            trees: []
+                            trees: [],
+                            icon: null
                         }
                     }
                 },

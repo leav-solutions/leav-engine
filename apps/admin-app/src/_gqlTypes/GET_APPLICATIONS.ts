@@ -6,11 +6,35 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationsFiltersInput, SortApplications, ApplicationType} from './globalTypes';
+import {ApplicationsFiltersInput, SortApplications, AvailableLanguage, ApplicationType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATIONS
 // ====================================================
+
+export interface GET_APPLICATIONS_applications_list_icon_whoAmI_library {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
+export interface GET_APPLICATIONS_applications_list_icon_whoAmI {
+    id: string;
+    library: GET_APPLICATIONS_applications_list_icon_whoAmI_library;
+    label: string | null;
+    color: string | null;
+    preview: GET_APPLICATIONS_applications_list_icon_whoAmI_preview | null;
+}
+
+export interface GET_APPLICATIONS_applications_list_icon {
+    whoAmI: GET_APPLICATIONS_applications_list_icon_whoAmI;
+}
 
 export interface GET_APPLICATIONS_applications_list {
     id: string;
@@ -19,7 +43,7 @@ export interface GET_APPLICATIONS_applications_list {
     description: SystemTranslation | null;
     endpoint: string;
     color: string | null;
-    icon: string | null;
+    icon: GET_APPLICATIONS_applications_list_icon | null;
     url: string;
 }
 
@@ -34,4 +58,5 @@ export interface GET_APPLICATIONS {
 export interface GET_APPLICATIONSVariables {
     filters?: ApplicationsFiltersInput | null;
     sort?: SortApplications | null;
+    lang?: AvailableLanguage[] | null;
 }

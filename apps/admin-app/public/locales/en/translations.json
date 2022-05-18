@@ -321,6 +321,12 @@
             "internal": "Internal",
             "external": "External"
         },
-        "settings": "Settings"
+        "settings": "Settings",
+        "icon": "Icon"
+    },
+    "file_selector": {
+        "select": "Select a file",
+        "delete_confirm": "Do you really want to delete this file?",
+        "select_library": "Select library"
     }
 }

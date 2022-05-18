@@ -2,9 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
+import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 
 export const getApplicationsQuery = gql`
-    query GET_APPLICATIONS($filters: ApplicationsFiltersInput, $sort: SortApplications) {
+    ${recordIdentityFragment}
+    query GET_APPLICATIONS($filters: ApplicationsFiltersInput, $sort: SortApplications, $lang: [AvailableLanguage!]) {
         applications(filters: $filters, sort: $sort) {
             list {
                 id
@@ -13,7 +15,9 @@ export const getApplicationsQuery = gql`
                 description
                 endpoint
                 color
-                icon
+                icon {
+                    ...RecordIdentity
+                }
                 url
             }
         }

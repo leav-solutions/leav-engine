@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
+import {Override} from '@leav/utils';
 import {GraphQLUpload} from 'apollo-server';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
@@ -9,6 +10,7 @@ import {IApplicationDomain} from 'domain/application/applicationDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IApplicationPermissionDomain} from 'domain/permission/applicationPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import express, {Express} from 'express';
 import glob from 'glob';
@@ -36,6 +38,7 @@ import {
     IApplicationModule
 } from '../../_types/application';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
+import {AttributeCondition, IRecord} from '../../_types/record';
 
 export interface IApplicationApp {
     registerRoute(app: Express): void;
@@ -50,6 +53,7 @@ interface IDeps {
     'core.domain.permission.application'?: IApplicationPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.record'?: IRecordDomain;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
     config?: any;
@@ -63,6 +67,7 @@ export default function ({
     'core.domain.permission.application': applicationPermissionDomain = null,
     'core.domain.library': libraryDomain,
     'core.domain.tree': treeDomain,
+    'core.domain.record': recordDomain,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
     config = null
@@ -103,7 +108,7 @@ export default function ({
                     libraries: [Library!]!,
                     trees: [Tree!]!,
                     color: String,
-                    icon: String,
+                    icon: Record,
                     module: String!,
                     endpoint: String!,
                     url: String!,
@@ -118,6 +123,11 @@ export default function ({
                     version: String
                 }
 
+                input ApplicationIconInput {
+                    libraryId: String!,
+                    recordId: String!
+                }
+
                 input ApplicationInput {
                     id: ID!
                     label: SystemTranslation,
@@ -126,7 +136,7 @@ export default function ({
                     libraries: [String!],
                     trees: [String!],
                     color: String,
-                    icon: String,
+                    icon: ApplicationIconInput,
                     module: String,
                     endpoint: String,
                     settings: JSONObject
@@ -238,6 +248,26 @@ export default function ({
                         },
                         url: (appData: IApplication, _, ctx: IQueryInfos): string => {
                             return applicationDomain.getApplicationUrl({application: appData, ctx});
+                        },
+                        icon: async (
+                            appData: Override<IApplication, {icon: {libraryId: string; recordId: string}}>,
+                            _,
+                            ctx: IQueryInfos
+                        ): Promise<IRecord> => {
+                            if (!appData.icon) {
+                                return null;
+                            }
+                            const record = await recordDomain.find({
+                                params: {
+                                    library: appData.icon.libraryId,
+                                    filters: [
+                                        {field: 'id', value: appData.icon.recordId, condition: AttributeCondition.EQUAL}
+                                    ]
+                                },
+                                ctx
+                            });
+
+                            return record.list.length ? record.list[0] : null;
                         }
                     }
                 }

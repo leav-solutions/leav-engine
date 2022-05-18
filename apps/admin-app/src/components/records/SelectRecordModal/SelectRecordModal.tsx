@@ -9,7 +9,7 @@ import Navigator from '../../navigator';
 
 interface IEditRecordFormSelectRecordProps {
     open: boolean;
-    library: string;
+    library: string | string[];
     onSelect: (record: RecordIdentity_whoAmI) => void;
     onClose: () => void;
 }
@@ -25,7 +25,7 @@ const EditRecordFormSelectRecord = ({
     return (
         <Modal open={open} onClose={onClose}>
             <Modal.Header>{t('records.select_record')}</Modal.Header>
-            <Navigator onEditRecordClick={onSelect} restrictToRoots={[library]} />
+            <Navigator onEditRecordClick={onSelect} restrictToRoots={Array.isArray(library) ? library : [library]} />
             <Modal.Actions>
                 <Button data-test-id="select-record-modal-close-btn" onClick={onClose}>
                     {t('admin.cancel')}
