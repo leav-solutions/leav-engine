@@ -31,7 +31,7 @@ module.exports = {
         prefetch: 1
     },
     logs: {
-        transport: ['console']
+        transport: 'console'
     },
     debug: true
 };

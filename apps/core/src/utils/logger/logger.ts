@@ -8,7 +8,7 @@ interface IDeps {
 }
 export default function ({config = null}: IDeps = {}): logger.Winston {
     if (typeof config.logs !== 'undefined') {
-        const transports = config.logs.transport.map(transport => {
+        const transports = (config.logs.transport ?? '').split(',').map(transport => {
             if (transport === 'console') {
                 return new logger.transports.Console({
                     colorize: true
