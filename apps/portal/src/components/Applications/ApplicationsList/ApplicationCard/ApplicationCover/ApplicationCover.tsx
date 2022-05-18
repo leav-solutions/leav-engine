@@ -11,13 +11,24 @@ interface IApplicationCoverProps {
     application: GET_APPLICATIONS_applications_list;
 }
 
-const Cover = styled.div`
+const Cover = styled.div<{hasIcon: boolean}>`
     font-size: 3.5em;
     font-weight!: bold;
     letter-spacing: 0.5em;
     text-align: center;
     text-transform: uppercase;
-    text-indent: 0.5em;
+    text-indent: ${props => (props.hasIcon ? '0' : '0.5em')};
+    overflow: hidden;
+    height: 6rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+`;
+
+const AppImage = styled.img`
+    height: 5rem;
+    object-fit: cover;
 `;
 
 function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
@@ -29,9 +40,15 @@ function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
         .map(word => word[0])
         .join('');
 
+    const appIcon = application.icon?.whoAmI?.preview?.medium;
     const bgColor = application.color ?? stringToColor(label);
     const fontColor = getInvertColor(bgColor);
-    return <Cover style={{background: bgColor, color: fontColor}}>{initials}</Cover>;
+
+    return (
+        <Cover style={{background: bgColor, color: fontColor}} hasIcon={!!appIcon}>
+            {appIcon ? <AppImage src={appIcon} height="3rem" /> : initials}
+        </Cover>
+    );
 }
 
 export default ApplicationCover;

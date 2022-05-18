@@ -41,4 +41,5 @@ export interface GET_LIBRARIESVariables {
     id?: string | null;
     label?: string | null;
     system?: boolean | null;
+    behavior?: LibraryBehavior[] | null;
 }

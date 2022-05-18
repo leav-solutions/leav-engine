@@ -160,6 +160,11 @@ export interface ActionsListConfigurationInput {
     deleteValue?: ActionConfigurationInput[] | null;
 }
 
+export interface ApplicationIconInput {
+    libraryId: string;
+    recordId: string;
+}
+
 export interface ApplicationInput {
     id: string;
     label?: SystemTranslation | null;
@@ -168,7 +173,7 @@ export interface ApplicationInput {
     libraries?: string[] | null;
     trees?: string[] | null;
     color?: string | null;
-    icon?: string | null;
+    icon?: ApplicationIconInput | null;
     module?: string | null;
     endpoint?: string | null;
     settings?: JSONObject | null;
@@ -177,7 +182,7 @@ export interface ApplicationInput {
 export interface ApplicationsFiltersInput {
     id?: string | null;
     label?: string | null;
-    type?: ApplicationType | null;
+    type?: (ApplicationType | null)[] | null;
     system?: boolean | null;
     endpoint?: string | null;
     module?: string | null;

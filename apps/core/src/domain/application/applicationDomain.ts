@@ -23,7 +23,6 @@ import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 
-const protectedEndpoints = ['login', 'portal'];
 export const MAX_CONSULTATION_HISTORY_SIZE = 10;
 
 export interface IApplicationDomain {
@@ -55,7 +54,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.userData': userDataDomain = null,
     'core.infra.application': applicationRepo = null,
@@ -139,10 +138,6 @@ export default function ({
 
             if (!utils.isEndpointValid(appToSave.endpoint, isExternalApp)) {
                 errors.endpoint = Errors.INVALID_ENDPOINT_FORMAT;
-            }
-
-            if (protectedEndpoints.includes(applicationData.endpoint)) {
-                errors.endpoint = {msg: Errors.PROTECTED_ENDPOINT, vars: {endpoint: applicationData.endpoint}};
             }
 
             if (Object.keys(errors).length) {

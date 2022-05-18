@@ -13,10 +13,6 @@ export const recordIdentityFragment = gql`
             library {
                 id
                 label
-                gqlNames {
-                    query
-                    type
-                }
             }
             preview {
                 tiny
@@ -24,7 +20,6 @@ export const recordIdentityFragment = gql`
                 medium
                 big
                 huge
-                pages
             }
         }
     }

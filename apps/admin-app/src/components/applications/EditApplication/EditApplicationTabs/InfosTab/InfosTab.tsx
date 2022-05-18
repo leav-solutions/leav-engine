@@ -50,7 +50,13 @@ function InfosTab(): JSX.Element {
                 module: submitData.module,
                 endpoint: submitData.endpoint,
                 libraries: submitData.libraries,
-                trees: submitData.trees
+                trees: submitData.trees,
+                icon: submitData.icon?.whoAmI
+                    ? {
+                          libraryId: submitData.icon.whoAmI.library.id,
+                          recordId: submitData.icon.whoAmI.id
+                      }
+                    : null
             }
         };
 

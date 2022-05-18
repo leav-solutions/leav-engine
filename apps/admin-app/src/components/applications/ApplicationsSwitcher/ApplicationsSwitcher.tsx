@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {getInvertColor, localizedTranslation, stringToColor} from '@leav/utils';
+import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
+import RecordPreview from 'components/shared/RecordPreview';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import useLang from 'hooks/useLang';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
@@ -18,16 +19,10 @@ const AppSidebar = styled(Sidebar)`
     padding: 0.5em 1em;
 `;
 
-const AppIcon = styled.span<{color?: string}>`
-    display: inline-block;
-    background: ${props => props.color ?? ''};
-    color: ${props => (props.color ? getInvertColor(props.color) : '#000000')};
+const AppIcon = styled.span`
     width: 2em;
     height: 2em;
-    border-radius: 50%;
     margin-right: 1em;
-    text-align: center;
-    line-height: 2em;
 `;
 
 const AppList = styled(List)`
@@ -104,17 +99,14 @@ function ApplicationsSwitcher(): JSX.Element {
                     .map(app => {
                         const label = localizedTranslation(app.label, lang);
                         const description = localizedTranslation(app.description, lang);
-                        const initials = label
-                            .split(' ')
-                            .slice(0, 2)
-                            .map(word => word[0])
-                            .join('')
-                            .toUpperCase();
-
                         return (
                             <AppItem as="a" href={app.url} key={app.id}>
-                                <AppIcon color={app.color ?? stringToColor(label)} className="ui avatar">
-                                    {initials}
+                                <AppIcon>
+                                    <RecordPreview
+                                        label={label}
+                                        color={app.color}
+                                        image={app?.icon?.whoAmI?.preview?.small}
+                                    />
                                 </AppIcon>
                                 <List.Content>
                                     <List.Header>{label}</List.Header>

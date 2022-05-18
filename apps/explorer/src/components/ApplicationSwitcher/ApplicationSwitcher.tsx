@@ -1,12 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AppstoreOutlined, HomeOutlined} from '@ant-design/icons';
+import {AppstoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {localizedTranslation, stringToColor} from '@leav/utils';
-import {Avatar, Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
+import {localizedTranslation} from '@leav/utils';
+import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import RecordPreview from 'components/shared/RecordPreview';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -31,20 +32,23 @@ const AppsButton = styled(Button)`
 `;
 
 const CustomMenu = styled(Menu)`
-    max-height: 80vh;
-    overflow-y: auto;
-    li {
-        display: grid;
-        grid-template-columns: 3rem 300px;
-        align-content: center;
+    && {
+        max-height: 80vh;
+        overflow-y: auto;
+        li {
+            display: grid;
+            grid-template-columns: 4rem 300px;
+            align-content: center;
+            height: auto;
 
-        .description {
-            color: ${themingVar['@leav-secondary-font-color']};
+            .description {
+                color: ${themingVar['@leav-secondary-font-color']};
+            }
         }
-    }
 
-    .ant-typography {
-        margin-bottom: 0;
+        .ant-typography {
+            margin-bottom: 0;
+        }
     }
 `;
 
@@ -88,9 +92,11 @@ function ApplicationSwitcher(): JSX.Element {
                       key: app.id,
                       icon: (
                           <AppLink app={app} label={label}>
-                              <Avatar style={{backgroundColor: app.color ?? stringToColor(label), marginRight: '1em'}}>
-                                  {initials}
-                              </Avatar>
+                              <RecordPreview
+                                  label={label}
+                                  color={app.color}
+                                  image={app?.icon?.whoAmI?.preview?.small}
+                              />
                           </AppLink>
                       ),
                       label: (
@@ -112,19 +118,15 @@ function ApplicationSwitcher(): JSX.Element {
                   };
               });
 
-    const AppsMenu = <CustomMenu items={menuItems} />;
-
-    const dropdownContent = error ? <ErrorDisplay message={error.message} /> : AppsMenu;
-
     if (portalApp) {
         menuItems.unshift({
             key: portalApp.id,
             icon: (
                 <AppLink app={portalApp} label={portalLabel}>
-                    <Avatar
-                        size="default"
-                        style={{marginRight: '1em', background: 'none', color: themingVar['@default-text-color']}}
-                        icon={<HomeOutlined />}
+                    <RecordPreview
+                        label={portalApp.label}
+                        color={portalApp.color}
+                        image={portalApp?.icon?.whoAmI?.preview?.small}
                     />
                 </AppLink>
             ),
@@ -137,6 +139,10 @@ function ApplicationSwitcher(): JSX.Element {
             )
         });
     }
+
+    const AppsMenu = <CustomMenu items={menuItems} />;
+
+    const dropdownContent = error ? <ErrorDisplay message={error.message} /> : AppsMenu;
 
     const _handleOpen = () => setIsVisible(true);
     const _handleClose = () => setIsVisible(false);
@@ -163,8 +169,6 @@ function ApplicationSwitcher(): JSX.Element {
                 bodyStyle={{padding: 0}}
             >
                 {dropdownContent}
-                {/* <Dropdown overlay={dropdownContent} trigger={['click']}>
-            </Dropdown> */}
             </Drawer>
         </>
     );

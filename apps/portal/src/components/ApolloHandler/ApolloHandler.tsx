@@ -3,7 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache, ServerError} from '@apollo/client';
 import {onError} from '@apollo/link-error';
-import {message} from 'antd';
+import {message, Spin} from 'antd';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 
@@ -11,10 +13,28 @@ interface IApolloHandlerProps {
     children: ReactNode;
 }
 
-export const UNAUTHORIZED = 'Unauthorized';
+export const UNAUTHENTICATED = 'UNAUTHENTICATED';
+
+const _redirectToLogin = () =>
+    window.location.replace(`${process.env.REACT_APP_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
 
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
+
+    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(process.env.REACT_APP_API_URL);
+
+    if (loading) {
+        return <Spin />;
+    }
+
+    if (error) {
+        if (error.includes(UNAUTHENTICATED)) {
+            _redirectToLogin();
+            return <></>;
+        }
+
+        return <ErrorDisplay message={error} />;
+    }
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
     const _handleApolloError = onError(({graphQLErrors, networkError}) => {
@@ -48,7 +68,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             })
         ]),
         cache: new InMemoryCache({
-            possibleTypes: {Record: ['User']}
+            possibleTypes
         })
     });
 

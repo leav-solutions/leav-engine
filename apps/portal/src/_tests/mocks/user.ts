@@ -14,10 +14,6 @@ export const mockUser: ME_me = {
             id: 'users',
             label: {
                 fr: 'Utilisateurs'
-            },
-            gqlNames: {
-                query: 'users',
-                type: 'Users'
             }
         },
         preview: null

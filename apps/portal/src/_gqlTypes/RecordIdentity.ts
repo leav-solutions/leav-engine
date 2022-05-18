@@ -10,15 +10,9 @@
 // GraphQL fragment: RecordIdentity
 // ====================================================
 
-export interface RecordIdentity_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RecordIdentity_whoAmI_library {
     id: string;
     label: SystemTranslation | null;
-    gqlNames: RecordIdentity_whoAmI_library_gqlNames;
 }
 
 export interface RecordIdentity_whoAmI_preview {
@@ -27,7 +21,6 @@ export interface RecordIdentity_whoAmI_preview {
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
 }
 
 export interface RecordIdentity_whoAmI {

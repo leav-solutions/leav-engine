@@ -4,8 +4,8 @@
 import gql from 'graphql-tag';
 
 export const getLibsQuery = gql`
-    query GET_LIBRARIES($id: ID, $label: String, $system: Boolean) {
-        libraries(filters: {id: $id, label: $label, system: $system}) {
+    query GET_LIBRARIES($id: ID, $label: String, $system: Boolean, $behavior: [LibraryBehavior!]) {
+        libraries(filters: {id: $id, label: $label, system: $system, behavior: $behavior}) {
             totalCount
             list {
                 id

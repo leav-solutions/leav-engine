@@ -2,9 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
+import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 
 export const saveApplicationMutation = gql`
-    mutation SAVE_APPLICATION($application: ApplicationInput!) {
+    ${recordIdentityFragment}
+    mutation SAVE_APPLICATION($application: ApplicationInput!, $lang: [AvailableLanguage!]) {
         saveApplication(application: $application) {
             id
             color
@@ -13,7 +15,9 @@ export const saveApplicationMutation = gql`
             endpoint
             label
             system
-            icon
+            icon {
+                ...RecordIdentity
+            }
         }
     }
 `;

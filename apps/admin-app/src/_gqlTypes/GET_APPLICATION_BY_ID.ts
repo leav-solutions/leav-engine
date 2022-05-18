@@ -6,11 +6,35 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationType, ApplicationInstallStatus} from './globalTypes';
+import {AvailableLanguage, ApplicationType, ApplicationInstallStatus} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATION_BY_ID
 // ====================================================
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pages: string | null;
+    big: string | null;
+}
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI {
+    id: string;
+    library: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library;
+    label: string | null;
+    color: string | null;
+    preview: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview | null;
+}
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon {
+    whoAmI: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI;
+}
 
 export interface GET_APPLICATION_BY_ID_applications_list_libraries {
     id: string;
@@ -38,7 +62,7 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     endpoint: string;
     url: string;
     color: string | null;
-    icon: string | null;
+    icon: GET_APPLICATION_BY_ID_applications_list_icon | null;
     module: string;
     libraries: GET_APPLICATION_BY_ID_applications_list_libraries[];
     trees: GET_APPLICATION_BY_ID_applications_list_trees[];
@@ -57,4 +81,5 @@ export interface GET_APPLICATION_BY_ID {
 
 export interface GET_APPLICATION_BY_IDVariables {
     id: string;
+    lang?: AvailableLanguage[] | null;
 }
