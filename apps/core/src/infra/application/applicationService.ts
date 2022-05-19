@@ -30,7 +30,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({'core.utils': utils = null, config}: IDeps = {}): IApplicationService {
+export default function({'core.utils': utils = null, config}: IDeps = {}): IApplicationService {
     const _execCommand = (scriptPath: string, env: {}): Promise<{exitCode: number; out: string}> => {
         return new Promise((resolve, reject) => {
             const child = exec(scriptPath, {env: {...process.env, ...env}, cwd: path.dirname(scriptPath)});
@@ -57,8 +57,12 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
         });
     };
 
+    const _getInstancesFolder = (rootPath: string): string => {
+        return path.resolve(rootPath, config.applications.rootFolder, APPS_INSTANCES_FOLDER);
+    };
+
     const _getDestinationFolder = (applicationId: string, rootPath: string): string => {
-        return path.resolve(rootPath, config.applications.rootFolder, APPS_INSTANCES_FOLDER, applicationId);
+        return path.resolve(_getInstancesFolder(rootPath), applicationId);
     };
 
     return {
@@ -82,9 +86,22 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
                 };
             }
 
+            // Make sure instances folder exists
+            try {
+                await fs.stat(_getInstancesFolder(rootPath));
+            } catch (err) {
+                if (err.code === 'ENOENT') {
+                    await fs.mkdir(_getInstancesFolder(rootPath));
+                } else {
+                    console.error(err);
+                    throw err;
+                }
+            }
+
             // Define env variables
             const leavEnv = {
                 LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
+                LEAV_AUTH_URL: `${config.server.publicUrl}/auth/authenticate`,
                 LEAV_DEFAULT_LANG: config.lang.default,
                 LEAV_AVAILABLE_LANG: config.lang.available.join(','),
                 LEAV_LOGIN_ENDPOINT: utils.getFullApplicationEndpoint('login'),
