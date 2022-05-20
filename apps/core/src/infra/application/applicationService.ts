@@ -7,6 +7,7 @@ import {R_OK} from 'constants';
 import fs from 'fs/promises';
 import path from 'path';
 import {IUtils} from 'utils/utils';
+import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {
@@ -27,10 +28,15 @@ export const APPLICATION_UNINSTALL_SCRIPT_NAME = 'app_uninstall.sh';
 
 interface IDeps {
     'core.utils'?: IUtils;
+    'core.utils.logger'?: winston.Winston;
     config?: IConfig;
 }
 
-export default function ({'core.utils': utils = null, config}: IDeps = {}): IApplicationService {
+export default function ({
+    'core.utils': utils = null,
+    'core.utils.logger': logger = null,
+    config
+}: IDeps = {}): IApplicationService {
     const _execCommand = (scriptPath: string, env: {}): Promise<{exitCode: number; out: string}> => {
         return new Promise((resolve, reject) => {
             const child = exec(scriptPath, {env: {...process.env, ...env}, cwd: path.dirname(scriptPath)});
@@ -57,8 +63,25 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
         });
     };
 
+    const _getInstancesFolder = (rootPath: string): string => {
+        return path.resolve(rootPath, config.applications.rootFolder, APPS_INSTANCES_FOLDER);
+    };
+
     const _getDestinationFolder = (applicationId: string, rootPath: string): string => {
-        return path.resolve(rootPath, config.applications.rootFolder, APPS_INSTANCES_FOLDER, applicationId);
+        return path.resolve(_getInstancesFolder(rootPath), applicationId);
+    };
+
+    const _createInstanceFolder = async (instanceFolderPath: string) => {
+        try {
+            await fs.mkdir(instanceFolderPath);
+        } catch (err) {
+            if (err.code === 'EEXIST') {
+                return;
+            }
+
+            logger.error(err);
+            throw err;
+        }
     };
 
     return {
@@ -82,9 +105,23 @@ export default function ({'core.utils': utils = null, config}: IDeps = {}): IApp
                 };
             }
 
+            // Make sure instances folder exists
+            const instanceFolderPath = _getInstancesFolder(rootPath);
+            try {
+                await fs.stat(instanceFolderPath);
+            } catch (err) {
+                if (err.code === 'ENOENT') {
+                    await _createInstanceFolder(instanceFolderPath);
+                } else {
+                    logger.error(err);
+                    throw err;
+                }
+            }
+
             // Define env variables
             const leavEnv = {
                 LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
+                LEAV_AUTH_URL: `${config.server.publicUrl}/auth/authenticate`,
                 LEAV_DEFAULT_LANG: config.lang.default,
                 LEAV_AVAILABLE_LANG: config.lang.available.join(','),
                 LEAV_LOGIN_ENDPOINT: utils.getFullApplicationEndpoint('login'),
