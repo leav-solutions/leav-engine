@@ -124,7 +124,7 @@ function ApplicationSwitcher(): JSX.Element {
             icon: (
                 <AppLink app={portalApp} label={portalLabel}>
                     <RecordPreview
-                        label={portalApp.label}
+                        label={portalLabel}
                         color={portalApp.color}
                         image={portalApp?.icon?.whoAmI?.preview?.small}
                     />

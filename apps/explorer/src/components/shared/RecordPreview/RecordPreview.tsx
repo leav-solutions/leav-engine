@@ -69,6 +69,17 @@ const ImagePreview = styled.div<IImagePreviewProps>`
 `;
 ImagePreview.displayName = 'ImagePreview';
 
+const _getInitials = (label: string) => {
+    return typeof label === 'string' && label
+        ? label
+              .split(' ')
+              .slice(0, 2)
+              .map(word => word[0])
+              .join('')
+              .toUpperCase()
+        : '?';
+};
+
 function RecordPreviewList({label, color, image, size, style}: IRecordPreviewProps): JSX.Element {
     if (image) {
         return (
@@ -89,8 +100,6 @@ function RecordPreviewList({label, color, image, size, style}: IRecordPreviewPro
         );
     }
 
-    const initial = String(label) ? label[0].toLocaleUpperCase() : '?';
-
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
 
@@ -108,7 +117,7 @@ function RecordPreviewList({label, color, image, size, style}: IRecordPreviewPro
                 fontSize: containerSize > '4rem' ? `calc(${containerSize} - 3rem)` : `calc(${containerSize} - 1rem)`
             }}
         >
-            {initial}
+            {_getInitials(label)}
         </GeneratedPreview>
     );
 }
@@ -191,8 +200,6 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
         );
     }
 
-    const initial = label ? label[0].toLocaleUpperCase() : '?';
-
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
 
@@ -204,7 +211,7 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
             fontColor={fontColor}
             style={style}
         >
-            {initial}
+            {_getInitials(label)}
         </GeneratedPreviewTile>
     );
 }
