@@ -7,6 +7,7 @@ import {R_OK} from 'constants';
 import fs from 'fs/promises';
 import path from 'path';
 import {IUtils} from 'utils/utils';
+import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {
@@ -27,10 +28,15 @@ export const APPLICATION_UNINSTALL_SCRIPT_NAME = 'app_uninstall.sh';
 
 interface IDeps {
     'core.utils'?: IUtils;
+    'core.utils.logger'?: winston.Winston;
     config?: IConfig;
 }
 
-export default function({'core.utils': utils = null, config}: IDeps = {}): IApplicationService {
+export default function ({
+    'core.utils': utils = null,
+    'core.utils.logger': logger = null,
+    config
+}: IDeps = {}): IApplicationService {
     const _execCommand = (scriptPath: string, env: {}): Promise<{exitCode: number; out: string}> => {
         return new Promise((resolve, reject) => {
             const child = exec(scriptPath, {env: {...process.env, ...env}, cwd: path.dirname(scriptPath)});
@@ -65,6 +71,19 @@ export default function({'core.utils': utils = null, config}: IDeps = {}): IAppl
         return path.resolve(_getInstancesFolder(rootPath), applicationId);
     };
 
+    const _createInstanceFolder = async (instanceFolderPath: string) => {
+        try {
+            await fs.mkdir(instanceFolderPath);
+        } catch (err) {
+            if (err.code === 'EEXIST') {
+                return;
+            }
+
+            logger.error(err);
+            throw err;
+        }
+    };
+
     return {
         async runInstall({application}): Promise<IApplicationInstall> {
             const rootPath = appRootPath();
@@ -87,13 +106,14 @@ export default function({'core.utils': utils = null, config}: IDeps = {}): IAppl
             }
 
             // Make sure instances folder exists
+            const instanceFolderPath = _getInstancesFolder(rootPath);
             try {
-                await fs.stat(_getInstancesFolder(rootPath));
+                await fs.stat(instanceFolderPath);
             } catch (err) {
                 if (err.code === 'ENOENT') {
-                    await fs.mkdir(_getInstancesFolder(rootPath));
+                    await _createInstanceFolder(instanceFolderPath);
                 } else {
-                    console.error(err);
+                    logger.error(err);
                     throw err;
                 }
             }
