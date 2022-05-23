@@ -65,7 +65,7 @@ describe('HeaderNotification', () => {
             type: NotificationType.basic,
             time: 1234567890,
             priority: NotificationPriority.low,
-            channel: NotificationChannel.passive
+            channel: NotificationChannel.serverError
         };
 
         const mockState = {

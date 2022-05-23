@@ -149,7 +149,7 @@ function LinkField({
     const _handleCloseValuesAdd = () => setIsValuesAddVisible(false);
 
     const _handleDeleteValue = async (value: IRecordPropertyLink) => {
-        const deleteRes = await onValueDelete({value: value.linkValue.id}, attribute.id);
+        const deleteRes = await onValueDelete({value: value.linkValue.id, id_value: value.id_value}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             setFieldValues(

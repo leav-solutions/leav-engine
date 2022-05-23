@@ -1,0 +1,173 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {InboxOutlined} from '@ant-design/icons';
+import {extractArgsFromString} from '@leav/utils';
+import {message, Upload} from 'antd';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import * as XLSX from 'xlsx';
+import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
+import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
+import {ImportType} from '_gqlTypes/globalTypes';
+import {ImportReducerActionTypes} from '../importReducer/importReducer';
+import {useImportReducerContext} from '../importReducer/ImportReducerContext';
+import {ISheet} from '../_types';
+
+interface IImportModalSelectFileStepsProps {
+    onGetAttributes: (library: string) => Promise<GET_ATTRIBUTES_BY_LIB_attributes_list[]>;
+}
+
+function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStepsProps): JSX.Element {
+    const {t} = useTranslation();
+
+    const {state, dispatch} = useImportReducerContext();
+    const {file} = state;
+
+    const _setFileData = async content => {
+        const workbook = XLSX.read(content, {type: 'binary'});
+
+        const s: ISheet[] = [];
+
+        for (const sheetName in workbook.Sheets) {
+            if (workbook.Sheets.hasOwnProperty(sheetName)) {
+                // Use the sheet_to_json method to convert excel to json data
+                const sheetData: Array<{[col: string]: string}> = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+                    blankrows: false,
+                    defval: null
+                });
+
+                // if sheet is empty we skip it
+                if (!sheetData.length) {
+                    continue;
+                }
+
+                // get columns' name
+                const sheetColumns = Object.keys(sheetData[0]);
+
+                // match only first line cells (A1, B1, etc.)
+                const firstRowAddresses = Object.keys(workbook.Sheets[sheetName]).filter(
+                    k => !!k.match(/\b[A-Z]+1\b/g)
+                );
+                const isMapped = !!workbook.Sheets[sheetName][firstRowAddresses[0]].c;
+
+                // Mapping is present.
+                if (isMapped) {
+                    const comments: string[] = [];
+
+                    for (const address of firstRowAddresses) {
+                        // get first line comments and delete "\n" characters
+                        comments.push(workbook.Sheets[sheetName][address].c?.[0]?.t?.replace(/\n/g, ' ') || null);
+                    }
+
+                    const params = extractArgsFromString(comments[0]);
+
+                    const sType = params.type;
+                    const sLibrary = params.library;
+                    const sKey = params.key;
+                    const sLinkAttribute = params.linkAttribute;
+                    const sKeyTo = params.keyTo;
+                    const sMapping = [];
+                    let sKeyColumnIndex: number;
+                    let sKeyToColumnIndex: number;
+
+                    // Extract mapping, keyIndex and keyToIndex from all columns comments
+                    for (const [index, comm] of comments.entries()) {
+                        const commArgs = extractArgsFromString(comm);
+                        sMapping.push(String(commArgs.id) ?? null);
+
+                        if (commArgs.key) {
+                            sKeyColumnIndex = index;
+                        }
+
+                        if (commArgs.keyTo) {
+                            sKeyToColumnIndex = index;
+                        }
+                    }
+
+                    let sKeyToAttributes: GET_ATTRIBUTES_BY_LIB_attributes_list[] = [];
+
+                    const attrs = await onGetAttributes(sLibrary);
+
+                    const linkAttributeProps =
+                        sKeyToColumnIndex && sLinkAttribute
+                            ? (attrs.find(
+                                  a => a.id === sLinkAttribute
+                              ) as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
+                            : null;
+
+                    if (linkAttributeProps) {
+                        sKeyToAttributes = await onGetAttributes(linkAttributeProps?.linked_library.id);
+                    }
+
+                    s.push({
+                        name: sheetName,
+                        attributes: attrs,
+                        columns: sheetColumns,
+                        type: ImportType[sType],
+                        library: sLibrary,
+                        linkAttribute: sLinkAttribute,
+                        key: sKey,
+                        keyColumnIndex: sKeyColumnIndex,
+                        keyTo: sKeyTo,
+                        keyToColumnIndex: sKeyToColumnIndex,
+                        keyToAttributes: sKeyToAttributes,
+                        data: sheetData.length ? sheetData : null,
+                        mapping: sMapping
+                    });
+                } else {
+                    s.push({
+                        name: sheetName,
+                        columns: sheetColumns,
+                        attributes: [],
+                        mapping: [],
+                        data: sheetData.length ? sheetData : null
+                    });
+                }
+            }
+        }
+
+        if (!s.length || s.every(sheet => sheet.data === null)) {
+            message.error(t('import.empty_file'));
+            return false;
+        }
+
+        dispatch({type: ImportReducerActionTypes.SET_SHEETS, sheets: s});
+
+        return true;
+    };
+
+    const draggerProps = {
+        name: 'file',
+        multiple: false,
+        accept: '.xlsx',
+        showUploadList: false,
+        beforeUpload: fileToImport => {
+            // Read file to read mapping and display a preview on next step
+            const reader = new FileReader();
+            reader.readAsBinaryString(fileToImport);
+
+            reader.onload = async e => {
+                const res = await _setFileData(reader.result);
+                if (res) {
+                    dispatch({type: ImportReducerActionTypes.SET_FILE, file: fileToImport});
+                }
+                dispatch({type: ImportReducerActionTypes.SET_OK_BTN, okBtn: res});
+            };
+
+            // Prevent default upload. We'll handle it ourselves later on
+            return false;
+        }
+    };
+
+    return (
+        <Upload.Dragger {...draggerProps}>
+            <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">{file?.name || t('import.file_selection_instruction')}</p>
+        </Upload.Dragger>
+    );
+}
+
+export default ImportModalSelectFileStep;

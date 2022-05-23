@@ -5,7 +5,7 @@ import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
 import {ILinkValue, IValueEdge} from '_types/value';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecord, IRecordFilterOption, IRecordSort} from '../../_types/record';
+import {AttributeCondition, IRecord, IRecordFilterOption} from '../../_types/record';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {

@@ -120,3 +120,19 @@ export const getInvertColor = (color: string): string => {
 
     return yiq >= 128 ? '#000000' : '#FFFFFF';
 };
+
+/**
+ * Parse string to extract args.
+ * Arg is a string with format:
+ * -[argName] argValue
+ *
+ * eg. "-library product -type link" => {library: product, type: link}
+ * @param mapping
+ */
+export const extractArgsFromString = (mapping: string): {[arg: string]: string} => {
+    const args = mapping
+        .split('-')
+        .slice(1)
+        .map(e => e.replace(/\s+/g, ' ').trim().split(' '));
+    return args.reduce((acc, value) => ({...acc, [value[0]]: value[1] ?? true}), {});
+};

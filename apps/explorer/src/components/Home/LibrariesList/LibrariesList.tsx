@@ -146,11 +146,7 @@ function LibrariesList(): JSX.Element {
                 pagination={false}
             />
             {importActiveLibrary && (
-                <ImportModal
-                    library={importActiveLibrary}
-                    open={!!importActiveLibrary}
-                    onClose={() => setImportActiveLibrary('')}
-                />
+                <ImportModal open={!!importActiveLibrary} onClose={() => setImportActiveLibrary('')} />
             )}
         </Wrapper>
     );

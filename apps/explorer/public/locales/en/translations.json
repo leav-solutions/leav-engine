@@ -341,8 +341,8 @@
     },
     "import": {
         "title": "Data import",
-        "file_selection": "Select XLSX file",
-        "file_selection_instruction": "Click or drag file to this area to upload",
+        "file_selection": "Select file",
+        "file_selection_instruction": "Click or drag file",
         "start": "Start import",
         "in_progress": "Import in progress",
         "data_overview": "Data Overview",
@@ -353,7 +353,21 @@
         "empty_file": "Empty file",
         "mapping": "Mapping",
         "attribute_selection": "Select an attribute",
-        "key": "Select reference attribute"
+        "key": "Select reference attribute",
+        "library": "Library",
+        "type": "Import type",
+        "types": {
+            "standard": "Standard",
+            "link": "Link"
+        },
+        "import_key": "Import key",
+        "select_import_key": "Select key",
+        "link_key": "Link key",
+        "link_attribute": "Link attribute",
+        "select_library": "Select library",
+        "select_type": "Select type",
+        "select_link_attribute": "Select attribute",
+        "do_not_import": "Do not import"
     },
     "error": {
         "error_occurred": "An error occurred",

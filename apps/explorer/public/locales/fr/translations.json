@@ -346,8 +346,8 @@
     },
     "import": {
         "title": "Importer des données",
-        "file_selection": "Sélection du fichier XLSX",
-        "file_selection_instruction": "Cliquez ou déposez votre fichier afin de l'importer",
+        "file_selection": "Sélection du fichier",
+        "file_selection_instruction": "Cliquez ou déposez votre fichier",
         "start": "Lancer l'import",
         "in_progress": "Import en cours",
         "data_overview": "Aperçu des données",
@@ -358,7 +358,21 @@
         "empty_file": "Le fichier ne contient pas de données",
         "mapping": "Sélection des attributs",
         "attribute_selection": "Sélectionner un attribut",
-        "key": "Sélection de l'attribut référence"
+        "key": "Clé",
+        "library": "Bibliothèque",
+        "type": "Type d'import",
+        "types": {
+            "standard": "Standard",
+            "link": "Liaison"
+        },
+        "import_key": "Clé d'import",
+        "select_import_key": "Sélectionner la clé",
+        "link_key": "Clé de liaison",
+        "link_attribute": "Attribut de liaison",
+        "select_library": "Sélectionner une bibliothèque",
+        "select_type": "Sélectionner un type",
+        "select_link_attribute": "Sélectionner un attribut",
+        "do_not_import": "Ne pas importer"
     },
     "error": {
         "error_occurred": "Une erreur est survenue",

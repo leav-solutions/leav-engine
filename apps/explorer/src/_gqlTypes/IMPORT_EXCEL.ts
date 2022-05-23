@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {SheetInput} from './globalTypes';
+
 // ====================================================
 // GraphQL mutation operation: IMPORT_EXCEL
 // ====================================================
@@ -16,7 +18,5 @@ export interface IMPORT_EXCEL {
 
 export interface IMPORT_EXCELVariables {
     file: any;
-    library: string;
-    mapping: (string | null)[];
-    key?: string | null;
+    sheets?: (SheetInput | null)[] | null;
 }

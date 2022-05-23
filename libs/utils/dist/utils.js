@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -117,4 +117,20 @@ const getInvertColor = (color) => {
     return yiq >= 128 ? '#000000' : '#FFFFFF';
 };
 exports.getInvertColor = getInvertColor;
+/**
+ * Parse string to extract args.
+ * Arg is a string with format:
+ * -[argName] argValue
+ *
+ * eg. "-library product -type link" => {library: product, type: link}
+ * @param mapping
+ */
+const extractArgsFromString = (mapping) => {
+    const args = mapping
+        .split('-')
+        .slice(1)
+        .map(e => e.replace(/\s+/g, ' ').trim().split(' '));
+    return args.reduce((acc, value) => { var _a; return (Object.assign(Object.assign({}, acc), { [value[0]]: (_a = value[1]) !== null && _a !== void 0 ? _a : true })); }, {});
+};
+exports.extractArgsFromString = extractArgsFromString;
 //# sourceMappingURL=utils.js.map

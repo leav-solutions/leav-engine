@@ -59,5 +59,19 @@ describe('utils', () => {
             expect(utils_1.getInvertColor('#B7BFC7')).toBe('#000000');
         });
     });
+    describe('extractArgsFromString', () => {
+        test('Extract args', async () => {
+            expect(utils_1.extractArgsFromString('-library product -type link -key')).toEqual({
+                library: 'product',
+                type: 'link',
+                key: true
+            });
+            expect(utils_1.extractArgsFromString('-library product -type link -library users -answer 42')).toEqual({
+                type: 'link',
+                library: 'users',
+                answer: '42'
+            });
+        });
+    });
 });
 //# sourceMappingURL=utils.test.js.map

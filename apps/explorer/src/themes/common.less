@@ -1,8 +1,30 @@
 // Fix some weird behavior on submenu when scroll is active (item title disappearing)
 .ant-menu-vertical-left.ant-menu-sub:not([class*="-active"]), .ant-menu-vertical-right.ant-menu-sub:not([class*="-active"]), .ant-menu-vertical.ant-menu-sub:not([class*="-active"]) {
     overflow-y: scroll;
+}
+
+.ant-typography {
+    overflow-wrap: anywhere;
+}
+
+.ant-btn-primary {
+  border: @leav-primary-btn-border;
+  font-weight: 600;
+
+
+  &:active {
+    border-color: transparent;
+    box-shadow: 0px 3px 6px #5858584d;
+    background: @leav-primary-btn-bg-hover;
   }
 
-  .ant-typography {
-    overflow-wrap: anywhere;
+  &:focus {
+    border-color: transparent;
+    box-shadow: 0px 3px 6px #5858584d;
+    background: @btn-primary-bg;
   }
+
+  &:hover {
+      background: @leav-primary-btn-bg-hover;
+  }
+}

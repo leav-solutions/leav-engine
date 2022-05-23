@@ -77,7 +77,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
             const notification: INotification = {
                 type: NotificationType.error,
                 priority: NotificationPriority.high,
-                channel: NotificationChannel.passive,
+                channel: NotificationChannel.serverError,
                 content: `${t('error.error_occurred')}: ${error.message}`
             };
 

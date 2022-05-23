@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GraphQLUpload} from 'graphql-upload';
 import {IImportDomain} from 'domain/import/importDomain';
+import fs from 'fs';
+import {GraphQLUpload} from 'graphql-upload';
+import {nanoid} from 'nanoid';
+import * as Config from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {IElement, IFile, IFileUpload, ImportType} from '_types/import';
+import {IFileUpload, ImportType} from '_types/import';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import fs from 'fs';
-import {nanoid} from 'nanoid';
-import * as Config from '_types/config';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -31,9 +31,9 @@ interface IImportExcelParams {
         type: ImportType;
         library: string;
         mapping: Array<string | null>;
-        key?: string; // or attributeId on sheet of links
+        keyIndex?: number;
         linkAttribute?: string;
-        keyTo?: string;
+        keyToIndex?: number;
     } | null>;
 }
 
@@ -98,9 +98,9 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                         type: ImportType!
                         library: String!,
                         mapping: [String],
-                        key: String,
+                        keyIndex: Int,
                         linkAttribute: String,
-                        keyTo: String,
+                        keyToIndex: Int,
                     }
 
                     extend type Mutation {
