@@ -6,13 +6,12 @@ import {IValidateHelper} from 'domain/helpers/validate';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {IQueryInfos} from '_types/queryInfos';
-import {Action} from '../../_types/import';
-import {ICacheService, ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import * as Config from '_types/config';
 import fs from 'fs';
 import path from 'path';
-import {when} from 'jest-when';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
+import {Action, ImportMode} from '../../_types/import';
 import importDomain from './importDomain';
 
 const importMockConfig: Mockify<Config.IImport> = {
@@ -59,6 +58,7 @@ describe('importDomain', () => {
                 {
                     library: 'test_import',
                     matches: [],
+                    mode: ImportMode.UPSERT,
                     data: [
                         {
                             attribute: 'simple',
@@ -85,6 +85,7 @@ describe('importDomain', () => {
                 {
                     library: 'users_groups',
                     matches: [],
+                    mode: ImportMode.UPSERT,
                     data: [
                         {
                             attribute: 'simple',
@@ -345,5 +346,221 @@ describe('importDomain', () => {
         expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
         expect(mockTreeDomain.getNodesByRecord.mock.calls.length).toBe(1);
         expect(mockTreeDomain.addElement.mock.calls.length).toBe(1);
+    });
+
+    test('test import elements - Upsert mode', async () => {
+        const data = {
+            elements: [
+                {
+                    library: 'test_import',
+                    matches: [{attribute: 'id', value: 'existingId'}],
+                    mode: ImportMode.UPSERT,
+                    data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
+                    links: []
+                },
+                {
+                    library: 'test_import',
+                    matches: [{attribute: 'id', value: 'nonExistingId'}],
+                    mode: ImportMode.UPSERT,
+                    data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
+                    links: []
+                }
+            ],
+            trees: []
+        };
+
+        await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data));
+
+        const mockAttrDomain: Mockify<IAttributeDomain> = {
+            getLibraryAttributes: global.__mockPromise([{id: 'simple'}])
+        };
+
+        const mockValueDomain: Mockify<IValueDomain> = {
+            saveValue: global.__mockPromise([]),
+            getValues: global.__mockPromise([])
+        };
+
+        const mockRecordDomain: Mockify<IRecordDomain> = {
+            find: jest.fn().mockImplementation(({params}) => {
+                if (params.filters[0].value === 'existingId') {
+                    return {totalCount: 1, list: [{id: 'existingId'}]};
+                } else {
+                    return {totalCount: 0, list: []};
+                }
+            }),
+            createRecord: global.__mockPromise({id: '1'})
+        };
+
+        const mockValidateHelper: Mockify<IValidateHelper> = {validateLibrary: global.__mockPromise()};
+
+        const mockCacheService: Mockify<ICacheService> = {
+            getData: global.__mockPromise(),
+            storeData: global.__mockPromise(),
+            deleteAll: global.__mockPromise()
+        };
+
+        const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
+
+        const imprtDomain = importDomain({
+            config: mockConfig as Config.IConfig,
+            'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+            'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+            'core.domain.value': mockValueDomain as IValueDomain,
+            'core.infra.cache.cacheService': mockCachesService as ICachesService
+        });
+
+        await imprtDomain.import('test.json', ctx);
+
+        expect(mockRecordDomain.find).toBeCalledTimes(2);
+        expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
+        expect(mockValueDomain.saveValue).toBeCalledTimes(2);
+
+        // Delete remaining import file.
+        await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
+    });
+
+    test('test import elements - Insert mode', async () => {
+        const data = {
+            elements: [
+                {
+                    library: 'test_import',
+                    matches: [{attribute: 'id', value: 'existingId'}],
+                    mode: ImportMode.INSERT,
+                    data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
+                    links: []
+                },
+                {
+                    library: 'test_import',
+                    matches: [{attribute: 'id', value: 'nonExistingId'}],
+                    mode: ImportMode.INSERT,
+                    data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
+                    links: []
+                }
+            ],
+            trees: []
+        };
+
+        await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data));
+
+        const mockAttrDomain: Mockify<IAttributeDomain> = {
+            getLibraryAttributes: global.__mockPromise([{id: 'simple'}])
+        };
+
+        const mockValueDomain: Mockify<IValueDomain> = {
+            saveValue: global.__mockPromise([]),
+            getValues: global.__mockPromise([])
+        };
+
+        const mockRecordDomain: Mockify<IRecordDomain> = {
+            find: jest.fn().mockImplementation(({params}) => {
+                if (params.filters[0].value === 'existingId') {
+                    return {totalCount: 1, list: [{id: 'existingId'}]};
+                } else {
+                    return {totalCount: 0, list: []};
+                }
+            }),
+            createRecord: global.__mockPromise({id: '1'})
+        };
+
+        const mockValidateHelper: Mockify<IValidateHelper> = {validateLibrary: global.__mockPromise()};
+
+        const mockCacheService: Mockify<ICacheService> = {
+            getData: global.__mockPromise(),
+            storeData: global.__mockPromise(),
+            deleteAll: global.__mockPromise()
+        };
+
+        const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
+
+        const imprtDomain = importDomain({
+            config: mockConfig as Config.IConfig,
+            'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+            'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+            'core.domain.value': mockValueDomain as IValueDomain,
+            'core.infra.cache.cacheService': mockCachesService as ICachesService
+        });
+
+        await imprtDomain.import('test.json', ctx);
+
+        expect(mockRecordDomain.find).toBeCalledTimes(2);
+        expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
+        expect(mockValueDomain.saveValue).toBeCalledTimes(1);
+
+        // Delete remaining import file.
+        await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
+    });
+
+    test('test import elements - Update mode', async () => {
+        const data = {
+            elements: [
+                {
+                    library: 'test_import',
+                    matches: [{attribute: 'id', value: 'existingId'}],
+                    mode: ImportMode.UPDATE,
+                    data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
+                    links: []
+                },
+                {
+                    library: 'test_import',
+                    matches: [{attribute: 'id', value: 'nonExistingId'}],
+                    mode: ImportMode.UPDATE,
+                    data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
+                    links: []
+                }
+            ],
+            trees: []
+        };
+
+        await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data));
+
+        const mockAttrDomain: Mockify<IAttributeDomain> = {
+            getLibraryAttributes: global.__mockPromise([{id: 'simple'}])
+        };
+
+        const mockValueDomain: Mockify<IValueDomain> = {
+            saveValue: global.__mockPromise([]),
+            getValues: global.__mockPromise([])
+        };
+
+        const mockRecordDomain: Mockify<IRecordDomain> = {
+            find: jest.fn().mockImplementation(({params}) => {
+                if (params.filters[0].value === 'existingId') {
+                    return {totalCount: 1, list: [{id: 'existingId'}]};
+                } else {
+                    return {totalCount: 0, list: []};
+                }
+            }),
+            createRecord: global.__mockPromise({id: '1'})
+        };
+
+        const mockValidateHelper: Mockify<IValidateHelper> = {validateLibrary: global.__mockPromise()};
+
+        const mockCacheService: Mockify<ICacheService> = {
+            getData: global.__mockPromise(),
+            storeData: global.__mockPromise(),
+            deleteAll: global.__mockPromise()
+        };
+
+        const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
+
+        const imprtDomain = importDomain({
+            config: mockConfig as Config.IConfig,
+            'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+            'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+            'core.domain.value': mockValueDomain as IValueDomain,
+            'core.infra.cache.cacheService': mockCachesService as ICachesService
+        });
+
+        await imprtDomain.import('test.json', ctx);
+
+        expect(mockRecordDomain.find).toBeCalledTimes(2);
+        expect(mockRecordDomain.createRecord).not.toBeCalled();
+        expect(mockValueDomain.saveValue).toBeCalledTimes(1);
+
+        // Delete remaining import file.
+        await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
     });
 });

@@ -365,6 +365,13 @@
             "standard": "Standard",
             "link": "Liaison"
         },
+        "select_mode": "Sélectionner un mode",
+        "mode": "Mode d'import",
+        "modes": {
+            "update": "Mise à jour uniquement",
+            "insert": "Création uniquement",
+            "upsert": "Création et mise à jour"
+        },
         "import_key": "Clé d'import",
         "select_import_key": "Sélectionner la clé",
         "link_key": "Clé de liaison",

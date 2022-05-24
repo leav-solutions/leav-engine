@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {ImportType} from '_gqlTypes/globalTypes';
+import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
 
 export interface ISheet {
     name: string;
@@ -11,6 +11,7 @@ export interface ISheet {
     attributes: GET_ATTRIBUTES_BY_LIB_attributes_list[];
     mapping: Array<string | null>;
     type?: ImportType;
+    mode?: ImportMode;
     library?: string;
     linkAttribute?: string;
     key?: string;

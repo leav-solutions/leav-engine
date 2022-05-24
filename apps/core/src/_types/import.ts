@@ -9,6 +9,12 @@ export enum ImportType {
     LINK = 'LINK'
 }
 
+export enum ImportMode {
+    INSERT = 'insert',
+    UPDATE = 'update',
+    UPSERT = 'upsert'
+}
+
 export enum Action {
     ADD = 'add',
     REPLACE = 'replace',
@@ -37,6 +43,7 @@ export interface IData {
 export interface IElement {
     library: string;
     matches: IMatch[];
+    mode: ImportMode;
     data: IData[];
     links: IData[];
 }

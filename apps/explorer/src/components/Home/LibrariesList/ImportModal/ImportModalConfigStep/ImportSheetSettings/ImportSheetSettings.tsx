@@ -8,7 +8,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {AttributeType, ImportType} from '_gqlTypes/globalTypes';
+import {AttributeType, ImportMode, ImportType} from '_gqlTypes/globalTypes';
 import {useImportReducerContext} from '../../importReducer/ImportReducerContext';
 
 interface IImportSettingsProps {
@@ -16,6 +16,7 @@ interface IImportSettingsProps {
     libraries: GET_LIBRARIES_LIST_libraries_list[];
     onLibrarySelect: (sheetIndex: number, library: string) => void;
     onImportTypeSelect: (sheetIndex: number, type: ImportType) => void;
+    onImportModeSelect: (sheetIndex: number, mode: ImportMode) => void;
     onLinkAttributeSelect: (sheetIndex: number, attribute: string) => void;
 }
 
@@ -29,6 +30,7 @@ function ImportSheetSettings({
     libraries,
     onLibrarySelect,
     onImportTypeSelect,
+    onImportModeSelect,
     onLinkAttributeSelect
 }: IImportSettingsProps): JSX.Element {
     const [{lang}] = useLang();
@@ -47,6 +49,19 @@ function ImportSheetSettings({
             >
                 <Select.Option value={ImportType.STANDARD}>{t('import.types.standard')}</Select.Option>
                 <Select.Option value={ImportType.LINK}>{t('import.types.link')}</Select.Option>
+            </Select>
+            <Typography.Title level={5}>{t('import.mode')}</Typography.Title>
+            <Select
+                style={{width: 160}}
+                defaultValue={sheet.mode}
+                placeholder={t('import.select_mode')}
+                onChange={value => onImportModeSelect(sheetIndex, value)}
+            >
+                {Object.values(ImportMode).map(mode => (
+                    <Select.Option key={mode} value={mode}>
+                        {t(`import.modes.${mode}`)}
+                    </Select.Option>
+                ))}
             </Select>
             <Typography.Title level={5}>{t('import.library')}</Typography.Title>
             <Select

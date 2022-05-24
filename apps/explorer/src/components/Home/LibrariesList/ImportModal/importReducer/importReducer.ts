@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ImportType} from '_gqlTypes/globalTypes';
+import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
 import {ImportSteps, ISheet} from '../_types';
 
 export interface IImportReducerState {
@@ -50,24 +50,31 @@ export type ImportReducerAction =
           importError: string;
       };
 
-const _isSheetsConfValid = (state: IImportReducerState, action: ImportReducerAction): IImportReducerState => {
+const _isSheetsConfValid = (sheets: ISheet[]) => {
+    const mappingOk = (s: ISheet) => {
+        return s.mapping.length === Object.keys(s.data[0]).length;
+    };
+    const keysOk = (s: ISheet) => {
+        return s.type === ImportType.LINK
+            ? !!s.linkAttribute && typeof s.keyColumnIndex !== 'undefined' && typeof s.keyToColumnIndex !== 'undefined'
+            : true;
+    };
+    const modeOk = (s: ISheet) => {
+        return s.mode === ImportMode.update
+            ? typeof s.keyColumnIndex !== 'undefined' && s.keyColumnIndex !== null
+            : true;
+    };
+
+    return sheets.every(s => mappingOk(s) && keysOk(s) && modeOk(s));
+};
+
+const importReducer = (state: IImportReducerState, action: ImportReducerAction): IImportReducerState => {
     switch (action.type) {
         case ImportReducerActionTypes.SET_SHEETS:
-            const mappingOk = (s: ISheet) => {
-                return s.mapping.length === Object.keys(s.data[0]).length;
-            };
-            const keysOk = (s: ISheet) => {
-                return s.type === ImportType.LINK
-                    ? !!s.linkAttribute &&
-                          typeof s.keyColumnIndex !== 'undefined' &&
-                          typeof s.keyToColumnIndex !== 'undefined'
-                    : true;
-            };
-
             return {
                 ...state,
                 sheets: action.sheets,
-                okBtn: action.sheets.every(s => mappingOk(s) && keysOk(s))
+                okBtn: _isSheetsConfValid(action.sheets)
             };
         case ImportReducerActionTypes.SET_FILE:
             return {
@@ -94,4 +101,4 @@ const _isSheetsConfValid = (state: IImportReducerState, action: ImportReducerAct
     }
 };
 
-export default _isSheetsConfValid;
+export default importReducer;

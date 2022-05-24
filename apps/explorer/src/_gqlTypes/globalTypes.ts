@@ -33,6 +33,12 @@ export enum FormElementTypes {
     layout = 'layout'
 }
 
+export enum ImportMode {
+    insert = 'insert',
+    update = 'update',
+    upsert = 'upsert'
+}
+
 export enum ImportType {
     LINK = 'LINK',
     STANDARD = 'STANDARD'
@@ -112,11 +118,12 @@ export interface RecordSortInput {
 
 export interface SheetInput {
     type: ImportType;
+    mode: ImportMode;
     library: string;
     mapping?: (string | null)[] | null;
-    key?: string | null;
+    keyIndex?: number | null;
     linkAttribute?: string | null;
-    keyTo?: string | null;
+    keyToIndex?: number | null;
 }
 
 export interface TreeElementInput {

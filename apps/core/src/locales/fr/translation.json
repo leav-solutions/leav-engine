@@ -30,6 +30,7 @@
         "MISSING_REQUIRED_ACTION": "Actions requises manquantes: {{actions}}",
         "MISSING_TARGET": "Cible manquante",
         "MULTIPLE_VALUES_NOT_ALLOWED": "Valeurs multiples non autorisées sur ce type d'attribut",
+        "NO_IMPORT_MATCHES" : "Clé d'import manquante",
         "NON_FILES_LIBRARY": "Impossible de lier une bibliothèque non-fichiers",
         "PAGINATION_OFFSET_AND_CURSOR": "Impossible d'utiliser un offset et un curseur en même temps",
         "PROTECTED_ENDPOINT": "Ce chemin n'est pas autorisé: {{endpoint}}",

@@ -9,7 +9,7 @@ import {useTranslation} from 'react-i18next';
 import * as XLSX from 'xlsx';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {ImportType} from '_gqlTypes/globalTypes';
+import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
 import {ISheet} from '../_types';
@@ -17,6 +17,9 @@ import {ISheet} from '../_types';
 interface IImportModalSelectFileStepsProps {
     onGetAttributes: (library: string) => Promise<GET_ATTRIBUTES_BY_LIB_attributes_list[]>;
 }
+
+const defaultType = ImportType.STANDARD;
+const defaultMode = ImportMode.upsert;
 
 function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStepsProps): JSX.Element {
     const {t} = useTranslation();
@@ -62,11 +65,12 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
 
                     const params = extractArgsFromString(comments[0]);
 
-                    const sType = params.type;
+                    const sType = params.type ?? defaultType;
                     const sLibrary = params.library;
                     const sKey = params.key;
                     const sLinkAttribute = params.linkAttribute;
                     const sKeyTo = params.keyTo;
+                    const sMode = params.mode ?? defaultMode;
                     const sMapping = [];
                     let sKeyColumnIndex: number;
                     let sKeyToColumnIndex: number;
@@ -105,6 +109,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                         attributes: attrs,
                         columns: sheetColumns,
                         type: ImportType[sType],
+                        mode: ImportMode[sMode],
                         library: sLibrary,
                         linkAttribute: sLinkAttribute,
                         key: sKey,
@@ -119,6 +124,8 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                     s.push({
                         name: sheetName,
                         columns: sheetColumns,
+                        type: defaultType,
+                        mode: defaultMode,
                         attributes: [],
                         mapping: [],
                         data: sheetData.length ? sheetData : null

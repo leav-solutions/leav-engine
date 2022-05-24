@@ -14,7 +14,7 @@ import {
     GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute
 } from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {AttributeType, ImportType} from '_gqlTypes/globalTypes';
+import {AttributeType, ImportMode, ImportType} from '_gqlTypes/globalTypes';
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
 import {ISheet} from '../_types';
@@ -63,6 +63,10 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
             keyTo: null,
             keyToAttributes: null
         });
+    };
+
+    const _handleImportModeSelect = (sheetIndex: number, mode: ImportMode) => {
+        _changeSheetProperty(sheetIndex, {mode});
     };
 
     const _handleLinkAttributeSelect = async (sheetIndex: number, linkAttribute: string) => {
@@ -220,6 +224,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                                 libraries={libraries}
                                 onLibrarySelect={_handleLibrarySelect}
                                 onImportTypeSelect={_handleImportTypeSelect}
+                                onImportModeSelect={_handleImportModeSelect}
                                 onLinkAttributeSelect={_handleLinkAttributeSelect}
                             />
                             <Table

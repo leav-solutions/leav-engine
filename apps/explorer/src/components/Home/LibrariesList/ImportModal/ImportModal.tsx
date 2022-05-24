@@ -87,6 +87,7 @@ function ImportModal({onClose, open}: IImportModalProps): JSX.Element {
                     file,
                     sheets: sheets.map(sheet => ({
                         type: sheet.type,
+                        mode: sheet.mode,
                         library: sheet.library,
                         mapping: sheet.mapping,
                         keyIndex: Number(sheet.keyColumnIndex),

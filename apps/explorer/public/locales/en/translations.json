@@ -360,6 +360,13 @@
             "standard": "Standard",
             "link": "Link"
         },
+        "select_mode": "Select mode",
+        "mode": "Import mode",
+        "modes": {
+            "update": "Update only",
+            "insert": "Insert only",
+            "upsert": "Update and insert"
+        },
         "import_key": "Import key",
         "select_import_key": "Select key",
         "link_key": "Link key",

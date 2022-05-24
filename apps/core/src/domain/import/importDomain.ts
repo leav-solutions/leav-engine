@@ -17,7 +17,16 @@ import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {Action, IData, IElement, IMatch, ImportType, ITree, IValue as IImportValue} from '../../_types/import';
+import {
+    Action,
+    IData,
+    IElement,
+    IMatch,
+    ImportMode,
+    ImportType,
+    ITree,
+    IValue as IImportValue
+} from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {ITreeElement} from '../../_types/tree';
@@ -25,12 +34,14 @@ import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
+const defaultImportMode = ImportMode.UPSERT;
 
 export interface IImportExcelParams {
     filename: string;
     sheets?: Array<{
         type: ImportType;
         library: string;
+        mode: ImportMode;
         mapping: Array<string | null>;
         keyIndex?: number; // or attributeId on sheet of links
         keyToIndex?: number; // or attributeId on sheet of links
@@ -377,7 +388,8 @@ export default function ({
             try {
                 await _jsonSchemaValidation(filename);
             } catch (err) {
-                throw new ValidationError({file: err.message});
+                const message = err.errors.map(e => e.message).join('\n');
+                throw new ValidationError({}, message);
             }
 
             const cacheDataPath = `${filename}-links`;
@@ -387,11 +399,25 @@ export default function ({
                 filename,
                 // treat elements and cache links
                 async (element: IElement, index: number): Promise<void> => {
+                    const importMode = element.mode ?? defaultImportMode;
                     await validateHelper.validateLibrary(element.library, ctx);
 
-                    let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
+                    if (element.mode === ImportMode.UPDATE && !element.matches.length) {
+                        throw new ValidationError({element: Errors.NO_IMPORT_MATCHES});
+                    }
 
-                    // if not match we create a new record
+                    let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
+                    const recordFound = !!recordIds.length;
+
+                    // Record not found, in update mode, we just ignore it
+                    if (
+                        (!recordFound && element.mode === ImportMode.UPDATE) ||
+                        (recordFound && element.mode === ImportMode.INSERT)
+                    ) {
+                        return;
+                    }
+
+                    // Create the record if it does not exist
                     if (!recordIds.length) {
                         recordIds = [(await recordDomain.createRecord(element.library, ctx)).id];
                     }
@@ -438,12 +464,16 @@ export default function ({
 
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
-                const cacheStringifiedObject = (
-                    await cacheService.getCache(ECacheType.DISK).getData([cacheKey.toString()], cacheDataPath)
-                )[0];
-                const element = JSON.parse(cacheStringifiedObject);
-                for (const link of element.links) {
-                    await _treatElement(element.library, link, element.recordIds, ctx);
+                try {
+                    const cacheStringifiedObject = (
+                        await cacheService.getCache(ECacheType.DISK).getData([cacheKey.toString()], cacheDataPath)
+                    )[0];
+                    const element = JSON.parse(cacheStringifiedObject);
+                    for (const link of element.links) {
+                        await _treatElement(element.library, link, element.recordIds, ctx);
+                    }
+                } catch (err) {
+                    continue;
                 }
             }
 
@@ -494,7 +524,8 @@ export default function ({
 
             for (const [indexSheet, dataSheet] of data.entries()) {
                 if (sheets?.[indexSheet] !== null) {
-                    let {type, library, mapping, keyIndex, linkAttribute, keyToIndex} = sheets?.[indexSheet] || {};
+                    let {type, library, mapping, keyIndex, linkAttribute, keyToIndex, mode = defaultImportMode} =
+                        sheets?.[indexSheet] || {};
                     mapping = mapping ?? [];
 
                     // on mapping in file
@@ -518,6 +549,7 @@ export default function ({
                         const args = extractArgsFromString(comments[0]);
 
                         type = ImportType[String(args.type)];
+                        mode = args.mode ? (String(args.mode) as ImportMode) : defaultImportMode;
 
                         // if sheet type is not specified we ignore this sheet
                         if (typeof type === 'undefined') {
@@ -630,6 +662,7 @@ export default function ({
                         const element = {
                             library,
                             matches,
+                            mode,
                             data: elementData,
                             links: elementLinks
                         };

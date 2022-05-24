@@ -7,10 +7,10 @@ import {GraphQLUpload} from 'graphql-upload';
 import {nanoid} from 'nanoid';
 import * as Config from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {IFileUpload, ImportType} from '_types/import';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
+import {IFileUpload, ImportMode, ImportType} from '../../_types/import';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -30,6 +30,7 @@ interface IImportExcelParams {
     sheets?: Array<{
         type: ImportType;
         library: string;
+        mode: ImportMode;
         mapping: Array<string | null>;
         keyIndex?: number;
         linkAttribute?: string;
@@ -90,12 +91,16 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                     scalar Upload
 
                     enum ImportType {
-                        STANDARD
-                        LINK
+                        ${Object.values(ImportType).join(' ')}
+                    }
+
+                    enum ImportMode {
+                        ${Object.values(ImportMode).join(' ')}
                     }
 
                     input SheetInput {
                         type: ImportType!
+                        mode: ImportMode!
                         library: String!,
                         mapping: [String],
                         keyIndex: Int,
