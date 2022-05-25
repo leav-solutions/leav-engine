@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KeyOutlined, LinkOutlined} from '@ant-design/icons';
+import {KeyOutlined, LinkOutlined, WarningOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Select, Space, Table, Tabs, Typography} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
@@ -11,7 +11,8 @@ import {useTranslation} from 'react-i18next';
 import themingVar from 'themingVar';
 import {
     GET_ATTRIBUTES_BY_LIB_attributes_list,
-    GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute
+    GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute,
+    GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute
 } from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {AttributeType, ImportMode, ImportType} from '_gqlTypes/globalTypes';
@@ -19,6 +20,7 @@ import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
 import {ISheet} from '../_types';
 import ImportKeysSelector from './ImportKeysSelector';
+import ImportMappingRowTitle from './ImportMappingRowTitle';
 import ImportSheetSettings from './ImportSheetSettings';
 
 interface IImportModalConfigStepProps {
@@ -49,9 +51,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
             library: lib,
             attributes: attrs,
             mapping: [],
-            key: null,
             linkAttribute: null,
-            keyTo: null,
             keyToAttributes: null
         });
     };
@@ -60,7 +60,6 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         _changeSheetProperty(sheetIndex, {
             type,
             linkAttribute: null,
-            keyTo: null,
             keyToAttributes: null
         });
     };
@@ -70,20 +69,36 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
     };
 
     const _handleLinkAttributeSelect = async (sheetIndex: number, linkAttribute: string) => {
-        const linkAttributeProps = sheets[sheetIndex].attributes.find(
-            a => a.id === linkAttribute
-        ) as GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute;
+        const sheet = sheets[sheetIndex];
+        const linkAttributeProps = sheet.attributes.find(a => a.id === linkAttribute) as
+            | GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute
+            | GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute;
 
-        const library = linkAttributeProps.linked_library.id;
-        const attrs = await onGetAttributes(library);
+        const library =
+            linkAttributeProps.type === AttributeType.tree
+                ? sheet.treeLinkLibrary
+                : (linkAttributeProps as GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute)?.linked_library?.id;
 
-        const mapping = sheets[sheetIndex].mapping;
+        let keyToAttributes = [];
+        if (library) {
+            keyToAttributes = await onGetAttributes(library);
+        }
+
+        const mapping = sheet.mapping;
 
         _changeSheetProperty(sheetIndex, {
             linkAttribute,
+            linkAttributeProps,
             mapping,
-            keyTo: null,
-            keyToAttributes: attrs
+            keyToAttributes,
+            treeLinkLibrary:
+                linkAttributeProps.type === AttributeType.tree
+                    ? (linkAttributeProps as GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute).linked_tree.libraries
+                          .map(l => l.library.id)
+                          .includes(sheet.treeLinkLibrary)
+                        ? sheet.treeLinkLibrary
+                        : null
+                    : null
         });
     };
 
@@ -92,23 +107,20 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         const mapping = sheet.mapping;
         mapping[mappingIndex] = attributeId;
 
-        const key = !!sheet.key && sheet.mapping.includes(sheet.key) ? sheet.key : null;
-
-        const keyTo =
-            mapping[mappingIndex] === sheet.keyTo || sheet.keyToColumnIndex === mappingIndex
-                ? attributeId
-                : sheet.keyTo;
-
         _changeSheetProperty(sheetIndex, {
-            mapping,
-            key,
-            keyTo
+            mapping
         });
+    };
+
+    const _handleTreeLinkLibrarySelect = async (sheetIndex: number, treeLinkLibrary: string) => {
+        const keyToAttributes = treeLinkLibrary ? await onGetAttributes(treeLinkLibrary) : null;
+        _changeSheetProperty(sheetIndex, {treeLinkLibrary, keyToAttributes});
     };
 
     return (
         <Tabs type="card">
             {sheets.map((sheet, sheetIndex) => {
+                const isSheetIgnored = sheet.type === ImportType.IGNORE;
                 const displayedRows = sheet.data.slice(0, 3);
                 const _handleSelectKey = (columnIndex: number) => (keyType: 'key' | 'keyTo', value: boolean) => {
                     const newProps: Partial<ISheet> = {};
@@ -178,7 +190,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                 if (sheet.type && sheet.library && (sheet.type !== ImportType.LINK || sheet.linkAttribute)) {
                     const mappingRow = {
                         key: sheetData.length,
-                        __root: t('import.mapping'),
+                        __root: <ImportMappingRowTitle sheet={sheet} />,
                         ...Object.keys(sheet.data[0]).reduce((allCols, col, idx) => {
                             const attributeSelectOptions = (sheet.keyToColumnIndex === idx
                                 ? sheet?.keyToAttributes ?? []
@@ -216,8 +228,16 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                     sheetData.push(mappingRow);
                 }
 
+                const tabTitle = (
+                    <Space>
+                        {sheet.name}
+                        {!!state.settingsError[sheet.name] && (
+                            <WarningOutlined style={{color: themingVar['@error-color']}} />
+                        )}
+                    </Space>
+                );
                 return (
-                    <Tabs.TabPane tab={sheet.name} key={sheetIndex}>
+                    <Tabs.TabPane tab={tabTitle} key={sheetIndex}>
                         <Space direction="vertical" align="start">
                             <ImportSheetSettings
                                 sheetIndex={sheetIndex}
@@ -226,15 +246,20 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                                 onImportTypeSelect={_handleImportTypeSelect}
                                 onImportModeSelect={_handleImportModeSelect}
                                 onLinkAttributeSelect={_handleLinkAttributeSelect}
+                                onTreeLinkLibrarySelect={_handleTreeLinkLibrarySelect}
                             />
-                            <Table
-                                title={() => <Typography.Title level={5}>{t('import.data_overview')}</Typography.Title>}
-                                tableLayout={'fixed'}
-                                columns={sheetColumns}
-                                dataSource={sheetData}
-                                size="small"
-                                pagination={{hideOnSinglePage: true}}
-                            />
+                            {!isSheetIgnored && (
+                                <Table
+                                    title={() => (
+                                        <Typography.Title level={5}>{t('import.data_overview')}</Typography.Title>
+                                    )}
+                                    tableLayout={'fixed'}
+                                    columns={sheetColumns}
+                                    dataSource={sheetData}
+                                    size="small"
+                                    pagination={{hideOnSinglePage: true}}
+                                />
+                            )}
                         </Space>
                     </Tabs.TabPane>
                 );

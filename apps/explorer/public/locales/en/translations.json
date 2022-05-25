@@ -357,8 +357,9 @@
         "library": "Library",
         "type": "Import type",
         "types": {
-            "standard": "Standard",
-            "link": "Link"
+            "IGNORE": "Ignore",
+            "STANDARD": "Standard",
+            "LINK": "Link"
         },
         "select_mode": "Select mode",
         "mode": "Import mode",
@@ -374,7 +375,17 @@
         "select_library": "Select library",
         "select_type": "Select type",
         "select_link_attribute": "Select attribute",
-        "do_not_import": "Do not import"
+        "do_not_import": "Do not import",
+        "settings_errors": {
+            "MAPPING": "Please select at least one attribute",
+            "KEY": "Please select an import key",
+            "KEY_TO": "Please select a link key",
+            "TYPE": "Please select a type",
+            "MODE": "Please select a mode",
+            "LIBRARY": "Please select a library",
+            "LINK_ATTRIBUTE": "Please select a link attribute"
+        },
+        "tree_link_library": "Linked library"
     },
     "error": {
         "error_occurred": "An error occurred",

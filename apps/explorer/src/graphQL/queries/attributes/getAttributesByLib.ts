@@ -21,6 +21,12 @@ export const getAttributesByLibQuery = gql`
                     linked_tree {
                         id
                         label
+                        libraries {
+                            library {
+                                id
+                                label
+                            }
+                        }
                     }
                 }
                 ... on StandardAttribute {

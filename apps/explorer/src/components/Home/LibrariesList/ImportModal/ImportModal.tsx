@@ -23,7 +23,7 @@ import ImportModalSelectFileStep from './ImportModalSelectFileStep';
 import importReducer from './importReducer';
 import {ImportReducerActionTypes, initialState} from './importReducer/importReducer';
 import ImportReducerContext from './importReducer/ImportReducerContext';
-import {ImportSteps, ISheet} from './_types';
+import {ImportSteps} from './_types';
 
 const {Step} = Steps;
 
@@ -67,8 +67,8 @@ function ImportModal({onClose, open}: IImportModalProps): JSX.Element {
         },
         onError: error => {
             // Extract human friendly error message
-            let errorMessage = error.message;
-            const serverErrors = (error.networkError as ServerError).result.errors;
+            let errorMessage = error?.message;
+            const serverErrors = (error?.networkError as ServerError)?.result?.errors ?? [];
             if (serverErrors.length) {
                 errorMessage = serverErrors.map(serverError => serverError.message).join('\n');
             }
@@ -85,15 +85,18 @@ function ImportModal({onClose, open}: IImportModalProps): JSX.Element {
             await runImport({
                 variables: {
                     file,
-                    sheets: sheets.map(sheet => ({
-                        type: sheet.type,
-                        mode: sheet.mode,
-                        library: sheet.library,
-                        mapping: sheet.mapping,
-                        keyIndex: Number(sheet.keyColumnIndex),
-                        linkAttribute: sheet.linkAttribute,
-                        keyToIndex: Number(sheet.keyToColumnIndex)
-                    }))
+                    sheets: sheets
+                        .filter(sheet => sheet.type !== ImportType.IGNORE)
+                        .map(sheet => ({
+                            type: sheet.type,
+                            mode: sheet.mode,
+                            library: sheet.library,
+                            mapping: sheet.mapping,
+                            keyIndex: Number(sheet.keyColumnIndex),
+                            linkAttribute: sheet.linkAttribute,
+                            keyToIndex: Number(sheet.keyToColumnIndex),
+                            treeLinkLibrary: sheet.treeLinkLibrary
+                        }))
                 }
             });
         } catch (err) {
@@ -138,17 +141,6 @@ function ImportModal({onClose, open}: IImportModalProps): JSX.Element {
         </Space>
     );
 
-    const refreshOkBtn = () => {
-        const mappingOk = (s: ISheet) => s.mapping.length === Object.keys(s.data[0]).length;
-        const keyToOk = (s: ISheet) => (s.type === ImportType.LINK ? !!s.linkAttribute && !!s.keyTo : true);
-
-        const isValid = sheets.every(s => mappingOk(s) && keyToOk(s));
-        dispatch({
-            type: ImportReducerActionTypes.SET_OK_BTN,
-            okBtn: sheets.every(s => mappingOk(s) && keyToOk(s))
-        });
-    };
-
     const _handleGetAttributes = async (attributesLib: string) => {
         const {error, data} = await runGetAttributes({
             variables: {library: attributesLib}
@@ -174,6 +166,26 @@ function ImportModal({onClose, open}: IImportModalProps): JSX.Element {
         }
     };
 
+    // Generate a recap of all settings errors, by sheet. This will be set as button title, thus we generate a raw string
+    const buttonTitle =
+        currentStep === ImportSteps.CONFIG
+            ? Object.keys(state.settingsError)
+                  .reduce((errorMessage, sheetKey) => {
+                      if (state.settingsError[sheetKey]) {
+                          let sheetErrorMessage = `${sheetKey}:\n`;
+                          sheetErrorMessage +=
+                              '\t' +
+                              state.settingsError[sheetKey]
+                                  .map(error => t(`import.settings_errors.${error}`))
+                                  .join('\n\t');
+                          errorMessage.push(sheetErrorMessage);
+                      }
+
+                      return errorMessage;
+                  }, [])
+                  .join('\n')
+            : '';
+
     return (
         <ImportReducerContext.Provider value={{state, dispatch}}>
             <Modal
@@ -188,7 +200,7 @@ function ImportModal({onClose, open}: IImportModalProps): JSX.Element {
                 centered
                 confirmLoading={currentStep === ImportSteps.PROCESSING}
                 bodyStyle={{height: 'calc(100vh - 10rem)'}}
-                okButtonProps={{disabled: !okBtn, className: 'submit-btn'}}
+                okButtonProps={{disabled: !okBtn, className: 'submit-btn', title: buttonTitle}}
                 cancelButtonProps={{disabled: currentStep === ImportSteps.DONE}}
                 destroyOnClose={true}
             >

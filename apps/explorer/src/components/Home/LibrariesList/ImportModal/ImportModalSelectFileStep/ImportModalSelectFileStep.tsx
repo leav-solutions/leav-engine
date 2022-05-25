@@ -9,7 +9,7 @@ import {useTranslation} from 'react-i18next';
 import * as XLSX from 'xlsx';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
+import {AttributeType, ImportMode, ImportType} from '_gqlTypes/globalTypes';
 import {ImportReducerActionTypes} from '../importReducer/importReducer';
 import {useImportReducerContext} from '../importReducer/ImportReducerContext';
 import {ISheet} from '../_types';
@@ -67,11 +67,10 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
 
                     const sType = params.type ?? defaultType;
                     const sLibrary = params.library;
-                    const sKey = params.key;
                     const sLinkAttribute = params.linkAttribute;
-                    const sKeyTo = params.keyTo;
                     const sMode = params.mode ?? defaultMode;
                     const sMapping = [];
+                    const sTreeLinkLibrary = params.treeLinkLibrary;
                     let sKeyColumnIndex: number;
                     let sKeyToColumnIndex: number;
 
@@ -100,8 +99,12 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                               ) as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
                             : null;
 
-                    if (linkAttributeProps) {
-                        sKeyToAttributes = await onGetAttributes(linkAttributeProps?.linked_library.id);
+                    if (linkAttributeProps && (linkAttributeProps.type !== AttributeType.tree || sTreeLinkLibrary)) {
+                        const keyToLibrary =
+                            linkAttributeProps.type === AttributeType.tree
+                                ? sTreeLinkLibrary
+                                : linkAttributeProps?.linked_library?.id;
+                        sKeyToAttributes = await onGetAttributes(keyToLibrary);
                     }
 
                     s.push({
@@ -112,11 +115,11 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                         mode: ImportMode[sMode],
                         library: sLibrary,
                         linkAttribute: sLinkAttribute,
-                        key: sKey,
+                        linkAttributeProps,
                         keyColumnIndex: sKeyColumnIndex,
-                        keyTo: sKeyTo,
                         keyToColumnIndex: sKeyToColumnIndex,
                         keyToAttributes: sKeyToAttributes,
+                        treeLinkLibrary: sTreeLinkLibrary,
                         data: sheetData.length ? sheetData : null,
                         mapping: sMapping
                     });

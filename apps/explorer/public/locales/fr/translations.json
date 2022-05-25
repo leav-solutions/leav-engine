@@ -362,8 +362,9 @@
         "library": "Bibliothèque",
         "type": "Type d'import",
         "types": {
-            "standard": "Standard",
-            "link": "Liaison"
+            "IGNORE": "Ignorer",
+            "STANDARD": "Standard",
+            "LINK": "Liaison"
         },
         "select_mode": "Sélectionner un mode",
         "mode": "Mode d'import",
@@ -379,7 +380,17 @@
         "select_library": "Sélectionner une bibliothèque",
         "select_type": "Sélectionner un type",
         "select_link_attribute": "Sélectionner un attribut",
-        "do_not_import": "Ne pas importer"
+        "do_not_import": "Ne pas importer",
+        "settings_errors": {
+            "MAPPING": "Veuillez sélectionner au moins un attribut",
+            "KEY": "Veuillez sélectionner une clé d'import",
+            "KEY_TO": "Veuillez sélectionner une clé de liaison",
+            "TYPE": "Veuillez sélectionner un type",
+            "MODE": "Veuillez sélectionner un mode",
+            "LIBRARY": "Veuillez sélectionner une bibliothèque",
+            "LINK_ATTRIBUTE": "Veuillez sélectionner un attribut de liaison"
+        },
+        "tree_link_library": "Bibliothèque liée"
     },
     "error": {
         "error_occurred": "Une erreur est survenue",

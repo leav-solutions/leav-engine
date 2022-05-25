@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
-import {ImportSteps, ISheet} from '../_types';
+import {ImportSteps, ISheet, SheetSettingsError} from '../_types';
 
 export interface IImportReducerState {
     sheets: ISheet[];
@@ -10,6 +10,7 @@ export interface IImportReducerState {
     currentStep: ImportSteps;
     okBtn: boolean;
     importError?: string;
+    settingsError: {[sheetName: string]: SheetSettingsError[]};
 }
 
 export enum ImportReducerActionTypes {
@@ -25,7 +26,8 @@ export const initialState: IImportReducerState = {
     file: null,
     currentStep: ImportSteps.SELECT_FILE,
     okBtn: false,
-    importError: null
+    importError: null,
+    settingsError: {}
 };
 
 export type ImportReducerAction =
@@ -68,34 +70,115 @@ const _isSheetsConfValid = (sheets: ISheet[]) => {
     return sheets.every(s => mappingOk(s) && keysOk(s) && modeOk(s));
 };
 
+const _getSheetErrors = (sheet: ISheet): SheetSettingsError[] => {
+    if (sheet.type === ImportType.IGNORE) {
+        return [];
+    }
+
+    const checks: Array<{error: SheetSettingsError; condition: boolean}> = [
+        {
+            error: SheetSettingsError.TYPE,
+            condition: !sheet.type
+        },
+        {
+            error: SheetSettingsError.MODE,
+            condition: !sheet.mode
+        },
+        {
+            error: SheetSettingsError.LIBRARY,
+            condition: !sheet.library
+        },
+        {
+            error: SheetSettingsError.MAPPING,
+            condition: sheet.type && !(sheet?.mapping ?? []).filter(mappingCol => !!mappingCol).length
+        },
+        {
+            error: SheetSettingsError.LINK_ATTRIBUTE,
+            condition: sheet.type === ImportType.LINK && !sheet.linkAttribute
+        },
+        {
+            error: SheetSettingsError.KEY,
+            condition:
+                (sheet.mode === ImportMode.update || sheet.type === ImportType.LINK) &&
+                (typeof sheet.keyColumnIndex === 'undefined' ||
+                    sheet.keyColumnIndex === null ||
+                    !sheet.mapping[sheet.keyColumnIndex])
+        },
+        {
+            error: SheetSettingsError.KEY_TO,
+            condition:
+                sheet.type === ImportType.LINK &&
+                (typeof sheet.keyToColumnIndex === 'undefined' ||
+                    sheet.keyToColumnIndex === null ||
+                    !sheet.mapping[sheet.keyToColumnIndex])
+        }
+    ];
+
+    return checks.reduce((errors: SheetSettingsError[], check): SheetSettingsError[] => {
+        if (check.condition) {
+            errors.push(check.error);
+        }
+        return errors;
+    }, []);
+};
+
+const _getSettingsErrors = (sheets: ISheet[]) => {
+    return sheets.reduce((acc, s) => {
+        const sheetErrors = _getSheetErrors(s);
+        if (sheetErrors.length) {
+            acc[s.name] = sheetErrors;
+        }
+
+        return acc;
+    }, {});
+};
+
 const importReducer = (state: IImportReducerState, action: ImportReducerAction): IImportReducerState => {
     switch (action.type) {
-        case ImportReducerActionTypes.SET_SHEETS:
+        case ImportReducerActionTypes.SET_SHEETS: {
+            const settingsError = _getSettingsErrors(action.sheets);
+
             return {
                 ...state,
                 sheets: action.sheets,
-                okBtn: _isSheetsConfValid(action.sheets)
+                settingsError,
+                okBtn: !Object.keys(settingsError).length
             };
-        case ImportReducerActionTypes.SET_FILE:
+        }
+        case ImportReducerActionTypes.SET_FILE: {
             return {
                 ...state,
                 file: action.file
             };
-        case ImportReducerActionTypes.SET_CURRENT_STEP:
-            return {
-                ...state,
+        }
+        case ImportReducerActionTypes.SET_CURRENT_STEP: {
+            let stateChanges: Partial<IImportReducerState> = {
                 currentStep: action.currentStep
             };
-        case ImportReducerActionTypes.SET_OK_BTN:
+
+            if (action.currentStep === ImportSteps.CONFIG) {
+                const settingsError = _getSettingsErrors(state.sheets);
+
+                stateChanges = {...stateChanges, settingsError, okBtn: !Object.keys(settingsError).length};
+            }
+
+            return {
+                ...state,
+                ...stateChanges
+            };
+        }
+        case ImportReducerActionTypes.SET_OK_BTN: {
             return {
                 ...state,
                 okBtn: action.okBtn
             };
-        case ImportReducerActionTypes.SET_IMPORT_ERROR:
+        }
+        case ImportReducerActionTypes.SET_IMPORT_ERROR: {
             return {
                 ...state,
                 importError: action.importError
             };
+        }
         default:
             return state;
     }

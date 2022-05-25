@@ -106,6 +106,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                         keyIndex: Int,
                         linkAttribute: String,
                         keyToIndex: Int,
+                        treeLinkLibrary: String,
                     }
 
                     extend type Mutation {

@@ -40,6 +40,7 @@ export enum ImportMode {
 }
 
 export enum ImportType {
+    IGNORE = 'IGNORE',
     LINK = 'LINK',
     STANDARD = 'STANDARD'
 }
@@ -124,6 +125,7 @@ export interface SheetInput {
     keyIndex?: number | null;
     linkAttribute?: string | null;
     keyToIndex?: number | null;
+    treeLinkLibrary?: string | null;
 }
 
 export interface TreeElementInput {

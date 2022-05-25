@@ -43,9 +43,10 @@ export interface IImportExcelParams {
         library: string;
         mode: ImportMode;
         mapping: Array<string | null>;
-        keyIndex?: number; // or attributeId on sheet of links
-        keyToIndex?: number; // or attributeId on sheet of links
+        keyIndex?: number;
+        keyToIndex?: number;
         linkAttribute?: string;
+        treeLinkLibrary?: string;
     } | null>;
 }
 
@@ -388,8 +389,8 @@ export default function ({
             try {
                 await _jsonSchemaValidation(filename);
             } catch (err) {
-                const message = err.errors.map(e => e.message).join('\n');
-                throw new ValidationError({}, message);
+                const message = (err?.errors ?? []).map(e => e.message).join('\n');
+                throw new ValidationError({}, message || err.message);
             }
 
             const cacheDataPath = `${filename}-links`;
@@ -515,164 +516,172 @@ export default function ({
                 flags: 'a' // 'a' means appending (old data will be preserved)
             });
 
-            const writeLine = (line: string) => writeStream.write(`\n${line}`);
+            const writeLine = (line: string) => writeStream.write(line);
 
             // Header of file.
-            writeLine(`{
-                "elements": [
-              `);
+            writeLine('{"elements": [');
 
-            for (const [indexSheet, dataSheet] of data.entries()) {
-                if (sheets?.[indexSheet] !== null) {
-                    let {type, library, mapping, keyIndex, linkAttribute, keyToIndex, mode = defaultImportMode} =
-                        sheets?.[indexSheet] || {};
-                    mapping = mapping ?? [];
+            const sheetsToProcess = data.filter((sheet, index) => {
+                return !sheets || (!!sheets?.[index] && sheets[index].type !== ImportType.IGNORE);
+            });
 
-                    // on mapping in file
-                    if (typeof sheets === 'undefined') {
-                        const comments = [];
-                        workbook.worksheets[indexSheet].getRow(1).eachCell(cell => {
-                            // Cell comment might be split in multiple texts, merge them.
-                            const cellComments = ((cell.note as ExcelJS.Comment)?.texts ?? [])
-                                .map(cellComm => cellComm.text)
-                                .join(' ');
+            let firstElementWritten = false;
+            for (const [indexSheet, dataSheet] of sheetsToProcess.entries()) {
+                let {
+                    type,
+                    library,
+                    mode = defaultImportMode,
+                    mapping,
+                    keyIndex,
+                    linkAttribute,
+                    keyToIndex,
+                    treeLinkLibrary
+                } = sheets?.[indexSheet] || {};
 
-                            comments.push(cellComments.replace(/\n/g, ' ') || null);
-                        });
+                mapping = mapping ?? [];
 
-                        // if mapping parameters not specified we ignore this sheet
-                        if (comments[0] === null) {
-                            continue;
+                // on mapping in file
+                if (typeof sheets === 'undefined') {
+                    const comments = [];
+                    workbook.worksheets[indexSheet].getRow(1).eachCell(cell => {
+                        // Cell comment might be split in multiple texts, merge them.
+                        const cellComments = ((cell.note as ExcelJS.Comment)?.texts ?? [])
+                            .map(cellComm => cellComm.text)
+                            .join(' ');
+
+                        comments.push(cellComments.replace(/\n/g, ' ') || null);
+                    });
+
+                    // if mapping parameters not specified we ignore this sheet
+                    if (comments[0] === null) {
+                        continue;
+                    }
+
+                    // Extract args global args from comment on first column
+                    const args = extractArgsFromString(comments[0]);
+
+                    type = ImportType[String(args.type)];
+                    mode = args.mode ? (String(args.mode) as ImportMode) : defaultImportMode;
+
+                    // if sheet type is not specified we ignore this sheet
+                    if (typeof type === 'undefined' || type === ImportType.IGNORE) {
+                        continue;
+                    }
+
+                    library = String(args.library);
+
+                    // Extract mapping, keyIndex and keyToIndex from all columns comments
+                    for (const [index, comm] of comments.entries()) {
+                        const commArgs = extractArgsFromString(comm);
+                        mapping.push(String(commArgs.id) ?? null);
+
+                        if (commArgs.key) {
+                            keyIndex = index;
                         }
 
-                        // Extract args global args from comment on first column
-                        const args = extractArgsFromString(comments[0]);
-
-                        type = ImportType[String(args.type)];
-                        mode = args.mode ? (String(args.mode) as ImportMode) : defaultImportMode;
-
-                        // if sheet type is not specified we ignore this sheet
-                        if (typeof type === 'undefined') {
-                            continue;
-                        }
-
-                        library = String(args.library);
-
-                        // Extract mapping, keyIndex and keyToIndex from all columns comments
-                        for (const [index, comm] of comments.entries()) {
-                            const commArgs = extractArgsFromString(comm);
-                            mapping.push(String(commArgs.id) ?? null);
-
-                            if (commArgs.key) {
-                                keyIndex = index;
-                            }
-
-                            if (commArgs.keyTo) {
-                                keyToIndex = index;
-                            }
-                        }
-
-                        // may be undefined if standard import
-                        linkAttribute = String(args.linkAttribute);
-
-                        if (
-                            (type === ImportType.LINK &&
-                                (typeof keyIndex === 'undefined' ||
-                                    typeof linkAttribute === 'undefined' ||
-                                    typeof keyToIndex === 'undefined' ||
-                                    !mapping[keyToIndex])) ||
-                            (typeof keyIndex !== 'undefined' && !mapping[keyIndex]) ||
-                            typeof library === 'undefined' ||
-                            typeof mapping === 'undefined'
-                        ) {
-                            throw new ValidationError({mapping: `Sheet n° ${indexSheet}: Missing mapping parameters`});
+                        if (commArgs.keyTo) {
+                            keyToIndex = index;
                         }
                     }
 
-                    // Delete columns' name line.
-                    dataSheet.shift();
+                    // may be undefined if standard import
+                    linkAttribute = args.linkAttribute ? String(args.linkAttribute) : null;
+                    treeLinkLibrary = args.treeLinkLibrary ? String(args.treeLinkLibrary) : null;
 
-                    const filteredMapping = mapping.filter(m => m); // Filters null values
-                    for (const [index, line] of dataSheet.entries()) {
-                        let matches = [];
-                        let elementData = [];
-                        let elementLinks = [];
+                    if (
+                        (type === ImportType.LINK &&
+                            (typeof keyIndex === 'undefined' ||
+                                typeof linkAttribute === 'undefined' ||
+                                typeof keyToIndex === 'undefined' ||
+                                !mapping[keyToIndex])) ||
+                        (typeof keyIndex !== 'undefined' && !mapping[keyIndex]) ||
+                        typeof library === 'undefined' ||
+                        typeof mapping === 'undefined'
+                    ) {
+                        throw new ValidationError({mapping: `Sheet n° ${indexSheet}: Missing mapping parameters`});
+                    }
+                }
 
-                        if (typeof keyIndex !== 'undefined' && typeof line[keyIndex] !== 'undefined') {
-                            const keyAttribute = mapping[keyIndex];
-                            matches = [
-                                {
-                                    attribute: keyAttribute,
-                                    value: String(line[keyIndex])
-                                }
-                            ];
-                        }
+                // Delete columns' name line.
+                dataSheet.shift();
 
-                        if (type === ImportType.STANDARD) {
-                            elementData = line
-                                .filter((_, i) => mapping[i]) // Ignore cells not mapped
-                                .map((cellValue, cellIndex) => ({
-                                    attribute: filteredMapping[cellIndex], // Retrieve attribute
-                                    values: [{value: String(cellValue)}],
-                                    action: Action.REPLACE
-                                }))
-                                .filter(cell => cell.attribute !== 'id');
-                        }
+                const linkAttributeProps = linkAttribute
+                    ? await attributeDomain.getAttributeProperties({id: linkAttribute, ctx})
+                    : null;
 
-                        if (type === ImportType.LINK) {
-                            let keyToValueLibrary: string;
-                            const keyToAttribute = mapping[keyToIndex];
-                            let keyToValue = String(line[keyToIndex]);
+                const filteredMapping = mapping.filter(m => m); // Filters null values
+                for (const [index, line] of dataSheet.entries()) {
+                    let matches = [];
+                    let elementData = [];
+                    let elementLinks = [];
 
-                            // If linkAttribute is a tree attribute
-                            if (keyToValue.includes('/')) {
-                                [keyToValueLibrary, keyToValue] = keyToValue.split('/');
+                    if (typeof keyIndex !== 'undefined' && typeof line[keyIndex] !== 'undefined') {
+                        const keyAttribute = mapping[keyIndex];
+                        matches = [
+                            {
+                                attribute: keyAttribute,
+                                value: String(line[keyIndex])
                             }
+                        ];
+                    }
 
-                            const metadataMapping = filteredMapping.filter(
-                                (_, mappingIndex) => mappingIndex !== keyIndex && mappingIndex !== keyToIndex
-                            );
-                            const metadataValues = line.filter(
-                                (_, cellIndex) =>
-                                    mapping[cellIndex] && cellIndex !== keyIndex && cellIndex !== keyToIndex
-                            );
+                    if (type === ImportType.STANDARD) {
+                        elementData = line
+                            .filter((_, i) => mapping[i]) // Ignore cells not mapped
+                            .map((cellValue, cellIndex) => ({
+                                attribute: filteredMapping[cellIndex], // Retrieve attribute
+                                values: [{value: String(cellValue)}],
+                                action: Action.REPLACE
+                            }))
+                            .filter(cell => cell.attribute !== 'id');
+                    }
 
-                            elementLinks = [
-                                {
-                                    attribute: linkAttribute,
-                                    values: [
-                                        {
-                                            ...(!!keyToValueLibrary && {library: keyToValueLibrary}),
-                                            value: [{attribute: keyToAttribute, value: keyToValue}],
-                                            metadata: metadataValues.reduce(
-                                                (allMetadata, metadataValue, metadataValueIndex) => {
-                                                    allMetadata[metadataValueIndex] = metadataValue;
+                    if (type === ImportType.LINK) {
+                        const keyToAttribute = mapping[keyToIndex];
+                        const keyToValue = String(line[keyToIndex]);
+                        const keyToValueLibrary =
+                            linkAttributeProps.type === AttributeTypes.TREE
+                                ? treeLinkLibrary
+                                : linkAttributeProps.linked_library;
 
-                                                    return allMetadata;
-                                                },
-                                                {}
-                                            )
-                                        }
-                                    ],
-                                    action: 'add'
-                                }
-                            ];
-                        }
-
-                        const element = {
-                            library,
-                            matches,
-                            mode,
-                            data: elementData,
-                            links: elementLinks
-                        };
-
-                        // Adding element to JSON file.
-                        writeLine(
-                            JSON.stringify(element) +
-                                (index !== dataSheet.length - 1 || indexSheet !== data.length - 1 ? ',' : '')
+                        const metadataValues = line.filter(
+                            (_, cellIndex) => mapping[cellIndex] && cellIndex !== keyIndex && cellIndex !== keyToIndex
                         );
+
+                        elementLinks = [
+                            {
+                                attribute: linkAttribute,
+                                values: [
+                                    {
+                                        library: keyToValueLibrary ?? '',
+                                        value: [{attribute: keyToAttribute, value: keyToValue}],
+                                        metadata: metadataValues.reduce(
+                                            (allMetadata, metadataValue, metadataValueIndex) => {
+                                                allMetadata[metadataValueIndex] = metadataValue;
+
+                                                return allMetadata;
+                                            },
+                                            {}
+                                        )
+                                    }
+                                ],
+                                action: 'add'
+                            }
+                        ];
                     }
+
+                    const element = {
+                        library,
+                        matches,
+                        mode,
+                        data: elementData,
+                        links: elementLinks
+                    };
+
+                    // Adding element to JSON file.
+                    // Add comma if not first element
+                    writeLine((firstElementWritten ? ',' : '') + JSON.stringify(element));
+                    firstElementWritten = true;
                 }
             }
 
