@@ -93,9 +93,11 @@ const Cell = ({columnName, data}: ICellProps) => {
         case AttributeType.tree:
             const [firstValue, ...otherValues] = valuesToDisplay;
 
+            const whoAmI = type === AttributeType.tree ? firstValue.record.whoAmI : firstValue.whoAmI;
+
             return (
                 <RecordCardCellWrapper>
-                    <RecordCard record={firstValue.whoAmI} size={previewSize} lang={lang} key={firstValue.whoAmI.id} />
+                    <RecordCard record={whoAmI} size={previewSize} lang={lang} key={whoAmI.id} />
 
                     {otherValues.length ? (
                         <Tooltip overlay={otherValues.map(val => val?.whoAmI?.label).join(', ')}>

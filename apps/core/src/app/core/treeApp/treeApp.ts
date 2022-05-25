@@ -56,7 +56,7 @@ export default function ({
      * @return string
      */
     const _findParentAttribute = (path): string => {
-        const restrictedKeys = ['ancestors', 'children', 'value', 'treeValue'];
+        const restrictedKeys = ['record', 'ancestors', 'children', 'value', 'treeValue'];
         if (!restrictedKeys.includes(path.key) && typeof path.key !== 'number') {
             return path.key;
         }
@@ -480,7 +480,9 @@ export default function ({
                             ctx: IQueryInfos,
                             info: GraphQLResolveInfo
                         ): Promise<IRecord> => {
-                            return treeDomain.getRecordByNodeId({treeId: parent.treeId, nodeId: parent.id, ctx});
+                            const treeId =
+                                parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
+                            return treeDomain.getRecordByNodeId({treeId, nodeId: parent.id, ctx});
                         },
                         children: async (
                             parent: ITreeNode & {treeId?: string},
