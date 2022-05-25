@@ -11,8 +11,6 @@ function ImportModalDoneStep(): JSX.Element {
     const {state} = useImportReducerContext();
     const {importError} = state;
 
-    console.log({state});
-
     return (
         <Result
             status={importError ? 'error' : 'success'}

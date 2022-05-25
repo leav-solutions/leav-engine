@@ -8,6 +8,7 @@ import {ColumnsType} from 'antd/lib/table';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {
     GET_ATTRIBUTES_BY_LIB_attributes_list,
@@ -32,6 +33,12 @@ enum KeysValues {
     IMPORT = 'import_key',
     LINK = 'link_key'
 }
+
+const SheetWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+`;
 
 function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigStepProps): JSX.Element {
     const [{lang}] = useLang();
@@ -181,7 +188,8 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                 sheetColumns.unshift({
                     title: <></>,
                     dataIndex: '__root',
-                    onCell: _setStyleOnMappingRow
+                    onCell: _setStyleOnMappingRow,
+                    width: '250px'
                 });
 
                 const sheetData = displayedRows.map((row, index) => ({...row, key: index}));
@@ -236,9 +244,10 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                         )}
                     </Space>
                 );
+
                 return (
                     <Tabs.TabPane tab={tabTitle} key={sheetIndex}>
-                        <Space direction="vertical" align="start">
+                        <SheetWrapper>
                             <ImportSheetSettings
                                 sheetIndex={sheetIndex}
                                 libraries={libraries}
@@ -253,14 +262,15 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                                     title={() => (
                                         <Typography.Title level={5}>{t('import.data_overview')}</Typography.Title>
                                     )}
-                                    tableLayout={'fixed'}
                                     columns={sheetColumns}
                                     dataSource={sheetData}
                                     size="small"
+                                    tableLayout="auto"
                                     pagination={{hideOnSinglePage: true}}
+                                    style={{width: '100%', overflow: 'auto'}}
                                 />
                             )}
-                        </Space>
+                        </SheetWrapper>
                     </Tabs.TabPane>
                 );
             })}

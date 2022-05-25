@@ -6,6 +6,7 @@ import {Form, Select, Space} from 'antd';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import {
     GET_ATTRIBUTES_BY_LIB_attributes_list,
     GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute
@@ -28,6 +29,13 @@ const isLinkAttribute = (attribute: GET_ATTRIBUTES_BY_LIB_attributes_list): bool
     attribute.type === AttributeType.simple_link ||
     attribute.type === AttributeType.advanced_link ||
     attribute.type === AttributeType.tree;
+
+const SettingsWrapper = styled(Space)`
+    && .ant-form-item-label {
+        padding: 0;
+        font-weight: bold;
+    }
+`;
 
 function ImportSheetSettings({
     sheetIndex,
@@ -58,7 +66,7 @@ function ImportSheetSettings({
 
     return (
         <Form layout="vertical">
-            <Space direction="horizontal" size="large">
+            <SettingsWrapper direction="horizontal" size="middle" wrap>
                 <Form.Item label={t('import.type')} required>
                     <Select
                         style={{minWidth: 200}}
@@ -133,7 +141,7 @@ function ImportSheetSettings({
                         )}
                     </>
                 )}
-            </Space>
+            </SettingsWrapper>
         </Form>
     );
 }
