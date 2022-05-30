@@ -33,5 +33,8 @@ module.exports = {
     logs: {
         transport: 'console'
     },
-    debug: true
+    debug: true,
+    redis: {
+        host: process.env.REDIS_HOST || 'redis'
+    }
 };
