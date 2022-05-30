@@ -100,6 +100,7 @@ jobs:
           ELASTICSEARCH_URL: "http://localhost:9200"
           IMPORT_DIR: ${{ github.workspace }}/imports
           DISK_CACHE_DIRECTORY: ${{ github.workspace }}/cache
+          REDIS_HOST: localhost
 
   e2e-indexation-manager:
     runs-on: ubuntu-latest
@@ -150,6 +151,7 @@ jobs:
           AMQP_PWD: guest
           APP_ROOT_PATH: .
           ELASTICSEARCH_URL: "http://localhost:9200"
+          REDIS_HOST: localhost
 
   e2e-sync-scan:
     runs-on: ubuntu-latest
