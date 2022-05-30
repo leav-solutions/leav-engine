@@ -71,7 +71,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
         fetchPolicy: 'no-cache',
         onCompleted: data => {
             setCurrentStep(ExportSteps.DONE);
-            setFilepath(data.export);
+            setFilepath(data?.export);
         },
         onError: error => {
             const notification: INotification = {
