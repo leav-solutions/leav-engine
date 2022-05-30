@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 import ms from 'ms';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
+import AuthenticationError from '../../errors/AuthenticationError';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {AttributeCondition, IRecord} from '../../_types/record';
 
@@ -168,14 +169,14 @@ export default function ({
             }
 
             if (!token) {
-                throw new Error('No token provided');
+                throw new AuthenticationError('No token provided');
             }
 
             // Token validation checking
             const payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
 
             if (typeof payload.userId === 'undefined') {
-                throw new Error('invalid token');
+                throw new AuthenticationError('Invalid token');
             }
 
             const ctx: IQueryInfos = {
@@ -192,7 +193,7 @@ export default function ({
             });
 
             if (!users.list.length) {
-                throw new Error('user not found');
+                throw new AuthenticationError('User not found');
             }
 
             return payload;

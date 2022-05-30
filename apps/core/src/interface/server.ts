@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
-import {ApolloServer, AuthenticationError} from 'apollo-server-express';
+import {ApolloServer, AuthenticationError as ApolloAuthenticationError} from 'apollo-server-express';
 import {IApplicationApp} from 'app/application/applicationApp';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
@@ -15,6 +15,7 @@ import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
+import AuthenticationError from '../errors/AuthenticationError';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 
 export interface IServer {
@@ -81,6 +82,16 @@ export default function ({
         return newError;
     };
 
+    const _checkAuth = async (req, res, next) => {
+        try {
+            await authApp.validateRequestToken(req);
+
+            next();
+        } catch (err) {
+            next(err);
+        }
+    };
+
     return {
         async init(): Promise<void> {
             const app = express();
@@ -105,12 +116,9 @@ export default function ({
 
                 // Initialize routes
                 authApp.registerRoute(app);
-                app.use(
-                    '/previews',
-                    // TODO: temporary disabled, we have to send token with explorer
-                    // authApp.checkToken,
-                    express.static(config.preview.directory)
-                );
+
+                app.use('/previews', [_checkAuth, express.static(config.preview.directory)]);
+                app.use('/exports', [_checkAuth, express.static(config.export.directory)]);
 
                 // Handling errors
                 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
@@ -122,7 +130,10 @@ export default function ({
                         return res.status(400).json({message: err.name});
                     }
 
-                    logger.error(err);
+                    if (err instanceof AuthenticationError) {
+                        return res.status(401).send('Unauthorized');
+                    }
+
                     res.status(500).json({error: 'INTERNAL_SERVER_ERROR'}); // FIXME: format error msg?
                 });
 
@@ -162,7 +173,7 @@ export default function ({
 
                             return ctx;
                         } catch (e) {
-                            throw new AuthenticationError('you must be logged in');
+                            throw new ApolloAuthenticationError('you must be logged in');
                         }
                     },
                     // We're using a gateway here instead of a simple schema definition because we need to be able
