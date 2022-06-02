@@ -37,6 +37,7 @@
         "**/*.icc",
         "**/.env",
         "**/build",
-        "**/dist"
+        "**/dist",
+        "exports"
     ]
 }
