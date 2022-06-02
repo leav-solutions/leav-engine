@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
-import {mount} from 'enzyme';
+import {mount, ReactWrapper} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {wait} from '../../utils/testUtils';
@@ -64,7 +64,7 @@ describe('<RootSelector/>', () => {
                     error: new Error(errorText)
                 }
             ];
-            let wrapper;
+            let wrapper: ReactWrapper;
             await act(async () => {
                 wrapper = mount(
                     <MockedProvider mocks={ERRORMOCKS} addTypename={false}>
@@ -72,7 +72,12 @@ describe('<RootSelector/>', () => {
                     </MockedProvider>
                 );
             });
-            wrapper.update();
+
+            await act(async () => {
+                await wait(0);
+                wrapper.update();
+            });
+
             expect(wrapper.find('[data-testid="error"]').text()).toContain(errorText);
         });
         test('loaded data state', async () => {

@@ -4,7 +4,6 @@
 import hexToRgba from 'hex-rgba';
 import React from 'react';
 import {Input, InputOnChangeData} from 'semantic-ui-react';
-import styled from 'styled-components';
 
 interface IPermissionSelectorProps {
     value: boolean | null;
@@ -41,15 +40,13 @@ function PermissionSelector({
     const inputVal = permValToInputVal(value);
     const bgColor = value !== null ? bgColors[inputVal] : hexToRgba(bgColors[permValToInputVal(inheritValue)], 40);
 
-    const Wrapper = styled(as)`
-        background: ${bgColor};
-    `;
+    const Wrapper = as;
     Wrapper.displayName = 'Wrapper';
 
     const _handleChange = (e: React.ChangeEvent, data: InputOnChangeData) => onChange(inputValToPermVal[data.value]);
 
     return (
-        <Wrapper>
+        <Wrapper style={{background: bgColor}}>
             <Input
                 aria-label="permission-selector"
                 type="range"
