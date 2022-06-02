@@ -103,6 +103,7 @@ x-env-explorer: &env-explorer
 
 x-env-login: &env-login
   APP_ROOT_PATH: *dir-login
+  REACT_APP_AUTH_URL: /auth/authenticate
 
 x-env-portal: &env-portal
   APP_ROOT_PATH: *dir-portal
