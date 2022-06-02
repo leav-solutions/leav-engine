@@ -4,19 +4,19 @@ exports[`RecordCardSkeleton Snapshot test 1`] = `
 LoadedCheerio {
   "0": Node {
     "attribs": Object {
-      "class": "sc-htpNat hEwjHA",
+      "class": "sc-dkzDqf mUyXQ",
     },
     "children": Array [
       Node {
         "attribs": Object {
-          "class": "sc-bdVaJa beorfM",
+          "class": "sc-bczRLJ iyxJEs",
         },
         "children": Array [],
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Node {
           "attribs": Object {
-            "class": "sc-bwzfXH ovtal",
+            "class": "sc-gsnTZi bOZNzr",
           },
           "children": Array [],
           "name": "div",
@@ -44,7 +44,7 @@ LoadedCheerio {
       },
       Node {
         "attribs": Object {
-          "class": "sc-bwzfXH ovtal",
+          "class": "sc-gsnTZi bOZNzr",
         },
         "children": Array [],
         "name": "div",
@@ -53,7 +53,7 @@ LoadedCheerio {
         "parent": [Circular],
         "prev": Node {
           "attribs": Object {
-            "class": "sc-bdVaJa beorfM",
+            "class": "sc-bczRLJ iyxJEs",
           },
           "children": Array [],
           "name": "div",
