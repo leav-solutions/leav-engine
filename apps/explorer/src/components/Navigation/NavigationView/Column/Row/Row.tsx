@@ -39,7 +39,7 @@ const RowWrapper = styled.div<IRowProps>`
     overflow: hidden;
 
     grid-template-columns: ${props => (props.isActive ? '1rem auto auto 1rem' : 'auto auto 1rem')};
-    padding: 1rem;
+    padding: 1rem 0.5rem;
     background: ${props => {
         if (props.isInPath) {
             return themingVar['@leav-background-active'];
@@ -61,6 +61,10 @@ const RowWrapper = styled.div<IRowProps>`
 `;
 
 const RecordCardWrapper = styled.div`
+    min-width: 0;
+    width: 100%;
+    padding-right: 0.2rem;
+
     & > * > * {
         justify-content: space-around;
     }
@@ -188,11 +192,9 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                     <Checkbox onClick={handleCheckboxOnClick} checked={isChecked} />
                 </CheckboxWrapper>
             )}
-            <Tooltip title={treeElement.record.whoAmI.label}>
-                <RecordCardWrapper>
-                    <RecordCard record={record} size={PreviewSize.small} />
-                </RecordCardWrapper>
-            </Tooltip>
+            <RecordCardWrapper>
+                <RecordCard record={record} size={PreviewSize.small} />
+            </RecordCardWrapper>
 
             {!!treeElement.childrenCount && (
                 <>
