@@ -59,10 +59,14 @@ interface IPendingValues {
     [attributeId: string]: {[idValue: string]: SAVE_VALUE_BATCH_saveValueBatch_values};
 }
 
+const modalWidth = 900;
+const sidebarWidth = 300;
+
 const Container = styled.div<{isSidebarCollapsed: boolean}>`
     height: calc(100vh - 12rem);
     display: grid;
-    grid-template-columns: auto ${p => (p.isSidebarCollapsed ? 0 : '300px')};
+    grid-template-columns: ${p =>
+        p.isSidebarCollapsed ? `${modalWidth}px 0` : `minmax(0, ${modalWidth - sidebarWidth}px) ${sidebarWidth}px`};
     grid-template-rows: 5em auto;
     grid-template-areas:
         'title sidebar'
@@ -337,7 +341,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 maskClosable
                 width="90vw"
                 centered
-                style={{padding: 0, maxWidth: '800px'}}
+                style={{padding: 0, maxWidth: `${modalWidth}px`}}
                 bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
                 footer={footerButtons}
             >

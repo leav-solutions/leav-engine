@@ -19,6 +19,7 @@ import CellInfos from './CellInfos';
 
 const SimpleCell = styled.div`
     padding: 5px;
+    width: 100%;
 `;
 
 const RecordCardCellWrapper = styled.div`
@@ -31,9 +32,10 @@ const MoreValuesCount = styled.span`
     height: 1.75em;
     margin: 0 1em;
     border-radius: 2em;
-    background: ${themingVar['@primary-color']};
-    color: #fff;
+    background: ${themingVar['@item-active-bg']};
+    color: ${themingVar['@leav-secondary-font-color']};
     font-weight: bold;
+    font-size: 0.9em;
 `;
 
 interface ICellProps {
@@ -95,7 +97,14 @@ const Cell = ({columnName, data}: ICellProps) => {
 
             return (
                 <RecordCardCellWrapper>
-                    <RecordCard record={firstValue.whoAmI} size={previewSize} lang={lang} key={firstValue.whoAmI.id} />
+                    <RecordCard
+                        record={firstValue.whoAmI}
+                        size={previewSize}
+                        lang={lang}
+                        key={firstValue.whoAmI.id}
+                        withPreview={false}
+                        withLibrary={false}
+                    />
 
                     {otherValues.length ? (
                         <Tooltip overlay={otherValues.map(val => val?.whoAmI?.label).join(', ')}>
