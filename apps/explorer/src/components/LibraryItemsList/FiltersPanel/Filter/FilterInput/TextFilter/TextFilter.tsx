@@ -5,7 +5,7 @@ import {Input} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {IFilter} from '../../../../../_types/types';
+import {IFilterInputProps} from '../../Filter';
 
 const Text = styled(Input.TextArea)`
     background: ${themingVar['@default-bg']} 0% 0% no-repeat padding-box;
@@ -14,18 +14,24 @@ const Text = styled(Input.TextArea)`
     border-radius: 3px;
 `;
 
-interface ITextFilterProps {
-    filter: IFilter;
-    updateFilterValue: (newFilterValue: IFilter['value']) => void;
-}
-
 const MAX_INPUT_ROWS = 5;
 
-const TextFilter = ({filter, updateFilterValue}: ITextFilterProps) => {
-    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+const TextFilter = ({filter, updateFilterValue, onPressEnter}: IFilterInputProps) => {
+    const _handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const newValue = (event.target.value ?? '').toString();
 
         updateFilterValue({...filter.value, value: newValue});
+    };
+
+    const _handlePressEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        // If holding shift key, keep normal behavior (ie. insert new line)
+        if (e.shiftKey) {
+            return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+        onPressEnter();
     };
 
     const value = filter.value.value ? String(filter.value.value) : null;
@@ -37,7 +43,8 @@ const TextFilter = ({filter, updateFilterValue}: ITextFilterProps) => {
             disabled={!filter.active}
             rows={inputRows}
             value={value}
-            onChange={handleChange}
+            onChange={_handleChange}
+            onPressEnter={_handlePressEnter}
             data-testid="filter-textarea"
         />
     );

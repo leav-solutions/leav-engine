@@ -194,4 +194,63 @@ describe('searchReducer', () => {
 
         expect(newState.queryFilters).toEqual(expect.arrayContaining([expect.objectContaining(queryFilter)]));
     });
+    test('RESET_FILTERS', async () => {
+        const newState = searchReducer({...initialSearchState}, {type: SearchActionTypes.RESET_FILTERS});
+
+        expect(newState.queryFilters).toHaveLength(0);
+        expect(newState.filters).toHaveLength(0);
+        expect(newState.loading).toBe(true);
+    });
+    test('DISABLE_FILTERS', async () => {
+        const queryFilter = {
+            field: 'id',
+            value: '1',
+            condition: RecordFilterCondition.EQUAL
+        };
+
+        const filter = {
+            type: FilterType.ATTRIBUTE,
+            index: 1,
+            key: '1',
+            value: {value: 'test'},
+            active: true,
+            condition: AttributeConditionFilter.EQUAL
+        };
+
+        const newState = searchReducer(
+            {...initialSearchState, filters: [filter], queryFilters: [queryFilter]},
+            {type: SearchActionTypes.DISABLE_FILTERS}
+        );
+
+        expect(newState.filters).toHaveLength(1);
+        expect(newState.filters[0].active).toBe(false);
+        expect(newState.queryFilters).toHaveLength(0);
+        expect(newState.loading).toBe(true);
+    });
+    test('APPLY_FILTERS', async () => {
+        const queryFilter = {
+            field: 'id',
+            value: 'test',
+            condition: RecordFilterCondition.EQUAL
+        };
+
+        const filter = {
+            type: FilterType.ATTRIBUTE,
+            index: 1,
+            key: 'id',
+            value: {value: 'test'},
+            active: true,
+            condition: AttributeConditionFilter.EQUAL
+        };
+
+        const newState = searchReducer(
+            {...initialSearchState, filters: [filter]},
+            {type: SearchActionTypes.APPLY_FILTERS}
+        );
+
+        expect(newState.filters).toHaveLength(1);
+        expect(newState.queryFilters).toHaveLength(1);
+        expect(newState.queryFilters[0]).toEqual(queryFilter);
+        expect(newState.loading).toBe(true);
+    });
 });

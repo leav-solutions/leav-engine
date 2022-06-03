@@ -256,13 +256,27 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     });
 
     // Get data
-    const [getRecords, {error: getRecordsError, refetch}] = useLazyQuery<
+    const [getRecords, {error: getRecordsError}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields), {
-        fetchPolicy: 'network-only',
-        onCompleted: data => {
-            const itemsFromQuery = data ? data[library.gqlNames.query || ''].list : [];
+    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields), {fetchPolicy: 'network-only'});
+
+    const _fetchRecords = async (filters: IQueryFilter[], sortField: string, sortOrder: SortOrder) => {
+        try {
+            const results = await getRecords({
+                variables: {
+                    limit: searchState.pagination,
+                    offset: searchState.offset,
+                    filters,
+                    sortField,
+                    sortOrder,
+                    fullText: searchState.fullText
+                }
+            });
+
+            const recordsData = results.data;
+
+            const itemsFromQuery = recordsData?.[library.gqlNames.query || '']?.list ?? [];
 
             const newRecords: ISearchRecord[] = manageItems({
                 items: itemsFromQuery,
@@ -271,42 +285,15 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
 
             searchDispatch({
                 type: SearchActionTypes.SET_TOTAL_COUNT,
-                totalCount: data?.[library.gqlNames.query]?.totalCount
+                totalCount: recordsData?.[library.gqlNames.query]?.totalCount
             });
 
             searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});
+        } catch (err) {
+            // Error is already handled. This try/catch is just to avoid unhandled rejection
+        } finally {
             searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
         }
-    });
-
-    const _fetchRecords = async (filters: IQueryFilter[], sortField: string, sortOrder: SortOrder) => {
-        const results = await getRecords({
-            variables: {
-                limit: searchState.pagination,
-                offset: searchState.offset,
-                filters,
-                sortField,
-                sortOrder,
-                fullText: searchState.fullText
-            }
-        });
-
-        const recordsData = results.data;
-
-        const itemsFromQuery = recordsData?.[library.gqlNames.query || '']?.list ?? [];
-
-        const newRecords: ISearchRecord[] = manageItems({
-            items: itemsFromQuery,
-            fields: searchState.fields
-        });
-
-        searchDispatch({
-            type: SearchActionTypes.SET_TOTAL_COUNT,
-            totalCount: recordsData?.[library.gqlNames.query]?.totalCount
-        });
-
-        searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});
-        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
     };
 
     const _reload = () => {
