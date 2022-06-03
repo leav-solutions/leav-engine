@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Dropdown, Menu} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
-import BooleanFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/BooleanFilter';
+import BooleanFilter from 'components/LibraryItemsList/FiltersPanel/Filter/FilterInput/BooleanFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';

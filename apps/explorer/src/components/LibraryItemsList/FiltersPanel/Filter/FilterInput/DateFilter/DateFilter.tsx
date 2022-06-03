@@ -4,15 +4,10 @@
 import {DatePicker} from 'antd';
 import moment from 'moment';
 import React from 'react';
-import themingVar from '../../../../../themingVar';
-import {IFilter} from '../../../../../_types/types';
+import themingVar from '../../../../../../themingVar';
+import {IFilterInputProps} from '../../Filter';
 
-interface IDateFilterProps {
-    filter: IFilter;
-    updateFilterValue: (newFilterValue: IFilter['value']) => void;
-}
-
-const DateFilter = ({filter, updateFilterValue}: IDateFilterProps) => {
+const DateFilter = ({filter, updateFilterValue}: IFilterInputProps) => {
     const _handleChange = (value: moment.Moment | null) => {
         if (!value) {
             updateFilterValue(null);

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
-import DateBetweenFilter from 'components/LibraryItemsList/DisplayTypeSelector/FilterInput/DateBetweenFilter';
+import DateBetweenFilter from 'components/LibraryItemsList/FiltersPanel/Filter/FilterInput/DateBetweenFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import {ILibraryDetailExtendedAttributeParentLinkedTree} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
@@ -36,14 +36,14 @@ import {
     TreeConditionFilter
 } from '../../../../_types/types';
 import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModal/SelectTreeNodeModal';
-import DateFilter from '../../DisplayTypeSelector/FilterInput/DateFilter';
-import NumericFilter from '../../DisplayTypeSelector/FilterInput/NumericFilter';
-import TextFilter from '../../DisplayTypeSelector/FilterInput/TextFilter';
 import FiltersDropdown from '../../FiltersDropdown';
 import FilterDropdownButton from '../FilterDropdownButton';
 import FilterTreeCondition from '../FilterTreeCondition';
 import mustHideValue from '../mustHideValue';
 import FilterAttributeCondition from './FilterAttributeCondition';
+import DateFilter from './FilterInput/DateFilter';
+import NumericFilter from './FilterInput/NumericFilter';
+import TextFilter from './FilterInput/TextFilter';
 
 interface IWrapperProps {
     active: boolean;
@@ -151,14 +151,15 @@ const ClearParentButton = styled(Button)`
     }
 `;
 
+export interface IFilterInputProps {
+    filter: IFilter;
+    updateFilterValue: (newFilterValue: IFilter['value']) => void;
+    onPressEnter?: () => void;
+}
+
 interface IFilterProps {
     filter: IFilter;
     handleProps: DraggableProvidedDragHandleProps;
-}
-
-interface ISwitchFormType {
-    filter: IFilter;
-    updateFilterValue: (newFilterValue: IFilter['value']) => void;
 }
 
 export const getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | string | number => {
@@ -167,8 +168,6 @@ export const getDefaultFilterValueByFormat = (format: AttributeFormat): boolean 
             return true;
         case AttributeFormat.date:
             return moment().utcOffset(0).startOf('day').unix();
-        case AttributeFormat.numeric:
-            return 0;
         default:
             return '';
     }
@@ -242,7 +241,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     );
 
     const InputByFormat = useCallback(
-        (props: ISwitchFormType) => {
+        (props: IFilterInputProps) => {
             const showStandardCondition =
                 props.filter.condition in AttributeConditionFilter &&
                 !(props.filter.condition in TreeConditionFilter) &&
@@ -467,6 +466,10 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         filter.type === FilterType.LIBRARY
     );
 
+    const _handlePressEnter = () => {
+        searchDispatch({type: SearchActionTypes.APPLY_FILTERS});
+    };
+
     return (
         <>
             {showSelectTreeNodeModal && (
@@ -524,7 +527,11 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                             </HeadOptions>
                         </Dropdown>
                     </Head>
-                    <InputByFormat filter={filter} updateFilterValue={updateFilterValue} />
+                    <InputByFormat
+                        filter={filter}
+                        updateFilterValue={updateFilterValue}
+                        onPressEnter={_handlePressEnter}
+                    />
                 </Content>
             </Wrapper>
         </>

@@ -189,6 +189,7 @@ function FiltersDropdown({
             // we replace current filter
             const filterPos = searchState.filters.findIndex(f => f.index === filter.index);
             filters.splice(filterPos, 1, {...newFilter, index: filter.index});
+            setVisible(false);
         } else {
             filters.push(newFilter);
         }

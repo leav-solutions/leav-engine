@@ -17,7 +17,6 @@ import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import themingVar from '../../../themingVar';
 import Filter from './Filter/Filter';
 import './Filters.css';
-import {getRequestFromFilters} from './getRequestFromFilter';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -72,23 +71,12 @@ function FiltersPanel(): JSX.Element {
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const dispatch = useAppDispatch();
 
-    const resetFilters = () => {
-        searchDispatch({
-            type: SearchActionTypes.SET_FILTERS,
-            filters: []
-        });
-
-        searchDispatch({
-            type: SearchActionTypes.SET_QUERY_FILTERS,
-            queryFilters: []
-        });
+    const _resetFilters = () => {
+        searchDispatch({type: SearchActionTypes.RESET_FILTERS});
     };
 
-    const disableFilters = () => {
-        searchDispatch({
-            type: SearchActionTypes.SET_FILTERS,
-            filters: searchState.filters.map(f => ({...f, active: false}))
-        });
+    const _disableFilters = () => {
+        searchDispatch({type: SearchActionTypes.DISABLE_FILTERS});
     };
 
     const handleHide = () => {
@@ -128,12 +116,7 @@ function FiltersPanel(): JSX.Element {
     const filtersSorted = searchState.filters.sort((a, b) => a.index - b.index);
 
     const _handleApplyFilters = () => {
-        searchDispatch({
-            type: SearchActionTypes.SET_QUERY_FILTERS,
-            queryFilters: getRequestFromFilters(searchState.filters)
-        });
-
-        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
+        searchDispatch({type: SearchActionTypes.APPLY_FILTERS});
     };
 
     const allFiltersDisabled = searchState.filters.every(f => f.active === false);
@@ -148,13 +131,13 @@ function FiltersPanel(): JSX.Element {
                                 {
                                     key: 'disable',
                                     disabled: allFiltersDisabled,
-                                    onClick: disableFilters,
+                                    onClick: _disableFilters,
                                     label: t('filters.disable-filters')
                                 },
                                 {
                                     key: 'remove',
                                     disabled: !searchState.filters.length,
-                                    onClick: resetFilters,
+                                    onClick: _resetFilters,
                                     label: t('filters.remove-filters')
                                 },
                                 {
