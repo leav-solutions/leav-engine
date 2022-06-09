@@ -102,9 +102,10 @@ export const getFiltersFromRequest = (
                             type: FilterType.LIBRARY,
                             library: {
                                 id: libraryId,
-                                label:
-                                    rootAttribute.linkedTree.libraries.filter(l => l.library.id === libraryId)?.[0]
-                                        .library.label ?? null
+                                label: rootAttribute?.linkedTree?.libraries
+                                    ? rootAttribute.linkedTree.libraries.filter(l => l.library.id === libraryId)?.[0]
+                                          .library.label
+                                    : null
                             },
                             parentAttribute: {...rootAttribute, format: defaultLinkAttributeFilterFormat}
                         };

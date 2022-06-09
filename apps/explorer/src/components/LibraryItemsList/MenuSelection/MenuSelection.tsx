@@ -95,7 +95,7 @@ function MenuSelection(): JSX.Element {
                     ></Menu>
                 }
             >
-                <Button type={'text'} icon={<DownOutlined />}>
+                <Button icon={<DownOutlined />}>
                     {t('items-list-row.nb-elements', {
                         nbItems: searchState.totalCount
                     })}

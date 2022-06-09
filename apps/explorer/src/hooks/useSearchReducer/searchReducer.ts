@@ -1,15 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getRequestFromFilters} from 'components/LibraryItemsList/FiltersPanel/getRequestFromFilter';
+import getFieldsFromView from 'components/LibraryItemsList/helpers/getFieldsFromView';
 import {defaultSort, defaultView, viewSettingsField} from 'constants/constants';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
-import {IAttribute, IField, IFilter, IQueryFilter, IViewDisplay} from '_types/types';
-import {ISearchRecord, ISearchSort, ISearchState, IViewState} from './_types';
+import {IAttribute, IField, IFilter, IView, IViewDisplay} from '_types/types';
+import {ISearchRecord, ISearchSort, ISearchState} from './_types';
 
 export enum SearchActionTypes {
-    SET_RECORDS = 'SET_RECORDS',
-    SET_TOTAL_COUNT = 'SET_TOTAL_COUNT',
+    UPDATE_RESULT = 'UPDATE_RESULT',
     SET_PAGINATION = 'SET_PAGINATION',
     SET_OFFSET = 'SET_OFFSET',
     SET_LOADING = 'SET_LOADING',
@@ -19,8 +18,9 @@ export enum SearchActionTypes {
     SET_FIELDS = 'SET_FIELDS',
     SET_FULLTEXT = 'SET_FULLTEXT',
     SET_FILTERS = 'SET_FILTERS',
-    SET_QUERY_FILTERS = 'SET_QUERY_FILTERS',
-    SET_VIEW = 'SET_VIEW',
+    SET_VIEW_RELOAD = 'SET_VIEW_RELOAD',
+    SET_VIEW_SYNC = 'SET_VIEW_SYNC',
+    CHANGE_VIEW = 'CHANGE_VIEW',
     SET_USER_VIEWS_ORDER = 'SET_USER_VIEWS_ORDER',
     SET_SHARED_VIEWS_ORDER = 'SET_SHARED_VIEWS_ORDER',
     SET_DISPLAY = 'SET_DISPLAY',
@@ -30,8 +30,7 @@ export enum SearchActionTypes {
 }
 
 export type SearchAction =
-    | {type: SearchActionTypes.SET_RECORDS; records: ISearchRecord[]}
-    | {type: SearchActionTypes.SET_TOTAL_COUNT; totalCount: number}
+    | {type: SearchActionTypes.UPDATE_RESULT; records: ISearchRecord[]; totalCount: number}
     | {type: SearchActionTypes.SET_PAGINATION; page: number}
     | {type: SearchActionTypes.SET_OFFSET; offset: number}
     | {type: SearchActionTypes.SET_LOADING; loading: boolean}
@@ -41,8 +40,9 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_FIELDS; fields: IField[]}
     | {type: SearchActionTypes.SET_FULLTEXT; fullText: string}
     | {type: SearchActionTypes.SET_FILTERS; filters: IFilter[]}
-    | {type: SearchActionTypes.SET_QUERY_FILTERS; queryFilters: IQueryFilter[]}
-    | {type: SearchActionTypes.SET_VIEW; view: IViewState}
+    | {type: SearchActionTypes.SET_VIEW_RELOAD; reload: boolean}
+    | {type: SearchActionTypes.SET_VIEW_SYNC; sync: boolean}
+    | {type: SearchActionTypes.CHANGE_VIEW; view: IView}
     | {type: SearchActionTypes.SET_DISPLAY; display: IViewDisplay}
     | {type: SearchActionTypes.SET_USER_VIEWS_ORDER; userViewsOrder: string[]}
     | {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER; sharedViewsOrder: string[]}
@@ -62,11 +62,11 @@ export const initialSearchState: ISearchState = {
     fields: [],
     fullText: '',
     filters: [],
-    queryFilters: [],
     display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
     view: {current: defaultView, reload: false, sync: true},
     userViewsOrder: [],
-    sharedViewsOrder: []
+    sharedViewsOrder: [],
+    lang: null
 };
 
 const checkSync = (
@@ -112,10 +112,8 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
     });
 
     switch (action.type) {
-        case SearchActionTypes.SET_RECORDS:
-            return {...state, records: action.records};
-        case SearchActionTypes.SET_TOTAL_COUNT:
-            return {...state, totalCount: action.totalCount};
+        case SearchActionTypes.UPDATE_RESULT:
+            return {...state, records: action.records, totalCount: action.totalCount, loading: false};
         case SearchActionTypes.SET_PAGINATION:
             return {...state, pagination: action.page, loading: true};
         case SearchActionTypes.SET_OFFSET:
@@ -130,7 +128,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
 
             return {...state, sort: action.sort, view: {...state.view, sync}};
         case SearchActionTypes.CANCEL_SORT:
-            return {...state, sort: {...defaultSort, active: false}};
+            return {...state, sort: {...defaultSort, active: false}, loading: true};
         case SearchActionTypes.SET_ATTRIBUTES:
             return {...state, attributes: action.attributes};
         case SearchActionTypes.SET_FIELDS:
@@ -140,16 +138,29 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
 
             sync = sync && action.fields.map(f => f.id).join('.') === viewFieldsKeys.join('.');
 
-            return {...state, fields: action.fields, view: {...state.view, sync}};
+            return {...state, fields: action.fields, view: {...state.view, sync}, loading: true};
         case SearchActionTypes.SET_FULLTEXT:
             return {...state, fullText: action.fullText};
         case SearchActionTypes.SET_FILTERS:
             sync = sync && JSON.stringify(state.view.current.filters) === JSON.stringify(action.filters);
             return {...state, filters: action.filters, view: {...state.view, sync}};
-        case SearchActionTypes.SET_QUERY_FILTERS:
-            return {...state, queryFilters: action.queryFilters};
-        case SearchActionTypes.SET_VIEW:
-            return {...state, view: action.view};
+        case SearchActionTypes.CHANGE_VIEW:
+            return {
+                ...state,
+                view: {
+                    current: action.view,
+                    reload: true,
+                    sync: true
+                },
+                fields: getFieldsFromView(action.view, state.library, state.lang),
+                filters: action.view.filters,
+                sort: {...(action.view?.sort ?? defaultSort), active: true},
+                display: action.view.display
+            };
+        case SearchActionTypes.SET_VIEW_RELOAD:
+            return {...state, view: {...state.view, reload: action.reload}};
+        case SearchActionTypes.SET_VIEW_SYNC:
+            return {...state, view: {...state.view, sync: action.sync}};
         case SearchActionTypes.SET_DISPLAY:
             sync =
                 sync &&
@@ -161,18 +172,16 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         case SearchActionTypes.SET_SHARED_VIEWS_ORDER:
             return {...state, sharedViewsOrder: action.sharedViewsOrder};
         case SearchActionTypes.RESET_FILTERS:
-            return {...state, filters: [], queryFilters: [], loading: true};
+            return {...state, filters: [], loading: true};
         case SearchActionTypes.DISABLE_FILTERS:
             return {
                 ...state,
                 filters: state.filters.map(f => ({...f, active: false})),
-                queryFilters: [],
                 loading: true
             };
         case SearchActionTypes.APPLY_FILTERS:
             return {
                 ...state,
-                queryFilters: getRequestFromFilters(state.filters),
                 loading: true
             };
     }

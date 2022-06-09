@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Spin} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -12,10 +11,11 @@ import {useTranslation} from 'react-i18next';
 import {ColumnWithLooseAccessor, useFlexLayout, useTable, UseTableColumnOptions} from 'react-table';
 import {useSticky} from 'react-table-sticky';
 import styled from 'styled-components';
+import {isTypeStandard} from 'utils';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {infosCol, selectionColumn} from '../../../constants/constants';
 import themingVar from '../../../themingVar';
-import {ITableCell, ITableRow} from '../../../_types/types';
+import {IField, ITableCell, ITableRow} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
@@ -34,6 +34,11 @@ interface ICustomTableProps {
 }
 
 export const INFOS_COLUMN_WIDTH = '350px';
+enum FieldColumnWidth {
+    SMALL = 200,
+    MEDIUM = 250,
+    LARGE = 300
+}
 
 const CustomTable = styled.div<ICustomTableProps>`
     grid-area: data;
@@ -101,6 +106,23 @@ const Pagination = styled.div`
     padding-top: 8px;
 `;
 
+const _getFieldColumWidth = (field: IField): FieldColumnWidth => {
+    if (!isTypeStandard(field.type) || field.multipleValues) {
+        return FieldColumnWidth.LARGE;
+    }
+
+    switch (field.format) {
+        case AttributeFormat.numeric:
+        case AttributeFormat.boolean:
+        case AttributeFormat.date:
+            return FieldColumnWidth.SMALL;
+        case AttributeFormat.date_range:
+            return FieldColumnWidth.LARGE;
+        default:
+            return FieldColumnWidth.MEDIUM;
+    }
+};
+
 const Table = () => {
     const {t} = useTranslation();
     const [{lang}] = useLang();
@@ -151,7 +173,8 @@ const Table = () => {
                     key: field.key,
                     type: field.type,
                     format: field.embeddedData?.format || field.format,
-                    embeddedPath: field.embeddedData?.path
+                    embeddedPath: field.embeddedData?.path,
+                    width: _getFieldColumWidth(field)
                 };
             });
         }
@@ -230,14 +253,6 @@ const Table = () => {
     );
 
     const {getTableProps, getTableBodyProps, headerGroups, prepareRow, rows} = tableInstance;
-
-    if (searchState.loading) {
-        return (
-            <>
-                <Spin />
-            </>
-        );
-    }
 
     return (
         <>

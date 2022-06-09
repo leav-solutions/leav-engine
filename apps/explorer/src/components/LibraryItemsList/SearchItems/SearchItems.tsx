@@ -6,7 +6,6 @@ import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 
 function SearchItems(): JSX.Element {
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
@@ -18,11 +17,6 @@ function SearchItems(): JSX.Element {
     };
 
     const handleEnter = e => {
-        searchDispatch({
-            type: SearchActionTypes.SET_QUERY_FILTERS,
-            queryFilters: getRequestFromFilters(searchState.filters)
-        });
-
         searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
     };
 

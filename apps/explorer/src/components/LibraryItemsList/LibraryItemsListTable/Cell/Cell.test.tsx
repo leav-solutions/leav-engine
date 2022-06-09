@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockRecord, mockRecordWhoAmI} from '__mocks__/common/record';
 import {ITableCell} from '../../../../_types/types';
 import Cell from './Cell';
@@ -66,13 +67,20 @@ describe('Cell', () => {
             format: AttributeFormat.text
         };
 
-        await act(async () => {
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} />);
-        });
+        render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} />);
 
         expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
         expect(screen.queryByText('record2')).not.toBeInTheDocument();
         expect(screen.queryByText('record3')).not.toBeInTheDocument();
-        expect(screen.getByText('+ 2')).toBeInTheDocument();
+        expect(screen.getByText('3')).toBeInTheDocument();
+
+        await act(async () => {
+            userEvent.hover(screen.getByText('3'), null);
+        });
+
+        await waitFor(() => screen.getByText('record2'));
+
+        expect(screen.getByText('record2')).toBeInTheDocument();
+        expect(screen.getByText('record3')).toBeInTheDocument();
     });
 });

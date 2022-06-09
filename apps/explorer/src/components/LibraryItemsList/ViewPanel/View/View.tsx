@@ -100,7 +100,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const [deleteView] = useMutation<IDeleteViewMutation, IDeleteViewMutationVariables>(deleteViewMutation);
 
     const _changeView = () => {
-        searchDispatch({type: SearchActionTypes.SET_VIEW, view: {current: view, reload: true, sync: false}});
+        searchDispatch({type: SearchActionTypes.CHANGE_VIEW, view});
     };
 
     const ROWS_DESCRIPTION = 3;
@@ -112,14 +112,9 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
         await deleteView({variables: {viewId: view.id}});
 
         // set flag to refetch views
-        searchDispatch({
-            type: SearchActionTypes.SET_VIEW,
-            view: {
-                current: view.id === searchState.view.current.id ? defaultView : searchState.view.current,
-                reload: true,
-                sync: false
-            }
-        });
+        if (view.id === searchState.view.current.id) {
+            searchDispatch({type: SearchActionTypes.CHANGE_VIEW, view: defaultView});
+        }
 
         searchDispatch(
             !view.shared
@@ -156,12 +151,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
             // set flag to refetch views
             searchDispatch({
-                type: SearchActionTypes.SET_VIEW,
-                view: {
-                    current: searchState.view.current,
-                    reload: true,
-                    sync: false
-                }
+                type: SearchActionTypes.SET_VIEW_RELOAD,
+                reload: true
             });
 
             searchDispatch({
