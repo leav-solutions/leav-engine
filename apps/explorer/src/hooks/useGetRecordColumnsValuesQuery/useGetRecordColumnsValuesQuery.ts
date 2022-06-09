@@ -75,6 +75,7 @@ export const useGetRecordColumnsValuesQuery = (
         return refetchData;
     };
 
+    // @ts-ignore
     return {
         ...query,
         loading: query.loading || typeof queryData === undefined,

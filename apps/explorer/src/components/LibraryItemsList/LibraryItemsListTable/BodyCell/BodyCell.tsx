@@ -34,7 +34,7 @@ function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
             flex: '1 0 auto',
             maxWidth: INFOS_COLUMN_WIDTH,
             minWidth: INFOS_COLUMN_WIDTH,
-            zIndex: 'auto'
+            zIndex: 3
         };
     }
 

@@ -8,11 +8,11 @@ import {mockRecordWhoAmI} from '__mocks__/common/record';
 import searchReducer, {initialSearchState, SearchActionTypes} from './searchReducer';
 
 describe('searchReducer', () => {
-    test('SET_RECORDS', async () => {
+    test('UPDATE_RESULT', async () => {
         const newState = searchReducer(
-            {...initialSearchState},
+            {...initialSearchState, loading: true},
             {
-                type: SearchActionTypes.SET_RECORDS,
+                type: SearchActionTypes.UPDATE_RESULT,
                 records: [
                     {
                         whoAmI: {
@@ -23,25 +23,17 @@ describe('searchReducer', () => {
                         index: 0,
                         fields: []
                     }
-                ]
+                ],
+                totalCount: 42
             }
         );
 
         expect(newState.records).toHaveLength(1);
         expect(newState.records[0].whoAmI.id).toBe('123456');
-    });
-
-    test('SET_TOTAL_COUNT', async () => {
-        const newState = searchReducer(
-            {...initialSearchState},
-            {
-                type: SearchActionTypes.SET_TOTAL_COUNT,
-                totalCount: 42
-            }
-        );
-
         expect(newState.totalCount).toBe(42);
+        expect(newState.loading).toBe(false);
     });
+
     test('SET_PAGINATION', async () => {
         const newState = searchReducer(
             {...initialSearchState},
@@ -177,30 +169,13 @@ describe('searchReducer', () => {
         expect(newState.filters).toEqual(expect.arrayContaining([expect.objectContaining(filter)]));
     });
 
-    test('SET_QUERY_FILTERS', async () => {
-        const queryFilter = {
-            field: 'id',
-            value: '1',
-            condition: RecordFilterCondition.EQUAL
-        };
-
-        const newState = searchReducer(
-            {...initialSearchState},
-            {
-                type: SearchActionTypes.SET_QUERY_FILTERS,
-                queryFilters: [queryFilter]
-            }
-        );
-
-        expect(newState.queryFilters).toEqual(expect.arrayContaining([expect.objectContaining(queryFilter)]));
-    });
     test('RESET_FILTERS', async () => {
         const newState = searchReducer({...initialSearchState}, {type: SearchActionTypes.RESET_FILTERS});
 
-        expect(newState.queryFilters).toHaveLength(0);
         expect(newState.filters).toHaveLength(0);
         expect(newState.loading).toBe(true);
     });
+
     test('DISABLE_FILTERS', async () => {
         const queryFilter = {
             field: 'id',
@@ -218,22 +193,15 @@ describe('searchReducer', () => {
         };
 
         const newState = searchReducer(
-            {...initialSearchState, filters: [filter], queryFilters: [queryFilter]},
+            {...initialSearchState, filters: [filter]},
             {type: SearchActionTypes.DISABLE_FILTERS}
         );
 
         expect(newState.filters).toHaveLength(1);
         expect(newState.filters[0].active).toBe(false);
-        expect(newState.queryFilters).toHaveLength(0);
         expect(newState.loading).toBe(true);
     });
     test('APPLY_FILTERS', async () => {
-        const queryFilter = {
-            field: 'id',
-            value: 'test',
-            condition: RecordFilterCondition.EQUAL
-        };
-
         const filter = {
             type: FilterType.ATTRIBUTE,
             index: 1,
@@ -249,8 +217,6 @@ describe('searchReducer', () => {
         );
 
         expect(newState.filters).toHaveLength(1);
-        expect(newState.queryFilters).toHaveLength(1);
-        expect(newState.queryFilters[0]).toEqual(queryFilter);
         expect(newState.loading).toBe(true);
     });
 });

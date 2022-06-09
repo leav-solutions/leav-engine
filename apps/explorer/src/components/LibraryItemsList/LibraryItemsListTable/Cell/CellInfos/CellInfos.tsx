@@ -44,7 +44,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
 
     const menuActions: FloatingMenuAction[] = [
         {
-            title: t('global.edit'),
+            title: t('global.details'),
             button: <EditRecordBtn shape={'circle'} record={record} size={menuBtnSize} />
         }
     ];

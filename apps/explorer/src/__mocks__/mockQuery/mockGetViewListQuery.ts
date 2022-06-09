@@ -1,15 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SortOrder, ViewTypes, ViewSizes} from '_gqlTypes/globalTypes';
+import {mockView} from '__mocks__/common/view';
 import {getViewsListQuery, IGetViewListElement} from '../../graphQL/queries/views/getViewsListQuery';
 
 const views: IGetViewListElement[] = [
     {
+        ...mockView,
         __typename: 'View',
-        id: 'id',
-        display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
-        shared: false,
         created_by: {
             id: '1',
             whoAmI: {
@@ -27,21 +25,7 @@ const views: IGetViewListElement[] = [
                 }
             }
         },
-        label: {
-            fr: 'list',
-            en: 'list'
-        },
-        description: {
-            fr: 'this is a list ',
-            en: 'this is a list '
-        },
-        color: '#e48232',
-        filters: [],
-        sort: {
-            field: 'id',
-            order: SortOrder.asc
-        },
-        settings: []
+        filters: []
     }
 ];
 

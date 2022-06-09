@@ -91,25 +91,8 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                 });
 
                 searchDispatch({
-                    type: SearchActionTypes.SET_VIEW,
-                    view: {
-                        current: {
-                            ...searchState.view.current,
-                            sort: searchState.sort.active
-                                ? {field: searchState.sort.field, order: searchState.sort.order}
-                                : undefined,
-                            display: searchState.display,
-                            filters: searchState.filters,
-                            settings: [
-                                {
-                                    name: viewSettingsField,
-                                    value: viewFields
-                                }
-                            ]
-                        },
-                        reload: true,
-                        sync: false
-                    }
+                    type: SearchActionTypes.SET_VIEW_SYNC,
+                    sync: true
                 });
             } catch (e) {
                 console.error(e);
@@ -117,10 +100,10 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         }
     };
 
-    const _setView = () => {
+    const _resetView = () => {
         searchDispatch({
-            type: SearchActionTypes.SET_VIEW,
-            view: {current: searchState.view.current, reload: true, sync: false}
+            type: SearchActionTypes.CHANGE_VIEW,
+            view: searchState.view.current
         });
     };
 
@@ -141,16 +124,12 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         });
 
         searchDispatch({
-            type: SearchActionTypes.SET_VIEW,
+            type: SearchActionTypes.CHANGE_VIEW,
             view: {
-                current: {
-                    ...newView,
-                    owner: true,
-                    id: newViewRes.data.saveView.id,
-                    filters: []
-                },
-                reload: true,
-                sync: false
+                ...newView,
+                owner: true,
+                id: newViewRes.data.saveView.id,
+                filters: []
             }
         });
 
@@ -216,7 +195,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                         </>
                     </Button>
                 </Tooltip>
-                <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_setView} />
+                <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_resetView} />
                 <Button
                     icon={<SaveFilled />}
                     onClick={_saveView}

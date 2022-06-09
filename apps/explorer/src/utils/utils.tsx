@@ -149,6 +149,10 @@ export const checkTypeIsLink = (type: AttributeType) => {
     return type === AttributeType.simple_link || type === AttributeType.advanced_link;
 };
 
+export const isTypeStandard = (type: AttributeType) => {
+    return type === AttributeType.simple || type === AttributeType.advanced;
+};
+
 export const displayTypeToPreviewSize = (displayType: ViewSizes) => {
     switch (displayType) {
         case ViewSizes.SMALL:
@@ -359,4 +363,9 @@ export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, lib
 export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
     const appTrees = app?.trees ?? [];
     return !appTrees.length || !!appTrees.find(appTree => appTree.id === treeId);
+};
+
+export const stopEvent = (e: React.SyntheticEvent<any>) => {
+    e.preventDefault();
+    e.stopPropagation();
 };

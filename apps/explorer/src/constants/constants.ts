@@ -37,3 +37,5 @@ export const formatNotUsingCondition = [AttributeFormat.boolean];
 export const defaultLinkAttributeFilterFormat = AttributeFormat.text;
 
 export const treeNavigationPageSize = 20;
+
+export const getSelectedViewKey = (libraryId: string) => `selected_view_${libraryId}`;

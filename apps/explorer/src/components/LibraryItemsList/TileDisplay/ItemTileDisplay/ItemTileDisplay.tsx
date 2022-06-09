@@ -17,7 +17,7 @@ import {useTranslation} from 'react-i18next';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {displayTypeToPreviewSize, getFileUrl, localizedTranslation} from 'utils';
+import {displayTypeToPreviewSize, getFileUrl, localizedTranslation, stopEvent} from 'utils';
 import themingVar from '../../../../themingVar';
 import {
     IItem,
@@ -28,12 +28,7 @@ import {
 } from '../../../../_types/types';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 import RecordPreview from '../../../shared/RecordPreview';
-
-const itemPreviewSize = {
-    [PreviewSize.small]: '100px',
-    [PreviewSize.medium]: '200px',
-    [PreviewSize.big]: '300px'
-};
+import getItemPreviewSize from '../helpers/getItemPreviewSize';
 
 const buttonsColor = '#333333';
 
@@ -200,7 +195,9 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
           selectionState.searchSelection.allSelected
         : selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
 
-    const selectedToggle = () => {
+    const selectedToggle = (e: React.MouseEvent) => {
+        stopEvent(e);
+
         setIsSelect(!isSelected);
 
         const newSelected: ISharedSelected = {
@@ -235,14 +232,12 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     };
 
     const _handleSelect = e => {
-        e.stopPropagation();
-        e.preventDefault();
-        selectedToggle();
+        stopEvent(e);
+        selectedToggle(e);
     };
 
     const _handleDelete = e => {
-        e.stopPropagation();
-        e.preventDefault();
+        stopEvent(e);
 
         message.warn(t('global.feature_not_available'));
     };
@@ -253,6 +248,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
         selectionState.selection.selected.length ||
         (selectionState.selection as ISharedStateSelectionSearch).allSelected;
 
+    const itemPreviewSize = getItemPreviewSize(previewSize);
     return (
         <>
             {editRecordModal && (
@@ -264,7 +260,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                 />
             )}
             <Item
-                $previewSize={itemPreviewSize[previewSize]}
+                $previewSize={itemPreviewSize}
                 size="small"
                 onClick={selectedToggle}
                 onDoubleClick={() => setEditRecordModal(true)}
@@ -277,8 +273,8 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                             }
                             tile={true}
                             style={{
-                                width: itemPreviewSize[previewSize],
-                                height: itemPreviewSize[previewSize]
+                                width: itemPreviewSize,
+                                height: itemPreviewSize
                             }}
                         />
                         <ActionsWrapper>

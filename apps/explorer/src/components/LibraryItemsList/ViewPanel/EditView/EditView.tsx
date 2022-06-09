@@ -15,8 +15,8 @@ import addViewMutation, {
 } from '../../../../graphQL/mutations/views/addViewMutation';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import {getRequestFromFilters} from '../../FiltersPanel/getRequestFromFilter';
 import {ISystemTranslation, IView} from '../../../../_types/types';
+import {getRequestFromFilters} from '../../FiltersPanel/getRequestFromFilter';
 
 interface IFormValues {
     label: ISystemTranslation;
@@ -90,25 +90,18 @@ function EditView({visible, onClose, view}: IEditViewProps): JSX.Element {
             });
         }
 
-        searchDispatch({
-            type: SearchActionTypes.SET_VIEW,
-            view: {
-                current:
-                    view.id === searchState.view.current.id
-                        ? {
-                              ...searchState.view.current,
-                              label: values.label,
-                              description: !Object.values(values.description).every(x => x === '')
-                                  ? values.description
-                                  : null,
-                              display: {type: values.type, size: view.display.size},
-                              shared: values.shared
-                          }
-                        : searchState.view.current,
-                reload: true,
-                sync: false
-            }
-        });
+        if (view.id === searchState.view.current.id) {
+            searchDispatch({
+                type: SearchActionTypes.CHANGE_VIEW,
+                view: {
+                    ...searchState.view.current,
+                    label: values.label,
+                    description: !Object.values(values.description).every(x => x === '') ? values.description : null,
+                    display: {type: values.type, size: view.display.size},
+                    shared: values.shared
+                }
+            });
+        }
 
         setConfirmLoading(false);
         onClose();

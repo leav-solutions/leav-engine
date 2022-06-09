@@ -13,7 +13,8 @@
         "copy": "Copy",
         "feature_not_available": "This feature will be available soon!",
         "available_soon": "Soon",
-        "go_back_home": "Back Home"
+        "go_back_home": "Back Home",
+        "details": "Details"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
@@ -98,6 +99,7 @@
         "new": "New",
         "header_table": "Items from {{libName}}",
         "show-filter-panel": "Show filters",
+        "show_more_links": "Show more",
         "table": {
             "preview": "Preview",
             "selected": "Selected",

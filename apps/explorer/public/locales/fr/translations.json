@@ -15,7 +15,8 @@
         "copy": "Copie",
         "feature_not_available": "Cette fonctionnalité sera bientôt disponible!",
         "available_soon": "Bientôt",
-        "go_back_home": "Retourner à l'accueil"
+        "go_back_home": "Retourner à l'accueil",
+        "details": "Détails"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
@@ -101,6 +102,7 @@
         "display_type": "Affichage",
         "header_table": "Éléments de {{libName}}",
         "show-filter-panel": "Montrer les filtres",
+        "show_more_links": "Voir plus",
         "actions": {
             "new": "L'ajout des élements n'est pas encore mis en place"
         },

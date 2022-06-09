@@ -2,11 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
+import {SelectionModeContext} from 'context';
 import useSearchReducer from 'hooks/useSearchReducer';
-import React from 'react';
+import React, {useContext} from 'react';
+import {resetSearchSelection, resetSelection} from 'redux/selection';
+import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {displayTypeToPreviewSize} from 'utils';
 import themingVar from '../../../themingVar';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
+import getItemPreviewSize from './helpers/getItemPreviewSize';
 import ItemTileDisplay from './ItemTileDisplay';
 
 const LoadingWrapper = styled.div`
@@ -17,16 +22,14 @@ const LoadingWrapper = styled.div`
     align-items: center;
 `;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{size: string}>`
     grid-area: data;
     height: 100%;
     overflow-y: scroll;
     border-radius: 0.25rem 0.25rem 0 0;
     border-bottom: none;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(${({size}) => size} + 1rem), 1fr));
     align-content: flex-start;
 `;
 
@@ -40,9 +43,26 @@ const Footer = styled.div`
 
 function TileDisplay(): JSX.Element {
     const {state: searchState} = useSearchReducer();
+    const itemPreviewSize = getItemPreviewSize(displayTypeToPreviewSize(searchState.display.size));
+    const dispatch = useAppDispatch();
+    const selectionMode = useContext(SelectionModeContext);
+
+    const _handleClick = () => {
+        // On click outside of an element, unselect all
+        if (selectionMode) {
+            dispatch(resetSearchSelection());
+        } else {
+            dispatch(resetSelection());
+        }
+    };
+
+    const {selectionState} = useAppSelector(state => ({
+        selectionState: state.selection
+    }));
+
     return (
         <>
-            <Wrapper>
+            <Wrapper size={itemPreviewSize} onClick={_handleClick}>
                 {searchState.loading ? (
                     <LoadingWrapper>
                         <Spin size="large" />
