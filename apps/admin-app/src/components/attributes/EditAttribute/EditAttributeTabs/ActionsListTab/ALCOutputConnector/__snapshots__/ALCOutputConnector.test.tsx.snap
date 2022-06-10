@@ -4,19 +4,19 @@ exports[`ALCOutputConnector Snapshot test 1`] = `
 LoadedCheerio {
   "0": Node {
     "attribs": Object {
-      "class": "sc-bwzfXH XqlEP",
+      "class": "sc-gsnTZi hEMQZf",
     },
     "children": Array [
       Node {
         "attribs": Object {
-          "class": "sc-htpNat bXFbJl",
+          "class": "sc-dkzDqf hxLpTO",
         },
         "children": Array [],
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Node {
           "attribs": Object {
-            "class": "sc-bdVaJa oaXtU",
+            "class": "sc-bczRLJ etimha",
             "style": "width:40px",
           },
           "children": Array [],
@@ -47,7 +47,7 @@ LoadedCheerio {
       },
       Node {
         "attribs": Object {
-          "class": "sc-bdVaJa oaXtU",
+          "class": "sc-bczRLJ etimha",
           "style": "width:40px",
         },
         "children": Array [],
@@ -57,7 +57,7 @@ LoadedCheerio {
         "parent": [Circular],
         "prev": Node {
           "attribs": Object {
-            "class": "sc-htpNat bXFbJl",
+            "class": "sc-dkzDqf hxLpTO",
           },
           "children": Array [],
           "name": "div",

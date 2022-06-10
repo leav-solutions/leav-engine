@@ -17,12 +17,12 @@ interface IRecordPreviewProps {
     size?: PreviewSize;
 }
 
-const getPreviewSize = (size?: PreviewSize) => {
+export const getPreviewSize = (size?: PreviewSize) => {
     switch (size) {
         case PreviewSize.medium:
-            return '5rem';
+            return '4.5rem';
         case PreviewSize.big:
-            return '8rem';
+            return '7rem';
         case PreviewSize.small:
         default:
             return '3rem';
@@ -40,7 +40,7 @@ const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
     ${props => props.style || ''}
     background-color: ${props => props.bgColor};
     color: ${props => props.fontColor};
-    font-size: 1.1em;
+    font-size: ${({size}) => `calc(${getPreviewSize(size)} / 2.5)`};
     height: ${({size}) => getPreviewSize(size)};
     width: ${({size}) => getPreviewSize(size)};
     padding: 5px;
@@ -70,14 +70,14 @@ const ImagePreview = styled.div<IImagePreviewProps>`
 ImagePreview.displayName = 'ImagePreview';
 
 const _getInitials = (label: string) => {
-    return typeof label === 'string' && label
-        ? label
-              .split(' ')
-              .slice(0, 2)
-              .map(word => word[0])
-              .join('')
-              .toUpperCase()
-        : '?';
+    if (typeof label !== 'string') {
+        return '?';
+    }
+
+    const words = label.split(' ').slice(0, 2);
+    const letters = words.length > 1 ? words.map(word => word[0]).join('') : words[0].slice(0, 2);
+
+    return letters.toUpperCase();
 };
 
 function RecordPreviewList({label, color, image, size, style}: IRecordPreviewProps): JSX.Element {
@@ -112,10 +112,7 @@ function RecordPreviewList({label, color, image, size, style}: IRecordPreviewPro
             bgColor={bgColor}
             fontColor={fontColor}
             size={size}
-            style={{
-                ...style,
-                fontSize: containerSize > '4rem' ? `calc(${containerSize} - 3rem)` : `calc(${containerSize} - 1rem)`
-            }}
+            style={{...style}}
         >
             {_getInitials(label)}
         </GeneratedPreview>

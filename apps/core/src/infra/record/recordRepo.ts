@@ -188,12 +188,12 @@ export default function ({
         return {initialVars, queryPart: aql.join(queryParts)};
     };
 
-    const _isAttributeFilter = (filter: IRecordFilterOption) => {
-        return filter.condition in AttributeCondition;
+    const _isAttributeFilter = (filter: IRecordFilterOption | GeneratedAqlQuery) => {
+        return (filter as IRecordFilterOption).condition in AttributeCondition;
     };
 
-    const _isClassifiedFilter = (filter: IRecordFilterOption) => {
-        return filter.condition in TreeCondition;
+    const _isClassifiedFilter = (filter: IRecordFilterOption | GeneratedAqlQuery) => {
+        return (filter as IRecordFilterOption).condition in TreeCondition;
     };
 
     return {
@@ -231,28 +231,26 @@ export default function ({
                             isFilteringOnActive || (_isAttributeFilter(filter) && filter.attributes[0].id === 'active');
                         stack.push(filter);
                     } else {
-                        const [f0, f1] = [stack.pop(), stack.pop()].reverse() as IRecordFilterOption[];
-                        let f0FindRequest: IFindRequestResult;
-                        let f1FindRequest: IFindRequestResult;
+                        let [f0, f1] = [stack.pop(), stack.pop()].reverse();
 
                         if (_isAttributeFilter(f0) || _isClassifiedFilter(f0)) {
-                            f0FindRequest = await _findRequest(libraryId, `${i}_0`, f0);
+                            const f0FindRequest = await _findRequest(libraryId, `${i}_0`, f0 as IRecordFilterOption);
+                            f0 = f0FindRequest.queryPart;
+
+                            initialVars = [...initialVars, ...(f0FindRequest?.initialVars ?? [])];
                         }
 
                         if (_isAttributeFilter(f1) || _isClassifiedFilter(f1)) {
-                            f1FindRequest = await _findRequest(libraryId, `${i}_1`, f1);
+                            const f1FindRequest = await _findRequest(libraryId, `${i}_1`, f1 as IRecordFilterOption);
+                            f1 = f1FindRequest.queryPart;
+
+                            initialVars = [...initialVars, ...(f1FindRequest?.initialVars ?? [])];
                         }
 
                         const res =
                             filter.operator === Operator.AND
-                                ? aql`INTERSECTION(${f0FindRequest.queryPart}, ${f1FindRequest.queryPart})`
-                                : aql`APPEND(${f0FindRequest.queryPart}, ${f1FindRequest.queryPart}, true)`;
-
-                        initialVars = [
-                            ...initialVars,
-                            ...(f0FindRequest?.initialVars ?? []),
-                            ...(f1FindRequest?.initialVars ?? [])
-                        ];
+                                ? aql`INTERSECTION(${f0}, ${f1})`
+                                : aql`APPEND(${f0}, ${f1}, true)`;
 
                         stack.push(res);
                     }

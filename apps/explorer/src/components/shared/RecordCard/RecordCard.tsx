@@ -7,6 +7,7 @@ import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedTranslation} from 'utils';
 import {FilePreview, IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
+import {getPreviewSize} from '../RecordPreview/RecordPreview';
 
 export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;
@@ -19,20 +20,32 @@ export interface IRecordCardProps {
 
 interface IWrapperProps {
     recordColor: string | null;
+    size: PreviewSize;
+    withPreview: boolean;
     style?: CSSObject;
 }
 
 /* tslint:disable:variable-name */
 const Wrapper = styled.div<IWrapperProps>`
     border-left: 5px solid ${props => props.recordColor || 'transparent'};
-    display: flex;
-    flex-direction: row;
-    ${props => props.style}
+    display: grid;
+    grid-template-columns:
+        ${props => {
+            if (!props.withPreview) {
+                return '100%';
+            }
+
+            const previewSize = getPreviewSize(props.size);
+            const previewColSize = `calc(${previewSize} + 1.5rem)`;
+            return `${previewColSize} calc(100% - ${previewColSize})`;
+        }}
+        ${props => props.style};
 `;
 Wrapper.displayName = 'Wrapper';
 
 const CardPart = styled.div`
     display: flex;
+    line-height: 1.3;
     flex-direction: column;
     justify-content: center;
 `;
@@ -75,7 +88,13 @@ const RecordCard = ({
     const label = record.label || record.id;
 
     return (
-        <Wrapper recordColor={record.color ?? ''} style={style} className="record-card">
+        <Wrapper
+            recordColor={record.color ?? ''}
+            style={style}
+            className="record-card"
+            size={size}
+            withPreview={withPreview}
+        >
             {withPreview && (
                 <PreviewWrapper className="preview">
                     <RecordPreview

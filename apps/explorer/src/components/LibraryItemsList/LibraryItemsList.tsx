@@ -29,7 +29,7 @@ import {
     GET_VIEW_view_display,
     GET_VIEW_view_sort
 } from '_gqlTypes/GET_VIEW';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, SortOrder} from '_gqlTypes/globalTypes';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {defaultSort, defaultView, panelSize, viewSettingsField} from '../../constants/constants';
 import {getRecordsFromLibraryQuery} from '../../graphQL/queries/records/getRecordsFromLibraryQuery';
@@ -256,13 +256,27 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
     });
 
     // Get data
-    const [getRecords, {error: getRecordsError, refetch}] = useLazyQuery<
+    const [getRecords, {error: getRecordsError}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields), {
-        fetchPolicy: 'network-only',
-        onCompleted: data => {
-            const itemsFromQuery = data ? data[library.gqlNames.query || ''].list : [];
+    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields), {fetchPolicy: 'network-only'});
+
+    const _fetchRecords = async (filters: IQueryFilter[], sortField: string, sortOrder: SortOrder) => {
+        try {
+            const results = await getRecords({
+                variables: {
+                    limit: searchState.pagination,
+                    offset: searchState.offset,
+                    filters,
+                    sortField,
+                    sortOrder,
+                    fullText: searchState.fullText
+                }
+            });
+
+            const recordsData = results.data;
+
+            const itemsFromQuery = recordsData?.[library.gqlNames.query || '']?.list ?? [];
 
             const newRecords: ISearchRecord[] = manageItems({
                 items: itemsFromQuery,
@@ -271,13 +285,20 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
 
             searchDispatch({
                 type: SearchActionTypes.SET_TOTAL_COUNT,
-                totalCount: data?.[library.gqlNames.query]?.totalCount
+                totalCount: recordsData?.[library.gqlNames.query]?.totalCount
             });
 
             searchDispatch({type: SearchActionTypes.SET_RECORDS, records: newRecords});
+        } catch (err) {
+            // Error is already handled. This try/catch is just to avoid unhandled rejection
+        } finally {
             searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
         }
-    });
+    };
+
+    const _reload = () => {
+        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
+    };
 
     useEffect(() => {
         if (!searchState.view.reload || !hasAccess) {
@@ -356,16 +377,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         const field = searchState.view.current.sort?.field || defaultSort.field;
         const order = searchState.view.current.sort?.order || defaultSort.order;
 
-        getRecords({
-            variables: {
-                limit: searchState.pagination,
-                offset: searchState.offset,
-                filters: queryFilters,
-                sortField: field,
-                sortOrder: order,
-                fullText: searchState.fullText
-            }
-        });
+        _fetchRecords(queryFilters, field, order);
 
         updateSelectedViewMutation({
             variables: {
@@ -405,16 +417,11 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         }
 
         if (searchState.loading) {
-            getRecords({
-                variables: {
-                    limit: searchState.pagination,
-                    offset: searchState.offset,
-                    filters: searchState.queryFilters,
-                    sortField: searchState.sort?.field ?? defaultSort.field,
-                    sortOrder: searchState.sort?.order ?? defaultSort.order,
-                    fullText: searchState.fullText
-                }
-            });
+            _fetchRecords(
+                searchState.queryFilters,
+                searchState.sort?.field ?? defaultSort.field,
+                searchState.sort?.order ?? defaultSort.order
+            );
         }
     }, [
         searchState.fullText,
@@ -448,7 +455,7 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
             <SelectionModeContext.Provider value={selectionMode}>
                 <MenuWrapper>
-                    <MenuItemList refetch={refetch} />
+                    <MenuItemList refetch={_reload} />
                     <MenuItemListSelected active={menuSelectedActive} />
                 </MenuWrapper>
 

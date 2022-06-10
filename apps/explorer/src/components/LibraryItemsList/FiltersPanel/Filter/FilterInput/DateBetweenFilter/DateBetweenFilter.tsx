@@ -4,15 +4,11 @@
 import {DatePicker} from 'antd';
 import moment from 'moment';
 import React from 'react';
-import themingVar from '../../../../../themingVar';
-import {IDateRangeValue, IFilter} from '../../../../../_types/types';
+import themingVar from '../../../../../../themingVar';
+import {IDateRangeValue} from '../../../../../../_types/types';
+import {IFilterInputProps} from '../../Filter';
 
-interface IDateBetweenFilterProps {
-    filter: IFilter;
-    updateFilterValue: (newFilterValue: IFilter['value']) => void;
-}
-
-const DateBetweenFilter = ({filter, updateFilterValue}: IDateBetweenFilterProps) => {
+const DateBetweenFilter = ({filter, updateFilterValue}: IFilterInputProps) => {
     const dateRangeValue: IDateRangeValue =
         (filter?.value?.value as IDateRangeValue)?.from && (filter?.value?.value as IDateRangeValue)?.to
             ? (filter.value.value as IDateRangeValue)

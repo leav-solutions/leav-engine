@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getRequestFromFilters} from 'components/LibraryItemsList/FiltersPanel/getRequestFromFilter';
 import {defaultSort, defaultView, viewSettingsField} from 'constants/constants';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {IAttribute, IField, IFilter, IQueryFilter, IViewDisplay} from '_types/types';
@@ -22,7 +23,10 @@ export enum SearchActionTypes {
     SET_VIEW = 'SET_VIEW',
     SET_USER_VIEWS_ORDER = 'SET_USER_VIEWS_ORDER',
     SET_SHARED_VIEWS_ORDER = 'SET_SHARED_VIEWS_ORDER',
-    SET_DISPLAY = 'SET_DISPLAY'
+    SET_DISPLAY = 'SET_DISPLAY',
+    RESET_FILTERS = 'RESET_FILTERS',
+    DISABLE_FILTERS = 'DISABLE_FILTERS',
+    APPLY_FILTERS = 'APPLY_FILTERS'
 }
 
 export type SearchAction =
@@ -41,7 +45,10 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_VIEW; view: IViewState}
     | {type: SearchActionTypes.SET_DISPLAY; display: IViewDisplay}
     | {type: SearchActionTypes.SET_USER_VIEWS_ORDER; userViewsOrder: string[]}
-    | {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER; sharedViewsOrder: string[]};
+    | {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER; sharedViewsOrder: string[]}
+    | {type: SearchActionTypes.RESET_FILTERS}
+    | {type: SearchActionTypes.DISABLE_FILTERS}
+    | {type: SearchActionTypes.APPLY_FILTERS};
 
 export const initialSearchState: ISearchState = {
     library: null,
@@ -153,6 +160,21 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             return {...state, userViewsOrder: action.userViewsOrder};
         case SearchActionTypes.SET_SHARED_VIEWS_ORDER:
             return {...state, sharedViewsOrder: action.sharedViewsOrder};
+        case SearchActionTypes.RESET_FILTERS:
+            return {...state, filters: [], queryFilters: [], loading: true};
+        case SearchActionTypes.DISABLE_FILTERS:
+            return {
+                ...state,
+                filters: state.filters.map(f => ({...f, active: false})),
+                queryFilters: [],
+                loading: true
+            };
+        case SearchActionTypes.APPLY_FILTERS:
+            return {
+                ...state,
+                queryFilters: getRequestFromFilters(state.filters),
+                loading: true
+            };
     }
 };
 
