@@ -109,15 +109,30 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         });
     };
 
-    const _handleMappingSelect = (sheetIndex: number, mappingIndex: number, attributeId: string | null) => {
+    const _handleMappingSelect = (sheetIndex: number, selectedMappingIndex: number, attributeId: string | null) => {
         const sheet = sheets[sheetIndex];
-        const mapping = sheet.mapping;
-        mapping[mappingIndex] = attributeId;
+        let mapping = [...sheet.mapping];
+        mapping[selectedMappingIndex] = attributeId;
 
-        _changeSheetProperty(sheetIndex, {
-            mapping
+        // Prevent mapping the same attribute twice
+        // We may have the same attribute twice only if one is used as "keyTo". Otherwise, it's forbidden
+        mapping = mapping.map((mappingAttribute, columnIndex) => {
+            if (
+                columnIndex !== selectedMappingIndex &&
+                mappingAttribute === attributeId &&
+                sheet.keyToColumnIndex !== columnIndex &&
+                sheet.keyToColumnIndex !== selectedMappingIndex
+            ) {
+                return null;
+            }
+
+            return mappingAttribute;
         });
+
+        _changeSheetProperty(sheetIndex, {mapping});
     };
+
+    //TODO: fix import selectors width?
 
     const _handleTreeLinkLibrarySelect = async (sheetIndex: number, treeLinkLibrary: string) => {
         const keyToAttributes = treeLinkLibrary ? await onGetAttributes(treeLinkLibrary) : null;
@@ -143,6 +158,12 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
                     if (sheet[otherPropToCheckColumnIndex] === columnIndex) {
                         newProps[otherPropToCheck] = null;
                         newProps[otherPropToCheckColumnIndex] = null;
+                    }
+
+                    // If changing keyTo, empty mapping for this column as mappable attributes are not the same
+                    if (keyType === 'keyTo') {
+                        newProps.mapping = [...sheet.mapping];
+                        newProps.mapping[columnIndex] = null;
                     }
 
                     _changeSheetProperty(sheetIndex, newProps);

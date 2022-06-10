@@ -9,7 +9,6 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
 import React, {ReactNode, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {ImportType} from '_gqlTypes/globalTypes';
 import {IMPORT_EXCEL, IMPORT_EXCELVariables} from '_gqlTypes/IMPORT_EXCEL';
@@ -30,18 +29,17 @@ const {Step} = Steps;
 export interface IImportModalProps {
     open: boolean;
     onClose: () => void;
+    library?: string;
 }
 const Content = styled.div`
     margin-top: 2em;
 `;
 
-function ImportModal({onClose, open}: IImportModalProps): JSX.Element {
+function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [state, dispatch] = useReducer(importReducer, initialState);
+    const [state, dispatch] = useReducer(importReducer, {...initialState, defaultLibrary: library});
     const {sheets, file, currentStep, okBtn} = state;
-
-    const appDispatch = useAppDispatch();
 
     // get libraries list
     const librariesListQuery = useGetLibrariesListQuery();
@@ -150,7 +148,7 @@ function ImportModal({onClose, open}: IImportModalProps): JSX.Element {
             message.error(error.message);
         }
 
-        return data?.attributes?.list ?? [];
+        return (data?.attributes?.list ?? []).filter(attribute => !attribute.system || attribute.id === 'id');
     };
 
     const _getStepContent = (): JSX.Element => {

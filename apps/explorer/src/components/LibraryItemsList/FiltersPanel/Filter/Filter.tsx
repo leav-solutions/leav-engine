@@ -293,7 +293,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                   ...f,
                   type: AttributeType.simple,
                   multiple_values: undefined,
-                  linked_tree: undefined
+                  linked_tree: undefined,
+                  system: false
               }))
             : [];
     };

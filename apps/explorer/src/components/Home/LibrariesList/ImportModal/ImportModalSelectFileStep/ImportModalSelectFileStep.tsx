@@ -69,10 +69,14 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                     const sLibrary = params.library;
                     const sLinkAttribute = params.linkAttribute;
                     const sMode = params.mode ?? defaultMode;
-                    const sMapping = [];
+                    let sMapping = [];
                     const sTreeLinkLibrary = params.treeLinkLibrary;
                     let sKeyColumnIndex: number;
                     let sKeyToColumnIndex: number;
+
+                    let sKeyToAttributes: GET_ATTRIBUTES_BY_LIB_attributes_list[] = [];
+
+                    const attributes = await onGetAttributes(sLibrary);
 
                     // Extract mapping, keyIndex and keyToIndex from all columns comments
                     for (const [index, comm] of comments.entries()) {
@@ -88,13 +92,9 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                         }
                     }
 
-                    let sKeyToAttributes: GET_ATTRIBUTES_BY_LIB_attributes_list[] = [];
-
-                    const attrs = await onGetAttributes(sLibrary);
-
                     const linkAttributeProps =
                         sKeyToColumnIndex && sLinkAttribute
-                            ? (attrs.find(
+                            ? (attributes.find(
                                   a => a.id === sLinkAttribute
                               ) as GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute)
                             : null;
@@ -107,9 +107,17 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                         sKeyToAttributes = await onGetAttributes(keyToLibrary);
                     }
 
+                    // Check if all mapping attributes actually exist
+                    sMapping = sMapping.map((mappingAttribute, index) => {
+                        const attributesToCheck = index === sKeyToColumnIndex ? sKeyToAttributes : attributes;
+                        return attributesToCheck.find(attribute => attribute.id === mappingAttribute)
+                            ? mappingAttribute
+                            : null;
+                    });
+
                     s.push({
                         name: sheetName,
-                        attributes: attrs,
+                        attributes,
                         columns: sheetColumns,
                         type: ImportType[sType],
                         mode: ImportMode[sMode],
@@ -124,12 +132,16 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                         mapping: sMapping
                     });
                 } else {
+                    const sLibrary = state.defaultLibrary;
+                    const attributes = await onGetAttributes(sLibrary);
+
                     s.push({
                         name: sheetName,
+                        library: sLibrary,
                         columns: sheetColumns,
                         type: defaultType,
                         mode: defaultMode,
-                        attributes: [],
+                        attributes,
                         mapping: [],
                         data: sheetData.length ? sheetData : null
                     });

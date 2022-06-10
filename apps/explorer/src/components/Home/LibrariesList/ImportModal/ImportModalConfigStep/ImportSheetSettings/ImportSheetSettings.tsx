@@ -100,7 +100,7 @@ function ImportSheetSettings({
                         <Form.Item label={t('import.library')} required>
                             <Select
                                 style={{minWidth: 200}}
-                                defaultValue={sheet.library}
+                                defaultValue={sheet.library ?? state.defaultLibrary}
                                 placeholder={t('import.select_library')}
                                 onChange={value => onLibrarySelect(sheetIndex, value)}
                             >

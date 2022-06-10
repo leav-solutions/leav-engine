@@ -5,7 +5,7 @@ import {Switch} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {ImportType} from '_gqlTypes/globalTypes';
+import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
 import {ISheet} from '../../_types';
 
 interface IImportKeysSelectorProps {
@@ -16,8 +16,9 @@ interface IImportKeysSelectorProps {
 
 const Wrapper = styled.div<{hasKeyTo: boolean}>`
     display: grid;
-    grid-template-columns: repeat(${props => (props.hasKeyTo ? 2 : 1)}, 1fr);
-    grid-column-gap: 1em;
+    grid-template-columns: 7rem 3rem;
+    grid-column-gap: 0.5em;
+    grid-row-gap: 1em;
 `;
 
 function ImportKeysSelector({columnIndex, sheet, onChange}: IImportKeysSelectorProps): JSX.Element {
@@ -32,21 +33,26 @@ function ImportKeysSelector({columnIndex, sheet, onChange}: IImportKeysSelectorP
         onChange('keyTo', value);
     };
 
+    const displayImportKey = isLinkImport || sheet.mode !== ImportMode.insert;
+    const displayLinkKey = isLinkImport;
+
+    if (!displayImportKey && !displayLinkKey) {
+        return null;
+    }
+
     return (
         <Wrapper hasKeyTo={isLinkImport}>
-            <Switch
-                checkedChildren={t('import.import_key')}
-                unCheckedChildren={t('import.import_key')}
-                checked={sheet.keyColumnIndex === columnIndex}
-                onChange={_handleKeyChange}
-            />
-            {isLinkImport && (
-                <Switch
-                    checkedChildren={t('import.link_key')}
-                    unCheckedChildren={t('import.link_key')}
-                    checked={sheet.keyToColumnIndex === columnIndex}
-                    onChange={_handleKeyToChange}
-                />
+            {displayImportKey && (
+                <>
+                    <label>{t('import.import_key')}: </label>
+                    <Switch checked={sheet.keyColumnIndex === columnIndex} onChange={_handleKeyChange} />
+                </>
+            )}
+            {displayLinkKey && (
+                <>
+                    <label>{t('import.link_key')}: </label>
+                    <Switch checked={sheet.keyToColumnIndex === columnIndex} onChange={_handleKeyToChange} />
+                </>
             )}
         </Wrapper>
     );

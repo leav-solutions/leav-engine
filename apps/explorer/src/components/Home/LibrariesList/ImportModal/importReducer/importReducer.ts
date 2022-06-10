@@ -5,6 +5,7 @@ import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
 import {ImportSteps, ISheet, SheetSettingsError} from '../_types';
 
 export interface IImportReducerState {
+    defaultLibrary: string;
     sheets: ISheet[];
     file: File | null;
     currentStep: ImportSteps;
@@ -22,6 +23,7 @@ export enum ImportReducerActionTypes {
 }
 
 export const initialState: IImportReducerState = {
+    defaultLibrary: null,
     sheets: [],
     file: null,
     currentStep: ImportSteps.SELECT_FILE,
@@ -51,24 +53,6 @@ export type ImportReducerAction =
           type: ImportReducerActionTypes.SET_IMPORT_ERROR;
           importError: string;
       };
-
-const _isSheetsConfValid = (sheets: ISheet[]) => {
-    const mappingOk = (s: ISheet) => {
-        return s.mapping.length === Object.keys(s.data[0]).length;
-    };
-    const keysOk = (s: ISheet) => {
-        return s.type === ImportType.LINK
-            ? !!s.linkAttribute && typeof s.keyColumnIndex !== 'undefined' && typeof s.keyToColumnIndex !== 'undefined'
-            : true;
-    };
-    const modeOk = (s: ISheet) => {
-        return s.mode === ImportMode.update
-            ? typeof s.keyColumnIndex !== 'undefined' && s.keyColumnIndex !== null
-            : true;
-    };
-
-    return sheets.every(s => mappingOk(s) && keysOk(s) && modeOk(s));
-};
 
 const _getSheetErrors = (sheet: ISheet): SheetSettingsError[] => {
     if (sheet.type === ImportType.IGNORE) {
