@@ -346,8 +346,8 @@
     },
     "import": {
         "title": "Importer des données",
-        "file_selection": "Sélection du fichier XLSX",
-        "file_selection_instruction": "Cliquez ou déposez votre fichier afin de l'importer",
+        "file_selection": "Sélection du fichier",
+        "file_selection_instruction": "Cliquez ou déposez votre fichier",
         "start": "Lancer l'import",
         "in_progress": "Import en cours",
         "data_overview": "Aperçu des données",
@@ -358,7 +358,39 @@
         "empty_file": "Le fichier ne contient pas de données",
         "mapping": "Sélection des attributs",
         "attribute_selection": "Sélectionner un attribut",
-        "key": "Sélection de l'attribut référence"
+        "key": "Clé",
+        "library": "Bibliothèque",
+        "type": "Type d'import",
+        "types": {
+            "IGNORE": "Ignorer",
+            "STANDARD": "Standard",
+            "LINK": "Liaison"
+        },
+        "select_mode": "Sélectionner un mode",
+        "mode": "Mode d'import",
+        "modes": {
+            "update": "Mise à jour uniquement",
+            "insert": "Création uniquement",
+            "upsert": "Création et mise à jour"
+        },
+        "import_key": "Clé d'import",
+        "select_import_key": "Sélectionner la clé",
+        "link_key": "Clé de liaison",
+        "link_attribute": "Attribut de liaison",
+        "select_library": "Sélectionner une bibliothèque",
+        "select_type": "Sélectionner un type",
+        "select_link_attribute": "Sélectionner un attribut",
+        "do_not_import": "Ne pas importer",
+        "settings_errors": {
+            "MAPPING": "Veuillez sélectionner au moins un attribut",
+            "KEY": "Veuillez sélectionner une clé d'import",
+            "KEY_TO": "Veuillez sélectionner une clé de liaison",
+            "TYPE": "Veuillez sélectionner un type",
+            "MODE": "Veuillez sélectionner un mode",
+            "LIBRARY": "Veuillez sélectionner une bibliothèque",
+            "LINK_ATTRIBUTE": "Veuillez sélectionner un attribut de liaison"
+        },
+        "tree_link_library": "Bibliothèque liée"
     },
     "error": {
         "error_occurred": "Une erreur est survenue",

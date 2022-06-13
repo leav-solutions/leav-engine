@@ -30,7 +30,8 @@ describe('AttributesSelectionList', () => {
                                     format: AttributeFormat.text,
                                     label: {fr: 'test attribute'},
                                     multiple_values: false,
-                                    embedded_fields: null
+                                    embedded_fields: null,
+                                    system: false
                                 }
                             ]
                         }
@@ -78,7 +79,8 @@ describe('AttributesSelectionList', () => {
                                     format: AttributeFormat.text,
                                     label: {fr: 'attributeA'},
                                     multiple_values: false,
-                                    embedded_fields: null
+                                    embedded_fields: null,
+                                    system: false
                                 },
                                 {
                                     id: 'attrB',
@@ -86,7 +88,8 @@ describe('AttributesSelectionList', () => {
                                     format: AttributeFormat.text,
                                     label: {fr: 'attributeB'},
                                     multiple_values: false,
-                                    embedded_fields: null
+                                    embedded_fields: null,
+                                    system: false
                                 }
                             ]
                         }

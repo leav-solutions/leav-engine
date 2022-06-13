@@ -22,12 +22,23 @@ export interface GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute {
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
     linked_library: GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute_linked_library | null;
+}
+
+export interface GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute_linked_tree_libraries_library {
+    id: string;
+    label: any | null;
+}
+
+export interface GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute_linked_tree_libraries {
+    library: GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute_linked_tree_libraries_library;
 }
 
 export interface GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute_linked_tree {
     id: string;
     label: any | null;
+    libraries: GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute_linked_tree_libraries[];
 }
 
 export interface GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute {
@@ -36,6 +47,7 @@ export interface GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute {
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
     linked_tree: GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute_linked_tree | null;
 }
 
@@ -51,6 +63,7 @@ export interface GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute {
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
     embedded_fields: (GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields | null)[] | null;
 }
 

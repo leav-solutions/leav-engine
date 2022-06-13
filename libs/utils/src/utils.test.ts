@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    extractArgsFromString,
     getGraphqlQueryNameFromLibraryName,
     getGraphqlTypeFromLibraryName,
     getInvertColor,
@@ -66,6 +67,22 @@ describe('utils', () => {
             expect(getInvertColor('#E0E1E2')).toBe('#000000');
             expect(getInvertColor('#F6F6F6')).toBe('#000000');
             expect(getInvertColor('#B7BFC7')).toBe('#000000');
+        });
+    });
+
+    describe('extractArgsFromString', () => {
+        test('Extract args', async () => {
+            expect(extractArgsFromString('-library product -type link -key')).toEqual({
+                library: 'product',
+                type: 'link',
+                key: true
+            });
+
+            expect(extractArgsFromString('-library product -type link -library users -answer 42')).toEqual({
+                type: 'link',
+                library: 'users',
+                answer: '42'
+            });
         });
     });
 });

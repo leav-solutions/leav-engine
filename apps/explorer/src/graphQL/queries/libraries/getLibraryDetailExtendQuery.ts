@@ -70,6 +70,7 @@ interface ILibraryDetailExtendedAttribute {
     format: AttributeFormat;
     label: ISystemTranslation;
     multiple_values: boolean;
+    system: boolean;
 }
 
 export type ILibraryDetailExtendedAttributeChild = ILibraryDetailExtendedAttribute;
@@ -117,6 +118,7 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                     format
                     label
                     multiple_values
+                    system
                     ... on StandardAttribute {
                         id
                         ${getEmbeddedFields(depthEmbeddedFields)}
@@ -131,6 +133,7 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                                 format
                                 label
                                 multiple_values
+                                system
                                 ... on StandardAttribute {
                                     id
                                     ${getEmbeddedFields(depthEmbeddedFields)}
@@ -165,6 +168,7 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                                         format
                                         label
                                         multiple_values
+                                        system
                                         ... on StandardAttribute {
                                             id
                                             ${getEmbeddedFields(depthEmbeddedFields)}

@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GraphQLUpload} from 'graphql-upload';
 import {IImportDomain} from 'domain/import/importDomain';
+import fs from 'fs';
+import {GraphQLUpload} from 'graphql-upload';
+import {nanoid} from 'nanoid';
+import * as Config from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {IElement, IFile, IFileUpload} from '_types/import';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import fs from 'fs';
-import {nanoid} from 'nanoid';
-import * as Config from '_types/config';
+import {IFileUpload, ImportMode, ImportType} from '../../_types/import';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -27,9 +27,15 @@ interface IImportParams {
 
 interface IImportExcelParams {
     file: Promise<IFileUpload>;
-    library: string;
-    mapping: string[];
-    key: string | null;
+    sheets?: Array<{
+        type: ImportType;
+        library: string;
+        mode: ImportMode;
+        mapping: Array<string | null>;
+        keyIndex?: number;
+        linkAttribute?: string;
+        keyToIndex?: number;
+    } | null>;
 }
 
 export default function ({'core.domain.import': importDomain = null, config = null}: IDeps = {}): ICoreImportApp {
@@ -84,9 +90,28 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                 typeDefs: `
                     scalar Upload
 
+                    enum ImportType {
+                        ${Object.values(ImportType).join(' ')}
+                    }
+
+                    enum ImportMode {
+                        ${Object.values(ImportMode).join(' ')}
+                    }
+
+                    input SheetInput {
+                        type: ImportType!
+                        mode: ImportMode!
+                        library: String!,
+                        mapping: [String],
+                        keyIndex: Int,
+                        linkAttribute: String,
+                        keyToIndex: Int,
+                        treeLinkLibrary: String,
+                    }
+
                     extend type Mutation {
                         import(file: Upload!): Boolean!
-                        importExcel(file: Upload!, library: String!, mapping: [String]!, key: String): Boolean!
+                        importExcel(file: Upload!, sheets: [SheetInput]): Boolean!
                     }
                 `,
                 resolvers: {
@@ -114,11 +139,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
 
                             return true;
                         },
-                        async importExcel(
-                            _,
-                            {file, library, mapping, key}: IImportExcelParams,
-                            ctx: IQueryInfos
-                        ): Promise<boolean> {
+                        async importExcel(_, {file, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean> {
                             const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['xlsx'];
@@ -128,7 +149,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const storedFileName = await _storeUploadFile(fileData);
 
                             try {
-                                await importDomain.importExcel({filename: storedFileName, library, mapping, key}, ctx);
+                                await importDomain.importExcel({filename: storedFileName, sheets}, ctx);
                             } finally {
                                 // Delete remaining import file.
                                 await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);

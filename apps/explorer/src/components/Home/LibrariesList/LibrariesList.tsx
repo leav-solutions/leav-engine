@@ -147,8 +147,8 @@ function LibrariesList(): JSX.Element {
             />
             {importActiveLibrary && (
                 <ImportModal
-                    library={importActiveLibrary}
                     open={!!importActiveLibrary}
+                    library={importActiveLibrary}
                     onClose={() => setImportActiveLibrary('')}
                 />
             )}

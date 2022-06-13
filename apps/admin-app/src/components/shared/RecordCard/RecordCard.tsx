@@ -35,6 +35,7 @@ const CardPart = styled.div`
     justify-content: center;
 `;
 
+// @ts-ignore
 const PreviewWrapper = styled(CardPart)`
     margin: 0 0.8em;
 `;

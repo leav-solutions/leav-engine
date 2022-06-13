@@ -26,7 +26,7 @@ function HeaderNotification(): JSX.Element {
                 switch (notification.channel) {
                     case NotificationChannel.trigger:
                         return {...acc, triggerNotifications: [...acc.triggerNotifications, notification]};
-                    case NotificationChannel.passive:
+                    case NotificationChannel.serverError:
                     default:
                         return {...acc, passiveNotifications: [...acc.passiveNotifications, notification]};
                 }

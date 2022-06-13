@@ -80,7 +80,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                         notification = {
                             content: errorContent,
                             type: NotificationType.error,
-                            channel: NotificationChannel.passive
+                            channel: NotificationChannel.serverError
                         };
                         break;
                 }

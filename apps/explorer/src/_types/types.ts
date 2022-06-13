@@ -295,7 +295,7 @@ export enum NotificationPriority {
 
 export enum NotificationChannel {
     trigger = 'trigger',
-    passive = 'passive'
+    serverError = 'passive'
 }
 
 export interface IBaseNotification {

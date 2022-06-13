@@ -470,7 +470,7 @@ export default function ({
             }
 
             // if simple attribute type
-            let v: IValue = {};
+            let v: IValue;
             if (attr.type === AttributeTypes.SIMPLE || attr.type === AttributeTypes.SIMPLE_LINK) {
                 v = (
                     await valueRepo.getValues({library, recordId, attribute: {...attr, reverse_link: reverseLink}, ctx})

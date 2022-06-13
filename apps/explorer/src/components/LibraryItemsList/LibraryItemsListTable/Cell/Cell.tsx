@@ -95,13 +95,15 @@ const Cell = ({columnName, data}: ICellProps) => {
         case AttributeType.tree:
             const [firstValue, ...otherValues] = valuesToDisplay;
 
+            const whoAmI = type === AttributeType.tree ? firstValue.record.whoAmI : firstValue.whoAmI;
+
             return (
                 <RecordCardCellWrapper>
                     <RecordCard
-                        record={firstValue.whoAmI}
+                        record={whoAmI}
                         size={previewSize}
                         lang={lang}
-                        key={firstValue.whoAmI.id}
+                        key={whoAmI.id}
                         withPreview={false}
                         withLibrary={false}
                     />

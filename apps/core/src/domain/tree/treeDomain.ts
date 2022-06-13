@@ -149,7 +149,7 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -643,6 +643,14 @@ export default function({
             return utils.getLibraryTreeId(library);
         },
         async getRecordByNodeId({treeId, nodeId, ctx}): Promise<IRecord> {
+            if (!treeId) {
+                throw new ValidationError({treeId: Errors.UNKNOWN_TREE});
+            }
+
+            if (!nodeId) {
+                throw new ValidationError({nodeId: Errors.UNKNOWN_NODE});
+            }
+
             return treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
         },
         async getNodesByRecord({treeId, record, ctx}): Promise<string[]> {

@@ -23,7 +23,8 @@ const mockQueryAttribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
         en: 'test'
     },
     multiple_values: false,
-    embedded_fields: null
+    embedded_fields: null,
+    system: false
 };
 
 export const mockAttributeStandard: GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute = {
@@ -52,7 +53,7 @@ export const mockAttributeLink: GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttrib
 export const mockAttributeTree: GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute = {
     ...mockQueryAttribute,
     type: AttributeType.tree,
-    linked_tree: {id: 'test_tree', label: {fr: 'test_tree'}}
+    linked_tree: {id: 'test_tree', label: {fr: 'test_tree'}, libraries: [{library: {id: 'test_lib', label: 'my_lib'}}]}
 };
 
 export const mockSelectedAttributeA: ISelectedAttribute = {

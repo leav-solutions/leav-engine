@@ -33,6 +33,18 @@ export enum FormElementTypes {
     layout = 'layout'
 }
 
+export enum ImportMode {
+    insert = 'insert',
+    update = 'update',
+    upsert = 'upsert'
+}
+
+export enum ImportType {
+    IGNORE = 'IGNORE',
+    LINK = 'LINK',
+    STANDARD = 'STANDARD'
+}
+
 export enum RecordFilterCondition {
     BEGIN_WITH = 'BEGIN_WITH',
     BETWEEN = 'BETWEEN',
@@ -103,6 +115,17 @@ export interface RecordFilterInput {
 export interface RecordSortInput {
     field?: string | null;
     order: SortOrder;
+}
+
+export interface SheetInput {
+    type: ImportType;
+    mode: ImportMode;
+    library: string;
+    mapping?: (string | null)[] | null;
+    keyIndex?: number | null;
+    linkAttribute?: string | null;
+    keyToIndex?: number | null;
+    treeLinkLibrary?: string | null;
 }
 
 export interface TreeElementInput {

@@ -35,6 +35,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_StandardA
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
     id: string;
 }
 
@@ -43,6 +44,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
     id: string;
 }
 
@@ -51,6 +53,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
     id: string;
 }
 
@@ -59,6 +62,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
     id: string;
 }
 
@@ -79,6 +83,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
     id: string;
     linked_library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute_linked_library | null;
     __typename: 'LinkAttribute';
@@ -90,6 +95,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes_LinkAttribute {
@@ -98,6 +104,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes_TreeAttribute {
@@ -106,6 +113,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
+    system: boolean;
 }
 
 export type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes =
@@ -138,6 +146,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     multiple_values: boolean;
     id: string;
     linked_tree: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree | null;
+    system: boolean;
 }
 
 export type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes =

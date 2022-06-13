@@ -1,22 +1,32 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {extractArgsFromString} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
-import {ICachesService, ECacheType} from '../../infra/cache/cacheService';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
 import ValidationError from '../../errors/ValidationError';
-import {IAttribute} from '../../_types/attribute';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {Action, IData, IElement, IMatch, ITree} from '../../_types/import';
+import {
+    Action,
+    IData,
+    IElement,
+    IMatch,
+    ImportMode,
+    ImportType,
+    ITree,
+    IValue as IImportValue
+} from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {ITreeElement} from '../../_types/tree';
@@ -24,17 +34,25 @@ import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
+const defaultImportMode = ImportMode.UPSERT;
 
 export interface IImportExcelParams {
     filename: string;
-    library: string;
-    mapping: string[];
-    key?: string | null;
+    sheets?: Array<{
+        type: ImportType;
+        library: string;
+        mode: ImportMode;
+        mapping: Array<string | null>;
+        keyIndex?: number;
+        keyToIndex?: number;
+        linkAttribute?: string;
+        treeLinkLibrary?: string;
+    } | null>;
 }
 
 export interface IImportDomain {
     import(filename: string, ctx: IQueryInfos): Promise<boolean>;
-    importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean>;
+    importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
 interface IDeps {
@@ -60,7 +78,7 @@ export default function ({
         library: string,
         attribute: IAttribute,
         recordId: string,
-        value: IValue,
+        value: IImportValue,
         ctx: IQueryInfos,
         valueId?: string
     ): Promise<void> => {
@@ -69,18 +87,31 @@ export default function ({
         if (isMatch) {
             const recordsList = await recordDomain.find({
                 params: {
-                    library: attribute.linked_library,
-                    filters: _matchesToFilters(value.value)
+                    library: attribute.type === AttributeTypes.TREE ? value.library : attribute.linked_library,
+                    filters: _matchesToFilters(value.value as IMatch[])
                 },
                 ctx
             });
 
             value.value = recordsList.list[0]?.id;
-        }
 
-        if (isMatch && typeof value.value === 'undefined') {
-            // TODO: Throw
-            return;
+            if (attribute.type === AttributeTypes.TREE) {
+                const node = await treeDomain.getNodesByRecord({
+                    treeId: attribute.linked_tree,
+                    record: {
+                        id: value.value,
+                        library: value.library
+                    },
+                    ctx
+                });
+
+                value.value = node[0];
+            }
+
+            if (typeof value.value === 'undefined') {
+                // TODO: Throw
+                return;
+            }
         }
 
         await valueDomain.saveValue({
@@ -355,7 +386,12 @@ export default function ({
 
     return {
         async import(filename: string, ctx: IQueryInfos): Promise<boolean> {
-            await _jsonSchemaValidation(filename);
+            try {
+                await _jsonSchemaValidation(filename);
+            } catch (err) {
+                const message = (err?.errors ?? []).map(e => e.message).join('\n');
+                throw new ValidationError({}, message || err.message);
+            }
 
             const cacheDataPath = `${filename}-links`;
             let lastCacheIndex: number;
@@ -364,11 +400,25 @@ export default function ({
                 filename,
                 // treat elements and cache links
                 async (element: IElement, index: number): Promise<void> => {
+                    const importMode = element.mode ?? defaultImportMode;
                     await validateHelper.validateLibrary(element.library, ctx);
 
-                    let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
+                    if (element.mode === ImportMode.UPDATE && !element.matches.length) {
+                        throw new ValidationError({element: Errors.NO_IMPORT_MATCHES});
+                    }
 
-                    // if not match we create a new record
+                    let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
+                    const recordFound = !!recordIds.length;
+
+                    // Record not found, in update mode, we just ignore it
+                    if (
+                        (!recordFound && element.mode === ImportMode.UPDATE) ||
+                        (recordFound && element.mode === ImportMode.INSERT)
+                    ) {
+                        return;
+                    }
+
+                    // Create the record if it does not exist
                     if (!recordIds.length) {
                         recordIds = [(await recordDomain.createRecord(element.library, ctx)).id];
                     }
@@ -415,12 +465,16 @@ export default function ({
 
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
-                const cacheStringifiedObject = (
-                    await cacheService.getCache(ECacheType.DISK).getData([cacheKey.toString()], cacheDataPath)
-                )[0];
-                const element = JSON.parse(cacheStringifiedObject);
-                for (const link of element.links) {
-                    await _treatElement(element.library, link, element.recordIds, ctx);
+                try {
+                    const cacheStringifiedObject = (
+                        await cacheService.getCache(ECacheType.DISK).getData([cacheKey.toString()], cacheDataPath)
+                    )[0];
+                    const element = JSON.parse(cacheStringifiedObject);
+                    for (const link of element.links) {
+                        await _treatElement(element.library, link, element.recordIds, ctx);
+                    }
+                } catch (err) {
+                    continue;
                 }
             }
 
@@ -429,63 +483,206 @@ export default function ({
 
             return true;
         },
-        async importExcel({filename, library, mapping, key}, ctx: IQueryInfos): Promise<boolean> {
+        async importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean> {
             const buffer = await _getFileDataBuffer(filename);
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer);
-            const data: string[][] = [];
+            const data: string[][][] = [];
 
-            workbook.eachSheet(s => {
+            workbook.eachSheet((s, i) => {
                 s.eachRow(r => {
-                    let elem = (r.values as string[]).slice(1);
-                    // replace empty item by null
-                    elem = Array.from(elem, e => (typeof e !== 'undefined' ? e : null));
-                    data.push(elem);
+                    let elems = (r.values as any[]).slice(1);
+
+                    elems = Array.from(elems, e => {
+                        if (typeof e === 'undefined') {
+                            return null; // we replace empty cell value by null
+                        } else if (typeof e === 'object') {
+                            return e.result; // if cell value is a formula
+                        }
+
+                        return e;
+                    });
+
+                    if (typeof data[i - 1] === 'undefined') {
+                        data[i - 1] = [];
+                    }
+
+                    data[i - 1].push(elems);
                 });
             });
-
-            // delete first row of columns name
-            data.shift();
 
             const JSONFilename = filename.slice(0, filename.lastIndexOf('.')) + '.json';
             const writeStream = fs.createWriteStream(`${config.import.directory}/${JSONFilename}`, {
                 flags: 'a' // 'a' means appending (old data will be preserved)
             });
 
-            const writeLine = line => writeStream.write(`\n${line}`);
+            const writeLine = (line: string) => writeStream.write(line);
 
             // Header of file.
-            writeLine(`{
-                "elements": [
-              `);
+            writeLine('{"elements": [');
 
-            for (const [index, d] of data.entries()) {
-                const matches =
-                    key && d[mapping.indexOf(key)] !== null && typeof d[mapping.indexOf(key)] !== 'undefined'
-                        ? [
-                              {
-                                  attribute: key,
-                                  value: String(d[mapping.indexOf(key)])
-                              }
-                          ]
-                        : [];
+            const sheetsToProcess = data.filter((sheet, index) => {
+                return !sheets || (!!sheets?.[index] && sheets[index].type !== ImportType.IGNORE);
+            });
 
-                const element = {
+            let firstElementWritten = false;
+            for (const [indexSheet, dataSheet] of sheetsToProcess.entries()) {
+                let {
+                    type,
                     library,
-                    matches,
-                    data: d
-                        .filter((_, i) => mapping[i])
-                        .map((e, i) => ({
-                            attribute: mapping.filter(m => m !== null)[i],
-                            values: [{value: String(e)}],
-                            action: Action.REPLACE
-                        }))
-                        .filter(e => e.attribute !== 'id'),
-                    links: []
-                };
+                    mode = defaultImportMode,
+                    mapping,
+                    keyIndex,
+                    linkAttribute,
+                    keyToIndex,
+                    treeLinkLibrary
+                } = sheets?.[indexSheet] || {};
 
-                // Adding element to JSON file.
-                writeLine(JSON.stringify(element) + (index !== data.length - 1 ? ',' : ''));
+                mapping = mapping ?? [];
+
+                // on mapping in file
+                if (typeof sheets === 'undefined') {
+                    const comments = [];
+                    workbook.worksheets[indexSheet].getRow(1).eachCell(cell => {
+                        // Cell comment might be split in multiple texts, merge them.
+                        const cellComments = ((cell.note as ExcelJS.Comment)?.texts ?? [])
+                            .map(cellComm => cellComm.text)
+                            .join(' ');
+
+                        comments.push(cellComments.replace(/\n/g, ' ') || null);
+                    });
+
+                    // if mapping parameters not specified we ignore this sheet
+                    if (comments[0] === null) {
+                        continue;
+                    }
+
+                    // Extract args global args from comment on first column
+                    const args = extractArgsFromString(comments[0]);
+
+                    type = ImportType[String(args.type)];
+                    mode = args.mode ? (String(args.mode) as ImportMode) : defaultImportMode;
+
+                    // if sheet type is not specified we ignore this sheet
+                    if (typeof type === 'undefined' || type === ImportType.IGNORE) {
+                        continue;
+                    }
+
+                    library = String(args.library);
+
+                    // Extract mapping, keyIndex and keyToIndex from all columns comments
+                    for (const [index, comm] of comments.entries()) {
+                        const commArgs = extractArgsFromString(comm);
+                        mapping.push(String(commArgs.id) ?? null);
+
+                        if (commArgs.key) {
+                            keyIndex = index;
+                        }
+
+                        if (commArgs.keyTo) {
+                            keyToIndex = index;
+                        }
+                    }
+
+                    // may be undefined if standard import
+                    linkAttribute = args.linkAttribute ? String(args.linkAttribute) : null;
+                    treeLinkLibrary = args.treeLinkLibrary ? String(args.treeLinkLibrary) : null;
+
+                    if (
+                        (type === ImportType.LINK &&
+                            (typeof keyIndex === 'undefined' ||
+                                typeof linkAttribute === 'undefined' ||
+                                typeof keyToIndex === 'undefined' ||
+                                !mapping[keyToIndex])) ||
+                        (typeof keyIndex !== 'undefined' && !mapping[keyIndex]) ||
+                        typeof library === 'undefined' ||
+                        typeof mapping === 'undefined'
+                    ) {
+                        throw new ValidationError({mapping: `Sheet n° ${indexSheet}: Missing mapping parameters`});
+                    }
+                }
+
+                // Delete columns' name line.
+                dataSheet.shift();
+
+                const linkAttributeProps = linkAttribute
+                    ? await attributeDomain.getAttributeProperties({id: linkAttribute, ctx})
+                    : null;
+
+                const filteredMapping = mapping.filter(m => m); // Filters null values
+                for (const [index, line] of dataSheet.entries()) {
+                    let matches = [];
+                    let elementData = [];
+                    let elementLinks = [];
+
+                    if (typeof keyIndex !== 'undefined' && typeof line[keyIndex] !== 'undefined') {
+                        const keyAttribute = mapping[keyIndex];
+                        matches = [
+                            {
+                                attribute: keyAttribute,
+                                value: String(line[keyIndex])
+                            }
+                        ];
+                    }
+
+                    if (type === ImportType.STANDARD) {
+                        elementData = line
+                            .filter((_, i) => mapping[i]) // Ignore cells not mapped
+                            .map((cellValue, cellIndex) => ({
+                                attribute: filteredMapping[cellIndex], // Retrieve attribute
+                                values: [{value: String(cellValue)}],
+                                action: Action.REPLACE
+                            }))
+                            .filter(cell => cell.attribute !== 'id');
+                    }
+
+                    if (type === ImportType.LINK) {
+                        const keyToAttribute = mapping[keyToIndex];
+                        const keyToValue = String(line[keyToIndex]);
+                        const keyToValueLibrary =
+                            linkAttributeProps.type === AttributeTypes.TREE
+                                ? treeLinkLibrary
+                                : linkAttributeProps.linked_library;
+
+                        const metadataValues = line.filter(
+                            (_, cellIndex) => mapping[cellIndex] && cellIndex !== keyIndex && cellIndex !== keyToIndex
+                        );
+
+                        elementLinks = [
+                            {
+                                attribute: linkAttribute,
+                                values: [
+                                    {
+                                        library: keyToValueLibrary ?? '',
+                                        value: [{attribute: keyToAttribute, value: keyToValue}],
+                                        metadata: metadataValues.reduce(
+                                            (allMetadata, metadataValue, metadataValueIndex) => {
+                                                allMetadata[metadataValueIndex] = metadataValue;
+
+                                                return allMetadata;
+                                            },
+                                            {}
+                                        )
+                                    }
+                                ],
+                                action: 'add'
+                            }
+                        ];
+                    }
+
+                    const element = {
+                        library,
+                        matches,
+                        mode,
+                        data: elementData,
+                        links: elementLinks
+                    };
+
+                    // Adding element to JSON file.
+                    // Add comma if not first element
+                    writeLine((firstElementWritten ? ',' : '') + JSON.stringify(element));
+                    firstElementWritten = true;
+                }
             }
 
             // End of file.
