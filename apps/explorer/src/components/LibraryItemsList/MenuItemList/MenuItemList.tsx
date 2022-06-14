@@ -8,7 +8,7 @@ import {SelectionModeContext} from 'context';
 import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
 import MenuItemActions from '../MenuItemActions';
@@ -17,6 +17,7 @@ import MenuView from '../MenuView';
 import SearchItems from '../SearchItems';
 
 interface IMenuItemListProps {
+    library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
     refetch?: () => void;
 }
 
@@ -27,11 +28,10 @@ const Wrapper = styled.div`
     width: 100%;
 `;
 
-function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
+function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
-    const [activeLibrary] = useActiveLibrary();
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
-    const canCreateRecord = activeLibrary.permissions.create_record;
+    const canCreateRecord = library.permissions.create_record;
 
     const selectionMode = useContext(SelectionModeContext);
 
@@ -45,7 +45,7 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
 
     return (
         <Wrapper>
-            {activeLibrary?.id && <MenuView activeLibrary={activeLibrary} />}
+            {library?.id && <MenuView library={library} />}
 
             <Space size="large">
                 <MenuSelection />
@@ -69,7 +69,7 @@ function MenuItemList({refetch}: IMenuItemListProps): JSX.Element {
             {isRecordCreationVisible && (
                 <EditRecordModal
                     record={null}
-                    library={activeLibrary.id}
+                    library={library.id}
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                 />

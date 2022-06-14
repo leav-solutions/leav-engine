@@ -12,7 +12,6 @@ import {
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Badge, Button, Dropdown, Menu, Space, Tooltip} from 'antd';
-import {IActiveLibrary} from 'graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
@@ -20,6 +19,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
+import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import addViewMutation, {
@@ -35,10 +35,10 @@ import FiltersDropdown from '../FiltersDropdown';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 
 interface IMenuViewProps {
-    activeLibrary: IActiveLibrary;
+    library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
 }
 
-function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
+function MenuView({library}: IMenuViewProps): JSX.Element {
     const {t} = useTranslation();
 
     const [{lang, defaultLang}] = useLang();
@@ -74,7 +74,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                     variables: {
                         view: {
                             ..._.omit(searchState.view.current, 'owner'),
-                            library: activeLibrary.id,
+                            library: library.id,
                             sort: searchState.sort.active
                                 ? {field: searchState.sort.field, order: searchState.sort.order}
                                 : undefined,
@@ -111,7 +111,7 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
         const newView: IAddViewMutationVariablesView = {
             ..._.omit(defaultView, ['id', 'owner']),
             label: {[defaultLang]: t('view.add-view.title')},
-            library: activeLibrary.id,
+            library: library.id,
             display: {type: viewType, size: ViewSizes.MEDIUM},
             filters: []
         };
@@ -215,10 +215,10 @@ function MenuView({activeLibrary}: IMenuViewProps): JSX.Element {
                         {t('filters.filters')}
                     </Button>
                     <FiltersDropdown
-                        libraryId={activeLibrary.id}
+                        libraryId={library.id}
                         button={<Button icon={<PlusOutlined />} type={'default'} />}
-                        attributes={activeLibrary.attributes}
-                        trees={activeLibrary.trees}
+                        attributes={library.attributes}
+                        trees={library.linkedTrees}
                         libraries={[]}
                     />
                 </Button.Group>

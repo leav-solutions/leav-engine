@@ -408,7 +408,10 @@
         "invalid_format": "Invalid format",
         "missing_attribute": "Missing attribute",
         "modified_at": "Modified at",
-        "add_value": "Ajouter une valeur",
+        "created_at": "Created at",
+        "link_created_at": "Linked at",
+        "add_value": "Add value",
+        "add_value_link": "Add link",
         "delete_value_confirm": "Do you really want to delete this value?",
         "whoAmI": "Informations",
         "no_value": "No value",
@@ -422,6 +425,7 @@
         "values_list": "Values List",
         "new_record": "New record",
         "value_details_section": "Value",
+        "link_value_details_section": "Linked record",
         "attribute_details_section": "Attribute",
         "path_section": "Path",
         "start_typing_message": "Start typing to search elements",
@@ -446,7 +450,11 @@
     "record_summary": {
         "id": "Identifiant",
         "label": "Libellé",
-        "library": "Bibliothèque"
+        "library": "Bibliothèque",
+        "created_at": "Created at",
+        "created_at_value": "{{date}} by {{user}}",
+        "modified_at": "Modified at",
+        "modified_at_value": "{{date}} by {{user}}"
     },
     "floating_menu": {
         "more_actions": "More"

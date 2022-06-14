@@ -51,7 +51,6 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
             style={{
                 top: '1rem'
             }}
-            closable={false}
             onOk={handleOk}
             okText={t('global.apply')}
             cancelText={t('global.cancel')}
