@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {render, screen, waitFor} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockLibraryPermissions} from '__mocks__/common/library';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
+import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import MenuItemList from './MenuItemList';
 
@@ -39,13 +39,9 @@ describe('MenuItemList', () => {
     test('should have MenuView', async () => {
         await act(async () => {
             render(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <MockSearchContextProvider>
-                            <MenuItemList refetch={jest.fn()} />
-                        </MockSearchContextProvider>
-                    </MockStore>
-                </MockedProviderWithFragments>
+                <MockSearchContextProvider>
+                    <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+                </MockSearchContextProvider>
             );
 
             await waitFor(() => screen.getByText('MenuView'));
@@ -59,13 +55,9 @@ describe('MenuItemList', () => {
     test('should have MenuSelection', async () => {
         await act(async () => {
             render(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <MockSearchContextProvider>
-                            <MenuItemList refetch={jest.fn()} />
-                        </MockSearchContextProvider>
-                    </MockStore>
-                </MockedProviderWithFragments>
+                <MockSearchContextProvider>
+                    <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+                </MockSearchContextProvider>
             );
 
             await waitFor(() => screen.getByText('MenuSelection'));
@@ -84,7 +76,7 @@ describe('MenuItemList', () => {
                 <MockedProviderWithFragments>
                     <MockStore>
                         <MockSearchContextProvider>
-                            <MenuItemList refetch={jest.fn()} />
+                            <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
                         </MockSearchContextProvider>
                     </MockStore>
                 </MockedProviderWithFragments>
@@ -102,7 +94,7 @@ describe('MenuItemList', () => {
                 <MockedProviderWithFragments>
                     <MockStore>
                         <MockSearchContextProvider>
-                            <MenuItemList refetch={jest.fn()} />
+                            <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
                         </MockSearchContextProvider>
                     </MockStore>
                 </MockedProviderWithFragments>
@@ -120,7 +112,7 @@ describe('MenuItemList', () => {
                 <MockedProviderWithFragments>
                     <MockStore>
                         <MockSearchContextProvider>
-                            <MenuItemList refetch={jest.fn()} />
+                            <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
                         </MockSearchContextProvider>
                     </MockStore>
                 </MockedProviderWithFragments>

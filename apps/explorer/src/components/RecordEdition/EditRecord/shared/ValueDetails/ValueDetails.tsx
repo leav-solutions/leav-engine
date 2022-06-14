@@ -1,22 +1,28 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloseOutlined} from '@ant-design/icons';
+import {ArrowRightOutlined} from '@ant-design/icons';
 import {Collapse, Divider} from 'antd';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import PropertiesList from 'components/shared/PropertiesList';
-import {IRecordPropertyTree, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import RecordCard from 'components/shared/RecordCard';
+import {
+    IRecordPropertyLink,
+    IRecordPropertyTree,
+    RecordProperty
+} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {localizedTranslation} from 'utils';
+import {checkTypeIsLink, isTypeStandard, localizedTranslation} from 'utils';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {
     RECORD_FORM_recordForm_elements_attribute,
     RECORD_FORM_recordForm_elements_attribute_TreeAttribute
 } from '_gqlTypes/RECORD_FORM';
+import {PreviewSize} from '_types/types';
 import TreeValuePath from './TreeValuePath';
 
 interface IValueDetailsProps {
@@ -34,7 +40,7 @@ const AttributeDescription = styled.div`
     padding: 0 1em;
 `;
 
-const CloseButton = styled(CloseOutlined)`
+const CloseButton = styled(ArrowRightOutlined)`
     cursor: pointer;
     position: absolute;
     right: 1em;
@@ -52,6 +58,14 @@ function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
 
     const valueDetailsContent = value?.modified_at
         ? [
+              {
+                  title: isTypeStandard(attribute.type)
+                      ? t('record_edition.created_at')
+                      : t('record_edition.link_created_at'),
+                  value: `${new Date(value.created_at * 1000).toLocaleString()} ${
+                      value?.created_by ? ` ${t('record_edition.by')} ${value.created_by.whoAmI.label}` : ''
+                  }`
+              },
               {
                   title: t('record_edition.modified_at'),
                   value: `${new Date(value.modified_at * 1000).toLocaleString()} ${
@@ -76,26 +90,39 @@ function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
         }
     ];
 
+    const valueDetailsSectionTitle = isTypeStandard(attribute.type)
+        ? t('record_edition.value_details_section')
+        : t('record_edition.link_value_details_section');
+
+    const valueWhoAmI = isTypeStandard(attribute.type)
+        ? null
+        : checkTypeIsLink(attribute.type)
+        ? (value as IRecordPropertyLink).linkValue.whoAmI
+        : (value as IRecordPropertyTree).treeValue.record.whoAmI;
+
     return (
         <>
             {!state.sidebarCollapsed && <CloseButton onClick={_handleClose} />}
             <AttributeTitle>{localizedTranslation(attribute.label, lang)}</AttributeTitle>
             <AttributeDescription>{localizedTranslation(attribute.description, lang)}</AttributeDescription>
             <Divider style={{margin: '.5em 0'}} />
-            <Collapse
-                bordered={false}
-                defaultActiveKey={['attribute', 'value']}
-                style={{background: 'none'}}
-                destroyInactivePanel
-            >
-                {valueDetailsContent.length && (
-                    <Panel key="value" header={t('record_edition.value_details_section')}>
-                        <PropertiesList items={valueDetailsContent} />
-                    </Panel>
-                )}
+            <Collapse bordered={false} defaultActiveKey={['value']} style={{background: 'none'}} destroyInactivePanel>
                 <Panel key="attribute" header={t('record_edition.attribute_details_section')}>
                     <PropertiesList items={attributeDetailsContent} />
                 </Panel>
+                {valueDetailsContent.length && (
+                    <Panel key="value" header={valueDetailsSectionTitle}>
+                        {valueWhoAmI && (
+                            <RecordCard
+                                record={valueWhoAmI}
+                                size={PreviewSize.big}
+                                tile
+                                style={{marginBottom: '1rem'}}
+                            />
+                        )}
+                        <PropertiesList items={valueDetailsContent} />
+                    </Panel>
+                )}
                 {attribute.type === AttributeType.tree && (
                     <Panel key="path" header={t('record_edition.path_section')}>
                         <TreeValuePath

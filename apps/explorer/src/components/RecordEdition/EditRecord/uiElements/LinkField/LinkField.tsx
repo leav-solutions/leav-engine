@@ -115,7 +115,7 @@ function LinkField({
     const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
     const [fieldValues, setFieldValues] = useState<RECORD_FORM_recordForm_elements_values_LinkValue[]>(recordValues);
     const {loading: recordColumnsLoading, data: recordColumnsData, refetch} = useGetRecordColumnsValuesQuery(
-        record?.library.gqlNames.query,
+        attribute?.linked_library?.id,
         linkedRecordsColumns.map(c => c.id),
         recordValues.map(r => r.linkValue.id)
     );
@@ -260,7 +260,7 @@ function LinkField({
     const tableFooter = () => {
         return fieldValues.length && canAddValue ? (
             <FooterWrapper>
-                <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} />
+                <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} linkField />
             </FooterWrapper>
         ) : null;
     };
@@ -280,7 +280,7 @@ function LinkField({
                     size="small"
                     pagination={false}
                     locale={{
-                        emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} />
+                        emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} linkField />
                     }}
                     data-testid="linked-field-values"
                     footer={tableFooter}

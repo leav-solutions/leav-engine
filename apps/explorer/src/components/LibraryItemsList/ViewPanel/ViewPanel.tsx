@@ -279,7 +279,14 @@ function ViewPanel(): JSX.Element {
 
     return (
         <Wrapper>
-            {editView && <EditView view={editView} visible={!!editView} onClose={_closeModal} />}
+            {editView && (
+                <EditView
+                    view={editView}
+                    visible={!!editView}
+                    onClose={_closeModal}
+                    libraryId={searchState.library.id}
+                />
+            )}
             <Header>
                 <span>{t('view.views')}</span>
                 <Button onClick={handleHide} icon={<IconClosePanel />}></Button>

@@ -13,15 +13,19 @@ export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;
     size: PreviewSize;
     style?: CSSObject;
+    previewStyle?: CSSObject;
     lang?: string[];
     withPreview?: boolean;
     withLibrary?: boolean;
+    tile?: boolean;
 }
 
 interface IWrapperProps {
     recordColor: string | null;
     size: PreviewSize;
     withPreview: boolean;
+    withLibrary: boolean;
+    tile: boolean;
     style?: CSSObject;
 }
 
@@ -29,9 +33,18 @@ interface IWrapperProps {
 const Wrapper = styled.div<IWrapperProps>`
     border-left: 5px solid ${props => props.recordColor || 'transparent'};
     display: grid;
+    grid-template-areas: ${props => {
+        const previewPart = props.withPreview ? ' preview ' : '';
+        const subLabelPart = props.withLibrary ? ' sub-label ' : '';
+        return (props.tile
+            ? `"${previewPart}" "label" "${subLabelPart}"`
+            : `"${previewPart}label" "${previewPart}${subLabelPart}"`
+        ).replace('""', ''); // Remove empty rows
+    }};
+
     grid-template-columns:
         ${props => {
-            if (!props.withPreview) {
+            if (!props.withPreview || props.tile) {
                 return '100%';
             }
 
@@ -43,26 +56,25 @@ const Wrapper = styled.div<IWrapperProps>`
 `;
 Wrapper.displayName = 'Wrapper';
 
-const CardPart = styled.div`
-    display: flex;
-    line-height: 1.3;
-    flex-direction: column;
-    justify-content: center;
-`;
-
-const PreviewWrapper = styled(CardPart)`
-    margin: 0 0.8em;
+const PreviewWrapper = styled.div<{tile: boolean}>`
+    grid-area: preview;
+    margin: ${props => (props.tile ? '0.3rem 0' : '0 0.8em')};
 `;
 
 const RecordLabel = styled.div`
+    grid-area: label;
     font-weight: bold;
     overflow: hidden;
+    align-self: end;
+    line-height: 1.3em;
 `;
 
-const LibLabel = styled.div`
+const SubLabel = styled.div`
+    grid-area: sub-label;
     font-weight: normal;
     color: rgba(0, 0, 0, 0.4);
     font-size: 0.9em;
+    line-height: 1.3em;
 `;
 
 const getPreviewBySize = (preview?: FilePreview, size?: PreviewSize) => {
@@ -81,9 +93,11 @@ const RecordCard = ({
     record,
     size,
     style,
+    previewStyle,
     lang,
     withPreview = true,
-    withLibrary = true
+    withLibrary = true,
+    tile = false
 }: IRecordCardProps): JSX.Element => {
     const label = record.label || record.id;
 
@@ -94,30 +108,31 @@ const RecordCard = ({
             className="record-card"
             size={size}
             withPreview={withPreview}
+            withLibrary={withLibrary}
+            tile={tile}
         >
             {withPreview && (
-                <PreviewWrapper className="preview">
+                <PreviewWrapper className="preview" tile={tile}>
                     <RecordPreview
                         label={record.label || record.id}
                         color={record.color}
                         image={getPreviewBySize(record.preview, size)}
                         size={size}
-                        style={style}
+                        style={previewStyle}
+                        tile={tile}
                     />
                 </PreviewWrapper>
             )}
-            <CardPart>
-                <RecordLabel className="label">
-                    <Paragraph ellipsis={{rows: 1, tooltip: label}} style={{marginBottom: 0}}>
-                        {label}
-                    </Paragraph>
-                </RecordLabel>
-                {withLibrary && (
-                    <LibLabel className="library-label">
-                        {localizedTranslation(record.library?.label, lang ?? []) || record.library?.id}
-                    </LibLabel>
-                )}
-            </CardPart>
+            <RecordLabel className="label">
+                <Paragraph ellipsis={{rows: 1, tooltip: label}} style={{marginBottom: 0}}>
+                    {label}
+                </Paragraph>
+            </RecordLabel>
+            {withLibrary && (
+                <SubLabel className="library-label">
+                    {localizedTranslation(record.library?.label, lang ?? []) || record.library?.id}
+                </SubLabel>
+            )}
         </Wrapper>
     );
 };

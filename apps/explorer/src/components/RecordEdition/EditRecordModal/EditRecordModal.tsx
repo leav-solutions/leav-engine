@@ -4,8 +4,6 @@
 import {useMutation} from '@apollo/client';
 import {Button} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
-import {IconClosePanel} from 'assets/icons/IconClosePanel';
-import {IconOpenPanel} from 'assets/icons/IconOpenPanel';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
@@ -42,7 +40,6 @@ import {
     SubmitValueFunc
 } from '../EditRecord/_types';
 import editRecordReducer from '../editRecordReducer';
-import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext from './creationErrorContext';
@@ -59,7 +56,7 @@ interface IPendingValues {
     [attributeId: string]: {[idValue: string]: SAVE_VALUE_BATCH_saveValueBatch_values};
 }
 
-const modalWidth = 900;
+const modalWidth = 1200;
 const sidebarWidth = 300;
 
 const Container = styled.div<{isSidebarCollapsed: boolean}>`
@@ -67,18 +64,20 @@ const Container = styled.div<{isSidebarCollapsed: boolean}>`
     display: grid;
     grid-template-columns: ${p =>
         p.isSidebarCollapsed ? `${modalWidth}px 0` : `minmax(0, ${modalWidth - sidebarWidth}px) ${sidebarWidth}px`};
-    grid-template-rows: 5em auto;
+    grid-template-rows: 5rem auto;
     grid-template-areas:
-        'title sidebar'
+        'title title'
         'content sidebar';
     overflow: hidden;
+    grid-gutter: 0;
 `;
 
 const Title = styled.div`
     grid-area: title;
     align-self: center;
-    font-size: 1.2rem;
+    font-size: 1rem;
     padding: 1rem;
+    border-bottom: 1px solid ${themingVar['@border-color-base']};
 `;
 
 const Content = styled.div`
@@ -87,6 +86,7 @@ const Content = styled.div`
     padding: 1em;
     overflow-x: hidden;
     overflow-y: scroll;
+    padding-right: 1rem;
 `;
 
 const Sidebar = styled.div`
@@ -95,16 +95,6 @@ const Sidebar = styled.div`
     background: ${themingVar['@leav-secondary-bg']};
     border-top-right-radius: 3px;
     z-index: 1;
-`;
-
-const ToggleExpand = styled.div`
-    position: absolute;
-    left: -25px;
-    padding: 5px;
-    background: ${themingVar['@leav-secondary-bg']};
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    cursor: pointer;
 `;
 
 function EditRecordModal({open, record, library, onClose, afterCreate: afterSave}: IEditRecordModalProps): JSX.Element {
@@ -302,13 +292,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
         };
     };
 
-    const _handleToggleSidebar = () => dispatch({type: EditRecordReducerActionsTypes.TOGGLE_SIDEBAR});
-
-    const title = record ? (
-        <RecordCard record={record} size={PreviewSize.small} withLibrary={false} withPreview={false} />
-    ) : (
-        t('record_edition.new_record')
-    );
+    const title = record ? <RecordCard record={record} size={PreviewSize.small} /> : t('record_edition.new_record');
 
     const footerButtons = [
         <Button aria-label={t('global.close')} key="close" onClick={onClose}>
@@ -337,8 +321,6 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 onCancel={onClose}
                 destroyOnClose
                 cancelText={t('global.cancel')}
-                closable={false}
-                maskClosable
                 width="90vw"
                 centered
                 style={{padding: 0, maxWidth: `${modalWidth}px`}}
@@ -368,16 +350,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                                         />
                                     )}
                                 </Content>
-                                <Sidebar className="sidebar">
-                                    {canEdit && (
-                                        <>
-                                            <ToggleExpand onClick={_handleToggleSidebar}>
-                                                {state.sidebarCollapsed ? <IconClosePanel /> : <IconOpenPanel />}
-                                            </ToggleExpand>
-                                            <EditRecordSidebar />{' '}
-                                        </>
-                                    )}
-                                </Sidebar>
+                                <Sidebar className="sidebar">{canEdit && <EditRecordSidebar />}</Sidebar>
                             </Container>
                         </CreationErrorContext.Provider>
                     </EditRecordReducerContext.Provider>

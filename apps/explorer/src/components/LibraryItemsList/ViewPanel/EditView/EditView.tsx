@@ -27,11 +27,12 @@ interface IFormValues {
 
 interface IEditViewProps {
     view: IView;
+    libraryId: string;
     onClose: () => void;
     visible: boolean;
 }
 
-function EditView({visible, onClose, view}: IEditViewProps): JSX.Element {
+function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Element {
     const {t} = useTranslation();
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
@@ -57,7 +58,7 @@ function EditView({visible, onClose, view}: IEditViewProps): JSX.Element {
 
         const upView: IAddViewMutationVariablesView = {
             id: view.id,
-            library: activeLibrary.id,
+            library: libraryId,
             display: {type: values.type, size: view.display.size},
             shared: values.shared,
             label: values.label,

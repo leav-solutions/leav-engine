@@ -135,7 +135,7 @@ function TreeField({
     const ListFooter =
         fieldValues.length && canAddValue ? (
             <FooterWrapper>
-                <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} />
+                <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} linkField />
             </FooterWrapper>
         ) : null;
 
@@ -155,7 +155,7 @@ function TreeField({
                     renderItem={renderItem}
                     split
                     locale={{
-                        emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} />
+                        emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} linkField />
                     }}
                     footer={ListFooter}
                 />

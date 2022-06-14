@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {render, screen} from '_tests/testUtils';
@@ -65,11 +66,17 @@ describe('EditRecordSidebar', () => {
                 );
             });
 
+            expect(screen.queryByText(/created_at/)).toBeInTheDocument();
+            expect(screen.queryByText(/modified_at/)).toBeInTheDocument();
+            // user label should appear on created_by and modified_by
+            expect(screen.getAllByText(new RegExp(value.modified_by.whoAmI.label))).toHaveLength(2);
+
+            // Expand attribute section
+            userEvent.click(screen.getByRole(/button/, {name: /attribute/}));
+
             expect(screen.getByText(attribute.id)).toBeInTheDocument();
             expect(screen.getByText(attribute.label.fr)).toBeInTheDocument();
             expect(screen.getByText(attribute.description.fr)).toBeInTheDocument();
-            expect(screen.queryByText(/modified_at/)).toBeInTheDocument();
-            expect(screen.getByText(new RegExp(value.modified_by.whoAmI.label))).toBeInTheDocument();
         });
 
         test("Don't display modifier if not set in value", async () => {
@@ -94,7 +101,7 @@ describe('EditRecordSidebar', () => {
                         value: {
                             ...mockRecordPropertyWithAttribute.value,
                             treeValue: {
-                                record: mockTreeRecord,
+                                record: {...mockTreeRecord, whoAmI: {...mockTreeRecord.whoAmI, label: 'Tree record'}},
                                 ancestors: [{record: mockTreeRecordChild}, {record: mockTreeRecord}]
                             }
                         }
@@ -115,7 +122,7 @@ describe('EditRecordSidebar', () => {
                 collapseBtn.click();
             });
 
-            expect(screen.getByText(mockTreeRecord.whoAmI.label)).toBeInTheDocument();
+            expect(screen.getByText('Tree record')).toBeInTheDocument();
             expect(screen.getByText(mockTreeRecordChild.whoAmI.label)).toBeInTheDocument();
         });
     });

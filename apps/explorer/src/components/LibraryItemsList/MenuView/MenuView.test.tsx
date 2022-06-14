@@ -4,10 +4,10 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import mocksGetViewsListQuery from '../../../__mocks__/mockQuery/mockGetViewListQuery';
-import SelectView from './MenuView';
-import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
+import MenuView from './MenuView';
 
 describe('SelectView', () => {
     const mocks = mocksGetViewsListQuery('activeLibraryId');
@@ -15,7 +15,7 @@ describe('SelectView', () => {
         render(
             <MockedProviderWithFragments mocks={mocks}>
                 <MockStore>
-                    <SelectView activeLibrary={mockActiveLibrary} />
+                    <MenuView library={mockGetLibraryDetailExtendedElement} />
                 </MockStore>
             </MockedProviderWithFragments>
         );

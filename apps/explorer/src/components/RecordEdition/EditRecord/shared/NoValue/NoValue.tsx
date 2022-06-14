@@ -10,6 +10,7 @@ import styled from 'styled-components';
 interface INoValueProps {
     canAddValue: boolean;
     onAddValue: () => void;
+    linkField?: boolean;
 }
 
 const NoValueWrapper = styled.div`
@@ -32,7 +33,7 @@ const AddButton = styled(Button)`
     }
 `;
 
-function NoValue({canAddValue, onAddValue}: INoValueProps): JSX.Element {
+function NoValue({canAddValue, onAddValue, linkField = false}: INoValueProps): JSX.Element {
     const {t} = useTranslation();
 
     return (
@@ -40,7 +41,7 @@ function NoValue({canAddValue, onAddValue}: INoValueProps): JSX.Element {
             {canAddValue ? (
                 <AddButton onClick={onAddValue} size="small">
                     <FileAddOutlined />
-                    <span>{t('record_edition.add_value')}</span>
+                    <span>{linkField ? t('record_edition.add_value_link') : t('record_edition.add_value')}</span>
                 </AddButton>
             ) : (
                 <>

@@ -103,8 +103,6 @@ function RecordPreviewList({label, color, image, size, style}: IRecordPreviewPro
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
 
-    const containerSize = getPreviewSize(size);
-
     return (
         <GeneratedPreview
             data-testid="generated-preview"

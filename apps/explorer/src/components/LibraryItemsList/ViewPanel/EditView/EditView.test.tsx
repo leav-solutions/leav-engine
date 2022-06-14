@@ -23,6 +23,7 @@ describe('EditView', () => {
                 <MockedProviderWithFragments mocks={mocks}>
                     <MockStore>
                         <EditView
+                            libraryId="lib_id"
                             visible={true}
                             onClose={jest.fn()}
                             view={{

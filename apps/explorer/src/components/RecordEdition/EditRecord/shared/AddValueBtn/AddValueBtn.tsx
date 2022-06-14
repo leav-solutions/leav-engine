@@ -10,6 +10,7 @@ import themingVar from 'themingVar';
 
 interface IAddValueBtnProps extends ButtonProps {
     bordered?: boolean;
+    linkField?: boolean;
 }
 
 const StyledBtn = styled(({bordered, ...rest}: IAddValueBtnProps) => <Button {...rest} />)`
@@ -26,12 +27,12 @@ const StyledBtn = styled(({bordered, ...rest}: IAddValueBtnProps) => <Button {..
     }
 `;
 
-function AddValueBtn({bordered = false, ...props}: IAddValueBtnProps): JSX.Element {
+function AddValueBtn({bordered = false, linkField = false, ...props}: IAddValueBtnProps): JSX.Element {
     const {t} = useTranslation();
     return (
         <StyledBtn bordered={bordered} {...props}>
             <PlusOutlined />
-            {t('record_edition.add_value')}
+            {linkField ? t('record_edition.add_value_link') : t('record_edition.add_value')}
         </StyledBtn>
     );
 }

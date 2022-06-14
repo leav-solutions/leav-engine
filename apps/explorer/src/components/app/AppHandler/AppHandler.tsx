@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -84,7 +85,9 @@ function AppHandler(): JSX.Element {
 
     return (
         <ApplicationContext.Provider value={currentApp}>
-            <Router />
+            <ErrorBoundary>
+                <Router />
+            </ErrorBoundary>
         </ApplicationContext.Provider>
     );
 }

@@ -4,7 +4,7 @@
 import {useMutation, useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import {getSelectedViewKey, panelSize, viewSettingsField} from 'constants/constants';
+import {defaultSort, getSelectedViewKey, panelSize, viewSettingsField} from 'constants/constants';
 import {SelectionModeContext} from 'context';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
@@ -102,8 +102,7 @@ function LibraryItemsListContent({selectionMode, library, defaultView}: ILibrary
             current: defaultView,
             reload: false,
             sync: true
-        },
-        lang
+        }
     });
 
     const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
@@ -134,8 +133,8 @@ function LibraryItemsListContent({selectionMode, library, defaultView}: ILibrary
             limit: searchState.pagination,
             offset: searchState.offset,
             filters: getRequestFromFilters(searchState.filters),
-            sortField: searchState.sort.field,
-            sortOrder: searchState.sort.order,
+            sortField: searchState.sort.field || defaultSort.field,
+            sortOrder: searchState.sort.order || defaultSort.order,
             fullText: searchState.fullText
         },
         onCompleted: _applyResults
@@ -214,7 +213,7 @@ function LibraryItemsListContent({selectionMode, library, defaultView}: ILibrary
         <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
             <SelectionModeContext.Provider value={selectionMode}>
                 <MenuWrapper>
-                    <MenuItemList refetch={_reload} />
+                    <MenuItemList refetch={_reload} library={library} />
                     <MenuItemListSelected active={menuSelectedActive} />
                 </MenuWrapper>
 
