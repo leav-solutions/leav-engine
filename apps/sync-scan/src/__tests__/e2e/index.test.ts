@@ -89,7 +89,7 @@ describe('e2e tests', () => {
             const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = [];
 
-            await automate(fsc, dbs, amqpConn.channel);
+            await automate(fsc, dbs, amqpConn);
 
             const expected = {
                 // pathAfter as keys
@@ -129,7 +129,7 @@ describe('e2e tests', () => {
             const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = test4Db(inodes);
 
-            await automate(fsc, dbs, amqpConn.channel);
+            await automate(fsc, dbs, amqpConn);
 
             const expected = {
                 // pathBefore as keys
@@ -167,7 +167,7 @@ describe('e2e tests', () => {
             const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = test5Db(inodes);
 
-            await automate(fsc, dbs, amqpConn.channel);
+            await automate(fsc, dbs, amqpConn);
 
             const expected = {
                 // pathBefore as keys

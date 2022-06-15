@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import {IAmqpMsg} from '_types/amqp';
+import {IAmqpConn, IAmqpMsg} from '_types/amqp';
 import {amqpService} from '.';
 import {getConfig} from '../config';
 import {EventTypes} from '../_types/events';
@@ -32,32 +32,26 @@ const _getEventMsg = (
     };
 };
 
-export const create = async (
-    path: string,
-    inode: number,
-    isDirectory: boolean,
-    channel: amqp.ConfirmChannel,
-    hash?: string
-) => {
+export const create = async (path: string, inode: number, isDirectory: boolean, amqpConn: IAmqpConn, hash?: string) => {
     const cfg = await getConfig();
 
     await amqpService.publish(
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
-        channel,
+        amqpConn,
         _getEventMsg(EventTypes.CREATE, null, path, inode, isDirectory, cfg.amqp.rootKey, hash)
     );
 
     _logEvent({eventType: EventTypes.CREATE, pathAfter: path});
 };
 
-export const remove = async (path: string, inode: number, isDirectory: boolean, channel: amqp.ConfirmChannel) => {
+export const remove = async (path: string, inode: number, isDirectory: boolean, amqpConn: IAmqpConn) => {
     const cfg = await getConfig();
 
     await amqpService.publish(
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
-        channel,
+        amqpConn,
         _getEventMsg(EventTypes.REMOVE, path, null, inode, isDirectory, cfg.amqp.rootKey)
     );
 
@@ -69,33 +63,27 @@ export const move = async (
     pathAfter: string,
     inode: number,
     isDirectory: boolean,
-    channel: amqp.ConfirmChannel
+    amqpConn: IAmqpConn
 ) => {
     const cfg = await getConfig();
 
     await amqpService.publish(
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
-        channel,
+        amqpConn,
         _getEventMsg(EventTypes.MOVE, pathBefore, pathAfter, inode, isDirectory, cfg.amqp.rootKey)
     );
 
     _logEvent({eventType: EventTypes.MOVE, pathBefore, pathAfter});
 };
 
-export const update = async (
-    path: string,
-    inode: number,
-    isDirectory: boolean,
-    channel: amqp.ConfirmChannel,
-    hash: string
-) => {
+export const update = async (path: string, inode: number, isDirectory: boolean, amqpConn: IAmqpConn, hash: string) => {
     const cfg = await getConfig();
 
     await amqpService.publish(
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
-        channel,
+        amqpConn,
         _getEventMsg(EventTypes.UPDATE, path, path, inode, isDirectory, cfg.amqp.rootKey, hash)
     );
 

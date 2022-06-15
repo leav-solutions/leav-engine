@@ -14,13 +14,19 @@ import {IAmqpConn} from './_types/amqp';
     try {
         const cfg: IConfig = await getConfig();
 
-        const amqpConn: IAmqpConn = await amqp.init(cfg.amqp);
-
+        console.info('Scanning filesystem...');
         const fsScan: FilesystemContent = await scan.filesystem(cfg);
+
+        console.info('Scanning database...');
         const dbScan: FullTreeContent = await scan.database(cfg);
 
-        await automate(fsScan, dbScan, amqpConn.channel);
+        console.info('RabbitMQ connection initialization...');
+        const amqpConn: IAmqpConn = await amqp.init(cfg.amqp);
 
+        console.info('Synchronization...');
+        await automate(fsScan, dbScan, amqpConn);
+
+        console.info('Closing RabbitMQ connection...');
         await amqpConn.connection.close();
     } catch (e) {
         console.error(e);

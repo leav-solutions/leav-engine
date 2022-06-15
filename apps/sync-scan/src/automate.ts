@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
+import {IAmqpConn} from '_types/amqp';
 import * as events from './amqp/events';
 import {FilesystemContent, IFileContent} from './_types/filesystem';
 import {FullTreeContent} from './_types/queries';
@@ -65,13 +66,13 @@ const _getEventTypeAndDbElIdx = (fc: IFileContent, dbEl: FullTreeContent) => {
     return {match, dbElIdx};
 };
 
-const _delUntrtDbEl = async (dbEl: FullTreeContent, channel: amqp.ConfirmChannel): Promise<void> => {
+const _delUntrtDbEl = async (dbEl: FullTreeContent, amqpConn: IAmqpConn): Promise<void> => {
     for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
         await events.remove(
             de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
             de.record.inode,
             de.record.is_directory,
-            channel
+            amqpConn
         );
     }
 };
@@ -81,7 +82,7 @@ const _trtFile = async (
     dbElIdx: number[],
     dbEl: FullTreeContent,
     fc: IFileContent,
-    channel: amqp.ConfirmChannel
+    amqpConn: IAmqpConn
 ): Promise<void> => {
     switch (match) {
         case Attr.INODE: // Identical inode only
@@ -95,7 +96,7 @@ const _trtFile = async (
                 fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
                 fc.ino,
                 fc.type === 'directory' ? true : false,
-                channel
+                amqpConn
             );
             break;
         case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
@@ -105,7 +106,7 @@ const _trtFile = async (
                 fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
                 fc.ino,
                 false, // isDirectory,
-                channel,
+                amqpConn,
                 fc.hash
             );
             break;
@@ -115,7 +116,7 @@ const _trtFile = async (
                 fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
                 fc.ino,
                 fc.type === 'directory' ? true : false,
-                channel,
+                amqpConn,
                 fc.hash
             );
             break;
@@ -126,11 +127,11 @@ const _process = async (
     fsEl: FilesystemContent,
     dbEl: FullTreeContent,
     level: number,
-    channel: amqp.ConfirmChannel
+    amqpConn: IAmqpConn
 ): Promise<void> => {
     if (!fsEl.filter(fse => fse.level === level).length) {
         // delete all untreated elements in database before end of process
-        await _delUntrtDbEl(dbEl, channel);
+        await _delUntrtDbEl(dbEl, amqpConn);
         return;
     }
 
@@ -138,23 +139,17 @@ const _process = async (
     let dbElIdx: number[];
     for (const fc of fsEl) {
         if (fc.level === level && !fc.trt) {
-            ({match, dbElIdx} = await _getEventTypeAndDbElIdx(fc, dbEl));
-            await _trtFile(match, dbElIdx, dbEl, fc, channel);
+            ({match, dbElIdx} = _getEventTypeAndDbElIdx(fc, dbEl));
+            await _trtFile(match, dbElIdx, dbEl, fc, amqpConn);
             fc.trt = true;
         }
     }
 
-    await _process(fsEl, dbEl, level + 1, channel);
+    await _process(fsEl, dbEl, level + 1, amqpConn);
 };
 
-export default async (
-    fsScan: FilesystemContent,
-    dbScan: FullTreeContent,
-    channel: amqp.ConfirmChannel
-): Promise<void> => {
+export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, amqpConn: IAmqpConn): Promise<void> => {
     const dbEl: FullTreeContent = _extractChildrenDbElems(dbScan);
 
-    await _process(fsScan, dbEl, 0, channel);
-
-    console.info('Sync finished.');
+    await _process(fsScan, dbEl, 0, amqpConn);
 };

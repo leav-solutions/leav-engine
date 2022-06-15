@@ -72,7 +72,7 @@ describe('unit tests', () => {
             const create = jest.spyOn(events, 'create');
             const move = jest.spyOn(events, 'move');
 
-            await expect(automate(filesystem, database, amqpConn.channel)).resolves.toStrictEqual(undefined);
+            await expect(automate(filesystem, database, amqpConn)).resolves.toStrictEqual(undefined);
 
             expect(create).toHaveBeenCalledTimes(1);
             expect(move).toHaveBeenCalledTimes(1);
