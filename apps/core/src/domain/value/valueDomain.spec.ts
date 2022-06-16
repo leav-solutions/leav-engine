@@ -73,10 +73,15 @@ describe('ValueDomain', () => {
         type: AttributeTypes.SIMPLE
     };
 
+    const mockUtilsStandardAttribute: Mockify<IUtils> = {
+        isStandardAttribute: jest.fn(() => true)
+    };
+
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'valueDomainTest'
     };
+
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -109,7 +114,8 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const savedValue = await valDomain.saveValue({
@@ -153,7 +159,8 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const savedValue = await valDomain.saveValue({
@@ -206,7 +213,8 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const savedValue = await valDomain.saveValue({
@@ -243,7 +251,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             await expect(
@@ -268,7 +277,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             await expect(
@@ -293,7 +303,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             await expect(
@@ -337,7 +348,8 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const savedValue = await valDomain.saveValue({
@@ -385,7 +397,8 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const savedValue = await valDomain.saveValue({
@@ -424,7 +437,8 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const savedValue = await valDomain.saveValue({
@@ -480,7 +494,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             await expect(
@@ -516,7 +531,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNoTree as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             await expect(
@@ -556,7 +572,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             await expect(
@@ -603,7 +620,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             await expect(
@@ -650,7 +668,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             await expect(
@@ -696,7 +715,8 @@ describe('ValueDomain', () => {
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtilsStandardAttribute as IUtils
                 });
 
                 const savedValue = await valDomain.saveValue({
@@ -712,9 +732,10 @@ describe('ValueDomain', () => {
                     meta_attribute: 'metadata value'
                 });
 
-                expect(savedValue).toMatchObject(savedValueData);
                 expect(savedValue.metadata).toMatchObject({
-                    meta_attribute: 'metadata value'
+                    meta_attribute: {
+                        value: 'metadata value'
+                    }
                 });
             });
 
@@ -747,7 +768,8 @@ describe('ValueDomain', () => {
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtilsStandardAttribute as IUtils
                 });
 
                 const saveVal = valDomain.saveValue({
@@ -798,7 +820,8 @@ describe('ValueDomain', () => {
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute': mockRecordAttrPermForbidDom as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtilsStandardAttribute as IUtils
                 });
 
                 const saveVal = valDomain.saveValue({
@@ -855,7 +878,8 @@ describe('ValueDomain', () => {
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                     'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.utils': mockUtilsStandardAttribute as IUtils
                 });
 
                 await valDomain.saveValue({
@@ -872,6 +896,7 @@ describe('ValueDomain', () => {
 
             test('Should throw with metafield specified if actions list throws', async () => {
                 const mockUtils: Mockify<IUtils> = {
+                    ...mockUtilsStandardAttribute,
                     rethrow: jest.fn().mockImplementation(e => {
                         throw e;
                     })
@@ -948,6 +973,7 @@ describe('ValueDomain', () => {
 
         test('Should save multiple values', async () => {
             const mockUtils: Mockify<IUtils> = {
+                ...mockUtilsStandardAttribute,
                 rethrow: jest.fn().mockImplementation(e => {
                     throw e;
                 })
@@ -988,10 +1014,10 @@ describe('ValueDomain', () => {
                     switch (id) {
                         case 'test_attr':
                         case 'test_attr2':
-                            attrProps = {...mockAttrAdv};
+                            attrProps = {...mockAttrAdv, id};
                             break;
                         case 'test_attr3':
-                            attrProps = {...mockAttrSimple};
+                            attrProps = {...mockAttrSimple, id};
                             break;
                     }
 
@@ -1082,6 +1108,7 @@ describe('ValueDomain', () => {
             };
 
             const mockUtils: Mockify<IUtils> = {
+                ...mockUtilsStandardAttribute,
                 translateError: jest.fn().mockImplementation(err => err.msg ?? err)
             };
 
@@ -1154,7 +1181,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomainNoEdit as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1178,6 +1206,7 @@ describe('ValueDomain', () => {
 
         test('Delete empty values', async () => {
             const mockUtils: Mockify<IUtils> = {
+                ...mockUtilsStandardAttribute,
                 rethrow: jest.fn().mockImplementation(e => {
                     throw e;
                 })
@@ -1235,6 +1264,7 @@ describe('ValueDomain', () => {
 
         test("Don't delete empty values if keepEmpty true", async () => {
             const mockUtils: Mockify<IUtils> = {
+                ...mockUtilsStandardAttribute,
                 rethrow: jest.fn().mockImplementation(e => {
                     throw e;
                 })

@@ -434,6 +434,8 @@
         "attribute_details_section": "Attribut",
         "path_section": "Chemin",
         "start_typing_message": "Commencez à taper pour chercher des éléments",
+        "metadata_section": "Propriétés de la valeur",
+        "metadata_section_link": "Propriétés de la liaison",
         "attribute": {
             "id": "Identifiant",
             "type": "Type",

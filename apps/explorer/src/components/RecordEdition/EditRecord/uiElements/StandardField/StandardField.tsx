@@ -8,7 +8,10 @@ import React, {useContext, useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {RECORD_FORM_recordForm_elements_values_Value} from '_gqlTypes/RECORD_FORM';
+import {
+    RECORD_FORM_recordForm_elements_values,
+    RECORD_FORM_recordForm_elements_values_Value
+} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
@@ -23,53 +26,68 @@ import standardFieldReducer, {
 } from './standardFieldReducer/standardFieldReducer';
 import StandardFieldValue from './StandardFieldValue';
 
-const Wrapper = styled.div`
-    margin-bottom: 1.5em;
+const Wrapper = styled.div<{metadataEdit: boolean}>`
+    margin-bottom: ${props => (props.metadataEdit ? 0 : '1.5em')};
 `;
+
+export const emptyValue: RECORD_FORM_recordForm_elements_values = {
+    id_value: null,
+    created_at: null,
+    modified_at: null,
+    created_by: null,
+    modified_by: null,
+    metadata: null,
+    raw_value: null,
+    value: null
+};
 
 function StandardField({
     element,
-    record,
     onValueSubmit,
-    onValueDelete
+    onValueDelete,
+    metadataEdit = false
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
-    const {readOnly: isRecordReadOnly} = useRecordEditionContext();
+    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
 
     const fieldValues = (element.values as RECORD_FORM_recordForm_elements_values_Value[]) ?? [];
     const isMultipleValues = element.attribute.multiple_values;
     const {attribute} = element;
     const creationErrors = useContext(CreationErrorContext);
 
-    const initialValues = fieldValues.length
-        ? fieldValues.reduce(
-              (allValues, fieldValue, index): IKeyValue<IStandardFieldValue> => ({
-                  ...allValues,
-                  [fieldValue.id_value]: {
+    const initialValues =
+        Array.isArray(fieldValues) && fieldValues.length
+            ? fieldValues.reduce(
+                  (allValues, fieldValue, index): IKeyValue<IStandardFieldValue> => ({
+                      ...allValues,
+                      [fieldValue?.id_value ?? null]: {
+                          ...virginValue,
+                          idValue: fieldValue?.id_value ?? null,
+                          index,
+                          value: fieldValue ?? null,
+                          displayValue: fieldValue?.value ?? '',
+                          editingValue:
+                              attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? '',
+                          originRawValue:
+                              attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? ''
+                      }
+                  }),
+                  {}
+              )
+            : {
+                  [newValueId]: {
                       ...virginValue,
-                      idValue: fieldValue?.id_value ?? null,
-                      index,
-                      value: fieldValue ?? null,
-                      displayValue: fieldValue?.value ?? '',
-                      editingValue: attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? '',
-                      originRawValue: attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? ''
+                      idValue: newValueId
                   }
-              }),
-              {}
-          )
-        : {
-              [newValueId]: {
-                  ...virginValue,
-                  idValue: newValueId
-              }
-          };
+              };
 
     const initialState: IStandardFieldReducerState = {
         attribute,
         record,
         formElement: element,
         isReadOnly: attribute?.system || isRecordReadOnly || !attribute.permissions.edit_value,
-        values: initialValues
+        values: initialValues,
+        metadataEdit
     };
 
     const [state, dispatch] = useReducer(standardFieldReducer, initialState);
@@ -99,9 +117,17 @@ function StandardField({
         ]);
 
         if (submitRes.status === APICallStatus.SUCCESS) {
+            const submitResValue = submitRes.values[0] as SAVE_VALUE_BATCH_saveValueBatch_values_Value;
+            const resultValue = state.metadataEdit
+                ? {
+                      ...submitResValue.metadata.find(({name}) => name === element.attribute.id).value,
+                      metadata: null,
+                      attribute
+                  }
+                : submitResValue;
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
-                newValue: submitRes.values[0] as SAVE_VALUE_BATCH_saveValueBatch_values_Value,
+                newValue: resultValue,
                 idValue
             });
 
@@ -166,7 +192,7 @@ function StandardField({
     const canAddAnotherValue = isMultipleValues && hasValue && attribute.format !== AttributeFormat.boolean;
 
     return (
-        <Wrapper>
+        <Wrapper metadataEdit={metadataEdit}>
             {valuesToDisplay.map(value => (
                 <StandardFieldValue
                     key={value.idValue}

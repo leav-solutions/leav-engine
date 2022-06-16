@@ -137,7 +137,7 @@ export interface ValueBatchInput {
     attribute?: string | null;
     id_value?: string | null;
     value?: string | null;
-    metadata?: any | null;
+    metadata?: (ValueMetadataInput | null)[] | null;
 }
 
 export interface ValueInput {

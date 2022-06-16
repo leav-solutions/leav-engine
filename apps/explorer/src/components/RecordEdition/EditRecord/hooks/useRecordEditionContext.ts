@@ -4,6 +4,6 @@
 import {createContext, useContext} from 'react';
 import {IRecordEditionContext} from '../_types';
 
-export const RecordEditionContext = createContext<IRecordEditionContext>({elements: {}, readOnly: false});
+export const RecordEditionContext = createContext<IRecordEditionContext>({elements: {}, readOnly: false, record: null});
 
 export const useRecordEditionContext = () => useContext(RecordEditionContext);

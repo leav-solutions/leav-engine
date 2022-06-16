@@ -30,6 +30,23 @@ export const saveValueBatchMutation = gql`
                     type
                     system
                 }
+                metadata {
+                    name
+                    value {
+                        id_value
+                        modified_at
+                        modified_by {
+                            ...RecordIdentity
+                        }
+                        created_at
+                        created_by {
+                            ...RecordIdentity
+                        }
+                        version
+                        value
+                        raw_value
+                    }
+                }
 
                 ... on Value {
                     value

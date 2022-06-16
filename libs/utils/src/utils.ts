@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {camelCase, flow, partialRight, trimEnd, upperFirst} from 'lodash';
 import minimatch from 'minimatch';
+import {IKeyValue} from './types/helpers';
 
 export const getGraphqlTypeFromLibraryName = (library: string): string => {
     return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
@@ -135,4 +136,8 @@ export const extractArgsFromString = (mapping: string): {[arg: string]: string} 
         .slice(1)
         .map(e => e.replace(/\s+/g, ' ').trim().split(' '));
     return args.reduce((acc, value) => ({...acc, [value[0]]: value[1] ?? true}), {});
+};
+
+export const objectToNameValueArray = <T>(obj: IKeyValue<T>): Array<{name: string; value: T}> => {
+    return Object.keys(obj).map(key => ({name: key, value: obj[key]}));
 };

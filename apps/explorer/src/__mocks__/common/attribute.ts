@@ -112,7 +112,8 @@ export const mockFormAttribute: RECORD_FORM_recordForm_elements_attribute = {
     permissions: {
         access_attribute: true,
         edit_value: true
-    }
+    },
+    metadata_fields: null
 };
 
 export const mockFormAttributeTree: RECORD_FORM_recordForm_elements_attribute_TreeAttribute = {

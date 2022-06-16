@@ -10,6 +10,11 @@ import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import RecordCard from 'components/shared/RecordCard';
 import createRecordMutation from 'graphQL/mutations/records/createRecordMutation';
+import {
+    IRecordPropertyLink,
+    IRecordPropertyStandard,
+    IRecordPropertyTree
+} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
 import React, {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -37,6 +42,7 @@ import {
     ISubmittedValueStandard,
     ISubmittedValueTree,
     IValueToSubmit,
+    MetadataSubmitValueFunc,
     SubmitValueFunc
 } from '../EditRecord/_types';
 import editRecordReducer from '../editRecordReducer';
@@ -58,6 +64,7 @@ interface IPendingValues {
 
 const modalWidth = 1200;
 const sidebarWidth = 300;
+const contentHeight = 'calc(100vh - 16.5rem)';
 
 const Container = styled.div<{isSidebarCollapsed: boolean}>`
     height: calc(100vh - 12rem);
@@ -81,7 +88,7 @@ const Title = styled.div`
 `;
 
 const Content = styled.div`
-    height: calc(100vh - 16.5rem);
+    height: ${contentHeight};
     grid-area: content;
     padding: 1em;
     overflow-x: hidden;
@@ -90,6 +97,9 @@ const Content = styled.div`
 `;
 
 const Sidebar = styled.div`
+    height: ${contentHeight};
+    overflow-x: hidden;
+    overflow-y: scroll;
     position: relative;
     grid-area: sidebar;
     background: ${themingVar['@leav-secondary-bg']};
@@ -126,11 +136,11 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
 
     const _handleValueSubmit: SubmitValueFunc = async values => {
         if (!isCreationMode) {
-            // In Editon mode, submit values immediately and send result back to children
+            // In Edition mode, submit values immediately and send result back to children
             return saveValues(
                 record,
                 values.map(val => {
-                    const savableValue = {...val, attribute: val.attribute.id};
+                    const savableValue = {...val, attribute: val.attribute.id, metadata: val.metadata};
 
                     switch (val.attribute.type) {
                         case AttributeType.advanced_link:
@@ -202,6 +212,32 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
             status: APICallStatus.SUCCESS,
             values: storedValues
         };
+    };
+
+    const _handleMetadataSubmit: MetadataSubmitValueFunc = (value, attribute, metadata) => {
+        let valueContent;
+        switch (attribute.type) {
+            case AttributeType.simple:
+            case AttributeType.advanced:
+                valueContent = (value as IRecordPropertyStandard).raw_value;
+                break;
+            case AttributeType.advanced_link:
+            case AttributeType.simple_link:
+                valueContent = (value as IRecordPropertyLink).linkValue;
+                break;
+            case AttributeType.tree:
+                valueContent = (value as IRecordPropertyTree).treeValue;
+                break;
+        }
+
+        return _handleValueSubmit([
+            {
+                idValue: value.id_value,
+                attribute,
+                value: valueContent,
+                metadata
+            }
+        ]);
     };
 
     /**
@@ -350,7 +386,9 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                                         />
                                     )}
                                 </Content>
-                                <Sidebar className="sidebar">{canEdit && <EditRecordSidebar />}</Sidebar>
+                                <Sidebar className="sidebar">
+                                    {canEdit && <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />}
+                                </Sidebar>
                             </Container>
                         </CreationErrorContext.Provider>
                     </EditRecordReducerContext.Provider>

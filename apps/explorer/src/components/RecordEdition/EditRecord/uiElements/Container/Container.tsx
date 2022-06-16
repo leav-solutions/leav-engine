@@ -6,7 +6,7 @@ import React from 'react';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {IFormElementProps} from '../../_types';
 
-function Container({element, record, onValueSubmit, onValueDelete}: IFormElementProps<{}>): JSX.Element {
+function Container({element, onValueSubmit, onValueDelete}: IFormElementProps<{}>): JSX.Element {
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
 
@@ -16,12 +16,7 @@ function Container({element, record, onValueSubmit, onValueDelete}: IFormElement
                 <Row data-testid="container-child-element" key={el.id}>
                     <Col span={24}>
                         {el.uiElement && (
-                            <el.uiElement
-                                element={el}
-                                record={record}
-                                onValueSubmit={onValueSubmit}
-                                onValueDelete={onValueDelete}
-                            />
+                            <el.uiElement element={el} onValueSubmit={onValueSubmit} onValueDelete={onValueDelete} />
                         )}
                     </Col>
                 </Row>

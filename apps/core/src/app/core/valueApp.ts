@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IKeyValue, objectToNameValueArray} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -9,7 +10,7 @@ import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IValue, IValueVersion} from '_types/value';
+import {IStandardValue, IValue, IValueVersion} from '_types/value';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
@@ -71,6 +72,9 @@ export default function ({
         },
         modified_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> => {
             return typeof value.modified_by === 'undefined' ? null : _getUser(value.modified_by, ctx);
+        },
+        metadata: (value: IValue, _, ctx: IQueryInfos): Array<{name: string; value: IStandardValue}> => {
+            return value.metadata ? objectToNameValueArray(value.metadata as IKeyValue<IStandardValue>) : [];
         }
     };
 
@@ -79,12 +83,17 @@ export default function ({
             const baseSchema = {
                 typeDefs: `
                     scalar ValueVersion
-                    scalar ValueMetadata
 
                     input ValueVersionInput {
                         name: String!,
                         value: String!
                     }
+
+                    type ValueMetadata {
+                        name: String!,
+                        value: Value
+                    }
+
                     interface GenericValue {
                         id_value: ID,
                         modified_at: Int,
@@ -93,8 +102,9 @@ export default function ({
                         created_by: User,
                         version: ValueVersion,
                         attribute: Attribute,
-                        metadata: ValueMetadata
+                        metadata: [ValueMetadata]
                     }
+
                     type Value implements GenericValue {
                         id_value: ID,
                         value: Any,
@@ -105,22 +115,26 @@ export default function ({
                         created_by: User,
                         version: ValueVersion,
                         attribute: Attribute,
-                        metadata: ValueMetadata
+                        metadata: [ValueMetadata]
                     }
+
                     type saveValueBatchResult {
                         values: [GenericValue!],
                         errors: [ValueBatchError!]
                     }
+
                     type ValueBatchError {
                         type: String!,
                         attribute: String!,
                         input: String,
                         message: String!
                     }
+
                     input ValueMetadataInput {
                         name: String!,
                         value: String
                     }
+
                     type LinkValue implements GenericValue {
                         id_value: ID,
                         value: Record!,
@@ -130,8 +144,9 @@ export default function ({
                         created_by: User,
                         version: ValueVersion,
                         attribute: Attribute,
-                        metadata: ValueMetadata
+                        metadata: [ValueMetadata]
                     }
+
                     type TreeValue implements GenericValue {
                         id_value: ID!,
                         modified_at: Int!,
@@ -141,24 +156,28 @@ export default function ({
                         value: TreeNode!,
                         version: ValueVersion,
                         attribute: Attribute,
-                        metadata: ValueMetadata
+                        metadata: [ValueMetadata]
                     }
+
                     type DateRangeValue {
                         from: String
                         to: String
                     }
+
                     input ValueInput {
                         id_value: ID,
                         value: String,
                         metadata: [ValueMetadataInput],
                         version: [ValueVersionInput]
                     }
+
                     input ValueBatchInput {
                         attribute: ID,
                         id_value: ID,
                         value: String,
-                        metadata: ValueMetadata
+                        metadata: [ValueMetadataInput]
                     }
+
                     extend type Mutation {
                         # Save one value
                         saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): GenericValue!

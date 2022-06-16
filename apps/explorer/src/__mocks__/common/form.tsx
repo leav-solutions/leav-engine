@@ -13,7 +13,11 @@ import {FormElement} from 'components/RecordEdition/EditRecord/_types';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React from 'react';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
-import {RECORD_FORM_recordForm, RECORD_FORM_recordForm_elements_values_LinkValue} from '_gqlTypes/RECORD_FORM';
+import {
+    RECORD_FORM_recordForm,
+    RECORD_FORM_recordForm_elements_values_LinkValue,
+    RECORD_FORM_recordForm_elements_values_TreeValue
+} from '_gqlTypes/RECORD_FORM';
 import {mockAttribute, mockAttributeLink, mockAttributeTree, mockFormAttribute} from './attribute';
 import {mockRecordWhoAmI} from './record';
 import {mockModifier} from './value';
@@ -30,7 +34,8 @@ const formElementBase = {
             created_by: mockModifier,
             modified_by: mockModifier,
             id_value: null,
-            attribute: mockAttribute
+            attribute: mockAttribute,
+            metadata: null
         }
     ],
     settings: {}
@@ -77,7 +82,8 @@ export const mockLinkValue: RECORD_FORM_recordForm_elements_values_LinkValue = {
     modified_at: 123456789,
     created_by: mockModifier,
     modified_by: mockModifier,
-    id_value: null
+    id_value: null,
+    metadata: null
 };
 
 export const mockFormElementLink: FormElement<{}> = {
@@ -160,6 +166,7 @@ export const mockTreeValueA: IRecordPropertyTree = {
     modified_at: 123456789,
     created_by: mockModifier,
     modified_by: mockModifier,
+    metadata: null,
     id_value: '123456'
 };
 
@@ -192,7 +199,10 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
         ...mockAttributeTree,
         treeValuesList: {enable: false, allowFreeEntry: false, values: []}
     },
-    values: [mockTreeValueA, mockTreeValueB]
+    values: [
+        {...(mockTreeValueA as RECORD_FORM_recordForm_elements_values_TreeValue), metadata: null},
+        {...(mockTreeValueB as RECORD_FORM_recordForm_elements_values_TreeValue), metadata: null}
+    ]
 };
 
 export const mockFormElementTextBlock: FormElement<{}> = {

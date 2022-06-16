@@ -6,6 +6,24 @@ import recordIdentityFragment from '../records/recordIdentityFragment';
 
 export const getRecordFormQuery = gql`
     ${recordIdentityFragment}
+
+    fragment StandardValuesListFragment on StandardValuesListConf {
+        ... on StandardStringValuesListConf {
+            enable
+            allowFreeEntry
+            values
+        }
+
+        ... on StandardDateRangeValuesListConf {
+            enable
+            allowFreeEntry
+            dateRangeValues: values {
+                from
+                to
+            }
+        }
+    }
+
     query RECORD_FORM($libraryId: String!, $formId: String!, $recordId: String) {
         recordForm(recordId: $recordId, libraryId: $libraryId, formId: $formId) {
             id
@@ -27,6 +45,13 @@ export const getRecordFormQuery = gql`
                     }
                     modified_by {
                         ...RecordIdentity
+                    }
+                    metadata {
+                        name
+                        value {
+                            value
+                            raw_value
+                        }
                     }
 
                     ... on Value {
@@ -66,23 +91,29 @@ export const getRecordFormQuery = gql`
                         access_attribute
                         edit_value
                     }
+                    metadata_fields {
+                        id
+                        label
+                        description
+                        type
+                        format
+                        system
+                        multiple_values
+                        permissions(record: {id: $recordId, library: $libraryId}) {
+                            access_attribute
+                            edit_value
+                        }
+                        values_list {
+                            ...StandardValuesListFragment
+                        }
+                        metadata_fields {
+                            id
+                        }
+                    }
 
                     ... on StandardAttribute {
                         values_list {
-                            ... on StandardStringValuesListConf {
-                                enable
-                                allowFreeEntry
-                                values
-                            }
-
-                            ... on StandardDateRangeValuesListConf {
-                                enable
-                                allowFreeEntry
-                                dateRangeValues: values {
-                                    from
-                                    to
-                                }
-                            }
+                            ...StandardValuesListFragment
                         }
                     }
 

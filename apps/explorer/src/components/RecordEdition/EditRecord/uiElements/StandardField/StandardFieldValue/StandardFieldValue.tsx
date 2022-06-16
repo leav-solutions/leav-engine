@@ -226,10 +226,14 @@ function StandardFieldValue({
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
         onSubmit(fieldValue.idValue, convertedValue);
 
-        editRecordDispatch({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: null
-        });
+        if (!state.metadataEdit) {
+            editRecordDispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                value: null
+            });
+        } else {
+            dispatch({type: StandardFieldReducerActionsTypes.UNEDIT_FIELD, idValue: fieldValue.idValue});
+        }
     };
 
     const _handlePressEnter = async () => {
@@ -263,10 +267,12 @@ function StandardFieldValue({
             idValue: fieldValue.idValue
         });
 
-        editRecordDispatch({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: {value: fieldValue.value, attribute}
-        });
+        if (!state.metadataEdit) {
+            editRecordDispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                value: {value: fieldValue.value, attribute}
+            });
+        }
     };
 
     const _handleValueChange = (value: AnyPrimitive | IDateRangeValue) => {
@@ -290,10 +296,12 @@ function StandardFieldValue({
             idValue: fieldValue.idValue
         });
 
-        editRecordDispatch({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: null
-        });
+        if (!state.metadataEdit) {
+            editRecordDispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                value: null
+            });
+        }
     };
 
     const _handleClickSubmit = () => {
@@ -476,7 +484,7 @@ function StandardFieldValue({
                                     </label>
                                 )}
                                 {_getInput()}
-                                <FloatingMenu actions={valueActions} />
+                                {!state.metadataEdit && <FloatingMenu actions={valueActions} />}
                             </InputWrapper>
                         </Popover>
                         <ActionsWrapper ref={actionsWrapperRef}>

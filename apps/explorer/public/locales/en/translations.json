@@ -429,6 +429,8 @@
         "attribute_details_section": "Attribute",
         "path_section": "Path",
         "start_typing_message": "Start typing to search elements",
+        "metadata_section": "Value properties",
+        "metadata_section_link": "Link properties",
         "attribute": {
             "id": "Identifier",
             "type": "Type",

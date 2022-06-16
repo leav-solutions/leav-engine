@@ -39,11 +39,12 @@ export interface IRecordPropertyModifier {
 }
 
 interface IRecordPropertyBase {
-    id_value: string | null;
-    created_at: number | null;
-    created_by: IRecordPropertyModifier | null;
-    modified_at: number | null;
-    modified_by: IRecordPropertyModifier | null;
+    id_value?: string | null;
+    created_at?: number | null;
+    created_by?: IRecordPropertyModifier | null;
+    modified_at?: number | null;
+    modified_by?: IRecordPropertyModifier | null;
+    metadata?: Array<{name: string; value: IRecordPropertyStandard}>;
 }
 
 export interface IRecordPropertyStandard extends IRecordPropertyBase {
