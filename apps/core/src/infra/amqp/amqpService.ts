@@ -26,7 +26,7 @@ export default function ({
         amqp,
         async publish(exchange: string, routingKey: string, msg: string): Promise<void> {
             await amqp.publisher.channel.checkExchange(exchange);
-            amqp.publisher.channel.publish(exchange, routingKey, Buffer.from(msg));
+            amqp.publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {persistent: true});
             await amqp.publisher.channel.waitForConfirms();
         },
         async consume(queue: string, routingKey: string, onMessage: onMessageFunc): Promise<void> {

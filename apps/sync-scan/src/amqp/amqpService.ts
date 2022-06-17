@@ -6,7 +6,7 @@ import * as amqp from './amqp';
 import {getConfig} from '../config';
 import {IConfig} from '../_types/config';
 
-let retry = 0;
+let retries = 0;
 
 export const publish = async (
     exchange: string,
@@ -14,24 +14,25 @@ export const publish = async (
     amqpConn: IAmqpConn,
     msg: IAmqpMsg
 ): Promise<void> => {
-    await amqpConn.channel.checkExchange(exchange);
-    amqpConn.channel.publish(exchange, routingKey, Buffer.from(JSON.stringify(msg)));
-    await amqpConn.channel.waitForConfirms();
-
     try {
-        await amqpConn.channel.close();
         await amqpConn.channel.checkExchange(exchange);
-        amqpConn.channel.publish(exchange, routingKey, Buffer.from(JSON.stringify(msg)));
+        amqpConn.channel.publish(exchange, routingKey, Buffer.from(JSON.stringify(msg)), {persistent: true});
         await amqpConn.channel.waitForConfirms();
     } catch (e) {
         const cfg: IConfig = await getConfig();
 
-        if (!retry) {
-            retry += 1;
-            amqpConn = await amqp.init(cfg.amqp);
-            await publish(exchange, routingKey, amqpConn, msg);
+        if (!retries) {
+            retries += 1;
+
+            try {
+                amqpConn = await amqp.init(cfg.amqp);
+                await publish(exchange, routingKey, amqpConn, msg);
+            } catch (err) {
+                console.error(err);
+                throw new Error('2 tries reached. Stop sync.');
+            }
         } else {
-            throw new Error('2 tries reached. Stop sync.');
+            throw Error;
         }
     }
 };

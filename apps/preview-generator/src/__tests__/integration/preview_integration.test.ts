@@ -382,7 +382,7 @@ const sendTestMessage = async (config: IConfig, msg: IMessageConsume) => {
     const channel: Channel = await getChannel(amqpConfig);
 
     const buffer = Buffer.from(JSON.stringify(msg));
-    return channel.publish(exchange, routingKey, buffer);
+    return channel.publish(exchange, routingKey, buffer, {persistent: true});
 };
 
 const consumeResponse = async (config: IConfig, consume: (msg: ConsumeMessage, channel: Channel) => void) => {
