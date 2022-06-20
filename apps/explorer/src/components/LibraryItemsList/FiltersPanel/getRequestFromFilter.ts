@@ -48,12 +48,12 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
             } else {
                 queryFilter = [
                     {
-                        field: filter.condition in AttributeConditionFilter ? filter.key : null,
+                        field: filter?.condition in AttributeConditionFilter ? filter.key : null,
                         value:
-                            filter.condition === AttributeConditionFilter.BETWEEN
-                                ? JSON.stringify(filter.value.value)
-                                : filter?.value?.value.toString(),
-                        condition: RecordFilterCondition[filter.condition],
+                            filter?.condition === AttributeConditionFilter.BETWEEN
+                                ? JSON.stringify(filter?.value?.value ?? '')
+                                : (filter?.value?.value ?? '').toString(),
+                        condition: RecordFilterCondition[filter?.condition],
                         treeId: (filter as IFilterTree).tree?.id
                     }
                 ];
