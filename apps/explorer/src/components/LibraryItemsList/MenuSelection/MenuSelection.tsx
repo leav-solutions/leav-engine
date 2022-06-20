@@ -81,7 +81,7 @@ function MenuSelection(): JSX.Element {
                         items={[
                             !selectionMode
                                 ? {
-                                      key: 'select',
+                                      key: 'select_all',
                                       onClick: selectAll,
                                       label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
                                   }
