@@ -126,10 +126,15 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should create a new reverse advanced link value', async function () {
+        test.only('Should create a new reverse advanced link value', async function () {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([])
+                execute: global.__mockPromise([
+                    {
+                        _from: 'test_lib/12345',
+                        _to: 'test_linked_lib/987654'
+                    }
+                ])
             };
 
             const attrRepo = attributeAdvancedLinkRepo({

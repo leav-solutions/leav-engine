@@ -82,6 +82,7 @@ export default function ({
                             .reduce((sizes, version) => [...sizes, ...version.sizes.map(s => `${s.name}: String,`)], [])
                             .join(' ')}
                         pages: String
+                        file: Record
                     }
 
                     type RecordIdentityConf {
