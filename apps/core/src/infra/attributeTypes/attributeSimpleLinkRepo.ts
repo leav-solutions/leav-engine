@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
+import {AttributeCondition, IRecordFilterOption} from '../../_types/record';
 import {ILinkValue, IStandardValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
@@ -93,9 +93,13 @@ export default function ({
                 ctx
             });
 
-            return res
-                .slice(0, 1)
-                .map(r => ({id_value: null, value: dbUtils.cleanup(r), created_by: null, modified_by: null}));
+            return res.slice(0, 1).map(r => ({
+                id_value: null,
+                library: attribute.linked_library,
+                value: dbUtils.cleanup(r),
+                created_by: null,
+                modified_by: null
+            }));
         },
         sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);

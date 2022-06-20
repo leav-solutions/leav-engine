@@ -49,9 +49,10 @@ export default function ({
     }
 
     const _buildLinkValue = (linkedRecord: IRecord, valueEdge: IValueEdge): ILinkValue => {
+        const [recordLibrary] = valueEdge._to.split('/');
         return {
             id_value: valueEdge._key,
-            value: linkedRecord,
+            value: {...linkedRecord, library: recordLibrary},
             attribute: valueEdge.attribute,
             modified_at: valueEdge.modified_at,
             modified_by: valueEdge.modified_by,

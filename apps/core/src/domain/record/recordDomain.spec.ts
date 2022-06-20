@@ -20,7 +20,9 @@ import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {mockAttrAdvLink, mockAttrSimple, mockAttrSimpleLink, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../__tests__/mocks/library';
+import {mockRecord} from '../../__tests__/mocks/record';
 import {mockTree} from '../../__tests__/mocks/tree';
+import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
 
@@ -779,6 +781,29 @@ describe('RecordDomain', () => {
                 'core.domain.value': mockValDomain as IValueDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo
             });
+            recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
+                Promise.resolve([
+                    attributeId === 'previews'
+                        ? {
+                              raw_value: {
+                                  small: 'small_fake-image',
+                                  medium: 'medium_fake-image',
+                                  big: 'big_fake-image'
+                              }
+                          }
+                        : {
+                              ...mockStandardValue,
+                              value: {
+                                  ...mockRecord,
+                                  previews: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image'
+                                  }
+                              }
+                          }
+                ])
+            );
 
             const res = await recDomain.getRecordIdentity(record, ctx);
 
@@ -787,9 +812,23 @@ describe('RecordDomain', () => {
             expect(res.label).toBe('Label Value');
             expect(res.color).toBe('#123456');
             expect(res.preview).toEqual({
+                big: getPreviewUrl() + 'big_fake-image',
                 small: getPreviewUrl() + 'small_fake-image',
                 medium: getPreviewUrl() + 'medium_fake-image',
-                big: getPreviewUrl() + 'big_fake-image'
+                file: {
+                    active: true,
+                    created_at: 1234567890,
+                    created_by: '1',
+                    id: '123456',
+                    library: 'my_lib',
+                    modified_at: 1234567890,
+                    modified_by: '1',
+                    previews: {
+                        big: 'big_fake-image',
+                        medium: 'medium_fake-image',
+                        small: 'small_fake-image'
+                    }
+                }
             });
         });
 
@@ -831,7 +870,8 @@ describe('RecordDomain', () => {
     });
 
     describe('getRecordFieldValue', () => {
-        const mockRecord: IRecord = {
+        const mockRecordWithValues: IRecord = {
+            ...mockRecord,
             id: '12345',
             library: 'test_lib',
             created_at: 2119477320,
@@ -858,13 +898,13 @@ describe('RecordDomain', () => {
 
             const value = await recDomain.getRecordFieldValue({
                 library: 'test_lib',
-                record: mockRecord,
+                record: mockRecordWithValues,
                 attributeId: 'created_at',
                 ctx
             });
 
             expect(Array.isArray(value)).toBe(false);
-            expect((value as IValue).value).toBe(2119477320);
+            expect((value as IValue).value).toBe(mockRecordWithValues.created_at);
         });
 
         test('Return a value not present on record', async () => {
@@ -893,7 +933,7 @@ describe('RecordDomain', () => {
 
             const value = await recDomain.getRecordFieldValue({
                 library: 'test_lib',
-                record: mockRecord,
+                record: mockRecordWithValues,
                 attributeId: 'label',
                 ctx
             });
@@ -933,7 +973,7 @@ describe('RecordDomain', () => {
 
             const value = await recDomain.getRecordFieldValue({
                 library: 'test_lib',
-                record: mockRecord,
+                record: mockRecordWithValues,
                 attributeId: 'created_at',
                 ctx
             });
@@ -966,7 +1006,7 @@ describe('RecordDomain', () => {
 
             const value = await recDomain.getRecordFieldValue({
                 library: 'test_lib',
-                record: mockRecord,
+                record: mockRecordWithValues,
                 attributeId: 'created_by',
                 ctx
             });
@@ -991,7 +1031,7 @@ describe('RecordDomain', () => {
 
             const value = await recDomain.getRecordFieldValue({
                 library: 'test_lib',
-                record: mockRecord,
+                record: mockRecordWithValues,
                 attributeId: 'created_at',
                 options: {forceArray: true},
                 ctx

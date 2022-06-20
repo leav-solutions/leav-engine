@@ -21,6 +21,7 @@ import {getPreviewUrl} from '../../utils/preview/preview';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {EventType} from '../../_types/event';
+import {FilesAttributes} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
@@ -176,7 +177,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -384,6 +385,78 @@ export default function ({
         }
     };
 
+    const _getPreviews = async ({
+        conf,
+        lib,
+        record,
+        ctx
+    }: {
+        conf: IRecordIdentityConf;
+        lib: ILibrary;
+        record: IRecord;
+        valueDomain: IValueDomain;
+        libraryRepo: ILibraryRepo;
+        ctx: any;
+    }) => {
+        const previewBaseUrl = getPreviewUrl();
+
+        let fileRecord;
+
+        // On a file, previews are accessible straight on the record
+        // Otherwise, we fetch values of the previews attribute
+        if (lib.behavior === LibraryBehavior.FILES) {
+            fileRecord = record;
+        } else {
+            const previewAttribute = conf.preview;
+            if (!previewAttribute) {
+                return null;
+            }
+
+            const previewValues = await ret.getRecordFieldValue({
+                library: lib.id,
+                record,
+                attributeId: previewAttribute,
+                options: {forceArray: true},
+                ctx
+            });
+
+            if (!(previewValues as IValue[]).length) {
+                return null;
+            }
+
+            fileRecord = previewValues[0].value;
+        }
+
+        // Get value of the previews field. We're calling getRecordFieldValue to apply actions_list if any
+        const filePreviewsValue = await ret.getRecordFieldValue({
+            library: lib.id,
+            record: fileRecord,
+            attributeId: FilesAttributes.PREVIEWS,
+            options: {forceArray: true},
+            ctx
+        });
+        const previews = filePreviewsValue[0]?.raw_value ?? {};
+
+        const previewsWithUrl = Object.entries(previews)
+            .map(value => {
+                const [key, url] = value;
+
+                if (!url || url.toString() === '') {
+                    // avoid broken image
+                    return {[key]: null};
+                }
+                // add host url to preview
+                const absoluteUrl = join(previewBaseUrl, url.toString());
+
+                return {[key]: absoluteUrl};
+            })
+            .reduce((obj, o) => ({...obj, ...o}), {});
+
+        previewsWithUrl.file = fileRecord;
+
+        return previewsWithUrl;
+    };
+
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const libs = await libraryRepo.getLibraries({
             params: {filters: {id: record.library}, strictFilters: true},
@@ -423,7 +496,7 @@ export default function ({
 
         let preview = null;
         if (conf.preview) {
-            preview = (await getPreviews({conf, lib, record, valueDomain, libraryRepo, ctx})) ?? null;
+            preview = (await _getPreviews({conf, lib, record, valueDomain, libraryRepo, ctx})) ?? null;
         }
 
         //look in tree if not defined on current record
@@ -472,7 +545,7 @@ export default function ({
         };
     };
 
-    return {
+    const ret = {
         async createRecord(library: string, ctx: IQueryInfos): Promise<IRecord> {
             const recordData = {
                 created_at: moment().unix(),
@@ -808,75 +881,6 @@ export default function ({
             return {...record, active: savedVal.value};
         }
     };
+
+    return ret;
 }
-
-interface IGetPreview {
-    conf: IRecordIdentityConf;
-    lib: ILibrary;
-    record: IRecord;
-    valueDomain: IValueDomain;
-    libraryRepo: ILibraryRepo;
-    ctx: any;
-}
-
-const getPreviews = async ({conf, lib, record, valueDomain, libraryRepo, ctx}: IGetPreview) => {
-    const _getPreviewFromRecord = async (valueRecord: IRecord) => {
-        let previewAttribute: string;
-
-        if (valueRecord.library) {
-            const libs = await libraryRepo.getLibraries({
-                params: {filters: {id: valueRecord.library}, strictFilters: true},
-                ctx
-            });
-
-            if (!libs.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-            }
-
-            const valueLib = libs.list.pop();
-
-            const valueConf = valueLib.recordIdentityConf || {};
-
-            return valueConf.preview;
-        } else {
-            previewAttribute = 'previews';
-        }
-
-        return valueRecord[previewAttribute];
-    };
-
-    const previewUrl = getPreviewUrl();
-    const confPreview = lib.behavior === LibraryBehavior.FILES ? 'previews' : conf.preview;
-
-    // can return a preview object or a full record for advance link
-    const valuePreview = confPreview
-        ? (
-              await valueDomain.getValues({
-                  library: lib.id,
-                  recordId: record.id,
-                  attribute: confPreview,
-                  ctx
-              })
-          )?.pop()
-        : null;
-
-    const previews = valuePreview?.value?.id ? await _getPreviewFromRecord(valuePreview?.value) : valuePreview?.value;
-
-    // append preview url
-    return previews
-        ? Object.entries(previews)
-              .map(value => {
-                  const [key, url] = value;
-
-                  if (!url || url.toString() === '') {
-                      // avoid broken image
-                      return {[key]: null};
-                  }
-                  // add host url to preview
-                  const absoluteUrl = join(previewUrl, url.toString());
-
-                  return {[key]: absoluteUrl};
-              })
-              .reduce((obj, o) => ({...obj, ...o}))
-        : null;
-};
