@@ -21,6 +21,15 @@ export interface CREATE_RECORD_createRecord_whoAmI_library {
     gqlNames: CREATE_RECORD_createRecord_whoAmI_library_gqlNames;
 }
 
+export interface CREATE_RECORD_createRecord_whoAmI_preview_file_library {
+    id: string;
+}
+
+export interface CREATE_RECORD_createRecord_whoAmI_preview_file {
+    id: string;
+    library: CREATE_RECORD_createRecord_whoAmI_preview_file_library;
+}
+
 export interface CREATE_RECORD_createRecord_whoAmI_preview {
     tiny: string | null;
     small: string | null;
@@ -28,6 +37,8 @@ export interface CREATE_RECORD_createRecord_whoAmI_preview {
     big: string | null;
     huge: string | null;
     pages: string | null;
+    original: string;
+    file: CREATE_RECORD_createRecord_whoAmI_preview_file | null;
 }
 
 export interface CREATE_RECORD_createRecord_whoAmI {

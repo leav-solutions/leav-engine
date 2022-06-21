@@ -7,6 +7,8 @@
         "done": "Done",
         "delete": "Delete",
         "apply": "Apply",
+        "clear": "Effacer",
+        "submit": "Submit",
         "select": "Select",
         "search": "Search",
         "duplicate": "Duplicate",
@@ -14,7 +16,8 @@
         "feature_not_available": "This feature will be available soon!",
         "available_soon": "Soon",
         "go_back_home": "Back Home",
-        "details": "Details"
+        "details": "Details",
+        "element_not_found": "Element not found"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
@@ -38,6 +41,15 @@
             "session_expired": "Your session has expired."
         }
     },
+    "home": {
+        "libraries": "Libraries",
+        "trees" : "Trees",
+        "id": "ID",
+        "label": "Label"
+    },
+    "settings": {
+        "choose-lang": "Language"
+    },
     "menu": {
         "app_name": "Explorer",
         "shortcuts": "Shortcuts",
@@ -53,6 +65,7 @@
     "sidebar": {
         "close": "Close Sidebar",
         "library": "Library",
+        "setting": "Settings",
         "shortcuts": "Shortcuts",
         "libraries": "Libraries",
         "tree": "Tree",
@@ -64,12 +77,6 @@
         "others_trees": "Other trees",
         "related_trees": "Related to active library",
         "favorites_trees": "Favorites"
-    },
-    "home": {
-        "libraries": "Libraries",
-        "trees" : "Trees",
-        "id": "ID",
-        "label": "Label"
     },
     "lib_list": {
         "header": "Libraries List"
@@ -85,9 +92,6 @@
         "new": "New",
         "not_found": "Unknown library"
     },
-    "settings": {
-        "choose-lang": "Language"
-    },
     "loading": "Loading",
     "items_list": {
         "all_sheets": "All sheets",
@@ -95,8 +99,8 @@
         "sorts": "Sorts",
         "groups": "Groups",
         "columns": "Columns",
-        "display_type": "Display",
         "new": "New",
+        "display_type": "Display",
         "header_table": "Items from {{libName}}",
         "show-filter-panel": "Show filters",
         "show_more_links": "Show more",
@@ -135,7 +139,7 @@
             "small": "small",
             "medium": "medium",
             "big": "big",
-            "display-tile": "Gallery"
+            "tile": "Gallery"
         }
     },
     "items-list-row": {
@@ -464,5 +468,10 @@
     "applications": {
         "title": "Applications",
         "current_app_error": "Couldn't load current application (ID: \"{{appId}}\")"
+    },
+    "file_data": {
+        "path": "Path",
+        "no_preview": "Preview unavailable",
+        "directory": "Dossier"
     }
 }

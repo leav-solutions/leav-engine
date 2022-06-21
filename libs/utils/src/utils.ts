@@ -3,6 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {camelCase, flow, partialRight, trimEnd, upperFirst} from 'lodash';
 import minimatch from 'minimatch';
+import {extname} from 'path';
+import * as extensions from './MIMEByExtension.json';
+import {FileType} from './types/files';
 import {IKeyValue} from './types/helpers';
 
 export const getGraphqlTypeFromLibraryName = (library: string): string => {
@@ -140,4 +143,29 @@ export const extractArgsFromString = (mapping: string): {[arg: string]: string} 
 
 export const objectToNameValueArray = <T>(obj: IKeyValue<T>): Array<{name: string; value: T}> => {
     return Object.keys(obj).map(key => ({name: key, value: obj[key]}));
+};
+
+export const getLibraryGraphqlNames = (libraryId: string) => {
+    const libQueryName = getGraphqlQueryNameFromLibraryName(libraryId);
+    const libTypeName = getGraphqlTypeFromLibraryName(libraryId);
+
+    return {
+        query: libQueryName,
+        type: libTypeName,
+        list: libTypeName + 'List',
+        searchableFields: libTypeName + 'SearchableFields',
+        filter: libTypeName + 'Filter'
+    };
+};
+
+export const getFileType = (fileName: string): FileType => {
+    const extension = extname(fileName).toLowerCase().replace('.', '');
+
+    if (!extensions[extension]) {
+        return FileType.OTHER;
+    }
+
+    const type = extensions[extension].type;
+
+    return type;
 };

@@ -1,0 +1,638 @@
+{
+    "doc": {
+        "mime": "application/msword",
+        "type": "document"
+    },
+    "dot": {
+        "mime": "application/msword",
+        "type": "document"
+    },
+    "pdf": {
+        "mime": "application/pdf",
+        "type": "document"
+    },
+    "ai": {
+        "mime": "application/pdf",
+        "type": "document"
+    },
+    "xls": {
+        "mime": "application/vnd.ms-excel",
+        "type": "document"
+    },
+    "xlm": {
+        "mime": "application/vnd.ms-excel",
+        "type": "document"
+    },
+    "xla": {
+        "mime": "application/vnd.ms-excel",
+        "type": "document"
+    },
+    "xlc": {
+        "mime": "application/vnd.ms-excel",
+        "type": "document"
+    },
+    "xlt": {
+        "mime": "application/vnd.ms-excel",
+        "type": "document"
+    },
+    "xlw": {
+        "mime": "application/vnd.ms-excel",
+        "type": "document"
+    },
+    "ppt": {
+        "mime": "application/vnd.ms-powerpoint",
+        "type": "document"
+    },
+    "pps": {
+        "mime": "application/vnd.ms-powerpoint",
+        "type": "document"
+    },
+    "pot": {
+        "mime": "application/vnd.ms-powerpoint",
+        "type": "document"
+    },
+    "odc": {
+        "mime": "application/vnd.oasis.opendocument.chart",
+        "type": "document"
+    },
+    "otc": {
+        "mime": "application/vnd.oasis.opendocument.chart-template",
+        "type": "document"
+    },
+    "odb": {
+        "mime": "application/vnd.oasis.opendocument.database",
+        "type": "document"
+    },
+    "odf": {
+        "mime": "application/vnd.oasis.opendocument.formula",
+        "type": "document"
+    },
+    "odft": {
+        "mime": "application/vnd.oasis.opendocument.formula-template",
+        "type": "document"
+    },
+    "odg": {
+        "mime": "application/vnd.oasis.opendocument.graphics",
+        "type": "document"
+    },
+    "otg": {
+        "mime": "application/vnd.oasis.opendocument.graphics-template",
+        "type": "document"
+    },
+    "odi": {
+        "mime": "application/vnd.oasis.opendocument.image",
+        "type": "document"
+    },
+    "oti": {
+        "mime": "application/vnd.oasis.opendocument.image-template",
+        "type": "document"
+    },
+    "odp": {
+        "mime": "application/vnd.oasis.opendocument.presentation",
+        "type": "document"
+    },
+    "otp": {
+        "mime": "application/vnd.oasis.opendocument.presentation-template",
+        "type": "document"
+    },
+    "ods": {
+        "mime": "application/vnd.oasis.opendocument.spreadsheet",
+        "type": "document"
+    },
+    "ots": {
+        "mime": "application/vnd.oasis.opendocument.spreadsheet-template",
+        "type": "document"
+    },
+    "odt": {
+        "mime": "application/vnd.oasis.opendocument.text",
+        "type": "document"
+    },
+    "odm": {
+        "mime": "application/vnd.oasis.opendocument.text-master",
+        "type": "document"
+    },
+    "ott": {
+        "mime": "application/vnd.oasis.opendocument.text-template",
+        "type": "document"
+    },
+    "oth": {
+        "mime": "application/vnd.oasis.opendocument.text-web",
+        "type": "document"
+    },
+    "pptx": {
+        "mime": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "type": "document"
+    },
+    "sldx": {
+        "mime": "application/vnd.openxmlformats-officedocument.presentationml.slide",
+        "type": "document"
+    },
+    "ppsx": {
+        "mime": "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+        "type": "document"
+    },
+    "potx": {
+        "mime": "application/vnd.openxmlformats-officedocument.presentationml.template",
+        "type": "document"
+    },
+    "xlsx": {
+        "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "type": "document"
+    },
+    "xltx": {
+        "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+        "type": "document"
+    },
+    "docx": {
+        "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "type": "document"
+    },
+    "dotx": {
+        "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "type": "document"
+    },
+    "psb": {
+        "mime": "image/vnd.3gpp.pic-bw-small",
+        "type": "image"
+    },
+    "bmp": {
+        "mime": "image/x-ms-bmp",
+        "type": "image"
+    },
+    "cgm": {
+        "mime": "image/cgm",
+        "type": "image"
+    },
+    "g3": {
+        "mime": "image/g3fax",
+        "type": "image"
+    },
+    "gif": {
+        "mime": "image/gif",
+        "type": "image"
+    },
+    "ief": {
+        "mime": "image/ief",
+        "type": "image"
+    },
+    "jpeg": {
+        "mime": "image/jpeg",
+        "type": "image"
+    },
+    "jpg": {
+        "mime": "image/jpeg",
+        "type": "image"
+    },
+    "jpe": {
+        "mime": "image/jpeg",
+        "type": "image"
+    },
+    "ktx": {
+        "mime": "image/ktx",
+        "type": "image"
+    },
+    "png": {
+        "mime": "image/png",
+        "type": "image"
+    },
+    "btif": {
+        "mime": "image/prs.btif",
+        "type": "image"
+    },
+    "sgi": {
+        "mime": "image/sgi",
+        "type": "image"
+    },
+    "svg": {
+        "mime": "image/svg+xml",
+        "type": "image"
+    },
+    "eps": {
+        "mime": "application/EncapsulatedPostScript",
+        "type": "image"
+    },
+    "svgz": {
+        "mime": "image/svg+xml",
+        "type": "image"
+    },
+    "tiff": {
+        "mime": "image/tiff",
+        "type": "image"
+    },
+    "tif": {
+        "mime": "image/tiff",
+        "type": "image"
+    },
+    "psd": {
+        "mime": "image/vnd.adobe.photoshop",
+        "type": "image"
+    },
+    "uvi": {
+        "mime": "image/vnd.dece.graphic",
+        "type": "image"
+    },
+    "uvvi": {
+        "mime": "image/vnd.dece.graphic",
+        "type": "image"
+    },
+    "uvg": {
+        "mime": "image/vnd.dece.graphic",
+        "type": "image"
+    },
+    "uvvg": {
+        "mime": "image/vnd.dece.graphic",
+        "type": "image"
+    },
+    "djvu": {
+        "mime": "image/vnd.djvu",
+        "type": "image"
+    },
+    "djv": {
+        "mime": "image/vnd.djvu",
+        "type": "image"
+    },
+    "dwg": {
+        "mime": "image/vnd.dwg",
+        "type": "image"
+    },
+    "dxf": {
+        "mime": "image/vnd.dxf",
+        "type": "image"
+    },
+    "fbs": {
+        "mime": "image/vnd.fastbidsheet",
+        "type": "image"
+    },
+    "fpx": {
+        "mime": "image/vnd.fpx",
+        "type": "image"
+    },
+    "fst": {
+        "mime": "image/vnd.fst",
+        "type": "image"
+    },
+    "mmr": {
+        "mime": "image/vnd.fujixerox.edmics-mmr",
+        "type": "image"
+    },
+    "rlc": {
+        "mime": "image/vnd.fujixerox.edmics-rlc",
+        "type": "image"
+    },
+    "mdi": {
+        "mime": "image/vnd.ms-modi",
+        "type": "image"
+    },
+    "wdp": {
+        "mime": "image/vnd.ms-photo",
+        "type": "image"
+    },
+    "npx": {
+        "mime": "image/vnd.net-fpx",
+        "type": "image"
+    },
+    "wbmp": {
+        "mime": "image/vnd.wap.wbmp",
+        "type": "image"
+    },
+    "xif": {
+        "mime": "image/vnd.xiff",
+        "type": "image"
+    },
+    "webp": {
+        "mime": "image/webp",
+        "type": "image"
+    },
+    "3ds": {
+        "mime": "image/x-3ds",
+        "type": "image"
+    },
+    "ras": {
+        "mime": "image/x-cmu-raster",
+        "type": "image"
+    },
+    "cmx": {
+        "mime": "image/x-cmx",
+        "type": "image"
+    },
+    "fh": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "fhc": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "fh4": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "fh5": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "fh7": {
+        "mime": "image/x-freehand",
+        "type": "image"
+    },
+    "ico": {
+        "mime": "image/x-icon",
+        "type": "image"
+    },
+    "jng": {
+        "mime": "image/x-jng",
+        "type": "image"
+    },
+    "sid": {
+        "mime": "image/x-mrsid-image",
+        "type": "image"
+    },
+    "pcx": {
+        "mime": "image/x-pcx",
+        "type": "image"
+    },
+    "pic": {
+        "mime": "image/x-pict",
+        "type": "image"
+    },
+    "pct": {
+        "mime": "image/x-pict",
+        "type": "image"
+    },
+    "pnm": {
+        "mime": "image/x-portable-anymap",
+        "type": "image"
+    },
+    "pbm": {
+        "mime": "image/x-portable-bitmap",
+        "type": "image"
+    },
+    "pgm": {
+        "mime": "image/x-portable-graymap",
+        "type": "image"
+    },
+    "ppm": {
+        "mime": "image/x-portable-pixmap",
+        "type": "image"
+    },
+    "rgb": {
+        "mime": "image/x-rgb",
+        "type": "image"
+    },
+    "tga": {
+        "mime": "image/x-tga",
+        "type": "image"
+    },
+    "xbm": {
+        "mime": "image/x-xbitmap",
+        "type": "image"
+    },
+    "xpm": {
+        "mime": "image/x-xpixmap",
+        "type": "image"
+    },
+    "xwd": {
+        "mime": "image/x-xwindowdump",
+        "type": "image"
+    },
+    "3gp": {
+        "mime": "video/3gpp",
+        "type": "video"
+    },
+    "3gpp": {
+        "mime": "video/3gpp",
+        "type": "video"
+    },
+    "3g2": {
+        "mime": "video/3gpp2",
+        "type": "video"
+    },
+    "h261": {
+        "mime": "video/h261",
+        "type": "video"
+    },
+    "h263": {
+        "mime": "video/h263",
+        "type": "video"
+    },
+    "h264": {
+        "mime": "video/h264",
+        "type": "video"
+    },
+    "jpgv": {
+        "mime": "video/jpeg",
+        "type": "video"
+    },
+    "jpm": {
+        "mime": "video/jpm",
+        "type": "video"
+    },
+    "jpgm": {
+        "mime": "video/jpm",
+        "type": "video"
+    },
+    "mj2": {
+        "mime": "video/mj2",
+        "type": "video"
+    },
+    "mjp2": {
+        "mime": "video/mj2",
+        "type": "video"
+    },
+    "ts": {
+        "mime": "video/mp2t",
+        "type": "video"
+    },
+    "mp4": {
+        "mime": "video/mp4",
+        "type": "video"
+    },
+    "mp4v": {
+        "mime": "video/mp4",
+        "type": "video"
+    },
+    "mpg4": {
+        "mime": "video/mp4",
+        "type": "video"
+    },
+    "mpeg": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "mpg": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "mpe": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "m1v": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "m2v": {
+        "mime": "video/mpeg",
+        "type": "video"
+    },
+    "ogv": {
+        "mime": "video/ogg",
+        "type": "video"
+    },
+    "qt": {
+        "mime": "video/quicktime",
+        "type": "video"
+    },
+    "mov": {
+        "mime": "video/quicktime",
+        "type": "video"
+    },
+    "uvh": {
+        "mime": "video/vnd.dece.hd",
+        "type": "video"
+    },
+    "uvvh": {
+        "mime": "video/vnd.dece.hd",
+        "type": "video"
+    },
+    "uvm": {
+        "mime": "video/vnd.dece.mobile",
+        "type": "video"
+    },
+    "uvvm": {
+        "mime": "video/vnd.dece.mobile",
+        "type": "video"
+    },
+    "uvp": {
+        "mime": "video/vnd.dece.pd",
+        "type": "video"
+    },
+    "uvvp": {
+        "mime": "video/vnd.dece.pd",
+        "type": "video"
+    },
+    "uvs": {
+        "mime": "video/vnd.dece.sd",
+        "type": "video"
+    },
+    "uvvs": {
+        "mime": "video/vnd.dece.sd",
+        "type": "video"
+    },
+    "uvv": {
+        "mime": "video/vnd.dece.video",
+        "type": "video"
+    },
+    "uvvv": {
+        "mime": "video/vnd.dece.video",
+        "type": "video"
+    },
+    "dvb": {
+        "mime": "video/vnd.dvb.file",
+        "type": "video"
+    },
+    "fvt": {
+        "mime": "video/vnd.fvt",
+        "type": "video"
+    },
+    "mxu": {
+        "mime": "video/vnd.mpegurl",
+        "type": "video"
+    },
+    "m4u": {
+        "mime": "video/vnd.mpegurl",
+        "type": "video"
+    },
+    "pyv": {
+        "mime": "video/vnd.ms-playready.media.pyv",
+        "type": "video"
+    },
+    "uvu": {
+        "mime": "video/vnd.uvvu.mp4",
+        "type": "video"
+    },
+    "uvvu": {
+        "mime": "video/vnd.uvvu.mp4",
+        "type": "video"
+    },
+    "viv": {
+        "mime": "video/vnd.vivo",
+        "type": "video"
+    },
+    "webm": {
+        "mime": "video/webm",
+        "type": "video"
+    },
+    "f4v": {
+        "mime": "video/x-f4v",
+        "type": "video"
+    },
+    "fli": {
+        "mime": "video/x-fli",
+        "type": "video"
+    },
+    "flv": {
+        "mime": "video/x-flv",
+        "type": "video"
+    },
+    "m4v": {
+        "mime": "video/x-m4v",
+        "type": "video"
+    },
+    "mkv": {
+        "mime": "video/x-matroska",
+        "type": "video"
+    },
+    "mk3d": {
+        "mime": "video/x-matroska",
+        "type": "video"
+    },
+    "mks": {
+        "mime": "video/x-matroska",
+        "type": "video"
+    },
+    "mng": {
+        "mime": "video/x-mng",
+        "type": "video"
+    },
+    "asf": {
+        "mime": "video/x-ms-asf",
+        "type": "video"
+    },
+    "asx": {
+        "mime": "video/x-ms-asf",
+        "type": "video"
+    },
+    "vob": {
+        "mime": "video/x-ms-vob",
+        "type": "video"
+    },
+    "wm": {
+        "mime": "video/x-ms-wm",
+        "type": "video"
+    },
+    "wmv": {
+        "mime": "video/x-ms-wmv",
+        "type": "video"
+    },
+    "wmx": {
+        "mime": "video/x-ms-wmx",
+        "type": "video"
+    },
+    "wvx": {
+        "mime": "video/x-ms-wvx",
+        "type": "video"
+    },
+    "avi": {
+        "mime": "video/x-msvideo",
+        "type": "video"
+    },
+    "movie": {
+        "mime": "video/x-sgi-movie",
+        "type": "video"
+    },
+    "smv": {
+        "mime": "video/x-smv",
+        "type": "video"
+    }
+}

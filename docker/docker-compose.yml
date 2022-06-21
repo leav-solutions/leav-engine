@@ -161,6 +161,8 @@ services:
         -c,
         "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- yarn install && yarn run db:migrate && yarn run start:watch",
       ]
+    logging:
+      driver: local
 
   indexation-manager:
     image: *node_image

@@ -5,6 +5,7 @@ import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
 import {ApolloServer, AuthenticationError as ApolloAuthenticationError} from 'apollo-server-express';
 import {IApplicationApp} from 'app/application/applicationApp';
 import {IAuthApp} from 'app/auth/authApp';
+import {IFilesManagerApp} from 'app/core/filesManagerApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import cookieParser from 'cookie-parser';
 import express, {NextFunction, Request, Response} from 'express';
@@ -26,15 +27,17 @@ interface IDeps {
     config?: IConfig;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.auth'?: IAuthApp;
+    'core.app.core.filesManager'?: IFilesManagerApp;
     'core.app.application'?: IApplicationApp;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
+    'core.app.core.filesManager': filesManagerApp = null,
     'core.app.application': applicationApp = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null
@@ -116,6 +119,7 @@ export default function ({
 
                 // Initialize routes
                 authApp.registerRoute(app);
+                filesManagerApp.registerRoute(app);
 
                 app.use('/previews', [_checkAuth, express.static(config.preview.directory)]);
                 app.use('/exports', [_checkAuth, express.static(config.export.directory)]);

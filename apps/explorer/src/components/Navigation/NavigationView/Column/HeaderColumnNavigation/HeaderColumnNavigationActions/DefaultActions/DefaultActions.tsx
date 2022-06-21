@@ -30,16 +30,16 @@ import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {localizedTranslation} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
-import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
 import {GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {INotification, ISharedStateSelectionSearch, NotificationChannel, NotificationType} from '_types/types';
 
 interface IDefaultActionsProps {
     isDetail: boolean;
-    parent?: GET_TREE_CONTENT_treeContent;
+    parent?: TREE_NODE_CHILDREN_treeNodeChildren_list;
     activeTree: IActiveTree;
 }
 

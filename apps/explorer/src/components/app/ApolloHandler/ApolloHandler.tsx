@@ -141,7 +141,14 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                     keyFields: false
                 },
                 RecordIdentity: {
-                    keyFields: ['id', 'library', ['id']]
+                    keyFields: ['id', 'library', ['id']],
+                    fields: {
+                        preview: {
+                            merge(existing, incoming) {
+                                return {...existing, ...incoming};
+                            }
+                        }
+                    }
                 },
                 Library: {
                     fields: {

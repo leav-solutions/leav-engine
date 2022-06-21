@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getFileType, getLibraryGraphqlNames} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
@@ -18,6 +19,7 @@ import {ITree} from '_types/tree';
 import {IValueVersion} from '_types/value';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
+import {FilesAttributes} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import {IRecord} from '../../_types/record';
@@ -54,9 +56,7 @@ export default function ({
     'core.utils': utils = null,
     'core.app.core': coreApp = null
 }: IDeps = {}): ICoreLibraryApp {
-    const _getLibGqlFilterType = libTypeName => libTypeName + 'Filter';
     const _getLibGqlListType = libTypeName => libTypeName + 'List';
-    const _getLibGqlSearchableFieldsType = libTypeName => libTypeName + 'SearchableFields';
 
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -213,15 +213,7 @@ export default function ({
                         },
                         gqlNames: parent => {
                             const libId = parent.id;
-                            const libQueryName = utils.libNameToQueryName(libId);
-                            const libTypeName = utils.libNameToTypeName(libId);
-                            return {
-                                query: libQueryName,
-                                type: libTypeName,
-                                list: _getLibGqlListType(libTypeName),
-                                searchableFields: _getLibGqlSearchableFieldsType(libTypeName),
-                                filter: _getLibGqlFilterType(libTypeName)
-                            };
+                            return getLibraryGraphqlNames(libId);
                         },
                         defaultView: (library, _, ctx) => {
                             return library.defaultView ? viewDomain.getViewById(library.defaultView, ctx) : null;
@@ -258,9 +250,9 @@ export default function ({
                 if (!lib.attributes.length) {
                     continue;
                 }
-
-                const libQueryName = utils.libNameToQueryName(lib.id);
-                const libTypeName = utils.libNameToTypeName(lib.id);
+                const gqlNames = getLibraryGraphqlNames(lib.id);
+                const libQueryName = gqlNames.query;
+                const libTypeName = gqlNames.type;
 
                 baseSchema.typeDefs += `
                     type ${libTypeName} implements Record {
@@ -273,6 +265,7 @@ export default function ({
                             )
                         )},
                         permissions: RecordPermissions!
+                        ${lib.behavior === LibraryBehavior.FILES ? 'file_type: FileType!' : ''}
                     }
 
                     type ${_getLibGqlListType(libTypeName)} {
@@ -289,7 +282,7 @@ export default function ({
                             pagination: RecordsPagination,
                             retrieveInactive: Boolean,
                             searchQuery: String
-                        ): ${_getLibGqlListType(libTypeName)}!
+                        ): ${gqlNames.list}!
                     }
                 `;
 
@@ -376,6 +369,12 @@ export default function ({
                         }, Promise.resolve({}));
                     }
                 };
+
+                if (lib.behavior === LibraryBehavior.FILES) {
+                    baseSchema.resolvers[libTypeName].file_type = (parent: IRecord) => {
+                        return getFileType(parent[FilesAttributes.FILE_NAME]);
+                    };
+                }
 
                 for (const libAttr of lib.attributes) {
                     baseSchema.resolvers[libTypeName][libAttr.id] = async (

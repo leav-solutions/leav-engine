@@ -34,7 +34,7 @@ const _recordIdsToQueryFilters = (recordIds: string[]): IQueryFilter[] =>
         return allFilters;
     }, []);
 
-export const useGetRecordColumnsValuesQuery = (
+export const useGetRecordValuesQuery = (
     libraryGqlQueryType: string,
     columns: string[],
     recordIds: string[]

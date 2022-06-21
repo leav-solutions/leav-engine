@@ -28,6 +28,15 @@ export interface GET_VIEW_view_created_by_whoAmI_library {
     gqlNames: GET_VIEW_view_created_by_whoAmI_library_gqlNames;
 }
 
+export interface GET_VIEW_view_created_by_whoAmI_preview_file_library {
+    id: string;
+}
+
+export interface GET_VIEW_view_created_by_whoAmI_preview_file {
+    id: string;
+    library: GET_VIEW_view_created_by_whoAmI_preview_file_library;
+}
+
 export interface GET_VIEW_view_created_by_whoAmI_preview {
     tiny: string | null;
     small: string | null;
@@ -35,6 +44,8 @@ export interface GET_VIEW_view_created_by_whoAmI_preview {
     big: string | null;
     huge: string | null;
     pages: string | null;
+    original: string;
+    file: GET_VIEW_view_created_by_whoAmI_preview_file | null;
 }
 
 export interface GET_VIEW_view_created_by_whoAmI {

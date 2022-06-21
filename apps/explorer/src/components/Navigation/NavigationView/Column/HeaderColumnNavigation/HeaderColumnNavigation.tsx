@@ -10,7 +10,7 @@ import {setNavigationPath} from 'redux/navigation';
 import {resetSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {ISharedSelected, SharedStateSelectionType} from '_types/types';
 import {useActiveTree} from '../../../../../hooks/ActiveTreeHook/ActiveTreeHook';
 import themingVar from '../../../../../themingVar';
@@ -40,8 +40,8 @@ interface IHeaderColumnNavigationProps {
     depth: number;
     isDetail?: boolean;
     isActive?: boolean;
-    treeElement?: GET_TREE_CONTENT_treeContent;
-    children?: GET_TREE_CONTENT_treeContent[];
+    treeElement?: TREE_NODE_CHILDREN_treeNodeChildren_list;
+    children?: TREE_NODE_CHILDREN_treeNodeChildren_list[];
 }
 
 function HeaderColumnNavigation({

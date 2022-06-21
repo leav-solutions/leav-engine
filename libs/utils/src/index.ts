@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export * from './types/applications';
 export * from './types/errors';
+export * from './types/files';
 export * from './types/forms';
 export * from './types/helpers';
 export * from './utils';

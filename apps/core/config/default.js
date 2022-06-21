@@ -101,5 +101,10 @@ module.exports = {
     },
     applications: {
         rootFolder: process.env.APPLICATIONS_FOLDER || 'applications'
+    },
+    files: {
+        rootPaths: process.env.FILES_ROOT_PATHS,
+        originalsPathPrefix: process.env.FILES_ORIGINALS_PREFIX || 'originals'
     }
 };
+'';

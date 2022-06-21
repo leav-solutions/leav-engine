@@ -178,7 +178,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -446,6 +446,7 @@ export default function({
                     // avoid broken image
                     return {[key]: null};
                 }
+
                 // add host url to preview
                 const absoluteUrl = join(previewBaseUrl, url.toString());
 
@@ -454,7 +455,7 @@ export default function({
             .reduce((obj, o) => ({...obj, ...o}), {});
 
         previewsWithUrl.file = fileRecord;
-        previewsWithUrl.original = `${config.files.originalsPathPrefix}/${fileRecord.library}/${fileRecord.id}`;
+        previewsWithUrl.original = `/${config.files.originalsPathPrefix}/${fileRecord.library}/${fileRecord.id}`;
 
         return previewsWithUrl;
     };
@@ -497,7 +498,7 @@ export default function({
         }
 
         let preview = null;
-        if (conf.preview) {
+        if (conf.preview || lib.behavior === LibraryBehavior.FILES) {
             preview = (await _getPreviews({conf, lib, record, valueDomain, libraryRepo, ctx})) ?? null;
         }
 

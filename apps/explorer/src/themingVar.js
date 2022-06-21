@@ -22,6 +22,7 @@ module.exports = {
     '@background-color-light': '#FAFAFA',
     '@leav-secondary-bg': '#f0f0f0',
     '@leav-secondary-action-bg': '#F4F4F4',
+    '@leav-light-border-color': '#F0F0F0',
     '@leav-background-active': '#DEF4FF',
     '@leav-view-panel-label-background-active': '#C6E2FF',
     '@leav-view-panel-background-title': '#F4F4F4',

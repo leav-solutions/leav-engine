@@ -26,6 +26,7 @@ export interface IConfig {
     plugins: IKeyValue<IKeyValue<any>>;
     preview: IPreview;
     applications: IApplicationsConfig;
+    files: IFilesConfig;
 }
 
 export interface IServer {
@@ -132,4 +133,9 @@ export interface IPreview {
 
 export interface IApplicationsConfig {
     rootFolder: string;
+}
+
+export interface IFilesConfig {
+    rootPaths: string;
+    originalsPathPrefix: string;
 }

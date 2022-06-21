@@ -23,6 +23,15 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library 
     gqlNames: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library_gqlNames;
 }
 
+export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview_file_library {
+    id: string;
+}
+
+export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview_file {
+    id: string;
+    library: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview_file_library;
+}
+
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview {
     tiny: string | null;
     small: string | null;
@@ -30,6 +39,8 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview 
     big: string | null;
     huge: string | null;
     pages: string | null;
+    original: string;
+    file: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview_file | null;
 }
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI {

@@ -16,7 +16,7 @@ import {
 } from 'graphQL/queries/records/getRecordColumnsValues';
 import {IRecordPropertyLink, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
-import {useGetRecordColumnsValuesQuery} from 'hooks/useGetRecordColumnsValuesQuery/useGetRecordColumnsValuesQuery';
+import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -109,7 +109,7 @@ function LinkField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
     const [errorMessage, setErrorMessage] = useState<string | string[]>();
     const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
     const [fieldValues, setFieldValues] = useState<RECORD_FORM_recordForm_elements_values_LinkValue[]>(recordValues);
-    const {loading: recordColumnsLoading, data: recordColumnsData, refetch} = useGetRecordColumnsValuesQuery(
+    const {loading: recordColumnsLoading, data: recordColumnsData, refetch} = useGetRecordValuesQuery(
         attribute?.linked_library?.id,
         linkedRecordsColumns.map(c => c.id),
         recordValues.map(r => r.linkValue.id)

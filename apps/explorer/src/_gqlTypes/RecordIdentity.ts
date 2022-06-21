@@ -21,6 +21,15 @@ export interface RecordIdentity_whoAmI_library {
     gqlNames: RecordIdentity_whoAmI_library_gqlNames;
 }
 
+export interface RecordIdentity_whoAmI_preview_file_library {
+    id: string;
+}
+
+export interface RecordIdentity_whoAmI_preview_file {
+    id: string;
+    library: RecordIdentity_whoAmI_preview_file_library;
+}
+
 export interface RecordIdentity_whoAmI_preview {
     tiny: string | null;
     small: string | null;
@@ -28,6 +37,8 @@ export interface RecordIdentity_whoAmI_preview {
     big: string | null;
     huge: string | null;
     pages: string | null;
+    original: string;
+    file: RecordIdentity_whoAmI_preview_file | null;
 }
 
 export interface RecordIdentity_whoAmI {

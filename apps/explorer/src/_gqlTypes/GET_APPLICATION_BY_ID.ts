@@ -21,6 +21,15 @@ export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library {
     gqlNames: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library_gqlNames;
 }
 
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview_file_library {
+    id: string;
+}
+
+export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview_file {
+    id: string;
+    library: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview_file_library;
+}
+
 export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview {
     tiny: string | null;
     small: string | null;
@@ -28,6 +37,8 @@ export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview {
     big: string | null;
     huge: string | null;
     pages: string | null;
+    original: string;
+    file: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview_file | null;
 }
 
 export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI {

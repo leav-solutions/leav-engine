@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {INavigationState} from './stateType';
 
 export const navigationInitialState: INavigationState = {
@@ -20,7 +20,7 @@ const navigationSlice = createSlice({
                 state.path = [];
             }
         },
-        setNavigationPath: (state, action: PayloadAction<GET_TREE_CONTENT_treeContent[]>) => {
+        setNavigationPath: (state, action: PayloadAction<TREE_NODE_CHILDREN_treeNodeChildren_list[]>) => {
             state.path = action.payload;
         }
     }

@@ -16,7 +16,8 @@
         "feature_not_available": "Cette fonctionnalité sera bientôt disponible!",
         "available_soon": "Bientôt",
         "go_back_home": "Retourner à l'accueil",
-        "details": "Détails"
+        "details": "Détails",
+        "element_not_found": "Élément introuvable"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
@@ -103,9 +104,6 @@
         "header_table": "Éléments de {{libName}}",
         "show-filter-panel": "Montrer les filtres",
         "show_more_links": "Voir plus",
-        "actions": {
-            "new": "L'ajout des élements n'est pas encore mis en place"
-        },
         "table": {
             "preview": "Vignette",
             "selected": "Sélectionner",
@@ -469,5 +467,10 @@
     "applications": {
         "title": "Applications",
         "current_app_error": "Impossible de charger l'application courante (identifiant: \"{{appId}}\")"
+    },
+    "file_data": {
+        "path": "Emplacement",
+        "no_preview": "Aperçu indisponible",
+        "directory": "Dossier"
     }
 }

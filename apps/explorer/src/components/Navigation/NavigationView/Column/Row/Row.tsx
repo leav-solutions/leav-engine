@@ -12,7 +12,7 @@ import {setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {localizedTranslation} from 'utils';
-import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import themingVar from '../../../../../themingVar';
 import {
     IRecordIdentityWhoAmI,
@@ -85,7 +85,7 @@ const CheckboxWrapper = styled.div<ICheckboxWrapperProps>`
 
 interface IActiveRowNavigationProps {
     isActive: boolean;
-    treeElement: GET_TREE_CONTENT_treeContent;
+    treeElement: TREE_NODE_CHILDREN_treeNodeChildren_list;
     depth: number;
 }
 
