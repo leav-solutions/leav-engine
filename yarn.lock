@@ -3132,6 +3132,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@leav/message-broker@workspace:libs/message-broker":
+  version: 0.0.0-use.local
+  resolution: "@leav/message-broker@workspace:libs/message-broker"
+  dependencies:
+    "@types/amqplib": 0.8.2
+    "@types/jest": ^25.2.2
+    amqplib: 0.8.0
+    eslint: ^7.0.0
+    jest: 26.6.3
+    prettier: ^2.0.5
+    ts-jest: 26
+    typescript: 4.1
+  languageName: unknown
+  linkType: soft
+
 "@leav/utils@workspace:libs/utils":
   version: 0.0.0-use.local
   resolution: "@leav/utils@workspace:libs/utils"
@@ -11107,6 +11122,7 @@ __metadata:
     "@elastic/elasticsearch-mock": ^0.3.0
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
+    "@leav/message-broker": "workspace:libs/message-broker"
     "@types/amqplib": 0.8.2
     "@types/cacache": 15.0.1
     "@types/debug": 0.0.30
@@ -31131,6 +31147,7 @@ __metadata:
   dependencies:
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
+    "@leav/message-broker": "workspace:libs/message-broker"
     "@types/amqplib": 0.8.2
     "@types/jest": ^25.1.4
     "@types/joi": ^14.3.4

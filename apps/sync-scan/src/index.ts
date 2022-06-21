@@ -3,12 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import automate from './automate';
 import {getConfig} from './config';
-import * as amqp from './amqp';
 import * as scan from './scan';
 import {IConfig} from './_types/config';
 import {FilesystemContent} from './_types/filesystem';
 import {FullTreeContent} from './_types/queries';
-import {IAmqpConn} from './_types/amqp';
+import {amqpService, IAmqpService} from '@leav/message-broker';
 
 (async function () {
     try {
@@ -21,13 +20,13 @@ import {IAmqpConn} from './_types/amqp';
         const dbScan: FullTreeContent = await scan.database(cfg);
 
         console.info('RabbitMQ connection initialization...');
-        const amqpConn: IAmqpConn = await amqp.init(cfg.amqp);
+        const amqp: IAmqpService = await amqpService({config: cfg.amqp});
 
         console.info('Synchronization...');
-        await automate(fsScan, dbScan, amqpConn);
+        await automate(fsScan, dbScan, amqp);
 
         console.info('Closing RabbitMQ connection...');
-        await amqpConn.connection.close();
+        await amqp.close();
     } catch (e) {
         console.error(e);
         process.exit(1);

@@ -1,19 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ConfirmChannel, Connection} from 'amqplib';
 import automate from '../../automate';
-import * as events from '../../amqp/events';
+import * as events from '../../events';
 import * as scan from '../../scan';
-import {IAmqpConn} from '../../_types/amqp';
 import {database, filesystem} from './scan';
+import {IAmqpService} from '@leav/message-broker';
 
-jest.mock('../../amqp/events', () => ({
+jest.mock('../../events', () => ({
     create: jest.fn(),
     move: jest.fn()
 }));
 
-let amqpConn: IAmqpConn;
+let amqp;
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -25,18 +24,13 @@ beforeAll(async () => {
             return;
         });
 
-        const mockChannel = {
-            publish: jest.fn()
-        };
-
-        const mockConnection = {
+        const mockAmqp = {
+            publish: jest.fn(),
+            consume: jest.fn(),
             close: jest.fn()
         };
 
-        amqpConn = {
-            channel: (mockChannel as unknown) as ConfirmChannel,
-            connection: (mockConnection as unknown) as Connection
-        };
+        amqp = mockAmqp;
     } catch (e) {
         console.error(e);
     }
@@ -72,7 +66,7 @@ describe('unit tests', () => {
             const create = jest.spyOn(events, 'create');
             const move = jest.spyOn(events, 'move');
 
-            await expect(automate(filesystem, database, amqpConn)).resolves.toStrictEqual(undefined);
+            await expect(automate(filesystem, database, amqp as IAmqpService)).resolves.toStrictEqual(undefined);
 
             expect(create).toHaveBeenCalledTimes(1);
             expect(move).toHaveBeenCalledTimes(1);

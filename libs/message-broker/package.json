@@ -1,0 +1,32 @@
+{
+  "name": "@leav/message-broker",
+  "version": "1.0.0",
+  "description": "Shared message broker to use across projects",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "tsc --build",
+    "tscheck": "tsc --noEmit -p .",
+    "tscheck:watch": "tsc -w --noEmit -p .",
+    "test": "jest -c jest-config.json"
+  },
+  "main": "dist/index",
+  "keywords": [
+    "config",
+    "configuration",
+    "settings"
+  ],
+  "author": "",
+  "license": "LGPL3",
+  "devDependencies": {
+    "@types/amqplib": "0.8.2",
+    "@types/jest": "^25.2.2",
+    "eslint": "^7.0.0",
+    "jest": "26.6.3",
+    "prettier": "^2.0.5",
+    "ts-jest": "26",
+    "typescript": "4.1"
+  },
+  "dependencies": {
+    "amqplib": "0.8.0"
+  }
+}
