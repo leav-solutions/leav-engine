@@ -820,7 +820,7 @@ describe('RecordDomain', () => {
                 big: getPreviewUrl() + 'big_fake-image',
                 small: getPreviewUrl() + 'small_fake-image',
                 medium: getPreviewUrl() + 'medium_fake-image',
-                original: 'originals/my_lib/123456',
+                original: '/originals/my_lib/123456',
                 file: {
                     active: true,
                     created_at: 1234567890,
@@ -1000,7 +1000,7 @@ describe('RecordDomain', () => {
 
             const mockValueDomainFormatValueLink: Mockify<IValueDomain> = {
                 formatValue: jest.fn(({value, library}) =>
-                    Promise.resolve({value: {...mockRecord, id: mockRecord.created_by, library: 'users'}})
+                    Promise.resolve({value: {...mockRecord, id: mockRecordWithValues.created_by, library: 'users'}})
                 )
             };
 

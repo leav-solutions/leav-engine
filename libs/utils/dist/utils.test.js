@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+const files_1 = require("./types/files");
 const utils_1 = require("./utils");
 describe('utils', () => {
     describe('getGraphqlQueryNameFromLibraryName', () => {
@@ -79,6 +80,24 @@ describe('utils', () => {
                 { name: 'a', value: 'b' },
                 { name: 'c', value: 'd' }
             ]);
+        });
+    });
+    describe('getLibraryGraphqlNames', () => {
+        test('Return graphql types', async () => {
+            const res = utils_1.getLibraryGraphqlNames('some_records');
+            expect(res.query).toBe('someRecords');
+            expect(res.type).toBe('SomeRecord');
+            expect(res.list).toBe('SomeRecordList');
+            expect(res.searchableFields).toBe('SomeRecordSearchableFields');
+            expect(res.filter).toBe('SomeRecordFilter');
+        });
+    });
+    describe('getFileType', () => {
+        test('Return file type from extension', async () => {
+            expect(utils_1.getFileType('file.txt')).toBe(files_1.FileType.OTHER);
+            expect(utils_1.getFileType('file.jpg')).toBe(files_1.FileType.IMAGE);
+            expect(utils_1.getFileType('file.mp4')).toBe(files_1.FileType.VIDEO);
+            expect(utils_1.getFileType('file.pdf')).toBe(files_1.FileType.DOCUMENT);
         });
     });
 });

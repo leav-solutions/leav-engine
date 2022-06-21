@@ -10,7 +10,14 @@ export const mockPreviews: RecordIdentity_whoAmI_preview = {
     medium: '/fake/url/medium.jpg',
     big: '/fake/url/big.jpg',
     huge: '/fake/url/huge.jpg',
-    pages: ''
+    pages: '',
+    original: 'originals/files/123456',
+    file: {
+        id: '123456',
+        library: {
+            id: 'files'
+        }
+    }
 };
 
 export const mockRecord: RecordIdentity_whoAmI = {

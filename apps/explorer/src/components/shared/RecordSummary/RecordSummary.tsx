@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import RecordPreview from 'components/shared/RecordPreview';
+import {Space} from 'antd';
 import {IRecordColumnValueLink, IRecordColumnValueStandard} from 'graphQL/queries/records/getRecordColumnsValues';
 import {useLang} from 'hooks/LangHook/LangHook';
-import {useGetRecordColumnsValuesQuery} from 'hooks/useGetRecordColumnsValuesQuery/useGetRecordColumnsValuesQuery';
+import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -15,21 +15,25 @@ import {PreviewSize} from '_types/types';
 import ErrorDisplay from '../ErrorDisplay';
 import Loading from '../Loading';
 import PropertiesList from '../PropertiesList';
+import RecordPreviewWithModal from '../RecordPreviewWithModal';
 
 interface IRecordSummaryProps {
     record: RecordIdentity_whoAmI;
 }
 
-export const Wrapper = styled.div`
+export const Wrapper = styled(Space)`
     padding: 1em;
+    display: flex;
 `;
 
 function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
     const preview = record?.preview?.medium;
+    const previewFile = record?.preview?.file;
+
     const {t} = useTranslation();
     const [{lang}] = useLang();
 
-    const {loading, error, data} = useGetRecordColumnsValuesQuery(
+    const {loading, error, data} = useGetRecordValuesQuery(
         record?.library?.gqlNames.query,
         ['created_at', 'created_by', 'modified_at', 'modified_by'],
         [record?.id]
@@ -85,14 +89,16 @@ function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
     }
 
     return (
-        <Wrapper>
-            <RecordPreview
+        <Wrapper direction="vertical">
+            <RecordPreviewWithModal
                 label={record?.label ?? record?.id}
                 color={record?.color}
                 image={preview && getFileUrl(preview)}
                 tile
                 size={PreviewSize.medium}
-                style={{borderRadius: themingVar['@border-radius-base'], marginBottom: '1rem'}}
+                style={{borderRadius: themingVar['@border-radius-base']}}
+                fileId={previewFile?.id}
+                fileLibraryId={previewFile?.library?.id}
             />
             <PropertiesList items={summaryContent} />
         </Wrapper>

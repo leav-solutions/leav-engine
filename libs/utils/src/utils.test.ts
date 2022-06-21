@@ -1,11 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FileType} from './types/files';
 import {
     extractArgsFromString,
+    getFileType,
     getGraphqlQueryNameFromLibraryName,
     getGraphqlTypeFromLibraryName,
     getInvertColor,
+    getLibraryGraphqlNames,
     localizedTranslation,
     objectToNameValueArray,
     stringToColor
@@ -93,6 +96,27 @@ describe('utils', () => {
                 {name: 'a', value: 'b'},
                 {name: 'c', value: 'd'}
             ]);
+        });
+    });
+
+    describe('getLibraryGraphqlNames', () => {
+        test('Return graphql types', async () => {
+            const res = getLibraryGraphqlNames('some_records');
+
+            expect(res.query).toBe('someRecords');
+            expect(res.type).toBe('SomeRecord');
+            expect(res.list).toBe('SomeRecordList');
+            expect(res.searchableFields).toBe('SomeRecordSearchableFields');
+            expect(res.filter).toBe('SomeRecordFilter');
+        });
+    });
+
+    describe('getFileType', () => {
+        test('Return file type from extension', async () => {
+            expect(getFileType('file.txt')).toBe(FileType.OTHER);
+            expect(getFileType('file.jpg')).toBe(FileType.IMAGE);
+            expect(getFileType('file.mp4')).toBe(FileType.VIDEO);
+            expect(getFileType('file.pdf')).toBe(FileType.DOCUMENT);
         });
     });
 });

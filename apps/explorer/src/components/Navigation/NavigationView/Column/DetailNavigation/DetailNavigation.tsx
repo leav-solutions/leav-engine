@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import RecordPreviewWithModal from 'components/shared/RecordPreviewWithModal';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_TREE_CONTENT_treeContent} from '_gqlTypes/GET_TREE_CONTENT';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import themingVar from '../../../../../themingVar';
 import {getFileUrl} from '../../../../../utils';
-import RecordPreview from '../../../../shared/RecordPreview';
 
 const Detail = styled.div`
     min-width: ${themingVar['@leav-navigation-column-details-width']};
@@ -47,16 +47,20 @@ const PreviewWrapper = styled.div`
     padding: 2rem;
     height: 25rem;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 interface IDetailNavigationProps {
-    treeElement: GET_TREE_CONTENT_treeContent;
+    treeElement: TREE_NODE_CHILDREN_treeNodeChildren_list;
 }
 
 const DetailNavigation = ({treeElement}: IDetailNavigationProps): JSX.Element => {
     const {t} = useTranslation();
 
     const recordData = treeElement.record;
+    const previewFile = recordData?.whoAmI?.preview?.file;
 
     const label = recordData.whoAmI.label ? recordData.whoAmI.label : t('navigation.list.info.no-label');
 
@@ -65,8 +69,10 @@ const DetailNavigation = ({treeElement}: IDetailNavigationProps): JSX.Element =>
     return (
         <Detail data-testid="details-column">
             <PreviewWrapper>
-                <RecordPreview
+                <RecordPreviewWithModal
                     key={recordData.id}
+                    fileId={previewFile?.id}
+                    fileLibraryId={previewFile?.library?.id}
                     label={recordData.whoAmI.label ? label : recordData.id}
                     color={recordData.whoAmI.color}
                     image={img && getFileUrl(img)}

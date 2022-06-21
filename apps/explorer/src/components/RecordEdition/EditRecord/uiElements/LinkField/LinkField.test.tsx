@@ -8,7 +8,7 @@ import {
 } from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
-import {IUseGetRecordColumnsValuesQueryHook} from 'hooks/useGetRecordColumnsValuesQuery/useGetRecordColumnsValuesQuery';
+import {IUseGetRecordColumnsValuesQueryHook} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import React from 'react';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {
@@ -32,8 +32,8 @@ jest.mock('components/SearchModal', () => {
     };
 });
 
-jest.mock('hooks/useGetRecordColumnsValuesQuery/useGetRecordColumnsValuesQuery', () => ({
-    useGetRecordColumnsValuesQuery: (): Partial<IUseGetRecordColumnsValuesQueryHook> => ({
+jest.mock('hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
+    useGetRecordValuesQuery: (): Partial<IUseGetRecordColumnsValuesQueryHook> => ({
         loading: false,
         data: {
             [mockRecordWhoAmI.id]: {

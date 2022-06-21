@@ -7,7 +7,7 @@ import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedTranslation} from 'utils';
 import {FilePreview, IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
-import {getPreviewSize} from '../RecordPreview/RecordPreview';
+import {_getPreviewSize} from '../RecordPreview/RecordPreview';
 
 export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;
@@ -48,7 +48,7 @@ const Wrapper = styled.div<IWrapperProps>`
                 return '100%';
             }
 
-            const previewSize = getPreviewSize(props.size);
+            const previewSize = _getPreviewSize(props.size);
             const previewColSize = `calc(${previewSize} + 1.5rem)`;
             return `${previewColSize} calc(100% - ${previewColSize})`;
         }}
@@ -77,7 +77,7 @@ const SubLabel = styled.div`
     line-height: 1.3em;
 `;
 
-const getPreviewBySize = (preview?: FilePreview, size?: PreviewSize) => {
+const _getPreviewBySize = (preview?: FilePreview, size?: PreviewSize) => {
     const fileSizeByPreviewSize: {[size in PreviewSize]: string} = {
         [PreviewSize.small]: 'tiny',
         [PreviewSize.medium]: 'small',
@@ -116,7 +116,7 @@ const RecordCard = ({
                     <RecordPreview
                         label={record.label || record.id}
                         color={record.color}
-                        image={getPreviewBySize(record.preview, size)}
+                        image={_getPreviewBySize(record.preview, size)}
                         size={size}
                         style={previewStyle}
                         tile={tile}

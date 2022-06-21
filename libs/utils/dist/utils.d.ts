@@ -1,3 +1,4 @@
+import {FileType} from './types/files';
 import {IKeyValue} from './types/helpers';
 export declare const getGraphqlTypeFromLibraryName: (library: string) => string;
 export declare const getGraphqlQueryNameFromLibraryName: (library: string) => string;
@@ -33,9 +34,19 @@ export declare const extractArgsFromString: (
 ) => {
     [arg: string]: string;
 };
-export declare const objectToNameValueArray: (
-    obj: IKeyValue<any>
+export declare const objectToNameValueArray: <T>(
+    obj: IKeyValue<T>
 ) => Array<{
     name: string;
-    value: string;
+    value: T;
 }>;
+export declare const getLibraryGraphqlNames: (
+    libraryId: string
+) => {
+    query: string;
+    type: string;
+    list: string;
+    searchableFields: string;
+    filter: string;
+};
+export declare const getFileType: (fileName: string) => FileType;

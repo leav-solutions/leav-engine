@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FileType} from '@leav/utils';
 import {IAuthApp} from 'app/auth/authApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IFilesManagerDomain} from 'domain/filesManager/filesManagerDomain';
@@ -36,6 +37,10 @@ export default function({
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
+                    enum FileType {
+                        ${Object.values(FileType).join(' ')}
+                    }
+
                     extend type Mutation {
                         forcePreviewsGeneration(libraryId: ID!, recordId: ID, failedOnly: Boolean): Boolean!
                     }

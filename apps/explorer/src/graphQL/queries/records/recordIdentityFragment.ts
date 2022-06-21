@@ -25,6 +25,13 @@ const recordIdentityFragment = gql`
                 big
                 huge
                 pages
+                original
+                file {
+                    id
+                    library {
+                        id
+                    }
+                }
             }
         }
     }
