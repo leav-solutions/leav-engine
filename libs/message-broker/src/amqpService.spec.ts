@@ -5,35 +5,37 @@ import * as amqp from 'amqplib';
 import {IAmqp} from './_types/amqp';
 import amqpService, {IAmqpService} from './amqpService';
 
+type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};
+
+const amqpMockConfig: Mockify<IAmqp> = {connOpt: {hostname: 'localhost'}, exchange: 'exchange', type: 'direct'};
+
+const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
+    assertExchange: jest.fn(),
+    checkExchange: jest.fn(),
+    assertQueue: jest.fn(),
+    bindQueue: jest.fn(),
+    consume: jest.fn(),
+    publish: jest.fn(),
+    waitForConfirms: jest.fn(),
+    prefetch: jest.fn()
+};
+
+const mockAmqpConnection: Mockify<amqp.Connection> = {
+    close: jest.fn(),
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+};
+
+jest.mock('amqplib', () => ({
+    connect: jest.fn().mockImplementation(() => mockAmqpConnection)
+}));
+
 describe('amqp', () => {
-    type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};
-
-    const amqpMockConfig: Mockify<IAmqp> = {connOpt: {hostname: 'localhost'}, exchange: 'exchange', type: 'direct'};
-
-    const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-        assertExchange: jest.fn(),
-        checkExchange: jest.fn(),
-        assertQueue: jest.fn(),
-        bindQueue: jest.fn(),
-        consume: jest.fn(),
-        publish: jest.fn(),
-        waitForConfirms: jest.fn(),
-        prefetch: jest.fn()
-    };
-
     let amqpServ: IAmqpService;
 
     beforeAll(async done => {
         amqpServ = await amqpService({
             config: amqpMockConfig as IAmqp
         });
-
-        // As queue is only used in tests to consume messages, it's not created in amqp.init. Thus, we have to do it here
-        await amqpServ.consumer.channel.assertQueue('myQueue');
-        await amqpServ.consumer.channel.bindQueue('myQueue', 'exchange', 'someRoutingKey');
-
-        amqpServ.publisher.channel = mockAmqpChannel as amqp.ConfirmChannel;
-        amqpServ.consumer.channel = mockAmqpChannel as amqp.ConfirmChannel;
 
         done();
     });
