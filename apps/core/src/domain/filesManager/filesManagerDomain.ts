@@ -4,7 +4,7 @@
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {i18n} from 'i18next';
-import {IAmqpService} from 'infra/amqp/amqpService';
+import {IAmqpService} from '@leav/message-broker';
 import Joi from 'joi';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
@@ -52,7 +52,7 @@ export interface IFilesManagerDomain {
 
 interface IDeps {
     config?: Config.IConfig;
-    'core.infra.amqp.amqpService'?: IAmqpService;
+    'core.infra.amqpService'?: IAmqpService;
     'core.utils.logger'?: winston.Winston;
     'core.domain.record'?: IRecordDomain;
     'core.domain.value'?: IValueDomain;
@@ -90,9 +90,9 @@ export const systemPreviewVersions: IPreviewVersion[] = [
     }
 ];
 
-export default function ({
+export default function({
     config = null,
-    'core.infra.amqp.amqpService': amqpService = null,
+    'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
@@ -171,8 +171,8 @@ export default function ({
 
     return {
         async init(): Promise<void> {
-            await amqpService.amqp.consumer.channel.assertQueue(config.filesManager.queues.events);
-            await amqpService.amqp.consumer.channel.bindQueue(
+            await amqpService.consumer.channel.assertQueue(config.filesManager.queues.events);
+            await amqpService.consumer.channel.bindQueue(
                 config.filesManager.queues.events,
                 config.amqp.exchange,
                 config.filesManager.routingKeys.events

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from 'infra/amqp/amqpService';
+import {IAmqpService} from '@leav/message-broker';
 import * as Config from '_types/config';
 import {Payload} from '../../_types/event';
 import {IQueryInfos} from '_types/queryInfos';
@@ -12,13 +12,10 @@ export interface IEventsManagerDomain {
 
 interface IDeps {
     config?: Config.IConfig;
-    'core.infra.amqp.amqpService'?: IAmqpService;
+    'core.infra.amqpService'?: IAmqpService;
 }
 
-export default function ({
-    config = null,
-    'core.infra.amqp.amqpService': amqpService = null
-}: IDeps): IEventsManagerDomain {
+export default function ({config = null, 'core.infra.amqpService': amqpService = null}: IDeps): IEventsManagerDomain {
     return {
         async send(payload: Payload, ctx: IQueryInfos): Promise<void> {
             await amqpService.publish(

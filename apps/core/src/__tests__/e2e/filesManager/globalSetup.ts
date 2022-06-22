@@ -4,7 +4,7 @@
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
-import {initAmqp} from '../../../infra/amqp';
+import {amqpService} from '@leav/message-broker';
 import {initDb} from '../../../infra/db/db';
 
 export async function setup() {
@@ -17,9 +17,9 @@ export async function setup() {
         const translator = await i18nextInit(conf);
 
         // Init AMQP
-        const amqpConn = await initAmqp({config: conf});
+        const amqp = await amqpService({config: conf.amqp});
 
-        const {coreContainer} = await initDI({translator, 'core.infra.amqp': amqpConn});
+        const {coreContainer} = await initDI({translator, 'core.infra.amqpService': amqp});
         const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
         await dbUtils.migrate(coreContainer);

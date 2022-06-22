@@ -11122,6 +11122,7 @@ __metadata:
     "@elastic/elasticsearch-mock": ^0.3.0
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
+    "@leav/message-broker": "workspace:libs/message-broker"
     "@types/amqplib": 0.8.2
     "@types/cacache": 15.0.1
     "@types/debug": 0.0.30

@@ -4,7 +4,7 @@
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {IAmqpService} from 'infra/amqp/amqpService';
+import {IAmqpService} from '@leav/message-broker';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {FileEvents, IFileEventData, IPreviewVersion} from '../../../_types/filesManager';

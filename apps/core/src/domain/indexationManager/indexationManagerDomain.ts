@@ -5,7 +5,7 @@ import Joi from 'joi';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IFindRecordParams, IRecordDomain} from 'domain/record/recordDomain';
-import {IAmqpService} from 'infra/amqp/amqpService';
+import {IAmqpService} from '@leav/message-broker';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {isEqual, pick} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
@@ -24,7 +24,7 @@ export interface IIndexationManagerDomain {
 interface IDeps {
     config?: Config.IConfig;
     'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
-    'core.infra.amqp.amqpService'?: IAmqpService;
+    'core.infra.amqpService'?: IAmqpService;
     'core.domain.record'?: IRecordDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
@@ -33,7 +33,7 @@ interface IDeps {
 export default function ({
     config = null,
     'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
-    'core.infra.amqp.amqpService': amqpService = null,
+    'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.attribute': attributeDomain = null
@@ -361,8 +361,8 @@ export default function ({
 
     return {
         async init(): Promise<void> {
-            await amqpService.amqp.consumer.channel.assertQueue(config.indexationManager.queues.events);
-            await amqpService.amqp.consumer.channel.bindQueue(
+            await amqpService.consumer.channel.assertQueue(config.indexationManager.queues.events);
+            await amqpService.consumer.channel.bindQueue(
                 config.indexationManager.queues.events,
                 config.amqp.exchange,
                 config.eventsManager.routingKeys.events

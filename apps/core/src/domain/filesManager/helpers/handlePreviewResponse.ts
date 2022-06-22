@@ -7,7 +7,7 @@ import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IAmqpService} from '../../../infra/amqp/amqpService';
+import {IAmqpService} from '@leav/message-broker';
 import {
     IFilesAttributes,
     IPreviewResponse,

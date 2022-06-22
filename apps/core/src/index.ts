@@ -8,12 +8,13 @@ import * as Config from '_types/config';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
-import {initAmqp} from './infra/amqp';
+// import {initAmqp} from './infra/amqp';
 import {initRedis} from './infra/cache';
 import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
+import {amqpService} from '@leav/message-broker';
 
-(async function() {
+(async function () {
     let conf: Config.IConfig;
 
     try {
@@ -31,12 +32,12 @@ import {initPlugins} from './pluginsLoader';
     const translator = await i18nextInit(conf);
 
     // Init AMQP
-    const amqpConn = await initAmqp({config: conf});
+    const amqp = await amqpService({config: conf.amqp});
     const redisClient = await initRedis({config: conf});
 
     const {coreContainer, pluginsContainer} = await initDI({
         translator,
-        'core.infra.amqp': amqpConn,
+        'core.infra.amqpService': amqp,
         'core.infra.redis': redisClient
     });
 

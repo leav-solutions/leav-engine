@@ -154,6 +154,7 @@ services:
       - *volume-config_manager-modules
       - *volume-app_root_path-modules
       - *volume-utils-modules
+      - *volume-message_broker-modules
     ports:
       - "9229:9229"
     working_dir: *dir-core
