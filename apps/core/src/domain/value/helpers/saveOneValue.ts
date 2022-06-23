@@ -7,9 +7,8 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import moment from 'moment';
 import {IQueryInfos} from '_types/queryInfos';
-import {ActionsListEvents} from '../../../_types/actionsList';
-import {AttributeTypes, IAttribute} from '../../../_types/attribute';
-import {ITreeValue, IValue} from '../../../_types/value';
+import {IAttribute} from '../../../_types/attribute';
+import {IValue} from '../../../_types/value';
 import doesValueExist from './doesValueExist';
 
 export default async (
@@ -60,18 +59,5 @@ export default async (
               ctx
           });
 
-    // Apply actions list on value
-    const processedValue = attribute?.actions_list?.[ActionsListEvents.GET_VALUE]
-        ? await deps.actionsListDomain.runActionsList(
-              attribute?.actions_list?.[ActionsListEvents.GET_VALUE],
-              savedVal,
-              ctx
-          )
-        : savedVal;
-
-    if (attribute.type === AttributeTypes.TREE) {
-        (processedValue.value as ITreeValue).treeId = attribute.linked_tree;
-    }
-
-    return {...savedVal, value: processedValue.value, raw_value: savedVal.value, attribute: attribute.id};
+    return savedVal;
 };

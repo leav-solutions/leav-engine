@@ -35,6 +35,7 @@ export interface IStandardFieldReducerState {
     attribute: IRecordPropertyAttribute;
     isReadOnly: boolean;
     values: IKeyValue<IStandardFieldValue>;
+    metadataEdit: boolean;
 }
 
 export enum StandardFieldReducerActionsTypes {

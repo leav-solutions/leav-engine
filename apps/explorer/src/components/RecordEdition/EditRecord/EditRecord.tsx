@@ -65,13 +65,8 @@ function EditRecord({record, library, onValueSubmit, onValueDelete, readonly}: I
     };
 
     return (
-        <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly}}>
-            <rootElement.uiElement
-                element={rootElement}
-                record={record}
-                onValueSubmit={onValueSubmit}
-                onValueDelete={onValueDelete}
-            />
+        <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
+            <rootElement.uiElement element={rootElement} onValueSubmit={onValueSubmit} onValueDelete={onValueDelete} />
         </RecordEditionContext.Provider>
     );
 }

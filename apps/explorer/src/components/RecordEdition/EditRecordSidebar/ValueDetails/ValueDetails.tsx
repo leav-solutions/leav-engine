@@ -23,10 +23,13 @@ import {
     RECORD_FORM_recordForm_elements_attribute_TreeAttribute
 } from '_gqlTypes/RECORD_FORM';
 import {PreviewSize} from '_types/types';
+import {MetadataSubmitValueFunc} from '../../EditRecord/_types';
 import TreeValuePath from './TreeValuePath';
+import ValueMetadata from './ValueMetadata';
 
 interface IValueDetailsProps {
     attribute: RECORD_FORM_recordForm_elements_attribute;
+    onMetadataSubmit: MetadataSubmitValueFunc;
     value: RecordProperty;
 }
 
@@ -49,12 +52,15 @@ const CloseButton = styled(ArrowRightOutlined)`
 
 const {Panel} = Collapse;
 
-function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
+function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
     const {state, dispatch} = useEditRecordReducer();
 
     const _handleClose = () => dispatch({type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE, value: null});
+
+    const metadataFields = (attribute?.metadata_fields ?? []).filter(field => field.permissions.access_attribute);
+    const hasMetadata = metadataFields.length > 0;
 
     const valueDetailsContent = value?.modified_at
         ? [
@@ -106,7 +112,12 @@ function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
             <AttributeTitle>{localizedTranslation(attribute.label, lang)}</AttributeTitle>
             <AttributeDescription>{localizedTranslation(attribute.description, lang)}</AttributeDescription>
             <Divider style={{margin: '.5em 0'}} />
-            <Collapse bordered={false} defaultActiveKey={['value']} style={{background: 'none'}} destroyInactivePanel>
+            <Collapse
+                bordered={false}
+                defaultActiveKey={['value', 'metadata']}
+                style={{background: 'none'}}
+                destroyInactivePanel
+            >
                 <Panel key="attribute" header={t('record_edition.attribute_details_section')}>
                     <PropertiesList items={attributeDetailsContent} />
                 </Panel>
@@ -121,6 +132,18 @@ function ValueDetails({attribute, value}: IValueDetailsProps): JSX.Element {
                             />
                         )}
                         <PropertiesList items={valueDetailsContent} />
+                    </Panel>
+                )}
+                {hasMetadata && (
+                    <Panel
+                        key="metadata"
+                        header={
+                            isTypeStandard(attribute.type)
+                                ? t('record_edition.metadata_section')
+                                : t('record_edition.metadata_section_link')
+                        }
+                    >
+                        <ValueMetadata value={value} attribute={attribute} onMetadataSubmit={onMetadataSubmit} />
                     </Panel>
                 )}
                 {attribute.type === AttributeType.tree && (

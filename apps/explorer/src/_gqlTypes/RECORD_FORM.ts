@@ -82,12 +82,23 @@ export interface RECORD_FORM_recordForm_elements_values_Value_modified_by {
     whoAmI: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI;
 }
 
+export interface RECORD_FORM_recordForm_elements_values_Value_metadata_value {
+    value: any | null;
+    raw_value: any | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_Value_metadata {
+    name: string;
+    value: RECORD_FORM_recordForm_elements_values_Value_metadata_value | null;
+}
+
 export interface RECORD_FORM_recordForm_elements_values_Value {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
     created_by: RECORD_FORM_recordForm_elements_values_Value_created_by | null;
     modified_by: RECORD_FORM_recordForm_elements_values_Value_modified_by | null;
+    metadata: (RECORD_FORM_recordForm_elements_values_Value_metadata | null)[] | null;
     value: any | null;
     raw_value: any | null;
 }
@@ -158,6 +169,16 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by {
     whoAmI: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI;
 }
 
+export interface RECORD_FORM_recordForm_elements_values_LinkValue_metadata_value {
+    value: any | null;
+    raw_value: any | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_LinkValue_metadata {
+    name: string;
+    value: RECORD_FORM_recordForm_elements_values_LinkValue_metadata_value | null;
+}
+
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_library_gqlNames {
     query: string;
     type: string;
@@ -197,6 +218,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue {
     modified_at: number | null;
     created_by: RECORD_FORM_recordForm_elements_values_LinkValue_created_by | null;
     modified_by: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by | null;
+    metadata: (RECORD_FORM_recordForm_elements_values_LinkValue_metadata | null)[] | null;
     linkValue: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue;
 }
 
@@ -264,6 +286,16 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_wh
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by {
     id: string;
     whoAmI: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_TreeValue_metadata_value {
+    value: any | null;
+    raw_value: any | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_TreeValue_metadata {
+    name: string;
+    value: RECORD_FORM_recordForm_elements_values_TreeValue_metadata_value | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_library_gqlNames {
@@ -347,6 +379,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue {
     modified_at: number | null;
     created_by: RECORD_FORM_recordForm_elements_values_TreeValue_created_by | null;
     modified_by: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by | null;
+    metadata: (RECORD_FORM_recordForm_elements_values_TreeValue_metadata | null)[] | null;
     treeValue: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue;
 }
 
@@ -358,6 +391,57 @@ export type RECORD_FORM_recordForm_elements_values =
 export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_permissions {
     access_attribute: boolean;
     edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_permissions {
+    access_attribute: boolean;
+    edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_values_list_StandardStringValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    values: string[] | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_values_list =
+    | RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_values_list_StandardStringValuesListConf
+    | RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf;
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_metadata_fields {
+    id: string;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields {
+    id: string;
+    label: any | null;
+    description: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
+    multiple_values: boolean;
+    /**
+     * Permissions for this attribute.
+     * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
+     */
+    permissions: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_permissions;
+    values_list: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_values_list | null;
+    metadata_fields:
+        | RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_metadata_fields[]
+        | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf {
@@ -396,12 +480,62 @@ export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute {
      * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
      */
     permissions: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_permissions;
+    metadata_fields: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields[] | null;
     values_list: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_permissions {
     access_attribute: boolean;
     edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_permissions {
+    access_attribute: boolean;
+    edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_values_list_StandardStringValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    values: string[] | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_values_list =
+    | RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_values_list_StandardStringValuesListConf
+    | RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf;
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_metadata_fields {
+    id: string;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields {
+    id: string;
+    label: any | null;
+    description: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
+    multiple_values: boolean;
+    /**
+     * Permissions for this attribute.
+     * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
+     */
+    permissions: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_permissions;
+    values_list: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_values_list | null;
+    metadata_fields: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_metadata_fields[] | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library_gqlNames {
@@ -467,6 +601,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute {
      * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
      */
     permissions: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_permissions;
+    metadata_fields: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields[] | null;
     linked_library: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library | null;
     linkValuesList: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList | null;
 }
@@ -474,6 +609,55 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute {
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_permissions {
     access_attribute: boolean;
     edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_permissions {
+    access_attribute: boolean;
+    edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_values_list_StandardStringValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    values: string[] | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_values_list =
+    | RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_values_list_StandardStringValuesListConf
+    | RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_values_list_StandardDateRangeValuesListConf;
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_metadata_fields {
+    id: string;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields {
+    id: string;
+    label: any | null;
+    description: any | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
+    multiple_values: boolean;
+    /**
+     * Permissions for this attribute.
+     * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
+     */
+    permissions: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_permissions;
+    values_list: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_values_list | null;
+    metadata_fields: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_metadata_fields[] | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_linked_tree {
@@ -575,6 +759,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute {
      * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
      */
     permissions: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_permissions;
+    metadata_fields: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields[] | null;
     linked_tree: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_linked_tree | null;
     treeValuesList: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList | null;
 }

@@ -1,3 +1,4 @@
+import {IKeyValue} from './types/helpers';
 export declare const getGraphqlTypeFromLibraryName: (library: string) => string;
 export declare const getGraphqlQueryNameFromLibraryName: (library: string) => string;
 export declare const isFileAllowed: (
@@ -32,3 +33,9 @@ export declare const extractArgsFromString: (
 ) => {
     [arg: string]: string;
 };
+export declare const objectToNameValueArray: (
+    obj: IKeyValue<any>
+) => Array<{
+    name: string;
+    value: string;
+}>;

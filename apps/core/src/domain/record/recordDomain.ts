@@ -11,9 +11,10 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import moment from 'moment';
 import {join} from 'path';
 import {IUtils} from 'utils/utils';
+import winston from 'winston';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
-import {IStandardValue, IValue, IValuesOptions} from '_types/value';
+import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
@@ -172,6 +173,7 @@ interface IDeps {
     'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils'?: IUtils;
+    'core.utils.logger'?: winston.Winston;
 }
 
 export default function ({
@@ -185,37 +187,9 @@ export default function ({
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.domain.eventsManager': eventsManager = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    'core.utils.logger': logger = null
 }: IDeps = {}): IRecordDomain {
-    /**
-     * Run actions list on a value
-     *
-     * @param isLinkAttribute
-     * @param value
-     * @param attrProps
-     * @param record
-     * @param library
-     * @param ctx
-     */
-    const _runActionsList = async (
-        isLinkAttribute: boolean,
-        value: IValue,
-        attrProps: IAttribute,
-        record: IRecord,
-        library: string,
-        ctx: IQueryInfos
-    ) => {
-        return !!attrProps.actions_list && !!attrProps.actions_list.getValue
-            ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
-                  ...ctx,
-                  attribute: attrProps,
-                  recordId: record.id,
-                  library,
-                  value
-              })
-            : value;
-    };
-
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
      *
@@ -255,45 +229,6 @@ export default function ({
         }
 
         return values;
-    };
-
-    /**
-     * Format value: add a few informations for link attributes, run actions list
-     *
-     * @param attribute
-     * @param value
-     * @param record
-     * @param library
-     */
-    const _formatRecordValue = async (
-        attribute: IAttribute,
-        value: IValue,
-        record: IRecord,
-        library: string,
-        ctx: IQueryInfos
-    ): Promise<IValue> => {
-        let val = {...value}; // Don't mutate given value
-
-        const isLinkAttribute =
-            attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
-
-        if (isLinkAttribute && attribute.linked_library) {
-            const linkValue = {...val.value, library: attribute.linked_library};
-            val = {...value, value: linkValue};
-        }
-
-        const processedValue: IValue =
-            attribute.id !== 'id' && !!attribute.actions_list && !!attribute.actions_list.getValue
-                ? await _runActionsList(isLinkAttribute, val, attribute, record, library, ctx)
-                : val;
-
-        processedValue.attribute = attribute.id;
-
-        if (utils.isStandardAttribute(attribute)) {
-            (processedValue as IStandardValue).raw_value = val.value;
-        }
-
-        return processedValue;
     };
 
     const _checkLogicExpr = async (filters: IRecordFilterLight[]) => {
@@ -774,7 +709,7 @@ export default function ({
             const forceArray = options?.forceArray ?? false;
 
             let formattedValues = await Promise.all(
-                values.map(v => _formatRecordValue(attrProps, v, record, library, ctx))
+                values.map(v => valueDomain.formatValue({attribute: attrProps, value: v, record, library, ctx}))
             );
 
             // sort of flatMap cause _formatRecordValue can return multiple values for 1 input val (think heritage)
@@ -794,7 +729,7 @@ export default function ({
             }, []);
 
             if (hasNoValue) {
-                // remove null values or values that do not reprensent a record
+                // remove null values or values that do not represent a record
                 formattedValues = formattedValues.filter(
                     v =>
                         v.value !== null &&

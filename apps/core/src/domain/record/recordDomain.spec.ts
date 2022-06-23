@@ -838,6 +838,10 @@ describe('RecordDomain', () => {
             created_by: '42'
         };
 
+        const mockValueDomainFormatValue: Mockify<IValueDomain> = {
+            formatValue: jest.fn(({value, library}) => Promise.resolve(value))
+        };
+
         test('Return a value present on record', async () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({
@@ -848,6 +852,7 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.value': mockValueDomainFormatValue as IValueDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -872,6 +877,7 @@ describe('RecordDomain', () => {
             };
 
             const mockValDomain: Mockify<IValueDomain> = {
+                ...mockValueDomainFormatValue,
                 getValues: global.__mockPromise([
                     {
                         id_value: 12345,
@@ -911,9 +917,17 @@ describe('RecordDomain', () => {
             const mockALDomain: Mockify<IActionsListDomain> = {
                 runActionsList: global.__mockPromise({value: '1/3/37 00:42'})
             };
+
+            const mockValueDomainFormatValueDate: Mockify<IValueDomain> = {
+                formatValue: jest.fn(({value}) =>
+                    Promise.resolve({...value, raw_value: value.value, value: '1/3/37 00:42'})
+                )
+            };
+
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.value': mockValueDomainFormatValueDate as IValueDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -937,8 +951,16 @@ describe('RecordDomain', () => {
                     multiple_values: false
                 })
             };
+
+            const mockValueDomainFormatValueLink: Mockify<IValueDomain> = {
+                formatValue: jest.fn(({value, library}) =>
+                    Promise.resolve({value: {...mockRecord, id: mockRecord.created_by, library: 'users'}})
+                )
+            };
+
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.value': mockValueDomainFormatValueLink as IValueDomain,
                 'core.utils': mockUtilsLinkAttribute as IUtils
             });
 
@@ -963,6 +985,7 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.value': mockValueDomainFormatValue as IValueDomain,
                 'core.utils': mockUtils as IUtils
             });
 

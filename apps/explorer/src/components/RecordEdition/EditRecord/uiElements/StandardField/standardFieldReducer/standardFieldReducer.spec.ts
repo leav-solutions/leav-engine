@@ -50,7 +50,8 @@ describe('standardFieldReducer', () => {
         formElement: mockFormElementInput,
         attribute: mockAttribute,
         isReadOnly: false,
-        values: {[idValue]: mockValue}
+        values: {[idValue]: mockValue},
+        metadataEdit: false
     };
 
     test('ADD_VALUE', async () => {
@@ -164,7 +165,8 @@ describe('standardFieldReducer', () => {
                     created_by: mockModifier,
                     modified_by: mockModifier,
                     version: null,
-                    attribute: mockAttribute
+                    attribute: mockAttribute,
+                    metadata: null
                 }
             }
         );
@@ -208,7 +210,8 @@ describe('standardFieldReducer', () => {
                     created_by: mockModifier,
                     modified_by: mockModifier,
                     version: null,
-                    attribute: mockAttribute
+                    attribute: mockAttribute,
+                    metadata: null
                 }
             }
         );

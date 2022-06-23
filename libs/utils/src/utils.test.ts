@@ -7,6 +7,7 @@ import {
     getGraphqlTypeFromLibraryName,
     getInvertColor,
     localizedTranslation,
+    objectToNameValueArray,
     stringToColor
 } from './utils';
 
@@ -83,6 +84,15 @@ describe('utils', () => {
                 library: 'users',
                 answer: '42'
             });
+        });
+    });
+
+    describe('objectToNameValueArray', () => {
+        test('Convert object to name/value array', async () => {
+            expect(objectToNameValueArray({a: 'b', c: 'd'})).toEqual([
+                {name: 'a', value: 'b'},
+                {name: 'c', value: 'd'}
+            ]);
         });
     });
 });

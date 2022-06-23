@@ -1,9 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, FormFieldTypes, FormUIElementTypes, ICommonFieldsSettings, Override} from '@leav/utils';
+import {
+    AnyPrimitive,
+    FormFieldTypes,
+    FormUIElementTypes,
+    ICommonFieldsSettings,
+    IKeyValue,
+    Override
+} from '@leav/utils';
 import {Checkbox, DatePicker, InputRef} from 'antd';
 import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
+import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {MutableRefObject} from 'react';
 import {ValueInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
@@ -22,6 +30,7 @@ export interface IValueToSubmit {
     attribute: string;
     value: AnyPrimitive | null;
     idValue: string;
+    metadata?: IKeyValue<AnyPrimitive>;
 }
 
 export enum APICallStatus {
@@ -49,6 +58,7 @@ export interface IDeleteValueResult {
 export interface IRecordEditionContext {
     elements: IFormElementsByContainer;
     readOnly: boolean;
+    record: IRecordIdentityWhoAmI;
 }
 
 export interface IFormElementsByContainer {
@@ -71,17 +81,23 @@ export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISu
 
 export type SubmitValueFunc = (values: SubmittedValue[]) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
+export type MetadataSubmitValueFunc = (
+    value: RecordProperty,
+    attribute: RECORD_FORM_recordForm_elements_attribute,
+    metadata: IKeyValue<AnyPrimitive>
+) => Promise<ISubmitMultipleResult>;
 
 export interface ISubmittedValueBase {
     attribute: RECORD_FORM_recordForm_elements_attribute;
     idValue: string;
+    metadata?: IKeyValue<AnyPrimitive>;
 }
 
 export interface IFormElementProps<SettingsType> {
-    record: IRecordIdentityWhoAmI;
     element: FormElement<SettingsType>;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
+    metadataEdit?: boolean;
 }
 
 export type FormElement<SettingsType> = Override<

@@ -73,5 +73,13 @@ describe('utils', () => {
             });
         });
     });
+    describe('objectToNameValueArray', () => {
+        test('Convert object to name/value array', async () => {
+            expect(utils_1.objectToNameValueArray({ a: 'b', c: 'd' })).toEqual([
+                { name: 'a', value: 'b' },
+                { name: 'c', value: 'd' }
+            ]);
+        });
+    });
 });
 //# sourceMappingURL=utils.test.js.map

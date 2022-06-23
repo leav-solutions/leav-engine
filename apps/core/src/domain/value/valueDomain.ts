@@ -6,7 +6,9 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
+import winston from 'winston';
 import * as Config from '_types/config';
+import {IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
@@ -14,7 +16,7 @@ import {Errors, ErrorTypes} from '../../_types/errors';
 import {EventType} from '../../_types/event';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {IFindValueTree, IValue, IValuesOptions} from '../../_types/value';
+import {IFindValueTree, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
@@ -101,6 +103,20 @@ export interface IValueDomain {
         value?: IValue;
         ctx: IQueryInfos;
     }): Promise<IValue>;
+
+    formatValue({
+        attribute,
+        value,
+        record,
+        library,
+        ctx
+    }: {
+        attribute: IAttribute;
+        value: IValue;
+        record: IRecord;
+        library: string;
+        ctx: IQueryInfos;
+    }): Promise<IValue>;
 }
 
 interface IDeps {
@@ -113,11 +129,12 @@ interface IDeps {
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
     'core.utils'?: IUtils;
+    'core.utils.logger'?: winston.Winston;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.helpers.validate'?: IValidateHelper;
 }
 
-export default function ({
+const valueDomain = function ({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -128,8 +145,37 @@ export default function ({
     'core.infra.value': valueRepo = null,
     'core.utils': utils = null,
     'core.domain.eventsManager': eventsManager = null,
-    'core.domain.helpers.validate': validate = null
+    'core.domain.helpers.validate': validate = null,
+    'core.utils.logger': logger = null
 }: IDeps = {}): IValueDomain {
+    /**
+     * Run actions list on a value
+     *
+     * @param isLinkAttribute
+     * @param value
+     * @param attrProps
+     * @param record
+     * @param library
+     * @param ctx
+     */
+    const _runActionsList = async (
+        value: IValue,
+        attrProps: IAttribute,
+        record: IRecord,
+        library: string,
+        ctx: IQueryInfos
+    ) => {
+        return !!attrProps.actions_list && !!attrProps.actions_list.getValue
+            ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
+                  ...ctx,
+                  attribute: attrProps,
+                  recordId: record.id,
+                  library,
+                  value
+              })
+            : value;
+    };
+
     return {
         async getValues({library, recordId, attribute, options, ctx}): Promise<IValue[]> {
             await validate.validateLibrary(library, ctx);
@@ -206,7 +252,7 @@ export default function ({
             const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
             await validate.validateLibrary(library, ctx);
-            await validate.validateRecord(library, recordId, ctx);
+            const record = await validate.validateRecord(library, recordId, ctx);
 
             const valueChecksParams = {
                 attributeProps,
@@ -273,27 +319,22 @@ export default function ({
                 ctx
             );
 
+            // Apply actions list on value
+            const processedValue = await this.formatValue({
+                attribute: attributeProps,
+                value: savedVal,
+                record,
+                library,
+                ctx
+            });
+
             await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
 
-            // TODO: get old value ?
-            await eventsManager.send(
-                {
-                    type: EventType.VALUE_SAVE,
-                    data: {
-                        libraryId: library,
-                        recordId,
-                        attributeId: attributeProps.id,
-                        value: {new: savedVal}
-                    }
-                },
-                ctx
-            );
-
-            return savedVal;
+            return {...savedVal, ...processedValue};
         },
         async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
-            await validate.validateRecord(library, recordId, ctx);
+            const record = await validate.validateRecord(library, recordId, ctx);
 
             const saveRes: ISaveBatchValueResult = await values.reduce(
                 async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
@@ -381,7 +422,16 @@ export default function ({
                                       ctx
                                   );
 
-                        prevRes.values.push({...savedVal, attribute: value.attribute});
+                        // Apply actions list on value
+                        const processedValue = await this.formatValue({
+                            attribute: attributeProps,
+                            value: savedVal,
+                            record,
+                            library,
+                            ctx
+                        });
+
+                        prevRes.values.push(processedValue);
 
                         // TODO: get old value ?
                         await eventsManager.send(
@@ -534,6 +584,65 @@ export default function ({
             );
 
             return res;
+        },
+        async formatValue({attribute, value, record, library, ctx}) {
+            let val = {...value}; // Don't mutate given value
+
+            const isLinkAttribute =
+                attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
+
+            if (isLinkAttribute && attribute.linked_library) {
+                const linkValue = {...val.value, library: attribute.linked_library};
+                val = {...value, value: linkValue};
+            }
+
+            const processedValue: IValue =
+                attribute.id !== 'id' && !!attribute.actions_list && !!attribute.actions_list.getValue
+                    ? await _runActionsList(val, attribute, record, library, ctx)
+                    : val;
+
+            processedValue.attribute = attribute.id;
+
+            if (utils.isStandardAttribute(attribute)) {
+                (processedValue as IStandardValue).raw_value = val.value;
+            }
+
+            // Format metadata values as well
+            if ((attribute.metadata_fields ?? []).length) {
+                const metadataValuesFormatted = await attribute.metadata_fields.reduce(
+                    async (allValuesProm, metadataField) => {
+                        const allValues = await allValuesProm;
+                        try {
+                            const metadataAttributeProps = await attributeDomain.getAttributeProperties({
+                                id: metadataField,
+                                ctx
+                            });
+
+                            allValues[metadataField] =
+                                typeof value.metadata?.[metadataField] !== 'undefined'
+                                    ? await this.formatValue({
+                                          attribute: metadataAttributeProps,
+                                          value: {value: value.metadata?.[metadataField]},
+                                          record,
+                                          library,
+                                          ctx
+                                      })
+                                    : null;
+                        } catch (err) {
+                            logger.error(err);
+                            allValues[metadataField] = null;
+                        }
+
+                        return allValues;
+                    },
+                    Promise.resolve({})
+                );
+                processedValue.metadata = metadataValuesFormatted;
+            }
+
+            return processedValue;
         }
     };
-}
+};
+
+export default valueDomain;

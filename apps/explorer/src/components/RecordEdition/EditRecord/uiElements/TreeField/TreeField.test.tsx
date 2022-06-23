@@ -8,11 +8,13 @@ import {
 } from 'components/RecordEdition/editRecordReducer/editRecordReducer';
 import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import React from 'react';
-import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
+import {
+    RECORD_FORM_recordForm_elements_attribute_TreeAttribute,
+    RECORD_FORM_recordForm_elements_values_TreeValue
+} from '_gqlTypes/RECORD_FORM';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockAttributeTree} from '__mocks__/common/attribute';
 import {mockFormElementTree, mockTreeValueA} from '__mocks__/common/form';
-import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
 import TreeField from '.';
 import {APICallStatus, DeleteValueFunc, ISubmitMultipleResult, SubmitValueFunc} from '../../_types';
@@ -42,10 +44,11 @@ describe('TreeField', () => {
         status: APICallStatus.SUCCESS,
         values: [
             {
-                ...mockTreeValueA,
+                ...(mockTreeValueA as RECORD_FORM_recordForm_elements_values_TreeValue),
                 id_value: '987654',
                 version: null,
-                attribute: {...mockAttributeTree, system: false}
+                attribute: {...mockAttributeTree, system: false},
+                metadata: null
             }
         ]
     };
@@ -60,7 +63,6 @@ describe('TreeField', () => {
         render(
             <TreeField
                 element={{...mockFormElementTree, values: []}}
-                record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
             />
@@ -77,7 +79,6 @@ describe('TreeField', () => {
                         ...mockFormElementTree,
                         attribute: {...mockFormElementTree.attribute, multiple_values: true}
                     }}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -101,7 +102,6 @@ describe('TreeField', () => {
                     ...mockFormElementTree,
                     attribute: {...mockFormElementTree.attribute, multiple_values: false}
                 }}
-                record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
             />
@@ -114,7 +114,6 @@ describe('TreeField', () => {
         render(
             <TreeField
                 element={mockFormElementTree}
-                record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
             />
@@ -127,7 +126,6 @@ describe('TreeField', () => {
         render(
             <TreeField
                 element={mockFormElementTree}
-                record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
             />
@@ -140,7 +138,6 @@ describe('TreeField', () => {
         render(
             <TreeField
                 element={mockFormElementTree}
-                record={mockRecordWhoAmI}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
             />
@@ -186,7 +183,6 @@ describe('TreeField', () => {
                         ...mockFormElementTree,
                         attribute: {...mockAttribute}
                     }}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />

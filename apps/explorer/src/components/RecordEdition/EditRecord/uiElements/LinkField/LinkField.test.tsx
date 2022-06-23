@@ -79,7 +79,8 @@ describe('LinkField', () => {
                     whoAmI: {
                         ...mockRecordWhoAmI
                     }
-                }
+                },
+                metadata: null
             }
         ]
     };
@@ -93,7 +94,6 @@ describe('LinkField', () => {
             render(
                 <LinkField
                     element={mockFormElementLink}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -138,7 +138,6 @@ describe('LinkField', () => {
             render(
                 <LinkField
                     element={{...mockFormElementLinkWithColumns, values: recordValuesWithColumns}}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -156,7 +155,6 @@ describe('LinkField', () => {
             render(
                 <LinkField
                     element={{...mockFormElementLink, values: []}}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -176,7 +174,6 @@ describe('LinkField', () => {
                         attribute: {...mockFormElementLink.attribute, system: true},
                         values: []
                     }}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -191,7 +188,6 @@ describe('LinkField', () => {
             render(
                 <LinkField
                     element={mockFormElementLink}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -217,7 +213,6 @@ describe('LinkField', () => {
             render(
                 <LinkField
                     element={mockFormElementLinkMultivalue}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -240,7 +235,6 @@ describe('LinkField', () => {
             render(
                 <LinkField
                     element={mockFormElementLinkNoMultivalue}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -255,7 +249,6 @@ describe('LinkField', () => {
             render(
                 <LinkField
                     element={mockFormElementLink}
-                    record={mockRecordWhoAmI}
                     onValueSubmit={mockHandleSubmit}
                     onValueDelete={mockHandleDelete}
                 />
@@ -309,7 +302,6 @@ describe('LinkField', () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkMultivalue}
-                        record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -369,7 +361,6 @@ describe('LinkField', () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkValuesList}
-                        record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -420,7 +411,6 @@ describe('LinkField', () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkMultivalue}
-                        record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -446,7 +436,6 @@ describe('LinkField', () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkMultivalue}
-                        record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -468,7 +457,6 @@ describe('LinkField', () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkMultivalue}
-                        record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -515,7 +503,6 @@ describe('LinkField', () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkMultivalueNoFreeEntry}
-                        record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />
@@ -597,7 +584,6 @@ describe('LinkField', () => {
                 render(
                     <LinkField
                         element={mockFormElementLinkMultivalue}
-                        record={mockRecordWhoAmI}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
                     />,

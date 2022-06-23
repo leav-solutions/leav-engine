@@ -8,7 +8,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {AttributeCondition} from '../../_types/record';
+import {AttributeCondition, IRecord} from '../../_types/record';
 
 interface IDeps {
     'core.infra.library'?: ILibraryRepo;
@@ -18,7 +18,7 @@ interface IDeps {
 
 export interface IValidateHelper {
     validateLibrary(library: string, ctx: IQueryInfos): Promise<void>;
-    validateRecord(library: string, record: string, ctx: IQueryInfos): Promise<void>;
+    validateRecord(library: string, recordId: string, ctx: IQueryInfos): Promise<IRecord>;
     validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
 }
 
@@ -28,14 +28,14 @@ export default function ({
     'core.infra.view': viewRepo = null
 }: IDeps): IValidateHelper {
     return {
-        async validateRecord(library: string, record: string, ctx: IQueryInfos): Promise<void> {
+        async validateRecord(library, recordId, ctx): Promise<IRecord> {
             const recordsRes = await recordRepo.find({
                 libraryId: library,
                 filters: [
                     {
                         attributes: [{id: 'id', type: AttributeTypes.SIMPLE}],
                         condition: AttributeCondition.EQUAL,
-                        value: String(record)
+                        value: String(recordId)
                     }
                 ],
                 retrieveInactive: true,
@@ -45,6 +45,8 @@ export default function ({
             if (!recordsRes.list.length) {
                 throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
             }
+
+            return recordsRes.list[0];
         },
         async validateLibrary(library: string, ctx: IQueryInfos): Promise<void> {
             const lib = await libraryRepo.getLibraries({params: {filters: {id: library}}, ctx});

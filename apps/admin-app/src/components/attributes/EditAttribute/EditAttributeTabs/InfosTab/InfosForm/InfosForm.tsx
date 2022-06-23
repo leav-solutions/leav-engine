@@ -69,10 +69,6 @@ const FormWrapper = styled(Form)`
 
 const FormFooter = styled.div`
     border-top: 1px solid #dddddd;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     padding: 1em;
     text-align: right;
 `;

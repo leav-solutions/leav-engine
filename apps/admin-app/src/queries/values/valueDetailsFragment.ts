@@ -9,7 +9,13 @@ export const valueDetailsFragment = gql`
         created_at
         modified_at
         version
-        metadata
+        metadata {
+            name
+            value {
+                value
+                raw_value
+            }
+        }
 
         ... on Value {
             value
@@ -43,7 +49,13 @@ export const valueDetailsExtendedFragment = gql`
         created_at
         modified_at
         version
-        metadata
+        metadata {
+            name
+            value {
+                value
+                raw_value
+            }
+        }
 
         ... on Value {
             id_value

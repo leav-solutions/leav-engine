@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {AnyPrimitive} from '@leav/utils';
 import {IDbEdge} from 'infra/db/_types';
 import {IRecord} from './record';
 import {ITreeNode, TreePaths} from './tree';
@@ -14,7 +15,7 @@ export interface IDbValueVersion {
 }
 
 export interface IValueMetadata {
-    [fieldName: string]: any;
+    [fieldName: string]: IStandardValue | AnyPrimitive;
 }
 
 export interface IGenericValue {

@@ -96,15 +96,10 @@ export interface IRowData {
     [columnName: string]: unknown;
 }
 
-function LinkField({
-    record,
-    element,
-    onValueSubmit,
-    onValueDelete
-}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+function LinkField({element, onValueSubmit, onValueDelete}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
-    const {readOnly: isRecordReadOnly} = useRecordEditionContext();
+    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const recordValues = (element.values as RECORD_FORM_recordForm_elements_values_LinkValue[]) ?? [];
 
     const attribute = element.attribute as RECORD_FORM_recordForm_elements_attribute_LinkAttribute;

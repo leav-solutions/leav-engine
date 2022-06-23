@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {render, screen} from '_tests/testUtils';
-import {mockFormAttributeTree} from '__mocks__/common/attribute';
+import {mockFormAttribute, mockFormAttributeTree} from '__mocks__/common/attribute';
 import {mockRecord} from '__mocks__/common/record';
 import {mockTreeRecord, mockTreeRecordChild} from '__mocks__/common/treeElements';
 import {mockRecordPropertyWithAttribute} from '__mocks__/common/value';
@@ -15,6 +15,12 @@ import EditRecordSidebar from './EditRecordSidebar';
 jest.mock('components/shared/RecordSummary', () => {
     return function RecordSummary() {
         return <div>RecordSummary</div>;
+    };
+});
+
+jest.mock('components/RecordEdition/EditRecord/uiElements/StandardField', () => {
+    return function StandardField() {
+        return <div>StandardField</div>;
     };
 });
 
@@ -41,12 +47,14 @@ describe('EditRecordSidebar', () => {
         dispatch: jest.fn()
     };
 
+    const mockHandleMetadataSubmit = jest.fn();
+
     describe('Record summary', () => {
         test('Display record summary', async () => {
             await act(async () => {
                 render(
                     <EditRecordReducerContext.Provider value={mockReducer}>
-                        <EditRecordSidebar />
+                        <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
                     </EditRecordReducerContext.Provider>
                 );
             });
@@ -61,7 +69,7 @@ describe('EditRecordSidebar', () => {
             await act(async () => {
                 render(
                     <EditRecordReducerContext.Provider value={mockReducerWithValue}>
-                        <EditRecordSidebar />
+                        <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
                     </EditRecordReducerContext.Provider>
                 );
             });
@@ -83,7 +91,7 @@ describe('EditRecordSidebar', () => {
             await act(async () => {
                 render(
                     <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
-                        <EditRecordSidebar />
+                        <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
                     </EditRecordReducerContext.Provider>
                 );
             });
@@ -112,7 +120,7 @@ describe('EditRecordSidebar', () => {
             await act(async () => {
                 render(
                     <EditRecordReducerContext.Provider value={mockReducerWithTreeValue}>
-                        <EditRecordSidebar />
+                        <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
                     </EditRecordReducerContext.Provider>
                 );
             });
@@ -124,6 +132,33 @@ describe('EditRecordSidebar', () => {
 
             expect(screen.getByText('Tree record')).toBeInTheDocument();
             expect(screen.getByText(mockTreeRecordChild.whoAmI.label)).toBeInTheDocument();
+        });
+
+        test('Display metadata of the value', async () => {
+            const mockReducerWithValueAndMetadata = {
+                state: {
+                    ...mockReducerWithValue.state,
+                    activeValue: {
+                        ...mockReducerWithValue.state.activeValue,
+                        attribute: {
+                            ...mockReducerWithValue.state.activeValue.attribute,
+                            metadata_fields: [{...mockFormAttribute, values_list: null}]
+                        }
+                    }
+                },
+                dispatch: jest.fn()
+            };
+            const {value, attribute} = mockReducerWithValue.state.activeValue;
+            await act(async () => {
+                render(
+                    <EditRecordReducerContext.Provider value={mockReducerWithValueAndMetadata}>
+                        <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+                    </EditRecordReducerContext.Provider>
+                );
+            });
+
+            expect(screen.getByText(/metadata/)).toBeInTheDocument();
+            expect(screen.getByText(/StandardField/)).toBeInTheDocument();
         });
     });
 });

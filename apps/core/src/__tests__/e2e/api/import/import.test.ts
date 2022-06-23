@@ -1,15 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {makeGraphQlCall, gqlSaveLibrary, gqlSaveAttribute} from '../e2eUtils';
-import {AttributeTypes} from '../../../../_types/attribute';
-import fs from 'fs';
-import path from 'path';
-import {IImportDomain} from '../../../../domain/import/importDomain';
-import {IQueryInfos} from '../../../../_types/queryInfos';
-import {getConfig} from '../../../../config';
-import {init} from '../globalSetup';
 import {appRootPath} from '@leav/app-root-path';
+import fs from 'fs';
+import {getConfig} from '../../../../config';
+import {IImportDomain} from '../../../../domain/import/importDomain';
+import {AttributeTypes} from '../../../../_types/attribute';
+import {IQueryInfos} from '../../../../_types/queryInfos';
+import {gqlSaveAttribute, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
+import {init} from '../globalSetup';
 
 const testLibName = 'test_import';
 const testLibNameQuery = 'testImport';
@@ -67,9 +66,24 @@ describe('Import', () => {
     test('check record creation: simple, simple_link and advanced_link', async () => {
         expect.assertions(7);
 
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameQuery} { totalCount list { simple simple_link { simple } advanced_link {login} property(attribute: "advanced_link") { metadata } } } }`
-        );
+        const res = await makeGraphQlCall(`{
+            ${testLibNameQuery} {
+                totalCount
+                list {
+                    simple
+                    simple_link { simple }
+                    advanced_link {login}
+                    property(attribute: "advanced_link") {
+                        metadata {
+                            name
+                            value {
+                                value
+                            }
+                        }
+                    }
+                }
+            }
+        }`);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
@@ -80,11 +94,14 @@ describe('Import', () => {
         expect(record.simple).toBe('simple');
         expect(record.simple_link.simple).toBe('simple');
         expect(record.advanced_link.login).toBe('admin');
-        expect(record.property[0].metadata).toEqual(
-            expect.objectContaining({
-                simple: 'meta_value'
-            })
-        );
+        expect(record.property[0].metadata).toEqual([
+            {
+                name: 'simple',
+                value: {
+                    value: 'meta_value'
+                }
+            }
+        ]);
     });
 
     test('check tree', async () => {

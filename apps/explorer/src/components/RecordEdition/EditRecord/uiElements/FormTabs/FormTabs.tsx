@@ -22,7 +22,7 @@ const StyledTabs = styled(Tabs)`
     }
 `;
 
-function FormTabs({element, record, onValueSubmit, onValueDelete}: IFormElementProps<IFormTabsSettings>): JSX.Element {
+function FormTabs({element, onValueSubmit, onValueDelete}: IFormElementProps<IFormTabsSettings>): JSX.Element {
     const [{lang}] = useLang();
     const tabPosition = element.settings.direction === TabsDirection.VERTICAL ? 'left' : 'top';
 
@@ -44,7 +44,6 @@ function FormTabs({element, record, onValueSubmit, onValueDelete}: IFormElementP
                     <Tabs.TabPane tab={localizedTranslation(tab.label, lang)} key={tab.id}>
                         <tabContainer.uiElement
                             element={tabContainer}
-                            record={record}
                             onValueSubmit={onValueSubmit}
                             onValueDelete={onValueDelete}
                         />

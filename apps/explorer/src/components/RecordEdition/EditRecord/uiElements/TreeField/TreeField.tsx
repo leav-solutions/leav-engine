@@ -56,14 +56,9 @@ const FooterWrapper = styled.div`
     text-align: left;
 `;
 
-function TreeField({
-    element,
-    record,
-    onValueSubmit,
-    onValueDelete
-}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+function TreeField({element, onValueSubmit, onValueDelete}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const attribute = element.attribute as RECORD_FORM_recordForm_elements_attribute_TreeAttribute;
-    const {readOnly: isRecordReadOnly} = useRecordEditionContext();
+    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const recordValues = (element.values as RECORD_FORM_recordForm_elements_values_TreeValue[]) ?? [];
 
     const [fieldValues, setFieldValues] = useState<RECORD_FORM_recordForm_elements_values_TreeValue[]>(recordValues);

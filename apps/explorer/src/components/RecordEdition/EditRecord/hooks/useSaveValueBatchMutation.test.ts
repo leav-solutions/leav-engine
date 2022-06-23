@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as apolloClient from '@apollo/client';
-import {ErrorTypes} from '@leav/utils/src';
+import {ErrorTypes} from '@leav/utils';
 import {
     SAVE_VALUE_BATCH,
     SAVE_VALUE_BATCH_saveValueBatch_errors,
@@ -37,7 +37,8 @@ describe('useSaveValueBatchMutation', () => {
             system: false
         } as unknown) as SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute,
         value: null,
-        raw_value: null
+        raw_value: null,
+        metadata: null
     };
 
     test('If no errors, return values', async () => {

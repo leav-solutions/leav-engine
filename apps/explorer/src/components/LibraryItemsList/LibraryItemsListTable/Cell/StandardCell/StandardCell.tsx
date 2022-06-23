@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, CloseOutlined, FileTextOutlined} from '@ant-design/icons';
-import {AnyPrimitive} from '@leav/utils/src';
+import {AnyPrimitive} from '@leav/utils';
 import {Switch, Tooltip, Typography} from 'antd';
 import React from 'react';
 import {useTranslation} from 'react-i18next';

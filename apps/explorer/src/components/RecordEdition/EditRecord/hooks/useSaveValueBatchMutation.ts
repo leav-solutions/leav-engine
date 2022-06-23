@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloError, useApolloClient, useMutation} from '@apollo/client';
-import {ErrorTypes} from '@leav/utils';
+import {ErrorTypes, objectToNameValueArray} from '@leav/utils';
 import {saveValueBatchMutation} from 'graphQL/mutations/values/saveValueBatchMutation';
 import {useTranslation} from 'react-i18next';
 import {
@@ -32,10 +32,16 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
                     variables: {
                         library: record.library.id,
                         recordId: record.id,
-                        values: values.map(value => ({
-                            attribute: value.attribute,
-                            id_value: value.idValue,
-                            value: String(value.value)
+                        values: values.map(valueToSave => ({
+                            attribute: valueToSave.attribute,
+                            id_value: valueToSave.idValue,
+                            value: String(valueToSave.value),
+                            metadata: valueToSave.metadata
+                                ? objectToNameValueArray(valueToSave.metadata).map(({name, value}) => ({
+                                      name,
+                                      value: String(value)
+                                  }))
+                                : null
                         }))
                     }
                 });

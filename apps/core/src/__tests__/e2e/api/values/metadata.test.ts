@@ -41,7 +41,13 @@ describe('Values Metadata', () => {
                     }
                 ) {
                     id_value
-                    metadata
+                    metadata {
+                        name
+                        value {
+                            value
+                            raw_value
+                        }
+                    }
                 }
             }`;
         const resSaveValue = await makeGraphQlCall(query);
@@ -49,7 +55,7 @@ describe('Values Metadata', () => {
         expect(resSaveValue.status).toBe(200);
         expect(resSaveValue.data.errors).toBeUndefined();
         expect(resSaveValue.data.data.saveValue.id_value).toBeDefined();
-        expect(resSaveValue.data.data.saveValue.metadata[metaAttrId]).toBeDefined();
+        expect(resSaveValue.data.data.saveValue.metadata.find(({name}) => name === metaAttrId)).toBeDefined();
 
         // Read value
         const queryGetVal = `{
@@ -57,7 +63,13 @@ describe('Values Metadata', () => {
                 list {
                     property(attribute: "${attrWithMetaId}") {
                         id_value
-                        metadata
+                        metadata {
+                            name
+                            value {
+                                value
+                                raw_value
+                            }
+                        }
                     }
                 }
             }
@@ -66,6 +78,6 @@ describe('Values Metadata', () => {
 
         expect(resGetVal.status).toBe(200);
         expect(resGetVal.data.errors).toBeUndefined();
-        expect(resGetVal.data.data.r.list[0].property[0].metadata[metaAttrId]).toBeDefined();
+        expect(resGetVal.data.data.r.list[0].property[0].metadata.find(({name}) => name === metaAttrId)).toBeDefined();
     });
 });
