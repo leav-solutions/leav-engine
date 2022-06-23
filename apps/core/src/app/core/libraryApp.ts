@@ -42,7 +42,7 @@ interface IDeps {
     'core.app.core'?: ICoreApp;
 }
 
-export default function({
+export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -335,7 +335,9 @@ export default function({
                 baseSchema.resolvers[libTypeName] = {
                     library: async (rec, _, ctx) =>
                         rec.library ? libraryDomain.getLibraryProperties(rec.library, ctx) : null,
-                    whoAmI: recordDomain.getRecordIdentity,
+                    whoAmI: async (rec: IRecord, _, ctx: IQueryInfos) => {
+                        return recordDomain.getRecordIdentity(rec, ctx);
+                    },
                     property: async (parent, {attribute}, ctx) => {
                         return recordDomain.getRecordFieldValue({
                             library: lib.id,

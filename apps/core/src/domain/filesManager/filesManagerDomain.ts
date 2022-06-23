@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {i18n} from 'i18next';
 import {IAmqpService} from 'infra/amqp/amqpService';
 import Joi from 'joi';
 import {IUtils} from 'utils/utils';
@@ -12,7 +13,9 @@ import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITreeNode} from '_types/tree';
+import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {IRecordDomain} from '../record/recordDomain';
@@ -32,11 +35,19 @@ interface IForcePreviewsGenerationParams {
     recordId?: string;
 }
 
+interface IGetOriginalPathParams {
+    fileId: string;
+    libraryId: string;
+    ctx: IQueryInfos;
+}
+
 export interface IFilesManagerDomain {
     init(): Promise<void>;
     getPreviewVersion(): IPreviewVersion[];
     getPreviewAttributesSettings(): IPreviewAttributesSettings;
     forcePreviewsGeneration(params: IForcePreviewsGenerationParams): Promise<boolean>;
+    getRootPathByKey(rootKey: string): string;
+    getOriginalPath(params: IGetOriginalPathParams): Promise<string>;
 }
 
 interface IDeps {
@@ -47,6 +58,7 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.utils'?: IUtils;
+    translator?: i18n;
 }
 
 export const systemPreviewVersions: IPreviewVersion[] = [
@@ -85,7 +97,8 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    translator = null
 }: IDeps): IFilesManagerDomain {
     const _onMessage = async (msg: string): Promise<void> => {
         let msgBody: IFileEventData;
@@ -297,6 +310,61 @@ export default function ({
             }
 
             return true;
+        },
+        getRootPathByKey(rootKey) {
+            const rootPathConfig = config.files.rootPaths;
+
+            // Paths config is in the form of: "key1:path1,key2:path2"
+            const pathsByKeys = rootPathConfig.split(',').reduce((paths, pathByKey) => {
+                // Trim all the thing to be tolerant with trailing spaces
+                const [key, path] = pathByKey.trim().split(':');
+                paths[key.trim()] = path.trim();
+
+                return paths;
+            }, {});
+
+            if (!pathsByKeys[rootKey]) {
+                throw new Error(`Root path for key ${rootKey} not found`);
+            }
+
+            return pathsByKeys[rootKey];
+        },
+        async getOriginalPath({fileId, libraryId, ctx}) {
+            // Get file record
+            const fileRecords = await recordDomain.find({
+                params: {
+                    library: libraryId,
+                    filters: [{field: 'id', value: fileId, condition: AttributeCondition.EQUAL}]
+                },
+                ctx
+            });
+
+            if (!fileRecords.list.length) {
+                throw new ValidationError(
+                    {
+                        id: Errors.FILE_NOT_FOUND
+                    },
+                    translator.t('errors.FILE_NOT_FOUND')
+                );
+            }
+
+            const fileRecord = fileRecords.list[0];
+
+            // Get root path from file root key
+            let rootPath = this.getRootPathByKey(fileRecord[FilesAttributes.ROOT_KEY]);
+
+            // Handle famous issue of presence or not of trailing slash in a path
+            if (rootPath[rootPath.length - 1] !== '/') {
+                rootPath += '/';
+            }
+
+            // Return original path
+            const fullPath = `${rootPath}${fileRecord[FilesAttributes.FILE_PATH]}/${
+                fileRecord[FilesAttributes.FILE_NAME]
+            }`;
+
+            // Clean double slashes, just to be sure
+            return fullPath.replace('//', '/');
         }
     };
 }

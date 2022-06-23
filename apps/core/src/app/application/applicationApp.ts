@@ -6,6 +6,7 @@ import {Override} from '@leav/utils';
 import {GraphQLUpload} from 'apollo-server';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IApplicationDomain} from 'domain/application/applicationDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IApplicationPermissionDomain} from 'domain/permission/applicationPermissionDomain';
@@ -17,7 +18,6 @@ import glob from 'glob';
 import {GraphQLResolveInfo} from 'graphql';
 import path from 'path';
 import {IUtils} from 'utils/utils';
-import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
 import {IGetCoreAttributesParams} from '_types/attribute';
 import {IRequestWithContext} from '_types/express';
@@ -47,8 +47,9 @@ export interface IApplicationApp {
 
 interface IDeps {
     'core.app.auth'?: IAuthApp;
-    'core.domain.application'?: IApplicationDomain;
     'core.app.graphql'?: IGraphqlApp;
+    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
+    'core.domain.application'?: IApplicationDomain;
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.permission.application'?: IApplicationPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
@@ -62,6 +63,7 @@ interface IDeps {
 export default function ({
     'core.app.auth': authApp = null,
     'core.app.graphql': graphqlApp = null,
+    'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.domain.application': applicationDomain = null,
     'core.domain.permission': permissionDomain = null,
     'core.domain.permission.application': applicationPermissionDomain = null,
@@ -284,13 +286,7 @@ export default function ({
                 // Check authentication and parse token
                 async (req: IRequestWithContext, res, next) => {
                     const endpoint = req.params.endpoint;
-                    const ctx: IQueryInfos = {
-                        userId: null,
-                        lang: (req.query.lang as string) ?? config.lang.default,
-                        queryId: req.body.requestId || uuidv4(),
-                        groupsId: []
-                    };
-                    req.ctx = ctx;
+                    req.ctx = initQueryContext(req);
 
                     if (endpoint === 'login') {
                         return next();

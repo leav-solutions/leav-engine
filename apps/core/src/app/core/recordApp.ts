@@ -8,7 +8,7 @@ import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
-import {systemPreviewVersions} from '../../domain/filesManager/filesManagerDomain';
+import {IFilesManagerDomain, systemPreviewVersions} from '../../domain/filesManager/filesManagerDomain';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord, TreeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
@@ -23,6 +23,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.filesManager'?: IFilesManagerDomain;
     'core.utils'?: IUtils;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core.attribute'?: ICoreAttributeApp;
@@ -33,6 +34,7 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.domain.filesManager': filesManagerDomain = null,
     'core.utils': utils = null,
     'core.app.core.attribute': attributeApp = null,
     'core.app.core.indexationManager': indexationManagerApp = null
@@ -83,6 +85,7 @@ export default function ({
                             .join(' ')}
                         pages: String
                         file: Record
+                        original: String!
                     }
 
                     type RecordIdentityConf {
