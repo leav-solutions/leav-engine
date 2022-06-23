@@ -4,10 +4,14 @@
 import * as amqp from 'amqplib';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
+import {i18n} from 'i18next';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
+import ValidationError from '../../errors/ValidationError';
 import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
+import {mockRecord} from '../../__tests__/mocks/record';
+import {mockTranslator} from '../../__tests__/mocks/translator';
 import filesManager, {systemPreviewVersions} from './filesManagerDomain';
 import {createPreview} from './helpers/handlePreview';
 import winston = require('winston');
@@ -262,5 +266,71 @@ describe('FilesManager', () => {
             mockAmqpService,
             mockConfig
         );
+    });
+
+    describe('getRootPathByKey', () => {
+        test('Return path by key', async () => {
+            const mockConfigWithPaths = {
+                ...mockConfig,
+                files: {
+                    rootPaths: 'key1:path1, key2: path2 , key3 : path3 '
+                }
+            };
+
+            const files = filesManager({
+                config: mockConfigWithPaths as Config.IConfig
+            });
+
+            expect(files.getRootPathByKey('key1')).toBe('path1');
+            expect(files.getRootPathByKey('key2')).toBe('path2');
+            expect(files.getRootPathByKey('key3')).toBe('path3');
+            expect(() => files.getRootPathByKey('keyUnknown')).toThrow(Error);
+        });
+    });
+
+    describe('getOriginalPath', () => {
+        test('Retrieve original path', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    list: [
+                        {
+                            ...mockRecord,
+                            file_path: '/path/to/file',
+                            file_name: 'myFile.mp4',
+                            rootKey: 'key1'
+                        }
+                    ]
+                })
+            };
+
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain
+            });
+            files.getRootPathByKey = jest.fn(() => '/rootPath');
+
+            const originalPath = await files.getOriginalPath({ctx, libraryId: 'libraryId', fileId: '123456'});
+
+            expect(originalPath).toBe('/rootPath/path/to/file/myFile.mp4');
+        });
+
+        test('Throws if file does not exist', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    list: []
+                })
+            };
+
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                translator: mockTranslator as i18n
+            });
+            files.getRootPathByKey = jest.fn(() => '/rootPath');
+
+            await expect(files.getOriginalPath({ctx, libraryId: 'libraryId', fileId: '123456'})).rejects.toThrow(
+                ValidationError
+            );
+        });
     });
 });

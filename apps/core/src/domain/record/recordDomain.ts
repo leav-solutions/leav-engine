@@ -14,6 +14,7 @@ import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
+import {IPreview} from '_types/preview';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -400,7 +401,7 @@ export default function({
     }) => {
         const previewBaseUrl = getPreviewUrl();
 
-        let fileRecord;
+        let fileRecord: IRecord;
 
         // On a file, previews are accessible straight on the record
         // Otherwise, we fetch values of the previews attribute
@@ -437,7 +438,7 @@ export default function({
         });
         const previews = filePreviewsValue[0]?.raw_value ?? {};
 
-        const previewsWithUrl = Object.entries(previews)
+        const previewsWithUrl: IPreview = Object.entries(previews)
             .map(value => {
                 const [key, url] = value;
 
@@ -453,6 +454,7 @@ export default function({
             .reduce((obj, o) => ({...obj, ...o}), {});
 
         previewsWithUrl.file = fileRecord;
+        previewsWithUrl.original = `${config.files.originalsPathPrefix}/${fileRecord.library}/${fileRecord.id}`;
 
         return previewsWithUrl;
     };

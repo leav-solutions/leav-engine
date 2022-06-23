@@ -29,7 +29,11 @@ import recordDomain from './recordDomain';
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
 const mockConfig: Mockify<Config.IConfig> = {
-    eventsManager: eventsManagerMockConfig as Config.IEventsManager
+    eventsManager: eventsManagerMockConfig as Config.IEventsManager,
+    files: {
+        rootPaths: 'files1:/files',
+        originalsPathPrefix: 'originals'
+    }
 };
 
 describe('RecordDomain', () => {
@@ -779,7 +783,8 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
-                'core.infra.library': mockLibRepo as ILibraryRepo
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                config: mockConfig as Config.IConfig
             });
             recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
                 Promise.resolve([
@@ -815,6 +820,7 @@ describe('RecordDomain', () => {
                 big: getPreviewUrl() + 'big_fake-image',
                 small: getPreviewUrl() + 'small_fake-image',
                 medium: getPreviewUrl() + 'medium_fake-image',
+                original: 'originals/my_lib/123456',
                 file: {
                     active: true,
                     created_at: 1234567890,

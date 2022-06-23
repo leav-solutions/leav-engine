@@ -6,6 +6,7 @@
         "ELEMENT_NOT_IN_TREE": "Élément {{element}} non présent dans l’arbre {{tree}}",
         "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Un élement identique avec le même chemin est déjà présent",
         "ERROR": "Erreur",
+        "FILE_NOT_FOUND": "Fichier inconnu",
         "FORBIDDEN_ID": "L'Id spécifiée est interdit",
         "FORMAT_ERROR": "Format invalide: {{details}}",
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
