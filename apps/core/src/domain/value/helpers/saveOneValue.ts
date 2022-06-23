@@ -60,18 +60,4 @@ export default async (
           });
 
     return savedVal;
-
-    // const processedValue =  attribute?.actions_list?.[ActionsListEvents.GET_VALUE]
-    //     ? await deps.actionsListDomain.runActionsList(
-    //           attribute?.actions_list?.[ActionsListEvents.GET_VALUE],
-    //           savedVal,
-    //           ctx
-    //       )
-    //     : savedVal;
-
-    // if (attribute.type === AttributeTypes.TREE) {
-    //     (processedValue.value as ITreeValue).treeId = attribute.linked_tree;
-    // }
-
-    // return {...savedVal, value: processedValue.value, raw_value: savedVal.value, attribute: attribute.id};
 };
