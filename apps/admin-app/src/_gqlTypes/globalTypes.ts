@@ -305,6 +305,7 @@ export interface RecordIdentityConfInput {
     label?: string | null;
     color?: string | null;
     preview?: string | null;
+    treeColorPreview?: string | null;
 }
 
 export interface SortApplications {

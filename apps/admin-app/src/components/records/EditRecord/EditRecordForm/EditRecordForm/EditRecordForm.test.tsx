@@ -79,7 +79,7 @@ const library: GET_LIB_BY_ID_libraries_list = {
     label: {fr: 'produits', en: 'products'},
     attributes: attributes as GET_LIB_BY_ID_libraries_list_attributes[],
     permissions_conf: null,
-    recordIdentityConf: {label: null, color: null, preview: null},
+    recordIdentityConf: {label: null, color: null, preview: null, treeColorPreview: null},
     defaultView: null,
     fullTextAttributes: [],
     gqlNames: {

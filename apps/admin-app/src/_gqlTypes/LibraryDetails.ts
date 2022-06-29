@@ -229,6 +229,7 @@ export interface LibraryDetails_recordIdentityConf {
     label: string | null;
     color: string | null;
     preview: string | null;
+    treeColorPreview: string | null;
 }
 
 export interface LibraryDetails_defaultView {

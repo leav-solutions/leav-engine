@@ -40,7 +40,7 @@ describe('EditLibraryForm', () => {
         label: {fr: 'Test', en: null},
         system: false,
         attributes: attributes as GET_LIB_BY_ID_libraries_list_attributes[],
-        recordIdentityConf: {label: null, color: null, preview: null}
+        recordIdentityConf: {label: null, color: null, preview: null, treeColorPreview: null}
     };
 
     beforeAll(() => {

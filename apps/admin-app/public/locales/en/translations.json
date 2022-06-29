@@ -60,6 +60,7 @@
         "record_identity_label": "Label",
         "record_identity_color": "Color",
         "record_identity_preview": "Preview",
+        "record_identity_dependent_color_and_preview": "Tree for default color and preview",
         "permissions": "Permissions",
         "permissions_settings_title": "Settings",
         "permissions_relation": "Relation",

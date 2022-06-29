@@ -61,7 +61,8 @@ function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
                             ? {
                                   label: libData.recordIdentityConf.label,
                                   preview: libData.recordIdentityConf.preview,
-                                  color: libData.recordIdentityConf.color
+                                  color: libData.recordIdentityConf.color,
+                                  treeColorPreview: libData.recordIdentityConf.treeColorPreview
                               }
                             : null
                 }
