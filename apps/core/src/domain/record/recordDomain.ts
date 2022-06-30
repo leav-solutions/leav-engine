@@ -116,6 +116,11 @@ const allowedTypeOperator = {
     object: [AttributeCondition.BETWEEN]
 };
 
+const fulltextSearchDefaultPagination = {
+    from: 0,
+    size: 10000
+};
+
 export interface IRecordDomain {
     createRecord(library: string, ctx: IQueryInfos): Promise<IRecord>;
 
@@ -662,7 +667,8 @@ export default function ({
 
             // Add ids filters if searchQuery is defined
             if (typeof searchQuery !== 'undefined') {
-                const searchRecords = await recordRepo.search(library, searchQuery);
+                const {from, size} = fulltextSearchDefaultPagination;
+                const searchRecords = await recordRepo.search(library, searchQuery, from, size);
 
                 if (searchRecords.list.length) {
                     searchFilters = searchRecords.list.flatMap((r, i, arr) =>
