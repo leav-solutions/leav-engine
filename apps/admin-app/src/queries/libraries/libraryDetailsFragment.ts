@@ -34,6 +34,7 @@ export const libraryDetailsFragment = gql`
             label
             color
             preview
+            treeColorPreview
         }
         defaultView {
             id

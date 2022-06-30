@@ -384,6 +384,94 @@ export default function ({
         }
     };
 
+    const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
+        const libs = await libraryRepo.getLibraries({
+            params: {filters: {id: record.library}, strictFilters: true},
+            ctx
+        });
+
+        if (!libs.list.length) {
+            throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+        }
+
+        const lib = libs.list.pop();
+        const conf = lib.recordIdentityConf || {};
+
+        let label = null;
+        if (conf.label) {
+            const labelValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.label,
+                ctx
+            });
+
+            label = labelValues.length ? labelValues.pop().value : null;
+        }
+
+        let color = null;
+        if (conf.color) {
+            const colorValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.color,
+                ctx
+            });
+
+            color = colorValues.length ? colorValues.pop().value : null;
+        }
+
+        let preview = null;
+        if (conf.preview) {
+            preview = (await getPreviews({conf, lib, record, valueDomain, libraryRepo, ctx})) ?? null;
+        }
+
+        //look in tree if not defined on current record
+        if ((color === null || preview === null) && conf.treeColorPreview) {
+            const treeValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.treeColorPreview,
+                ctx
+            });
+            if (treeValues.length) {
+                // for now we look through first element (discard others if linked to multiple leaves of tree)
+                const treeAttrProps = await attributeDomain.getAttributeProperties({id: conf.treeColorPreview, ctx});
+                const ancestors = await treeRepo.getElementAncestors({
+                    treeId: treeAttrProps.linked_tree,
+                    nodeId: treeValues[0].value.id,
+                    ctx
+                });
+
+                const heritedDatas = await ancestors.reduceRight(
+                    async (res: any, ancestor, index) => {
+                        res = await res; // cause async function so res is a promise
+                        if (res.color !== null && res.preview !== null) {
+                            // already found data, nothing to do
+                            return res;
+                        }
+                        const ancestorIdentity = await _getRecordIdentity(ancestor.record, ctx);
+
+                        return {
+                            color: res.color === null ? ancestorIdentity.color : res.color,
+                            preview: res.preview === null ? ancestorIdentity.preview : res.preview
+                        };
+                    },
+                    {color, preview}
+                );
+                color = color === null ? heritedDatas.color : color;
+                preview = preview === null ? heritedDatas.preview : preview;
+            }
+        }
+        return {
+            id: record.id,
+            library: lib,
+            label,
+            color,
+            preview
+        };
+    };
+
     return {
         async createRecord(library: string, ctx: IQueryInfos): Promise<IRecord> {
             const recordData = {
@@ -648,51 +736,7 @@ export default function ({
 
             return records;
         },
-        async getRecordIdentity(record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> {
-            const libs = await libraryRepo.getLibraries({
-                params: {filters: {id: record.library}, strictFilters: true},
-                ctx
-            });
-
-            if (!libs.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-            }
-
-            const lib = libs.list.pop();
-            const conf = lib.recordIdentityConf || {};
-
-            let label = null;
-            if (conf.label) {
-                const labelValues = await valueDomain.getValues({
-                    library: lib.id,
-                    recordId: record.id,
-                    attribute: conf.label,
-                    ctx
-                });
-
-                label = labelValues.length ? labelValues.pop().value : null;
-            }
-
-            let color = null;
-            if (conf.color) {
-                const colorValues = await valueDomain.getValues({
-                    library: lib.id,
-                    recordId: record.id,
-                    attribute: conf.color,
-                    ctx
-                });
-
-                color = colorValues.length ? colorValues.pop().value : null;
-            }
-
-            return {
-                id: record.id,
-                library: lib,
-                label,
-                color,
-                preview: (await getPreviews({conf, lib, record, valueDomain, libraryRepo, ctx})) ?? null
-            };
-        },
+        getRecordIdentity: _getRecordIdentity,
         async getRecordFieldValue({library, record, attributeId, options, ctx}): Promise<IValue | IValue[] | null> {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
             let values = await _extractRecordValue(record, attrProps, library, options, ctx);

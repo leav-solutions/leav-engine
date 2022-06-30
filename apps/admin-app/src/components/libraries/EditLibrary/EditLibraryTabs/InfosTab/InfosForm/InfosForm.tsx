@@ -10,7 +10,7 @@ import * as yup from 'yup';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError, localizedLabel} from '../../../../../../utils';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {LibraryBehavior} from '../../../../../../_gqlTypes/globalTypes';
+import {AttributeType, LibraryBehavior} from '../../../../../../_gqlTypes/globalTypes';
 import {ErrorTypes, IFormError} from '../../../../../../_types/errors';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import ViewSelector from '../../../../../views/ViewSelector';
@@ -54,7 +54,8 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         recordIdentityConf: {
             label: null,
             color: null,
-            preview: null
+            preview: null,
+            treeColorPreview: null
         },
         permissions: {
             admin_library: true,
@@ -81,6 +82,15 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
               value: a.id,
               text: localizedLabel(a.label, lang) || a.id
           }))
+        : [];
+
+    const libTreeAttributesOptions = library?.attributes
+        ? library.attributes.filter(a => a.type === AttributeType.tree)
+            .map(a => ({
+                key: a.id,
+                value: a.id,
+                text: localizedLabel(a.label, lang) || a.id
+            }))
         : [];
     libAttributesOptions.unshift({key: '', value: '', text: ''});
 
@@ -110,7 +120,8 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         recordIdentityConf: yup.object().shape({
             label: yup.string().nullable(),
             color: yup.string().nullable(),
-            preview: yup.string().nullable()
+            preview: yup.string().nullable(),
+            treeColorPreview: yup.string().nullable()
         })
     });
 
@@ -252,6 +263,18 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             disabled={readonly}
                             label={t('libraries.record_identity_preview')}
                             value={recordIdentityConf && recordIdentityConf.preview ? recordIdentityConf.preview : ''}
+                            onChange={_handleChange}
+                        />
+                    </FormFieldWrapper>
+                    <FormFieldWrapper error={_getErrorByField('recordIdentityConf.preview')}>
+                        <Form.Dropdown
+                            search
+                            selection
+                            options={libTreeAttributesOptions}
+                            name="recordIdentityConf.treeColorPreview"
+                            disabled={readonly}
+                            label={t('libraries.record_identity_dependent_color_and_preview')}
+                            value={recordIdentityConf && recordIdentityConf.treeColorPreview ? recordIdentityConf.treeColorPreview : ''}
                             onChange={_handleChange}
                         />
                     </FormFieldWrapper>

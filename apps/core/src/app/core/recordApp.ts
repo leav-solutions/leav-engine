@@ -29,7 +29,7 @@ interface IDeps {
     'core.app.core.indexationManager'?: IIndexationManagerApp;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
@@ -87,13 +87,15 @@ export default function({
                     type RecordIdentityConf {
                         label: ID,
                         color: ID,
-                        preview: ID
+                        preview: ID,
+                        treeColorPreview: ID
                     }
 
                     input RecordIdentityConfInput {
                         label: ID,
                         color: ID,
-                        preview: ID
+                        preview: ID,
+                        treeColorPreview: ID
                     }
 
                     input RecordInput {

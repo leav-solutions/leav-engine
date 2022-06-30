@@ -93,4 +93,5 @@ export interface IRecordIdentityConf {
     label?: string;
     color?: string;
     preview?: string;
+    treeColorPreview?: string;
 }
