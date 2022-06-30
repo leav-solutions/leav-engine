@@ -17,7 +17,8 @@
         "available_soon": "Bientôt",
         "go_back_home": "Retourner à l'accueil",
         "details": "Détails",
-        "element_not_found": "Élément introuvable"
+        "element_not_found": "Élément introuvable",
+        "refresh_page": "Rafraîchir la page"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
