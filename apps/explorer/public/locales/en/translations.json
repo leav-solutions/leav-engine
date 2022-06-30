@@ -17,7 +17,8 @@
         "available_soon": "Soon",
         "go_back_home": "Back Home",
         "details": "Details",
-        "element_not_found": "Element not found"
+        "element_not_found": "Element not found",
+        "refresh_page": "Refresh Page"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
