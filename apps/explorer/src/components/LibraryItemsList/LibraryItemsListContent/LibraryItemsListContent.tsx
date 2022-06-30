@@ -102,7 +102,8 @@ function LibraryItemsListContent({selectionMode, library, defaultView}: ILibrary
             current: defaultView,
             reload: false,
             sync: true
-        }
+        },
+        lang
     });
 
     const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
