@@ -4,6 +4,7 @@
 import React from 'react';
 import {SortOrder, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {act, render, screen} from '_tests/testUtils';
+import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import {IView} from '../../../../_types/types';
 import View from './View';
 
@@ -24,7 +25,11 @@ describe('View', () => {
 
     test('should show view label', async () => {
         await act(async () => {
-            render(<View view={mockView} onEdit={jest.fn()} />);
+            render(
+                <MockSearchContextProvider>
+                    <View view={mockView} onEdit={jest.fn()} />
+                </MockSearchContextProvider>
+            );
         });
 
         expect(screen.getByTestId('view-title')).toBeInTheDocument();

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 import {IGetViewListElement, IGetViewListSort} from 'graphQL/queries/views/getViewsListQuery';
+import viewDetailsFragment from 'graphQL/queries/views/viewDetailsFragment';
 import {RecordFilterCondition, RecordFilterOperator, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {ISystemTranslation} from '../../../_types/types';
 
@@ -40,12 +41,13 @@ export interface IAddViewMutationVariables {
     view: IAddViewMutationVariablesView;
 }
 
-const addViewMutation = gql`
+const saveViewMutation = gql`
+    ${viewDetailsFragment}
     mutation ADD_VIEW($view: ViewInput!) {
         saveView(view: $view) {
-            id
+            ...ViewDetails
         }
     }
 `;
 
-export default addViewMutation;
+export default saveViewMutation;

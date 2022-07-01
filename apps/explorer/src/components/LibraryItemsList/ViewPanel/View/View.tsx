@@ -2,8 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EllipsisOutlined} from '@ant-design/icons';
-import {useMutation} from '@apollo/client';
 import {Button, Dropdown, Menu, Typography} from 'antd';
+import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
+import useDeleteViewMutation from 'graphQL/mutations/views/hooks/useDeleteViewMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
@@ -12,15 +13,6 @@ import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {defaultView} from '../../../../constants/constants';
-import addViewMutation, {
-    IAddViewMutation,
-    IAddViewMutationVariables
-} from '../../../../graphQL/mutations/views/addViewMutation';
-import deleteViewMutation, {
-    IDeleteViewMutation,
-    IDeleteViewMutationVariables
-} from '../../../../graphQL/mutations/views/deleteViewMutation';
-import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import themingVar from '../../../../themingVar';
 import {localizedTranslation} from '../../../../utils';
@@ -92,12 +84,13 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const {t} = useTranslation();
     const [{lang, defaultLang}] = useLang();
 
-    const [activeLibrary] = useActiveLibrary();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [description, setDescription] = useState<{expand: boolean; key: number}>({expand: false, key: 0});
 
-    const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(addViewMutation);
-    const [deleteView] = useMutation<IDeleteViewMutation, IDeleteViewMutationVariables>(deleteViewMutation);
+    const {addView} = useAddViewMutation(searchState.library.id);
+
+    // const [deleteView] = useMutation<IDeleteViewMutation, IDeleteViewMutationVariables>(deleteViewMutation);
+    const {deleteView} = useDeleteViewMutation();
 
     const _changeView = () => {
         searchDispatch({type: SearchActionTypes.CHANGE_VIEW, view});
@@ -109,7 +102,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
         // cancel click view selection
         event.domEvent.stopPropagation();
 
-        await deleteView({variables: {viewId: view.id}});
+        await deleteView(view.id);
 
         // set flag to refetch views
         if (view.id === searchState.view.current.id) {
@@ -135,17 +128,15 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
         try {
             const newViewRes = await addView({
-                variables: {
-                    view: {
-                        ..._.omit(view, 'owner'),
-                        label: {
-                            [defaultLang]: `${localizedTranslation(view.label, lang)} (${t('global.copy')})`
-                        },
-                        filters: getRequestFromFilters(view.filters),
-                        id: undefined,
-                        library: activeLibrary.id,
-                        shared: false
-                    }
+                view: {
+                    ..._.omit(view, 'owner'),
+                    label: {
+                        [defaultLang]: `${localizedTranslation(view.label, lang)} (${t('global.copy')})`
+                    },
+                    filters: getRequestFromFilters(view.filters),
+                    id: undefined,
+                    library: searchState.library.id,
+                    shared: false
                 }
             });
 

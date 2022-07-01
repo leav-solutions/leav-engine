@@ -4,6 +4,7 @@
 import gql from 'graphql-tag';
 import {RecordFilterCondition, RecordFilterOperator, SortOrder, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {ISystemTranslation} from '../../../_types/types';
+import viewDetailsFragment from './viewDetailsFragment';
 
 export interface IGetViewListFilter {
     field?: string;
@@ -64,51 +65,12 @@ export interface IGetViewListVariables {
 }
 
 export const getViewsListQuery = gql`
+    ${viewDetailsFragment}
     query GET_VIEWS_LIST($libraryId: String!) {
         views(library: $libraryId) {
             totalCount
             list {
-                id
-                display {
-                    size
-                    type
-                }
-                shared
-                created_by {
-                    id
-                    whoAmI {
-                        id
-                        label
-                        library {
-                            id
-                            gqlNames {
-                                query
-                                type
-                            }
-                        }
-                    }
-                }
-                label
-                description
-                color
-                filters {
-                    field
-                    value
-                    tree {
-                        id
-                        label
-                    }
-                    condition
-                    operator
-                }
-                sort {
-                    field
-                    order
-                }
-                settings {
-                    name
-                    value
-                }
+                ...ViewDetails
             }
         }
     }

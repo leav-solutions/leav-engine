@@ -169,7 +169,7 @@ function ViewPanel(): JSX.Element {
 
     const {sharedViews, userViews}: {sharedViews: IView[]; userViews: IView[]} = data?.views.list.reduce(
         (acc, view) => {
-            const viewFilters: IQueryFilter[] = view.filters.map(f => ({
+            const viewFilters: IQueryFilter[] = (view?.filters ?? []).map(f => ({
                 ...f,
                 treeId: f.tree?.id
             }));

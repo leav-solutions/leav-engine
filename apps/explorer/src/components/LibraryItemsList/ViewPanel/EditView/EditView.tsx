@@ -8,11 +8,11 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ViewTypes} from '_gqlTypes/globalTypes';
-import addViewMutation, {
+import saveViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
     IAddViewMutationVariablesView
-} from '../../../../graphQL/mutations/views/addViewMutation';
+} from '../../../../graphQL/mutations/views/saveViewMutation';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {ISystemTranslation, IView} from '../../../../_types/types';
@@ -42,7 +42,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
     const [form] = Form.useForm();
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
 
-    const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(addViewMutation);
+    const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(saveViewMutation);
 
     const _handleOk = async () => {
         form.submit();
