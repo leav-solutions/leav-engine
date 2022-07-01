@@ -6,15 +6,17 @@ import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import useLibraryView from 'hooks/useLibraryView/useLibraryView';
 import React from 'react';
+import {CSSObject} from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import LibraryItemsListContent from './LibraryItemsListContent';
 
 interface ILibraryItemsListProps {
     selectionMode?: boolean;
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
+    style?: CSSObject;
 }
 
-function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX.Element {
+function LibraryItemsList({selectionMode, library, style}: ILibraryItemsListProps): JSX.Element {
     const {loading: libraryViewLoading, view: libraryView} = useLibraryView(library);
 
     const hasAccess = library.permissions.access_library;
@@ -27,7 +29,14 @@ function LibraryItemsList({selectionMode, library}: ILibraryItemsListProps): JSX
         return <Loading />;
     }
 
-    return <LibraryItemsListContent library={library} selectionMode={selectionMode} defaultView={libraryView} />;
+    return (
+        <LibraryItemsListContent
+            library={library}
+            selectionMode={selectionMode}
+            defaultView={libraryView}
+            style={style}
+        />
+    );
 }
 
 export default LibraryItemsList;

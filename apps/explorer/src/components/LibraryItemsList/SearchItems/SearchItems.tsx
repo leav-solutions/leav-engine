@@ -17,7 +17,7 @@ function SearchItems(): JSX.Element {
     };
 
     const handleEnter = e => {
-        searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
+        searchDispatch({type: SearchActionTypes.APPLY_FILTERS});
     };
 
     return (

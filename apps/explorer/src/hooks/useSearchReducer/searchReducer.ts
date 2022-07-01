@@ -180,8 +180,11 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                 loading: true
             };
         case SearchActionTypes.APPLY_FILTERS:
+            // Reset pagination when applying filters as this may lead to unexpected behavior
+            // if new filters return less results
             return {
                 ...state,
+                offset: 0,
                 loading: true
             };
     }
