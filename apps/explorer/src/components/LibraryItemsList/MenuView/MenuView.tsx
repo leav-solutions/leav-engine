@@ -10,8 +10,8 @@ import {
     RollbackOutlined,
     SaveFilled
 } from '@ant-design/icons';
-import {useMutation} from '@apollo/client';
 import {Badge, Button, Dropdown, Menu, Space, Tooltip} from 'antd';
+import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
@@ -19,14 +19,11 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch, useAppSelector} from 'redux/store';
+import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
-import addViewMutation, {
-    IAddViewMutation,
-    IAddViewMutationVariables,
-    IAddViewMutationVariablesView
-} from '../../../graphQL/mutations/views/addViewMutation';
+import {IAddViewMutationVariablesView} from '../../../graphQL/mutations/views/saveViewMutation';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../utils';
 import {TypeSideItem} from '../../../_types/types';
@@ -38,6 +35,20 @@ interface IMenuViewProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
 }
 
+const ViewButton = styled(Button)`
+    && {
+        display: flex;
+        align-items: center;
+    }
+`;
+
+const ViewLabel = styled.span`
+    width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    whitespace: nowrap;
+`;
+
 function MenuView({library}: IMenuViewProps): JSX.Element {
     const {t} = useTranslation();
 
@@ -46,7 +57,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const {display} = useAppSelector(state => state);
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(addViewMutation);
+    const {addView} = useAddViewMutation(library.id);
 
     const _toggleShowView = () => {
         const visible = !display.side.visible || display.side.type !== TypeSideItem.view;
@@ -71,22 +82,20 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
 
                 // save view in backend
                 await addView({
-                    variables: {
-                        view: {
-                            ..._.omit(searchState.view.current, 'owner'),
-                            library: library.id,
-                            sort: searchState.sort.active
-                                ? {field: searchState.sort.field, order: searchState.sort.order}
-                                : undefined,
-                            display: searchState.display,
-                            filters: getRequestFromFilters(searchState.filters),
-                            settings: [
-                                {
-                                    name: viewSettingsField,
-                                    value: viewFields
-                                }
-                            ]
-                        }
+                    view: {
+                        ..._.omit(searchState.view.current, 'owner'),
+                        library: library.id,
+                        sort: searchState.sort.active
+                            ? {field: searchState.sort.field, order: searchState.sort.order}
+                            : undefined,
+                        display: searchState.display,
+                        filters: getRequestFromFilters(searchState.filters),
+                        settings: [
+                            {
+                                name: viewSettingsField,
+                                value: viewFields
+                            }
+                        ]
                     }
                 });
 
@@ -118,9 +127,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
 
         // save view in backend
         const newViewRes = await addView({
-            variables: {
-                view: newView
-            }
+            view: newView
         });
 
         searchDispatch({
@@ -180,20 +187,19 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                 <Tooltip
                     title={localizedTranslation(searchState.view.current?.label, lang) || t('select-view.default-view')}
                 >
-                    <Button
+                    <ViewButton
                         icon={
                             <IconViewType style={{marginRight: '8px'}} type={searchState.view.current.display.type} />
                         }
                         data-testid="dropdown-view-options"
                         onClick={_toggleShowView}
                         color={searchState.view.current?.color}
-                        style={{width: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
                     >
-                        <>
+                        <ViewLabel>
                             {localizedTranslation(searchState.view.current?.label, lang) ||
                                 t('select-view.default-view')}
-                        </>
-                    </Button>
+                        </ViewLabel>
+                    </ViewButton>
                 </Tooltip>
                 <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_resetView} />
                 <Button
