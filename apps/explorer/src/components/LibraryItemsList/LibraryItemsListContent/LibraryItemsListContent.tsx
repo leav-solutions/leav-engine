@@ -177,6 +177,8 @@ function LibraryItemsListContent({
         }
     };
 
+    const isLoading = getRecordsLoading || searchState.view.reload || searchState.loading;
+
     /**
      * Called when current view changes. In charge a refetching record and saving last used view
      */
@@ -201,14 +203,6 @@ function LibraryItemsListContent({
         searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
     };
 
-    if (getRecordsLoading || searchState.view.reload || searchState.loading) {
-        return <Loading />;
-    }
-
-    if (getRecordsError) {
-        return <ErrorDisplay message={getRecordsError.message} />;
-    }
-
     // if some elements are selected and the selection type is search, show the selection Menu
     const menuSelectedActive = selectionMode
         ? !!selectionState.searchSelection.selected.length ||
@@ -231,7 +225,9 @@ function LibraryItemsListContent({
                     style={style}
                 >
                     <SideItems />
-                    <DisplayTypeSelector />
+                    {isLoading && <Loading />}
+                    {!isLoading && getRecordsError && <ErrorDisplay message={getRecordsError.message} />}
+                    {!isLoading && !getRecordsError && <DisplayTypeSelector />}
                 </Wrapper>
             </SelectionModeContext.Provider>
         </SearchContext.Provider>
