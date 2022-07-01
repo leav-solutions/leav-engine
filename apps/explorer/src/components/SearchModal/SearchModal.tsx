@@ -17,7 +17,6 @@ import {ISharedStateSelectionSearch} from '_types/types';
 
 const WrapperItemsList = styled.div`
     position: relative;
-    height: 95%;
 `;
 
 interface ISearchModalProps {
@@ -79,7 +78,11 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
 
     return renderModal(
         <WrapperItemsList>
-            <LibraryItemsList selectionMode={true} library={data.libraries.list[0]} />
+            <LibraryItemsList
+                selectionMode={true}
+                library={data.libraries.list[0]}
+                style={{height: 'calc(100vh - 11rem)'}}
+            />
         </WrapperItemsList>
     );
 }

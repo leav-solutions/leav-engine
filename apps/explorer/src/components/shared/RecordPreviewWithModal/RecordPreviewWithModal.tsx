@@ -45,17 +45,26 @@ function RecordPreviewWithModal({
     ...recordPreviewProps
 }: IRecordPreviewWithModalProps): JSX.Element {
     const [isPreviewModalOpen, setPreviewModalOpen] = useState(false);
+    const hasPreview = fileId && fileLibraryId;
 
-    const _handlePreviewClick = () => setPreviewModalOpen(true);
+    const _handlePreviewClick = () => {
+        if (!hasPreview) {
+            return;
+        }
+        setPreviewModalOpen(true);
+    };
+
     const _handleClosePreviewModal = () => setPreviewModalOpen(false);
 
     return (
         <>
             <ClickHandler onClick={_handlePreviewClick} data-testid="click-handler">
                 <RecordPreview {...recordPreviewProps} />
-                <Overlay>
-                    <EyeOutlined />
-                </Overlay>
+                {hasPreview && (
+                    <Overlay>
+                        <EyeOutlined />
+                    </Overlay>
+                )}
             </ClickHandler>
             {isPreviewModalOpen && (
                 <FileModal

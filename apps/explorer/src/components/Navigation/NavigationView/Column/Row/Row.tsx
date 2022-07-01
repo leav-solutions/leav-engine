@@ -199,7 +199,14 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
             {!!treeElement.childrenCount && (
                 <>
                     <div className="counter">
-                        <Badge count={treeElement.childrenCount} overflowCount={1000} />
+                        <Badge
+                            count={treeElement.childrenCount}
+                            overflowCount={1000}
+                            style={{
+                                background: themingVar['@item-active-bg'],
+                                color: themingVar['@default-text-color']
+                            }}
+                        />
                     </div>
                     <div>{isAccessible && <RightOutlined />}</div>
                 </>

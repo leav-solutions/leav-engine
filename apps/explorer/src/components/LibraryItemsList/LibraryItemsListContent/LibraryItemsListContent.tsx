@@ -73,9 +73,15 @@ interface ILibraryItemsListContentProps {
     selectionMode?: boolean;
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
     defaultView: IView;
+    style?: CSSObject;
 }
 
-function LibraryItemsListContent({selectionMode, library, defaultView}: ILibraryItemsListContentProps): JSX.Element {
+function LibraryItemsListContent({
+    selectionMode,
+    library,
+    defaultView,
+    style
+}: ILibraryItemsListContentProps): JSX.Element {
     const [{lang}] = useLang();
     const {display, selection: selectionState} = useAppSelector(state => state); // keep selection
     const defaultAttributes = extractAttributesFromLibrary(library);
@@ -98,6 +104,7 @@ function LibraryItemsListContent({selectionMode, library, defaultView}: ILibrary
         fields: _getFieldsFromView(defaultView),
         filters: defaultView.filters,
         sort: {...defaultView.sort, active: true},
+        display: {...defaultView.display},
         view: {
             current: defaultView,
             reload: false,
@@ -221,6 +228,7 @@ function LibraryItemsListContent({selectionMode, library, defaultView}: ILibrary
                 <Wrapper
                     showSide={display.side.visible}
                     className={display.side.visible ? 'wrapper-open' : 'wrapper-close'}
+                    style={style}
                 >
                     <SideItems />
                     <DisplayTypeSelector />

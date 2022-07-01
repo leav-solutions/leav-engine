@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Paragraph from 'antd/lib/typography/Paragraph';
 import RecordPreview from 'components/shared/RecordPreview';
+import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedTranslation} from 'utils';
@@ -100,6 +101,7 @@ const RecordCard = ({
     tile = false
 }: IRecordCardProps): JSX.Element => {
     const label = record.label || record.id;
+    const [{lang: userLang}] = useLang();
 
     return (
         <Wrapper
@@ -130,7 +132,7 @@ const RecordCard = ({
             </RecordLabel>
             {withLibrary && (
                 <SubLabel className="library-label">
-                    {localizedTranslation(record.library?.label, lang ?? []) || record.library?.id}
+                    {localizedTranslation(record.library?.label, lang ?? userLang) || record.library?.id}
                 </SubLabel>
             )}
         </Wrapper>

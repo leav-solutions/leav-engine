@@ -22,6 +22,7 @@ function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Ele
     const {t} = useTranslation();
 
     const {loading, error, data} = useQuery<IFileDataQuery, IFileDataQueryVariables>(getFileDataQuery(libraryId), {
+        skip: !fileId,
         variables: {fileId}
     });
 

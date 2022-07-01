@@ -48,9 +48,9 @@ const Cell = ({columnName, data}: ICellProps) => {
         case AttributeType.tree:
             const [firstValue, ...otherValues] = valuesToDisplay;
 
-            const whoAmI = type === AttributeType.tree ? firstValue.record.whoAmI : firstValue.whoAmI;
+            const whoAmI = type === AttributeType.tree ? firstValue?.record?.whoAmI : firstValue?.whoAmI;
 
-            return (
+            return whoAmI ? (
                 <RecordCardCellWrapper>
                     <RecordCard
                         record={whoAmI}
@@ -63,7 +63,7 @@ const Cell = ({columnName, data}: ICellProps) => {
 
                     {otherValues.length ?? 0 ? <AllValuesCount values={valuesToDisplay} /> : <></>}
                 </RecordCardCellWrapper>
-            );
+            ) : null;
         default:
             // selection and infos column has no type
             if (columnName === infosCol) {
