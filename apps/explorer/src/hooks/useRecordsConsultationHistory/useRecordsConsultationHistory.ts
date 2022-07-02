@@ -11,24 +11,14 @@ const RECORDS_CONSULTATION_KEY = 'records_consultation';
 const HISTORY_LENGTH = 10;
 
 export default async function (libraryId: string | null, recordId: string | null) {
-    const [updatingRecordsConsultationMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData, {
-        refetchQueries: [
-            {
-                query: getUserDataQuery,
-                variables: {keys: [`${RECORDS_CONSULTATION_KEY}_${libraryId}`]}
-            }
-        ]
-    });
+    const historyKey = `${RECORDS_CONSULTATION_KEY}_${libraryId}`;
+    const [updatingRecordsConsultationMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
 
     useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         skip: !libraryId || !recordId,
-        variables: {
-            keys: [`${RECORDS_CONSULTATION_KEY}_${libraryId}`]
-        },
+        variables: {keys: [historyKey]},
         onCompleted: async data => {
-            const history = data.userData.data[RECORDS_CONSULTATION_KEY]
-                ? [...data.userData.data[RECORDS_CONSULTATION_KEY]]
-                : [];
+            const history = data.userData.data[historyKey] ? [...data.userData.data[historyKey]] : [];
 
             const idx = history.indexOf(recordId);
 
@@ -42,7 +32,7 @@ export default async function (libraryId: string | null, recordId: string | null
 
             await updatingRecordsConsultationMutation({
                 variables: {
-                    key: `${RECORDS_CONSULTATION_KEY}_${libraryId}`,
+                    key: historyKey,
                     value: history,
                     global: false
                 }
