@@ -28,7 +28,6 @@ exports.getFileType = exports.getLibraryGraphqlNames = exports.objectToNameValue
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const lodash_1 = require("lodash");
 const minimatch_1 = __importDefault(require("minimatch"));
-const path_1 = require("path");
 const extensions = __importStar(require("./MIMEByExtension.json"));
 const files_1 = require("./types/files");
 const getGraphqlTypeFromLibraryName = (library) => {
@@ -172,7 +171,7 @@ const getLibraryGraphqlNames = (libraryId) => {
 };
 exports.getLibraryGraphqlNames = getLibraryGraphqlNames;
 const getFileType = (fileName) => {
-    const extension = path_1.extname(fileName).toLowerCase().replace('.', '');
+    const extension = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
     if (!extensions[extension]) {
         return files_1.FileType.OTHER;
     }

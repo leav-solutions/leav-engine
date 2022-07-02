@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {camelCase, flow, partialRight, trimEnd, upperFirst} from 'lodash';
 import minimatch from 'minimatch';
-import {extname} from 'path';
 import * as extensions from './MIMEByExtension.json';
 import {FileType} from './types/files';
 import {IKeyValue} from './types/helpers';
@@ -159,7 +158,7 @@ export const getLibraryGraphqlNames = (libraryId: string) => {
 };
 
 export const getFileType = (fileName: string): FileType => {
-    const extension = extname(fileName).toLowerCase().replace('.', '');
+    const extension = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
 
     if (!extensions[extension]) {
         return FileType.OTHER;

@@ -95,7 +95,9 @@ describe('utils', () => {
     describe('getFileType', () => {
         test('Return file type from extension', async () => {
             expect(utils_1.getFileType('file.txt')).toBe(files_1.FileType.OTHER);
+            expect(utils_1.getFileType('file')).toBe(files_1.FileType.OTHER);
             expect(utils_1.getFileType('file.jpg')).toBe(files_1.FileType.IMAGE);
+            expect(utils_1.getFileType('file.old.jpg')).toBe(files_1.FileType.IMAGE);
             expect(utils_1.getFileType('file.mp4')).toBe(files_1.FileType.VIDEO);
             expect(utils_1.getFileType('file.pdf')).toBe(files_1.FileType.DOCUMENT);
         });
