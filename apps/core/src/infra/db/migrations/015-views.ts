@@ -7,6 +7,7 @@ import {IConfig} from '_types/config';
 import {IMigration} from '_types/migration';
 import {LIB_COLLECTION_NAME} from '../../../infra/library/libraryRepo';
 import {VIEWS_COLLECTION_NAME} from '../../../infra/view/_types';
+import {SortOrder} from '../../../_types/list';
 import {ViewSizes, ViewTypes} from '../../../_types/views';
 import {IDbService} from '../dbService';
 
@@ -15,7 +16,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({'core.infra.db.dbService': dbService = null, config = null}: IDeps = {}): IMigration {
+export default function({'core.infra.db.dbService': dbService = null, config = null}: IDeps = {}): IMigration {
     return {
         async run(ctx) {
             if (!(await dbService.collectionExists('core_views'))) {
@@ -43,7 +44,14 @@ export default function ({'core.infra.db.dbService': dbService = null, config = 
                     modified_at: now,
                     shared: true,
                     library: 'files',
-                    settings: {}
+                    settings: {},
+                    filters: [],
+                    sort: {
+                        field: 'id',
+                        order: SortOrder.ASC
+                    },
+                    description: null,
+                    color: null
                 };
 
                 const viewsCollec = dbService.db.collection(VIEWS_COLLECTION_NAME);
