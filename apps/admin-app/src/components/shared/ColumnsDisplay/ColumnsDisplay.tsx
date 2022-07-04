@@ -27,7 +27,7 @@ const Column = styled.div<IColumnProps>`
     display: flex;
     text-align: center;
     border-right: 1px solid #999999;
-    width: ${props => 100 / props.columnsNumber + '%'}
+    width: ${props => 100 / props.columnsNumber + '%'};
 
     &:first-child {
         padding-left: 0;
@@ -37,7 +37,6 @@ const Column = styled.div<IColumnProps>`
         border-right: none;
         padding-right: 0;
     }
-
 `;
 
 function ColumnsDisplay({columnsContent, columnsNumber}: IColumnsDisplayProps): JSX.Element {
