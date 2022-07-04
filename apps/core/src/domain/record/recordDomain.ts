@@ -666,7 +666,7 @@ export default function ({
             }
 
             // Add ids filters if searchQuery is defined
-            if (typeof searchQuery !== 'undefined') {
+            if (typeof searchQuery !== 'undefined' && searchQuery !== '') {
                 const {from, size} = fulltextSearchDefaultPagination;
                 const searchRecords = await recordRepo.search(library, searchQuery, from, size);
 
@@ -678,7 +678,7 @@ export default function ({
                     );
                 }
 
-                if (searchQuery !== '' && !searchFilters.length) {
+                if (!searchFilters.length) {
                     return {
                         totalCount: 0,
                         list: [],
