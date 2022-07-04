@@ -123,9 +123,10 @@ function LibrariesList(): JSX.Element {
 
                 return (
                     <FavoriteStar
+                        key="libraries_favorites"
                         isFavorite={isFavorite}
                         onToggle={_handleFavoriteToggle}
-                        hoverTrigger=".ant-table-cell"
+                        hoverTrigger=".ant-table-row"
                     />
                 );
             }

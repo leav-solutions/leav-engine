@@ -100,9 +100,10 @@ function TreeList(): JSX.Element {
 
                 return (
                     <FavoriteStar
+                        key="trees_favorites"
                         isFavorite={isFavorite}
                         onToggle={_handleFavoriteToggle}
-                        hoverTrigger=".ant-table-cell"
+                        hoverTrigger=".ant-table-row"
                     />
                 );
             }
