@@ -17,7 +17,7 @@ const Star = styled.span<Pick<IFavoriteStarProps, 'isFavorite' | 'hoverTrigger'>
 
     ${p =>
         p.hoverTrigger
-            ? `${p.hoverTrigger}:hover > & {
+            ? `${p.hoverTrigger}:hover & {
         display: inline;
     }`
             : ''}
