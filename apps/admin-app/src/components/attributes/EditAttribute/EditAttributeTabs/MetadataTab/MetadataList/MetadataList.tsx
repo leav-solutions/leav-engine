@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import EditAttributeModal from 'components/attributes/EditAttributeModal';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Table} from 'semantic-ui-react';
@@ -25,6 +26,12 @@ interface IMetadataListProps {
 function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useTranslation();
+    const [attributeEditionModalDisplay, setAttributeEditionModalDisplay] = useState<{
+        visible: boolean;
+        attribute?: string;
+    }>({
+        visible: false
+    });
 
     const [showNewAttrModal, setShowNewAttrModal] = useState<boolean>(false);
     const [showAddExistingAttrModal, setShowAddExistingAttrModal] = useState<boolean>(false);
@@ -55,6 +62,8 @@ function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Ele
         onChange([...fields.map(f => f.id), ...fieldIds]);
         _closeAddExistingAttrModal();
     };
+
+    const _handleCloseAttributeEditionModal = () => setAttributeEditionModalDisplay({visible: false});
 
     return (
         <>
@@ -96,9 +105,12 @@ function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Ele
                 <Table.Body>
                     {fields.map((f: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields) => {
                         const _onDelete = () => _handleDelete(f.id);
+                        const _handleRowClick = () => {
+                            setAttributeEditionModalDisplay({visible: true, attribute: f.id});
+                        };
                         const fieldLabel = localizedLabel(f.label, lang);
                         return (
-                            <Table.Row key={f.id}>
+                            <Table.Row key={f.id} onClick={_handleRowClick}>
                                 <Table.Cell>{f.id}</Table.Cell>
                                 <Table.Cell>{fieldLabel}</Table.Cell>
                                 <Table.Cell>{t('attributes.types.' + f.type)}</Table.Cell>
@@ -124,19 +136,30 @@ function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Ele
 
             {!readonly && (
                 <>
-                    <AttributeCreationModal
-                        open={showNewAttrModal}
-                        onClose={_closeNewAttrModal}
-                        onPostSave={_handleAddNewField}
-                        forcedType={AttributeType.simple}
-                    />
-                    <AttributesSelectionModal
-                        openModal={showAddExistingAttrModal}
-                        onClose={_closeAddExistingAttrModal}
-                        onSubmit={_handleAddExistingField}
-                        selection={fields.map(f => f.id)}
-                        filter={{type: [AttributeType.simple]}}
-                    />
+                    {showNewAttrModal && (
+                        <AttributeCreationModal
+                            open={showNewAttrModal}
+                            onClose={_closeNewAttrModal}
+                            onPostSave={_handleAddNewField}
+                            forcedType={AttributeType.simple}
+                        />
+                    )}
+                    {showAddExistingAttrModal && (
+                        <AttributesSelectionModal
+                            openModal={showAddExistingAttrModal}
+                            onClose={_closeAddExistingAttrModal}
+                            onSubmit={_handleAddExistingField}
+                            selection={fields.map(f => f.id)}
+                            filter={{type: [AttributeType.simple]}}
+                        />
+                    )}
+                    {attributeEditionModalDisplay.visible && (
+                        <EditAttributeModal
+                            open={true}
+                            onClose={_handleCloseAttributeEditionModal}
+                            attribute={attributeEditionModalDisplay.attribute}
+                        />
+                    )}
                 </>
             )}
         </>
