@@ -117,22 +117,28 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
         },
         async multiMatch<T extends any = any>(
             index: string,
-            {query, fields = ['*'], fuzziness = 'AUTO'}: IMultiMatchQuery['multi_match'],
+            {query, fields = ['*'], fuzziness = 'AUTO:2,5'}: IMultiMatchQuery['multi_match'],
             from?: number,
             size?: number
         ): Promise<ISearchResponse<T>> {
+            const words = query.length ? query.split(' ') : [];
+
             const response = await client.search<ISearchResponse<any>, any>({
                 index,
                 body: {
                     from,
                     size,
                     query: {
-                        multi_match: {
-                            query,
-                            fields,
-                            fuzziness,
-                            lenient: true,
-                            analyzer: 'standard'
+                        bool: {
+                            must: words.map(w => ({
+                                multi_match: {
+                                    query: w,
+                                    fields,
+                                    fuzziness,
+                                    lenient: true,
+                                    analyzer: 'standard'
+                                }
+                            }))
                         }
                     }
                 }

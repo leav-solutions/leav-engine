@@ -648,8 +648,8 @@ export default function ({
             return deletedRecord;
         },
         async find({params, ctx}): Promise<IListWithCursor<IRecord>> {
-            const {library, sort, pagination, withCount, retrieveInactive = false, searchQuery} = params;
-            let {filters = [] as IRecordFilterLight[]} = params;
+            const {library, sort, pagination, withCount, retrieveInactive = false} = params;
+            let {filters = [] as IRecordFilterLight[], searchQuery} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort;
             let searchFilters: IRecordFilterLight[] = [];
@@ -665,8 +665,11 @@ export default function ({
                 throw new PermissionError(LibraryPermissionsActions.ACCESS_LIBRARY);
             }
 
+            // format search query
+            searchQuery = searchQuery?.replace(/\s+/g, ' ').trim();
+
             // Add ids filters if searchQuery is defined
-            if (typeof searchQuery !== 'undefined') {
+            if (typeof searchQuery !== 'undefined' && searchQuery !== '') {
                 const {from, size} = fulltextSearchDefaultPagination;
                 const searchRecords = await recordRepo.search(library, searchQuery, from, size);
 
@@ -678,7 +681,7 @@ export default function ({
                     );
                 }
 
-                if (searchQuery !== '' && !searchFilters.length) {
+                if (!searchFilters.length) {
                     return {
                         totalCount: 0,
                         list: [],
