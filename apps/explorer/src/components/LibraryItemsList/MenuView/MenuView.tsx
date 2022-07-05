@@ -212,7 +212,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                     }
                 />
                 <Dropdown overlay={menu} trigger={['click']}>
-                    <Button icon={<MoreOutlined />}></Button>
+                    <Button icon={<PlusOutlined />}></Button>
                 </Dropdown>
             </Button.Group>
             <Badge dot={!!searchState.filters.length}>

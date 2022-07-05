@@ -121,7 +121,7 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
             from?: number,
             size?: number
         ): Promise<ISearchResponse<T>> {
-            const words = query.length ? query.replace(/\s+/g, ' ').trim().split(' ') : [];
+            const words = query.length ? query.split(' ') : [];
 
             const response = await client.search<ISearchResponse<any>, any>({
                 index,
