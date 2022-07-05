@@ -71,9 +71,7 @@ module.exports = {
             previewRequest: 'files.previewRequest',
             previewResponse: 'files.previewResponse'
         },
-        rootKeys: {
-            files1: 'files'
-        },
+        rootKeysMapping: process.env.FILES_ROOT_KEYS_MAPPING || 'files1:files',
         userId: process.env.FM_USER_ID || '1'
     },
     eventsManager: {
@@ -107,4 +105,3 @@ module.exports = {
         originalsPathPrefix: process.env.FILES_ORIGINALS_PREFIX || 'originals'
     }
 };
-'';

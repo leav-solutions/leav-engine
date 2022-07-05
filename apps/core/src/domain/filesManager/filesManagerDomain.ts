@@ -90,7 +90,7 @@ export const systemPreviewVersions: IPreviewVersion[] = [
     }
 ];
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqp.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -121,7 +121,19 @@ export default function ({
         }
 
         try {
-            const library = config.filesManager.rootKeys[msgBody.rootKey];
+            const librariesByRootKey = config.filesManager.rootKeysMapping
+                .split(',')
+                .reduce((libraries, libraryByRootKey) => {
+                    // Trim all the thing to be tolerant with trailing spaces
+                    const [key, libraryId] = libraryByRootKey.trim().split(':');
+                    libraries[key.trim()] = libraryId.trim();
+
+                    return libraries;
+                }, {});
+
+            const library = librariesByRootKey[msgBody.rootKey];
+            console.log(config.filesManager.rootKeysMapping, librariesByRootKey, msgBody.rootKey);
+            console.log('>>>>>', library);
             await handleEventFileSystem(
                 msgBody,
                 {library},

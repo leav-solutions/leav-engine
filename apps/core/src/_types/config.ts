@@ -95,9 +95,7 @@ export interface IFilesManager {
         previewRequest: string;
         previewResponse: string;
     };
-    rootKeys: {
-        files1: string;
-    };
+    rootKeysMapping: string;
     userId: string;
 }
 

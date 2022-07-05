@@ -36,6 +36,7 @@ x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils
 x-mount_point-repo: &mount_point-repo ../:/app:delegated
 x-mount_point-scripts: &mount_point-scripts ./scripts:/scripts
 x-mount_point-files: &mount_point-files ../files/:/files
+x-mount_point-files2: &mount_point-files2 ../files2/:/files2
 x-mount_point-previews: &mount_point-previews ../previews/:/results
 x-mount_point-exports: &mount_point-exports ../exports:/exports
 x-mount_point-imports: &mount_point-imports ../imports:/imports
@@ -59,7 +60,8 @@ x-env-core: &env-core
   SERVER_UPLOAD_LIMIT: "15000mb"
   REDIS_HOST: redis
   REDIS_PORT: 6379
-  FILES_ROOT_PATHS: files1:/files
+  FILES_ROOT_PATHS: files1:/files,files2:/files2
+  FILES_ROOT_KEYS_MAPPING: files1:files,files2:dam_2
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
@@ -88,6 +90,10 @@ x-env-automate-scan: &env-automate-scan
   ROOT_KEY: files1
   APP_ROOT_PATH: *dir-automate_scan
 
+x-env-automate-scan2: &env-automate-scan2
+  ROOT_KEY: files2
+  ROOT_PATH: /files2
+
 x-env-sync-scan: &env-sync-scan
   ALLOW_FILES_LIST: *allow-list
   IGNORE_FILES_LIST: *ignore-list
@@ -95,6 +101,11 @@ x-env-sync-scan: &env-sync-scan
   GRAPHQL_URI: http://core:4001/graphql
   GRAPHQL_TOKEN: ${GRAPHQL_TOKEN}
   APP_ROOT_PATH: *dir-sync_scan
+
+x-env-sync-scan2: &env-sync-scan2
+  FILESYSTEM_ABSOLUTE_PATH: /files2
+  GRAPHQL_TREE_ID: dam_2_tree
+  AMQP_ROOT_KEY: files2
 
 x-env-admin-app: &env-admin-app
   APP_ROOT_PATH: *dir-admin
@@ -116,6 +127,10 @@ x-env-preview-generator: &env-preview-generator
   ICC_PATH: /app/apps/preview-generator/profile/
   APP_ROOT_PATH: *dir-preview_generator
 
+x-env-preview-generator2: &env-preview-generator2
+  INPUT_ROOT_PATH: /files2
+  OUTPUT_ROOT_PATH: /results2
+
 ############################
 
 services:
@@ -135,6 +150,7 @@ services:
     volumes: # We must load every volumes for install
       - *mount_point-repo
       - *mount_point-files
+      - *mount_point-files2
       - *mount_point-previews
       - *mount_point-scripts
       - *mount_point-exports
@@ -312,7 +328,29 @@ services:
       - *mount_point-scripts
       - *volume-yarn-cache
       - *volume-shared-modules
-      - *volume-explorer-modules
+      - *volume-automate_scan-modules
+      - *volume-config_manager-modules
+    working_dir: *dir-automate_scan
+    command: [
+        sh,
+        -c,
+        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:watch",
+      ]
+
+  automate-scan2:
+    image: *node_image
+    restart: always
+    environment:
+      <<: *env-automate-scan
+      <<: *env-automate-scan2
+      <<: *env-amqp
+    volumes:
+      - *mount_point-repo
+      - *mount_point-files2
+      - *mount_point-scripts
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-automate_scan-modules
       - *volume-config_manager-modules
     working_dir: *dir-automate_scan
     command: [
@@ -330,6 +368,7 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-files
+      - *mount_point-files2
       - *mount_point-previews
       - *mount_point-scripts
       - *volume-shared-modules
@@ -354,6 +393,7 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-files
+      - *mount_point-files2
       - *mount_point-previews
       - *mount_point-scripts
       - *volume-yarn-cache
@@ -382,6 +422,26 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-files
+      - *mount_point-scripts
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-sync_scan-modules
+      - *volume-config_manager-modules
+    working_dir: *dir-sync_scan
+
+  sync-scan2:
+    image: *node_image
+    labels:
+      - traefik.enable=true
+    environment:
+      <<: *env-sync-scan
+      <<: *env-amqp
+      <<: *env-sync-scan2
+    depends_on:
+      - core
+    volumes:
+      - *mount_point-repo
+      - *mount_point-files2
       - *mount_point-scripts
       - *volume-yarn-cache
       - *volume-shared-modules

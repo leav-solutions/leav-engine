@@ -76,7 +76,7 @@ interface IDeps {
     'core.infra.elasticsearch'?: Client;
 }
 
-export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}): IElasticsearchService {
+export default function({'core.infra.elasticsearch': client = null}: IDeps = {}): IElasticsearchService {
     return {
         client,
         async indiceGetMapping(index: string): Promise<string[]> {

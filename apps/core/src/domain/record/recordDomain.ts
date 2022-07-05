@@ -183,7 +183,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,

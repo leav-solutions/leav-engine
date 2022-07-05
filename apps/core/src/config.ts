@@ -79,9 +79,7 @@ export const validateConfig = (conf: IConfig) => {
                 previewRequest: Joi.string().required(),
                 previewResponse: Joi.string().required()
             }),
-            rootKeys: Joi.object().keys({
-                files1: Joi.string().required()
-            }),
+            rootKeysMapping: Joi.string().required(),
             userId: Joi.number().required()
         }),
         indexationManager: Joi.object().keys({

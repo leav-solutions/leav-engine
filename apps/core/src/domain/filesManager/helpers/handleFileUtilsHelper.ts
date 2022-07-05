@@ -195,7 +195,7 @@ export const createFilesTreeElement = async (
             ctx
         });
     } catch (e) {
-        deps.logger.warn(`[FilesManager] Error when create tree element, record id: ${record.id}`);
+        deps.logger.warn(`[FilesManager] Error when create tree element, record id: ${record.id}`, e.message);
     }
 };
 

@@ -149,7 +149,7 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -415,6 +415,7 @@ export default function ({
                 errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
             }
 
+            console.log({treeId, record: element, ctx});
             if (treeExists && isRecordExisting && (await treeRepo.isRecordPresent({treeId, record: element, ctx}))) {
                 if (!treeProps.libraries[element.library].allowMultiplePositions) {
                     errors.element = Errors.ELEMENT_ALREADY_PRESENT;
