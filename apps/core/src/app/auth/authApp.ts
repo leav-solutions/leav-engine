@@ -152,7 +152,8 @@ export default function ({
                     res.cookie(ACCESS_TOKEN_COOKIE_NAME, '', {
                         expires: new Date(0),
                         httpOnly: true,
-                        sameSite: 'none',
+                        sameSite: config.auth.cookie.sameSite,
+                        secure: config.auth.cookie.secure,
                         domain: req.headers.host
                     });
                     return res.status(200).end();
