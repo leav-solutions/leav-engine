@@ -30,6 +30,7 @@
     "dependencies": {
         "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
+        "@leav/message-broker": "workspace:libs/message-broker",
         "amqplib": "0.8.0",
         "apollo-cache-inmemory": "^1.6.5",
         "apollo-client": "^2.6.8",

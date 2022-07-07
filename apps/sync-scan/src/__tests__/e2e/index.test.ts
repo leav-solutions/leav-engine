@@ -4,17 +4,16 @@
 import fs from 'fs';
 import automate from '../../automate';
 import {getConfig} from '../../config';
-import * as amqp from '../../amqp';
+import {IAmqpService, amqpService} from '@leav/message-broker';
 import * as scan from '../../scan';
 import {IConfig} from '../../_types/config';
 import {FilesystemContent} from '../../_types/filesystem';
 import {FullTreeContent} from '../../_types/queries';
-import {IAmqpConn} from '../../_types/amqp';
 import test4Db from './database/test4';
 import test5Db from './database/test5';
 
 let cfg: IConfig;
-let amqpConn: IAmqpConn;
+let amqp: IAmqpService;
 let inodes: number[];
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
@@ -25,11 +24,11 @@ beforeAll(async () => {
     try {
         cfg = await getConfig();
 
-        amqpConn = await amqp.init(cfg.amqp);
+        amqp = await amqpService({config: cfg.amqp});
 
         // As queue is only used in tests to consume messages, it's not created in amqp.init. Thus, we have to do it here
-        await amqpConn.channel.assertQueue(cfg.amqp.queue);
-        await amqpConn.channel.bindQueue(cfg.amqp.queue, cfg.amqp.exchange, cfg.amqp.routingKey);
+        await amqp.publisher.channel.assertQueue(cfg.amqp.queue);
+        await amqp.publisher.channel.bindQueue(cfg.amqp.queue, cfg.amqp.exchange, cfg.amqp.routingKey);
 
         // Create filesystem directory
         if (!fs.existsSync(cfg.filesystem.absolutePath)) {
@@ -42,10 +41,10 @@ beforeAll(async () => {
 
 afterAll(async done => {
     try {
-        await amqpConn.channel.deleteExchange(cfg.amqp.exchange);
-        await amqpConn.channel.deleteQueue(cfg.amqp.queue);
+        await amqp.publisher.channel.deleteExchange(cfg.amqp.exchange);
+        await amqp.publisher.channel.deleteQueue(cfg.amqp.queue);
 
-        await amqpConn.connection.close();
+        await amqp.close();
         done();
     } catch (e) {
         console.error(e);
@@ -89,7 +88,7 @@ describe('e2e tests', () => {
             const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = [];
 
-            await automate(fsc, dbs, amqpConn.channel);
+            await automate(fsc, dbs, amqp);
 
             const expected = {
                 // pathAfter as keys
@@ -100,14 +99,14 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': 'CREATE'
             };
 
-            await amqpConn.channel.consume(
+            await amqp.consumer.channel.consume(
                 cfg.amqp.queue,
                 async msg => {
                     const m = JSON.parse(msg.content.toString());
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
                     expect(expected[m.pathAfter]).toEqual(m.event);
                     if (m.pathAfter === 'dir/sdir/ssfile') {
-                        await amqpConn.channel.cancel('test3');
+                        await amqp.consumer.channel.cancel('test3');
                         done();
                     }
                 },
@@ -129,7 +128,7 @@ describe('e2e tests', () => {
             const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = test4Db(inodes);
 
-            await automate(fsc, dbs, amqpConn.channel);
+            await automate(fsc, dbs, amqp);
 
             const expected = {
                 // pathBefore as keys
@@ -138,7 +137,7 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'UPDATE'}
             };
 
-            amqpConn.channel.consume(
+            amqp.consumer.channel.consume(
                 cfg.amqp.queue,
                 async msg => {
                     const m = JSON.parse(msg.content.toString());
@@ -147,7 +146,7 @@ describe('e2e tests', () => {
                     expect(expected[m.pathBefore].event).toEqual(m.event);
                     if (m.pathAfter === 'dir/sdir/ssfile') {
                         expect('f75b8179e4bbe7e2b4a074dcef62de95').toEqual(m.hash);
-                        await amqpConn.channel.cancel('test4');
+                        await amqp.consumer.channel.cancel('test4');
                         done();
                     }
                 },
@@ -167,7 +166,7 @@ describe('e2e tests', () => {
             const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: FullTreeContent = test5Db(inodes);
 
-            await automate(fsc, dbs, amqpConn.channel);
+            await automate(fsc, dbs, amqp);
 
             const expected = {
                 // pathBefore as keys
@@ -178,14 +177,14 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': 'REMOVE'
             };
 
-            amqpConn.channel.consume(
+            amqp.consumer.channel.consume(
                 cfg.amqp.queue,
                 async msg => {
                     const m = JSON.parse(msg.content.toString());
                     expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
                     expect(expected[m.pathBefore]).toEqual(m.event);
                     if (m.pathBefore === 'dir/sdir/ssfile') {
-                        await amqpConn.channel.cancel('test5');
+                        await amqp.consumer.channel.cancel('test5');
                         done();
                     }
                 },

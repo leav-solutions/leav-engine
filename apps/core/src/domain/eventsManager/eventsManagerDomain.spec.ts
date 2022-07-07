@@ -4,17 +4,29 @@
 import * as amqp from 'amqplib';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
+import {IAmqpService, amqpService} from '@leav/message-broker';
 import {EventType} from '../../_types/event';
 import eventsManager from './eventsManagerDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
+    assertExchange: jest.fn(),
+    checkExchange: jest.fn(),
+    assertQueue: jest.fn(),
+    bindQueue: jest.fn(),
     consume: jest.fn(),
     publish: jest.fn(),
-    prefetch: jest.fn(),
-    checkExchange: jest.fn(),
-    waitForConfirms: jest.fn()
+    waitForConfirms: jest.fn(),
+    prefetch: jest.fn()
 };
+
+const mockAmqpConnection: Mockify<amqp.Connection> = {
+    close: jest.fn(),
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+};
+
+jest.mock('amqplib', () => ({
+    connect: jest.fn().mockImplementation(() => mockAmqpConnection)
+}));
 
 const ctx: IQueryInfos = {
     userId: '1',
@@ -42,17 +54,13 @@ describe('Events Manager', () => {
     };
 
     test('send amqp message', async () => {
-        const amqpServ = amqpService({
-            'core.infra.amqp': {
-                publisher: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
-                consumer: null
-            },
-            config: conf as IConfig
+        const amqpServ = await amqpService({
+            config: conf.amqp
         });
 
         const events = eventsManager({
             config: conf as IConfig,
-            'core.infra.amqp.amqpService': amqpServ as IAmqpService
+            'core.infra.amqpService': amqpServ as IAmqpService
         });
 
         await events.send({type: EventType.LIBRARY_SAVE, data: {new: {id: 'test'}}}, ctx);

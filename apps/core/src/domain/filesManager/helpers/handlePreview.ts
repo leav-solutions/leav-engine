@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as Config from '_types/config';
-import {IAmqpService} from '../../../infra/amqp/amqpService';
+import {IAmqpService} from '@leav/message-broker';
 import {IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
 
 export const sendPreviewMessage = async (

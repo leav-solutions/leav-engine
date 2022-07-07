@@ -2,13 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import * as Config from '_types/config';
-import amqpService from './amqpService';
+import {IAmqp} from './_types/amqp';
+import amqpService, {IAmqpService} from './amqpService';
 
-const amqpMockConfig: Mockify<Config.IAmqp['connOpt']> = {hostname: 'localhost'};
-const mockConfig: Mockify<Config.IConfig> = {
-    amqp: amqpMockConfig as Config.IAmqp
-};
+type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};
+
+const amqpMockConfig: Mockify<IAmqp> = {connOpt: {hostname: 'localhost'}, exchange: 'exchange', type: 'direct'};
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -21,25 +20,36 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     prefetch: jest.fn()
 };
 
+const mockAmqpConnection: Mockify<amqp.Connection> = {
+    close: jest.fn(),
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+};
+
 jest.mock('amqplib', () => ({
-    connect: jest.fn().mockReturnValue({
-        createChannel: jest.fn().mockReturnValue(mockAmqpChannel)
-    })
+    connect: jest.fn().mockImplementation(() => mockAmqpConnection)
 }));
 
 describe('amqp', () => {
+    let amqpServ: IAmqpService;
+
+    beforeAll(async done => {
+        amqpServ = await amqpService({
+            config: amqpMockConfig as IAmqp
+        });
+
+        done();
+    });
+
+    afterAll(async done => {
+        await amqpServ.close();
+        done();
+    });
+
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     test('Set up message listening', async () => {
-        const amqpServ = amqpService({
-            'core.infra.amqp': {
-                publisher: null,
-                consumer: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel}
-            },
-            config: mockConfig as Config.IConfig
-        });
         const mockCbFunc = jest.fn();
 
         await amqpServ.consume('myQueue', 'someRoutingKey', mockCbFunc);
@@ -48,14 +58,6 @@ describe('amqp', () => {
     });
 
     test('Publish a message', async () => {
-        const amqpServ = amqpService({
-            'core.infra.amqp': {
-                publisher: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
-                consumer: null
-            },
-            config: mockConfig as Config.IConfig
-        });
-
         await amqpServ.publish('exchange', 'someRoutingKey', JSON.stringify({test: 'Some value'}));
 
         expect(mockAmqpChannel.checkExchange).toBeCalled();

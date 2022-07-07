@@ -65,6 +65,7 @@
     "@elastic/elasticsearch": "^7.10.0",
     "@leav/app-root-path": "workspace:libs/app-root-path",
     "@leav/config-manager": "workspace:libs/config-manager",
+    "@leav/message-broker": "workspace:libs/message-broker",
     "amqplib": "0.8.0",
     "apollo-server": "^2.19.0",
     "apollo-server-core": "3.6.2",

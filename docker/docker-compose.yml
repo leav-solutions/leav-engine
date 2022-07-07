@@ -31,6 +31,7 @@ x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/ap
 x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
 x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
 x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
+x-volume-message_broker-modules: &volume-message_broker-modules node_modules_message-broker:/app/libs/message-broker/node_modules
 
 # Host path is relative to the docker folder
 x-mount_point-repo: &mount_point-repo ../:/app:delegated
@@ -153,6 +154,7 @@ services:
       - *volume-config_manager-modules
       - *volume-app_root_path-modules
       - *volume-utils-modules
+      - *volume-message_broker-modules
     ports:
       - "9229:9229"
     working_dir: *dir-core
@@ -387,6 +389,7 @@ services:
       - *volume-shared-modules
       - *volume-sync_scan-modules
       - *volume-config_manager-modules
+      - *volume-message_broker-modules
     working_dir: *dir-sync_scan
 
   # Proxy
@@ -462,6 +465,8 @@ services:
 
   kibana:
     image: *kibana_image
+    logging:
+      driver: none
     ports:
       - 5611:5601
     volumes:
@@ -507,3 +512,6 @@ volumes:
     driver: local
   node_modules_utils:
     driver: local
+  node_modules_message-broker:
+    driver: local
+

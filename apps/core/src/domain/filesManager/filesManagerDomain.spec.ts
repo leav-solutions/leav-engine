@@ -9,9 +9,9 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
-import amqpService, {IAmqpService} from '../../infra/amqp/amqpService';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
+import {IAmqpService, amqpService} from '@leav/message-broker';
 import filesManager, {systemPreviewVersions} from './filesManagerDomain';
 import {createPreview} from './helpers/handlePreview';
 import winston = require('winston');
@@ -41,18 +41,26 @@ const mockConfig: Mockify<Config.IConfig> = {
 };
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
+    assertExchange: jest.fn(),
+    checkExchange: jest.fn(),
     assertQueue: jest.fn(),
     bindQueue: jest.fn(),
-    consume: jest.fn()
+    consume: jest.fn(),
+    publish: jest.fn(),
+    waitForConfirms: jest.fn(),
+    prefetch: jest.fn()
 };
 
-const mockAmqpService = amqpService({
-    'core.infra.amqp': {
-        publisher: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel},
-        consumer: {connection: null, channel: mockAmqpChannel as amqp.ConfirmChannel}
-    },
-    config: mockConfig as Config.IConfig
-});
+const mockAmqpConnection: Mockify<amqp.Connection> = {
+    close: jest.fn(),
+    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+};
+
+jest.mock('amqplib', () => ({
+    connect: jest.fn().mockImplementation(() => mockAmqpConnection)
+}));
+
+let mockAmqpService;
 
 const logger: Mockify<winston.Winston> = {
     error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
@@ -69,6 +77,14 @@ describe('FilesManager', () => {
         queryId: 'filesManagerTest'
     };
 
+    beforeAll(async done => {
+        mockAmqpService = await amqpService({
+            config: mockConfig.amqp
+        });
+
+        done();
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -77,7 +93,7 @@ describe('FilesManager', () => {
         const files = filesManager({
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
-            'core.infra.amqp.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await files.init();
@@ -100,7 +116,7 @@ describe('FilesManager', () => {
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.infra.amqp.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordId: 'id'});
@@ -145,7 +161,7 @@ describe('FilesManager', () => {
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.infra.amqp.amqpService': mockAmqpService as IAmqpService,
+            'core.infra.amqpService': mockAmqpService as IAmqpService,
             'core.domain.tree': mockTreeDomain as ITreeDomain,
             'core.utils': mockUtils as IUtils
         });
@@ -192,7 +208,7 @@ describe('FilesManager', () => {
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.infra.amqp.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId'});
@@ -251,7 +267,7 @@ describe('FilesManager', () => {
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.infra.amqp.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', failedOnly: true});
