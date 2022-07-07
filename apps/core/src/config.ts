@@ -14,9 +14,7 @@ export const validateConfig = (conf: IConfig) => {
             port: Joi.number().required(),
             publicUrl: Joi.string().required(),
             apiEndpoint: Joi.string().required(),
-            uploadLimit: Joi.alternatives()
-                .try(Joi.string(), Joi.number())
-                .required()
+            uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required()
         }),
         db: Joi.object().keys({
             url: Joi.string().required(),
@@ -39,9 +37,7 @@ export const validateConfig = (conf: IConfig) => {
             }
         }),
         lang: Joi.object().keys({
-            available: Joi.array()
-                .items(Joi.string())
-                .required(),
+            available: Joi.array().items(Joi.string()).required(),
             default: Joi.string().required()
         }),
         logs: Joi.object().keys({
@@ -105,9 +101,7 @@ export const validateConfig = (conf: IConfig) => {
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required()
         }),
-        plugins: Joi.object()
-            .keys()
-            .unknown(),
+        plugins: Joi.object().keys().unknown(),
         preview: Joi.object().keys({
             directory: Joi.string().required()
         }),
@@ -117,6 +111,9 @@ export const validateConfig = (conf: IConfig) => {
         files: Joi.object().keys({
             rootPaths: Joi.string().required(),
             originalsPathPrefix: Joi.string().required()
+        }),
+        dbProfiler: Joi.object().keys({
+            enable: Joi.boolean().required()
         })
     });
 
@@ -137,11 +134,11 @@ export const validateConfig = (conf: IConfig) => {
  *
  * @return {Promise} Full config
  */
-export const getConfig = async (folder?: string): Promise<any> => {
+export const getConfig = async (folder?: string) => {
     const definedEnv: string = appEnv;
     const confRootFolder = folder ?? appRootPath();
     const confFolder = confRootFolder + '/config';
 
-    const conf = await loadConfig<any>(confFolder, definedEnv);
+    const conf = await loadConfig<IConfig>(confFolder, definedEnv);
     return conf;
 };

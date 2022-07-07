@@ -105,6 +105,8 @@ module.exports = {
     files: {
         rootPaths: process.env.FILES_ROOT_PATHS,
         originalsPathPrefix: process.env.FILES_ORIGINALS_PREFIX || 'originals'
+    },
+    dbProfiler: {
+        enable: typeof process.env.DB_PROFILER_ENABLE !== 'undefined' ? !!Number(process.env.DB_PROFILER_ENABLE) : false
     }
 };
-'';

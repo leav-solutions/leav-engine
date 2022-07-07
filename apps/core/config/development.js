@@ -15,5 +15,8 @@ module.exports = {
     auth: {
         tokenExpiration: '99y'
     },
-    debug: true
+    debug: true,
+    dbProfiler: {
+        enable: typeof process.env.DB_PROFILER_ENABLE !== 'undefined' ? !!Number(process.env.DB_PROFILER_ENABLE) : true
+    }
 };
