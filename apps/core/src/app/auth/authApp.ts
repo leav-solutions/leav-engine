@@ -5,8 +5,9 @@ import * as bcrypt from 'bcryptjs';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {Express, NextFunction, Request, Response} from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, {Algorithm} from 'jsonwebtoken';
 import ms from 'ms';
+import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../../errors/AuthenticationError';
@@ -22,7 +23,7 @@ export interface IAuthApp {
 interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.record'?: IRecordDomain;
-    config?: any;
+    config?: IConfig;
 }
 
 export default function ({
@@ -121,7 +122,7 @@ export default function ({
                             },
                             config.auth.key,
                             {
-                                algorithm: config.auth.algorithm,
+                                algorithm: config.auth.algorithm as Algorithm,
                                 expiresIn: tokenExpiration
                             }
                         );

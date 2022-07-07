@@ -3,18 +3,26 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
 import {IUtils} from 'utils/utils';
+import {IConfig} from '_types/config';
 import dbService from './dbService';
 describe('dbService', () => {
     const ctx = {
         userId: '0',
         queryId: 'testDbService'
     };
+
+    const mockConfig = {
+        dbProfiler: {
+            enable: false
+        }
+    };
+
     describe('collectionExists', () => {
         test('Should check if a collection already exists', async () => {
             const mockDb = new Database();
             mockDb.listCollections = jest.fn().mockReturnValue(Promise.resolve([{name: 'test'}]));
 
-            const dbServ = dbService({'core.infra.db': mockDb});
+            const dbServ = dbService({'core.infra.db': mockDb, config: mockConfig as IConfig});
 
             expect(await dbServ.collectionExists('test')).toBe(true);
             expect(await dbServ.collectionExists('dontExists')).toBe(false);
@@ -36,7 +44,11 @@ describe('dbService', () => {
 
             mockDb.query = global.__mockPromise({all: jest.fn()});
 
-            const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
+            const dbServ = dbService({
+                'core.infra.db': mockDb,
+                'core.utils': mockUtils as IUtils,
+                config: mockConfig as IConfig
+            });
 
             const res = await dbServ.execute({
                 query: 'FOR e in elems RETURN e',
@@ -66,7 +78,11 @@ describe('dbService', () => {
                 })
                 .mockImplementationOnce(q => mockDbCursor);
 
-            const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
+            const dbServ = dbService({
+                'core.infra.db': mockDb,
+                'core.utils': mockUtils as IUtils,
+                config: mockConfig as IConfig
+            });
 
             const res = await dbServ.execute({
                 query: 'FOR e in elems RETURN e',
@@ -89,7 +105,11 @@ describe('dbService', () => {
                 throw {isArangoError: true, errorNum: 1200};
             });
 
-            const dbServ = dbService({'core.infra.db': mockDb, 'core.utils': mockUtils as IUtils});
+            const dbServ = dbService({
+                'core.infra.db': mockDb,
+                'core.utils': mockUtils as IUtils,
+                config: mockConfig as IConfig
+            });
 
             await expect(
                 dbServ.execute({

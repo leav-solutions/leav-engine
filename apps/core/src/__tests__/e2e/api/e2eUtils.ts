@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import axios from 'axios';
 import FormData from 'form-data';
-import * as jwt from 'jsonwebtoken';
+import jwt, {Algorithm} from 'jsonwebtoken';
 import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '_types/attribute';
 import {ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
@@ -20,7 +20,7 @@ async function _getAuthToken() {
         },
         conf.auth.key,
         {
-            algorithm: conf.auth.algorithm,
+            algorithm: conf.auth.algorithm as Algorithm,
             expiresIn: conf.auth.tokenExpiration
         }
     );

@@ -3,7 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
 import {isAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {createHash} from 'crypto';
 import {IUtils} from 'utils/utils';
+import {IConfig} from '_types/config';
+import {IDbProfiler} from '_types/dbProfiler';
 import {IDbDocument, IExecute, IExecuteWithCount} from './_types';
 
 const MAX_ATTEMPTS = 10;
@@ -57,9 +60,14 @@ export enum collectionTypes {
 interface IDeps {
     'core.infra.db'?: Database;
     'core.utils'?: IUtils;
+    config?: IConfig;
 }
 
-export default function ({'core.infra.db': db = null, 'core.utils': utils = null}: IDeps = {}): IDbService {
+export default function ({
+    'core.infra.db': db = null,
+    'core.utils': utils = null,
+    config = null
+}: IDeps = {}): IDbService {
     const collectionExists = async function (name: string): Promise<boolean> {
         const collections = await db.listCollections();
 
@@ -79,6 +87,37 @@ export default function ({'core.infra.db': db = null, 'core.utils': utils = null
             attempts = 0
         }: IExecute): Promise<T> {
             try {
+                if (config.dbProfiler.enable) {
+                    const dbProfiler: IDbProfiler = ctx.dbProfiler ?? {
+                        totalCount: 0,
+                        uniqueQueriesCount: 0,
+                        queries: {}
+                    };
+
+                    dbProfiler.totalCount = (dbProfiler.totalCount ?? 0) + 1;
+
+                    // Generate a hash from the query to be able
+                    // to group identical queries (exact same query with exact same params)
+                    const queryKey = createHash('md5').update(JSON.stringify(query)).digest('base64');
+
+                    if (!dbProfiler.queries) {
+                        dbProfiler.queries = {};
+                    }
+
+                    // Retrieve the caller function (name and location)
+                    const caller = new Error().stack.split('\n')[2].trim().split(' ').splice(1).join(' @ ');
+
+                    dbProfiler.queries[queryKey] = {
+                        count: (dbProfiler.queries?.[queryKey]?.count ?? 0) + 1,
+                        callers: (dbProfiler.queries?.[queryKey]?.callers ?? new Set()).add(caller),
+                        query
+                    };
+
+                    dbProfiler.uniqueQueriesCount = Object.keys(dbProfiler.queries).length;
+
+                    ctx.dbProfiler = dbProfiler;
+                }
+
                 // Convert query to AqlQuery if we have a simple query to match query() types
                 const queryToRun = isAqlQuery(query)
                     ? {...query}

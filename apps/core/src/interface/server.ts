@@ -33,7 +33,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
@@ -160,6 +160,20 @@ export default function({
 
                         if (resp.errors) {
                             formattedResp.errors = resp.errors.map(e => _handleError(e, ctx));
+                        }
+
+                        const context: IQueryInfos = ctx.context;
+
+                        if (context.dbProfiler) {
+                            formattedResp.extensions = {
+                                dbProfiler: {
+                                    ...context.dbProfiler,
+                                    // Transform queries hash map into an array, sort queries by count
+                                    queries: Object.values(context.dbProfiler.queries)
+                                        .map(q => ({...q, callers: [...q.callers]})) // Transform callers Set into Array
+                                        .sort((a: any, b: any) => b.count - a.count)
+                                }
+                            };
                         }
 
                         return formattedResp;

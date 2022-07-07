@@ -27,6 +27,7 @@ export interface IConfig {
     preview: IPreview;
     applications: IApplicationsConfig;
     files: IFilesConfig;
+    dbProfiler: IDbProfilerConfig;
 }
 
 export interface IServer {
@@ -138,4 +139,8 @@ export interface IApplicationsConfig {
 export interface IFilesConfig {
     rootPaths: string;
     originalsPathPrefix: string;
+}
+
+export interface IDbProfilerConfig {
+    enable: boolean;
 }
