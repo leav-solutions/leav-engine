@@ -22,7 +22,7 @@ export enum ECacheType {
     RAM = 'RAM'
 }
 
-export default function ({
+export default function({
     'core.infra.cache.ramService': ramService = null,
     'core.infra.cache.diskService': diskService = null
 }: IDeps): ICachesService {

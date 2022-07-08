@@ -10,7 +10,7 @@ interface IDeps {
     'core.infra.redis'?: RedisClientType;
 }
 
-export default function ({config = null, 'core.infra.redis': redis = null}: IDeps): ICacheService {
+export default function({config = null, 'core.infra.redis': redis = null}: IDeps): ICacheService {
     return {
         async storeData(key: string, data: string): Promise<void> {
             await redis.SET(key, data);

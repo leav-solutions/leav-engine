@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
@@ -55,6 +56,7 @@ interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission.admin'?: IAdminPermissionDomain;
+    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.library'?: ILibraryRepo;
     'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
@@ -66,6 +68,7 @@ export default function({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.infra.library': libraryRepo = null,
     'core.utils': utils = null,
     'core.infra.tree': treeRepo = null,
@@ -86,29 +89,26 @@ export default function({
             // Validate attribute
             await this.getAttributeProperties({id: attributeId, ctx});
 
-            return attributeRepo.getAttributeLibraries({attributeId, ctx});
+            const libraries = await attributeRepo.getAttributeLibraries({attributeId, ctx});
+            return libraries;
         },
         async getLibraryFullTextAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
-            const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
+            const library = await getCoreEntityById('library', libraryId, ctx);
 
-            if (!libs.list.length) {
+            if (!library) {
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
             return attributeRepo.getLibraryFullTextAttributes({libraryId, ctx});
         },
         async getAttributeProperties({id, ctx}): Promise<IAttribute> {
-            const attrs = await attributeRepo.getAttributes({
-                params: {filters: {id}, strictFilters: true},
-                ctx
-            });
+            const attribute = await getCoreEntityById<IAttribute>('attribute', id, ctx);
 
-            if (!attrs.list.length) {
+            if (!attribute) {
                 throw new ValidationError<IAttribute>({id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: id}}});
             }
-            const props = attrs.list.pop();
 
-            return props;
+            return attribute;
         },
         async getAttributes({
             params,
@@ -128,11 +128,9 @@ export default function({
         async saveAttribute({attrData, ctx}): Promise<IAttribute> {
             // TODO: Validate attribute data (linked library, linked tree...)
 
-            const attrs = await attributeRepo.getAttributes({
-                params: {filters: {id: attrData.id}, strictFilters: true},
-                ctx
-            });
-            const isExistingAttr = !!attrs.list.length;
+            const attrProps = await getCoreEntityById<IAttribute>('attribute', attrData.id, ctx);
+
+            const isExistingAttr = !!attrProps;
 
             const defaultParams = {
                 _key: '',
@@ -143,7 +141,6 @@ export default function({
                 }
             };
 
-            const attrProps: IAttribute = attrs.list[0] ?? null;
             const attrToSave: IAttributeForRepo = isExistingAttr
                 ? {
                       ...defaultParams,
@@ -216,6 +213,9 @@ export default function({
                 ? await attributeRepo.updateAttribute({attrData: attrToSave, ctx})
                 : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
 
+            const cacheKey = utils.getCoreEntityCacheKey('attribute', attrToSave.id);
+            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+
             return attr;
         },
         async deleteAttribute({id, ctx}): Promise<IAttribute> {
@@ -241,7 +241,12 @@ export default function({
                 throw new ValidationError<IAttribute>({id: Errors.SYSTEM_ATTRIBUTE_DELETION});
             }
 
-            return attributeRepo.deleteAttribute({attrData: attrProps, ctx});
+            const deletedAttribute = await attributeRepo.deleteAttribute({attrData: attrProps, ctx});
+
+            const cacheKey = utils.getCoreEntityCacheKey('attribute', id);
+            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+
+            return deletedAttribute;
         },
         getInputTypes({attrData}): IOAllowedTypes {
             return getAllowedInputTypes(attrData);

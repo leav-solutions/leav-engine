@@ -105,7 +105,7 @@ export default function ({
                         dbProfiler.queries = {};
                     }
 
-                    const callStack = JSON.stringify(getCallStack(5));
+                    const callStack = JSON.stringify(getCallStack(10));
 
                     dbProfiler.queries[queryKey] = {
                         count: (dbProfiler.queries?.[queryKey]?.count ?? 0) + 1,

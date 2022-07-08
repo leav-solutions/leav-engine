@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
 import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
@@ -144,12 +145,13 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
+    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -158,18 +160,13 @@ export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.infra.tree': treeRepo = null,
     'core.utils': utils = null,
     'core.infra.cache.cacheService': cacheService = null
 }: IDeps = {}): ITreeDomain {
-    async function _getTreeProps(treeId: string, ctx: IQueryInfos): Promise<ITree | null> {
-        const trees = await treeRepo.getTrees({params: {filters: {id: treeId}, strictFilters: true}, ctx});
-
-        return trees.list.length ? trees.list[0] : null;
-    }
-
     async function _isExistingTree(treeId: string, ctx: IQueryInfos): Promise<boolean> {
-        const treeProps = await _getTreeProps(treeId, ctx);
+        const treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
 
         return !!treeProps;
     }
@@ -254,7 +251,7 @@ export default function ({
         await cacheService.getCache(ECacheType.RAM).deleteData(keys);
     };
 
-    const _cleanCacheRelatedToTree = async (treeId: string, ctx: IQueryInfos): Promise<void> => {
+    const _cleanPermissionsCacheRelatedToTree = async (treeId: string, ctx: IQueryInfos): Promise<void> => {
         if (treeId === 'users_groups') {
             return cacheService.getCache(ECacheType.RAM).deleteData([`${PERMISSIONS_CACHE_HEADER}:*`]);
         }
@@ -315,7 +312,7 @@ export default function ({
 
             // Get data to save
             const defaultParams = {id: '', behavior: TreeBehavior.STANDARD, system: false, label: {fr: '', en: ''}};
-            const treeProps = await _getTreeProps(treeData.id, ctx);
+            const treeProps = await getCoreEntityById<ITree>('tree', treeData.id, ctx);
 
             // If existing tree, skip all uneditable fields from supplied params.
             // If new tree, merge default params with supplied params
@@ -344,6 +341,11 @@ export default function ({
                 ? await treeRepo.updateTree({treeData: dataToSave as ITree, ctx})
                 : await treeRepo.createTree({treeData: dataToSave as ITree, ctx});
 
+            if (isExistingTree) {
+                const cacheKey = utils.getCoreEntityCacheKey('tree', dataToSave.id);
+                await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+            }
+
             return savedTree;
         },
         async deleteTree(id: string, ctx: IQueryInfos): Promise<ITree> {
@@ -356,7 +358,7 @@ export default function ({
             }
 
             // Check is existing tree
-            const treeProps = await _getTreeProps(id, ctx);
+            const treeProps = await getCoreEntityById<ITree>('tree', id, ctx);
 
             if (!treeProps) {
                 throw new ValidationError({id: Errors.UNKNOWN_TREE});
@@ -366,9 +368,14 @@ export default function ({
                 throw new ValidationError({id: Errors.SYSTEM_TREE_DELETION});
             }
 
-            await _cleanCacheRelatedToTree(treeProps.id, ctx);
+            await _cleanPermissionsCacheRelatedToTree(treeProps.id, ctx);
 
-            return treeRepo.deleteTree({id, ctx});
+            const deletedTree = treeRepo.deleteTree({id, ctx});
+
+            const cacheKey = utils.getCoreEntityCacheKey('tree', id);
+            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+
+            return deletedTree;
         },
         async getTrees({params, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>> {
             const initializedParams = {...params};
@@ -379,7 +386,7 @@ export default function ({
             return treeRepo.getTrees({params: initializedParams, ctx});
         },
         async getTreeProperties(treeId: string, ctx: IQueryInfos): Promise<ITree> {
-            const tree = await _getTreeProps(treeId, ctx);
+            const tree = await getCoreEntityById<ITree>('tree', treeId, ctx);
 
             if (!tree) {
                 throw new ValidationError({
@@ -391,7 +398,7 @@ export default function ({
         },
         async addElement({treeId, element, parent = null, order = 0, ctx}): Promise<ITreeNodeLight> {
             const errors: any = {};
-            const treeProps = await _getTreeProps(treeId, ctx);
+            const treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
             const treeExists = !!treeProps;
 
             if (!(await _isExistingTree(treeId, ctx))) {
@@ -454,7 +461,7 @@ export default function ({
         },
         async moveElement({treeId, nodeId, parentTo = null, order = 0, ctx}): Promise<ITreeNodeLight> {
             const errors: any = {};
-            const treeProps = await _getTreeProps(treeId, ctx);
+            const treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
             const treeExists = !!treeProps;
 
             if (!(await _isExistingTree(treeId, ctx))) {
@@ -545,7 +552,7 @@ export default function ({
                 throw new ValidationError(errors);
             }
 
-            await _cleanCacheRelatedToTree(treeId, ctx);
+            await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
 
             return treeRepo.moveElement({treeId, nodeId, parentTo, order, ctx});
         },
@@ -576,7 +583,7 @@ export default function ({
                 throw new PermissionError(TreeNodePermissionsActions.DETACH);
             }
 
-            await _cleanCacheRelatedToTree(treeId, ctx);
+            await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
 
             return treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
         },

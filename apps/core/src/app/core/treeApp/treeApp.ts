@@ -432,14 +432,8 @@ export default function ({
                         libraries: async (treeData: ITree, _, ctx: IQueryInfos): Promise<ITreeLibraryForGraphQL[]> => {
                             return Promise.all(
                                 Object.keys(treeData.libraries ?? {}).map(async libId => {
-                                    const lib = await libraryDomain.getLibraries({
-                                        params: {
-                                            filters: {id: libId},
-                                            strictFilters: true
-                                        },
-                                        ctx
-                                    });
-                                    return {library: lib.list[0], settings: treeData.libraries[libId]};
+                                    const lib = await libraryDomain.getLibraryProperties(libId, ctx);
+                                    return {library: lib, settings: treeData.libraries[libId]};
                                 })
                             );
                         },
