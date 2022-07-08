@@ -2,15 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference, omit, union} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
-import * as Config from '_types/config';
 import {ErrorFieldDetail} from '_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
@@ -44,22 +43,20 @@ export interface ILibraryDomain {
 }
 
 interface IDeps {
-    config?: Config.IConfig;
     'core.infra.library'?: ILibraryRepo;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.utils'?: IUtils;
-    translator?: i18n;
     'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
     'core.domain.helpers.validate'?: IValidateHelper;
+    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function ({
-    config = null,
+export default function({
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -68,9 +65,9 @@ export default function ({
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.helpers.validate': validateHelper = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    translator: translator
+    'core.infra.cache.cacheService': cacheService = null
 }: IDeps = {}): ILibraryDomain {
     return {
         async getLibraries({
@@ -106,34 +103,26 @@ export default function ({
                 throw new ValidationError({id: Errors.MISSING_LIBRARY_ID});
             }
 
-            const libs = await libraryRepo.getLibraries({
-                params: {filters: {id}, strictFilters: true},
-                ctx
-            });
+            const lib = await getCoreEntityById<ILibrary>('library', id, ctx);
 
-            if (!libs.list.length) {
+            if (!lib) {
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
-            const props = libs.list.pop();
-
-            return props;
+            return lib;
         },
         async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
-            const attrs = await attributeDomain.getAttributes({
-                params: {filters: {id: attributeId}, strictFilters: true},
-                ctx
-            });
+            const attribute = await getCoreEntityById('attribute', attributeId, ctx);
 
-            if (!attrs.list.length) {
+            if (!attribute) {
                 throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
             }
 
             return libraryRepo.getLibrariesUsingAttribute(attributeId, ctx);
         },
         async saveLibrary(libData: ILibrary, ctx: IQueryInfos): Promise<ILibrary> {
-            const libs = await libraryRepo.getLibraries({params: {filters: {id: libData.id}}, ctx});
-            const existingLib = !!libs.list.length;
+            const library = await getCoreEntityById<ILibrary>('library', libData.id, ctx);
+            const existingLib = !!library;
 
             const defaultParams = {
                 id: '',
@@ -220,7 +209,7 @@ export default function ({
             if (
                 existingLib &&
                 JSON.stringify(libData.permissions_conf?.permissionTreeAttributes) !==
-                    JSON.stringify(libs.list[0].permissions_conf?.permissionTreeAttributes)
+                    JSON.stringify(library.permissions_conf?.permissionTreeAttributes)
             ) {
                 const keyLib = getPermissionCachePatternKey({
                     permissionType: PermissionTypes.LIBRARY,
@@ -234,7 +223,7 @@ export default function ({
                 await cacheService.getCache(ECacheType.RAM).deleteData([keyLib, keyRec]);
             }
 
-            const lib = existingLib
+            const savedLib = existingLib
                 ? await libraryRepo.updateLibrary({
                       libData: dataToSave as ILibrary,
                       ctx
@@ -256,7 +245,7 @@ export default function ({
                 ctx
             });
 
-            await runBehaviorPostSave(lib, !existingLib, {treeRepo, utils}, ctx);
+            await runBehaviorPostSave(savedLib, !existingLib, {treeRepo, utils}, ctx);
 
             // delete associate values if attribute is delete
             const deletedAttrs = difference(difference(currentLibraryAttributes, defaultAttributes), libAttributes);
@@ -270,13 +259,13 @@ export default function ({
                     type: EventType.LIBRARY_SAVE,
                     data: {
                         new: {
-                            ...lib,
+                            ...savedLib,
                             fullTextAttributes: libFullTextAttributes,
                             attributes: libAttributes
                         },
                         ...(existingLib && {
                             old: {
-                                ...libs.list[0],
+                                ...library,
                                 fullTextAttributes: currentFullTextAttributes,
                                 attributes: currentLibraryAttributes
                             }
@@ -286,7 +275,12 @@ export default function ({
                 ctx
             );
 
-            return lib;
+            if (existingLib) {
+                const cacheKey = utils.getCoreEntityCacheKey('library', savedLib.id);
+                await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+            }
+
+            return savedLib;
         },
         async deleteLibrary(id: string, ctx: IQueryInfos): Promise<ILibrary> {
             // Check permissions
@@ -298,18 +292,13 @@ export default function ({
             }
 
             // Get library
-            const libraries = await this.getLibraries({params: {filters: {id}}, ctx});
+            const library = await this.getLibraryProperties(id, ctx);
 
-            if (!libraries.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-            }
-
-            const lib = libraries.list[0];
-            if (lib.system) {
+            if (library.system) {
                 throw new ValidationError({id: Errors.SYSTEM_LIBRARY_DELETION});
             }
 
-            await runBehaviorPostDelete(lib, {treeRepo, utils}, ctx);
+            await runBehaviorPostDelete(library, {treeRepo, utils}, ctx);
 
             // get all records and delete them
             const records = await recordDomain.find({params: {library: id}, ctx});
@@ -327,6 +316,9 @@ export default function ({
                 },
                 ctx
             );
+
+            const cacheKey = utils.getCoreEntityCacheKey('library', id);
+            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
 
             return deletedLibrary;
         }

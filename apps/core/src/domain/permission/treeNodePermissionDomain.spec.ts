@@ -190,6 +190,7 @@ describe('treeNodePermissionDomain', () => {
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.helpers.defaultPermission': mockDefaultPermHelper as IDefaultPermissionHelper,
+                'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(mockTree),
                 'core.infra.value': mockValueRepo as IValueRepo
             });
 

@@ -17,6 +17,7 @@ import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttribute
 import {AttributeTypes} from '../../_types/attribute';
 import {LibraryBehavior} from '../../_types/library';
 import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permissions';
+import {mockLibrary} from '../../__tests__/mocks/library';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain from './libraryDomain';
 
@@ -61,6 +62,15 @@ describe('LibraryDomain', () => {
 
     const mockValidateHelperBadView: Mockify<IValidateHelper> = {
         validateView: global.__mockPromise(false)
+    };
+
+    const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockLibrary);
+    const mockGetEntityByIdHelperNoResult = jest.fn().mockReturnValue(null);
+
+    const mockUtils: Mockify<IUtils> = {
+        isIdValid: jest.fn().mockReturnValue(true),
+        getLibraryTreeId: jest.fn().mockReturnValue({}),
+        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:library:42')
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -116,19 +126,12 @@ describe('LibraryDomain', () => {
 
     describe('getLibraryProperties', () => {
         test('Should return library properties', async function () {
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0})
-            };
-
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+            const libDomain = libraryDomain({
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper
+            });
             const lib = await libDomain.getLibraryProperties('test', ctx);
 
-            expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
-            expect(mockLibRepo.getLibraries).toBeCalledWith({
-                params: {filters: {id: 'test'}, strictFilters: true},
-                ctx: expect.anything()
-            });
-            expect(lib).toMatchObject({id: 'test', system: true});
+            expect(lib).toMatchObject(mockLibrary);
         });
 
         test('Should throw if unknown library', async function () {
@@ -142,15 +145,9 @@ describe('LibraryDomain', () => {
     });
 
     describe('saveLibrary', () => {
-        const mockUtils: Mockify<IUtils> = {
-            isIdValid: jest.fn().mockReturnValue(true),
-            getLibraryTreeId: jest.fn().mockReturnValue({})
-        };
-
         describe('Create library', () => {
             test('Should save a new library', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [], totalCount: 0}),
                     createLibrary: global.__mockPromise({id: 'test', system: false}),
                     updateLibrary: jest.fn(),
                     saveLibraryAttributes: jest.fn(),
@@ -185,12 +182,12 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -231,7 +228,6 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn()
@@ -249,12 +245,12 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                     'core.utils': mockUtilsInvalidID as IUtils
                 });
 
@@ -263,7 +259,6 @@ describe('LibraryDomain', () => {
 
             test('Save behavior specific attributes', async () => {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [], totalCount: 0}),
                     createLibrary: global.__mockPromise({id: 'test', system: false}),
                     updateLibrary: jest.fn(),
                     saveLibraryAttributes: jest.fn(),
@@ -298,12 +293,12 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
@@ -322,7 +317,6 @@ describe('LibraryDomain', () => {
 
             test('For FILES library, create linked tree', async () => {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [], totalCount: 0}),
                     createLibrary: global.__mockPromise({id: 'test', system: false, behavior: LibraryBehavior.FILES}),
                     updateLibrary: jest.fn(),
                     saveLibraryAttributes: jest.fn(),
@@ -357,12 +351,12 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                     'core.utils': mockUtils as IUtils,
                     'core.infra.tree': mockTreeRepo as ITreeRepo
                 });
@@ -382,10 +376,6 @@ describe('LibraryDomain', () => {
         describe('Update library', () => {
             test('Should update a library', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({
-                        list: [{id: 'test', system: false, permissions_conf: {permissionTreeAttributes: ['fake']}}],
-                        totalCount: 0
-                    }),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
@@ -420,13 +410,13 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -447,7 +437,6 @@ describe('LibraryDomain', () => {
 
             test('Should update library attributes', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
@@ -482,13 +471,13 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -505,7 +494,7 @@ describe('LibraryDomain', () => {
 
                 const defaultAttributes = getDefaultAttributes(updatedLib.behavior, updatedLib.id);
 
-                expect(mockCacheService.deleteData).toBeCalledTimes(0);
+                expect(mockCacheService.deleteData).toBeCalledTimes(1); // Entity cache clear
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].libId).toEqual('test');
@@ -523,7 +512,6 @@ describe('LibraryDomain', () => {
 
             test('Should throw if unknown attributes', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
@@ -558,12 +546,12 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -586,7 +574,6 @@ describe('LibraryDomain', () => {
 
             test('Should throw if unknown trees attributes in permissions conf', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn()
@@ -620,12 +607,12 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -682,12 +669,12 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -729,6 +716,7 @@ describe('LibraryDomain', () => {
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -737,7 +725,6 @@ describe('LibraryDomain', () => {
 
             test('Should throw if unknown default view', async function () {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
-                    getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
                     saveLibraryAttributes: jest.fn(),
@@ -772,12 +759,12 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelperBadView as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -823,12 +810,13 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
-                    config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.infra.cache.cacheService': mockCachesService as ICachesService,
                     'core.utils': mockUtils as IUtils
                 });
 
@@ -842,7 +830,7 @@ describe('LibraryDomain', () => {
     describe('deleteLibrary', () => {
         const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
 
-        test('Should delete an library and return deleted library', async function () {
+        test('Should delete a library and return deleted library', async function () {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
                 send: global.__mockPromise()
@@ -853,11 +841,13 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
-                config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.utils': mockUtils as IUtils
             });
 
             libDomain.getLibraries = global.__mockPromise({list: [libData], totalCount: 1});
@@ -879,7 +869,6 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
-                config: mockConfig as Config.IConfig,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
@@ -896,7 +885,6 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
-                config: mockConfig as Config.IConfig,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
@@ -911,7 +899,6 @@ describe('LibraryDomain', () => {
             };
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
-                config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain
@@ -923,9 +910,6 @@ describe('LibraryDomain', () => {
         });
 
         test('When deleting a files library, delete linked tree', async () => {
-            const mockUtils: Mockify<IUtils> = {
-                getLibraryTreeId: jest.fn().mockReturnValue({})
-            };
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
                 send: global.__mockPromise()
             };
@@ -935,13 +919,19 @@ describe('LibraryDomain', () => {
                 find: global.__mockPromise({totalCount: 0, list: []})
             };
 
+            const mockGetEntityByIdHelperFilesLibrary = jest.fn().mockReturnValue({
+                ...mockLibrary,
+                behavior: LibraryBehavior.FILES
+            });
+
             const libDomain = libraryDomain({
-                config: mockConfig as Config.IConfig,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperFilesLibrary,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.utils': mockUtils as IUtils
             });
             libDomain.getLibraries = global.__mockPromise({

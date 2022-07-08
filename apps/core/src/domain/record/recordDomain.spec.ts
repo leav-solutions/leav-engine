@@ -9,7 +9,6 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IStandardValue, IValue} from '_types/value';
@@ -43,16 +42,6 @@ describe('RecordDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'recordDomainTest'
-    };
-
-    const mockUtils: Mockify<IUtils> = {
-        isStandardAttribute: jest.fn().mockReturnValue(true),
-        isLinkAttribute: jest.fn().mockReturnValue(false)
-    };
-
-    const mockUtilsLinkAttribute: Mockify<IUtils> = {
-        isStandardAttribute: jest.fn().mockReturnValue(false),
-        isLinkAttribute: jest.fn().mockReturnValue(true)
     };
 
     describe('createRecord', () => {
@@ -753,10 +742,6 @@ describe('RecordDomain', () => {
                 }
             };
 
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({totalCount: 1, list: [libData]})
-            };
-
             const mockValDomain: Mockify<IValueDomain> = {
                 getValues: global.__mockPromiseMultiple([
                     [
@@ -781,9 +766,11 @@ describe('RecordDomain', () => {
                 ])
             };
 
+            const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
-                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 config: mockConfig as Config.IConfig
             });
             recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
@@ -859,9 +846,11 @@ describe('RecordDomain', () => {
             const mockValDomain: Mockify<IValueDomain> = {
                 getValues: jest.fn()
             };
+            const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.infra.library': mockLibRepo as ILibraryRepo
             });
 
@@ -898,8 +887,7 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValueDomainFormatValue as IValueDomain,
-                'core.utils': mockUtils as IUtils
+                'core.domain.value': mockValueDomainFormatValue as IValueDomain
             });
 
             const value = await recDomain.getRecordFieldValue({
@@ -933,8 +921,7 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValDomain as IValueDomain,
-                'core.utils': mockUtils as IUtils
+                'core.domain.value': mockValDomain as IValueDomain
             });
 
             const value = await recDomain.getRecordFieldValue({
@@ -972,9 +959,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.actionsList': mockALDomain as IActionsListDomain,
-                'core.domain.value': mockValueDomainFormatValueDate as IValueDomain,
-                'core.utils': mockUtils as IUtils
+                'core.domain.value': mockValueDomainFormatValueDate as IValueDomain
             });
 
             const value = await recDomain.getRecordFieldValue({
@@ -1006,8 +991,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValueDomainFormatValueLink as IValueDomain,
-                'core.utils': mockUtilsLinkAttribute as IUtils
+                'core.domain.value': mockValueDomainFormatValueLink as IValueDomain
             });
 
             const value = await recDomain.getRecordFieldValue({
@@ -1031,8 +1015,7 @@ describe('RecordDomain', () => {
             };
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.value': mockValueDomainFormatValue as IValueDomain,
-                'core.utils': mockUtils as IUtils
+                'core.domain.value': mockValueDomainFormatValue as IValueDomain
             });
 
             const value = await recDomain.getRecordFieldValue({

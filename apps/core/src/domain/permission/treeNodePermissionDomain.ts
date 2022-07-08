@@ -1,11 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
-import {ITreeElement} from '_types/tree';
+import {ITree, ITreeElement} from '_types/tree';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {
@@ -37,6 +38,7 @@ interface IDeps {
     'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
+    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.tree'?: ITreeRepo;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.value'?: IValueRepo;
@@ -49,6 +51,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper = null,
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
+        'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
         'core.infra.tree': treeRepo = null,
         'core.domain.attribute': attributeDomain = null,
         'core.infra.value': valueRepo = null
@@ -130,8 +133,8 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
             // Call repo instead of domain to avoid some cyclic reference issues
             const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
             const nodeElement = {id: nodeRecord.id, library: nodeRecord.library};
-            const trees = await treeRepo.getTrees({params: {filters: {id: treeId}, strictFilters: true}, ctx});
-            const treeData = trees.list.length ? trees.list[0] : null;
+
+            const treeData = await getCoreEntityById<ITree>('tree', treeId, ctx);
             if (!treeData) {
                 throw new ValidationError({
                     id: Errors.UNKNOWN_TREE

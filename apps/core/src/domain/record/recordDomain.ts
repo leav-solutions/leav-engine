@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
@@ -10,8 +11,6 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import moment from 'moment';
 import {join} from 'path';
-import {IUtils} from 'utils/utils';
-import winston from 'winston';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IPreview} from '_types/preview';
@@ -36,7 +35,6 @@ import {
     Operator,
     TreeCondition
 } from '../../_types/record';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
@@ -173,14 +171,12 @@ interface IDeps {
     'core.infra.record'?: IRecordRepo;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.value'?: IValueDomain;
-    'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
+    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.utils'?: IUtils;
-    'core.utils.logger'?: winston.Winston;
 }
 
 export default function ({
@@ -188,14 +184,12 @@ export default function ({
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.value': valueDomain = null,
-    'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.record': recordPermissionDomain = null,
     'core.domain.permission.library': libraryPermissionDomain = null,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.utils': utils = null,
-    'core.utils.logger': logger = null
+    'core.domain.eventsManager': eventsManager = null
 }: IDeps = {}): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
@@ -466,16 +460,12 @@ export default function ({
     };
 
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
-        const libs = await libraryRepo.getLibraries({
-            params: {filters: {id: record.library}, strictFilters: true},
-            ctx
-        });
+        const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
 
-        if (!libs.list.length) {
+        if (!lib) {
             throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
         }
 
-        const lib = libs.list.pop();
         const conf = lib.recordIdentityConf || {};
 
         let label = null;

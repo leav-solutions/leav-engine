@@ -80,6 +80,8 @@ export interface IUtils {
     translateError(error: Errors | IExtendedErrorMsg | string, lang: string): string;
 
     getFullApplicationEndpoint(endpoint: string): string;
+
+    getCoreEntityCacheKey(entityType: string, entityId: string): string;
 }
 
 export interface IUtilsDeps {
@@ -202,6 +204,9 @@ export default function ({translator = null}: IUtilsDeps = {}): IUtils {
         },
         getFullApplicationEndpoint(endpoint: string): string {
             return `${APPS_URL_PREFIX}/${endpoint}`;
+        },
+        getCoreEntityCacheKey(entityType: string, entityId: string): string {
+            return `coreEntity:${entityType}:${entityId}`;
         }
     };
 }

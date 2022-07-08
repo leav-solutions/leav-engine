@@ -10,7 +10,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({config = null}: IDeps): ICacheService {
+export default function({config = null}: IDeps): ICacheService {
     return {
         async storeData(key: string, data: string, path?: string): Promise<void> {
             await cacache.put(`${config.diskCache.directory}/${path}`, key, data);
