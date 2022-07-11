@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFileType = exports.getLibraryGraphqlNames = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -179,4 +179,15 @@ const getFileType = (fileName) => {
     return type;
 };
 exports.getFileType = getFileType;
+/**
+ * Return a simplified call stack (for the function who called this function, not this one, obviously)
+ *
+ * @param depth Number of calls to return
+ */
+const getCallStack = (depth = 2) => {
+    const callersStartDepth = 3;
+    const callers = new Error().stack.split('\n').slice(callersStartDepth, callersStartDepth + depth);
+    return callers.map(c => c.trim().split(' ').splice(1).join(' @ '));
+};
+exports.getCallStack = getCallStack;
 //# sourceMappingURL=utils.js.map

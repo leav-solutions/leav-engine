@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getCallStack} from '@leav/utils';
 import {Database} from 'arangojs';
 import {isAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {createHash} from 'crypto';
@@ -104,12 +105,11 @@ export default function ({
                         dbProfiler.queries = {};
                     }
 
-                    // Retrieve the caller function (name and location)
-                    const caller = new Error().stack.split('\n')[2].trim().split(' ').splice(1).join(' @ ');
+                    const callStack = JSON.stringify(getCallStack(5));
 
                     dbProfiler.queries[queryKey] = {
                         count: (dbProfiler.queries?.[queryKey]?.count ?? 0) + 1,
-                        callers: (dbProfiler.queries?.[queryKey]?.callers ?? new Set()).add(caller),
+                        callers: (dbProfiler.queries?.[queryKey]?.callers ?? new Set()).add(callStack),
                         query
                     };
 

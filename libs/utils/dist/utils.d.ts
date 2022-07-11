@@ -50,3 +50,9 @@ export declare const getLibraryGraphqlNames: (
     filter: string;
 };
 export declare const getFileType: (fileName: string) => FileType;
+/**
+ * Return a simplified call stack (for the function who called this function, not this one, obviously)
+ *
+ * @param depth Number of calls to return
+ */
+export declare const getCallStack: (depth?: number) => string[];
