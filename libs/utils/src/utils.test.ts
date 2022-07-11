@@ -4,6 +4,7 @@
 import {FileType} from './types/files';
 import {
     extractArgsFromString,
+    getCallStack,
     getFileType,
     getGraphqlQueryNameFromLibraryName,
     getGraphqlTypeFromLibraryName,
@@ -119,6 +120,14 @@ describe('utils', () => {
             expect(getFileType('file.old.jpg')).toBe(FileType.IMAGE);
             expect(getFileType('file.mp4')).toBe(FileType.VIDEO);
             expect(getFileType('file.pdf')).toBe(FileType.DOCUMENT);
+        });
+    });
+
+    describe('getCallStack', () => {
+        test('Return call stack', async () => {
+            // It would be hazardous to check the real stack as it might break on any change in jest internals.
+            // Just check we have something in the stack
+            expect(getCallStack().length).toBeGreaterThanOrEqual(1);
         });
     });
 });

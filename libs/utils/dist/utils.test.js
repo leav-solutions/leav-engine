@@ -102,5 +102,12 @@ describe('utils', () => {
             expect(utils_1.getFileType('file.pdf')).toBe(files_1.FileType.DOCUMENT);
         });
     });
+    describe('getCallStack', () => {
+        test('Return call stack', async () => {
+            // It would be hazardous to check the real stack as it might break on any change in jest internals.
+            // Just check we have something in the stack
+            expect(utils_1.getCallStack().length).toBeGreaterThanOrEqual(1);
+        });
+    });
 });
 //# sourceMappingURL=utils.test.js.map

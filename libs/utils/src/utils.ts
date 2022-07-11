@@ -168,3 +168,15 @@ export const getFileType = (fileName: string): FileType => {
 
     return type;
 };
+
+/**
+ * Return a simplified call stack (for the function who called this function, not this one, obviously)
+ *
+ * @param depth Number of calls to return
+ */
+export const getCallStack = (depth: number = 2): string[] => {
+    const callersStartDepth = 3;
+    const callers = new Error().stack.split('\n').slice(callersStartDepth, callersStartDepth + depth);
+
+    return callers.map(c => c.trim().split(' ').splice(1).join(' @ '));
+};
