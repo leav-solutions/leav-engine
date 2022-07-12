@@ -35,6 +35,7 @@ module.exports = {
     },
     debug: true,
     redis: {
-        host: process.env.REDIS_HOST || 'redis'
+        host: process.env.REDIS_HOST || 'redis',
+        database: 15
     }
 };

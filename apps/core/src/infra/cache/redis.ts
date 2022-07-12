@@ -15,7 +15,8 @@ export async function initRedis({config}: IDeps): Promise<RedisClientType> {
         socket: {
             host: config.redis.host,
             port: config.redis.port
-        }
+        },
+        database: config.redis.database
     });
 
     client.on('error', err => {
