@@ -2,17 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
-import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
-import {ITreeValue} from '_types/value';
-import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import {IDefaultPermissionHelper} from './defaultPermission';
-import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
+import {PermissionsActions, PermissionTypes} from '../../../_types/permissions';
+import {PERMISSIONS_NULL_PLACEHOLDER} from '../_types';
+import {IDefaultPermissionHelper} from './defaultPermission';
 import getPermissionCacheKey from './getPermissionCacheKey';
+import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 
 interface IGetGlobalPermissionParams {
     type: PermissionTypes;
@@ -70,7 +69,11 @@ export default function ({
             let perm: boolean;
 
             if (permFromCache !== null) {
-                perm = permFromCache === 'true';
+                if (permFromCache === PERMISSIONS_NULL_PLACEHOLDER) {
+                    perm = null;
+                } else {
+                    perm = permFromCache === 'true';
+                }
             } else {
                 const userGroupsPaths = !!ctx.groupsId
                     ? await Promise.all(
@@ -92,14 +95,11 @@ export default function ({
                     ctx
                 });
 
-                perm = perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});
-
-                if (perm !== null) {
-                    await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, perm.toString());
-                }
+                const permToStore = perm === null ? PERMISSIONS_NULL_PLACEHOLDER : perm.toString();
+                await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, permToStore);
             }
 
-            return perm;
+            return perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});
         },
         async getInheritedGlobalPermission(
             {type, applyTo, userGroupNodeId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
