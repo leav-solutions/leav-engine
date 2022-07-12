@@ -2,20 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {TreePaths} from '_types/tree';
+import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsActions, PermissionsRelations, PermissionTypes} from '../../../_types/permissions';
-import {IGetInheritedTreeBasedPermissionParams, IGetTreeBasedPermissionParams} from '../_types';
+import {
+    IGetInheritedTreeBasedPermissionParams,
+    IGetTreeBasedPermissionParams,
+    PERMISSIONS_NULL_PLACEHOLDER
+} from '../_types';
 import {IDefaultPermissionHelper} from './defaultPermission';
+import getPermissionCacheKey from './getPermissionCacheKey';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
-import getPermissionCacheKey from './getPermissionCacheKey';
-import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
@@ -145,7 +148,11 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
         let perm: boolean;
 
         if (permFromCache !== null) {
-            perm = permFromCache === 'true';
+            if (permFromCache === PERMISSIONS_NULL_PLACEHOLDER) {
+                perm = null;
+            } else {
+                perm = permFromCache === 'true';
+            }
         } else {
             const userGroupsPaths = !!ctx.groupsId
                 ? await Promise.all(
@@ -186,9 +193,8 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
                     : globalPerm || treePerm;
             }, null);
 
-            if (perm !== null) {
-                await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, perm.toString());
-            }
+            const permToStore = perm === null ? PERMISSIONS_NULL_PLACEHOLDER : perm.toString();
+            await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, permToStore);
         }
 
         return perm;
