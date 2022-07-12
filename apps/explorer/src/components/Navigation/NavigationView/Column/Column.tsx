@@ -64,7 +64,7 @@ const Column = ({treeElement, depth, isActive: columnActive}: IColumnProps) => {
         }
     };
     const {loading, error, data, refetch, called} = useQuery<TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables>(
-        treeNodeChildrenQuery(true),
+        treeNodeChildrenQuery,
         {
             variables: queryVariables,
             onCompleted: res => {

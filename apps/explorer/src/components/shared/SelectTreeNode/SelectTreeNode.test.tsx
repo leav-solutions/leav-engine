@@ -12,7 +12,7 @@ describe('SelectTreeNode', () => {
         const mocks = [
             {
                 request: {
-                    query: treeNodeChildrenQuery(true),
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'treeId',
                         node: null,
@@ -57,7 +57,7 @@ describe('SelectTreeNode', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery(true),
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'treeId',
                         node: 'id1',

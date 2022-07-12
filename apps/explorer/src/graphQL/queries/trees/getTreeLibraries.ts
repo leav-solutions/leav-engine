@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 
-export const getTreeLibraries = (withTotalCount?: boolean) => gql`
+export const getTreeLibraries = gql`
     query GET_TREE_LIBRARIES($treeId: ID!) {
         trees(filters: {id: $treeId}) {
-            ${withTotalCount ? 'totalCount' : ''}
+            totalCount
             list {
                 id
                 libraries {

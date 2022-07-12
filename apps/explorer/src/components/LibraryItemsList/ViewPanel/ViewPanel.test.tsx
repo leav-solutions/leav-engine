@@ -85,7 +85,7 @@ describe('ViewPanel', () => {
         },
         {
             request: {
-                query: getViewsListQuery(true),
+                query: getViewsListQuery,
                 variables: {
                     libraryId: mockGetLibraryDetailExtendedElement.id
                 }

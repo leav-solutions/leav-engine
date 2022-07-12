@@ -33,7 +33,7 @@ const mocksGetViewsListQuery = (libraryId: string) => {
     const mocks = [
         {
             request: {
-                query: getViewsListQuery(true),
+                query: getViewsListQuery,
                 variables: {
                     libraryId
                 }

@@ -19,7 +19,7 @@ export default function useAddViewMutation(library: string): IUseAddViewMutation
                 variables,
                 refetchQueries: [
                     {
-                        query: getViewsListQuery(true),
+                        query: getViewsListQuery,
                         variables: {
                             libraryId: library
                         }

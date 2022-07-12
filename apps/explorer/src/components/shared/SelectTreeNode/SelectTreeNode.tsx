@@ -98,7 +98,7 @@ function SelectTreeNode({
 
     // Retrieve tree content
     const [loadTreeContent, {error, called}] = useLazyQuery<TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables>(
-        treeNodeChildrenQuery(true)
+        treeNodeChildrenQuery
     );
 
     const _fetchTreeContent = async (key?: string, offset: number = 0) => {

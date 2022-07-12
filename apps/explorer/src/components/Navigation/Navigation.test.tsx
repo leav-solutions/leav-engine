@@ -192,7 +192,7 @@ describe('Navigation', () => {
         // Call on first level
         {
             request: {
-                query: treeNodeChildrenQuery(true),
+                query: treeNodeChildrenQuery,
                 variables: {
                     treeId: 'my_tree',
                     node: null,
@@ -206,7 +206,7 @@ describe('Navigation', () => {
         },
         {
             request: {
-                query: treeNodeChildrenQuery(true),
+                query: treeNodeChildrenQuery,
                 variables: {
                     treeId: 'my_tree',
                     node: '12345',
@@ -254,7 +254,7 @@ describe('Navigation', () => {
             // Call on first level
             {
                 request: {
-                    query: treeNodeChildrenQuery(true),
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -268,7 +268,7 @@ describe('Navigation', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery(true),
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -282,7 +282,7 @@ describe('Navigation', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery(true),
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -296,7 +296,7 @@ describe('Navigation', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery(true),
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -369,7 +369,7 @@ describe('Navigation', () => {
             // Call on first level
             {
                 request: {
-                    query: treeNodeChildrenQuery(true),
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -383,7 +383,7 @@ describe('Navigation', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery(true),
+                    query: treeNodeChildrenQuery,
                     variables: {
                         treeId: 'my_tree',
                         node: '12345',

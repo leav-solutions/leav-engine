@@ -4,11 +4,11 @@
 import gql from 'graphql-tag';
 import recordIdentityFragment from '../records/recordIdentityFragment';
 
-export const treeNodeChildrenQuery = (withTotalCount?: boolean) => gql`
+export const treeNodeChildrenQuery = gql`
     ${recordIdentityFragment}
     query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination) {
         treeNodeChildren(treeId: $treeId, node: $node, pagination: $pagination) {
-            ${withTotalCount ? 'totalCount' : ''}
+            totalCount
             list {
                 id
                 childrenCount

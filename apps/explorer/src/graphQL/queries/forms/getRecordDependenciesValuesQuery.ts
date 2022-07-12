@@ -34,17 +34,13 @@ export interface IGetRecordDependenciesValuesVariables {
     id: string;
 }
 
-export function getRecordDependenciesValuesQuery(
-    libraryGqlName: string,
-    attributes: string[],
-    withTotalCount?: boolean
-) {
+export function getRecordDependenciesValuesQuery(libraryGqlName: string, attributes: string[]) {
     return gqlUnchecked`
         query ${`RECORD_DEPS_VALUES_${libraryGqlName}`}($id: String!) {
             record: ${libraryGqlName}(filters: {field: "id", condition: ${
         AttributeConditionFilter.EQUAL
     }, value: $id}) {
-                ${withTotalCount ? 'totalCount' : ''}
+                totalCount
                 ${
                     attributes.length
                         ? `list {
