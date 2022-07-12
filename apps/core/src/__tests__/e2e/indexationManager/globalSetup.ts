@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {amqpService} from '@leav/message-broker';
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
-import {amqpService} from '@leav/message-broker';
+import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {initRedis} from '../../../infra/cache/redis';
 import {initDb} from '../../../infra/db/db';
 
@@ -26,6 +27,12 @@ export async function setup() {
             'core.infra.amqpService': amqp,
             'core.infra.redis': redisClient
         });
+
+        // Clear all caches (redis cache for example might persist between runs)
+        const cacheService: ICachesService = coreContainer.cradle['core.infra.cache.cacheService'];
+        await cacheService.getCache(ECacheType.DISK).deleteAll();
+        await cacheService.getCache(ECacheType.RAM).deleteAll();
+
         const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
         await dbUtils.clearDatabase();
