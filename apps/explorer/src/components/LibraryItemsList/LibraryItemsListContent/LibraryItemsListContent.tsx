@@ -127,14 +127,14 @@ function LibraryItemsListContent({
         searchDispatch({
             type: SearchActionTypes.UPDATE_RESULT,
             records: newRecords,
-            totalCount: data?.[library.gqlNames.query]?.totalCount
+            totalCount: data?.[library.gqlNames.query]?.totalCount || searchState.totalCount
         });
     };
 
     const {error: getRecordsError, loading: getRecordsLoading, fetchMore: getRecordsFetchMore} = useQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields), {
+    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields, !searchState.offset), {
         fetchPolicy: 'network-only',
         skip: !searchState.loading,
         variables: {
@@ -163,7 +163,7 @@ function LibraryItemsListContent({
             // Records have already been fetched, we use fetchMore to make sure
             // we request the right fields by passing in a whole new query
             const results = await getRecordsFetchMore({
-                query: getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields),
+                query: getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields, !searchState.offset),
                 variables
             });
 

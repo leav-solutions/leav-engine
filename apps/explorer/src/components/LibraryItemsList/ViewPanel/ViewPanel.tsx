@@ -127,7 +127,7 @@ function ViewPanel(): JSX.Element {
     const USER_VIEWS_ORDER_KEY = 'user_views_order_' + searchState.library.id;
     const SHARED_VIEWS_ORDER_KEY = 'shared_views_order_' + searchState.library.id;
 
-    const {data, loading, error, refetch} = useQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(getViewsListQuery, {
+    const {data, loading, error, refetch} = useQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(getViewsListQuery(true), {
         variables: {
             libraryId: searchState.library.id || ''
         }

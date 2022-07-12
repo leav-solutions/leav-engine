@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
-import React from 'react';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
 import SelectTreeNode from './SelectTreeNode';
@@ -13,7 +12,7 @@ describe('SelectTreeNode', () => {
         const mocks = [
             {
                 request: {
-                    query: treeNodeChildrenQuery,
+                    query: treeNodeChildrenQuery(true),
                     variables: {
                         treeId: 'treeId',
                         node: null,
@@ -58,7 +57,7 @@ describe('SelectTreeNode', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery,
+                    query: treeNodeChildrenQuery(true),
                     variables: {
                         treeId: 'treeId',
                         node: 'id1',

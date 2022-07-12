@@ -5,7 +5,6 @@ import {MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
-import React from 'react';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';
@@ -193,7 +192,7 @@ describe('Navigation', () => {
         // Call on first level
         {
             request: {
-                query: treeNodeChildrenQuery,
+                query: treeNodeChildrenQuery(true),
                 variables: {
                     treeId: 'my_tree',
                     node: null,
@@ -207,7 +206,7 @@ describe('Navigation', () => {
         },
         {
             request: {
-                query: treeNodeChildrenQuery,
+                query: treeNodeChildrenQuery(true),
                 variables: {
                     treeId: 'my_tree',
                     node: '12345',
@@ -255,7 +254,7 @@ describe('Navigation', () => {
             // Call on first level
             {
                 request: {
-                    query: treeNodeChildrenQuery,
+                    query: treeNodeChildrenQuery(true),
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -269,7 +268,7 @@ describe('Navigation', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery,
+                    query: treeNodeChildrenQuery(true),
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -283,7 +282,7 @@ describe('Navigation', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery,
+                    query: treeNodeChildrenQuery(true),
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -297,7 +296,7 @@ describe('Navigation', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery,
+                    query: treeNodeChildrenQuery(true),
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -370,7 +369,7 @@ describe('Navigation', () => {
             // Call on first level
             {
                 request: {
-                    query: treeNodeChildrenQuery,
+                    query: treeNodeChildrenQuery(true),
                     variables: {
                         treeId: 'my_tree',
                         node: null,
@@ -384,7 +383,7 @@ describe('Navigation', () => {
             },
             {
                 request: {
-                    query: treeNodeChildrenQuery,
+                    query: treeNodeChildrenQuery(true),
                     variables: {
                         treeId: 'my_tree',
                         node: '12345',

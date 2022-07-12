@@ -60,7 +60,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
     const [createRecordModalVisible, setCreateRecordModalVisible] = useState(false);
     const [libId, setLibId] = useState('');
 
-    const {data: treeLibraries} = useQuery<GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables>(getTreeLibraries, {
+    const {data: treeLibraries} = useQuery<GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables>(getTreeLibraries(true), {
         variables: {
             treeId: activeTree.id
         }

@@ -11,7 +11,6 @@ import {
 } from '@leav/utils';
 import {FormElement} from 'components/RecordEdition/EditRecord/_types';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React from 'react';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {
     RECORD_FORM_recordForm,

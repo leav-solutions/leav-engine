@@ -64,11 +64,11 @@ export interface IGetViewListVariables {
     libraryId: string;
 }
 
-export const getViewsListQuery = gql`
+export const getViewsListQuery = (withTotalCount?: boolean) => gql`
     ${viewDetailsFragment}
     query GET_VIEWS_LIST($libraryId: String!) {
         views(library: $libraryId) {
-            totalCount
+            ${withTotalCount ? 'totalCount' : ''}
             list {
                 ...ViewDetails
             }
