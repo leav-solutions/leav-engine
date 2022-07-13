@@ -68,7 +68,7 @@ export const getRecordsFields = (fields: IField[] = []) => {
     return queryField;
 };
 
-export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField[]) => {
+export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField[], withTotalCount?: boolean) => {
     const libQueryName = libraryName?.toUpperCase();
 
     if (!libQueryName?.length) {
@@ -99,7 +99,7 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
                 sort: {field: $sortField, order: $sortOrder}
                 searchQuery: $fullText
             ) {
-                totalCount
+                ${withTotalCount ? 'totalCount' : ''}
                 list {
                     _id: id
                     ${getRecordsFields(fields)}

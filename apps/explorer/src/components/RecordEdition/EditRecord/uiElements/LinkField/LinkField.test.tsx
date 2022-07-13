@@ -521,7 +521,7 @@ describe('LinkField', () => {
             const mocks = [
                 {
                     request: {
-                        query: getRecordsFromLibraryQuery('test_lib'),
+                        query: getRecordsFromLibraryQuery('test_lib', [], true),
                         variables: {
                             fullText: 'a',
                             limit: 10,

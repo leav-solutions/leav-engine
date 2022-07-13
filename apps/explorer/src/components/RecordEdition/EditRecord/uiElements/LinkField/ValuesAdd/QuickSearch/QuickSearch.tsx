@@ -30,7 +30,7 @@ function QuickSearch({library, onResult, onClear, pagination}: IQuickSearchProps
     const [runSearch, {loading, error}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(library.id), {
+    >(getRecordsFromLibraryQuery(library.id, [], true), {
         onCompleted: searchResult => {
             const {totalCount, list} = searchResult[library.gqlNames.query];
             onResult(list, totalCount);

@@ -5,7 +5,6 @@ import {MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
-import React from 'react';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';

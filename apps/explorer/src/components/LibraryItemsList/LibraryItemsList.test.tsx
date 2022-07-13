@@ -74,7 +74,7 @@ describe('LibraryItemsList', () => {
         const mocks = [
             {
                 request: {
-                    query: getRecordsFromLibraryQuery(libQueryName, []),
+                    query: getRecordsFromLibraryQuery(libQueryName, [], true),
                     variables: mockGetRecordsFromLibraryQueryVar
                 },
                 result: {
