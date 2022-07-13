@@ -2,10 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IValueRepo} from 'infra/value/valueRepo';
-import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {TreePaths} from '_types/tree';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
@@ -25,11 +23,9 @@ interface IDeps {
     'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
     'core.domain.permission.helpers.reducePermissionsArray'?: IReducePermissionsArrayHelper;
-    'core.infra.tree'?: ITreeRepo;
+    'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
     'core.infra.permission'?: IPermissionRepo;
-    'core.infra.value'?: IValueRepo;
     'core.infra.cache.cacheService'?: ICachesService;
-    config?: IConfig;
 }
 
 export interface ITreeBasedPermissionHelper {
@@ -43,10 +39,8 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper = null,
-        'core.infra.tree': treeRepo = null,
-        'core.infra.value': valueRepo = null,
-        'core.infra.cache.cacheService': cacheService = null,
-        config = null
+        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper = null,
+        'core.infra.cache.cacheService': cacheService = null
     } = deps;
 
     /**
@@ -72,7 +66,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
                 permTreeValues.map(
                     // Permissions for each values of tree attribute
                     async (value): Promise<boolean | null> => {
-                        const permTreePath = await treeRepo.getElementAncestors({
+                        const permTreePath = await elementAncestorsHelper.getCachedElementAncestors({
                             // Ancestors of value
                             treeId: permTreeId,
                             nodeId: value,
@@ -157,7 +151,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
             const userGroupsPaths = !!ctx.groupsId
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
-                          treeRepo.getElementAncestors({
+                          elementAncestorsHelper.getCachedElementAncestors({
                               treeId: 'users_groups',
                               nodeId: groupId,
                               ctx
@@ -207,7 +201,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
         const {type, action, userGroupId, applyTo, permissionTreeTarget, getDefaultPermission} = params;
 
         // Get perm for user group's parent
-        const groupAncestors = await treeRepo.getElementAncestors({
+        const groupAncestors = await elementAncestorsHelper.getCachedElementAncestors({
             treeId: 'users_groups',
             nodeId: userGroupId,
             ctx
@@ -226,7 +220,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
             return parentPerm;
         }
 
-        const treeElemAncestors = await treeRepo.getElementAncestors({
+        const treeElemAncestors = await elementAncestorsHelper.getCachedElementAncestors({
             treeId: permissionTreeTarget.tree,
             nodeId: permissionTreeTarget.nodeId,
             ctx

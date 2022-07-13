@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
@@ -75,6 +76,32 @@ describe('ValueDomain', () => {
 
     const mockUtilsStandardAttribute: Mockify<IUtils> = {
         isStandardAttribute: jest.fn(() => true)
+    };
+
+    const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
+        getCachedElementAncestors: global.__mockPromise([
+            {
+                id: '9',
+                record: {
+                    id: 9,
+                    library: 'my_lib'
+                }
+            },
+            {
+                id: '8',
+                record: {
+                    id: 8,
+                    library: 'my_lib'
+                }
+            },
+            {
+                id: '7',
+                record: {
+                    id: 7,
+                    library: 'my_lib'
+                }
+            }
+        ])
     };
 
     const ctx: IQueryInfos = {
@@ -1644,32 +1671,6 @@ describe('ValueDomain', () => {
                 }
             ];
 
-            const mockTreeRepo: Mockify<ITreeRepo> = {
-                getElementAncestors: global.__mockPromise([
-                    {
-                        id: '9',
-                        record: {
-                            id: 9,
-                            library: 'my_lib'
-                        }
-                    },
-                    {
-                        id: '8',
-                        record: {
-                            id: 8,
-                            library: 'my_lib'
-                        }
-                    },
-                    {
-                        id: '7',
-                        record: {
-                            id: 7,
-                            library: 'my_lib'
-                        }
-                    }
-                ])
-            };
-
             const mockValRepo = {
                 getValues: global.__mockPromise(valueData)
             };
@@ -1683,8 +1684,8 @@ describe('ValueDomain', () => {
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             const version: IValueVersion = {my_tree: '9'};
@@ -1700,7 +1701,7 @@ describe('ValueDomain', () => {
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
             expect(mockValRepo.getValues.mock.calls[0][0].options).toMatchObject({version});
 
-            expect(mockTreeRepo.getElementAncestors).toBeCalledTimes(1);
+            expect(mockElementAncestorsHelper.getCachedElementAncestors).toBeCalledTimes(1);
 
             expect(resValue.length).toBe(1);
             expect(resValue[0].value).toBe('val2');
@@ -1747,8 +1748,25 @@ describe('ValueDomain', () => {
                 }
             ];
 
-            const mockTreeRepo: Mockify<ITreeRepo> = {
-                getElementAncestors: jest.fn().mockImplementation(({treeId, element, ctx: ct}) => {
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrAdvVersionableWithThreeTrees = {
+                ...mockAttrAdvVersionable,
+                versions_conf: {
+                    versionable: true,
+                    trees: ['my_tree', 'other_tree', 'third_tree']
+                }
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableWithThreeTrees)
+            };
+
+            const mockElementAncestorsHelperMultipleTrees = {
+                ...mockElementAncestorsHelper,
+                getCachedElementAncestors: jest.fn().mockImplementation(({treeId, element, ctx: ct}) => {
                     let parents;
                     switch (treeId) {
                         case 'my_tree':
@@ -1825,29 +1843,13 @@ describe('ValueDomain', () => {
                 })
             };
 
-            const mockValRepo = {
-                getValues: global.__mockPromise(valueData)
-            };
-
-            const mockAttrAdvVersionableWithThreeTrees = {
-                ...mockAttrAdvVersionable,
-                versions_conf: {
-                    versionable: true,
-                    trees: ['my_tree', 'other_tree', 'third_tree']
-                }
-            };
-
-            const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableWithThreeTrees)
-            };
-
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper
             });
 
             const version: IValueVersion = {
@@ -1866,7 +1868,7 @@ describe('ValueDomain', () => {
 
             expect(mockValRepo.getValues.mock.calls.length).toBe(1);
             expect(mockValRepo.getValues.mock.calls[0][0].options).toMatchObject({version});
-            expect(mockTreeRepo.getElementAncestors).toBeCalledTimes(3);
+            expect(mockElementAncestorsHelperMultipleTrees.getCachedElementAncestors).toBeCalledTimes(3);
             expect(resValue.length).toBe(2);
             expect(resValue[0].value).toBe('val2');
             expect(resValue[1].value).toBe('val3');
@@ -1895,34 +1897,6 @@ describe('ValueDomain', () => {
                 }
             ];
 
-            const mockTreeRepo: Mockify<ITreeRepo> = {
-                getElementAncestors: global.__mockPromise([
-                    [
-                        {
-                            id: '9',
-                            record: {
-                                id: 9,
-                                library: 'my_lib'
-                            }
-                        },
-                        {
-                            id: '8',
-                            record: {
-                                id: 8,
-                                library: 'my_lib'
-                            }
-                        },
-                        {
-                            id: '7',
-                            record: {
-                                id: 7,
-                                library: 'my_lib'
-                            }
-                        }
-                    ]
-                ])
-            };
-
             const mockValRepo = {
                 getValues: global.__mockPromise(valueData)
             };
@@ -1936,8 +1910,8 @@ describe('ValueDomain', () => {
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             const version: IValueVersion = {my_tree: '9'};

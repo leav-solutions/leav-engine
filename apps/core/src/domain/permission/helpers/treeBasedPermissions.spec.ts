@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
+import {ICacheService, ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
 import {IGetTreeBasedPermissionParams} from '../_types';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import treeBasedPermissions from './treeBasedPermissions';
-import {ICachesService, ICacheService} from '../../../infra/cache/cacheService';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -21,73 +21,16 @@ const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
-describe('TreePermissionDomain', () => {
+describe('TreeBasedPermissionDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'treePermissionDomainTest',
         groupsId: ['1']
     };
 
+    beforeEach(() => jest.clearAllMocks());
+
     describe('getTreePermission', () => {
-        const mockTreeRepo: Mockify<ITreeRepo> = {
-            getNodesByRecord: global.__mockPromise([]),
-            getElementAncestors: jest.fn().mockImplementation(({treeId}) => {
-                let parents;
-                switch (treeId) {
-                    case 'categories':
-                        parents = [
-                            [
-                                {
-                                    record: {
-                                        id: 'A',
-                                        library: 'category'
-                                    }
-                                },
-                                {
-                                    record: {
-                                        id: 'B',
-                                        library: 'category'
-                                    }
-                                },
-                                {
-                                    record: {
-                                        id: 'C',
-                                        library: 'category'
-                                    }
-                                }
-                            ]
-                        ];
-                        break;
-                    case 'users_groups':
-                        parents = [
-                            [
-                                {
-                                    record: {
-                                        id: 1,
-                                        library: 'users_groups'
-                                    }
-                                },
-                                {
-                                    record: {
-                                        id: 2,
-                                        library: 'users_groups'
-                                    }
-                                },
-                                {
-                                    record: {
-                                        id: 3,
-                                        library: 'users_groups'
-                                    }
-                                }
-                            ]
-                        ];
-                        break;
-                }
-
-                return Promise.resolve(parents);
-            })
-        };
-
         const mockAttrProps = {
             category: {
                 id: 'category',
@@ -102,26 +45,6 @@ describe('TreePermissionDomain', () => {
         };
         const mockAttrDomain: Mockify<IAttributeDomain> = {
             getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id]))
-        };
-
-        const mockValueRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation(() => {
-                const val = {
-                    id_value: 54321,
-                    value: {
-                        record: {
-                            id: 1,
-                            library: 'users_groups'
-                        }
-                    }
-                };
-
-                return Promise.resolve([val]);
-            })
-        };
-
-        const mockValueMultipleRepo: Mockify<IValueRepo> = {
-            getValues: jest.fn().mockImplementation(({attribute}) => Promise.resolve([values[attribute.id]]))
         };
 
         const defaultPerm = false;
@@ -194,9 +117,10 @@ describe('TreePermissionDomain', () => {
                 ]
             ]
         };
-        const mockTreeMultipleRepo: Mockify<ITreeRepo> = {
-            getNodesByRecord: global.__mockPromise([]),
-            getElementAncestors: jest.fn().mockImplementation(({treeId}) => Promise.resolve(ancestors[treeId]))
+
+        const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
+            getCachedElementAncestors: jest.fn().mockImplementation(({treeId}) => Promise.resolve(ancestors[treeId])),
+            clearElementAncestorsCache: jest.fn()
         };
 
         const attributesProps = {
@@ -289,15 +213,14 @@ describe('TreePermissionDomain', () => {
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
             const perm = await treePermDomain.getTreeBasedPermission(params, ctx);
 
-            expect(mockTreeRepo.getElementAncestors.mock.calls.length).toBe(2);
+            expect(mockElementAncestorsHelper.getCachedElementAncestors.mock.calls.length).toBe(2);
             expect(perm).toBe(true);
             expect(mockPermByUserGroupsHelper.getPermissionByUserGroups.mock.calls.length).toBe(1);
         });
@@ -310,9 +233,8 @@ describe('TreePermissionDomain', () => {
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
@@ -337,9 +259,8 @@ describe('TreePermissionDomain', () => {
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperNull,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
@@ -359,9 +280,8 @@ describe('TreePermissionDomain', () => {
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
@@ -404,9 +324,8 @@ describe('TreePermissionDomain', () => {
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueNoCatRepo as IValueRepo,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
@@ -439,9 +358,8 @@ describe('TreePermissionDomain', () => {
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
-                'core.infra.tree': mockTreeMultipleRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
-                'core.infra.value': mockValueMultipleRepo as IValueRepo,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 
@@ -460,7 +378,7 @@ describe('TreePermissionDomain', () => {
                 ctx
             );
 
-            expect(mockTreeMultipleRepo.getElementAncestors.mock.calls.length).toBe(3);
+            expect(mockElementAncestorsHelper.getCachedElementAncestors.mock.calls.length).toBe(3);
             expect(perm).toBe(false);
             expect(mockPermByUserGroupsHelper.getPermissionByUserGroups.mock.calls.length).toBe(2);
         });
@@ -481,9 +399,8 @@ describe('TreePermissionDomain', () => {
             const treePermDomain = treeBasedPermissions({
                 'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
-                'core.infra.tree': mockTreeMultipleRepo as ITreeRepo,
                 'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
-                'core.infra.value': mockValueMultipleRepo as IValueRepo,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });
 

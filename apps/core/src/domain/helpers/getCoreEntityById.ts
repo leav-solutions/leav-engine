@@ -7,7 +7,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IViewRepo} from 'infra/view/_types';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {ICachesService} from '../../infra/cache/cacheService';
 
 interface IDeps {
     'core.infra.library'?: ILibraryRepo;
@@ -24,7 +24,7 @@ export type GetCoreEntityByIdFunc = <T extends ICoreEntity>(
     ctx: IQueryInfos
 ) => Promise<T>;
 
-export default function({
+export default function ({
     'core.infra.library': libraryRepo = null,
     'core.infra.attribute': attributeRepo = null,
     'core.infra.tree': treeRepo = null,
@@ -32,40 +32,43 @@ export default function({
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils': utils = null
 }: IDeps): GetCoreEntityByIdFunc {
-    const getCoreEntityById: GetCoreEntityByIdFunc = async (entityType, entityId, ctx) => {
+    const getCoreEntityById = async function <T>(entityType, entityId, ctx): Promise<T> {
+        const _execute = async () => {
+            let result;
+            switch (entityType) {
+                case 'library':
+                    result = await libraryRepo.getLibraries({
+                        params: {filters: {id: entityId}, strictFilters: true},
+                        ctx
+                    });
+                    break;
+                case 'attribute':
+                    result = await attributeRepo.getAttributes({
+                        params: {filters: {id: entityId}, strictFilters: true},
+                        ctx
+                    });
+                    break;
+                case 'tree':
+                    result = await treeRepo.getTrees({params: {filters: {id: entityId}, strictFilters: true}, ctx});
+                    break;
+                case 'view':
+                    result = await viewRepo.getViews({filters: {id: entityId}, strictFilters: true}, ctx);
+                    break;
+            }
+
+            if (!result.list.length) {
+                return null;
+            }
+
+            return result.list[0];
+        };
+
         const cacheKey = utils.getCoreEntityCacheKey(entityType, entityId);
-        const memoryCache = cacheService.getCache(ECacheType.RAM);
-        const cacheValue = await memoryCache.getData([cacheKey]);
 
-        if (cacheValue[0]) {
-            return JSON.parse(cacheValue[0]);
-        }
-
-        let result;
-        switch (entityType) {
-            case 'library':
-                result = await libraryRepo.getLibraries({params: {filters: {id: entityId}, strictFilters: true}, ctx});
-                break;
-            case 'attribute':
-                result = await attributeRepo.getAttributes({
-                    params: {filters: {id: entityId}, strictFilters: true},
-                    ctx
-                });
-                break;
-            case 'tree':
-                result = await treeRepo.getTrees({params: {filters: {id: entityId}, strictFilters: true}, ctx});
-                break;
-            case 'view':
-                result = await viewRepo.getViews({filters: {id: entityId}, strictFilters: true}, ctx);
-                break;
-        }
-
-        if (!result.list.length) {
-            return null;
-        }
-
-        memoryCache.storeData(cacheKey, JSON.stringify(result.list[0]));
-        return result.list[0];
+        // Due to race conditions, we sometimes get null when retrieving a newly created core entity. Thus, we don't
+        // want to keep this "false" null in cache
+        const res = await cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});
+        return res;
     };
 
     return getCoreEntityById;

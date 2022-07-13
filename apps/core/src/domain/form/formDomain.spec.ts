@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IValidateHelper} from 'domain/helpers/validate';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
@@ -45,6 +46,17 @@ describe('formDomain', () => {
         getRecordFieldValue: global.__mockPromise(mockStandardValue)
     };
 
+    const mockValidateHelper: Mockify<IValidateHelper> = {
+        validateLibrary: jest.fn()
+    };
+
+    const mockValidateHelperNoLibrary: Mockify<IValidateHelper> = {
+        ...mockValidateHelper,
+        validateLibrary: jest.fn(() => {
+            throw new ValidationError({id: 'boom'});
+        })
+    };
+
     const mockUtils: Mockify<IUtils> = {
         isIdValid: jest.fn().mockReturnValue(true)
     };
@@ -58,7 +70,8 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
             const res = await domain.getFormsByLib({library: 'my_lib', ctx});
@@ -75,7 +88,8 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper
             });
 
             await expect(domain.getFormsByLib({library: 'my_lib', ctx})).rejects.toThrow(ValidationError);
@@ -91,7 +105,8 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
             const res = await domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx});
@@ -108,7 +123,8 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper
             });
 
             await expect(domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx})).rejects.toThrow(
@@ -124,7 +140,8 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
-                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
             await expect(domain.getFormProperties({library: 'my_lib', id: 'edition_form', ctx})).rejects.toThrow(
@@ -145,6 +162,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -168,6 +186,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -195,6 +214,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelperNoLibrary as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -219,6 +239,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtilsInvalidID as IUtils
             });
@@ -245,6 +266,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomainNoMatch as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -271,6 +293,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
@@ -296,6 +319,7 @@ describe('formDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });

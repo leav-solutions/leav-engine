@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IValidateHelper} from 'domain/helpers/validate';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IAttributePermissionDomain} from 'domain/permission/attributePermissionDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
@@ -38,7 +39,6 @@ import {
 } from '../../_types/permissions';
 import {getElementValues} from './helpers/getElementValues';
 import {mustIncludeElement} from './helpers/mustIncludeElement';
-import {validateLibrary} from './helpers/validateLibrary';
 
 export interface IFormDomain {
     getFormsByLib({
@@ -68,6 +68,7 @@ interface IDeps {
     'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
+    'core.domain.helpers.validate'?: IValidateHelper;
     'core.infra.form'?: IFormRepo;
     'core.utils'?: IUtils;
     translator?: i18n;
@@ -79,6 +80,7 @@ export default function (deps: IDeps = {}): IFormDomain {
         'core.domain.permission.library': libraryPermissionDomain = null,
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
         'core.domain.permission.attribute': attributePermissionDomain = null,
+        'core.domain.helpers.validate': validateHelper = null,
         'core.infra.form': formRepo = null,
         'core.utils': utils = null,
         translator = null
@@ -176,7 +178,7 @@ export default function (deps: IDeps = {}): IFormDomain {
             const filters = {...params?.filters, library};
             const initializedParams = {...params, filters};
 
-            await validateLibrary(library, deps, ctx);
+            await validateHelper.validateLibrary(library, ctx);
 
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};
@@ -328,7 +330,7 @@ export default function (deps: IDeps = {}): IFormDomain {
         async getFormProperties({library, id, ctx}): Promise<IForm> {
             const filters = {id, library};
 
-            await validateLibrary(library, deps, ctx);
+            await validateHelper.validateLibrary(library, ctx);
 
             const forms = await formRepo.getForms({
                 params: {filters, strictFilters: true, withCount: false},
@@ -381,7 +383,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                 throw new PermissionError(permToCheck);
             }
 
-            await validateLibrary(dataToSave.library, deps, ctx);
+            await validateHelper.validateLibrary(dataToSave.library, ctx);
 
             // Validate ID
             if (!utils.isIdValid(dataToSave.id)) {
