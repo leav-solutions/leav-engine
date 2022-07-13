@@ -1,8 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+
+import {IQueryInfos} from '_types/queryInfos';
+
+export interface IMemoizeParams<T> {
+    key: string;
+    func: () => Promise<T>;
+    storeNulls?: boolean;
+    ctx: IQueryInfos;
+}
+
 export interface ICachesService {
     getCache?(type: ECacheType): ICacheService;
+    memoize<T>(params: IMemoizeParams<T>): Promise<T>;
 }
 
 export interface ICacheService {
@@ -22,7 +33,7 @@ export enum ECacheType {
     RAM = 'RAM'
 }
 
-export default function({
+export default function ({
     'core.infra.cache.ramService': ramService = null,
     'core.infra.cache.diskService': diskService = null
 }: IDeps): ICachesService {
@@ -40,6 +51,22 @@ export default function({
             }
 
             return cacheService;
+        },
+        async memoize({key, func, storeNulls, ctx}) {
+            const cacheService = this.getCache(ECacheType.RAM);
+            const cacheValue = await cacheService.getData([key]);
+
+            if (cacheValue[0]) {
+                return JSON.parse(cacheValue[0]);
+            }
+
+            const result = await func();
+
+            if (result !== null || storeNulls) {
+                cacheService.storeData(key, JSON.stringify(result));
+            }
+
+            return result;
         }
     };
 }

@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {IViewRepo} from 'infra/view/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
@@ -13,7 +12,6 @@ import {GetCoreEntityByIdFunc} from './getCoreEntityById';
 interface IDeps {
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.record'?: IRecordRepo;
-    'core.infra.view'?: IViewRepo;
 }
 
 export interface IValidateHelper {
@@ -24,8 +22,7 @@ export interface IValidateHelper {
 
 export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.infra.record': recordRepo = null,
-    'core.infra.view': viewRepo = null
+    'core.infra.record': recordRepo = null
 }: IDeps): IValidateHelper {
     return {
         async validateRecord(library, recordId, ctx): Promise<IRecord> {

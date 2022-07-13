@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
@@ -132,6 +133,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.helpers.validate'?: IValidateHelper;
+    'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
 }
 
 const valueDomain = function ({
@@ -146,7 +148,8 @@ const valueDomain = function ({
     'core.utils': utils = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.helpers.validate': validate = null,
-    'core.utils.logger': logger = null
+    'core.utils.logger': logger = null,
+    'core.domain.tree.helpers.elementAncestors': elementAncestors = null
 }: IDeps = {}): IValueDomain {
     /**
      * Run actions list on a value
@@ -227,7 +230,7 @@ const valueDomain = function ({
                                     ? options.version[treeName]
                                     : await treeRepo.getDefaultElement({id: treeName, ctx});
 
-                            const ancestors = await treeRepo.getElementAncestors({
+                            const ancestors = await elementAncestors.getCachedElementAncestors({
                                 treeId: treeName,
                                 nodeId: treeElem,
                                 ctx

@@ -18,6 +18,7 @@ import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
 import {IRecordDomain} from '../record/recordDomain';
+import {IElementAncestorsHelper} from './helpers/elementAncestors';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import treeDomain from './treeDomain';
 
@@ -55,6 +56,11 @@ describe('treeDomain', () => {
 
     const mockTreePermissionDomain: Mockify<ITreePermissionDomain> = {
         getTreePermission: global.__mockPromise(true)
+    };
+
+    const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
+        getCachedElementAncestors: global.__mockPromise([]),
+        clearElementAncestorsCache: jest.fn()
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -238,6 +244,7 @@ describe('treeDomain', () => {
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -556,7 +563,8 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
                 'core.utils': mockUtils as IUtils,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithLibsSettings
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithLibsSettings,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             await expect(
@@ -628,7 +636,8 @@ describe('treeDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             await domain.moveElement({
@@ -661,7 +670,8 @@ describe('treeDomain', () => {
                 'core.domain.record': recordDomain as IRecordDomain,
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
                 'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             await expect(
@@ -718,7 +728,8 @@ describe('treeDomain', () => {
                 'core.domain.value': mockValueDomain as IValueDomain,
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
                 'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithLibsSettings as GetCoreEntityByIdFunc
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithLibsSettings as GetCoreEntityByIdFunc,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             await expect(
@@ -773,7 +784,8 @@ describe('treeDomain', () => {
                 'core.domain.record': recordDomain as IRecordDomain,
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
                 'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper as GetCoreEntityByIdFunc
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper as GetCoreEntityByIdFunc,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             await expect(
@@ -801,7 +813,7 @@ describe('treeDomain', () => {
             find: global.__mockPromise({list: [{id: '1345', library: 'lib1'}], totalCount: 1})
         };
 
-        test('Should move an element in a tree', async () => {
+        test('Should delete an element in a tree', async () => {
             const mockAttributesDomain: Mockify<IAttributeDomain> = {
                 getAttributes: global.__mockPromise({
                     totalCount: 2,
@@ -852,7 +864,8 @@ describe('treeDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithPermissions as GetCoreEntityByIdFunc
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithPermissions as GetCoreEntityByIdFunc,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             await domain.deleteElement({

@@ -37,6 +37,7 @@ import {ILibraryDomain} from '../library/libraryDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
 import {IRecordDomain} from '../record/recordDomain';
+import {IElementAncestorsHelper} from './helpers/elementAncestors';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import validateFilesParent from './helpers/validateFilesParent';
 
@@ -146,12 +147,13 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
+    'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
     'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -161,6 +163,7 @@ export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
+    'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper = null,
     'core.infra.tree': treeRepo = null,
     'core.utils': utils = null,
     'core.infra.cache.cacheService': cacheService = null
@@ -369,6 +372,7 @@ export default function({
             }
 
             await _cleanPermissionsCacheRelatedToTree(treeProps.id, ctx);
+            await elementAncestorsHelper.clearElementAncestorsCache({treeId: treeProps.id, ctx});
 
             const deletedTree = treeRepo.deleteTree({id, ctx});
 
@@ -553,6 +557,7 @@ export default function({
             }
 
             await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
+            await elementAncestorsHelper.clearElementAncestorsCache({treeId, ctx});
 
             return treeRepo.moveElement({treeId, nodeId, parentTo, order, ctx});
         },
@@ -584,6 +589,7 @@ export default function({
             }
 
             await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
+            await elementAncestorsHelper.clearElementAncestorsCache({treeId, ctx});
 
             return treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
         },
@@ -629,7 +635,7 @@ export default function({
             return treeRepo.getElementChildren({treeId, nodeId, childrenCount, withTotalCount, pagination, ctx});
         },
         async getElementAncestors({treeId, nodeId, ctx}): Promise<TreePaths> {
-            return treeRepo.getElementAncestors({treeId, nodeId, ctx});
+            return elementAncestorsHelper.getCachedElementAncestors({treeId, nodeId, ctx});
         },
         async getLinkedRecords({treeId, attribute, nodeId, ctx}): Promise<IRecord[]> {
             const attrs = await attributeDomain.getAttributes({params: {filters: {id: attribute}}, ctx});
