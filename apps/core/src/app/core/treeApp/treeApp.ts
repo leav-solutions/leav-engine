@@ -39,7 +39,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function ({
+export default function({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -299,7 +299,7 @@ export default function ({
                             const hasChildrenCount = !!fields.find(f => f.name === 'childrenCount');
                             const depth = _getChildrenDepth(fields, 1);
 
-                            return (
+                            const treeContent = (
                                 await treeDomain.getTreeContent({
                                     treeId,
                                     startingNode: startAt,
@@ -311,6 +311,7 @@ export default function ({
                                 ...node,
                                 treeId
                             }));
+                            return treeContent;
                         },
                         async treeNodeChildren(
                             _,
@@ -482,7 +483,8 @@ export default function ({
                         ): Promise<IRecord> => {
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
-                            return treeDomain.getRecordByNodeId({treeId, nodeId: parent.id, ctx});
+                            const record = await treeDomain.getRecordByNodeId({treeId, nodeId: parent.id, ctx});
+                            return record;
                         },
                         children: async (
                             parent: ITreeNode & {treeId?: string},

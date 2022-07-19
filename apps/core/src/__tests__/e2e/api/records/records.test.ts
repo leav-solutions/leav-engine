@@ -840,10 +840,11 @@ describe('Records', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
 
-                expect(res.data.data[sfTestLibTreeIdQueryName].list.length).toBe(3);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list.length).toBe(4);
                 expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord1);
                 expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord2);
                 expect(res.data.data[sfTestLibTreeIdQueryName].list[2].id).toBe(sfTreeRecord3);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[3].id).toBe(sfTreeRecord4);
             });
         });
     });

@@ -18,7 +18,7 @@ import {
     getNodesCollectionName,
     getRootId
 } from './helpers/utils';
-import {IChildrenResultNode} from './_types';
+import {IChildrenResultNode, NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from './_types';
 
 export interface ITreeRepo {
     getDefaultElement(params: {id: string; ctx: IQueryInfos}): Promise<string>;
@@ -178,6 +178,15 @@ export default function({
             await dbService.createCollection(getEdgesCollectionName(treeData.id), collectionTypes.EDGE);
             await dbService.createCollection(getNodesCollectionName(treeData.id), collectionTypes.DOCUMENT);
 
+            const nodesCollection = dbService.db.collection(getNodesCollectionName(treeData.id));
+
+            // Add an index on nodes collection
+            await nodesCollection.ensureIndex({
+                fields: [NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD],
+                sparse: true,
+                type: 'persistent'
+            });
+
             return dbUtils.cleanup(treeRes.pop());
         },
         async updateTree({treeData, ctx}): Promise<ITree> {
@@ -234,28 +243,24 @@ export default function({
             const nodeCollec = dbService.db.collection(getNodesCollectionName(treeId));
             const nodeEntity = (
                 await dbService.execute({
-                    query: aql`INSERT {} IN ${nodeCollec} RETURN NEW`,
+                    query: aql`INSERT {
+                        ${NODE_LIBRARY_ID_FIELD}: ${element.library},
+                        ${NODE_RECORD_ID_FIELD}: ${element.id}
+                    } IN ${nodeCollec} RETURN NEW`,
                     ctx
                 })
             )[0];
 
             const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
 
-            // Link this entity to its record
-            const toRecordEdgeData = {
-                _from: nodeEntity._id,
-                _to: `${element.library}/${element.id}`,
-                [TO_RECORD_PROP_NAME]: true
-            };
-            await dbService.execute({
-                query: aql`INSERT ${toRecordEdgeData} IN ${edgeCollec} RETURN NEW`,
-                ctx
-            });
-
             // Add this entity to the tree
             const res = (
                 await dbService.execute<ITreeEdge[]>({
-                    query: aql`INSERT {_from: ${destination}, _to: ${nodeEntity._id}, order: ${order}} IN ${edgeCollec} RETURN NEW`,
+                    query: aql`INSERT {
+                        _from: ${destination},
+                        _to: ${nodeEntity._id},
+                        order: ${order}
+                    } IN ${edgeCollec} RETURN NEW`,
                     ctx
                 })
             )[0];
@@ -379,13 +384,14 @@ export default function({
             return !!res.length;
         },
         async isRecordPresent({treeId, record, ctx}): Promise<boolean> {
-            const collec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const collec = dbService.db.collection(getNodesCollectionName(treeId));
             const elementId = `${record.library}/${record.id}`;
 
             const query = aql`
-                FOR e IN ${collec}
-                    FILTER e._to == ${elementId} AND e.${TO_RECORD_PROP_NAME}
-                    RETURN e
+                FOR n IN ${collec}
+                    FILTER n.${aql.literal(NODE_LIBRARY_ID_FIELD)} == ${record.library}
+                        AND n.${aql.literal(NODE_RECORD_ID_FIELD)} == ${record.id}
+                    RETURN n
             `;
             const res = await dbService.execute({query, ctx});
 
@@ -412,29 +418,26 @@ export default function({
              * The order we need is defined between the node and its parent.
              * Thus, we have to retrieve it on the before-last edge of the path to the record
              */
-            // We query at depth + 1 to reach the records
             const queryParts = [
                 aql`
-                    FOR v, e, p IN 1..${depth + 1} OUTBOUND ${nodeFrom}
+                    FOR v, e, p IN 1..${depth} OUTBOUND ${nodeFrom}
                     ${collec}
-                    FILTER e.${TO_RECORD_PROP_NAME} AND e._from != ${nodeFrom}
+                    LET record = DOCUMENT(v.${NODE_LIBRARY_ID_FIELD}, v.${NODE_RECORD_ID_FIELD})
                     LET path = (
                         FOR pv IN p.vertices
                         FILTER pv._id != v._id
-                        AND pv._id != e._from
                         RETURN pv._key
                     )
-                    LET nodeOrder = TO_NUMBER(p.edges[-2].order)
+                    LET nodeOrder = TO_NUMBER(p.edges[-1].order)
                 `
             ];
 
             if (childrenCount) {
                 queryParts.push(aql`
                     LET childrenCount = COUNT(
-                        FOR vChildren, eChildren IN 1 outbound e._from
+                        FOR vChildren IN 1 outbound v
                         ${collec}
-                        FILTER !eChildren.${TO_RECORD_PROP_NAME}
-                        return vChildren._key
+                        return vChildren
                     )
                 `);
             }
@@ -442,8 +445,8 @@ export default function({
             queryParts.push(aql`
                 SORT LENGTH(path), nodeOrder ASC
                 RETURN {
-                    id: SPLIT(e._from, '/')[1],
-                    record: MERGE(v, {path}),
+                    id: v._key,
+                    record: MERGE(record, {path}),
                     order: nodeOrder,
                     ${aql.literal(childrenCount ? 'childrenCount' : '')}
                 }
@@ -522,28 +525,30 @@ export default function({
 
             const childrenCountQuery = aql`
                 LET childrenCount = COUNT(
-                    FOR vChildren, eChildren IN 1 OUTBOUND e._from
+                    FOR vChildren IN 1 OUTBOUND v
                     ${treeEdgeCollec}
-                    FILTER !eChildren.${TO_RECORD_PROP_NAME}
-                    RETURN eChildren._id
+                    RETURN vChildren
                 )
             `;
 
-            // We query at depth + 1 to reach the record
+            // Fetch children. For each child, retrieve linked record
             const query = aql`
-                FOR v, e, p IN 2 OUTBOUND ${nodeFrom}
+                FOR v, e, p IN 1 OUTBOUND ${nodeFrom}
                     ${treeEdgeCollec}
-                    FILTER e.${TO_RECORD_PROP_NAME}
-                    LET order = TO_NUMBER(p.edges[-2].order)
-                    ${childrenCount ? childrenCountQuery : aql``}
+                    LET order = TO_NUMBER(p.edges[0].order)
+                    LET key = p.edges[0]._key
+                    SORT order ASC, key ASC
                     ${hasPagination ? aql`LIMIT ${pagination.offset}, ${pagination.limit}` : aql.literal('')}
-                    SORT order ASC, p.edges[-2]._key ASC
+
+                    ${childrenCount ? childrenCountQuery : aql``}
+
+                    LET record = DOCUMENT(v.${NODE_LIBRARY_ID_FIELD}, v.${NODE_RECORD_ID_FIELD})
+
                     RETURN {
-                        _nodeId: e._from,
-                        id: PARSE_IDENTIFIER(e._from).key,
-                        order: TO_NUMBER(e.order),
+                        id: v._key,
+                        order,
                         ${childrenCount ? aql.literal('childrenCount,') : aql``}
-                        record: v
+                        record
                     }
             `;
 
@@ -574,17 +579,12 @@ export default function({
 
             const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
 
-            // Fix get ancestors
             const query = aql`
                 FOR v,e,p IN 0..${MAX_TREE_DEPTH} INBOUND ${getFullNodeId(nodeId, treeId)}
-                ${treeEdgeCollec}
-                FILTER v._id != ${getRootId(treeId)}
-                LET rec = FIRST(
-                    FOR vrec, erec in 1 outbound v._id ${treeEdgeCollec}
-                    FILTER erec.${TO_RECORD_PROP_NAME}
-                    return vrec
-                    )
-                RETURN {id: v._key, order: TO_NUMBER(e.order), record: rec}
+                    ${treeEdgeCollec}
+                    FILTER v._id != ${getRootId(treeId)}
+                    LET record = DOCUMENT(v.${NODE_LIBRARY_ID_FIELD}, v.${NODE_RECORD_ID_FIELD})
+                    RETURN {id: v._key, order: TO_NUMBER(e.order), record}
             `;
 
             const res: Array<{
@@ -619,16 +619,15 @@ export default function({
             });
         },
         async getRecordByNodeId({treeId, nodeId, ctx}): Promise<IRecord> {
-            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
-            const fullNodeId = getFullNodeId(nodeId, treeId);
+            const nodesCollec = dbService.db.collection(getNodesCollectionName(treeId));
 
             const query = aql`
-            FOR v,e,p
-            IN 1 OUTBOUND ${fullNodeId}
-            ${edgeCollec}
-            FILTER e.${TO_RECORD_PROP_NAME}
-            RETURN v
+                FOR n IN ${nodesCollec}
+                    FILTER n._key == ${nodeId}
+                    LET record = DOCUMENT(n.${NODE_LIBRARY_ID_FIELD}, n.${NODE_RECORD_ID_FIELD})
+                    RETURN record
             `;
+
             const queryRes = await dbService.execute({query, ctx});
             const recordDoc = queryRes[0];
 
@@ -649,13 +648,12 @@ export default function({
             record: ITreeElement;
             ctx: IQueryInfos;
         }): Promise<string[]> {
-            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const nodesCollec = dbService.db.collection(getNodesCollectionName(treeId));
 
             const query = aql`
-                FOR v,e,p IN 1 INBOUND ${`${record.library}/${record.id}`}
-                    ${edgeCollec}
-                    FILTER e.${TO_RECORD_PROP_NAME}
-                    RETURN v._key
+                FOR n IN ${nodesCollec}
+                    FILTER n.${NODE_LIBRARY_ID_FIELD} == ${record.library} && n.${NODE_RECORD_ID_FIELD} == ${record.id}
+                    RETURN n._key
             `;
             const nodes = await dbService.execute<string[]>({query, ctx});
 

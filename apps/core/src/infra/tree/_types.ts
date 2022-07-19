@@ -9,3 +9,6 @@ export interface IChildrenResultNode {
     order: number;
     childrenCount?: number;
 }
+
+export const NODE_LIBRARY_ID_FIELD = 'libraryId';
+export const NODE_RECORD_ID_FIELD = 'recordId';

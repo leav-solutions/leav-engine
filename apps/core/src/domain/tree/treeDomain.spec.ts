@@ -413,7 +413,8 @@ describe('treeDomain', () => {
                 isNodePresent: global.__mockPromise(false),
                 getTrees: global.__mockPromise({list: [], totalCount: 0}),
                 getElementAncestors: global.__mockPromise([]),
-                getRecordByNodeId: global.__mockPromise({id: '1345', library: 'lib1'})
+                getRecordByNodeId: global.__mockPromise({id: '1345', library: 'lib1'}),
+                isRecordPresent: global.__mockPromise(false)
             };
 
             const domain = treeDomain({
