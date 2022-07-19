@@ -4,8 +4,9 @@
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
 import {getEdgesCollectionName, getFullNodeId} from '../../infra/tree/helpers/utils';
+import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_types';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecord, IRecordFilterOption, IRecordSort} from '../../_types/record';
+import {AttributeCondition, IRecord, IRecordFilterOption} from '../../_types/record';
 import {ITreeValue, IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
@@ -177,11 +178,13 @@ export default function ({
             const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(attribute.linked_tree));
 
             const queryParts = [
-                aql`
-                FOR record, edge, path IN 2 OUTBOUND ${library + '/' + recordId}
+                aql`FOR vertex, edge IN 1 OUTBOUND ${library + '/' + recordId}
                     ${valuesLinksCollec}, ${treeEdgeCollec}
-                    PRUNE (IS_SAME_COLLECTION(${valuesLinksCollec}, edge) AND edge.attribute != ${attribute.id})
-                    FILTER edge.toRecord
+                    LET record = DOCUMENT(
+                        vertex.${aql.literal(NODE_LIBRARY_ID_FIELD)},
+                        vertex.${aql.literal(NODE_RECORD_ID_FIELD)}
+                    )
+                    FILTER edge.attribute == ${attribute.id}
                 `
             ];
 
@@ -192,7 +195,7 @@ export default function ({
             const limitOne = aql.literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
             queryParts.push(aql`
                 ${limitOne}
-                RETURN {id: SPLIT(edge._from, '/')[1], record, edge: path.edges[0]}
+                RETURN {id: vertex._key, record, edge}
             `);
 
             const query = aql.join(queryParts);
@@ -240,13 +243,15 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
-            // [record] ---(values links)---> [node] ---(tree link)---> [linked_record]
-            // We just want to follow the path if the first edge matches our attribute, hence the PRUNE condition
             const linkedValue = aql`FIRST(
-                FOR v, e IN 2 OUTBOUND r._id
+                FOR v, e IN 1 OUTBOUND r._id
                 ${valuesLinksCollec}, ${treeCollec}
-                PRUNE (IS_SAME_COLLECTION(${valuesLinksCollec}, e) AND e.attribute != ${attributes[0].id})
-                RETURN v.${linked.id}
+                FILTER e.attribute == ${attributes[0].id}
+                LET record = DOCUMENT(
+                    v.${aql.literal(NODE_LIBRARY_ID_FIELD)},
+                    v.${aql.literal(NODE_RECORD_ID_FIELD)}
+                )
+                RETURN record.${linked.id}
             )`;
 
             const query =
@@ -262,7 +267,6 @@ export default function ({
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
-            const treeCollec = dbService.db.edgeCollection(getEdgesCollectionName(attributes[0].linked_tree));
 
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -271,19 +275,22 @@ export default function ({
                 : attributes[1];
 
             const linkIdentifier = parentIdentifier + 'v';
+            const recordIdentifier = aql.literal(parentIdentifier + 'Record');
             const vIdentifier = aql.literal(linkIdentifier);
             const eIdentifier = aql.literal(parentIdentifier + 'e');
 
             const firstValuePrefix = aql`FIRST(`;
-            // [record] ---(values links)---> [node] ---(tree link)---> [linked_record]
-            // We just want to follow the path if the first edge matches our attribute, hence the PRUNE condition
             const retrieveValue = aql`
-                FOR ${vIdentifier}, ${eIdentifier} IN 2 OUTBOUND ${aql.literal(parentIdentifier)}._id
-                ${valuesLinksCollec}, ${treeCollec}
-                PRUNE (IS_SAME_COLLECTION(${valuesLinksCollec}, ${eIdentifier}) AND ${eIdentifier}.attribute != ${
-                attributes[0].id
-            })`;
-            const returnValue = aql`RETURN ${vIdentifier}`;
+                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
+                    ${valuesLinksCollec}
+                    FILTER ${eIdentifier}.attribute == ${attributes[0].id}
+                    LET ${recordIdentifier} = DOCUMENT(
+                        ${vIdentifier}.${aql.literal(NODE_LIBRARY_ID_FIELD)},
+                        ${vIdentifier}.${aql.literal(NODE_RECORD_ID_FIELD)}
+                    )
+                `;
+
+            const returnValue = aql`RETURN ${recordIdentifier}`;
             const firstValueSuffix = aql`)`;
 
             let query: AqlQuery;
@@ -332,7 +339,7 @@ export default function ({
                 const filterValue = attributes[1]._repo.filterQueryPart(
                     [...attributes].splice(1),
                     filter,
-                    linkIdentifier
+                    parentIdentifier + 'Record'
                 );
 
                 const linkedValue = aql.join([

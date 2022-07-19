@@ -6,6 +6,7 @@ import {AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import {getEdgesCollectionName, getFullNodeId, getRootId} from '../../infra/tree/helpers/utils';
+import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_types';
 import {
     CursorDirection,
     ICursorPaginationParams,
@@ -26,7 +27,7 @@ import {BASE_QUERY_IDENTIFIER, IAttributeTypesRepo} from '../attributeTypes/attr
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
-import {MAX_TREE_DEPTH, TO_RECORD_PROP_NAME} from '../tree/treeRepo';
+import {MAX_TREE_DEPTH} from '../tree/treeRepo';
 
 export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
 
@@ -157,13 +158,11 @@ export default function ({
                     LET ${classifiedSubqueryName} = (
                         FOR v, e IN 1..${MAX_TREE_DEPTH} OUTBOUND ${startingNode}
                             ${collec}
-                            FILTER e.${TO_RECORD_PROP_NAME}
-                            ${
-                                filter.condition === TreeCondition.CLASSIFIED_IN
-                                    ? aql`FILTER e._from != ${startingNode}`
-                                    : aql``
-                            }
-                            RETURN v._id
+                            LET record = DOCUMENT(
+                                v.${aql.literal(NODE_LIBRARY_ID_FIELD)},
+                                v.${aql.literal(NODE_RECORD_ID_FIELD)}
+                            )
+                            RETURN record._id
                     )
                 `);
 

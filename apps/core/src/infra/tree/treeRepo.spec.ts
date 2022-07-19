@@ -6,7 +6,7 @@ import {IDbDocument} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import {mockTree} from '../../__tests__/mocks/tree';
 import dbUtils, {IDbUtils} from '../db/dbUtils';
-import treeRepo from './treeRepo';
+import treeRepo, {TREES_COLLECTION_NAME} from './treeRepo';
 
 describe('TreeRepo', () => {
     const docTreeData = {
@@ -30,8 +30,15 @@ describe('TreeRepo', () => {
 
     describe('createTree', () => {
         test('Should create a tree', async function () {
+            const mockEnsureIndex = jest.fn();
+            const mockCollection = new Database().collection(TREES_COLLECTION_NAME);
+            mockCollection.ensureIndex = mockEnsureIndex;
+
+            const mockDb = new Database();
+            mockDb.collection = jest.fn().mockReturnValue(mockCollection);
+
             const mockDbServ = {
-                db: new Database(),
+                db: mockDb,
                 execute: global.__mockPromise([docTreeData]),
                 createCollection: global.__mockPromise()
             };
@@ -57,6 +64,7 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
             expect(mockDbServ.createCollection.mock.calls.length).toBe(2);
+            expect(mockEnsureIndex).toBeCalled();
 
             expect(createdTree).toMatchObject(treeData);
         });
@@ -170,7 +178,6 @@ describe('TreeRepo', () => {
                             _key: '19610667'
                         }
                     ],
-                    [], // Link to record
                     [
                         // Insert entity in tree
                         {
@@ -195,7 +202,7 @@ describe('TreeRepo', () => {
                 id: '19610667',
                 order: 0
             });
-            expect(mockDbServ.execute.mock.calls.length).toBe(3);
+            expect(mockDbServ.execute.mock.calls.length).toBe(2);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/^INSERT/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
@@ -204,10 +211,6 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/^INSERT/);
             expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
-
-            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatch(/^INSERT/);
-            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[2][0].query.bindVars).toMatchSnapshot();
         });
 
         test('Should add an element under another', async () => {
@@ -221,7 +224,6 @@ describe('TreeRepo', () => {
                             _key: '19610667'
                         }
                     ],
-                    [], // Link to record
                     [
                         // Insert entity in tree
                         {
@@ -247,7 +249,7 @@ describe('TreeRepo', () => {
                 id: '19610667',
                 order: 0
             });
-            expect(mockDbServ.execute.mock.calls.length).toBe(3);
+            expect(mockDbServ.execute.mock.calls.length).toBe(2);
             expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/INSERT/);
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
@@ -256,10 +258,6 @@ describe('TreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatch(/^INSERT/);
             expect(mockDbServ.execute.mock.calls[1][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[1][0].query.bindVars).toMatchSnapshot();
-
-            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatch(/^INSERT/);
-            expect(mockDbServ.execute.mock.calls[2][0].query.query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[2][0].query.bindVars).toMatchSnapshot();
         });
     });
 
