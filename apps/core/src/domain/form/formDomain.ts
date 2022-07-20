@@ -109,7 +109,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                 order: 0,
                 uiElementType: 'text_block',
                 type: FormElementTypes.layout,
-                settings: {content: translator.t('forms.missing_form_warning')}
+                settings: {content: translator.t('forms.missing_form_warning', {idForm: id})}
             },
             {
                 id: uniqueId(),
@@ -132,21 +132,23 @@ export default function (deps: IDeps = {}): IFormDomain {
                     uiElementType: 'input_field',
                     type: FormElementTypes.field,
                     settings: {
-                        displayRecordIdentity: true,
                         label: att.label?.[translator.language] || att.id,
                         attribute: att.id
                     }
                 };
-                if (att.type === AttributeTypes.SIMPLE || att.type === AttributeTypes.ADVANCED) {
-                    delete data.settings.displayRecordIdentity;
-                    data.uiElementType = 'input_field';
-                }
-                if (att.type === AttributeTypes.SIMPLE_LINK || att.type === AttributeTypes.ADVANCED_LINK) {
-                    data.uiElementType = 'link';
-                }
-                if (att.type === AttributeTypes.TREE) {
-                    delete data.settings.displayRecordIdentity;
-                    data.uiElementType = 'tree';
+                switch (att.type) {
+                    case AttributeTypes.SIMPLE:
+                    case AttributeTypes.ADVANCED:
+                        data.uiElementType = 'input_field';
+                        break;
+                    case AttributeTypes.SIMPLE_LINK:
+                    case AttributeTypes.ADVANCED_LINK:
+                        data.settings.displayRecordIdentity = true;
+                        data.uiElementType = 'link';
+                        break;
+                    case AttributeTypes.TREE:
+                        data.uiElementType = 'tree';
+                        break;
                 }
 
                 return data;
