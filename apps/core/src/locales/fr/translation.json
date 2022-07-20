@@ -140,5 +140,8 @@
         "edit_children": "Modifier les enfants",
         "admin_application": "Administrer l'application",
         "access_application": "Accéder à l'application"
+    },
+    "forms": {
+        "missing_form_warning": "Vous pouvez personnaliser cette vue dans l'administration en créant un formulaire avec l'identifiant **{{idForm}}** pour cette bibliothèque."
     }
 }

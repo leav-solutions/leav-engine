@@ -8,10 +8,13 @@ import {IAttributePermissionDomain} from 'domain/permission/attributePermissionD
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {i18n} from 'i18next';
+import attributeTypes from 'infra/attributeTypes';
 import {IFormRepo} from 'infra/form/formRepo';
-import {difference} from 'lodash';
+import {difference, uniqueId} from 'lodash';
 import omit from 'lodash/omit';
 import {IUtils} from 'utils/utils';
+import {AttributeTypes} from '../../_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
@@ -20,6 +23,7 @@ import {Errors} from '../../_types/errors';
 import {
     FormElementTypes,
     IForm,
+    IFormElement,
     IFormElementWithValues,
     IFormElementWithValuesAndChildren,
     IFormFilterOptions,
@@ -66,6 +70,7 @@ interface IDeps {
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.infra.form'?: IFormRepo;
     'core.utils'?: IUtils;
+    translator?: i18n;
 }
 
 export default function (deps: IDeps = {}): IFormDomain {
@@ -75,7 +80,8 @@ export default function (deps: IDeps = {}): IFormDomain {
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
         'core.domain.permission.attribute': attributePermissionDomain = null,
         'core.infra.form': formRepo = null,
-        'core.utils': utils = null
+        'core.utils': utils = null,
+        translator = null
     } = deps;
 
     const _canAccessAttribute = (attribute: string, libraryId: string, recordId: string, ctx: IQueryInfos) => {
@@ -95,6 +101,76 @@ export default function (deps: IDeps = {}): IFormDomain {
               });
     };
 
+    const _getMissingFormDefaultProps = async ({library, id, ctx}): Promise<IForm> => {
+        const defaultElements: IFormElement[] = [
+            {
+                id: uniqueId(),
+                containerId: FORM_ROOT_CONTAINER_ID,
+                order: 0,
+                uiElementType: 'text_block',
+                type: FormElementTypes.layout,
+                settings: {content: translator.t('forms.missing_form_warning', {idForm: id})}
+            },
+            {
+                id: uniqueId(),
+                containerId: FORM_ROOT_CONTAINER_ID,
+                order: 1,
+                uiElementType: 'divider',
+                type: FormElementTypes.layout,
+                settings: null
+            }
+        ];
+
+        const attributes = await attributeDomain.getLibraryAttributes(library, ctx);
+        const nonSystemAttributes = attributes.filter(att => !att?.system);
+        const attributesElements = nonSystemAttributes.map(
+            (att, index): IFormElement => {
+                const data: IFormElement = {
+                    id: uniqueId(),
+                    containerId: FORM_ROOT_CONTAINER_ID,
+                    order: index + 2,
+                    uiElementType: 'input_field',
+                    type: FormElementTypes.field,
+                    settings: {
+                        label: att.label?.[translator.language] || att.id,
+                        attribute: att.id
+                    }
+                };
+                switch (att.type) {
+                    case AttributeTypes.SIMPLE:
+                    case AttributeTypes.ADVANCED:
+                        data.uiElementType = 'input_field';
+                        break;
+                    case AttributeTypes.SIMPLE_LINK:
+                    case AttributeTypes.ADVANCED_LINK:
+                        data.settings = {
+                            displayRecordIdentity: true,
+                            label: att.label?.[translator.language] || att.id,
+                            attribute: att.id
+                        };
+                        data.uiElementType = 'link';
+                        break;
+                    case AttributeTypes.TREE:
+                        data.uiElementType = 'tree';
+                        break;
+                }
+
+                return data;
+            }
+        );
+
+        const finalElements = [...defaultElements, ...attributesElements];
+
+        return {
+            library,
+            elements: [
+                {
+                    elements: finalElements
+                }
+            ]
+        };
+    };
+
     return {
         async getFormsByLib({library, params, ctx}): Promise<IList<IForm>> {
             const filters = {...params?.filters, library};
@@ -109,7 +185,19 @@ export default function (deps: IDeps = {}): IFormDomain {
             return formRepo.getForms({params: initializedParams, ctx});
         },
         async getRecordForm({recordId, libraryId, formId, ctx}): Promise<IRecordForm> {
-            const formProps = await this.getFormProperties({library: libraryId, id: formId, ctx});
+            let formProps: IForm;
+            try {
+                formProps = await this.getFormProperties({library: libraryId, id: formId, ctx});
+            } catch (error) {
+                if (error instanceof ValidationError) {
+                    if (error.fields.id === Errors.UNKNOWN_FORM) {
+                        formProps = await _getMissingFormDefaultProps({library: libraryId, id: formId, ctx});
+                    }
+                } else {
+                    throw error;
+                }
+            }
+
             const flatElementsList: IFormElementWithValuesAndChildren[] = [];
 
             // Retrieve all relevant atributs in a hash map. It will be used later on to filters out empty containers
