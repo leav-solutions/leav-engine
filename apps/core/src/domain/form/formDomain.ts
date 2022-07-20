@@ -150,6 +150,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                         data.uiElementType = 'tree';
                         break;
                 }
+
                 return data;
             }
         );
