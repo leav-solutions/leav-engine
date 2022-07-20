@@ -125,7 +125,7 @@ export default function (deps: IDeps = {}): IFormDomain {
         const nonSystemAttributes = attributes.filter(att => !att?.system);
         const attributesElements = nonSystemAttributes.map(
             (att, index): IFormElement => {
-                const data = {
+                const data: IFormElement = {
                     id: uniqueId(),
                     containerId: FORM_ROOT_CONTAINER_ID,
                     order: index + 2,
@@ -143,7 +143,11 @@ export default function (deps: IDeps = {}): IFormDomain {
                         break;
                     case AttributeTypes.SIMPLE_LINK:
                     case AttributeTypes.ADVANCED_LINK:
-                        data.settings.displayRecordIdentity = true;
+                        data.settings = {
+                            displayRecordIdentity: true,
+                            label: att.label?.[translator.language] || att.id,
+                            attribute: att.id
+                        };
                         data.uiElementType = 'link';
                         break;
                     case AttributeTypes.TREE:
