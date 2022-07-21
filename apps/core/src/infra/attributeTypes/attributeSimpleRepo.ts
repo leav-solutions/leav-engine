@@ -9,7 +9,7 @@ import {IStandardValue, IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo, OperationType} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
@@ -93,13 +93,14 @@ export default function ({
         filterQueryPart(
             attributes: IAttributeWithRepo[],
             filter: IRecordFilterOption,
+            operationType: OperationType = OperationType.SEARCH,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 
-            const valueIdentifier = aql.literal(parentIdentifier + 'Val');
             let filterTarget: AqlQuery;
             let conditionApplied = filter.condition;
+
             if (
                 [
                     AttributeCondition.VALUES_COUNT_EQUAL,
@@ -128,9 +129,9 @@ export default function ({
             }
 
             const query: AqlQuery = aql`
-                        LET ${valueIdentifier} = ${filterTarget}
-                        FILTER ${getConditionPart(
-                            valueIdentifier,
+                        ${aql.literal(OperationType[operationType])} 
+                        ${getConditionPart(
+                            filterTarget,
                             conditionApplied as AttributeCondition,
                             filter.value,
                             attributes[0]

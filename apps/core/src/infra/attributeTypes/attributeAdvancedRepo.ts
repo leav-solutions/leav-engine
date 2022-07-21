@@ -5,10 +5,10 @@ import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IDbDocument, IDbEdge} from 'infra/db/_types';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
+import {AttributeCondition, IRecordFilterOption, IRecordSort, Operator} from '../../_types/record';
 import {IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, OperationType} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 const VALUES_COLLECTION = 'core_values';
@@ -261,6 +261,7 @@ export default function ({
         filterQueryPart(
             attributes: IAttribute[],
             filter: IRecordFilterOption,
+            operationType: OperationType = OperationType.SEARCH,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);

@@ -272,7 +272,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
             );
 
-            expect(filter.query).toMatch(/^FILTER/);
+            expect(filter.query).toMatch(/^SEARCH/);
             expect(filter).toMatchSnapshot();
         });
     });

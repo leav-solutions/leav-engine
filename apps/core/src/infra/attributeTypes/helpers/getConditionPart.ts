@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlLiteral, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlLiteral, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import moment from 'moment';
 import {AttributeFormats, IAttribute} from '../../../_types/attribute';
 import {AttributeCondition, IDateFilterValue} from '../../../_types/record';
 
 export type GetConditionPart = (
-    valueIdentifier: string | AqlLiteral,
+    valueIdentifier: string | AqlLiteral | AqlQuery, // FIXME: tmp let aqlquery only
     condition: AttributeCondition,
     value: string | number | boolean,
     attribute: IAttribute
@@ -15,12 +15,13 @@ export type GetConditionPart = (
 
 export default function (): GetConditionPart {
     return (
-        valueIdentifier: string | AqlLiteral,
+        valueIdentifier: string | AqlLiteral | AqlQuery, // FIXME: tmp let aqlquery only
         condition: AttributeCondition,
         value: string | number | boolean | IDateFilterValue,
         attribute: IAttribute
     ): GeneratedAqlQuery => {
         const valueField = typeof valueIdentifier === 'string' ? aql.literal(valueIdentifier) : valueIdentifier;
+        // const valueField = valueIdentifier;
 
         switch (condition) {
             case AttributeCondition.EQUAL: {

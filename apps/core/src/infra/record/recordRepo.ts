@@ -23,7 +23,7 @@ import {
     Operator,
     TreeCondition
 } from '../../_types/record';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypesRepo, OperationType} from '../attributeTypes/attributeTypesRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
@@ -134,7 +134,7 @@ export default function ({
         filter?: IRecordFilterOption
     ): Promise<IFindRequestResult> => {
         const queryParts = [];
-        const coll = dbService.db.collection(libraryId);
+        const coll = dbService.db.collection(`${libraryId}_view`);
 
         // Will contain query to init some "global" variables needed later on the query
         const initialVars: GeneratedAqlQuery[] = [];

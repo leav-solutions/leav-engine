@@ -7,7 +7,7 @@ import {AttributeCondition, IRecordFilterOption} from '../../_types/record';
 import {ILinkValue, IStandardValue} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo, OperationType} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
@@ -103,6 +103,7 @@ export default function ({
         },
         sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);
+
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
@@ -125,6 +126,7 @@ export default function ({
         filterQueryPart(
             attributes: IAttributeWithRepo[],
             filter: IRecordFilterOption,
+            operationType: OperationType = OperationType.SEARCH,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);
@@ -136,10 +138,10 @@ export default function ({
 
             const retrieveValue = aql`FOR l IN ${linkedLibCollec}
                 FILTER TO_STRING(r.${attributes[0].id}) == l._key`;
+
             const returnValue = aql`RETURN l`;
 
             let query: AqlQuery;
-            const linkValIdentifier = aql.literal(`${parentIdentifier}linkVal`);
             if (
                 [
                     AttributeCondition.VALUES_COUNT_EQUAL,
@@ -160,42 +162,36 @@ export default function ({
                         break;
                 }
 
-                query = aql.join([
-                    aql`LET ${linkValIdentifier} = `,
-                    aql`COUNT(`,
-                    retrieveValue,
-                    returnValue,
-                    aql`) ? 1 : 0`,
-                    aql`FILTER ${getConditionPart(
-                        linkValIdentifier,
-                        conditionApplied as AttributeCondition,
-                        filter.value,
-                        attributes[0]
-                    )}`
-                ]);
+                query = aql`${aql.literal(OperationType[operationType])} ${getConditionPart(
+                    aql.join([aql`COUNT(`, retrieveValue, returnValue, aql`) ? 1 : 0`]),
+                    conditionApplied as AttributeCondition,
+                    filter.value,
+                    attributes[0]
+                )}`;
             } else if (
                 filter.condition === AttributeCondition.IS_EMPTY ||
                 filter.condition === AttributeCondition.IS_NOT_EMPTY
             ) {
-                query = aql.join([
-                    aql`LET ${linkValIdentifier} = `,
-                    aql`FIRST(`,
-                    retrieveValue,
-                    returnValue,
-                    aql`)`,
-                    aql`FILTER ${getConditionPart(linkValIdentifier, filter.condition, filter.value, attributes[0])}`
-                ]);
+                query = aql`${aql.literal(OperationType[operationType])} ${getConditionPart(
+                    aql.join([aql`FIRST(`, retrieveValue, returnValue, aql`)`]),
+                    filter.condition,
+                    filter.value,
+                    attributes[0]
+                )}`;
             } else {
                 const filterLinkedValue = attributes[1]
-                    ? attributes[1]._repo.filterQueryPart([...attributes].splice(1), filter, 'l')
+                    ? attributes[1]._repo.filterQueryPart([...attributes].splice(1), filter, OperationType.AND, 'l')
                     : null;
 
                 const linkedValue = aql.join([aql`FIRST(`, retrieveValue, filterLinkedValue, returnValue, aql`)`]);
 
                 query =
                     linked.format !== AttributeFormats.EXTENDED
-                        ? aql`FILTER ${linkedValue} != null`
-                        : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} != null`;
+                        ? aql`${aql.literal(OperationType[operationType])} ${linkedValue} != null`
+                        : aql`${aql.literal(OperationType[operationType])} ${_getExtendedFilterPart(
+                              attributes,
+                              linkedValue
+                          )} != null`;
             }
 
             return query;

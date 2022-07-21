@@ -10,7 +10,7 @@ import {AttributeCondition, IRecord, IRecordFilterOption} from '../../_types/rec
 import {ITreeValue, IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo, OperationType} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
@@ -22,7 +22,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
@@ -264,6 +264,7 @@ export default function ({
         filterQueryPart(
             attributes: IAttributeWithRepo[],
             filter: IRecordFilterOption,
+            operationType: OperationType = OperationType.SEARCH,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -339,6 +340,7 @@ export default function ({
                 const filterValue = attributes[1]._repo.filterQueryPart(
                     [...attributes].splice(1),
                     filter,
+                    OperationType.AND,
                     parentIdentifier + 'Record'
                 );
 

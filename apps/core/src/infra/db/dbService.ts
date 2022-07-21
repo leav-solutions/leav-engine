@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getCallStack} from '@leav/utils';
-import {Database} from 'arangojs';
+import {Database, DocumentCollection, EdgeCollection} from 'arangojs';
 import {isAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {createHash} from 'crypto';
 import {IUtils} from 'utils/utils';
@@ -35,6 +35,14 @@ export interface IDbService {
      * @throws If collection already exists
      */
     createCollection?(name: string, type?: collectionTypes): Promise<void> | null;
+
+    /**
+     * Create a view in database
+     *
+     * @param collectionName Collection name
+     * @throws If collection not exists
+     */
+    createView?(collectionName: string): Promise<void>;
 
     /**
      * Delete a collection in database
@@ -157,13 +165,29 @@ export default function ({
                 throw new Error(`Collection ${name} already exists`);
             }
 
+            let collection: EdgeCollection | DocumentCollection;
+
             if (type === collectionTypes.EDGE) {
-                const collection = db.edgeCollection(name);
-                await collection.create();
+                collection = db.edgeCollection(name);
             } else {
-                const collection = db.collection(name);
-                await collection.create();
+                collection = db.collection(name);
             }
+
+            await collection.create();
+        },
+        async createView(collectionName: string): Promise<void> {
+            if (!(await collectionExists(collectionName))) {
+                throw new Error(`Collection ${collectionName} not exists`);
+            }
+
+            const view = db.arangoSearchView(`${collectionName}_view`);
+            await view.create({
+                links: {
+                    [collectionName]: {
+                        includeAllFields: true
+                    }
+                }
+            });
         },
         async dropCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
             if (!(await collectionExists(name))) {

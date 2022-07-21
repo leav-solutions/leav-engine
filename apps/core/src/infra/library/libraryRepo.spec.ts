@@ -61,7 +61,8 @@ describe('LibraryRepo', () => {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([docLibData]),
-                createCollection: global.__mockPromise()
+                createCollection: global.__mockPromise(),
+                createView: global.__mockPromise()
             };
 
             const mockCleanupRes = libData;

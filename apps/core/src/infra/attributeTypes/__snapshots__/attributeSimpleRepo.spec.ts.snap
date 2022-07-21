@@ -50,12 +50,11 @@ exports[`AttributeIndexRepo filterQueryPart Should return simple filter 1`] = `
 Object {
   "_source": [Function],
   "bindVars": Object {
-    "value0": "_key",
-    "value1": "123456",
+    "value0": "123456",
   },
   "query": "
-                        LET rVal = r.@value0
-                        FILTER rVal == @value1",
+                        SEARCH 
+                        rVal == @value0",
 }
 `;
 

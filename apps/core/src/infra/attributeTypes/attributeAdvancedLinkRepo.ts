@@ -12,7 +12,8 @@ import {
     BASE_QUERY_IDENTIFIER,
     IAttributeTypeRepo,
     IAttributeWithRepo,
-    IAttributeWithRevLink
+    IAttributeWithRevLink,
+    OperationType
 } from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
@@ -312,6 +313,7 @@ export default function ({
         filterQueryPart(
             attributes: IAttributeWithRepo[],
             filter: IRecordFilterOption,
+            operationType: OperationType = OperationType.SEARCH,
             parentIdentifier = BASE_QUERY_IDENTIFIER
         ): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
@@ -379,6 +381,13 @@ export default function ({
                     aql`)`,
                     aql`FILTER ${getConditionPart(linkValIdentifier, conditionApplied, filter.value, attributes[0])}`
                 ]);
+
+                // query = aql`FILTER ${getConditionPart(
+                //     aql.join([aql`COUNT(`, retrieveValue, returnValue, aql`)`]),
+                //     conditionApplied,
+                //     filter.value,
+                //     attributes[0]
+                // )}`;
             } else if (
                 filter.condition === AttributeCondition.IS_EMPTY ||
                 filter.condition === AttributeCondition.IS_NOT_EMPTY
@@ -391,11 +400,25 @@ export default function ({
                     aql`)`,
                     aql`FILTER ${getConditionPart(linkValIdentifier, filter.condition, filter.value, attributes[0])}`
                 ]);
+
+                // query = aql`FILTER ${getConditionPart(
+                //     aql.join([aql`FIRST(`, retrieveValue, returnValue, aql`)`]),
+                //     filter.condition,
+                //     filter.value,
+                //     attributes[0]
+                // )}`;
             } else {
                 const filterValue = attributes[1]
-                    ? attributes[1]._repo.filterQueryPart([...attributes].splice(1), filter, linkIdentifier) // FIXME: i instead linkIdentifier
+                    ? attributes[1]._repo.filterQueryPart(
+                          [...attributes].splice(1),
+                          filter,
+                          OperationType.AND,
+                          linkIdentifier
+                      ) // FIXME: i instead linkIdentifier
                     : null;
+
                 const linkedValue = aql.join([aql`FIRST(`, retrieveValue, filterValue, returnValue, aql`)`]);
+
                 query =
                     linked.format !== AttributeFormats.EXTENDED
                         ? aql`FILTER ${linkedValue} != null`

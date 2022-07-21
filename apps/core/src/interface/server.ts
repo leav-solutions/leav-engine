@@ -138,7 +138,8 @@ export default function ({
                         return res.status(401).send('Unauthorized');
                     }
 
-                    res.status(500).json({error: 'INTERNAL_SERVER_ERROR'}); // FIXME: format error msg?
+                    logger.error(err);
+                    res.status(500).json({error: 'INTERNAL_SERVER_ERROR'});
                 });
 
                 await graphqlApp.generateSchema();

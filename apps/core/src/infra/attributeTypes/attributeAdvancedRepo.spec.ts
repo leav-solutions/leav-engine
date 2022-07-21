@@ -7,6 +7,7 @@ import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
 import attributeAdvancedRepo from './attributeAdvancedRepo';
+import {OperationType} from './attributeTypesRepo';
 
 describe('AttributeStandardRepo', () => {
     const mockAttribute = {
@@ -650,6 +651,7 @@ describe('AttributeStandardRepo', () => {
             const filter = attrRepo.filterQueryPart(
                 [{id: 'label', type: AttributeTypes.ADVANCED, _repo: null}],
                 {condition: AttributeCondition.EQUAL, value: 'MyLabel'},
+                OperationType.SEARCH,
                 'r'
             );
 

@@ -27,6 +27,13 @@ export type GetConditionPartParentFunc = (
 ) => GetConditionPartFunc;
 
 export type GetConditionPartFunc = (valueIdentifier: string | AqlLiteral) => GeneratedAqlQuery;
+
+export enum OperationType {
+    // FILTER = 'FILTER',
+    SEARCH = 'SEARCH',
+    AND = 'AND' // to chain search operation type and use AND instead of search
+}
+
 /**
  * Define interface used for all attribute type specific files
  */
@@ -137,7 +144,12 @@ export interface IAttributeTypeRepo {
     /**
      * Return AQL query part to filter on this attribute. If will be concatenate with other filters and full query
      */
-    filterQueryPart(attributes: IAttributeWithRepo[], filter: IRecordFilterOption, parentIdentifier?: string): AqlQuery;
+    filterQueryPart(
+        attributes: IAttributeWithRepo[],
+        filter: IRecordFilterOption,
+        operationType?: OperationType,
+        parentIdentifier?: string
+    ): AqlQuery;
 
     /**
      * Return AQL query part to sort on this attribute

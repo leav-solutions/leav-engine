@@ -123,6 +123,9 @@ export default function ({
             // Create new collection for library
             await dbService.createCollection(docToInsert._key);
 
+            // Create view collection
+            await dbService.createView(docToInsert._key);
+
             // Insert in libraries collection
             const libCollc = dbService.db.collection(LIB_COLLECTION_NAME);
             const libRes = await dbService.execute({

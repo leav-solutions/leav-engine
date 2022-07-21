@@ -6,6 +6,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import attributeSimpleRepo from './attributeSimpleRepo';
+import {OperationType} from './attributeTypesRepo';
 
 describe('AttributeIndexRepo', () => {
     const mockAttribute = {
@@ -126,10 +127,11 @@ describe('AttributeIndexRepo', () => {
             const filter = attrRepo.filterQueryPart(
                 [{id: 'id', type: AttributeTypes.SIMPLE, _repo: null}],
                 {condition: AttributeCondition.EQUAL, value: '123456'},
+                OperationType.SEARCH,
                 'r'
             );
 
-            expect(filter.query).toMatch(/FILTER/);
+            expect(filter.query).toMatch(/SEARCH/);
             expect(filter).toMatchSnapshot();
         });
     });

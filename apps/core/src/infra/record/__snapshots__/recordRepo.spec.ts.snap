@@ -45,8 +45,8 @@ Object {
   "query": Object {
     "_source": [Function],
     "bindVars": Object {
-      "@value0": "test_lib",
-      "@value2": "test_lib",
+      "@value0": "test_lib_view",
+      "@value2": "test_lib_view",
       "value1": Object {
         "bindVars": Object {
           "filterField0": "test_attr",
