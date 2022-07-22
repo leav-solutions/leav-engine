@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IAmqpService} from '@leav/message-broker';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {i18n} from 'i18next';
-import {IAmqpService} from '@leav/message-broker';
 import Joi from 'joi';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
@@ -19,9 +19,10 @@ import {Errors} from '../../_types/errors';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {IRecordDomain} from '../record/recordDomain';
-import {handleEventFileSystem} from './helpers/handleFileSystem';
 import {createPreview} from './helpers/handlePreview';
-import {handlePreviewResponse} from './helpers/handlePreviewResponse';
+import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
+import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
+import {systemPreviewVersions} from './_constants';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -57,46 +58,19 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
     'core.utils'?: IUtils;
     translator?: i18n;
 }
 
-export const systemPreviewVersions: IPreviewVersion[] = [
-    {
-        background: false,
-        density: 300,
-        sizes: [
-            {
-                size: 64,
-                name: 'tiny'
-            },
-            {
-                size: 128,
-                name: 'small'
-            },
-            {
-                size: 256,
-                name: 'medium'
-            },
-            {
-                size: 512,
-                name: 'big'
-            },
-            {
-                size: 1024,
-                name: 'huge'
-            }
-        ]
-    }
-];
-
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.domain.filesManager.helpers.messagesHandler': messagesHandler = null,
     'core.utils': utils = null,
     translator = null
 }: IDeps): IFilesManagerDomain {
@@ -120,31 +94,7 @@ export default function({
             return;
         }
 
-        try {
-            const library = config.filesManager.rootKeys[msgBody.rootKey];
-            await handleEventFileSystem(
-                msgBody,
-                {library},
-                {
-                    recordDomain,
-                    valueDomain,
-                    treeDomain,
-                    amqpService,
-                    previewVersions: systemPreviewVersions,
-                    logger,
-                    config,
-                    utils
-                },
-                ctx
-            );
-        } catch (e) {
-            logger.error(
-                `[FilesManager] Error when processing file event msg:
-                    ${e.message}.
-                    Message was: ${msg}
-                `
-            );
-        }
+        messagesHandler.handleMessage(msgBody, ctx);
     };
 
     const _validateMsg = (msg: IFileEventData): void => {
@@ -178,7 +128,7 @@ export default function({
                 config.filesManager.routingKeys.events
             );
 
-            await handlePreviewResponse(config, logger, {
+            await initPreviewResponseHandler(config, logger, {
                 amqpService,
                 recordDomain,
                 valueDomain,
@@ -203,7 +153,7 @@ export default function({
                     return labels;
                 }, {});
 
-            const versions = systemPreviewVersions;
+            const versions = this.getPreviewVersion();
 
             return versions.reduce(
                 (settings: IPreviewAttributesSettings, version) => {

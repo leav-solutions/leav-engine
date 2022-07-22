@@ -1,11 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IQueryInfos} from '_types/queryInfos';
+import {systemPreviewVersions} from '../../../../domain/filesManager/_constants';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {getInputData, getPreviewsDatas, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
 import {createPreview} from '../handlePreview';
-import {IQueryInfos} from '_types/queryInfos';
 
 export const handleUpdateEvent = async (
     scanMsg: IFileEventData,
@@ -23,7 +24,7 @@ export const handleUpdateEvent = async (
         return;
     }
 
-    const {previewsStatus, previews} = getPreviewsDatas(deps.previewVersions);
+    const {previewsStatus, previews} = getPreviewsDatas(systemPreviewVersions);
 
     const recordData: IFilesAttributes = {
         INODE: scanMsg.inode,
@@ -37,5 +38,5 @@ export const handleUpdateEvent = async (
     await updateRecordFile(recordData, record.id, library, deps, ctx);
 
     // Regenerate Previews
-    await createPreview(record.id, scanMsg.pathAfter, library, deps.previewVersions, deps.amqpService, deps.config);
+    await createPreview(record.id, scanMsg.pathAfter, library, systemPreviewVersions, deps.amqpService, deps.config);
 };

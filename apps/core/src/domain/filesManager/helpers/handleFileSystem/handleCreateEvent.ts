@@ -1,6 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IQueryInfos} from '_types/queryInfos';
+import {systemPreviewVersions} from '../../../../domain/filesManager/_constants';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {
@@ -13,7 +15,6 @@ import {
     updateRecordFile
 } from '../handleFileUtilsHelper';
 import {createPreview} from '../handlePreview';
-import {IQueryInfos} from '_types/queryInfos';
 
 export const handleCreateEvent = async (
     scanMsg: IFileEventData,
@@ -27,7 +28,7 @@ export const handleCreateEvent = async (
     let record = await getRecord(fileName, filePath, resources.library, true, deps, ctx);
 
     // Preview and Previews status
-    const {previewsStatus, previews} = getPreviewsDatas(deps.previewVersions);
+    const {previewsStatus, previews} = getPreviewsDatas(systemPreviewVersions);
 
     if (record) {
         try {
@@ -78,7 +79,7 @@ export const handleCreateEvent = async (
             record.id,
             scanMsg.pathAfter,
             resources.library,
-            deps.previewVersions,
+            systemPreviewVersions,
             deps.amqpService,
             deps.config
         );
