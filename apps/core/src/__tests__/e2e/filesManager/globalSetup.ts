@@ -6,21 +6,27 @@ import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
+import {initRedis} from '../../../infra/cache/redis';
 import {initDb} from '../../../infra/db/db';
 
 export async function setup() {
     try {
         const conf = await getConfig();
 
-        await initDb(conf);
+        await initDb(conf, true);
 
         // Init i18next
         const translator = await i18nextInit(conf);
 
         // Init AMQP
         const amqp = await amqpService({config: conf.amqp});
+        const redisClient = await initRedis({config: conf});
 
-        const {coreContainer} = await initDI({translator, 'core.infra.amqpService': amqp});
+        const {coreContainer} = await initDI({
+            translator,
+            'core.infra.amqpService': amqp,
+            'core.infra.redis': redisClient
+        });
 
         // Clear all caches (redis cache for example might persist between runs)
         const cacheService: ICachesService = coreContainer.cradle['core.infra.cache.cacheService'];

@@ -7,14 +7,9 @@
         "\\.(ts|tsx)$": "ts-jest"
     },
     "testRegex": "src\/__tests__\/e2e\/filesManager\/.*(.test.ts)$",
-    "globalSetup": "./src/__tests__/e2e/filesManager/globalSetupHook.js",
+    "globalSetup": "./src/__tests__/e2e/filesManager/globalSetupHook.ts",
     "setupFiles": [
         "<rootDir>/src/__tests__/setup.ts",
         "<rootDir>/src/__tests__/jestUtils.ts"
-    ],
-    "globals": {
-        "ts-jest": {
-            "isolatedModules": true
-        }
-    }
+    ]
 }

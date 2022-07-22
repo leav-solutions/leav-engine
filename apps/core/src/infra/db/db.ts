@@ -14,7 +14,7 @@ const _getDbConnection = (config: IConfig): Database => {
     });
 };
 
-export default function (deps: IDeps): Database {
+export default function(deps: IDeps): Database {
     const db = _getDbConnection(deps.config);
 
     db.useDatabase(deps.config.db.name);
@@ -22,13 +22,17 @@ export default function (deps: IDeps): Database {
     return db;
 }
 
-export const initDb = async (config: IConfig) => {
+export const initDb = async (config: IConfig, forceReset: boolean = false) => {
     const db = _getDbConnection(config);
 
     const databases = await db.listDatabases();
     const dbExists = databases.reduce((exists, d) => exists || d === config.db.name, false);
 
-    if (!dbExists) {
+    if (dbExists && forceReset) {
+        await db.dropDatabase(config.db.name);
+    }
+
+    if (!dbExists || forceReset) {
         await db.createDatabase(config.db.name);
     }
 

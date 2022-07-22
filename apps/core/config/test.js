@@ -3,14 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
     server: {
-        host: '0.0.0.0',
-        port: 7357
+        host: process.env.SERVER_HOST || '0.0.0.0',
+        port: process.env.SERVER_PORT || 7357
     },
     db: {
-        name: 'leav_test'
+        name: process.env.DB_NAME || 'leav_test'
     },
     amqp: {
-        exchange: 'test_leav_core'
+        exchange: 'test_leav_core',
+        prefetch: 1
     },
     filesManager: {
         queues: {
@@ -27,8 +28,7 @@ module.exports = {
     indexationManager: {
         queues: {
             events: 'test_indexation_event'
-        },
-        prefetch: 1
+        }
     },
     logs: {
         transport: 'console'

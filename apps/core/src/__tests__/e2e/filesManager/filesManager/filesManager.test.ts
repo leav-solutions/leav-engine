@@ -3,17 +3,56 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as fs from 'fs';
 import {join} from 'path';
-import {Operator} from '../../../../_types/record';
 import {FilesAttributes} from '../../../../_types/filesManager';
+import {IRecord, Operator} from '../../../../_types/record';
 import {makeGraphQlCall} from '../../api/e2eUtils';
 
 jest.setTimeout(30000);
 
 const library = 'files';
 
-const rand = Math.random().toString().substring(2);
+const rand = Math.random()
+    .toString()
+    .substring(2);
 
-const fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(e => false));
+const _fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(e => false));
+
+const _findFileFromGraphql = async (
+    filepath: string,
+    filename: string,
+    additionalFields?: string[]
+): Promise<IRecord[]> => {
+    try {
+        const res = await makeGraphQlCall(`{
+            ${library}(filters: [
+                {
+                    field: "${FilesAttributes.FILE_PATH}",
+                    condition: EQUAL,
+                    value: "${filepath}"
+                },
+                {operator: ${Operator.AND}},
+                {
+                    field: "${FilesAttributes.FILE_NAME}",
+                    condition: EQUAL,
+                    value: "${filename}"
+                }
+            ]) {
+                list {
+                    id ${additionalFields.join(' ')}
+                }
+            }
+        }`);
+
+        if (res?.data?.errors) {
+            console.error(res.data.errors);
+        }
+
+        return res?.data?.data?.[library]?.list ?? [];
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
+};
 
 describe('Files manager', () => {
     const rootPath = '/files';
@@ -52,6 +91,11 @@ describe('Files manager', () => {
             fileInBaseDir = join(rootPath, filePath, dirName, fileName);
             fileInWorkDir = join(rootPath, filePath, newDirName, fileName);
 
+            // Create baseDir if not exists
+            if (!(await _fileExists(rootPath))) {
+                await fs.promises.mkdir(rootPath, {recursive: true});
+            }
+
             // create file for test
             await fs.promises.writeFile(baseFile, '');
 
@@ -61,234 +105,159 @@ describe('Files manager', () => {
 
         afterEach(async () => {
             // clean what is created in tests
+            console.log('GO CLEAN');
             const filesToDelete = [baseFile, workFile, fileInBaseDir, fileInWorkDir];
-
             for (const f of filesToDelete) {
-                if (await fileExists(f)) {
+                if (await _fileExists(f)) {
                     await fs.promises.unlink(f);
                 }
             }
-
-            if (await fileExists(baseDir)) {
+            if (await _fileExists(baseDir)) {
                 await _deleteFolderRecursive(baseDir);
             }
-            if (await fileExists(workDir)) {
+            if (await _fileExists(workDir)) {
                 await _deleteFolderRecursive(workDir);
             }
         });
 
-        test('create file', async done => {
-            expect.assertions(5);
+        test.only('create file', async done => {
+            console.log('CALL CREATE FILE');
+            expect.assertions(3);
 
             await fs.promises.writeFile(workFile, '');
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id is_directory} } }`
-                );
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list.length).toBe(1);
-                expect(res.data.data[library].list[0]).toEqual(
+            await setTimeout(async () => {
+                const files = await _findFileFromGraphql(filePath, newFileName, [FilesAttributes.IS_DIRECTORY]);
+
+                expect(files.length).toBe(1);
+                expect(files[0]).toEqual(
                     expect.objectContaining({
                         [FilesAttributes.IS_DIRECTORY]: false
                     })
                 );
 
-                expect(await fileExists(baseFile)).toBeTruthy();
+                expect(await _fileExists(baseFile)).toBeTruthy();
                 done();
             }, 1500);
+            console.log('end CREATE FILE');
         });
 
-        test('create dir', async done => {
-            expect.assertions(5);
+        test.only('create dir', async done => {
+            console.log('CALL CREATE dir');
+            expect.assertions(3);
             await fs.promises.mkdir(workDir);
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${newDirName}"}
-                    ]) { list {id is_directory} } }`
-                );
+            await setTimeout(async () => {
+                console.log('FIND', filePath, newDirName);
+                const files = await _findFileFromGraphql(filePath, newDirName, [FilesAttributes.IS_DIRECTORY]);
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
-                expect(res.data.data[library].list[0]).toEqual(
+                expect(files).toHaveLength(1);
+                expect(files[0]).toEqual(
                     expect.objectContaining({
                         [FilesAttributes.IS_DIRECTORY]: true
                     })
                 );
 
-                expect(await fileExists(workDir)).toBeTruthy();
+                expect(await _fileExists(workDir)).toBeTruthy();
                 done();
             }, 1500);
+            console.log('END CALL CREATE DIR');
         });
 
         test('update file', async done => {
-            expect.assertions(3);
+            expect.assertions(1);
             await fs.promises.writeFile(baseFile, 'new content');
 
             setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
-                );
+                const files = await _findFileFromGraphql(filePath, fileName);
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
+                expect(files).toHaveLength(1);
                 done();
             }, 1500);
         });
 
         test('move in a folder', async done => {
-            expect.assertions(3);
+            expect.assertions(1);
             await fs.promises.rename(baseFile, fileInBaseDir);
 
             setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
-                );
+                const files = await _findFileFromGraphql(join(filePath, dirName), fileName);
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
+                expect(files).toHaveLength(1);
                 done();
             }, 1500);
         });
 
         test('rename file', async done => {
-            expect.assertions(3);
+            expect.assertions(1);
             await fs.promises.rename(baseFile, workFile);
 
             setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id is_directory} } }`
-                );
+                const files = await _findFileFromGraphql(filePath, newFileName);
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
+                expect(files).toHaveLength(1);
                 done();
             }, 1500);
         });
 
         test('overwrite file', async done => {
-            expect.assertions(6);
+            expect.assertions(2);
             await fs.promises.writeFile(workFile, '');
             await fs.promises.rename(workFile, baseFile);
 
             setTimeout(async () => {
-                const res1 = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
-                );
+                const files = await _findFileFromGraphql(filePath, fileName);
+                const files2 = await _findFileFromGraphql(filePath, newFileName);
 
-                const res2 = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id is_directory} } }`
-                );
-
-                expect(res1.data.errors).toBeUndefined();
-                expect(res2.data.errors).toBeUndefined();
-                expect(res1.status).toBe(200);
-                expect(res2.status).toBe(200);
-                expect(res1.data.data[library].list).toHaveLength(1);
-                expect(res2.data.data[library].list).toHaveLength(0);
+                expect(files).toHaveLength(1);
+                expect(files2).toHaveLength(0);
                 done();
             }, 1500);
         });
 
         test('move folder with file inside', async done => {
-            expect.assertions(3);
+            expect.assertions(1);
             await fs.promises.rename(baseFile, fileInBaseDir);
             await fs.promises.rename(baseDir, workDir);
 
             setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, newDirName)}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
-                );
+                const files = await _findFileFromGraphql(join(filePath, newDirName), fileName);
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
+                expect(files).toHaveLength(1);
                 done();
             }, 1500);
         });
 
         test('move folder with file inside into other folder', async done => {
-            expect.assertions(7);
+            expect.assertions(3);
             await fs.promises.mkdir(workDir);
             await fs.promises.writeFile(fileInWorkDir, '');
             await fs.promises.rename(baseFile, fileInBaseDir);
             await fs.promises.rename(workDir, `${baseDir}/${newDirName}`);
 
             setTimeout(async () => {
-                const dirRecordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
-                );
+                const directories = await _findFileFromGraphql(join(filePath, dirName), fileName);
+                const files = await _findFileFromGraphql(join(filePath, dirName, newDirName), fileName);
 
-                const fileRecordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName, newDirName)}"}, 
-                        {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
-                );
-
-                expect(dirRecordsFind.data.errors).toBeUndefined();
-                expect(fileRecordsFind.data.errors).toBeUndefined();
-                expect(dirRecordsFind.status).toBe(200);
-                expect(fileRecordsFind.status).toBe(200);
-                expect(dirRecordsFind.data.data[library].list).toHaveLength(1);
-                expect(fileRecordsFind.data.data[library].list).toHaveLength(1);
-                expect(await fileExists(join(rootPath, filePath, dirName, newDirName))).toBeTruthy();
+                expect(directories).toHaveLength(1);
+                expect(files).toHaveLength(1);
+                expect(await _fileExists(join(rootPath, filePath, dirName, newDirName))).toBeTruthy();
                 done();
             }, 1500);
         });
 
-        test('remove file', async done => {
+        test.only('remove file', async done => {
             expect.assertions(3);
             await fs.promises.unlink(baseFile);
 
             setTimeout(async () => {
                 const res = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}",
+                        condition: EQUAL, value: "${filePath}"},
                         {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
+                        {field: "${FilesAttributes.FILE_NAME}",
+                        condition: EQUAL, value: "${fileName}"}
                     ]) { list {id is_directory} } }`
                 );
 
@@ -310,7 +279,7 @@ describe('Files manager', () => {
             // clean what is created in tests
             const extList = ['', '.jpg', '.psd', '.docx', '.eps', '.mp4', '.pdf', '.odp', '.pptx'];
             for (const ext of extList) {
-                if (await fileExists(file + ext)) {
+                if (await _fileExists(file + ext)) {
                     await fs.promises.unlink(file + ext);
                 }
             }
@@ -324,9 +293,12 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}",
+                        condition: EQUAL, value: "${filePath}"},
                         {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
+                        {field: "${
+                            FilesAttributes.FILE_NAME
+                        }",                            condition: EQUAL, value: "${fileName + '.jpg'}"}
                     ]) { list {id is_directory previews previews_status} } }`
                 );
 
@@ -357,9 +329,11 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}",
+                        condition: EQUAL, value: "${filePath}"},
                         {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
+                        {field: "${FilesAttributes.FILE_NAME}",
+                        condition: EQUAL,value: "${fileName + '.jpg'}"}
                     ]) { list {id is_directory previews previews_status} } }`
                 );
 
@@ -390,7 +364,7 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
                     ]) { list {id is_directory previews previews_status} } }`
@@ -423,9 +397,11 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
+                        {field: "${
+                            FilesAttributes.FILE_NAME
+                        }",                            condition: EQUAL, value: "${fileName + '.psd'}"}
                     ]) { list {id is_directory previews previews_status} } }`
                 );
 
@@ -456,9 +432,11 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pdf'}"}
+                        {field: "${
+                            FilesAttributes.FILE_NAME
+                        }",                            condition: EQUAL, value: "${fileName + '.pdf'}"}
                     ]) { list {id is_directory previews previews_status} } }`
                 );
 
@@ -489,9 +467,11 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.odp'}"}
+                        {field: "${
+                            FilesAttributes.FILE_NAME
+                        }",                            condition: EQUAL, value: "${fileName + '.odp'}"}
                     ]) { list {id is_directory previews previews_status} } }`
                 );
 
@@ -522,9 +502,12 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}",
+                        condition: EQUAL,value: "${filePath}"},
                         {operator: ${Operator.AND}},
-                        {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pptx'}"}
+                        {field: "${
+                            FilesAttributes.FILE_NAME
+                        }",                             condition: EQUAL,value: "${fileName + '.pptx'}"}
                     ]) { list {id is_directory previews previews_status} } }`
                 );
 
@@ -555,7 +538,7 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.docx'}"}
                     ]) { list {id is_directory previews previews_status} } }`
@@ -588,7 +571,7 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.eps'}"}
                     ]) { list {id is_directory previews previews_status} } }`
@@ -614,7 +597,7 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.mp4'}"}
                     ]) { list {id is_directory previews previews_status} } }`
@@ -642,7 +625,7 @@ describe('Files manager', () => {
 });
 
 const _deleteFolderRecursive = async (path: string) => {
-    if (await fileExists(path)) {
+    if (await _fileExists(path)) {
         const files = await fs.promises.readdir(path);
 
         for (const f of files) {
