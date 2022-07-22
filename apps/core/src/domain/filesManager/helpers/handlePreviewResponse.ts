@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IAmqpService} from '@leav/message-broker';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IAmqpService} from '@leav/message-broker';
 import {
     IFilesAttributes,
     IPreviewResponse,
@@ -27,7 +27,7 @@ export interface IHandlePreviewResponseDeps {
     logger: winston.Winston;
 }
 
-const onMessage = async (msg: string, logger: winston.Winston, deps: IHandlePreviewResponseDeps) => {
+const _onMessage = async (msg: string, logger: winston.Winston, deps: IHandlePreviewResponseDeps) => {
     let previewResponse: IPreviewResponse;
     const ctx: IQueryInfos = {
         userId: deps.config.filesManager.userId,
@@ -118,14 +118,21 @@ export const _getOriginalRecord = async (
     return recordFind[0];
 };
 
-export const handlePreviewResponse = async (
+export const initPreviewResponseHandler = async (
     config: Config.IConfig,
     logger: winston.Winston,
     deps: IHandlePreviewResponseDeps
 ) => {
+    await deps.amqpService.consumer.channel.assertQueue(config.filesManager.queues.previewResponse);
+    await deps.amqpService.consumer.channel.bindQueue(
+        config.filesManager.queues.previewResponse,
+        config.amqp.exchange,
+        config.filesManager.routingKeys.previewResponse
+    );
+
     await deps.amqpService.consume(
         config.filesManager.queues.previewResponse,
         config.filesManager.routingKeys.previewResponse,
-        (msg: string) => onMessage(msg, logger, deps)
+        (msg: string) => _onMessage(msg, logger, deps)
     );
 };

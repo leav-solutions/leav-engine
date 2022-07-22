@@ -1,26 +1,25 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IAmqpService} from '@leav/message-broker';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {IAmqpService} from '@leav/message-broker';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
-import {FileEvents, IFileEventData, IPreviewVersion} from '../../../_types/filesManager';
+import {IQueryInfos} from '_types/queryInfos';
+import {FileEvents, IFileEventData} from '../../../_types/filesManager';
 import {handleCreateEvent} from './handleFileSystem/handleCreateEvent';
 import {handleMoveEvent} from './handleFileSystem/handleMoveEvent';
 import {handleRemoveEvent} from './handleFileSystem/handleRemoveEvent';
 import {handleUpdateEvent} from './handleFileSystem/handleUpdateEvent';
 import winston = require('winston');
-import {IQueryInfos} from '_types/queryInfos';
 
 export interface IHandleFileSystemDeps {
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
     treeDomain: ITreeDomain;
     amqpService: IAmqpService;
-    previewVersions: IPreviewVersion[];
     logger: winston.Winston;
     config: Config.IConfig;
     utils: IUtils;

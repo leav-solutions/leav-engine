@@ -8,7 +8,7 @@ import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
-import {IFilesManagerDomain, systemPreviewVersions} from '../../domain/filesManager/filesManagerDomain';
+import {IFilesManagerDomain} from '../../domain/filesManager/filesManagerDomain';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord, TreeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
@@ -80,7 +80,8 @@ export default function ({
                     }
 
                     type Preview {
-                        ${systemPreviewVersions
+                        ${filesManagerDomain
+                            .getPreviewVersion()
                             .reduce((sizes, version) => [...sizes, ...version.sizes.map(s => `${s.name}: String,`)], [])
                             .join(' ')}
                         pages: String

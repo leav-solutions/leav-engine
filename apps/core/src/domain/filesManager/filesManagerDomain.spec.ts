@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {amqpService, IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
@@ -11,9 +12,9 @@ import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import {IAmqpService, amqpService} from '@leav/message-broker';
-import filesManager, {systemPreviewVersions} from './filesManagerDomain';
+import filesManager from './filesManagerDomain';
 import {createPreview} from './helpers/handlePreview';
+import {systemPreviewVersions} from './_constants';
 import winston = require('winston');
 
 const mockConfig: Mockify<Config.IConfig> = {
