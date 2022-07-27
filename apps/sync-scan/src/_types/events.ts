@@ -17,4 +17,5 @@ export interface IEventMsg {
     isDirectory: boolean;
     hash?: string;
     rootKey: string;
+    recordId?: string;
 }

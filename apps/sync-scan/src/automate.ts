@@ -4,7 +4,7 @@
 import {IAmqpService} from '@leav/message-broker';
 import * as events from './events';
 import {FilesystemContent, IFileContent} from './_types/filesystem';
-import {FullTreeContent, IDbLibrariesSettings, IDbScanResult} from './_types/queries';
+import {FullTreeContent, IDbLibrariesSettings, IDbScanResult, IRecord} from './_types/queries';
 
 enum Attr {
     NOTHING = 0,
@@ -15,11 +15,28 @@ enum Attr {
 
 const HASH_DIFF = 8;
 
-const _extractChildrenDbElements = (database: FullTreeContent, dbEl?: FullTreeContent): FullTreeContent => {
+const _extractChildrenDbElements = (
+    dbSettings: IDbLibrariesSettings,
+    database: FullTreeContent,
+    dbEl?: FullTreeContent
+): FullTreeContent => {
     let toList: FullTreeContent = [];
 
     for (const e of database) {
-        if (e.children.length) {
+        if (typeof e.record.treePath === 'undefined') {
+            e.record.treePath = '.';
+        }
+
+        if (e.record.library === dbSettings.directoriesLibraryId && e.children.length) {
+            e.children = e.children.map(c => ({
+                ...c,
+                record: {
+                    ...c.record,
+                    treePath:
+                        e.record.treePath === '.' ? e.record.file_name : e.record.treePath + '/' + e.record.file_name
+                }
+            }));
+
             toList = toList.concat(e.children);
         }
 
@@ -29,7 +46,7 @@ const _extractChildrenDbElements = (database: FullTreeContent, dbEl?: FullTreeCo
     dbEl = typeof dbEl !== 'undefined' ? dbEl.concat(database) : database;
 
     if (toList.length) {
-        return _extractChildrenDbElements(toList, dbEl);
+        return _extractChildrenDbElements(dbSettings, toList, dbEl);
     }
 
     return dbEl;
@@ -44,7 +61,7 @@ const _getEventTypeAndDbElIdx = (fc: IFileContent, dbEl: FullTreeContent) => {
             const res: number =
                 (fc.ino === e.record.inode ? Attr.INODE : 0) +
                 (fc.name === e.record.file_name ? Attr.NAME : 0) +
-                (fc.path === e.record.file_path ? Attr.PATH : 0);
+                (fc.path === e.record.treePath ? Attr.PATH : 0);
 
             if (res > match && [1, 3, 5, 6, 7].includes(res)) {
                 match = res;
@@ -72,33 +89,29 @@ const _delUntreatedDbElements = async (
 ): Promise<void> => {
     for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
         await events.remove(
-            de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
+            de.record.treePath === '.' ? de.record.file_name : `${de.record.treePath}/${de.record.file_name}`,
             de.record.inode,
             de.record.library === dbSettings.directoriesLibraryId,
+            de.record.id,
             amqp
         );
     }
 };
 
-const _treatFile = async (
-    match: Attr | number,
-    dbElIdx: number[],
-    dbEl: FullTreeContent,
-    fc: IFileContent,
-    amqp: IAmqpService
-): Promise<void> => {
+const _treatFile = async (match: Attr | number, dbEl: IRecord, fc: IFileContent, amqp: IAmqpService): Promise<void> => {
     switch (match) {
         case Attr.INODE: // Identical inode only
         case Attr.INODE + Attr.NAME: // 3 - move
-        case Attr.INODE + Attr.PATH: // 5 - name
+        case Attr.INODE + Attr.PATH: // 5 - rename
         case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
-            const deName: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_name;
-            const dePath: string = dbEl[dbElIdx[dbElIdx.length - 1]].record.file_path;
             await events.move(
-                dePath === '.' ? deName : `${dePath}/${deName}`,
+                dbEl.record.treePath === '.'
+                    ? dbEl.record.file_name
+                    : `${dbEl.record.treePath}/${dbEl.record.file_name}`,
                 fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
                 fc.ino,
                 fc.type === 'directory' ? true : false,
+                dbEl.record.id,
                 amqp
             );
             break;
@@ -110,7 +123,8 @@ const _treatFile = async (
                 fc.ino,
                 false, // isDirectory,
                 amqp,
-                fc.hash
+                fc.hash,
+                dbEl.record.id
             );
             break;
         default:
@@ -144,7 +158,7 @@ const _process = async (
     for (const fc of fsElements) {
         if (fc.level === level && !fc.trt) {
             ({match, dbElIdx} = _getEventTypeAndDbElIdx(fc, dbElements));
-            await _treatFile(match, dbElIdx, dbElements, fc, amqp);
+            await _treatFile(match, dbElements[dbElIdx[dbElIdx.length - 1]], fc, amqp);
             fc.trt = true;
         }
     }
@@ -153,11 +167,12 @@ const _process = async (
 };
 
 export default async (fsScan: FilesystemContent, dbScan: IDbScanResult, amqp: IAmqpService): Promise<void> => {
-    const dbElements = _extractChildrenDbElements(dbScan.treeContent);
     const dbSettings = {
         filesLibraryId: dbScan.filesLibraryId,
         directoriesLibraryId: dbScan.directoriesLibraryId
     };
+
+    const dbElements = _extractChildrenDbElements(dbSettings, dbScan.treeContent);
 
     await _process(fsScan, dbElements, 0, dbSettings, amqp);
 };

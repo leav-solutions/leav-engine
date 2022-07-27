@@ -29,7 +29,7 @@ export const handleCreateEvent = async (
     const filesLibraryId = resources.library;
     const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
 
-    let record = await getRecord(fileName, filePath, recordLibrary, true, deps, ctx);
+    let record = await getRecord({fileName, filePath, fileInode: scanMsg.inode}, {recordLibrary}, true, deps, ctx);
 
     // Preview and Previews status
     const {previewsStatus, previews} = getPreviewsDatas(systemPreviewVersions);

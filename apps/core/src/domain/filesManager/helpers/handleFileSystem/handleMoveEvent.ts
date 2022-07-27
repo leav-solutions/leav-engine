@@ -24,12 +24,16 @@ export const handleMoveEvent = async (
     const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(library);
     const filesLibraryId = library;
     const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
-
-    // Find the destination record
-    const destRecord = await getRecord(fileNameDest, filePathDest, recordLibrary, false, deps, ctx);
+    const recordId = scanMsg.recordId;
 
     // Find the origin record
-    const originRecord = await getRecord(fileNameOrigin, filePathOrigin, recordLibrary, false, deps, ctx);
+    const originRecord = await getRecord(
+        {fileName: fileNameOrigin, filePath: filePathOrigin, fileInode: scanMsg.inode},
+        {recordLibrary, recordId},
+        false,
+        deps,
+        ctx
+    );
 
     // Update the origin record
     if (!originRecord) {
@@ -37,8 +41,20 @@ export const handleMoveEvent = async (
         return false;
     }
 
-    // Destination record already exists, disable it
-    if (destRecord) {
+    // Find the destination record
+    const destRecord = await getRecord(
+        {fileName: fileNameDest, filePath: filePathDest},
+        {recordLibrary},
+        false,
+        deps,
+        ctx
+    );
+
+    // If destination record already exists, disable it.
+    // We check difference between destination and origin ids to avoid error due to a
+    // move, only in a tree, of the origin file (file path attribute is not updated in this case),
+    // but this should be allowed!
+    if (destRecord && destRecord.id !== originRecord.id) {
         await deps.recordDomain.deactivateRecord(destRecord, ctx);
         await deleteFilesTreeElement(destRecord.id, filesLibraryId, recordLibrary, deps, ctx);
     }
@@ -55,6 +71,7 @@ export const handleMoveEvent = async (
     try {
         const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
         // use getRecordParent, ignore disable
+
         const parentRecord = await getParentRecord(filePathDest, directoriesLibraryId, deps, ctx);
 
         const recordNode = (

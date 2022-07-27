@@ -20,10 +20,10 @@ module.exports = {
             username: process.env.AMQP_USERNAME,
             password: process.env.AMQP_PWD
         },
-        queue: process.env.AMQP_QUEUE || 'files_events',
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
+        type: process.env.AMQP_TYPE || 'direct',
+        prefetch: process.env.AMQP_PREFETCH || 5,
         routingKey: process.env.AMQP_ROUTING_KEY || 'files.event',
-        rootKey: process.env.AMQP_ROOT_KEY || 'files1',
-        type: 'direct'
+        rootKey: process.env.AMQP_ROOT_KEY || 'files1'
     }
 };

@@ -26,9 +26,8 @@ interface IGetRecord {
 }
 
 export const getRecord = async (
-    fileName: string,
-    filePath: string,
-    library: string,
+    {fileName, filePath, fileInode}: {fileName: string; filePath: string; fileInode?: number},
+    {recordLibrary, recordId}: {recordLibrary: string; recordId?: string},
     retrieveInactive: boolean,
     deps: IGetRecord,
     ctx: IQueryInfos
@@ -36,14 +35,38 @@ export const getRecord = async (
     let recordsFind: IListWithCursor<IRecord>;
 
     try {
+        const filters = [];
+
+        if (typeof recordId !== 'undefined') {
+            filters.push({
+                field: 'id',
+                condition: AttributeCondition.EQUAL,
+                value: recordId
+            });
+        } else {
+            filters.push(
+                ...(!!fileInode
+                    ? [
+                          {
+                              field: FilesAttributes.INODE,
+                              condition: AttributeCondition.EQUAL,
+                              value: String(fileInode)
+                          },
+                          {operator: Operator.OR}
+                      ]
+                    : []),
+                {operator: Operator.OPEN_BRACKET},
+                {field: FilesAttributes.FILE_NAME, condition: AttributeCondition.EQUAL, value: fileName},
+                {operator: Operator.AND},
+                {field: FilesAttributes.FILE_PATH, condition: AttributeCondition.EQUAL, value: filePath},
+                {operator: Operator.CLOSE_BRACKET}
+            );
+        }
+
         recordsFind = await deps.recordDomain.find({
             params: {
-                library,
-                filters: [
-                    {field: FilesAttributes.FILE_NAME, condition: AttributeCondition.EQUAL, value: fileName},
-                    {operator: Operator.AND},
-                    {field: FilesAttributes.FILE_PATH, condition: AttributeCondition.EQUAL, value: filePath}
-                ],
+                library: recordLibrary,
+                filters,
                 retrieveInactive
             },
             ctx

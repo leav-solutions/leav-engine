@@ -23,9 +23,10 @@ export interface IConfigFilesystem {
 
 export interface IConfigAmqp {
     connOpt: Options.Connect;
-    queue: string;
     exchange: string;
+    type: string;
     routingKey: string;
     rootKey: string;
-    type: string;
+    queue?: string;
+    prefetch?: number;
 }

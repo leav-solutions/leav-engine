@@ -34,11 +34,12 @@ const checkConfig = (conf: IConfig) => {
                         password: Joi.string().required()
                     })
                     .required(),
-                queue: Joi.string().required(),
                 exchange: Joi.string().required(),
+                type: Joi.string().required(),
                 routingKey: Joi.string().required(),
                 rootKey: Joi.string().required(),
-                type: Joi.string().required()
+                prefetch: Joi.number(),
+                queue: Joi.string()
             })
             .required(),
         env: Joi.string().required()

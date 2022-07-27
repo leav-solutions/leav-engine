@@ -150,53 +150,11 @@ const database: FullTreeContent = [
             {
                 order: 0,
                 record: {
-                    id: '293831',
-                    active: true,
-                    created_at: 1585753474,
-                    created_by: 1,
-                    file_name: 'f',
-                    file_path: 'dir',
-                    inode: 573226,
-                    hash: 'd41d8cd98f00b204e9800998ecf8427e',
-                    modified_at: 1585753474,
-                    modified_by: 1,
-                    previews_status: {
-                        small: {
-                            status: -1,
-                            message: 'wait for creation'
-                        },
-                        medium: {
-                            status: -1,
-                            message: 'wait for creation'
-                        },
-                        big: {
-                            status: -1,
-                            message: 'wait for creation'
-                        },
-                        pdf: {
-                            status: -1,
-                            message: 'wait for creation'
-                        }
-                    },
-                    previews: {
-                        small: '',
-                        medium: '',
-                        big: '',
-                        pdf: ''
-                    },
-                    root_key: 'files1',
-                    library: DB_SETTINGS.filesLibraryId
-                },
-                children: []
-            },
-            {
-                order: 0,
-                record: {
                     id: '293969',
                     active: true,
                     created_at: 1585753474,
                     created_by: 1,
-                    file_name: 'sf',
+                    file_name: 'sfile',
                     file_path: 'dir',
                     inode: 573805,
                     hash: 'd41d8cd98f00b204e9800998ecf8427e',
@@ -232,5 +190,47 @@ const database: FullTreeContent = [
                 children: []
             }
         ]
+    },
+    {
+        order: 0,
+        record: {
+            id: '293831',
+            active: true,
+            created_at: 1585753474,
+            created_by: 1,
+            file_name: 'file',
+            file_path: '.',
+            inode: 573226,
+            hash: 'd41d8cd98f00b204e9800998ecf8427e',
+            modified_at: 1585753474,
+            modified_by: 1,
+            previews_status: {
+                small: {
+                    status: -1,
+                    message: 'wait for creation'
+                },
+                medium: {
+                    status: -1,
+                    message: 'wait for creation'
+                },
+                big: {
+                    status: -1,
+                    message: 'wait for creation'
+                },
+                pdf: {
+                    status: -1,
+                    message: 'wait for creation'
+                }
+            },
+            previews: {
+                small: '',
+                medium: '',
+                big: '',
+                pdf: ''
+            },
+            root_key: 'files1',
+            library: DB_SETTINGS.filesLibraryId
+        },
+        children: []
     }
 ];

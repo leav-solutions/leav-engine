@@ -1,20 +1,25 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {amqpService, IAmqpService} from '@leav/message-broker';
 import fs from 'fs';
 import automate from '../../automate';
 import {getConfig} from '../../config';
+import {IAmqpService, amqpService} from '@leav/message-broker';
 import * as scan from '../../scan';
 import {IConfig} from '../../_types/config';
 import {FilesystemContent} from '../../_types/filesystem';
 import {IDbScanResult} from '../../_types/queries';
+import test3Db from './database/test3';
 import test4Db from './database/test4';
-import test5Db from './database/test5';
 
 let cfg: IConfig;
 let amqp: IAmqpService;
-let inodes: number[];
+let inodes: {[ino: string]: any};
+
+const DB_SETTINGS = {
+    filesLibraryId: 'files_library_id',
+    directoriesLibraryId: 'directories_library_id'
+};
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -27,8 +32,8 @@ beforeAll(async () => {
         amqp = await amqpService({config: cfg.amqp});
 
         // As queue is only used in tests to consume messages, it's not created in amqp.init. Thus, we have to do it here
-        await amqp.publisher.channel.assertQueue(cfg.amqp.queue);
-        await amqp.publisher.channel.bindQueue(cfg.amqp.queue, cfg.amqp.exchange, cfg.amqp.routingKey);
+        await amqp.consumer.channel.assertQueue(cfg.amqp.queue);
+        await amqp.consumer.channel.bindQueue(cfg.amqp.queue, cfg.amqp.exchange, cfg.amqp.routingKey);
 
         // Create filesystem directory
         if (!fs.existsSync(cfg.filesystem.absolutePath)) {
@@ -41,10 +46,13 @@ beforeAll(async () => {
 
 afterAll(async done => {
     try {
-        await amqp.publisher.channel.deleteExchange(cfg.amqp.exchange);
-        await amqp.publisher.channel.deleteQueue(cfg.amqp.queue);
-
         await amqp.close();
+
+        // Delete filesystem directory
+        if (fs.existsSync(cfg.filesystem.absolutePath)) {
+            fs.rmdirSync(cfg.filesystem.absolutePath, {recursive: true});
+        }
+
         done();
     } catch (e) {
         console.error(e);
@@ -72,13 +80,15 @@ describe('e2e tests', () => {
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sfile`)).toEqual(true);
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`)).toEqual(true);
 
-        inodes = [
-            fs.statSync(`${cfg.filesystem.absolutePath}/dir`).ino,
-            fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir`).ino,
-            fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino,
-            fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino,
-            fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino
-        ];
+        inodes = {
+            [fs.statSync(`${cfg.filesystem.absolutePath}/dir`).ino]: {
+                [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir`).ino]: {
+                    [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino]: {}
+                },
+                [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino]: {}
+            },
+            [fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino]: {}
+        };
     });
 
     test('2 - initialization/creation events', async done => {
@@ -87,8 +97,7 @@ describe('e2e tests', () => {
 
             const fsc: FilesystemContent = await scan.filesystem(cfg);
             const dbs: IDbScanResult = {
-                filesLibraryId: 'files',
-                directoriesLibraryId: 'files_directories',
+                ...DB_SETTINGS,
                 treeContent: []
             };
 
@@ -129,8 +138,12 @@ describe('e2e tests', () => {
             fs.renameSync(`${cfg.filesystem.absolutePath}/dir/sfile`, `${cfg.filesystem.absolutePath}/dir/sf`); // RENAME
             fs.writeFileSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
 
-            const fsc = await scan.filesystem(cfg);
-            const dbs = test4Db(inodes);
+            const fsc: FilesystemContent = await scan.filesystem(cfg);
+
+            const dbs: IDbScanResult = {
+                ...DB_SETTINGS,
+                treeContent: test3Db(inodes)
+            };
 
             await automate(fsc, dbs, amqp);
 
@@ -167,8 +180,12 @@ describe('e2e tests', () => {
 
             fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
 
-            const fsc = await scan.filesystem(cfg);
-            const dbs = test5Db(inodes);
+            const fsc: FilesystemContent = await scan.filesystem(cfg);
+
+            const dbs: IDbScanResult = {
+                ...DB_SETTINGS,
+                treeContent: test4Db(inodes)
+            };
 
             await automate(fsc, dbs, amqp);
 

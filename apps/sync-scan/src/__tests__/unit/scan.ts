@@ -1,13 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
 
 import {FilesystemContent} from '_types/filesystem';
 import {IDbScanResult} from '_types/queries';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export const mockDbResult: IDbScanResult = {
     filesLibraryId: 'files',
     directoriesLibraryId: 'directories',
@@ -37,7 +34,7 @@ export const mockDbResult: IDbScanResult = {
                         status: -1,
                         message: 'wait for creation'
                     },
-                    pages: {
+                    pdf: {
                         status: -1,
                         message: 'wait for creation'
                     }
@@ -46,7 +43,7 @@ export const mockDbResult: IDbScanResult = {
                     small: '',
                     medium: '',
                     big: '',
-                    pages: ''
+                    pdf: ''
                 },
                 root_key: 'files1',
                 library: 'files'
