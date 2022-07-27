@@ -14,7 +14,7 @@ export type FullTreeContent = IRecord[];
 
 export interface IRecord {
     order: number;
-    record: IRecordAttr;
+    record: IRecordAttr & {treePath?: string};
     children?: FullTreeContent;
 }
 
@@ -32,7 +32,7 @@ export interface IRecordAttr {
         small: IPreviewStatus;
         medium: IPreviewStatus;
         big: IPreviewStatus;
-        pages: IPreviewStatus;
+        pdf: IPreviewStatus;
     };
     previews: IPreviews;
     root_key: string;
@@ -45,7 +45,7 @@ export interface IPreviews {
     small: string;
     medium: string;
     big: string;
-    pages: string;
+    pdf: string;
 }
 
 export interface IPreviewStatus {

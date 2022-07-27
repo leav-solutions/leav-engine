@@ -7,7 +7,6 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {IRecord} from '_types/record';
 import {
     IFilesAttributes,
     IPreviewResponse,
@@ -15,7 +14,7 @@ import {
     IPreviewsStatus,
     IPreviewVersion
 } from '../../../_types/filesManager';
-import {getInputData, getRecord, updateRecordFile} from './handleFileUtilsHelper';
+import {updateRecordFile} from './handleFileUtilsHelper';
 import winston = require('winston');
 
 export interface IHandlePreviewResponseDeps {
@@ -92,30 +91,6 @@ const _onMessage = async (msg: string, logger: winston.Winston, deps: IHandlePre
         },
         ctx
     );
-};
-
-export const _getOriginalRecord = async (
-    input: string,
-    library: string,
-    deps: IHandlePreviewResponseDeps,
-    ctx: IQueryInfos
-): Promise<IRecord> => {
-    const {fileName, filePath} = getInputData(input);
-
-    const {list: recordFind} = await getRecord(
-        fileName,
-        filePath,
-        library,
-        false,
-        {
-            recordDomain: deps.recordDomain,
-            config: deps.config,
-            logger: deps.logger
-        },
-        ctx
-    );
-
-    return recordFind[0];
 };
 
 export const initPreviewResponseHandler = async (

@@ -112,7 +112,8 @@ export default function ({
             inode: Joi.number().required(),
             rootKey: Joi.string().required(),
             isDirectory: Joi.boolean().required(),
-            hash: Joi.string()
+            hash: Joi.string(),
+            recordId: Joi.string()
         });
 
         const isValid = msgBodySchema.validate(msg);

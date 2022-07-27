@@ -16,8 +16,19 @@ export const handleUpdateEvent = async (
 ): Promise<void> => {
     const {fileName, filePath} = getInputData(scanMsg.pathAfter);
 
+    const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(library);
+    const filesLibraryId = library;
+    const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
+    const recordId = scanMsg.recordId;
+
     // Get the records
-    const record = await getRecord(fileName, filePath, library, false, deps, ctx);
+    const record = await getRecord(
+        {fileName, filePath, fileInode: scanMsg.inode},
+        {recordLibrary, recordId},
+        false,
+        deps,
+        ctx
+    );
 
     if (!record) {
         deps.logger.warn(`[FilesManager] event ${scanMsg.event} - record not found : ${scanMsg.pathAfter}`);

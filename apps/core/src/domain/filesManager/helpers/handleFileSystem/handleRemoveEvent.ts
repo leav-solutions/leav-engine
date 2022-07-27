@@ -18,8 +18,15 @@ export const handleRemoveEvent = async (
     const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(library);
     const filesLibraryId = library;
     const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
+    const recordId = scanMsg.recordId;
 
-    const record = await getRecord(fileName, filePath, recordLibrary, false, deps, ctx);
+    const record = await getRecord(
+        {fileName, filePath, fileInode: scanMsg.inode},
+        {recordLibrary, recordId},
+        false,
+        deps,
+        ctx
+    );
 
     if (!record) {
         deps.logger.error(
@@ -28,14 +35,18 @@ export const handleRemoveEvent = async (
         return false;
     }
 
+    // First, remove the record from the tree, then deactivate the record.
+    // If we start by deactivating the record and something goes wrong when removing it from the tree, the record
+    // won't be found on the next attempt to remove it (eg. triggered by sync scan). The only way to fix this would be
+    // to reactivate it in DB
+    await deleteFilesTreeElement(record.id, filesLibraryId, recordLibrary, deps, ctx);
+
     // Deactivate the record
     try {
         await deps.recordDomain.deactivateRecord(record, {userId});
     } catch (e) {
-        deps.logger.warn(`[FilesManager] Error when deactivate the record: ${record.id}`);
+        deps.logger.warn(`[FilesManager] Error when deactivating the record: ${record.id}`);
     }
-
-    await deleteFilesTreeElement(record.id, filesLibraryId, recordLibrary, deps, ctx);
 
     return true;
 };

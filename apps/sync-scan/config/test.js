@@ -13,7 +13,7 @@ module.exports = {
         absolutePath: rootPath.path + '/src/__tests__/_fixtures'
     },
     amqp: {
-        queue: 'files_events_test_sync_scan',
-        exchange: 'leav_core_test_sync_scan'
+        exchange: 'leav_core_test_sync_scan',
+        queue: 'files_events_test_sync_scan'
     }
 };

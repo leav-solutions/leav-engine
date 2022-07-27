@@ -39,6 +39,7 @@ export interface IFileEventData {
     rootKey: string;
     isDirectory: boolean;
     hash?: string;
+    recordId?: string;
 }
 
 export interface IPreviewVersionSize {

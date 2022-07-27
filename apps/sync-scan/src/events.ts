@@ -16,7 +16,8 @@ const _getEventMsg = (
     inode: number,
     isDirectory: boolean,
     rootKey: string,
-    hash?: string
+    hash?: string,
+    recordId?: string
 ): IEventMsg => {
     return {
         event,
@@ -26,7 +27,8 @@ const _getEventMsg = (
         isDirectory,
         inode,
         rootKey,
-        hash
+        ...(!!hash && {hash}),
+        ...(!!recordId && {recordId})
     };
 };
 
@@ -42,13 +44,21 @@ export const create = async (path: string, inode: number, isDirectory: boolean, 
     _logEvent({eventType: EventTypes.CREATE, pathAfter: path});
 };
 
-export const remove = async (path: string, inode: number, isDirectory: boolean, amqp: IAmqpService) => {
+export const remove = async (
+    path: string,
+    inode: number,
+    isDirectory: boolean,
+    recordId: string,
+    amqp: IAmqpService
+) => {
     const cfg = await getConfig();
 
     await amqp.publish(
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
-        JSON.stringify(_getEventMsg(EventTypes.REMOVE, path, null, inode, isDirectory, cfg.amqp.rootKey))
+        JSON.stringify(
+            _getEventMsg(EventTypes.REMOVE, path, null, inode, isDirectory, cfg.amqp.rootKey, null, recordId)
+        )
     );
 
     _logEvent({eventType: EventTypes.REMOVE, pathBefore: path});
@@ -59,6 +69,7 @@ export const move = async (
     pathAfter: string,
     inode: number,
     isDirectory: boolean,
+    recordId: string,
     amqp: IAmqpService
 ) => {
     const cfg = await getConfig();
@@ -66,19 +77,30 @@ export const move = async (
     await amqp.publish(
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
-        JSON.stringify(_getEventMsg(EventTypes.MOVE, pathBefore, pathAfter, inode, isDirectory, cfg.amqp.rootKey))
+        JSON.stringify(
+            _getEventMsg(EventTypes.MOVE, pathBefore, pathAfter, inode, isDirectory, cfg.amqp.rootKey, recordId)
+        )
     );
 
     _logEvent({eventType: EventTypes.MOVE, pathBefore, pathAfter});
 };
 
-export const update = async (path: string, inode: number, isDirectory: boolean, amqp: IAmqpService, hash: string) => {
+export const update = async (
+    path: string,
+    inode: number,
+    isDirectory: boolean,
+    amqp: IAmqpService,
+    hash: string,
+    recordId: string
+) => {
     const cfg = await getConfig();
 
     await amqp.publish(
         cfg.amqp.exchange,
         cfg.amqp.routingKey,
-        JSON.stringify(_getEventMsg(EventTypes.UPDATE, path, path, inode, isDirectory, cfg.amqp.rootKey, hash))
+        JSON.stringify(
+            _getEventMsg(EventTypes.UPDATE, path, path, inode, isDirectory, cfg.amqp.rootKey, hash, recordId)
+        )
     );
 
     _logEvent({eventType: EventTypes.UPDATE, pathAfter: path, pathBefore: path});
