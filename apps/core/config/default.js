@@ -77,6 +77,14 @@ module.exports = {
         },
         userId: process.env.FM_USER_ID || '2'
     },
+    tasksManager: {
+        queues: {
+            orders: process.env.TM_ORDERS_QUEUE || 'tasks_orders'
+        },
+        routingKeys: {
+            orders: 'tasks.orders'
+        }
+    },
     eventsManager: {
         routingKeys: {
             events: 'database.event'

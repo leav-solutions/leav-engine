@@ -86,6 +86,14 @@ export const validateConfig = (conf: IConfig) => {
                 events: Joi.string().required()
             })
         }),
+        tasksManager: Joi.object().keys({
+            queues: Joi.object().keys({
+                orders: Joi.string().required()
+            }),
+            routingKeys: Joi.object().keys({
+                orders: Joi.string().required()
+            })
+        }),
         eventsManager: Joi.object().keys({
             routingKeys: Joi.object().keys({
                 events: Joi.string().required()

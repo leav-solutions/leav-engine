@@ -187,6 +187,27 @@ services:
         "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn workspace core run start:indexation",
       ]
 
+  tasks-manager:
+    image: *node_image
+    stdin_open: true
+    environment:
+      <<: *env-core
+      <<: *env-amqp
+    volumes:
+      - *mount_point-repo
+      - *mount_point-scripts
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-core-modules
+    ports:
+      - "9232:9232"
+    working_dir: *dir-core
+    command: [
+        sh,
+        -c,
+        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn workspace core run start:tasks",
+      ]
+
   admin-app:
     image: *node_image
     user: node
