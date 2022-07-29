@@ -1,10 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import Joi from 'joi';
 import * as Config from '_types/config';
 import {IAmqpService} from '@leav/message-broker';
 import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
+import {ITaskOrder} from '_types/tasksManager';
 
 export interface ITasksManagerDomain {
     init(): Promise<void>;
@@ -16,32 +18,30 @@ interface IDeps {
 }
 
 export default function ({config = null, 'core.infra.amqpService': amqpService = null}: IDeps): ITasksManagerDomain {
-    const _validateMsg = (msg: any /* IEvent */) => {
-        return;
-        // const msgBodySchema = Joi.object().keys({
-        //     time: Joi.number().required(),
-        //     userId: Joi.string().required(),
-        //     payload: Joi.object()
-        //         .keys({
-        //             type: Joi.string()
-        //                 .valid(...Object.values(EventType))
-        //                 .required(),
-        //             data: Joi.object().required()
-        //         })
-        //         .required()
-        // });
+    const _validateMsg = (msg: ITaskOrder) => {
+        const msgBodySchema = Joi.object().keys({
+            time: Joi.number().required(),
+            userId: Joi.string().required(),
+            payload: Joi.object()
+                .keys({
+                    domainName: Joi.string().required(),
+                    funcName: Joi.string().required(),
+                    funcArgs: Joi.array().required(),
+                    startAt: Joi.date().timestamp('unix').raw().required()
+                })
+                .required()
+        });
 
-        // const isValid = msgBodySchema.validate(msg);
+        const isValid = msgBodySchema.validate(msg);
 
-        // if (!!isValid.error) {
-        //     const errorMsg = isValid.error.details.map(e => e.message).join(', ');
-        //     throw new Error(errorMsg);
-        // }
+        if (!!isValid.error) {
+            const errorMsg = isValid.error.details.map(e => e.message).join(', ');
+            throw new Error(errorMsg);
+        }
     };
 
     const _onMessage = async (msg: string): Promise<void> => {
-        const event: any /* IEvent */ = JSON.parse(msg);
-
+        const event: ITaskOrder = JSON.parse(msg);
         // const ctx: IQueryInfos = {
         //     userId: '1',
         //     queryId: uuidv4()
@@ -52,6 +52,10 @@ export default function ({config = null, 'core.infra.amqpService': amqpService =
         } catch (e) {
             console.error(e);
         }
+
+        const {moduleName, funcName, funcArgs, startAt} = event.payload;
+
+        console.debug({moduleName, funcName, funcArgs, startAt});
     };
 
     return {
