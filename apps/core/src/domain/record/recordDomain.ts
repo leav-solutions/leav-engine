@@ -635,7 +635,7 @@ export default function({
             const canUpdate = await recordPermissionDomain.getRecordPermission({
                 action: RecordPermissionsActions.EDIT_RECORD,
                 userId: ctx.userId,
-                library: recordData.library,
+                library,
                 recordId: recordData.id,
                 ctx
             });

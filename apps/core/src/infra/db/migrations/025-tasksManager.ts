@@ -72,7 +72,42 @@ export default function ({
                     id: 'startAt',
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.DATE,
-                    label: {fr: 'Démarre le', en: 'Start at'}
+                    label: {fr: 'Commence le', en: 'Start at'}
+                },
+                {
+                    ...commonAttributeData,
+                    id: 'status',
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.TEXT,
+                    label: {fr: 'Status', en: 'Status'}
+                },
+                {
+                    ...commonAttributeData,
+                    id: 'progress',
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.NUMERIC,
+                    label: {fr: 'Progression', en: 'Progress'}
+                },
+                {
+                    ...commonAttributeData,
+                    id: 'startedAt',
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.NUMERIC,
+                    label: {fr: 'Commencé le', en: 'Started at'}
+                },
+                {
+                    ...commonAttributeData,
+                    id: 'completedAt',
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.NUMERIC,
+                    label: {fr: 'Terminé le', en: 'Completed at'}
+                },
+                {
+                    ...commonAttributeData,
+                    id: 'links',
+                    type: AttributeTypes.ADVANCED,
+                    format: AttributeFormats.TEXT,
+                    label: {fr: 'Liens', en: 'Links'}
                 }
             ];
 
@@ -116,7 +151,12 @@ export default function ({
                         'moduleName',
                         'funcName',
                         'funcArgs',
-                        'startAt'
+                        'startAt',
+                        'status',
+                        'progress',
+                        'startedAt',
+                        'completedAt',
+                        'links'
                     ],
                     ctx
                 });
