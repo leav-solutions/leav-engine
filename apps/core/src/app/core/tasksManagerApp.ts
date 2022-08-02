@@ -4,37 +4,108 @@
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import winston from 'winston';
 import {IConfig} from '_types/config';
-// import {IAppGraphQLSchema} from '_types/graphql';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {eTaskStatus, ITask} from '_types/tasksManager';
+import {IPaginationParams, ISortParams, IList} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
+import {IUtils} from 'utils/utils';
+import {AttributeCondition, IRecord} from '../../_types/record';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {USERS_LIBRARY} from '../../_types/library';
 
 export interface ITasksManagerApp {
     init(): Promise<void>;
-    // getGraphQLSchema(): Promise<IAppGraphQLSchema>;
+    getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {
     'core.domain.tasksManager'?: ITasksManagerDomain;
     'core.utils.logger'?: winston.Winston;
     config?: IConfig;
+    'core.utils'?: IUtils;
+    'core.domain.record'?: IRecordDomain;
+}
+
+export interface IGetTasksArgs {
+    filters?: ICoreEntityFilterOptions & {
+        status: eTaskStatus;
+    };
+    pagination?: IPaginationParams;
+    sort?: ISortParams;
 }
 
 export default function ({
-    'core.domain.tasksManager': tasksManager,
+    'core.domain.tasksManager': tasksManagerDomain = null,
     'core.utils.logger': logger = null,
+    'core.domain.record': recordDomain = null,
+    'core.utils': utils = null,
     config = null
 }: IDeps): ITasksManagerApp {
     return {
-        init: async () => tasksManager.init()
-        // async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
-        //     const baseSchema = {
-        //         typeDefs: `
-        //         `,
+        init: tasksManagerDomain.init,
+        async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
+            const baseSchema = {
+                typeDefs: `
+                    type Task {
+                        id: ID!,
+                        modified_at: Int,
+                        created_at: Int,
+                        modified_by: User,
+                        created_by: User,
+                        moduleName: String,
+                        funcName: String,
+                        funcArgs: [Any],
+                        startAt: DateTime,
+                        status: TaskStatus,
+                        progress: Int,
+                        startedAt: DateTime,
+                        completedAt: DateTime,
+                        links: [String]
+                    }
 
-        //         resolvers: {}
-        //     };
+                    type TasksList {
+                        totalCount: Int!
+                        list: [Task!]!
+                    }
 
-        //     const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
+                    enum TaskStatus {
+                        WAITING
+                        IN_PROGRESS
+                        DONE
+                    }
 
-        //     return fullSchema;
-        // }
+                    input TaskFiltersInput {
+                        id: ID,
+                        status: TaskStatus
+                    }
+
+                    extend type Query {
+                        tasks(
+                            filters: TaskFiltersInput!,
+                            pagination: Pagination,
+                            sort: RecordSortInput
+                        ): TasksList!
+                    }
+                `,
+                resolvers: {
+                    Query: {
+                        async tasks(
+                            _,
+                            {filters, pagination, sort}: IGetTasksArgs,
+                            ctx: IQueryInfos
+                        ): Promise<IList<ITask>> {
+                            return tasksManagerDomain.getTasks({
+                                params: {filters, pagination, sort, withCount: true},
+                                ctx
+                            });
+                        }
+                    }
+                }
+            };
+
+            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
+
+            return fullSchema;
+        }
     };
 }

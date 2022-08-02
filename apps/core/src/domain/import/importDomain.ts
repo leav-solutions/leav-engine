@@ -4,6 +4,7 @@
 import {extractArgsFromString} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
@@ -13,6 +14,7 @@ import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
+import {ITask} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
@@ -62,6 +64,7 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.infra.cache.cacheService'?: ICachesService;
+    'core.domain.tasksManager'?: ITasksManagerDomain;
     config?: Config.IConfig;
 }
 
@@ -72,6 +75,7 @@ export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.infra.cache.cacheService': cacheService = null,
+    'core.domain.tasksManager': tasksManager = null,
     config = null
 }: IDeps = {}): IImportDomain {
     const _addValue = async (
@@ -390,7 +394,23 @@ export default function ({
     };
 
     return {
-        async import(filename: string, ctx: IQueryInfos): Promise<boolean> {
+        async import(filename: string, ctx: IQueryInfos, task?: ITask): Promise<boolean> {
+            if (typeof task === 'undefined') {
+                // TODO: send task order
+                // and callback (del local file)?
+                await tasksManager.sendOrder(
+                    {
+                        moduleName: 'domain',
+                        funcName: 'import',
+                        funcArgs: [filename, ctx],
+                        startAt: Date.now()
+                    },
+                    ctx
+                );
+
+                return;
+            }
+
             try {
                 await _jsonSchemaValidation(filename);
             } catch (err) {

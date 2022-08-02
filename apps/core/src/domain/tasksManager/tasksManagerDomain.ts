@@ -9,7 +9,9 @@ import {v4 as uuidv4} from 'uuid';
 import {ITaskOrderPayload, ITaskOrder, eTaskStatus, ITask} from '../../_types/tasksManager';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {AttributeCondition} from '_types/record';
+import {IList, SortOrder} from '../../_types/list';
+import {IGetCoreEntitiesParams} from '_types/shared';
+import {ITaskRepo, TASKS_COLLECTION} from '../../infra/task/taskRepo';
 
 interface IUpdateData {
     status?: eTaskStatus;
@@ -19,10 +21,16 @@ interface IUpdateData {
     links?: string[];
 }
 
+interface IGetTasksParams extends IGetCoreEntitiesParams {
+    filters: ICoreEntityFilterOptions & {
+        status: eTaskStatus;
+    };
+}
+
 export interface ITasksManagerDomain {
     init(): Promise<void>;
     sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void>;
-    create(moduleName: string, funcName: string, funcArgs: any[], startAt: number, ctx: IQueryInfos): Promise<void>;
+    create(moduleName: string, funcName: string, funcArgs: any[], startAt: number, ctx: IQueryInfos): Promise<string>;
     update(
         taskId: string,
         {status, progress, startedAt, completedAt, links}: IUpdateData,
@@ -30,7 +38,7 @@ export interface ITasksManagerDomain {
     ): Promise<void>;
     complete(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
     start(taskId: string, ctx: IQueryInfos): Promise<void>;
-    getTasks(ctx: IQueryInfos, tasksId?: string[]): Promise<ITask[]>;
+    getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
 }
 
 interface IDeps {
@@ -38,15 +46,15 @@ interface IDeps {
     'core.infra.amqpService'?: IAmqpService;
     'core.domain.record'?: IRecordDomain;
     'core.domain.value'?: IValueDomain;
+    'core.infra.task'?: ITaskRepo;
 }
-
-const TASKS_COLLECTION = 'core_tasks';
 
 export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
-    'core.domain.value': valueDomain = null
+    'core.domain.value': valueDomain = null,
+    'core.infra.task': taskRepo = null
 }: IDeps): ITasksManagerDomain {
     const _validateMsg = (msg: ITaskOrder) => {
         const msgBodySchema = Joi.object().keys({
@@ -94,7 +102,7 @@ export default function ({
         funcArgs: any[],
         startAt: number,
         ctx: IQueryInfos
-    ): Promise<void> => {
+    ): Promise<string> => {
         const task = await recordDomain.createRecord(TASKS_COLLECTION, ctx);
 
         await valueDomain.saveValueBatch({
@@ -124,6 +132,8 @@ export default function ({
             ],
             ctx
         });
+
+        return task.id;
     };
 
     const _update = async (taskId: string, data: IUpdateData, ctx: IQueryInfos): Promise<void> => {
@@ -165,7 +175,7 @@ export default function ({
                 JSON.stringify({time: Date.now(), userId: ctx.userId, payload})
             );
         },
-        create: _create,
+        create: _create, // return task id
         update: _update,
         async start(taskId: string, ctx: IQueryInfos): Promise<void> {
             await _update(taskId, {startedAt: Date.now(), status: eTaskStatus.IN_PROGRESS}, ctx);
@@ -173,25 +183,28 @@ export default function ({
         async complete(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {
             await _update(taskId, {completedAt: Date.now(), status: eTaskStatus.DONE, links}, ctx);
         },
-        async getTasks(ctx: IQueryInfos, tasksId?: string[]): Promise<ITask[]> {
-            const records = await recordDomain.find({
-                params: {
-                    library: TASKS_COLLECTION,
-                    filters: tasksId.map(id => ({field: 'id', value: id, condition: AttributeCondition.EQUAL}))
-                },
-                ctx
-            });
+        async getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> {
+            if (typeof params.sort === 'undefined') {
+                params.sort = {field: 'id', order: SortOrder.ASC};
+            }
 
-            return records.list as ITask[];
+            const tasks = await taskRepo.getTasks({params, ctx});
+
+            console.debug({tasks: tasks.list});
+
+            return tasks;
         }
     };
 }
 
 // TODO:
 // create(...)
-// update(progression) TODO: à tester
-// finish
+// update(progression)
+// complete
 // getInfos(id)
 // 	-> progress, nom, status, …
 // getTasks(…) TODO: à tester
 // setCancelCallback(function) // TODO: add callback attribute in db
+
+// funcARgs as string everywhere ?
+// dates problem graphql
