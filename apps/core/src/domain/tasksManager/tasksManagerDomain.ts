@@ -12,6 +12,7 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {IList, SortOrder} from '../../_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {ITaskRepo, TASKS_COLLECTION} from '../../infra/task/taskRepo';
+import {AwilixContainer} from 'awilix';
 
 interface IUpdateData {
     status?: eTaskStatus;
@@ -22,15 +23,22 @@ interface IUpdateData {
 }
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
-    filters: ICoreEntityFilterOptions & {
-        status: eTaskStatus;
+    filters?: ICoreEntityFilterOptions & {
+        status?: eTaskStatus;
     };
 }
 
 export interface ITasksManagerDomain {
     init(): Promise<void>;
     sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void>;
-    create(moduleName: string, funcName: string, funcArgs: any[], startAt: number, ctx: IQueryInfos): Promise<string>;
+    create(
+        moduleName: string,
+        subModuleName: string,
+        funcName: string,
+        funcArgs: string,
+        startAt: number,
+        ctx: IQueryInfos
+    ): Promise<string>;
     update(
         taskId: string,
         {status, progress, startedAt, completedAt, links}: IUpdateData,
@@ -47,6 +55,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.value'?: IValueDomain;
     'core.infra.task'?: ITaskRepo;
+    'core.depsManager'?: AwilixContainer;
 }
 
 export default function ({
@@ -54,8 +63,11 @@ export default function ({
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
-    'core.infra.task': taskRepo = null
+    'core.infra.task': taskRepo = null,
+    'core.depsManager': depsManager = null
 }: IDeps): ITasksManagerDomain {
+    const _getLinuxTime = () => Math.floor(Date.now() / 1000);
+
     const _validateMsg = (msg: ITaskOrder) => {
         const msgBodySchema = Joi.object().keys({
             time: Joi.number().required(),
@@ -63,8 +75,9 @@ export default function ({
             payload: Joi.object()
                 .keys({
                     moduleName: Joi.string().required(),
+                    subModuleName: Joi.string().required(),
                     funcName: Joi.string().required(),
-                    funcArgs: Joi.array().required(),
+                    funcArgs: Joi.string().required(),
                     startAt: Joi.date().timestamp('unix').raw().required()
                 })
                 .required()
@@ -91,15 +104,16 @@ export default function ({
             console.error(e);
         }
 
-        const {moduleName, funcName, funcArgs, startAt} = order.payload;
+        const {moduleName, subModuleName, funcName, funcArgs, startAt} = order.payload;
 
-        await _create(moduleName, funcName, funcArgs, startAt, ctx);
+        await _create(moduleName, subModuleName, funcName, funcArgs, startAt, ctx);
     };
 
     const _create = async (
         moduleName: string,
+        subModuleName: string,
         funcName: string,
-        funcArgs: any[],
+        funcArgs: string,
         startAt: number,
         ctx: IQueryInfos
     ): Promise<string> => {
@@ -114,12 +128,16 @@ export default function ({
                     value: moduleName
                 },
                 {
+                    attribute: 'subModuleName',
+                    value: subModuleName
+                },
+                {
                     attribute: 'funcName',
                     value: funcName
                 },
                 {
                     attribute: 'funcArgs',
-                    value: JSON.stringify(funcArgs)
+                    value: funcArgs
                 },
                 {
                     attribute: 'startAt',
@@ -153,6 +171,16 @@ export default function ({
         });
     };
 
+    const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
+        if (typeof params.sort === 'undefined') {
+            params.sort = {field: 'id', order: SortOrder.ASC};
+        }
+
+        const tasks = await taskRepo.getTasks({params, ctx});
+
+        return tasks;
+    };
+
     return {
         async init(): Promise<void> {
             await amqpService.consumer.channel.assertQueue(config.tasksManager.queues.orders);
@@ -172,39 +200,30 @@ export default function ({
             await amqpService.publish(
                 config.amqp.exchange,
                 config.tasksManager.routingKeys.orders,
-                JSON.stringify({time: Date.now(), userId: ctx.userId, payload})
+                JSON.stringify({time: _getLinuxTime(), userId: ctx.userId, payload})
             );
         },
         create: _create, // return task id
         update: _update,
+        getTasks: _getTasks,
         async start(taskId: string, ctx: IQueryInfos): Promise<void> {
-            await _update(taskId, {startedAt: Date.now(), status: eTaskStatus.IN_PROGRESS}, ctx);
+            await _update(taskId, {startedAt: _getLinuxTime(), status: eTaskStatus.IN_PROGRESS}, ctx);
+
+            const task = (await _getTasks({params: {filters: {id: taskId}}, ctx}))?.list[0];
+
+            await (depsManager.resolve(`core.${task.moduleName}.${task.subModuleName}`) as any)[task.funcName](
+                ...JSON.parse(task.funcArgs),
+                ctx
+            );
+
+            // FIXME: callback ?
         },
         async complete(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {
-            await _update(taskId, {completedAt: Date.now(), status: eTaskStatus.DONE, links}, ctx);
-        },
-        async getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> {
-            if (typeof params.sort === 'undefined') {
-                params.sort = {field: 'id', order: SortOrder.ASC};
-            }
-
-            const tasks = await taskRepo.getTasks({params, ctx});
-
-            console.debug({tasks: tasks.list});
-
-            return tasks;
+            await _update(taskId, {completedAt: _getLinuxTime(), status: eTaskStatus.DONE, links}, ctx);
         }
     };
 }
 
 // TODO:
-// create(...)
-// update(progression)
-// complete
-// getInfos(id)
-// 	-> progress, nom, status, …
-// getTasks(…) TODO: à tester
 // setCancelCallback(function) // TODO: add callback attribute in db
-
-// funcARgs as string everywhere ?
-// dates problem graphql
+// ctx dans la task

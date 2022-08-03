@@ -11,8 +11,8 @@ import {eTaskStatus, ITask} from '_types/tasksManager';
 export const TASKS_COLLECTION = 'core_tasks';
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
-    filters: ICoreEntityFilterOptions & {
-        status: eTaskStatus;
+    filters?: ICoreEntityFilterOptions & {
+        status?: eTaskStatus;
     };
 }
 
@@ -42,11 +42,7 @@ export default function ({'core.infra.db.dbUtils': dbUtils = null}: IDeps = {}):
                 ctx
             });
 
-            // Convert id to user friendly id and convert funcArgs string to object
-            return {
-                ...res,
-                list: res.list.map(f => ({...f, funcArgs: JSON.parse(f.funcArgs)}))
-            };
+            return res;
         }
     };
 }

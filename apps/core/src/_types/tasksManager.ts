@@ -10,8 +10,9 @@ export enum eTaskStatus {
 
 export interface ITaskOrderPayload {
     moduleName: string;
+    subModuleName: string;
     funcName: string;
-    funcArgs: any[];
+    funcArgs: string;
     startAt: number;
 }
 
@@ -29,8 +30,9 @@ export interface ITask {
     modified_by?: string;
     active?: boolean;
     moduleName: string;
+    subModuleName: string;
     funcName: string;
-    funcArgs: any[];
+    funcArgs: string; // stringified array of args
     startAt: number;
     status: eTaskStatus;
     progress?: number; // percent //TODO: maybe add more explicit progress status

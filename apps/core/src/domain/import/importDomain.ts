@@ -53,7 +53,7 @@ export interface IImportExcelParams {
 }
 
 export interface IImportDomain {
-    import(filename: string, ctx: IQueryInfos): Promise<boolean>;
+    import(filename: string, ctx: IQueryInfos, taskId?: string): Promise<boolean>;
     importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
@@ -394,22 +394,24 @@ export default function ({
     };
 
     return {
-        async import(filename: string, ctx: IQueryInfos, task?: ITask): Promise<boolean> {
-            if (typeof task === 'undefined') {
-                // TODO: send task order
-                // and callback (del local file)?
-                await tasksManager.sendOrder(
-                    {
-                        moduleName: 'domain',
-                        funcName: 'import',
-                        funcArgs: [filename, ctx],
-                        startAt: Date.now()
-                    },
-                    ctx
-                );
+        async import(filename: string, ctx: IQueryInfos, taskId?: string): Promise<boolean> {
+            // if (typeof taskId === 'undefined') {
+            //     await tasksManager.sendOrder(
+            //         {
+            //             moduleName: 'domain',
+            //             subModuleName: 'import',
+            //             funcName: 'import',
+            //             funcArgs: JSON.stringify([filename]),
+            //             startAt: Math.floor(Date.now() / 1000)
+            //             // TODO: add callback (del local file)?
+            //         },
+            //         ctx
+            //     );
 
-                return;
-            }
+            //     return;
+            // }
+
+            // await tasksManager.start(taskId, ctx);
 
             try {
                 await _jsonSchemaValidation(filename);
@@ -505,6 +507,8 @@ export default function ({
 
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
+
+            // await tasksManager.complete(taskId, [], ctx);
 
             return true;
         },

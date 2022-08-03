@@ -9,9 +9,10 @@ import {eTaskStatus, ITask} from '_types/tasksManager';
 import {IPaginationParams, ISortParams, IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUtils} from 'utils/utils';
-import {AttributeCondition, IRecord} from '../../_types/record';
+// import {AttributeCondition, IRecord} from '../../_types/record';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {USERS_LIBRARY} from '../../_types/library';
+import {AwilixContainer} from 'awilix';
+// import {USERS_LIBRARY} from '../../_types/library';
 
 export interface ITasksManagerApp {
     init(): Promise<void>;
@@ -35,12 +36,12 @@ export interface IGetTasksArgs {
 }
 
 export default function ({
-    'core.domain.tasksManager': tasksManagerDomain = null,
-    'core.utils.logger': logger = null,
-    'core.domain.record': recordDomain = null,
-    'core.utils': utils = null,
-    config = null
-}: IDeps): ITasksManagerApp {
+    'core.domain.tasksManager': tasksManagerDomain = null
+}: // 'core.utils.logger': logger = null,
+// 'core.domain.record': recordDomain = null,
+// 'core.utils': utils = null,
+// config = null
+IDeps): ITasksManagerApp {
     return {
         init: tasksManagerDomain.init,
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -54,12 +55,12 @@ export default function ({
                         created_by: User,
                         moduleName: String,
                         funcName: String,
-                        funcArgs: [Any],
-                        startAt: DateTime,
+                        funcArgs: String,
+                        startAt: Int,
                         status: TaskStatus,
                         progress: Int,
-                        startedAt: DateTime,
-                        completedAt: DateTime,
+                        startedAt: Int,
+                        completedAt: Int,
                         links: [String]
                     }
 
@@ -81,7 +82,7 @@ export default function ({
 
                     extend type Query {
                         tasks(
-                            filters: TaskFiltersInput!,
+                            filters: TaskFiltersInput,
                             pagination: Pagination,
                             sort: RecordSortInput
                         ): TasksList!

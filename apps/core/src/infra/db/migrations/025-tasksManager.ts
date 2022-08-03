@@ -55,6 +55,13 @@ export default function ({
                 },
                 {
                     ...commonAttributeData,
+                    id: 'subModuleName',
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.TEXT,
+                    label: {fr: 'Nom du sous-module', en: 'Submodule Name'}
+                },
+                {
+                    ...commonAttributeData,
                     id: 'funcName',
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT,
@@ -149,6 +156,7 @@ export default function ({
                         'modified_by',
                         'modified_at',
                         'moduleName',
+                        'subModuleName',
                         'funcName',
                         'funcArgs',
                         'startAt',
