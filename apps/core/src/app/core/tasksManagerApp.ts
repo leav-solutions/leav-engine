@@ -9,10 +9,7 @@ import {eTaskStatus, ITask} from '_types/tasksManager';
 import {IPaginationParams, ISortParams, IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUtils} from 'utils/utils';
-// import {AttributeCondition, IRecord} from '../../_types/record';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {AwilixContainer} from 'awilix';
-// import {USERS_LIBRARY} from '../../_types/library';
 
 export interface ITasksManagerApp {
     init(): Promise<void>;
@@ -35,13 +32,7 @@ export interface IGetTasksArgs {
     sort?: ISortParams;
 }
 
-export default function ({
-    'core.domain.tasksManager': tasksManagerDomain = null
-}: // 'core.utils.logger': logger = null,
-// 'core.domain.record': recordDomain = null,
-// 'core.utils': utils = null,
-// config = null
-IDeps): ITasksManagerApp {
+export default function ({'core.domain.tasksManager': tasksManagerDomain = null}: IDeps): ITasksManagerApp {
     return {
         init: tasksManagerDomain.init,
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -70,8 +61,9 @@ IDeps): ITasksManagerApp {
                     }
 
                     enum TaskStatus {
-                        WAITING
-                        IN_PROGRESS
+                        PENDING
+                        FAILED
+                        RUNNING
                         DONE
                     }
 

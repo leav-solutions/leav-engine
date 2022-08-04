@@ -2,11 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // import {IDbService} from 'infra/db/dbService';
+import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {eTaskStatus, ITask} from '_types/tasksManager';
+import {aql} from 'arangojs';
 
 export const TASKS_COLLECTION = 'core_tasks';
 
@@ -18,13 +20,19 @@ interface IGetTasksParams extends IGetCoreEntitiesParams {
 
 export interface ITaskRepo {
     getTasks({params, ctx}: {params?: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
+    createTask(task: Omit<ITask, 'id'>, ctx: IQueryInfos): Promise<ITask>;
+    updateTask(task: Partial<ITask> & {id: string}, ctx: IQueryInfos): Promise<ITask>;
 }
 
 interface IDeps {
     'core.infra.db.dbUtils'?: IDbUtils;
+    'core.infra.db.dbService'?: IDbService;
 }
 
-export default function ({'core.infra.db.dbUtils': dbUtils = null}: IDeps = {}): ITaskRepo {
+export default function ({
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null
+}: IDeps = {}): ITaskRepo {
     return {
         async getTasks({params, ctx}): Promise<IList<ITask>> {
             const defaultParams: IGetCoreEntitiesParams = {
@@ -43,6 +51,31 @@ export default function ({'core.infra.db.dbUtils': dbUtils = null}: IDeps = {}):
             });
 
             return res;
+        },
+        async createTask(task: Omit<ITask, 'id'>, ctx: IQueryInfos): Promise<ITask> {
+            const collec = dbService.db.collection(TASKS_COLLECTION);
+            const docToInsert = dbUtils.convertToDoc(task);
+
+            const newTask = await dbService.execute({
+                query: aql`INSERT ${docToInsert} IN ${collec} RETURN NEW`,
+                ctx
+            });
+
+            return dbUtils.cleanup(newTask[0]);
+        },
+        async updateTask(task: Partial<ITask> & {id: string}, ctx: IQueryInfos): Promise<ITask> {
+            const collec = dbService.db.collection(TASKS_COLLECTION);
+            const docToInsert = dbUtils.convertToDoc(task);
+
+            const updatedTask = await dbService.execute({
+                query: aql`
+                    UPDATE ${docToInsert} IN ${collec}
+                    OPTIONS {mergeObjects: false}
+                    RETURN NEW`,
+                ctx
+            });
+
+            return dbUtils.cleanup(updatedTask[0]);
         }
     };
 }

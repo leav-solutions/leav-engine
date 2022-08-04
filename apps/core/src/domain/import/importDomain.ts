@@ -398,10 +398,12 @@ export default function ({
             // if (typeof taskId === 'undefined') {
             //     await tasksManager.sendOrder(
             //         {
-            //             moduleName: 'domain',
-            //             subModuleName: 'import',
-            //             funcName: 'import',
-            //             funcArgs: JSON.stringify([filename]),
+            //             func: {
+            //                 moduleName: 'domain',
+            //                 subModuleName: 'import',
+            //                 name: 'import',
+            //                 args: [filename]
+            //             },
             //             startAt: Math.floor(Date.now() / 1000)
             //             // TODO: add callback (del local file)?
             //         },
@@ -411,7 +413,7 @@ export default function ({
             //     return;
             // }
 
-            // await tasksManager.start(taskId, ctx);
+            // update progress with taskId
 
             try {
                 await _jsonSchemaValidation(filename);

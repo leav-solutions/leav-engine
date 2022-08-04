@@ -3,16 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 export enum eTaskStatus {
-    WAITING = 'WAITING',
-    IN_PROGRESS = 'IN_PROGRESS',
+    PENDING = 'PENDING',
+    RUNNING = 'RUNNING',
+    FAILED = 'FAILED',
     DONE = 'DONE'
 }
 
 export interface ITaskOrderPayload {
-    moduleName: string;
-    subModuleName: string;
-    funcName: string;
-    funcArgs: string;
+    func: ITaskFunc;
     startAt: number;
 }
 
@@ -22,6 +20,13 @@ export interface ITaskOrder {
     payload: ITaskOrderPayload;
 }
 
+export interface ITaskFunc {
+    moduleName: string;
+    subModuleName: string;
+    name: string;
+    args: any[];
+}
+
 export interface ITask {
     id: string;
     created_at?: number;
@@ -29,14 +34,12 @@ export interface ITask {
     modified_at?: number;
     modified_by?: string;
     active?: boolean;
-    moduleName: string;
-    subModuleName: string;
-    funcName: string;
-    funcArgs: string; // stringified array of args
+    func: ITaskFunc;
     startAt: number;
     status: eTaskStatus;
     progress?: number; // percent //TODO: maybe add more explicit progress status
     startedAt?: number;
     completedAt?: number;
     links?: string[];
+    callback?: ITaskFunc;
 }

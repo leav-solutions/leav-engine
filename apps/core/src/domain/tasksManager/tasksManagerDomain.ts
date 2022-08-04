@@ -6,7 +6,7 @@ import * as Config from '_types/config';
 import {IAmqpService} from '@leav/message-broker';
 import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
-import {ITaskOrderPayload, ITaskOrder, eTaskStatus, ITask} from '../../_types/tasksManager';
+import {ITaskOrderPayload, ITaskOrder, eTaskStatus, ITask, ITaskFunc} from '../../_types/tasksManager';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IList, SortOrder} from '../../_types/list';
@@ -31,19 +31,12 @@ interface IGetTasksParams extends IGetCoreEntitiesParams {
 export interface ITasksManagerDomain {
     init(): Promise<void>;
     sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void>;
-    create(
-        moduleName: string,
-        subModuleName: string,
-        funcName: string,
-        funcArgs: string,
-        startAt: number,
-        ctx: IQueryInfos
-    ): Promise<string>;
+    create(taskFunc: ITaskFunc, startAt: number, ctx: IQueryInfos): Promise<ITask>;
     update(
         taskId: string,
         {status, progress, startedAt, completedAt, links}: IUpdateData,
         ctx: IQueryInfos
-    ): Promise<void>;
+    ): Promise<ITask>;
     complete(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
     start(taskId: string, ctx: IQueryInfos): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
@@ -74,10 +67,12 @@ export default function ({
             userId: Joi.string().required(),
             payload: Joi.object()
                 .keys({
-                    moduleName: Joi.string().required(),
-                    subModuleName: Joi.string().required(),
-                    funcName: Joi.string().required(),
-                    funcArgs: Joi.string().required(),
+                    func: Joi.object().keys({
+                        moduleName: Joi.string().required(),
+                        subModuleName: Joi.string().required(),
+                        name: Joi.string().required(),
+                        args: Joi.array().required()
+                    }),
                     startAt: Joi.date().timestamp('unix').raw().required()
                 })
                 .required()
@@ -104,71 +99,40 @@ export default function ({
             console.error(e);
         }
 
-        const {moduleName, subModuleName, funcName, funcArgs, startAt} = order.payload;
+        const {func, startAt} = order.payload;
 
-        await _create(moduleName, subModuleName, funcName, funcArgs, startAt, ctx);
+        await _create(func, startAt, ctx);
     };
 
-    const _create = async (
-        moduleName: string,
-        subModuleName: string,
-        funcName: string,
-        funcArgs: string,
-        startAt: number,
-        ctx: IQueryInfos
-    ): Promise<string> => {
-        const task = await recordDomain.createRecord(TASKS_COLLECTION, ctx);
-
-        await valueDomain.saveValueBatch({
-            library: TASKS_COLLECTION,
-            recordId: task.id,
-            values: [
-                {
-                    attribute: 'moduleName',
-                    value: moduleName
-                },
-                {
-                    attribute: 'subModuleName',
-                    value: subModuleName
-                },
-                {
-                    attribute: 'funcName',
-                    value: funcName
-                },
-                {
-                    attribute: 'funcArgs',
-                    value: funcArgs
-                },
-                {
-                    attribute: 'startAt',
-                    value: startAt
-                },
-                {
-                    attribute: 'status',
-                    value: eTaskStatus.WAITING
-                }
-            ],
+    const _create = async (taskFunc: ITaskFunc, startAt: number, ctx: IQueryInfos): Promise<ITask> => {
+        const task = await taskRepo.createTask(
+            {
+                func: taskFunc,
+                startAt,
+                status: eTaskStatus.PENDING,
+                created_at: _getLinuxTime(),
+                created_by: ctx.userId,
+                modified_at: _getLinuxTime(),
+                modified_by: ctx.userId
+            },
             ctx
-        });
+        );
 
-        return task.id;
+        return task;
     };
 
-    const _update = async (taskId: string, data: IUpdateData, ctx: IQueryInfos): Promise<void> => {
-        let values = Object.keys(data)
-            .filter(k => k !== 'links')
-            .map(k => ({attribute: k, value: data[k]}));
-
-        if (typeof data.links !== 'undefined') {
-            values = values.concat(data.links.map(l => ({attribute: 'links', value: l})));
-        }
-
-        await valueDomain.saveValueBatch({
-            library: TASKS_COLLECTION,
-            recordId: taskId,
-            values,
+    const _update = async (taskId: string, data: IUpdateData, ctx: IQueryInfos): Promise<ITask> => {
+        const task = await taskRepo.updateTask(
+            {
+                id: taskId,
+                ...data,
+                modified_at: _getLinuxTime(),
+                modified_by: ctx.userId
+            },
             ctx
-        });
+        );
+
+        return task;
     };
 
     const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
@@ -207,16 +171,21 @@ export default function ({
         update: _update,
         getTasks: _getTasks,
         async start(taskId: string, ctx: IQueryInfos): Promise<void> {
-            await _update(taskId, {startedAt: _getLinuxTime(), status: eTaskStatus.IN_PROGRESS}, ctx);
-
             const task = (await _getTasks({params: {filters: {id: taskId}}, ctx}))?.list[0];
 
-            await (depsManager.resolve(`core.${task.moduleName}.${task.subModuleName}`) as any)[task.funcName](
-                ...JSON.parse(task.funcArgs),
-                ctx
-            );
+            const func = depsManager.resolve(`core.${task.func.moduleName}.${task.func.subModuleName}`)?.[
+                task.func.name
+            ];
 
-            // FIXME: callback ?
+            await _update(taskId, {startedAt: _getLinuxTime(), status: eTaskStatus.RUNNING}, ctx);
+
+            try {
+                await func(...task.func.args, ctx, taskId);
+            } catch (e) {
+                await _update(taskId, {status: eTaskStatus.FAILED}, ctx);
+            } finally {
+                // FIXME: call callback ?
+            }
         },
         async complete(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {
             await _update(taskId, {completedAt: _getLinuxTime(), status: eTaskStatus.DONE, links}, ctx);

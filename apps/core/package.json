@@ -6,7 +6,7 @@
     "start:watch": "onchange -i 'src/**/*.ts'  -- npm run start:dev",
     "start:files": "onchange -i 'src/**/*.ts'  -- node --inspect=0.0.0.0:9230 -r ts-node/register src/ --filesManager",
     "start:indexation": "onchange -i 'src/**/*.ts'  -- node --inspect=0.0.0.0:9231 -r ts-node/register src/ --indexationManager",
-    "start:tasks": "onchange -i 'src/**/*.ts'  -- node --inspect=0.0.0.0:9231 -r ts-node/register src/ --tasksManager",
+    "start:tasks": "onchange -i 'src/**/*.ts'  -- node --inspect=0.0.0.0:9232 -r ts-node/register src/ --tasksManager",
     "start:dev": "node --inspect=0.0.0.0:9229 -r ts-node/register src/ --server",
     "start:build": "npm run build && node . --server",
     "test:watch": "jest -c jest-unit-config.json --watch",
