@@ -117,6 +117,7 @@ export interface IIndexationManager {
 }
 
 export interface ITasksManager {
+    checkingInterval: number; // in milliseconds
     queues: {
         orders: string;
     };

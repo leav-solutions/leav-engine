@@ -6,16 +6,15 @@ import * as Config from '_types/config';
 import {IAmqpService} from '@leav/message-broker';
 import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
-import {ITaskOrderPayload, ITaskOrder, eTaskStatus, ITask, ITaskFunc} from '../../_types/tasksManager';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
+import {ITaskOrderPayload, ITaskOrder, TaskStatus, ITask, ITaskFunc, TaskPriority} from '../../_types/tasksManager';
 import {IList, SortOrder} from '../../_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {ITaskRepo, TASKS_COLLECTION} from '../../infra/task/taskRepo';
 import {AwilixContainer} from 'awilix';
+import {cp} from 'fs';
 
 interface IUpdateData {
-    status?: eTaskStatus;
+    status?: TaskStatus;
     progress?: number;
     startedAt?: number;
     completedAt?: number;
@@ -24,29 +23,27 @@ interface IUpdateData {
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
-        status?: eTaskStatus;
+        status?: TaskStatus;
     };
 }
 
 export interface ITasksManagerDomain {
     init(): Promise<void>;
     sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void>;
-    create(taskFunc: ITaskFunc, startAt: number, ctx: IQueryInfos): Promise<ITask>;
-    update(
+    createTask(taskFunc: ITaskFunc, startAt: number, priority: TaskPriority, ctx: IQueryInfos): Promise<ITask>;
+    updateTask(
         taskId: string,
         {status, progress, startedAt, completedAt, links}: IUpdateData,
         ctx: IQueryInfos
     ): Promise<ITask>;
-    complete(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
-    start(taskId: string, ctx: IQueryInfos): Promise<void>;
+    completeTask(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
+    startTask(task: ITask, ctx: IQueryInfos): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
 }
 
 interface IDeps {
     config?: Config.IConfig;
     'core.infra.amqpService'?: IAmqpService;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.value'?: IValueDomain;
     'core.infra.task'?: ITaskRepo;
     'core.depsManager'?: AwilixContainer;
 }
@@ -54,12 +51,40 @@ interface IDeps {
 export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.value': valueDomain = null,
     'core.infra.task': taskRepo = null,
     'core.depsManager': depsManager = null
 }: IDeps): ITasksManagerDomain {
-    const _getLinuxTime = () => Math.floor(Date.now() / 1000);
+    const _getUnixTime = () => Math.floor(Date.now() / 1000);
+
+    const _checkTasks = (ctx: IQueryInfos): NodeJS.Timer => {
+        // check if tasks waiting for execution and execute them
+
+        return setInterval(async () => {
+            const tasks = await taskRepo.getTasks({
+                params: {filters: {status: TaskStatus.PENDING}},
+                ctx
+            });
+
+            let tasksToExecute = tasks.list.filter(task => task.startAt <= _getUnixTime());
+
+            // reorder tasks by priority and startAt
+            tasksToExecute = tasksToExecute.sort((a, b) => {
+                if (a.priority === b.priority) {
+                    return a.startAt - b.startAt;
+                }
+
+                return b.priority - a.priority;
+            });
+
+            // console.debug({
+            //     tasksToExecute: tasksToExecute.map(t => ({id: t.id, startAt: t.startAt, priority: t.priority}))
+            // });
+
+            for (const task of tasksToExecute) {
+                await _startTask(task, ctx);
+            }
+        }, config.tasksManager.checkingInterval);
+    };
 
     const _validateMsg = (msg: ITaskOrder) => {
         const msgBodySchema = Joi.object().keys({
@@ -73,7 +98,10 @@ export default function ({
                         name: Joi.string().required(),
                         args: Joi.array().required()
                     }),
-                    startAt: Joi.date().timestamp('unix').raw().required()
+                    startAt: Joi.date().timestamp('unix').raw().required(),
+                    priority: Joi.string()
+                        .valid(...Object.values(TaskPriority))
+                        .required()
                 })
                 .required()
         });
@@ -99,20 +127,26 @@ export default function ({
             console.error(e);
         }
 
-        const {func, startAt} = order.payload;
+        const {func, startAt, priority} = order.payload;
 
-        await _create(func, startAt, ctx);
+        await _createTask(func, startAt, priority, ctx);
     };
 
-    const _create = async (taskFunc: ITaskFunc, startAt: number, ctx: IQueryInfos): Promise<ITask> => {
+    const _createTask = async (
+        taskFunc: ITaskFunc,
+        startAt: number,
+        priority: TaskPriority,
+        ctx: IQueryInfos
+    ): Promise<ITask> => {
         const task = await taskRepo.createTask(
             {
                 func: taskFunc,
                 startAt,
-                status: eTaskStatus.PENDING,
-                created_at: _getLinuxTime(),
+                status: TaskStatus.PENDING,
+                priority,
+                created_at: _getUnixTime(),
                 created_by: ctx.userId,
-                modified_at: _getLinuxTime(),
+                modified_at: _getUnixTime(),
                 modified_by: ctx.userId
             },
             ctx
@@ -121,18 +155,22 @@ export default function ({
         return task;
     };
 
-    const _update = async (taskId: string, data: IUpdateData, ctx: IQueryInfos): Promise<ITask> => {
+    const _updateTask = async (taskId: string, data: IUpdateData, ctx: IQueryInfos): Promise<ITask> => {
         const task = await taskRepo.updateTask(
             {
                 id: taskId,
                 ...data,
-                modified_at: _getLinuxTime(),
+                modified_at: _getUnixTime(),
                 modified_by: ctx.userId
             },
             ctx
         );
 
         return task;
+    };
+
+    const _completeTask = async (taskId: string, links: string[], ctx: IQueryInfos): Promise<void> => {
+        await _updateTask(taskId, {completedAt: _getUnixTime(), status: TaskStatus.DONE, links}, ctx);
     };
 
     const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
@@ -145,6 +183,23 @@ export default function ({
         return tasks;
     };
 
+    const _startTask = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
+        const func = depsManager.resolve(`core.${task.func.moduleName}.${task.func.subModuleName}`)?.[task.func.name];
+
+        await _updateTask(task.id, {startedAt: _getUnixTime(), status: TaskStatus.RUNNING}, ctx);
+
+        try {
+            await func(...task.func.args, ctx, task.id);
+        } catch (e) {
+            // console.error(e);
+            await _updateTask(task.id, {status: TaskStatus.FAILED}, ctx);
+            return;
+        }
+
+        await _completeTask(task.id, [], ctx); // FIXME: add links
+        // FIXME: call callback ?
+    };
+
     return {
         async init(): Promise<void> {
             await amqpService.consumer.channel.assertQueue(config.tasksManager.queues.orders);
@@ -154,45 +209,31 @@ export default function ({
                 config.tasksManager.routingKeys.orders
             );
 
-            return amqpService.consume(
+            await amqpService.consume(
                 config.tasksManager.queues.orders,
                 config.tasksManager.routingKeys.orders,
                 _onMessage
             );
+
+            _checkTasks({userId: '1'});
         },
         async sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void> {
             await amqpService.publish(
                 config.amqp.exchange,
                 config.tasksManager.routingKeys.orders,
-                JSON.stringify({time: _getLinuxTime(), userId: ctx.userId, payload})
+                JSON.stringify({time: _getUnixTime(), userId: ctx.userId, payload})
             );
         },
-        create: _create, // return task id
-        update: _update,
+        createTask: _createTask, // return task id
+        updateTask: _updateTask,
+        completeTask: _completeTask,
         getTasks: _getTasks,
-        async start(taskId: string, ctx: IQueryInfos): Promise<void> {
-            const task = (await _getTasks({params: {filters: {id: taskId}}, ctx}))?.list[0];
-
-            const func = depsManager.resolve(`core.${task.func.moduleName}.${task.func.subModuleName}`)?.[
-                task.func.name
-            ];
-
-            await _update(taskId, {startedAt: _getLinuxTime(), status: eTaskStatus.RUNNING}, ctx);
-
-            try {
-                await func(...task.func.args, ctx, taskId);
-            } catch (e) {
-                await _update(taskId, {status: eTaskStatus.FAILED}, ctx);
-            } finally {
-                // FIXME: call callback ?
-            }
-        },
-        async complete(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {
-            await _update(taskId, {completedAt: _getLinuxTime(), status: eTaskStatus.DONE, links}, ctx);
-        }
+        startTask: _startTask
     };
 }
 
 // TODO:
 // setCancelCallback(function) // TODO: add callback attribute in db
 // ctx dans la task
+// add priority field 'HIGH', 'MEDIUM', 'LOW'
+// ctx userId 'system' ??

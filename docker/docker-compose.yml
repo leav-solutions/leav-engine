@@ -196,6 +196,7 @@ services:
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
+      - *mount_point-imports
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-core-modules

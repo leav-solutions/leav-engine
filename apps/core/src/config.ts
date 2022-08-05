@@ -87,6 +87,7 @@ export const validateConfig = (conf: IConfig) => {
             })
         }),
         tasksManager: Joi.object().keys({
+            checkingInterval: Joi.number().required(),
             queues: Joi.object().keys({
                 orders: Joi.string().required()
             }),

@@ -5,10 +5,11 @@ import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {eTaskStatus, ITask} from '_types/tasksManager';
+import {TaskStatus, TaskPriority, ITask} from '../../_types/tasksManager';
 import {IPaginationParams, ISortParams, IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUtils} from 'utils/utils';
+import {GraphQLEnumType} from 'graphql';
 import {IRecordDomain} from 'domain/record/recordDomain';
 
 export interface ITasksManagerApp {
@@ -26,7 +27,7 @@ interface IDeps {
 
 export interface IGetTasksArgs {
     filters?: ICoreEntityFilterOptions & {
-        status: eTaskStatus;
+        status: TaskStatus;
     };
     pagination?: IPaginationParams;
     sort?: ISortParams;
@@ -38,6 +39,12 @@ export default function ({'core.domain.tasksManager': tasksManagerDomain = null}
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
+                    scalar TaskPriority
+
+                    enum TaskStatus {
+                        ${Object.values(TaskStatus).join(' ')}
+                    }
+
                     type Task {
                         id: ID!,
                         modified_at: Int,
@@ -49,6 +56,7 @@ export default function ({'core.domain.tasksManager': tasksManagerDomain = null}
                         funcArgs: String,
                         startAt: Int,
                         status: TaskStatus,
+                        priority: TaskPriority,
                         progress: Int,
                         startedAt: Int,
                         completedAt: Int,
@@ -58,13 +66,6 @@ export default function ({'core.domain.tasksManager': tasksManagerDomain = null}
                     type TasksList {
                         totalCount: Int!
                         list: [Task!]!
-                    }
-
-                    enum TaskStatus {
-                        PENDING
-                        FAILED
-                        RUNNING
-                        DONE
                     }
 
                     input TaskFiltersInput {
@@ -81,6 +82,7 @@ export default function ({'core.domain.tasksManager': tasksManagerDomain = null}
                     }
                 `,
                 resolvers: {
+                    TaskPriority,
                     Query: {
                         async tasks(
                             _,

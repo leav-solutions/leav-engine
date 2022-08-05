@@ -14,7 +14,7 @@ import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
-import {ITask} from '../../_types/tasksManager';
+import {TaskPriority, ITask} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
@@ -404,7 +404,8 @@ export default function ({
             //                 name: 'import',
             //                 args: [filename]
             //             },
-            //             startAt: Math.floor(Date.now() / 1000)
+            //             startAt: Math.floor(Date.now() / 1000),
+            //             priority: TaskPriority.MEDIUM
             //             // TODO: add callback (del local file)?
             //         },
             //         ctx

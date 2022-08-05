@@ -78,6 +78,7 @@ module.exports = {
         userId: process.env.FM_USER_ID || '2'
     },
     tasksManager: {
+        checkingInterval: 10000,
         queues: {
             orders: process.env.TM_ORDERS_QUEUE || 'tasks_orders'
         },

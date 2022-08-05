@@ -126,13 +126,15 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             // Store JSON file in local filesystem.
                             const storedFileName = await _storeUploadFile(fileData);
 
-                            try {
-                                await importDomain.import(storedFileName, ctx);
-                            } finally {
-                                // TODO: move and uncomment this part due to task manager
-                                // Delete remaining import file.
-                                // await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);
-                            }
+                            // try {
+                            await importDomain.import(storedFileName, ctx);
+                            // }
+
+                            // finally {
+                            //     // TODO: move and uncomment this part due to task manager
+                            //     // Delete remaining import file.
+                            //     // await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);
+                            // }
 
                             // FIXME: If import fail should we backup db?
                             // TODO: Waiting to link an id to this import to retrieve

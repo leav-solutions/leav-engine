@@ -2,16 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-export enum eTaskStatus {
+export enum TaskStatus {
     PENDING = 'PENDING',
     RUNNING = 'RUNNING',
     FAILED = 'FAILED',
     DONE = 'DONE'
 }
 
+export enum TaskPriority {
+    LOW = 0,
+    MEDIUM = 1,
+    HIGH = 2
+}
+
 export interface ITaskOrderPayload {
     func: ITaskFunc;
     startAt: number;
+    priority: TaskPriority;
 }
 
 export interface ITaskOrder {
@@ -36,7 +43,8 @@ export interface ITask {
     active?: boolean;
     func: ITaskFunc;
     startAt: number;
-    status: eTaskStatus;
+    status: TaskStatus;
+    priority: TaskPriority;
     progress?: number; // percent //TODO: maybe add more explicit progress status
     startedAt?: number;
     completedAt?: number;

@@ -7,14 +7,15 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {eTaskStatus, ITask} from '_types/tasksManager';
+import {TaskStatus, ITask} from '_types/tasksManager';
 import {aql} from 'arangojs';
 
 export const TASKS_COLLECTION = 'core_tasks';
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
-        status?: eTaskStatus;
+        startAt?: number;
+        status?: TaskStatus;
     };
 }
 
@@ -44,7 +45,7 @@ export default function ({
             };
             const initializedParams = {...defaultParams, ...params};
 
-            const res = await dbUtils.findCoreEntity<ITask & {funcArgs: string}>({
+            const res = await dbUtils.findCoreEntity<ITask>({
                 ...initializedParams,
                 collectionName: TASKS_COLLECTION,
                 ctx
