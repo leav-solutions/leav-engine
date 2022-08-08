@@ -19,13 +19,13 @@ export default function ({'core.domain.export': exportDomain = null}: IDeps = {}
             const baseSchema = {
                 typeDefs: `
                     extend type Query {
-                        export(library: ID!,  attributes: [ID!], filters: [RecordFilterInput]): String!
+                        export(library: ID!,  attributes: [ID!], filters: [RecordFilterInput]): Boolean!
                     }
                 `,
                 resolvers: {
                     Upload: GraphQLUpload,
                     Query: {
-                        async export(parent, {library, attributes, filters}, ctx): Promise<string> {
+                        async export(parent, {library, attributes, filters}, ctx): Promise<boolean> {
                             return exportDomain.export({library, attributes, filters}, ctx);
                         }
                     }

@@ -8,6 +8,7 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
 import {pick} from 'lodash';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import path from 'path';
 import * as Config from '_types/config';
 import ValidationError from '../../errors/ValidationError';
@@ -17,6 +18,7 @@ import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import validateLibAttributes from '../library/helpers/validateLibAttributes';
+import {TaskPriority} from '../../_types/tasksManager';
 
 export const DIR_PATH = '/exports';
 
@@ -27,7 +29,7 @@ export interface IExportParams {
 }
 
 export interface IExportDomain {
-    export(params: IExportParams, ctx: IQueryInfos): Promise<string>;
+    export(params: IExportParams, ctx: IQueryInfos, taskId?: string): Promise<boolean>;
 }
 
 interface IDeps {
@@ -37,6 +39,7 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.domain.library'?: ILibraryDomain;
+    'core.domain.tasksManager'?: ITasksManagerDomain;
     config?: Config.IConfig;
 }
 
@@ -45,7 +48,8 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.domain.library': libraryDomain = null
+    'core.domain.library': libraryDomain = null,
+    'core.domain.tasksManager': tasksManager = null
 }: IDeps = {}): IExportDomain {
     const _getFormattedValues = async (
         attribute: IAttribute,
@@ -136,7 +140,29 @@ export default function ({
     };
 
     return {
-        async export({library, attributes, filters}: IExportParams, ctx: IQueryInfos): Promise<string> {
+        async export(
+            {library, attributes, filters}: IExportParams,
+            ctx: IQueryInfos,
+            taskId?: string
+        ): Promise<boolean> {
+            if (typeof taskId === 'undefined') {
+                await tasksManager.sendOrder(
+                    {
+                        func: {
+                            moduleName: 'domain',
+                            subModuleName: 'export',
+                            name: 'export',
+                            args: [{library, attributes, filters}, ctx]
+                        },
+                        startAt: Math.floor(Date.now() / 1000),
+                        priority: TaskPriority.MEDIUM
+                    },
+                    ctx
+                );
+
+                return true;
+            }
+
             // separate different depths
             const attrsSplited = attributes.map(a => a.split('.'));
             const firstAttributes = attrsSplited.map(a => a[0]);
@@ -197,7 +223,8 @@ export default function ({
 
             // This is a public URL users will use to retrieve files.
             // It must match the route defined in the server.
-            return `${DIR_PATH}/${filename}`;
+            const url = `${DIR_PATH}/${filename}`;
+            await tasksManager.setLinks(taskId, [url], ctx);
         }
     };
 }
