@@ -11,7 +11,6 @@ import {IList, SortOrder} from '../../_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {ITaskRepo, TASKS_COLLECTION} from '../../infra/task/taskRepo';
 import {AwilixContainer} from 'awilix';
-import {cp} from 'fs';
 
 interface IUpdateData {
     status?: TaskStatus;
@@ -65,6 +64,11 @@ export default function ({
                 ctx
             });
 
+            // no tasks pending
+            if (!tasks.list.length) {
+                return;
+            }
+
             let tasksToExecute = tasks.list.filter(task => task.startAt <= _getUnixTime());
 
             // reorder tasks by priority and startAt
@@ -76,13 +80,8 @@ export default function ({
                 return b.priority - a.priority;
             });
 
-            // console.debug({
-            //     tasksToExecute: tasksToExecute.map(t => ({id: t.id, startAt: t.startAt, priority: t.priority}))
-            // });
-
-            for (const task of tasksToExecute) {
-                await _startTask(task, ctx);
-            }
+            // we execute only one task to avoid concurrency and let other tasks available
+            await _startTask(tasksToExecute[0], ctx);
         }, config.tasksManager.checkingInterval);
     };
 
@@ -184,9 +183,9 @@ export default function ({
     };
 
     const _startTask = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
-        const func = depsManager.resolve(`core.${task.func.moduleName}.${task.func.subModuleName}`)?.[task.func.name];
-
         await _updateTask(task.id, {startedAt: _getUnixTime(), status: TaskStatus.RUNNING}, ctx);
+
+        const func = depsManager.resolve(`core.${task.func.moduleName}.${task.func.subModuleName}`)?.[task.func.name];
 
         try {
             await func(...task.func.args, ctx, task.id);
@@ -235,5 +234,6 @@ export default function ({
 // TODO:
 // setCancelCallback(function) // TODO: add callback attribute in db
 // ctx dans la task
-// add priority field 'HIGH', 'MEDIUM', 'LOW'
+// add links
+// concurrency between services
 // ctx userId 'system' ??
