@@ -4,6 +4,7 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import fs from 'fs';
@@ -159,16 +160,21 @@ describe('importDomain', () => {
             getCache: jest.fn().mockReturnValue(mockCacheService)
         };
 
+        const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
+            sendOrder: global.__mockPromise()
+        };
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            'core.infra.cache.cacheService': mockCachesService as ICachesService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
-        await imprtDomain.import('test.json', ctx);
+        await imprtDomain.import('test.json', ctx, 'fakeTaskId');
 
         expect(mockRecordDomain.createRecord.mock.calls.length).toBe(2);
         expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(3);
@@ -260,17 +266,22 @@ describe('importDomain', () => {
             getCache: jest.fn().mockReturnValue(mockCacheService)
         };
 
+        const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
+            sendOrder: global.__mockPromise()
+        };
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            'core.infra.cache.cacheService': mockCachesService as ICachesService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
         try {
-            await imprtDomain.import('test.json', ctx);
+            await imprtDomain.import('test.json', ctx, 'fakeTaskId');
         } finally {
             // Delete remaining import file.
             await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
@@ -327,16 +338,21 @@ describe('importDomain', () => {
             getCache: jest.fn().mockReturnValue(mockCacheService)
         };
 
+        const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
+            sendOrder: global.__mockPromise()
+        };
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.tree': mockTreeDomain as ITreeDomain,
-            'core.infra.cache.cacheService': mockCachesService as ICachesService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
         try {
-            await imprtDomain.import('test.json', ctx);
+            await imprtDomain.import('test.json', ctx, 'fakeTaskId');
         } finally {
             // Delete remaining import file.
             await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
@@ -401,16 +417,21 @@ describe('importDomain', () => {
 
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
+        const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
+            sendOrder: global.__mockPromise()
+        };
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            'core.infra.cache.cacheService': mockCachesService as ICachesService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
-        await imprtDomain.import('test.json', ctx);
+        await imprtDomain.import('test.json', ctx, 'fakeTaskId');
 
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
@@ -473,16 +494,21 @@ describe('importDomain', () => {
 
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
+        const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
+            sendOrder: global.__mockPromise()
+        };
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            'core.infra.cache.cacheService': mockCachesService as ICachesService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
-        await imprtDomain.import('test.json', ctx);
+        await imprtDomain.import('test.json', ctx, 'fakeTaskId');
 
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
@@ -545,16 +571,21 @@ describe('importDomain', () => {
 
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
+        const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
+            sendOrder: global.__mockPromise()
+        };
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
             'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             'core.domain.value': mockValueDomain as IValueDomain,
-            'core.infra.cache.cacheService': mockCachesService as ICachesService
+            'core.infra.cache.cacheService': mockCachesService as ICachesService,
+            'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
-        await imprtDomain.import('test.json', ctx);
+        await imprtDomain.import('test.json', ctx, 'fakeTaskId');
 
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.createRecord).not.toBeCalled();

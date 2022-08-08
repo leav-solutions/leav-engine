@@ -9,7 +9,7 @@ import {v4 as uuidv4} from 'uuid';
 import {ITaskOrderPayload, ITaskOrder, TaskStatus, ITask, ITaskFunc, TaskPriority} from '../../_types/tasksManager';
 import {IList, SortOrder} from '../../_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {ITaskRepo, TASKS_COLLECTION} from '../../infra/task/taskRepo';
+import {ITaskRepo} from '../../infra/task/taskRepo';
 import {AwilixContainer} from 'awilix';
 
 interface IUpdateData {
@@ -29,15 +29,9 @@ interface IGetTasksParams extends IGetCoreEntitiesParams {
 export interface ITasksManagerDomain {
     init(): Promise<void>;
     sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void>;
-    createTask(taskFunc: ITaskFunc, startAt: number, priority: TaskPriority, ctx: IQueryInfos): Promise<ITask>;
-    updateTask(
-        taskId: string,
-        {status, progress, startedAt, completedAt, links}: IUpdateData,
-        ctx: IQueryInfos
-    ): Promise<ITask>;
-    completeTask(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
-    startTask(task: ITask, ctx: IQueryInfos): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
+    setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
+    updateProgress(taskId: string, progress: number, ctx: IQueryInfos): Promise<void>;
 }
 
 interface IDeps {
@@ -64,14 +58,14 @@ export default function ({
                 ctx
             });
 
-            // no tasks pending
+            // no pending tasks
             if (!tasks.list.length) {
                 return;
             }
 
             let tasksToExecute = tasks.list.filter(task => task.startAt <= _getUnixTime());
 
-            // reorder tasks by priority and startAt
+            // reorder tasks by priority then startAt
             tasksToExecute = tasksToExecute.sort((a, b) => {
                 if (a.priority === b.priority) {
                     return a.startAt - b.startAt;
@@ -81,7 +75,7 @@ export default function ({
             });
 
             // we execute only one task to avoid concurrency and let other tasks available
-            await _startTask(tasksToExecute[0], ctx);
+            await _executeTask(tasksToExecute[0], ctx);
         }, config.tasksManager.checkingInterval);
     };
 
@@ -168,10 +162,6 @@ export default function ({
         return task;
     };
 
-    const _completeTask = async (taskId: string, links: string[], ctx: IQueryInfos): Promise<void> => {
-        await _updateTask(taskId, {completedAt: _getUnixTime(), status: TaskStatus.DONE, links}, ctx);
-    };
-
     const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
         if (typeof params.sort === 'undefined') {
             params.sort = {field: 'id', order: SortOrder.ASC};
@@ -182,20 +172,23 @@ export default function ({
         return tasks;
     };
 
-    const _startTask = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
-        await _updateTask(task.id, {startedAt: _getUnixTime(), status: TaskStatus.RUNNING}, ctx);
-
-        const func = depsManager.resolve(`core.${task.func.moduleName}.${task.func.subModuleName}`)?.[task.func.name];
+    const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
+        await _updateTask(task.id, {startedAt: _getUnixTime(), status: TaskStatus.RUNNING, progress: 0}, ctx);
 
         try {
-            await func(...task.func.args, ctx, task.id);
+            const func = depsManager.resolve(`core.${task.func.moduleName}.${task.func.subModuleName}`)?.[
+                task.func.name
+            ];
+
+            await func(...task.func.args, task.id);
         } catch (e) {
-            // console.error(e);
+            console.error(e);
             await _updateTask(task.id, {status: TaskStatus.FAILED}, ctx);
             return;
         }
 
-        await _completeTask(task.id, [], ctx); // FIXME: add links
+        await _updateTask(task.id, {completedAt: _getUnixTime(), status: TaskStatus.DONE, progress: 100}, ctx);
+
         // FIXME: call callback ?
     };
 
@@ -223,17 +216,19 @@ export default function ({
                 JSON.stringify({time: _getUnixTime(), userId: ctx.userId, payload})
             );
         },
-        createTask: _createTask, // return task id
-        updateTask: _updateTask,
-        completeTask: _completeTask,
-        getTasks: _getTasks,
-        startTask: _startTask
+        async updateProgress(taskId: string, progress: number, ctx: IQueryInfos): Promise<void> {
+            await _updateTask(taskId, {progress}, ctx);
+        },
+        async setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {
+            await _updateTask(taskId, {links}, ctx);
+        },
+        getTasks: _getTasks
     };
 }
 
 // TODO:
-// setCancelCallback(function) // TODO: add callback attribute in db
-// ctx dans la task
 // add links
+// setCancelCallback(function) // TODO: add callback attribute in db
+// ctx dans la task ??
 // concurrency between services
 // ctx userId 'system' ??

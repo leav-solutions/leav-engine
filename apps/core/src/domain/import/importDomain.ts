@@ -395,26 +395,24 @@ export default function ({
 
     return {
         async import(filename: string, ctx: IQueryInfos, taskId?: string): Promise<boolean> {
-            // if (typeof taskId === 'undefined') {
-            //     await tasksManager.sendOrder(
-            //         {
-            //             func: {
-            //                 moduleName: 'domain',
-            //                 subModuleName: 'import',
-            //                 name: 'import',
-            //                 args: [filename]
-            //             },
-            //             startAt: Math.floor(Date.now() / 1000),
-            //             priority: TaskPriority.MEDIUM
-            //             // TODO: add callback (del local file)?
-            //         },
-            //         ctx
-            //     );
+            if (typeof taskId === 'undefined') {
+                await tasksManager.sendOrder(
+                    {
+                        func: {
+                            moduleName: 'domain',
+                            subModuleName: 'import',
+                            name: 'import',
+                            args: [filename, ctx]
+                        },
+                        startAt: Math.floor(Date.now() / 1000),
+                        priority: TaskPriority.MEDIUM
+                        // TODO: add callback (del local file)?
+                    },
+                    ctx
+                );
 
-            //     return;
-            // }
-
-            // update progress with taskId
+                return true;
+            }
 
             try {
                 await _jsonSchemaValidation(filename);
@@ -510,8 +508,6 @@ export default function ({
 
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
-
-            // await tasksManager.complete(taskId, [], ctx);
 
             return true;
         },

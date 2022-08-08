@@ -71,7 +71,6 @@ export default function ({
             const updatedTask = await dbService.execute({
                 query: aql`
                     UPDATE ${docToInsert} IN ${collec}
-                    OPTIONS {mergeObjects: false}
                     RETURN NEW`,
                 ctx
             });
