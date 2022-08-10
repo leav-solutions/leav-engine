@@ -174,7 +174,7 @@ describe('importDomain', () => {
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
-        await imprtDomain.import('test.json', ctx, 'fakeTaskId');
+        await imprtDomain.import('test.json', ctx, {id: 'fakeTaskId'});
 
         expect(mockRecordDomain.createRecord.mock.calls.length).toBe(2);
         expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(3);
@@ -281,7 +281,7 @@ describe('importDomain', () => {
         });
 
         try {
-            await imprtDomain.import('test.json', ctx, 'fakeTaskId');
+            await imprtDomain.import('test.json', ctx, {id: 'fakeTaskId'});
         } finally {
             // Delete remaining import file.
             await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
@@ -352,7 +352,7 @@ describe('importDomain', () => {
         });
 
         try {
-            await imprtDomain.import('test.json', ctx, 'fakeTaskId');
+            await imprtDomain.import('test.json', ctx, {id: 'fakeTaskId'});
         } finally {
             // Delete remaining import file.
             await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
@@ -431,7 +431,7 @@ describe('importDomain', () => {
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
-        await imprtDomain.import('test.json', ctx, 'fakeTaskId');
+        await imprtDomain.import('test.json', ctx, {id: 'fakeTaskId'});
 
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
@@ -508,7 +508,7 @@ describe('importDomain', () => {
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
-        await imprtDomain.import('test.json', ctx, 'fakeTaskId');
+        await imprtDomain.import('test.json', ctx, {id: 'fakeTaskId'});
 
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
@@ -585,7 +585,7 @@ describe('importDomain', () => {
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
         });
 
-        await imprtDomain.import('test.json', ctx, 'fakeTaskId');
+        await imprtDomain.import('test.json', ctx, {id: 'fakeTaskId'});
 
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.createRecord).not.toBeCalled();

@@ -18,7 +18,7 @@ import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import validateLibAttributes from '../library/helpers/validateLibAttributes';
-import {TaskPriority} from '../../_types/tasksManager';
+import {ITaskCallback, TaskPriority} from '../../_types/tasksManager';
 
 export const DIR_PATH = '/exports';
 
@@ -29,7 +29,7 @@ export interface IExportParams {
 }
 
 export interface IExportDomain {
-    export(params: IExportParams, ctx: IQueryInfos, taskId?: string): Promise<boolean>;
+    export(params: IExportParams, ctx: IQueryInfos, task?: {callback?: ITaskCallback; id?: string}): Promise<boolean>;
 }
 
 interface IDeps {
@@ -143,9 +143,9 @@ export default function ({
         async export(
             {library, attributes, filters}: IExportParams,
             ctx: IQueryInfos,
-            taskId?: string
+            task?: {callback?: ITaskCallback; id?: string}
         ): Promise<boolean> {
-            if (typeof taskId === 'undefined') {
+            if (typeof task?.id === 'undefined') {
                 await tasksManager.sendOrder(
                     {
                         func: {
@@ -224,7 +224,7 @@ export default function ({
             // This is a public URL users will use to retrieve files.
             // It must match the route defined in the server.
             const url = `${DIR_PATH}/${filename}`;
-            await tasksManager.setLinks(taskId, [url], ctx);
+            await tasksManager.setLinks(task.id, [url], ctx);
         }
     };
 }

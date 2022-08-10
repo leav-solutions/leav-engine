@@ -8,6 +8,7 @@ import {nanoid} from 'nanoid';
 import * as Config from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
+import {TaskCallbackType} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {IFileUpload, ImportMode, ImportType} from '../../_types/import';
@@ -127,18 +128,17 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const storedFileName = await _storeUploadFile(fileData);
 
                             // try {
-                            await importDomain.import(storedFileName, ctx);
-                            // }
-
-                            // finally {
-                            //     // TODO: move and uncomment this part due to task manager
-                            //     // Delete remaining import file.
-                            //     // await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);
-                            // }
+                            await importDomain.import(storedFileName, ctx, {
+                                // Delete remaining import file.
+                                callback: {
+                                    moduleName: 'utils',
+                                    name: 'deleteFile',
+                                    args: [`${config.import.directory}/${storedFileName}`],
+                                    type: TaskCallbackType.ALWAYS
+                                }
+                            });
 
                             // FIXME: If import fail should we backup db?
-                            // TODO: Waiting to link an id to this import to retrieve
-                            // the progression and display it on explorer.
 
                             return true;
                         },

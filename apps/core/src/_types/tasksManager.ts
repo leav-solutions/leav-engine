@@ -19,6 +19,7 @@ export interface ITaskOrderPayload {
     func: ITaskFunc;
     startAt: number;
     priority: TaskPriority;
+    callback?: ITaskCallback;
 }
 
 export interface ITaskOrder {
@@ -29,10 +30,18 @@ export interface ITaskOrder {
 
 export interface ITaskFunc {
     moduleName: string;
-    subModuleName: string;
+    subModuleName?: string;
     name: string;
     args: any[];
 }
+
+export enum TaskCallbackType {
+    ALWAYS = 'ALWAYS',
+    ON_SUCCESS = 'ON_SUCCESS',
+    ON_FAILURE = 'ON_FAILURE'
+}
+
+export type ITaskCallback = ITaskFunc & {type: TaskCallbackType};
 
 export interface ITask {
     id: string;
@@ -49,5 +58,5 @@ export interface ITask {
     startedAt?: number;
     completedAt?: number;
     links?: string[];
-    callback?: ITaskFunc;
+    callback?: ITaskCallback;
 }

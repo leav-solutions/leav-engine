@@ -4,6 +4,7 @@
 import {i18n} from 'i18next';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
+import fs from 'fs';
 import {IActionsListConfig} from '_types/actionsList';
 import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
 import {LibraryBehavior} from '_types/library';
@@ -96,14 +97,19 @@ export interface IUtils {
         message: ErrorFieldDetailMessage,
         lang: string
     ): ValidationError<T>;
+
+    deleteFile(path: string): Promise<void>;
 }
 
 export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function ({translator = null}: IUtilsDeps = {}): IUtils {
+export default function({translator = null}: IUtilsDeps = {}): IUtils {
     return {
+        deleteFile: async (path: string): Promise<void> => {
+            return fs.promises.unlink(path);
+        },
         libNameToQueryName(name: string): string {
             return flow([camelCase, trimEnd])(name);
         },

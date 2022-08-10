@@ -14,7 +14,7 @@ import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
-import {TaskPriority, ITask} from '../../_types/tasksManager';
+import {TaskPriority, ITask, ITaskFunc, ITaskCallback} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
@@ -34,6 +34,7 @@ import {AttributeCondition, Operator} from '../../_types/record';
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
+import {string} from 'joi';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 const defaultImportMode = ImportMode.UPSERT;
@@ -53,7 +54,7 @@ export interface IImportExcelParams {
 }
 
 export interface IImportDomain {
-    import(filename: string, ctx: IQueryInfos, taskId?: string): Promise<boolean>;
+    import(filename: string, ctx: IQueryInfos, task?: {callback?: ITaskCallback; id?: string}): Promise<boolean>;
     importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
@@ -394,8 +395,12 @@ export default function ({
     };
 
     return {
-        async import(filename: string, ctx: IQueryInfos, taskId?: string): Promise<boolean> {
-            if (typeof taskId === 'undefined') {
+        async import(
+            filename: string,
+            ctx: IQueryInfos,
+            task?: {callback?: ITaskCallback; id?: string}
+        ): Promise<boolean> {
+            if (typeof task?.id === 'undefined') {
                 await tasksManager.sendOrder(
                     {
                         func: {
@@ -405,8 +410,8 @@ export default function ({
                             args: [filename, ctx]
                         },
                         startAt: Math.floor(Date.now() / 1000),
-                        priority: TaskPriority.MEDIUM
-                        // TODO: add callback (del local file)?
+                        priority: TaskPriority.MEDIUM,
+                        ...(!!task.callback && {callback: task.callback})
                     },
                     ctx
                 );

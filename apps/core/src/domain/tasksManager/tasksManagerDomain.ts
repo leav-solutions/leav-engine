@@ -6,7 +6,15 @@ import * as Config from '_types/config';
 import {IAmqpService} from '@leav/message-broker';
 import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
-import {ITaskOrderPayload, ITaskOrder, TaskStatus, ITask, ITaskFunc, TaskPriority} from '../../_types/tasksManager';
+import {
+    ITaskOrderPayload,
+    ITaskOrder,
+    TaskStatus,
+    ITask,
+    ITaskFunc,
+    TaskPriority,
+    TaskCallbackType
+} from '../../_types/tasksManager';
 import {IList, SortOrder} from '../../_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {ITaskRepo} from '../../infra/task/taskRepo';
@@ -49,23 +57,24 @@ export default function ({
 }: IDeps): ITasksManagerDomain {
     const _getUnixTime = () => Math.floor(Date.now() / 1000);
 
-    const _checkTasks = (ctx: IQueryInfos): NodeJS.Timer => {
+    const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer => {
         // check if tasks waiting for execution and execute them
 
         return setInterval(async () => {
             const tasks = await taskRepo.getTasks({
-                params: {filters: {status: TaskStatus.PENDING}},
                 ctx
             });
 
-            // no pending tasks
-            if (!tasks.list.length) {
+            let tasksToExecute = tasks.list.filter(
+                task => task.status === TaskStatus.PENDING && task.startAt <= _getUnixTime()
+            );
+
+            // no pending tasks // parallel execution?
+            if (!tasksToExecute.length || tasks.list.map(t => t.status).includes(TaskStatus.RUNNING)) {
                 return;
             }
 
-            let tasksToExecute = tasks.list.filter(task => task.startAt <= _getUnixTime());
-
-            // reorder tasks by priority then startAt
+            // reorder tasks by priority and startAt
             tasksToExecute = tasksToExecute.sort((a, b) => {
                 if (a.priority === b.priority) {
                     return a.startAt - b.startAt;
@@ -85,16 +94,27 @@ export default function ({
             userId: Joi.string().required(),
             payload: Joi.object()
                 .keys({
-                    func: Joi.object().keys({
-                        moduleName: Joi.string().required(),
-                        subModuleName: Joi.string().required(),
-                        name: Joi.string().required(),
-                        args: Joi.array().required()
-                    }),
+                    func: Joi.object()
+                        .keys({
+                            moduleName: Joi.string().required(),
+                            subModuleName: Joi.string(),
+                            name: Joi.string().required(),
+                            args: Joi.array().required()
+                        })
+                        .required(),
                     startAt: Joi.date().timestamp('unix').raw().required(),
                     priority: Joi.string()
                         .valid(...Object.values(TaskPriority))
-                        .required()
+                        .required(),
+                    callback: Joi.object().keys({
+                        moduleName: Joi.string().required(),
+                        subModuleName: Joi.string(),
+                        name: Joi.string().required(),
+                        args: Joi.array().required(),
+                        type: Joi.string()
+                            .valid(...Object.values(TaskCallbackType))
+                            .required()
+                    })
                 })
                 .required()
         });
@@ -120,27 +140,26 @@ export default function ({
             console.error(e);
         }
 
-        const {func, startAt, priority} = order.payload;
+        const {func, startAt, priority, callback} = order.payload;
 
-        await _createTask(func, startAt, priority, ctx);
+        await _createTask({func, startAt, priority, callback}, ctx);
     };
 
     const _createTask = async (
-        taskFunc: ITaskFunc,
-        startAt: number,
-        priority: TaskPriority,
+        {func, startAt, priority, callback}: ITaskOrderPayload,
         ctx: IQueryInfos
     ): Promise<ITask> => {
         const task = await taskRepo.createTask(
             {
-                func: taskFunc,
+                func,
                 startAt,
                 status: TaskStatus.PENDING,
                 priority,
                 created_at: _getUnixTime(),
                 created_by: ctx.userId,
                 modified_at: _getUnixTime(),
-                modified_by: ctx.userId
+                modified_by: ctx.userId,
+                ...(!!callback && {callback})
             },
             ctx
         );
@@ -172,24 +191,62 @@ export default function ({
         return tasks;
     };
 
+    const _getDepsManagerFunc = ({
+        moduleName,
+        subModuleName,
+        funcName
+    }: {
+        moduleName: string;
+        subModuleName?: string;
+        funcName: string;
+    }): any => {
+        const func = depsManager.resolve(`core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}`)?.[funcName];
+
+        if (!func) {
+            throw new Error(
+                `Function core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}.${funcName} not found`
+            );
+        }
+
+        return func;
+    };
+
     const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
         await _updateTask(task.id, {startedAt: _getUnixTime(), status: TaskStatus.RUNNING, progress: 0}, ctx);
 
-        try {
-            const func = depsManager.resolve(`core.${task.func.moduleName}.${task.func.subModuleName}`)?.[
-                task.func.name
-            ];
+        let status = task.status;
+        const callback = task.callback;
 
-            await func(...task.func.args, task.id);
+        try {
+            const func = _getDepsManagerFunc({
+                moduleName: task.func.moduleName,
+                subModuleName: task.func.subModuleName,
+                funcName: task.func.name
+            });
+            await func(...task.func.args, {id: task.id});
+            status = TaskStatus.DONE;
         } catch (e) {
             console.error(e);
-            await _updateTask(task.id, {status: TaskStatus.FAILED}, ctx);
-            return;
+            status = TaskStatus.FAILED;
         }
 
-        await _updateTask(task.id, {completedAt: _getUnixTime(), status: TaskStatus.DONE, progress: 100}, ctx);
+        if (
+            typeof callback !== 'undefined' &&
+            (callback.type === TaskCallbackType.ALWAYS ||
+                (callback.type === TaskCallbackType.ON_FAILURE && status === TaskStatus.FAILED) ||
+                (callback.type === TaskCallbackType.ON_SUCCESS && status === TaskStatus.DONE))
+        ) {
+            const callbackFunc = _getDepsManagerFunc({
+                moduleName: callback.moduleName,
+                subModuleName: callback.subModuleName,
+                funcName: callback.name
+            });
 
-        // FIXME: call callback ?
+            await callbackFunc(...callback.args);
+        }
+
+        const updateData = status === TaskStatus.DONE ? {completedAt: _getUnixTime(), status, progress: 100} : {status};
+        await _updateTask(task.id, updateData, ctx);
     };
 
     return {
@@ -207,7 +264,7 @@ export default function ({
                 _onMessage
             );
 
-            _checkTasks({userId: '1'});
+            _monitorTasks({userId: '1'});
         },
         async sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void> {
             await amqpService.publish(
@@ -227,8 +284,6 @@ export default function ({
 }
 
 // TODO:
-// add links
-// setCancelCallback(function) // TODO: add callback attribute in db
 // ctx dans la task ??
 // concurrency between services
 // ctx userId 'system' ??
