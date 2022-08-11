@@ -5,7 +5,7 @@ import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {TaskStatus, TaskPriority, ITask} from '../../_types/tasksManager';
+import {TaskStatus, TaskPriority, ITask, TaskCallbackType} from '../../_types/tasksManager';
 import {IPaginationParams, ISortParams, IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUtils} from 'utils/utils';
@@ -47,13 +47,11 @@ export default function ({'core.domain.tasksManager': tasksManagerDomain = null}
 
                     type Task {
                         id: ID!,
+                        name: String!,
                         modified_at: Int,
                         created_at: Int,
                         modified_by: User,
                         created_by: User,
-                        moduleName: String,
-                        funcName: String,
-                        funcArgs: String,
                         startAt: Int,
                         status: TaskStatus,
                         priority: TaskPriority,
@@ -83,6 +81,7 @@ export default function ({'core.domain.tasksManager': tasksManagerDomain = null}
                 `,
                 resolvers: {
                     TaskPriority,
+
                     Query: {
                         async tasks(
                             _,

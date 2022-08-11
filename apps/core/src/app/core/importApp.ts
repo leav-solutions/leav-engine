@@ -111,14 +111,14 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                     }
 
                     extend type Mutation {
-                        import(file: Upload!): Boolean!
-                        importExcel(file: Upload!, sheets: [SheetInput]): Boolean!
+                        import(file: Upload!): ID!
+                        importExcel(file: Upload!, sheets: [SheetInput]): ID!
                     }
                 `,
                 resolvers: {
                     Upload: GraphQLUpload,
                     Mutation: {
-                        async import(_, {file}: IImportParams, ctx: IQueryInfos): Promise<boolean> {
+                        async import(_, {file}: IImportParams, ctx: IQueryInfos): Promise<string> {
                             const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['json'];
@@ -128,7 +128,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             const storedFileName = await _storeUploadFile(fileData);
 
                             // try {
-                            await importDomain.import(storedFileName, ctx, {
+                            return importDomain.import(storedFileName, ctx, {
                                 // Delete remaining import file.
                                 callback: {
                                     moduleName: 'utils',
@@ -139,10 +139,8 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             });
 
                             // FIXME: If import fail should we backup db?
-
-                            return true;
                         },
-                        async importExcel(_, {file, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean> {
+                        async importExcel(_, {file, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<string> {
                             const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['xlsx'];
@@ -151,14 +149,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             // Store XLSX file in local filesystem.
                             const storedFileName = await _storeUploadFile(fileData);
 
-                            try {
-                                await importDomain.importExcel({filename: storedFileName, sheets}, ctx);
-                            } finally {
-                                // Delete remaining import file.
-                                await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);
-                            }
-
-                            return true;
+                            return importDomain.importExcel({filename: storedFileName, sheets}, ctx);
                         }
                     }
                 }

@@ -21,7 +21,7 @@ interface IGetTasksParams extends IGetCoreEntitiesParams {
 
 export interface ITaskRepo {
     getTasks({params, ctx}: {params?: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
-    createTask(task: Omit<ITask, 'id'>, ctx: IQueryInfos): Promise<ITask>;
+    createTask(task: ITask, ctx: IQueryInfos): Promise<ITask>;
     updateTask(task: Partial<ITask> & {id: string}, ctx: IQueryInfos): Promise<ITask>;
 }
 
@@ -53,7 +53,7 @@ export default function ({
 
             return res;
         },
-        async createTask(task: Omit<ITask, 'id'>, ctx: IQueryInfos): Promise<ITask> {
+        async createTask(task: ITask, ctx: IQueryInfos): Promise<ITask> {
             const collec = dbService.db.collection(TASKS_COLLECTION);
             const docToInsert = dbUtils.convertToDoc(task);
 

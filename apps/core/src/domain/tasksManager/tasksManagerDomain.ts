@@ -94,6 +94,8 @@ export default function ({
             userId: Joi.string().required(),
             payload: Joi.object()
                 .keys({
+                    id: Joi.string().required(),
+                    name: Joi.string().required(),
                     func: Joi.object()
                         .keys({
                             moduleName: Joi.string().required(),
@@ -140,17 +142,17 @@ export default function ({
             console.error(e);
         }
 
-        const {func, startAt, priority, callback} = order.payload;
-
-        await _createTask({func, startAt, priority, callback}, ctx);
+        await _createTask(order.payload, ctx);
     };
 
     const _createTask = async (
-        {func, startAt, priority, callback}: ITaskOrderPayload,
+        {id, name, func, startAt, priority, callback}: ITaskOrderPayload,
         ctx: IQueryInfos
     ): Promise<ITask> => {
         const task = await taskRepo.createTask(
             {
+                id,
+                name,
                 func,
                 startAt,
                 status: TaskStatus.PENDING,
@@ -287,3 +289,5 @@ export default function ({
 // ctx dans la task ??
 // concurrency between services
 // ctx userId 'system' ??
+// return taskId qquid A FAIRE
+// tests unit A FAIRE

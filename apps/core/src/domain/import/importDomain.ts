@@ -14,11 +14,12 @@ import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
-import {TaskPriority, ITask, ITaskFunc, ITaskCallback} from '../../_types/tasksManager';
+import {TaskPriority, ITask, ITaskFunc, ITaskCallback, TaskCallbackType} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
+import {i18n} from 'i18next';
 import {
     Action,
     IData,
@@ -34,7 +35,8 @@ import {AttributeCondition, Operator} from '../../_types/record';
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
-import {string} from 'joi';
+import {v4 as uuidv4} from 'uuid';
+import {IUtils} from 'utils/utils';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 const defaultImportMode = ImportMode.UPSERT;
@@ -54,8 +56,8 @@ export interface IImportExcelParams {
 }
 
 export interface IImportDomain {
-    import(filename: string, ctx: IQueryInfos, task?: {callback?: ITaskCallback; id?: string}): Promise<boolean>;
-    importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
+    import(filename: string, ctx: IQueryInfos, task?: {callback?: ITaskCallback; id?: string}): Promise<string>;
+    importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<string>;
 }
 
 interface IDeps {
@@ -67,6 +69,8 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
     'core.domain.tasksManager'?: ITasksManagerDomain;
     config?: Config.IConfig;
+    translator?: i18n;
+    'core.utils'?: IUtils;
 }
 
 export default function ({
@@ -77,7 +81,9 @@ export default function ({
     'core.domain.tree': treeDomain = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.domain.tasksManager': tasksManager = null,
-    config = null
+    'core.utils': utils = null,
+    config = null,
+    translator = null
 }: IDeps = {}): IImportDomain {
     const _addValue = async (
         library: string,
@@ -399,10 +405,14 @@ export default function ({
             filename: string,
             ctx: IQueryInfos,
             task?: {callback?: ITaskCallback; id?: string}
-        ): Promise<boolean> {
+        ): Promise<string> {
             if (typeof task?.id === 'undefined') {
+                const newTaskId = uuidv4();
+
                 await tasksManager.sendOrder(
                     {
+                        id: newTaskId,
+                        name: `Import file ${filename}`, // FIXME: translator or get name from frontend
                         func: {
                             moduleName: 'domain',
                             subModuleName: 'import',
@@ -416,7 +426,7 @@ export default function ({
                     ctx
                 );
 
-                return true;
+                return newTaskId;
             }
 
             try {
@@ -514,9 +524,9 @@ export default function ({
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
 
-            return true;
+            return task.id;
         },
-        async importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean> {
+        async importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<string> {
             const buffer = await _getFileDataBuffer(filename);
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer);
@@ -721,7 +731,18 @@ export default function ({
             // End of file.
             writeLine('], "trees": []}');
 
-            return this.import(JSONFilename, ctx);
+            // Delete xlsx file
+            await utils.deleteFile(`${config.import.directory}/${filename}`);
+
+            return this.import(JSONFilename, ctx, {
+                // Delete remaining import file.
+                callback: {
+                    moduleName: 'utils',
+                    name: 'deleteFile',
+                    args: [`${config.import.directory}/${JSONFilename}`],
+                    type: TaskCallbackType.ALWAYS
+                }
+            });
         }
     };
 }

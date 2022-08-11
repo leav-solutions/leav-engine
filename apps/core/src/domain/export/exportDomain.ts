@@ -19,6 +19,7 @@ import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import validateLibAttributes from '../library/helpers/validateLibAttributes';
 import {ITaskCallback, TaskPriority} from '../../_types/tasksManager';
+import {v4 as uuidv4} from 'uuid';
 
 export const DIR_PATH = '/exports';
 
@@ -29,7 +30,7 @@ export interface IExportParams {
 }
 
 export interface IExportDomain {
-    export(params: IExportParams, ctx: IQueryInfos, task?: {callback?: ITaskCallback; id?: string}): Promise<boolean>;
+    export(params: IExportParams, ctx: IQueryInfos, task?: {callback?: ITaskCallback; id?: string}): Promise<string>;
 }
 
 interface IDeps {
@@ -143,11 +144,15 @@ export default function ({
         async export(
             {library, attributes, filters}: IExportParams,
             ctx: IQueryInfos,
-            task?: {callback?: ITaskCallback; id?: string}
-        ): Promise<boolean> {
+            task?: {id?: string}
+        ): Promise<string> {
             if (typeof task?.id === 'undefined') {
+                const newTaskId = uuidv4();
+
                 await tasksManager.sendOrder(
                     {
+                        id: newTaskId,
+                        name: `Export data from ${library} library`, // FIXME: translator or get name from frontend
                         func: {
                             moduleName: 'domain',
                             subModuleName: 'export',
@@ -160,7 +165,7 @@ export default function ({
                     ctx
                 );
 
-                return true;
+                return newTaskId;
             }
 
             // separate different depths
@@ -225,6 +230,8 @@ export default function ({
             // It must match the route defined in the server.
             const url = `${DIR_PATH}/${filename}`;
             await tasksManager.setLinks(task.id, [url], ctx);
+
+            return task.id;
         }
     };
 }

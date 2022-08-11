@@ -15,12 +15,7 @@ export enum TaskPriority {
     HIGH = 2
 }
 
-export interface ITaskOrderPayload {
-    func: ITaskFunc;
-    startAt: number;
-    priority: TaskPriority;
-    callback?: ITaskCallback;
-}
+export type ITaskOrderPayload = Pick<ITask, 'id' | 'name' | 'func' | 'startAt' | 'priority' | 'callback'>;
 
 export interface ITaskOrder {
     time: number;
@@ -45,6 +40,7 @@ export type ITaskCallback = ITaskFunc & {type: TaskCallbackType};
 
 export interface ITask {
     id: string;
+    name: string;
     created_at?: number;
     created_by?: string;
     modified_at?: number;
