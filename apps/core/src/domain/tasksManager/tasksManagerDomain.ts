@@ -11,7 +11,6 @@ import {
     ITaskOrder,
     TaskStatus,
     ITask,
-    ITaskFunc,
     TaskPriority,
     TaskCallbackType
 } from '../../_types/tasksManager';
@@ -31,6 +30,7 @@ interface IUpdateData {
 interface IGetTasksParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
         status?: TaskStatus;
+        startAt?: number;
     };
 }
 
@@ -61,30 +61,22 @@ export default function ({
         // check if tasks waiting for execution and execute them
 
         return setInterval(async () => {
-            const tasks = await taskRepo.getTasks({
-                ctx
-            });
+            const isATaskRunning = await taskRepo.isATaskRunning({ctx});
 
-            let tasksToExecute = tasks.list.filter(
-                task => task.status === TaskStatus.PENDING && task.startAt <= _getUnixTime()
-            );
-
-            // no pending tasks // parallel execution?
-            if (!tasksToExecute.length || tasks.list.map(t => t.status).includes(TaskStatus.RUNNING)) {
+            // FIXME: allow parallel execution?
+            if (isATaskRunning) {
                 return;
             }
 
-            // reorder tasks by priority and startAt
-            tasksToExecute = tasksToExecute.sort((a, b) => {
-                if (a.priority === b.priority) {
-                    return a.startAt - b.startAt;
-                }
+            const tasksToExecute = await taskRepo.getTasksToExecute({ctx});
 
-                return b.priority - a.priority;
-            });
+            // no pending tasks
+            if (!tasksToExecute.totalCount) {
+                return;
+            }
 
             // we execute only one task to avoid concurrency and let other tasks available
-            await _executeTask(tasksToExecute[0], ctx);
+            await _executeTask(tasksToExecute.list[0], ctx);
         }, config.tasksManager.checkingInterval);
     };
 
@@ -157,10 +149,6 @@ export default function ({
                 startAt,
                 status: TaskStatus.PENDING,
                 priority,
-                created_at: _getUnixTime(),
-                created_by: ctx.userId,
-                modified_at: _getUnixTime(),
-                modified_by: ctx.userId,
                 ...(!!callback && {callback})
             },
             ctx
@@ -173,9 +161,7 @@ export default function ({
         const task = await taskRepo.updateTask(
             {
                 id: taskId,
-                ...data,
-                modified_at: _getUnixTime(),
-                modified_by: ctx.userId
+                ...data
             },
             ctx
         );
@@ -289,5 +275,4 @@ export default function ({
 // ctx dans la task ??
 // concurrency between services
 // ctx userId 'system' ??
-// return taskId qquid A FAIRE
 // tests unit A FAIRE

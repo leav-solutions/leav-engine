@@ -99,6 +99,8 @@ export interface IUtils {
     ): ValidationError<T>;
 
     deleteFile(path: string): Promise<void>;
+
+    getUnixTime(): number;
 }
 
 export interface IUtilsDeps {
@@ -107,6 +109,7 @@ export interface IUtilsDeps {
 
 export default function({translator = null}: IUtilsDeps = {}): IUtils {
     return {
+        getUnixTime: () => Math.floor(Date.now() / 1000),
         deleteFile: async (path: string): Promise<void> => {
             return fs.promises.unlink(path);
         },

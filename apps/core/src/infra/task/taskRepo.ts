@@ -7,34 +7,68 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {TaskStatus, ITask} from '_types/tasksManager';
+import {TaskStatus, ITask} from '../../_types/tasksManager';
 import {aql} from 'arangojs';
+import {IUtils} from 'utils/utils';
+import {IExecuteWithCount, IDbDocument} from 'infra/db/_types';
 
 export const TASKS_COLLECTION = 'core_tasks';
 
-interface IGetTasksParams extends IGetCoreEntitiesParams {
-    filters?: ICoreEntityFilterOptions & {
-        startAt?: number;
-        status?: TaskStatus;
-    };
-}
-
 export interface ITaskRepo {
-    getTasks({params, ctx}: {params?: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
+    getTasks({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
     createTask(task: ITask, ctx: IQueryInfos): Promise<ITask>;
     updateTask(task: Partial<ITask> & {id: string}, ctx: IQueryInfos): Promise<ITask>;
+    getTasksToExecute({ctx}: {ctx: IQueryInfos}): Promise<IList<ITask>>;
+    isATaskRunning({ctx}: {ctx: IQueryInfos}): Promise<boolean>;
+    deleteTask(taskId, ctx): Promise<ITask>;
 }
 
 interface IDeps {
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.db.dbService'?: IDbService;
+    'core.utils'?: IUtils;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
+    'core.infra.db.dbUtils': dbUtils = null,
+    'core.utils': utils = null
 }: IDeps = {}): ITaskRepo {
     return {
+        async isATaskRunning({ctx}: {ctx: IQueryInfos}): Promise<boolean> {
+            const collec = dbService.db.collection(TASKS_COLLECTION);
+
+            const query = aql`FOR task IN ${collec}
+                    FILTER task.status == ${TaskStatus.RUNNING}
+                    RETURN task`;
+
+            const runningTasks = await dbService.execute({query, ctx});
+
+            return runningTasks.length > 0;
+        },
+        async getTasksToExecute({ctx}: {ctx: IQueryInfos}): Promise<IList<ITask>> {
+            const collec = dbService.db.collection(TASKS_COLLECTION);
+
+            const query = aql`FOR task IN ${collec}
+                    FILTER task.status == ${TaskStatus.PENDING}
+                    FILTER task.startAt <= ${utils.getUnixTime()}
+                    SORT task.priority DESC, task.startAt ASC
+                RETURN task`;
+
+            const tasks = await dbService.execute<IExecuteWithCount | IDbDocument[]>({
+                query,
+                withTotalCount: true,
+                ctx
+            });
+
+            const list = (tasks as IExecuteWithCount).results;
+            const totalCount = (tasks as IExecuteWithCount).totalCount;
+
+            return {
+                totalCount,
+                list: list.map(dbUtils.cleanup) as ITask[]
+            };
+        },
         async getTasks({params, ctx}): Promise<IList<ITask>> {
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
@@ -58,7 +92,13 @@ export default function ({
             const docToInsert = dbUtils.convertToDoc(task);
 
             const newTask = await dbService.execute({
-                query: aql`INSERT ${docToInsert} IN ${collec} RETURN NEW`,
+                query: aql`INSERT ${{
+                    ...docToInsert,
+                    created_at: utils.getUnixTime(),
+                    created_by: ctx.userId,
+                    modified_at: utils.getUnixTime(),
+                    modified_by: ctx.userId
+                }} IN ${collec} RETURN NEW`,
                 ctx
             });
 
@@ -69,13 +109,25 @@ export default function ({
             const docToInsert = dbUtils.convertToDoc(task);
 
             const updatedTask = await dbService.execute({
-                query: aql`
-                    UPDATE ${docToInsert} IN ${collec}
-                    RETURN NEW`,
+                query: aql`UPDATE ${{
+                    ...docToInsert,
+                    modified_at: utils.getUnixTime(),
+                    modified_by: ctx.userId
+                }} IN ${collec} RETURN NEW`,
                 ctx
             });
 
             return dbUtils.cleanup(updatedTask[0]);
+        },
+        async deleteTask(taskId, ctx): Promise<ITask> {
+            const collec = dbService.db.collection(TASKS_COLLECTION);
+
+            const res = await dbService.execute({
+                query: aql`REMOVE ${{_key: taskId}} IN ${collec} RETURN OLD`,
+                ctx
+            });
+
+            return dbUtils.cleanup<ITask>(res.pop());
         }
     };
 }
