@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TaskRepo Create task 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`TaskRepo Create task 2`] = `
+Object {
+  "@value1": "core_tasks",
+  "value0": Object {
+    "_key": "_key",
+    "created_at": 1,
+    "created_by": "0",
+    "func": Object {
+      "args": Array [],
+      "moduleName": "moduleName",
+      "name": "func",
+      "subModuleName": "subModuleName",
+    },
+    "id": "id",
+    "modified_at": 1,
+    "modified_by": "0",
+    "name": "name",
+    "priority": 1,
+    "startAt": 123,
+    "status": "PENDING",
+  },
+}
+`;
+
+exports[`TaskRepo Delete task 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`TaskRepo Delete task 2`] = `
+Object {
+  "@value1": "core_tasks",
+  "value0": Object {
+    "_key": "id",
+  },
+}
+`;
+
+exports[`TaskRepo Retrieve tasks to execute 1`] = `
+"FOR task IN @@value0
+                    FILTER task.status == @value1
+                    FILTER task.startAt <= @value2
+                    SORT task.priority DESC, task.startAt ASC
+                RETURN task"
+`;
+
+exports[`TaskRepo Retrieve tasks to execute 2`] = `
+Object {
+  "@value0": "core_tasks",
+  "value1": "PENDING",
+  "value2": 1,
+}
+`;
+
+exports[`TaskRepo Update task 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+
+exports[`TaskRepo Update task 2`] = `
+Object {
+  "@value1": "core_tasks",
+  "value0": Object {
+    "_key": "_key",
+    "func": Object {
+      "args": Array [],
+      "moduleName": "moduleName",
+      "name": "func",
+      "subModuleName": "subModuleName",
+    },
+    "id": "id",
+    "modified_at": 1,
+    "modified_by": "0",
+    "name": "name",
+    "priority": 1,
+    "startAt": 123,
+    "status": "PENDING",
+  },
+}
+`;
