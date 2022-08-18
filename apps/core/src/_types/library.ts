@@ -41,7 +41,8 @@ export interface ILibraryFilterOptions extends ICoreEntityFilterOptions {
 
 export enum LibraryBehavior {
     STANDARD = 'standard',
-    FILES = 'files'
+    FILES = 'files',
+    DIRECTORIES = 'directories'
 }
 
 export const USERS_LIBRARY = 'users';

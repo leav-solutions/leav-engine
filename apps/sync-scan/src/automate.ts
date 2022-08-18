@@ -4,7 +4,7 @@
 import {IAmqpService} from '@leav/message-broker';
 import * as events from './events';
 import {FilesystemContent, IFileContent} from './_types/filesystem';
-import {FullTreeContent} from './_types/queries';
+import {FullTreeContent, IDbLibrariesSettings, IDbScanResult} from './_types/queries';
 
 enum Attr {
     NOTHING = 0,
@@ -15,11 +15,11 @@ enum Attr {
 
 const HASH_DIFF = 8;
 
-const _extractChildrenDbElems = (database: FullTreeContent, dbEl?: FullTreeContent): FullTreeContent => {
+const _extractChildrenDbElements = (database: FullTreeContent, dbEl?: FullTreeContent): FullTreeContent => {
     let toList: FullTreeContent = [];
 
     for (const e of database) {
-        if (e.record.is_directory && e.children.length) {
+        if (e.children.length) {
             toList = toList.concat(e.children);
         }
 
@@ -29,7 +29,7 @@ const _extractChildrenDbElems = (database: FullTreeContent, dbEl?: FullTreeConte
     dbEl = typeof dbEl !== 'undefined' ? dbEl.concat(database) : database;
 
     if (toList.length) {
-        return _extractChildrenDbElems(toList, dbEl);
+        return _extractChildrenDbElements(toList, dbEl);
     }
 
     return dbEl;
@@ -65,18 +65,22 @@ const _getEventTypeAndDbElIdx = (fc: IFileContent, dbEl: FullTreeContent) => {
     return {match, dbElIdx};
 };
 
-const _delUntrtDbEl = async (dbEl: FullTreeContent, amqp: IAmqpService): Promise<void> => {
+const _delUntreatedDbElements = async (
+    dbEl: FullTreeContent,
+    dbSettings: IDbLibrariesSettings,
+    amqp: IAmqpService
+): Promise<void> => {
     for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
         await events.remove(
             de.record.file_path === '.' ? de.record.file_name : `${de.record.file_path}/${de.record.file_name}`,
             de.record.inode,
-            de.record.is_directory,
+            de.record.library === dbSettings.directoriesLibraryId,
             amqp
         );
     }
 };
 
-const _trtFile = async (
+const _treatFile = async (
     match: Attr | number,
     dbElIdx: number[],
     dbEl: FullTreeContent,
@@ -123,32 +127,37 @@ const _trtFile = async (
 };
 
 const _process = async (
-    fsEl: FilesystemContent,
-    dbEl: FullTreeContent,
+    fsElements: FilesystemContent,
+    dbElements: FullTreeContent,
     level: number,
+    dbSettings: IDbLibrariesSettings,
     amqp: IAmqpService
 ): Promise<void> => {
-    if (!fsEl.filter(fse => fse.level === level).length) {
+    if (!fsElements.filter(fse => fse.level === level).length) {
         // delete all untreated elements in database before end of process
-        await _delUntrtDbEl(dbEl, amqp);
+        await _delUntreatedDbElements(dbElements, dbSettings, amqp);
         return;
     }
 
     let match: Attr;
     let dbElIdx: number[];
-    for (const fc of fsEl) {
+    for (const fc of fsElements) {
         if (fc.level === level && !fc.trt) {
-            ({match, dbElIdx} = _getEventTypeAndDbElIdx(fc, dbEl));
-            await _trtFile(match, dbElIdx, dbEl, fc, amqp);
+            ({match, dbElIdx} = _getEventTypeAndDbElIdx(fc, dbElements));
+            await _treatFile(match, dbElIdx, dbElements, fc, amqp);
             fc.trt = true;
         }
     }
 
-    await _process(fsEl, dbEl, level + 1, amqp);
+    await _process(fsElements, dbElements, level + 1, dbSettings, amqp);
 };
 
-export default async (fsScan: FilesystemContent, dbScan: FullTreeContent, amqp: IAmqpService): Promise<void> => {
-    const dbEl: FullTreeContent = _extractChildrenDbElems(dbScan);
+export default async (fsScan: FilesystemContent, dbScan: IDbScanResult, amqp: IAmqpService): Promise<void> => {
+    const dbElements = _extractChildrenDbElements(dbScan.treeContent);
+    const dbSettings = {
+        filesLibraryId: dbScan.filesLibraryId,
+        directoriesLibraryId: dbScan.directoriesLibraryId
+    };
 
-    await _process(fsScan, dbEl, 0, amqp);
+    await _process(fsScan, dbElements, 0, dbSettings, amqp);
 };

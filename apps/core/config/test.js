@@ -27,8 +27,7 @@ module.exports = {
     indexationManager: {
         queues: {
             events: 'test_indexation_event'
-        },
-        prefetch: 1
+        }
     },
     logs: {
         transport: 'console'

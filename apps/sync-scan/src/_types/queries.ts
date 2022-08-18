@@ -1,6 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+export interface IDbLibrariesSettings {
+    filesLibraryId: string;
+    directoriesLibraryId: string;
+}
+
+export interface IDbScanResult extends IDbLibrariesSettings {
+    treeContent: FullTreeContent;
+}
+
 export type FullTreeContent = IRecord[];
 
 export interface IRecord {
@@ -17,7 +26,6 @@ export interface IRecordAttr {
     file_name: string;
     file_path: string;
     inode: number;
-    is_directory: boolean;
     modified_at: number;
     modified_by: number;
     previews_status: {

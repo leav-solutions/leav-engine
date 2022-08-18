@@ -25,7 +25,11 @@ export const handleCreateEvent = async (
     const {filePath, fileName} = getInputData(scanMsg.pathAfter);
 
     // Search for existing record
-    let record = await getRecord(fileName, filePath, resources.library, true, deps, ctx);
+    const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(resources.library);
+    const filesLibraryId = resources.library;
+    const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
+
+    let record = await getRecord(fileName, filePath, recordLibrary, true, deps, ctx);
 
     // Preview and Previews status
     const {previewsStatus, previews} = getPreviewsDatas(systemPreviewVersions);
@@ -44,9 +48,9 @@ export const handleCreateEvent = async (
                 HASH: scanMsg.hash
             };
 
-            await updateRecordFile(recordData, record.id, resources.library, deps, ctx);
+            await updateRecordFile(recordData, record.id, recordLibrary, deps, ctx);
         } catch (e) {
-            deps.logger.warn(`[FilesManager] Event ${scanMsg.event} - Error when activate record : ${e.message}`);
+            deps.logger.error(`[FilesManager] Event ${scanMsg.event} - Error on record activation : ${e.message}`);
         }
     } else {
         const recordData: IFilesAttributes = {
@@ -54,31 +58,31 @@ export const handleCreateEvent = async (
             FILE_PATH: filePath,
             FILE_NAME: fileName,
             INODE: scanMsg.inode,
-            IS_DIRECTORY: scanMsg.isDirectory,
             HASH: scanMsg.hash,
             PREVIEWS_STATUS: previewsStatus,
             PREVIEWS: previews
         };
 
         try {
-            record = await createRecordFile(recordData, resources.library, deps, ctx);
+            record = await createRecordFile(recordData, recordLibrary, deps, ctx);
         } catch (e) {
-            deps.logger.warn(`[FilesManager] Event ${scanMsg.event} - Error when create the record: ${e.message}`);
+            deps.logger.error(`[${ctx.queryId}] Event ${scanMsg.event} - Error on record creation: ${e.message}`);
+            deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
         }
     }
 
     // Find the parent folder
-    const parentRecords = await getParentRecord(filePath, resources.library, deps, ctx);
+    const parentRecords = await getParentRecord(filePath, directoriesLibraryId, deps, ctx);
 
     // Link the child to his parent in the tree
-    await createFilesTreeElement(record, parentRecords, resources.library, deps, ctx);
+    await createFilesTreeElement(record, parentRecords, filesLibraryId, deps, ctx);
 
     // Create the previews
     if (!scanMsg.isDirectory) {
         await createPreview(
             record.id,
             scanMsg.pathAfter,
-            resources.library,
+            recordLibrary,
             systemPreviewVersions,
             deps.amqpService,
             deps.config

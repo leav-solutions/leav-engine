@@ -1,43 +1,80 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {i18n} from 'i18next';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
+import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
+import getLibraryDefaultAttributes from '../../../utils/helpers/getLibraryDefaultAttributes';
+import {FilesAttributes} from '../../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../../_types/library';
 import {TreeBehavior} from '../../../_types/tree';
 
-const _filesBehavior = (
-    library: ILibrary,
-    isNewLib: boolean,
-    deps: {treeRepo: ITreeRepo; utils: IUtils},
-    ctx: IQueryInfos
-): Promise<any> =>
-    isNewLib
-        ? deps.treeRepo.createTree({
-              treeData: {
-                  id: deps.utils.getLibraryTreeId(library.id),
-                  system: true,
-                  label: library.label,
-                  behavior: TreeBehavior.FILES,
-                  libraries: {
-                      [library.id]: {
-                          allowMultiplePositions: false,
-                          allowedAtRoot: true,
-                          allowedChildren: ['__all__']
-                      }
-                  }
-              },
-              ctx
-          })
-        : null;
+interface IDeps {
+    treeRepo: ITreeRepo;
+    libraryRepo: ILibraryRepo;
+    utils: IUtils;
+    translator: i18n;
+    config: IConfig;
+}
 
-export default (
-    library: ILibrary,
-    isNewLib: boolean,
-    deps: {treeRepo: ITreeRepo; utils: IUtils},
-    ctx: IQueryInfos
-): Promise<void> => {
+const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps, ctx: IQueryInfos): Promise<any> => {
+    if (!isNewLib) {
+        return;
+    }
+
+    // Create directories libraries
+    const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(library.id);
+    await deps.libraryRepo.createLibrary({
+        libData: {
+            id: directoriesLibraryId,
+            behavior: LibraryBehavior.DIRECTORIES,
+            system: false,
+            label: deps.config.lang.available.reduce((labels, lang) => {
+                labels[lang] = deps.translator.t('files.directories', {lng: lang});
+
+                return labels;
+            }, {}),
+            recordIdentityConf: {
+                label: FilesAttributes.FILE_NAME
+            }
+        },
+        ctx
+    });
+
+    await deps.libraryRepo.saveLibraryAttributes({
+        libId: directoriesLibraryId,
+        attributes: getLibraryDefaultAttributes(LibraryBehavior.DIRECTORIES, directoriesLibraryId),
+        ctx
+    });
+
+    // Create tree
+    deps.treeRepo.createTree({
+        treeData: {
+            id: deps.utils.getLibraryTreeId(library.id),
+            system: false,
+            label: library.label,
+            behavior: TreeBehavior.FILES,
+            libraries: {
+                [directoriesLibraryId]: {
+                    allowMultiplePositions: false,
+                    allowedAtRoot: true,
+                    allowedChildren: [directoriesLibraryId, library.id]
+                },
+                [library.id]: {
+                    allowMultiplePositions: false,
+                    allowedAtRoot: true,
+                    allowedChildren: []
+                }
+            }
+        },
+        ctx
+    });
+};
+
+export default (library: ILibrary, isNewLib: boolean, deps: IDeps, ctx: IQueryInfos): Promise<void> => {
     const actionByBehavior = {
         [LibraryBehavior.FILES]: () => _filesBehavior(library, isNewLib, deps, ctx)
     };

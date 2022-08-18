@@ -140,8 +140,6 @@ export const updateRecordFile = async (
     },
     ctx: IQueryInfos
 ) => {
-    const {userId} = deps.config.filesManager;
-
     // Update record file attributes
     const values: IValue[] = Object.keys(recordData).map(key => ({
         attribute: FilesAttributes[key],
@@ -156,7 +154,8 @@ export const updateRecordFile = async (
             ctx
         });
     } catch (e) {
-        deps.logger.warn(`[FilesManager] Error when update record: ${recordId}`);
+        deps.logger.warn(`[${ctx.queryId}] Error when updating record: ${recordId}`);
+        deps.logger.warn(`[${ctx.queryId}] ${e.stack}`);
     }
 };
 
@@ -170,54 +169,67 @@ export const getInputData = (input: string) => {
 export const createFilesTreeElement = async (
     record: IRecord,
     parentRecord: IRecord,
-    library: string,
+    filesLibraryId: string,
     deps: IHandleFileSystemDeps,
     ctx: IQueryInfos
 ) => {
     try {
-        const treeId = deps.utils.getLibraryTreeId(library);
+        const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
         const parentNode = parentRecord
             ? (
                   await deps.treeDomain.getNodesByRecord({
                       treeId,
-                      record: {id: parentRecord.id, library},
+                      record: {id: parentRecord.id, library: parentRecord.library},
                       ctx
                   })
               )[0]
             : null;
+
         await deps.treeDomain.addElement({
-            treeId: deps.utils.getLibraryTreeId(library),
+            treeId,
             element: {
                 id: record.id,
-                library
+                library: record.library
             },
             parent: parentNode,
             ctx
         });
     } catch (e) {
-        deps.logger.warn(`[FilesManager] Error when create tree element, record id: ${record.id}`);
+        deps.logger.error(
+            `[${ctx.queryId}] Error on tree element creation, record id: ${record.id}, error: ${e.message}`
+        );
+        deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
     }
 };
 
-export const deleteFilesTreeElement = async (recordId: string, library: string, deps: IHandleFileSystemDeps, ctx) => {
+export const deleteFilesTreeElement = async (
+    recordId: string,
+    filesLibraryId: string,
+    recordLibrary: string,
+    deps: IHandleFileSystemDeps,
+    ctx
+) => {
     try {
-        const treeId = deps.utils.getLibraryTreeId(library);
+        const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
         const recordNode = (
             await deps.treeDomain.getNodesByRecord({
                 treeId,
-                record: {id: recordId, library},
+                record: {id: recordId, library: recordLibrary},
                 ctx
             })
         )[0];
 
         await deps.treeDomain.deleteElement({
-            treeId: deps.utils.getLibraryTreeId(library),
+            treeId,
             nodeId: recordNode,
             deleteChildren: true,
             ctx
         });
     } catch (e) {
-        deps.logger.warn(`[FilesManager] Error when deleting element from tree: ${recordId}`);
+        deps.logger.warn(
+            `[${ctx.queryId}] Error on tree element deletion, record id: ${recordId}, error: ${e.message}`
+        );
+        deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
     }
 };
 
@@ -230,7 +242,7 @@ export const getPreviewsDatas = (previewVersions: IPreviewVersion[]) => {
             // previewsStatus default value
             previewsStatus[size.name] = {
                 status: -1,
-                message: 'wait for creation'
+                message: 'waiting for creation'
             };
 
             // previews default value
@@ -241,7 +253,7 @@ export const getPreviewsDatas = (previewVersions: IPreviewVersion[]) => {
     // pages default value
     previewsStatus.pages = {
         status: -1,
-        message: 'wait for creation'
+        message: 'waiting for creation'
     };
 
     previews.pages = '';

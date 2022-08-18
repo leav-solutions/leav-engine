@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {isFileAllowed} from '@leav/utils';
 import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
 import {ApolloClient, ApolloQueryResult} from 'apollo-client';
 import {ApolloLink, DocumentNode} from 'apollo-link';
@@ -12,8 +13,7 @@ import walk from 'walk';
 import * as utils from './utils';
 import {IConfig} from './_types/config';
 import {FilesystemContent, IFileContent} from './_types/filesystem';
-import {FullTreeContent} from './_types/queries';
-import {isFileAllowed} from '@leav/utils';
+import {IDbScanResult} from './_types/queries';
 
 export const getFilePath = (root: string, fsPath: string): string => root.replace(`${fsPath}`, '').slice(1) || '.';
 export const getFileLevel = (path: string): number => (path === '.' ? 0 : path.split('/').length);
@@ -66,7 +66,7 @@ export const filesystem = ({filesystem: fsys, allowFilesList, ignoreFilesList}: 
         });
     });
 
-export const database = async ({graphql}: IConfig): Promise<FullTreeContent> => {
+export const database = async ({graphql}: IConfig): Promise<IDbScanResult> => {
     const httpLink: ApolloLink = createHttpLink({uri: graphql.uri, fetch: fetch as any});
 
     const authLink: ApolloLink = new ApolloLink((operation, forward) => {
@@ -84,6 +84,34 @@ export const database = async ({graphql}: IConfig): Promise<FullTreeContent> => 
         cache: new InMemoryCache()
     });
 
+    // Get tree libraries settings to identify which library is directories and which is files
+    const treePropsQuery: DocumentNode = gql`
+        query GET_TREES($treeId: ID!) {
+            trees(filters: {id: $treeId}) {
+                list {
+                    libraries {
+                        library {
+                            id
+                            behavior
+                        }
+                    }
+                }
+            }
+        }
+    `;
+    const treePropsResult: ApolloQueryResult<any> = await client.query({
+        query: treePropsQuery,
+        variables: {treeId: graphql.treeId}
+    });
+    const treeData = treePropsResult.data.trees.list[0];
+    if (!treeData) {
+        throw new Error(`Unknown tree ${graphql.treeId}`);
+    }
+
+    const filesLibraryId = treeData.libraries.find(l => l.library.behavior === 'files').library.id;
+    const directoriesLibraryId = treeData.libraries.find(l => l.library.behavior === 'directories').library.id;
+
+    // Get full tree content
     const getFullTreeContent: DocumentNode = gql`
         query GET_FULL_TREE_CONTENT($treeId: ID!) {
             fullTreeContent(treeId: $treeId)
@@ -95,5 +123,9 @@ export const database = async ({graphql}: IConfig): Promise<FullTreeContent> => 
         variables: {treeId: graphql.treeId}
     });
 
-    return result.data.fullTreeContent;
+    return {
+        filesLibraryId,
+        directoriesLibraryId,
+        treeContent: result.data.fullTreeContent
+    };
 };

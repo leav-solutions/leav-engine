@@ -39,7 +39,6 @@ import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
 import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
-import validateFilesParent from './helpers/validateFilesParent';
 
 export interface ITreeDomain {
     isNodePresent(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
@@ -153,7 +152,7 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -405,7 +404,7 @@ export default function({
             const treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
             const treeExists = !!treeProps;
 
-            if (!(await _isExistingTree(treeId, ctx))) {
+            if (!treeExists) {
                 errors.treeId = Errors.UNKNOWN_TREE;
             }
 
@@ -422,6 +421,7 @@ export default function({
             // check allow as children setting
             const parentRecord = parent ? await treeRepo.getRecordByNodeId({treeId, nodeId: parent, ctx}) : null;
             const parentElement = parentRecord ? {id: parentRecord.id, library: parentRecord.library} : null;
+
             if (treeExists && isRecordExisting && _isForbiddenAsChild(treeProps, parentElement, element)) {
                 errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
             }
@@ -443,17 +443,8 @@ export default function({
                 }
             }
 
-            // If files tree, check if parent is not a file
-            if (treeExists && treeProps.behavior === TreeBehavior.FILES) {
-                const validateParentDir = await validateFilesParent(parentElement, {valueDomain}, ctx);
-
-                if (!validateParentDir.isValid) {
-                    errors.parent = validateParentDir.message;
-                }
-            }
-
             if (Object.keys(errors).length) {
-                throw new ValidationError(errors);
+                throw new ValidationError(errors, Object.values(errors).join(', '));
             }
 
             return treeRepo.addElement({
@@ -545,16 +536,8 @@ export default function({
                 errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
             }
 
-            // If files tree, check if parent is not a file
-            if (treeExists && treeProps.behavior === TreeBehavior.FILES) {
-                const validateParentDir = await validateFilesParent(parentElement, {valueDomain}, ctx);
-                if (!validateParentDir.isValid) {
-                    errors.parent = validateParentDir.message;
-                }
-            }
-
             if (!!Object.keys(errors).length) {
-                throw new ValidationError(errors);
+                throw new ValidationError(errors, Object.values(errors).join(', '));
             }
 
             await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
@@ -574,7 +557,7 @@ export default function({
             }
 
             if (!!Object.keys(errors).length) {
-                throw new ValidationError(errors);
+                throw new ValidationError(errors, Object.values(errors).join(', '));
             }
 
             const canDetach = await treeNodePermissionDomain.getTreeNodePermission({
@@ -612,7 +595,7 @@ export default function({
             }
 
             if (Object.keys(errors).length) {
-                throw new ValidationError(errors);
+                throw new ValidationError(errors, Object.values(errors).join(', '));
             }
 
             return treeRepo.getTreeContent({treeId, startingNode, depth, childrenCount, ctx});

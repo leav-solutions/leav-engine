@@ -5,11 +5,13 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference, omit, union} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
+import {IConfig} from '_types/config';
 import {ErrorFieldDetail} from '_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
@@ -54,9 +56,11 @@ interface IDeps {
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.cache.cacheService'?: ICachesService;
+    translator?: i18n;
+    config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -67,7 +71,9 @@ export default function({
     'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.helpers.validate': validateHelper = null,
-    'core.infra.cache.cacheService': cacheService = null
+    'core.infra.cache.cacheService': cacheService = null,
+    translator: translator = null,
+    config = null
 }: IDeps = {}): ILibraryDomain {
     return {
         async getLibraries({
@@ -245,7 +251,7 @@ export default function({
                 ctx
             });
 
-            await runBehaviorPostSave(savedLib, !existingLib, {treeRepo, utils}, ctx);
+            await runBehaviorPostSave(savedLib, !existingLib, {treeRepo, libraryRepo, translator, utils, config}, ctx);
 
             // delete associate values if attribute is delete
             const deletedAttrs = difference(difference(currentLibraryAttributes, defaultAttributes), libAttributes);

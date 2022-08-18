@@ -417,6 +417,8 @@ services:
     volumes:
       - arango_data:/var/lib/arangodb3
       - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
+    ports:
+      - "8529:8529"
 
   message-broker:
     image: *message_broker_image

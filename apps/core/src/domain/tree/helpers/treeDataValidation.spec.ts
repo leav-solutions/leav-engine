@@ -6,7 +6,7 @@ import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {PermissionsRelations} from '../../../_types/permissions';
-import {mockLibrary, mockLibraryFiles} from '../../../__tests__/mocks/library';
+import {mockLibrary} from '../../../__tests__/mocks/library';
 import {mockFilesTree, mockTree} from '../../../__tests__/mocks/tree';
 import treeDataValidation from './treeDataValidation';
 
@@ -89,43 +89,6 @@ describe('TreeDataValidation', () => {
             });
 
             await expect(validationHelper.validate({...mockFilesTree}, ctx)).rejects.toThrow(ValidationError);
-        });
-
-        test('Should throw if, on files behavior, binding more than one library', async () => {
-            const mockLibDomainNotFiles: Mockify<ILibraryDomain> = {
-                getLibraries: global.__mockPromise({
-                    list: [
-                        {...mockLibraryFiles, id: 'lib1'},
-                        {...mockLibraryFiles, id: 'lib2'}
-                    ]
-                })
-            };
-
-            const validationHelper = treeDataValidation({
-                'core.domain.library': mockLibDomainNotFiles as ILibraryDomain,
-                'core.utils': mockUtils as IUtils
-            });
-
-            await expect(
-                validationHelper.validate(
-                    {
-                        ...mockFilesTree,
-                        libraries: {
-                            lib1: {
-                                allowMultiplePositions: false,
-                                allowedAtRoot: true,
-                                allowedChildren: ['__all__']
-                            },
-                            lib2: {
-                                allowMultiplePositions: false,
-                                allowedAtRoot: true,
-                                allowedChildren: ['__all__']
-                            }
-                        }
-                    },
-                    ctx
-                )
-            ).rejects.toThrow(ValidationError);
         });
     });
 });

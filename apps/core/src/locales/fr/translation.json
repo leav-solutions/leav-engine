@@ -143,5 +143,8 @@
     },
     "forms": {
         "missing_form_warning": "Vous pouvez personnaliser cette vue dans l'administration en créant un formulaire avec l'identifiant **{{idForm}}** pour cette bibliothèque."
+    },
+    "files": {
+        "directories": "Dossiers"
     }
 }
