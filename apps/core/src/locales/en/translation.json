@@ -142,5 +142,8 @@
     },
     "forms": {
         "missing_form_warning": "You can customize this view in the administration by creating a form with the id **{{idForm}}** for this library."
+    },
+    "files": {
+        "directories": "Directories"
     }
 }

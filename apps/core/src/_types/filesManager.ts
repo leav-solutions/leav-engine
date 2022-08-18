@@ -10,7 +10,6 @@ export enum FileEvents {
 
 export enum FilesAttributes {
     ROOT_KEY = 'root_key',
-    IS_DIRECTORY = 'is_directory',
     FILE_PATH = 'file_path',
     FILE_NAME = 'file_name',
     INODE = 'inode',
@@ -22,7 +21,6 @@ export enum FilesAttributes {
 
 export interface IFilesAttributes {
     ROOT_KEY?: string;
-    IS_DIRECTORY?: boolean;
     FILE_PATH?: string;
     FILE_NAME?: string;
     INODE?: number;

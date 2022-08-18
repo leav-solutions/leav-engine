@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService, IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
@@ -10,8 +11,11 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
+import {LibraryBehavior} from '../../_types/library';
+import {mockLibraryFiles} from '../../__tests__/mocks/library';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
+import {mockFilesTree} from '../../__tests__/mocks/tree';
 import filesManager from './filesManagerDomain';
 import {createPreview} from './helpers/handlePreview';
 import {systemPreviewVersions} from './_constants';
@@ -78,6 +82,14 @@ describe('FilesManager', () => {
         queryId: 'filesManagerTest'
     };
 
+    const mockLibraryDomain: Mockify<ILibraryDomain> = {
+        getLibraryProperties: global.__mockPromise(mockLibraryFiles)
+    };
+
+    const mockLibraryDomainDirectories: Mockify<ILibraryDomain> = {
+        getLibraryProperties: global.__mockPromise({...mockLibraryFiles, behavior: LibraryBehavior.DIRECTORIES})
+    };
+
     beforeAll(async done => {
         mockAmqpService = await amqpService({
             config: mockConfig.amqp
@@ -109,7 +121,7 @@ describe('FilesManager', () => {
             find: global.__mockPromise({
                 cursor: {},
                 totalCount: 1,
-                list: [{id: 'id', is_directory: false, file_path: 'file_path', file_name: 'file_name'}]
+                list: [{id: 'id', file_path: 'file_path', file_name: 'file_name', library: mockLibraryFiles.id}]
             })
         };
 
@@ -117,6 +129,7 @@ describe('FilesManager', () => {
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.library': mockLibraryDomain as ILibraryDomain,
             'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
@@ -127,7 +140,7 @@ describe('FilesManager', () => {
         expect(createPreview).toBeCalledWith(
             'id',
             'file_path/file_name',
-            'libraryId',
+            mockLibraryFiles.id,
             systemPreviewVersions,
             mockAmqpService,
             mockConfig
@@ -143,18 +156,47 @@ describe('FilesManager', () => {
             find: global.__mockPromise({
                 cursor: {},
                 totalCount: 1,
-                list: [{id: 'id', is_directory: true, file_path: 'dir_path', file_name: 'file_name'}]
+                list: [{id: 'id', file_path: 'dir_path', file_name: 'file_name'}]
             })
         };
 
         const mockTreeDomain: Mockify<ITreeDomain> = {
+            getTrees: global.__mockPromise({
+                list: [
+                    {
+                        ...mockFilesTree
+                    }
+                ]
+            }),
             getTreeContent: global.__mockPromise([
-                {record: {id: 'file1', is_directory: false, file_path: 'file_path_1', file_name: 'file_name_1'}},
-                {record: {id: 'file2', is_directory: false, file_path: 'file_path_2', file_name: 'file_name_2'}}
+                {
+                    record: {
+                        id: 'file1',
+                        file_path: 'file_path_1',
+                        file_name: 'file_name_1',
+                        library: 'lib2'
+                    }
+                },
+                {
+                    record: {
+                        id: 'file2',
+                        file_path: 'file_path_2',
+                        file_name: 'file_name_2',
+                        library: 'lib2'
+                    }
+                }
             ]),
             getNodesByRecord: global.__mockPromise({
                 id: '12345',
-                record: {id: 'file1', is_directory: false, file_path: 'file_path_1', file_name: 'file_name_1'}
+                record: {id: 'file1', file_path: 'file_path_1', file_name: 'file_name_1', library: mockLibraryFiles.id}
+            })
+        };
+
+        const mockLibraryDomainForDirectories: Mockify<ILibraryDomain> = {
+            getLibraryProperties: jest.fn(id => {
+                return id === 'lib2'
+                    ? {...mockLibraryFiles, id}
+                    : {...mockLibraryFiles, id, behavior: LibraryBehavior.DIRECTORIES};
             })
         };
 
@@ -162,12 +204,13 @@ describe('FilesManager', () => {
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
             'core.domain.tree': mockTreeDomain as ITreeDomain,
             'core.utils': mockUtils as IUtils
         });
 
-        await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordId: 'id'});
+        await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordId: 'id'});
 
         expect(createPreview).toBeCalledTimes(2);
 
@@ -175,7 +218,7 @@ describe('FilesManager', () => {
             1,
             'file1',
             'file_path_1/file_name_1',
-            'libraryId',
+            'lib2',
             systemPreviewVersions,
             mockAmqpService,
             mockConfig
@@ -185,7 +228,7 @@ describe('FilesManager', () => {
             2,
             'file2',
             'file_path_2/file_name_2',
-            'libraryId',
+            'lib2',
             systemPreviewVersions,
             mockAmqpService,
             mockConfig
@@ -198,9 +241,8 @@ describe('FilesManager', () => {
                 cursor: {},
                 totalCount: 1,
                 list: [
-                    {id: 'id', is_directory: true, file_path: 'dir_path', file_name: 'file_name'},
-                    {id: 'file1', is_directory: false, file_path: 'file_path_1', file_name: 'file_name_1'},
-                    {id: 'file2', is_directory: false, file_path: 'file_path_2', file_name: 'file_name_2'}
+                    {id: 'file1', file_path: 'file_path_1', file_name: 'file_name_1', library: mockLibraryFiles.id},
+                    {id: 'file2', file_path: 'file_path_2', file_name: 'file_name_2', library: mockLibraryFiles.id}
                 ]
             })
         };
@@ -209,6 +251,7 @@ describe('FilesManager', () => {
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.library': mockLibraryDomain as ILibraryDomain,
             'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
@@ -220,7 +263,7 @@ describe('FilesManager', () => {
             1,
             'file1',
             'file_path_1/file_name_1',
-            'libraryId',
+            mockLibraryFiles.id,
             systemPreviewVersions,
             mockAmqpService,
             mockConfig
@@ -230,7 +273,7 @@ describe('FilesManager', () => {
             2,
             'file2',
             'file_path_2/file_name_2',
-            'libraryId',
+            mockLibraryFiles.id,
             systemPreviewVersions,
             mockAmqpService,
             mockConfig
@@ -245,16 +288,16 @@ describe('FilesManager', () => {
                 list: [
                     {
                         id: 'file1',
-                        is_directory: false,
                         file_path: 'file_path_1',
                         file_name: 'file_name_1',
+                        library: mockLibraryFiles.id,
                         previews_status: [{status: 0, message: 'msg'}]
                     },
                     {
                         id: 'file2',
-                        is_directory: false,
                         file_path: 'file_path_2',
                         file_name: 'file_name_2',
+                        library: mockLibraryFiles.id,
                         previews_status: [
                             {status: -1, message: 'msg'},
                             {status: 0, message: 'msg'}
@@ -268,6 +311,7 @@ describe('FilesManager', () => {
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.domain.library': mockLibraryDomain as ILibraryDomain,
             'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
@@ -278,7 +322,7 @@ describe('FilesManager', () => {
         expect(createPreview).toHaveBeenCalledWith(
             'file2',
             'file_path_2/file_name_2',
-            'libraryId',
+            mockLibraryFiles.id,
             systemPreviewVersions,
             mockAmqpService,
             mockConfig

@@ -13,7 +13,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {AdminPermissionsActions} from '../../_types/permissions';
-import {ITree, TreeBehavior} from '../../_types/tree';
+import {ITree} from '../../_types/tree';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {ILibraryDomain} from '../library/libraryDomain';
@@ -67,6 +67,7 @@ describe('treeDomain', () => {
 
     const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockTree);
     const mockGetEntityByIdHelperNoResult = jest.fn().mockReturnValue(null);
+    const mockGetEntityByIdHelperFilesTree = jest.fn().mockReturnValue({...mockFilesTree});
 
     const mockUtils: Mockify<IUtils> = {
         isIdValid: jest.fn().mockReturnValue(true),
@@ -467,9 +468,9 @@ describe('treeDomain', () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 addElement: jest.fn(),
                 getTrees: global.__mockPromise({list: [mockFilesTree], totalCount: 1}),
-                isNodePresent: global.__mockPromise(false),
+                isNodePresent: global.__mockPromise(true),
                 isRecordPresent: global.__mockPromise(false),
-                getRecordByNodeId: global.__mockPromise({id: '1345', library: 'lib2'})
+                getRecordByNodeId: global.__mockPromise({id: '1345', library: 'lib2'}) // Parent record
             };
 
             const recordDomain: Mockify<IRecordDomain> = {
@@ -482,10 +483,6 @@ describe('treeDomain', () => {
             const mockValueDomain: Mockify<IValueDomain> = {
                 getValues: global.__mockPromise([{value: false}])
             };
-            const mockGetEntityByIdHelperFilesTree = jest.fn().mockReturnValue({
-                ...mockTree,
-                behavior: TreeBehavior.FILES
-            });
 
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
@@ -502,7 +499,7 @@ describe('treeDomain', () => {
                     parent: '999',
                     ctx
                 })
-            ).rejects.toHaveProperty('fields.parent');
+            ).rejects.toHaveProperty('fields.element');
         });
 
         test('Should throw if forbidden as child', async () => {
@@ -689,9 +686,9 @@ describe('treeDomain', () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 addElement: jest.fn(),
                 getTrees: global.__mockPromise({list: [mockFilesTree], totalCount: 1}),
-                isNodePresent: global.__mockPromise(false),
+                isNodePresent: global.__mockPromise(true),
                 getElementAncestors: global.__mockPromise([]),
-                getRecordByNodeId: global.__mockPromise({id: '1345', library: 'lib1'})
+                getRecordByNodeId: global.__mockPromise({id: '1345', library: 'lib2'})
             };
 
             const recordDomain: Mockify<IRecordDomain> = {
@@ -705,23 +702,6 @@ describe('treeDomain', () => {
                 getValues: global.__mockPromise([{value: false}])
             };
 
-            const mockGetEntityByIdHelperWithLibsSettings = jest.fn().mockReturnValue({
-                ...mockTree,
-                behavior: TreeBehavior.FILES,
-                libraries: {
-                    lib1: {
-                        allowMultiplePositions: true,
-                        allowedAtRoot: false,
-                        allowedChildren: ['__all__']
-                    },
-                    lib2: {
-                        allowMultiplePositions: true,
-                        allowedAtRoot: true,
-                        allowedChildren: ['lib2']
-                    }
-                }
-            });
-
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
@@ -729,7 +709,7 @@ describe('treeDomain', () => {
                 'core.domain.value': mockValueDomain as IValueDomain,
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
                 'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithLibsSettings as GetCoreEntityByIdFunc,
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperFilesTree as GetCoreEntityByIdFunc,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
@@ -740,7 +720,7 @@ describe('treeDomain', () => {
                     parentTo: '999',
                     ctx
                 })
-            ).rejects.toHaveProperty('fields.parent');
+            ).rejects.toHaveProperty('fields.element');
         });
 
         test('Should throw if forbidden as child', async () => {

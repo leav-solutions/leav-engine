@@ -5,6 +5,7 @@ import {aql, Database, DocumentCollection} from 'arangojs';
 import {asFunction, AwilixContainer} from 'awilix';
 import {resolve} from 'dns';
 import {readdirSync} from 'fs';
+import {ICachesService} from 'infra/cache/cacheService';
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
 import {Winston} from 'winston';
 import {IAttributeFilterOptions} from '_types/attribute';
@@ -348,6 +349,12 @@ describe('dbUtils', () => {
                 execute: global.__mockPromise([])
             };
 
+            const mockCacheService: Mockify<ICachesService> = {
+                getCache: jest.fn(() => ({
+                    deleteAll: jest.fn()
+                }))
+            };
+
             const mockDepsManager = {
                 build: depDefault => {
                     return depDefault();
@@ -365,6 +372,7 @@ describe('dbUtils', () => {
 
             const testDbUtils = dbUtils({
                 'core.infra.db.dbService': mockDbServ,
+                'core.infra.cache.cacheService': mockCacheService as ICachesService,
                 'core.utils.logger': mockLogger as Winston,
                 'core.infra.plugins': mockPluginsRepo as IPluginsRepo,
                 config: mockConf as IConfig

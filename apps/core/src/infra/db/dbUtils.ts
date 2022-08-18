@@ -17,6 +17,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {collectionTypes, IDbService} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
 import {IExecuteWithCount} from './_types';
@@ -48,13 +49,15 @@ export interface IDbUtils {
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
+    'core.infra.cache.cacheService'?: ICachesService;
     'core.utils.logger'?: winston.Winston;
     'core.infra.plugins'?: IPluginsRepo;
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
+    'core.infra.cache.cacheService': cacheService = null,
     'core.utils.logger': logger = null,
     'core.infra.plugins': pluginsRepo = null,
     config = null
@@ -171,6 +174,11 @@ export default function({
                 );
 
                 await _runMigrationFiles(pluginMigrationFiles, pluginMigrationFolder, plugin.infos.name);
+            }
+
+            /** Clear cache */
+            for (const cacheType of Object.values(ECacheType)) {
+                cacheService.getCache(cacheType).deleteAll();
             }
         },
 

@@ -31,7 +31,12 @@ export const mockFilesTree: ITree = {
         lib1: {
             allowMultiplePositions: false,
             allowedAtRoot: true,
-            allowedChildren: ['__all__']
+            allowedChildren: ['lib1', 'lib2']
+        },
+        lib2: {
+            allowMultiplePositions: false,
+            allowedAtRoot: true,
+            allowedChildren: []
         }
     }
 };

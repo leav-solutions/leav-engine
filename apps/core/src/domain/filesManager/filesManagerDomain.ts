@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {i18n} from 'i18next';
@@ -17,6 +18,7 @@ import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
+import {LibraryBehavior} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {IRecordDomain} from '../record/recordDomain';
 import {createPreview} from './helpers/handlePreview';
@@ -59,6 +61,7 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
+    'core.domain.library'?: ILibraryDomain;
     'core.utils'?: IUtils;
     translator?: i18n;
 }
@@ -71,6 +74,7 @@ export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.domain.filesManager.helpers.messagesHandler': messagesHandler = null,
+    'core.domain.library': libraryDomain = null,
     'core.utils': utils = null,
     translator = null
 }: IDeps): IFilesManagerDomain {
@@ -207,6 +211,13 @@ export default function ({
                 return records;
             };
 
+            const libraryProps = await libraryDomain.getLibraryProperties(libraryId, ctx);
+
+            if (!recordId && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
+                // Nothing to do if we ask to generate previews for directories
+                return false;
+            }
+
             let records = (
                 await recordDomain.find({
                     params: {
@@ -219,26 +230,51 @@ export default function ({
                 })
             ).list;
 
-            // if recordId is a directory: recreate all previews of subfiles
-            if (records.length === 1 && records[0][FilesAttributes.IS_DIRECTORY]) {
-                const treeId = utils.getLibraryTreeId(libraryId);
-                const treeNodes = await treeDomain.getNodesByRecord({
-                    treeId,
-                    record: {id: records[0].id, library: libraryId},
-                    ctx
-                });
-
-                const nodes: ITreeNode[] = await treeDomain.getTreeContent({
-                    treeId,
-                    startingNode: treeNodes[0], // Process only first node, as a record in file tree shouldn't be at multiple places
-                    ctx
-                });
-
-                records = _getChildren(nodes);
+            if (!records.length) {
+                // No records found, nothing to do
+                return false;
             }
 
-            // del all directories records
-            records = records.filter(r => !r[FilesAttributes.IS_DIRECTORY]);
+            // If recordId is a directory: recreate all previews of subfiles
+            if (recordId && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
+                // Find tree where this directory belongs
+                const trees = await treeDomain.getTrees({
+                    params: {
+                        filters: {
+                            library: libraryId
+                        }
+                    },
+                    ctx
+                });
+                const tree = trees.list[0];
+                const treeLibraries = await Promise.all(
+                    Object.keys(tree.libraries).map(treeLibraryId =>
+                        libraryDomain.getLibraryProperties(treeLibraryId, ctx)
+                    )
+                );
+                const filesLibraryId = treeLibraries.find(l => l.behavior === LibraryBehavior.FILES).id;
+
+                if (trees.list.length) {
+                    const treeId = tree.id;
+                    const treeNodes = await treeDomain.getNodesByRecord({
+                        treeId,
+                        record: {id: records[0].id, library: libraryId},
+                        ctx
+                    });
+
+                    // Get children for first node only, as a record in file tree shouldn't be at multiple places
+                    const nodes: ITreeNode[] = await treeDomain.getTreeContent({
+                        treeId,
+                        startingNode: treeNodes[0],
+                        ctx
+                    });
+
+                    records = _getChildren(nodes);
+
+                    // del all directories records
+                    records = records.filter(r => r.library === filesLibraryId);
+                }
+            }
 
             for (const r of records) {
                 if (
@@ -251,7 +287,7 @@ export default function ({
                     await createPreview(
                         r.id,
                         `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
-                        libraryId,
+                        r.library,
                         systemPreviewVersions,
                         amqpService,
                         config

@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as fs from 'fs';
 import {join} from 'path';
-import {Operator} from '../../../../_types/record';
 import {FilesAttributes} from '../../../../_types/filesManager';
+import {Operator} from '../../../../_types/record';
 import {makeGraphQlCall} from '../../api/e2eUtils';
 
 jest.setTimeout(30000);
@@ -85,19 +85,15 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const res = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id library {id}} } }`
                 );
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[library].list.length).toBe(1);
-                expect(res.data.data[library].list[0]).toEqual(
-                    expect.objectContaining({
-                        [FilesAttributes.IS_DIRECTORY]: false
-                    })
-                );
+                expect(res.data.data[library].list[0].library.id).toEqual(library);
 
                 expect(await fileExists(baseFile)).toBeTruthy();
                 done();
@@ -111,20 +107,16 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const res = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newDirName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id library {id}} } }`
                 );
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[library].list).toHaveLength(1);
-                expect(res.data.data[library].list[0]).toEqual(
-                    expect.objectContaining({
-                        [FilesAttributes.IS_DIRECTORY]: true
-                    })
-                );
+                expect(res.data.data[library].list[0].library.id).toEqual(library + '_directories');
 
                 expect(await fileExists(workDir)).toBeTruthy();
                 done();
@@ -138,10 +130,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const res = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -158,10 +150,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const res = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -178,10 +170,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const res = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -199,18 +191,18 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const res1 = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 const res2 = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 expect(res1.data.errors).toBeUndefined();
@@ -231,10 +223,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const res = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, newDirName)}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, newDirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -254,18 +246,18 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const dirRecordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 const fileRecordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName, newDirName)}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName, newDirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 expect(dirRecordsFind.data.errors).toBeUndefined();
@@ -286,10 +278,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const res = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
-                    ]) { list {id is_directory} } }`
+                    ]) { list {id} } }`
                 );
 
                 expect(res.data.errors).toBeUndefined();
@@ -324,10 +316,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -357,10 +349,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -390,10 +382,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -423,10 +415,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -456,10 +448,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pdf'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -489,10 +481,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.odp'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -522,10 +514,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pptx'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -555,10 +547,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.docx'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -588,10 +580,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.eps'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);
@@ -614,10 +606,10 @@ describe('Files manager', () => {
             setTimeout(async () => {
                 const recordsFind = await makeGraphQlCall(
                     `{ files(filters: [
-                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"}, 
+                        {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.mp4'}"}
-                    ]) { list {id is_directory previews previews_status} } }`
+                    ]) { list {id previews previews_status} } }`
                 );
 
                 expect(recordsFind.data.data[library].list).toHaveLength(1);

@@ -43,11 +43,11 @@ export default function ({
     };
 
     const _validateFilesTree = (treeLibraries: ILibrary[]) => {
-        if (treeLibraries.length > 1) {
-            throw new ValidationError<ITree>({libraries: Errors.TOO_MUCH_LIBRARIES_ON_FILES_TREE});
-        }
+        const hasForbiddenLibrary = treeLibraries.some(
+            lib => lib.behavior !== LibraryBehavior.FILES && lib.behavior !== LibraryBehavior.DIRECTORIES
+        );
 
-        if (treeLibraries[0].behavior !== LibraryBehavior.FILES) {
+        if (hasForbiddenLibrary) {
             throw new ValidationError<ITree>({libraries: Errors.NON_FILES_LIBRARY});
         }
     };
@@ -79,7 +79,11 @@ export default function ({
         _validatePermissionsConf(treeData);
 
         if (treeData.behavior === TreeBehavior.FILES) {
-            _validateFilesTree(existingLibraries);
+            const treeLibraries = Object.keys(treeData.libraries).map(libId =>
+                existingLibraries.find(lib => lib.id === libId)
+            );
+
+            _validateFilesTree(treeLibraries);
         }
     };
 

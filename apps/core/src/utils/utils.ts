@@ -54,6 +54,13 @@ export interface IUtils {
      */
     getLibraryTreeId(library: string): string;
 
+    /**
+     * Get the directories library associated with the library given
+     *
+     * @param library
+     */
+    getDirectoriesLibraryId(library: string): string;
+
     forceArray<T>(val: T | T[]): T[];
 
     getDefaultActionsList(attribute: IAttribute): IActionsListConfig;
@@ -167,6 +174,9 @@ export default function ({translator = null}: IUtilsDeps = {}): IUtils {
         },
         getLibraryTreeId(library) {
             return `${library}_tree`;
+        },
+        getDirectoriesLibraryId(library) {
+            return `${library}_directories`;
         },
         forceArray<T>(val: T | T[]): T[] {
             return Array.isArray(val) ? val : [val];

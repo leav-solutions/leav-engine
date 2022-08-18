@@ -5,6 +5,7 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {i18n} from 'i18next';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
@@ -24,7 +25,17 @@ import libraryDomain from './libraryDomain';
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
 
 const mockConfig: Mockify<Config.IConfig> = {
-    eventsManager: eventsManagerMockConfig as Config.IEventsManager
+    eventsManager: eventsManagerMockConfig as Config.IEventsManager,
+    lang: {
+        available: ['fr', 'en'],
+        default: 'fr'
+    }
+};
+
+const mockTranslator: Mockify<i18n> = {
+    t: jest.fn((key: string) => {
+        return key;
+    })
 };
 
 const mockCacheService: Mockify<ICacheService> = {
@@ -70,7 +81,8 @@ describe('LibraryDomain', () => {
     const mockUtils: Mockify<IUtils> = {
         isIdValid: jest.fn().mockReturnValue(true),
         getLibraryTreeId: jest.fn().mockReturnValue({}),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:library:42')
+        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:library:42'),
+        getDirectoriesLibraryId: jest.fn().mockReturnValue('files_directories')
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -170,7 +182,6 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
                             {id: 'file_path', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
@@ -281,8 +292,12 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
-                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                            {id: 'file_path', type: AttributeTypes.SIMPLE},
+                            {id: 'file_name', type: AttributeTypes.SIMPLE},
+                            {id: 'inode', type: AttributeTypes.SIMPLE},
+                            {id: 'previews', type: AttributeTypes.SIMPLE},
+                            {id: 'previews_status', type: AttributeTypes.SIMPLE},
+                            {id: 'hash', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
                     }),
@@ -310,9 +325,7 @@ describe('LibraryDomain', () => {
                     },
                     ctx
                 );
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes.includes('is_directory')).toBe(
-                    true
-                );
+                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes.includes('file_path')).toBe(true);
             });
 
             test('For FILES library, create linked tree', async () => {
@@ -339,8 +352,12 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
-                            {id: 'file_path', type: AttributeTypes.SIMPLE}
+                            {id: 'file_path', type: AttributeTypes.SIMPLE},
+                            {id: 'file_name', type: AttributeTypes.SIMPLE},
+                            {id: 'inode', type: AttributeTypes.SIMPLE},
+                            {id: 'previews', type: AttributeTypes.SIMPLE},
+                            {id: 'previews_status', type: AttributeTypes.SIMPLE},
+                            {id: 'hash', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
                     }),
@@ -358,7 +375,9 @@ describe('LibraryDomain', () => {
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                     'core.utils': mockUtils as IUtils,
-                    'core.infra.tree': mockTreeRepo as ITreeRepo
+                    'core.infra.tree': mockTreeRepo as ITreeRepo,
+                    config: mockConfig as Config.IConfig,
+                    translator: mockTranslator as i18n
                 });
 
                 await libDomain.saveLibrary(
@@ -398,7 +417,6 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
                             {id: 'file_path', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
@@ -459,7 +477,6 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
                             {id: 'file_path', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
@@ -534,7 +551,6 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
                             {id: 'file_path', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
@@ -595,7 +611,6 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
                             {id: 'file_path', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
@@ -657,7 +672,6 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
                             {id: 'file_path', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
@@ -747,7 +761,6 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
                             {id: 'file_path', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0
@@ -798,7 +811,6 @@ describe('LibraryDomain', () => {
                             {id: 'attr1', type: AttributeTypes.SIMPLE},
                             {id: 'attr2', type: AttributeTypes.SIMPLE},
                             {id: 'root_key', type: AttributeTypes.SIMPLE},
-                            {id: 'is_directory', type: AttributeTypes.SIMPLE},
                             {id: 'file_path', type: AttributeTypes.SIMPLE}
                         ],
                         totalCount: 0

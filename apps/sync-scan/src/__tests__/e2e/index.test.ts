@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {amqpService, IAmqpService} from '@leav/message-broker';
 import fs from 'fs';
 import automate from '../../automate';
 import {getConfig} from '../../config';
-import {IAmqpService, amqpService} from '@leav/message-broker';
 import * as scan from '../../scan';
 import {IConfig} from '../../_types/config';
 import {FilesystemContent} from '../../_types/filesystem';
-import {FullTreeContent} from '../../_types/queries';
+import {IDbScanResult} from '../../_types/queries';
 import test4Db from './database/test4';
 import test5Db from './database/test5';
 
@@ -86,7 +86,11 @@ describe('e2e tests', () => {
             expect.assertions(10);
 
             const fsc: FilesystemContent = await scan.filesystem(cfg);
-            const dbs: FullTreeContent = [];
+            const dbs: IDbScanResult = {
+                filesLibraryId: 'files',
+                directoriesLibraryId: 'files_directories',
+                treeContent: []
+            };
 
             await automate(fsc, dbs, amqp);
 
@@ -125,8 +129,8 @@ describe('e2e tests', () => {
             fs.renameSync(`${cfg.filesystem.absolutePath}/dir/sfile`, `${cfg.filesystem.absolutePath}/dir/sf`); // RENAME
             fs.writeFileSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
 
-            const fsc: FilesystemContent = await scan.filesystem(cfg);
-            const dbs: FullTreeContent = test4Db(inodes);
+            const fsc = await scan.filesystem(cfg);
+            const dbs = test4Db(inodes);
 
             await automate(fsc, dbs, amqp);
 
@@ -163,8 +167,8 @@ describe('e2e tests', () => {
 
             fs.rmdirSync(`${cfg.filesystem.absolutePath}/dir`, {recursive: true});
 
-            const fsc: FilesystemContent = await scan.filesystem(cfg);
-            const dbs: FullTreeContent = test5Db(inodes);
+            const fsc = await scan.filesystem(cfg);
+            const dbs = test5Db(inodes);
 
             await automate(fsc, dbs, amqp);
 

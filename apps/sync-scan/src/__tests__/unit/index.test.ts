@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IAmqpService} from '@leav/message-broker';
 import automate from '../../automate';
 import * as events from '../../events';
 import * as scan from '../../scan';
-import {database, filesystem} from './scan';
-import {IAmqpService} from '@leav/message-broker';
+import {mockDbResult, mockFsContent} from './scan';
 
 jest.mock('../../events', () => ({
     create: jest.fn(),
@@ -66,7 +66,7 @@ describe('unit tests', () => {
             const create = jest.spyOn(events, 'create');
             const move = jest.spyOn(events, 'move');
 
-            await expect(automate(filesystem, database, amqp as IAmqpService)).resolves.toStrictEqual(undefined);
+            await expect(automate(mockFsContent, mockDbResult, amqp as IAmqpService)).resolves.toStrictEqual(undefined);
 
             expect(create).toHaveBeenCalledTimes(1);
             expect(move).toHaveBeenCalledTimes(1);

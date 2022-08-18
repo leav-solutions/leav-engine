@@ -1,11 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {join} from 'path';
 import {IQueryInfos} from '_types/queryInfos';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
-import {deleteFilesTreeElement, getInputData, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
+import {
+    deleteFilesTreeElement,
+    getInputData,
+    getParentRecord,
+    getRecord,
+    updateRecordFile
+} from '../handleFileUtilsHelper';
 
 export const handleMoveEvent = async (
     scanMsg: IFileEventData,
@@ -16,22 +21,26 @@ export const handleMoveEvent = async (
     const {fileName: fileNameDest, filePath: filePathDest} = getInputData(scanMsg.pathAfter);
     const {fileName: fileNameOrigin, filePath: filePathOrigin} = getInputData(scanMsg.pathBefore);
 
+    const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(library);
+    const filesLibraryId = library;
+    const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
+
     // Find the destination record
-    const destRecord = await getRecord(fileNameDest, filePathDest, library, false, deps, ctx);
+    const destRecord = await getRecord(fileNameDest, filePathDest, recordLibrary, false, deps, ctx);
 
     // Find the origin record
-    const originRecord = await getRecord(fileNameOrigin, filePathOrigin, library, false, deps, ctx);
+    const originRecord = await getRecord(fileNameOrigin, filePathOrigin, recordLibrary, false, deps, ctx);
 
     // Update the origin record
     if (!originRecord) {
-        deps.logger.warn(`[FilesManager] event ${scanMsg.event}, record origin not found : ${scanMsg.pathBefore}`);
+        deps.logger.error(`[${ctx.queryId}] event ${scanMsg.event}, origin record not found : ${scanMsg.pathBefore}`);
         return false;
     }
 
-    // Disable the destination record
+    // Destination record already exists, disable it
     if (destRecord) {
         await deps.recordDomain.deactivateRecord(destRecord, ctx);
-        await deleteFilesTreeElement(destRecord.id, library, deps, ctx);
+        await deleteFilesTreeElement(destRecord.id, filesLibraryId, recordLibrary, deps, ctx);
     }
 
     const recordData: IFilesAttributes = {
@@ -40,35 +49,40 @@ export const handleMoveEvent = async (
         FILE_NAME: fileNameDest
     };
 
-    await updateRecordFile(recordData, originRecord.id, library, deps, ctx);
+    await updateRecordFile(recordData, originRecord.id, recordLibrary, deps, ctx);
 
     // Find parent record destination
-    const parentPathList = filePathDest.split('/');
-    const parentName = parentPathList.pop();
-
     try {
-        const treeId = deps.utils.getLibraryTreeId(library);
+        const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
         // use getRecordParent, ignore disable
-        const parentRecord = await getRecord(parentName, join(...parentPathList), library, false, deps, ctx);
+        const parentRecord = await getParentRecord(filePathDest, directoriesLibraryId, deps, ctx);
 
         const recordNode = (
             await deps.treeDomain.getNodesByRecord({
                 treeId,
-                record: {id: originRecord.id, library},
+                record: {id: originRecord.id, library: originRecord.library},
                 ctx
             })
         )[0];
+
+        if (!recordNode) {
+            throw new Error('Record node not found');
+        }
 
         // Move element in the tree
         const parentNode = parentRecord
             ? (
                   await deps.treeDomain.getNodesByRecord({
                       treeId,
-                      record: {id: parentRecord.id, library},
+                      record: {id: parentRecord.id, library: parentRecord.library},
                       ctx
                   })
               )[0]
             : null;
+
+        if (filePathDest && !parentNode) {
+            throw new Error('Parent not found');
+        }
 
         await deps.treeDomain.moveElement({
             treeId: deps.utils.getLibraryTreeId(library),
@@ -77,6 +91,9 @@ export const handleMoveEvent = async (
             ctx
         });
     } catch (e) {
-        deps.logger.warn(`[FilesManager] event ${scanMsg.event}, move element in tree fail : ${originRecord.id}`);
+        deps.logger.error(
+            `[${ctx.queryId}] event ${scanMsg.event}, move element in tree fail : ${originRecord.id}. ${e.message}`
+        );
+        deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
     }
 };

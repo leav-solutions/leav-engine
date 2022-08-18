@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FullTreeContent, IRecord} from '../../../_types/queries';
+import {FullTreeContent, IDbScanResult, IRecord} from '../../../_types/queries';
 
-export default (inodes: number[]): FullTreeContent => {
+export default (inodes: number[]): IDbScanResult => {
     database.forEach((e: IRecord, i: number) => (e.record.inode = inodes[i]));
-    return database;
+    return {filesLibraryId: 'files', directoriesLibraryId: 'files_directories', treeContent: database};
 };
 
 const database: FullTreeContent = [
@@ -19,7 +19,6 @@ const database: FullTreeContent = [
             file_name: 'dir',
             file_path: '.',
             inode: 573198,
-            is_directory: true,
             modified_at: 1585753474,
             modified_by: 1,
             previews_status: {
@@ -47,7 +46,7 @@ const database: FullTreeContent = [
                 pages: ''
             },
             root_key: 'files1',
-            library: 'files'
+            library: 'files_directories'
         },
         children: []
     },
@@ -61,7 +60,6 @@ const database: FullTreeContent = [
             file_name: 'sdir',
             file_path: 'dir',
             inode: 573202,
-            is_directory: true,
             modified_at: 1585753474,
             modified_by: 1,
             previews_status: {
@@ -89,7 +87,7 @@ const database: FullTreeContent = [
                 pages: ''
             },
             root_key: 'files1',
-            library: 'files'
+            library: 'files_directories'
         },
         children: []
     },
@@ -103,7 +101,6 @@ const database: FullTreeContent = [
             file_name: 'f',
             file_path: 'dir',
             inode: 573226,
-            is_directory: false,
             hash: 'd41d8cd98f00b204e9800998ecf8427e',
             modified_at: 1585753474,
             modified_by: 1,
@@ -146,7 +143,6 @@ const database: FullTreeContent = [
             file_name: 'sf',
             file_path: 'dir',
             inode: 573805,
-            is_directory: false,
             hash: 'd41d8cd98f00b204e9800998ecf8427e',
             modified_at: 1585753474,
             modified_by: 1,
@@ -189,7 +185,6 @@ const database: FullTreeContent = [
             file_name: 'ssfile',
             file_path: 'dir/sdir',
             inode: 573990,
-            is_directory: false,
             hash: 'd41d8cd98f00b204e9800998ecf8427e',
             modified_at: 1585753474,
             modified_by: 1,
