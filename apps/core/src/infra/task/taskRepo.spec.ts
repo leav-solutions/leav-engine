@@ -141,7 +141,7 @@ describe('TaskRepo', () => {
             'core.utils': mockUtils as IUtils
         });
 
-        const tasks = await repo.getTasksToExecute({ctx});
+        const tasks = await repo.getTasksToExecute(ctx);
 
         expect(mockDbServ.execute.mock.calls.length).toBe(1);
 

@@ -18,9 +18,14 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../errors/AuthenticationError';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
+import {WebSocketServer} from 'ws';
+import * as graphqlWS from 'graphql-ws/lib/use/ws';
+import {createServer} from 'http';
+import {PubSub} from 'graphql-subscriptions';
 
 export interface IServer {
     init(): Promise<void>;
+    pubsub: PubSub;
 }
 
 interface IDeps {
@@ -96,8 +101,10 @@ export default function ({
     };
 
     return {
+        pubsub: new PubSub(),
         async init(): Promise<void> {
             const app = express();
+            const httpServer = createServer(app);
 
             try {
                 // Express settings
@@ -216,12 +223,20 @@ export default function ({
                     }
                 });
 
-                await server.start();
+                // Create Web Socket Server
+                const wsServer = new WebSocketServer({
+                    server: httpServer,
+                    path: '/graphql'
+                });
 
+                graphqlWS.useServer({schema: graphqlApp.schema}, wsServer); // FIXME: à voir pour le cleanup
+
+                await server.start();
                 server.applyMiddleware({app, path: '/graphql', cors: true});
+
                 applicationApp.registerRoute(app);
 
-                await new Promise<void>(resolve => app.listen(config.server.port, resolve));
+                await new Promise<void>(resolve => httpServer.listen(config.server.port, resolve));
                 logger.info(`🚀 Server ready at http://localhost:${config.server.port}${server.graphqlPath}`);
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');

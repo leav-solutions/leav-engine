@@ -18,7 +18,7 @@ import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import validateLibAttributes from '../library/helpers/validateLibAttributes';
-import {ITaskCallback, TaskPriority} from '../../_types/tasksManager';
+import {ITaskCallback, OrderType, TaskPriority} from '../../_types/tasksManager';
 import {v4 as uuidv4} from 'uuid';
 
 export const DIR_PATH = '/exports';
@@ -150,6 +150,7 @@ export default function ({
                 const newTaskId = uuidv4();
 
                 await tasksManager.sendOrder(
+                    OrderType.CREATE,
                     {
                         id: newTaskId,
                         name: `Export data from ${library} library`, // FIXME: translator or get name from frontend

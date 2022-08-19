@@ -16,7 +16,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
-import {EventType} from '../../_types/event';
+import {EventAction, EventType} from '../../_types/event';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
@@ -464,8 +464,9 @@ const valueDomain = function ({
 
                         // TODO: get old value ?
                         await eventsManager.send(
+                            [EventType.MESSAGE_BROKER],
                             {
-                                type: EventType.VALUE_SAVE,
+                                action: EventAction.VALUE_SAVE,
                                 data: {
                                     libraryId: library,
                                     recordId,
@@ -612,8 +613,9 @@ const valueDomain = function ({
 
             // delete value on elasticsearch
             await eventsManager.send(
+                [EventType.MESSAGE_BROKER],
                 {
-                    type: EventType.VALUE_DELETE,
+                    action: EventAction.VALUE_DELETE,
                     data: {
                         libraryId: library,
                         recordId,

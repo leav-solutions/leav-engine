@@ -5,7 +5,7 @@ import {IRecord} from './record';
 import {ILibrary} from './library';
 import {IValue} from './value';
 
-export enum EventType {
+export enum EventAction {
     RECORD_SAVE = 'RECORD_SAVE',
     RECORD_DELETE = 'RECORD_DELETE',
     LIBRARY_SAVE = 'LIBRARY_SAVE',
@@ -14,8 +14,13 @@ export enum EventType {
     VALUE_DELETE = 'VALUE_DELETE'
 }
 
+export enum EventType {
+    MESSAGE_BROKER = 'MESSAGE_BROKER',
+    PUBSUB = 'PUBSUB'
+}
+
 export interface IPayload {
-    type: EventType;
+    action: EventAction;
 }
 
 export interface IRecordPayload extends IPayload {

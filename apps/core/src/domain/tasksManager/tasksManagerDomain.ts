@@ -7,24 +7,39 @@ import {IAmqpService} from '@leav/message-broker';
 import {IQueryInfos} from '_types/queryInfos';
 import {v4 as uuidv4} from 'uuid';
 import {
-    ITaskOrderPayload,
+    Payload,
     ITaskOrder,
     TaskStatus,
     ITask,
     TaskPriority,
-    TaskCallbackType
+    TaskCallbackType,
+    OrderType,
+    ITaskCreatePayload,
+    ITaskCancelPayload
 } from '../../_types/tasksManager';
 import {IList, SortOrder} from '../../_types/list';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {ITaskRepo} from '../../infra/task/taskRepo';
 import {AwilixContainer} from 'awilix';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {EventType} from '../../_types/event';
+import {Worker, isMainThread, workerData, parentPort} from 'worker_threads';
+import path from 'path';
+import {IUtils} from 'utils/utils';
 
-interface IUpdateData {
+import cluster from 'cluster';
+import {cpus} from 'os';
+import process from 'process';
+
+const numCPUs = cpus().length;
+
+export interface IUpdateData {
     status?: TaskStatus;
     progress?: number;
     startedAt?: number;
     completedAt?: number;
     links?: string[];
+    workerId?: number;
 }
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
@@ -36,7 +51,7 @@ interface IGetTasksParams extends IGetCoreEntitiesParams {
 
 export interface ITasksManagerDomain {
     init(): Promise<void>;
-    sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void>;
+    sendOrder(type: OrderType, payload: Payload, ctx: IQueryInfos): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
     setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
     updateProgress(taskId: string, progress: number, ctx: IQueryInfos): Promise<void>;
@@ -47,70 +62,179 @@ interface IDeps {
     'core.infra.amqpService'?: IAmqpService;
     'core.infra.task'?: ITaskRepo;
     'core.depsManager'?: AwilixContainer;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.utils'?: IUtils;
+}
+
+interface IMasterMsg {
+    type: string;
+    data?: any;
 }
 
 export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.infra.task': taskRepo = null,
-    'core.depsManager': depsManager = null
+    'core.depsManager': depsManager = null,
+    'core.domain.eventsManager': eventsManager = null,
+    'core.utils': utils = null
 }: IDeps): ITasksManagerDomain {
-    const _getUnixTime = () => Math.floor(Date.now() / 1000);
+    if (cluster.isWorker) {
+        // We send a message on initialization to the master to let it know that this worker is ready to receive a task
+        process.send('alive');
+
+        process.on('message', async (msg: IMasterMsg) => {
+            if (msg.type === 'execute') {
+                console.debug('Executing task from worker', cluster.worker.id);
+                await _executeTask(msg.data.task, {userId: '1'});
+                console.debug('Task executed, worker', cluster.worker.id, 'exit');
+                process.exit(0);
+            } else if (msg.type === 'cancel') {
+                console.debug('Task canceled, worker', cluster.worker.id, 'exit');
+                process.exit(0);
+            }
+        });
+    }
 
     const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer => {
         // check if tasks waiting for execution and execute them
-
         return setInterval(async () => {
-            const isATaskRunning = await taskRepo.isATaskRunning({ctx});
+            console.debug('interval');
+            console.debug('cluster.workers', cluster.workers);
+            console.debug({isMaster: cluster.isMaster, workers: Object.keys(cluster.workers).length});
 
-            // FIXME: allow parallel execution?
-            if (isATaskRunning) {
+            // too much workers running, waiting...
+            if (Object.keys(cluster.workers).length > numCPUs) {
+                console.debug('too much workers running, waiting...');
                 return;
             }
 
-            const tasksToExecute = await taskRepo.getTasksToExecute({ctx});
+            const tasksToExecute = await taskRepo.getTasksToExecute(ctx);
 
-            // no pending tasks
             if (!tasksToExecute.totalCount) {
                 return;
             }
 
+            const task = tasksToExecute.list[0];
+
+            // We have a task to execute, we create a worker
+            const worker = cluster.fork();
+            console.debug('worker', worker.id, 'created');
+
+            worker.on('message', async msg => {
+                console.debug('msg', msg, 'received from worker', worker.id);
+                if (msg === 'alive') {
+                    console.debug('Sending execution task msg to worker');
+                    // send execution order to new worker created when it's alive
+                    worker.send({type: 'execute', data: {task}} as IMasterMsg);
+                }
+            });
+
+            // TODO: si une tache en cours a ce worker id il faut fork (si on a atteint le numCpus on return on attend la fin d'une tache)
+            // si c'est ok ce worker est libre et on execute la tache
+            // On attache le worker id à la tache et on le détache des que la tache est terminé
+
             // we execute only one task to avoid concurrency and let other tasks available
-            await _executeTask(tasksToExecute.list[0], ctx);
+            // await _executeTask(tasksToExecute.list[0], ctx);
         }, config.tasksManager.checkingInterval);
+    };
+
+    const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
+        await _updateTask(
+            task.id,
+            {startedAt: utils.getUnixTime(), status: TaskStatus.RUNNING, progress: 0, workerId: cluster.worker.id},
+            ctx
+        );
+
+        let status = task.status;
+        const callback = task.callback;
+
+        try {
+            const func = _getDepsManagerFunc({
+                moduleName: task.func.moduleName,
+                subModuleName: task.func.subModuleName,
+                funcName: task.func.name
+            });
+
+            await func(...task.func.args, {id: task.id});
+
+            if (
+                typeof callback !== 'undefined' &&
+                (callback.type === TaskCallbackType.ALWAYS ||
+                    (callback.type === TaskCallbackType.ON_FAILURE && status === TaskStatus.FAILED) ||
+                    (callback.type === TaskCallbackType.ON_SUCCESS && status === TaskStatus.DONE))
+            ) {
+                const callbackFunc = _getDepsManagerFunc({
+                    moduleName: callback.moduleName,
+                    subModuleName: callback.subModuleName,
+                    funcName: callback.name
+                });
+
+                await callbackFunc(...callback.args);
+            }
+
+            status = TaskStatus.DONE;
+        } catch (e) {
+            console.error(e);
+            status = TaskStatus.FAILED;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 300000)); // 300s
+
+        await _updateTask(
+            task.id,
+            {
+                ...(status === TaskStatus.DONE ? {completedAt: utils.getUnixTime(), progress: 100} : {}),
+                status,
+                workerId: null
+            },
+            ctx
+        );
     };
 
     const _validateMsg = (msg: ITaskOrder) => {
         const msgBodySchema = Joi.object().keys({
             time: Joi.number().required(),
             userId: Joi.string().required(),
-            payload: Joi.object()
-                .keys({
-                    id: Joi.string().required(),
-                    name: Joi.string().required(),
-                    func: Joi.object()
-                        .keys({
-                            moduleName: Joi.string().required(),
-                            subModuleName: Joi.string(),
+            type: Joi.string()
+                .equal(...Object.keys(OrderType))
+                .required(),
+            payload: Joi.object().when('order', {
+                switch: [
+                    {
+                        is: OrderType.CREATE,
+                        then: Joi.object().keys({
+                            id: Joi.string().required(),
                             name: Joi.string().required(),
-                            args: Joi.array().required()
+                            func: Joi.object()
+                                .keys({
+                                    moduleName: Joi.string().required(),
+                                    subModuleName: Joi.string(),
+                                    name: Joi.string().required(),
+                                    args: Joi.array().required()
+                                })
+                                .required(),
+                            startAt: Joi.date().timestamp('unix').raw().required(),
+                            priority: Joi.string()
+                                .valid(...Object.values(TaskPriority))
+                                .required(),
+                            callback: Joi.object().keys({
+                                moduleName: Joi.string().required(),
+                                subModuleName: Joi.string(),
+                                name: Joi.string().required(),
+                                args: Joi.array().required(),
+                                type: Joi.string()
+                                    .valid(...Object.values(TaskCallbackType))
+                                    .required()
+                            })
                         })
-                        .required(),
-                    startAt: Joi.date().timestamp('unix').raw().required(),
-                    priority: Joi.string()
-                        .valid(...Object.values(TaskPriority))
-                        .required(),
-                    callback: Joi.object().keys({
-                        moduleName: Joi.string().required(),
-                        subModuleName: Joi.string(),
-                        name: Joi.string().required(),
-                        args: Joi.array().required(),
-                        type: Joi.string()
-                            .valid(...Object.values(TaskCallbackType))
-                            .required()
-                    })
-                })
-                .required()
+                    },
+                    {
+                        is: OrderType.CANCEL,
+                        then: Joi.object().keys({id: Joi.string().required()})
+                    }
+                ]
+            })
         });
 
         const isValid = msgBodySchema.validate(msg);
@@ -134,11 +258,15 @@ export default function ({
             console.error(e);
         }
 
-        await _createTask(order.payload, ctx);
+        if (order.type === OrderType.CREATE) {
+            await _createTask(order.payload as ITaskCreatePayload, ctx);
+        } else if (order.type === OrderType.CANCEL) {
+            await _cancelTask(order.payload as ITaskCancelPayload, ctx);
+        }
     };
 
     const _createTask = async (
-        {id, name, func, startAt, priority, callback}: ITaskOrderPayload,
+        {id, name, func, startAt, priority, callback}: ITaskCreatePayload,
         ctx: IQueryInfos
     ): Promise<ITask> => {
         const task = await taskRepo.createTask(
@@ -199,42 +327,22 @@ export default function ({
         return func;
     };
 
-    const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
-        await _updateTask(task.id, {startedAt: _getUnixTime(), status: TaskStatus.RUNNING, progress: 0}, ctx);
+    const _cancelTask = async ({id}: ITaskCancelPayload, ctx: IQueryInfos): Promise<void> => {
+        const res = await _getTasks({params: {filters: {id}}, ctx});
 
-        let status = task.status;
-        const callback = task.callback;
+        const task = res.list[0];
 
-        try {
-            const func = _getDepsManagerFunc({
-                moduleName: task.func.moduleName,
-                subModuleName: task.func.subModuleName,
-                funcName: task.func.name
-            });
-            await func(...task.func.args, {id: task.id});
-            status = TaskStatus.DONE;
-        } catch (e) {
-            console.error(e);
-            status = TaskStatus.FAILED;
+        if (!task) {
+            throw new Error('Task not found');
         }
 
-        if (
-            typeof callback !== 'undefined' &&
-            (callback.type === TaskCallbackType.ALWAYS ||
-                (callback.type === TaskCallbackType.ON_FAILURE && status === TaskStatus.FAILED) ||
-                (callback.type === TaskCallbackType.ON_SUCCESS && status === TaskStatus.DONE))
-        ) {
-            const callbackFunc = _getDepsManagerFunc({
-                moduleName: callback.moduleName,
-                subModuleName: callback.subModuleName,
-                funcName: callback.name
-            });
-
-            await callbackFunc(...callback.args);
+        if (task.status !== TaskStatus.RUNNING || typeof task.workerId === 'undefined') {
+            throw new Error('Task not running');
         }
 
-        const updateData = status === TaskStatus.DONE ? {completedAt: _getUnixTime(), status, progress: 100} : {status};
-        await _updateTask(task.id, updateData, ctx);
+        // send cancel signal to worker
+        console.debug('Sending cancel signal to task', id, ', worker', task.workerId);
+        cluster.workers[task.workerId].send({type: 'cancel'} as IMasterMsg);
     };
 
     return {
@@ -252,17 +360,20 @@ export default function ({
                 _onMessage
             );
 
-            _monitorTasks({userId: '1'});
+            if (cluster.isMaster) {
+                _monitorTasks({userId: '1'});
+            }
         },
-        async sendOrder(payload: ITaskOrderPayload, ctx: IQueryInfos): Promise<void> {
+        async sendOrder(type: OrderType, payload: Payload, ctx: IQueryInfos): Promise<void> {
             await amqpService.publish(
                 config.amqp.exchange,
                 config.tasksManager.routingKeys.orders,
-                JSON.stringify({time: _getUnixTime(), userId: ctx.userId, payload})
+                JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, type, payload})
             );
         },
         async updateProgress(taskId: string, progress: number, ctx: IQueryInfos): Promise<void> {
             await _updateTask(taskId, {progress}, ctx);
+            // await eventsManager.send([EventType.PUBSUB], {taskId, progress}, ctx);
         },
         async setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {
             await _updateTask(taskId, {links}, ctx);
@@ -270,9 +381,3 @@ export default function ({
         getTasks: _getTasks
     };
 }
-
-// TODO:
-// ctx dans la task ??
-// concurrency between services
-// ctx userId 'system' ??
-// tests unit A FAIRE

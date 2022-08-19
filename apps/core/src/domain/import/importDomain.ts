@@ -14,7 +14,7 @@ import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
-import {TaskPriority, ITask, ITaskFunc, ITaskCallback, TaskCallbackType} from '../../_types/tasksManager';
+import {TaskPriority, ITask, ITaskFunc, ITaskCallback, TaskCallbackType, OrderType} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
@@ -410,6 +410,7 @@ export default function ({
                 const newTaskId = uuidv4();
 
                 await tasksManager.sendOrder(
+                    OrderType.CREATE,
                     {
                         id: newTaskId,
                         name: `Import file ${filename}`, // FIXME: translator or get name from frontend

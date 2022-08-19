@@ -18,9 +18,9 @@ export interface ITaskRepo {
     getTasks({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
     createTask(task: ITask, ctx: IQueryInfos): Promise<ITask>;
     updateTask(task: Partial<ITask> & {id: string}, ctx: IQueryInfos): Promise<ITask>;
-    getTasksToExecute({ctx}: {ctx: IQueryInfos}): Promise<IList<ITask>>;
-    isATaskRunning({ctx}: {ctx: IQueryInfos}): Promise<boolean>;
+    getTasksToExecute(ctx: IQueryInfos): Promise<IList<ITask>>;
     deleteTask(taskId, ctx): Promise<ITask>;
+    isATaskRunning(ctx: IQueryInfos, workerId?: number): Promise<boolean>;
 }
 
 interface IDeps {
@@ -35,18 +35,21 @@ export default function ({
     'core.utils': utils = null
 }: IDeps = {}): ITaskRepo {
     return {
-        async isATaskRunning({ctx}: {ctx: IQueryInfos}): Promise<boolean> {
+        async isATaskRunning(ctx: IQueryInfos, workerId?: number): Promise<boolean> {
             const collec = dbService.db.collection(TASKS_COLLECTION);
+            const queryParts = [aql`FOR task IN ${collec} FILTER task.status == ${TaskStatus.RUNNING}`];
 
-            const query = aql`FOR task IN ${collec}
-                    FILTER task.status == ${TaskStatus.RUNNING}
-                    RETURN task`;
+            if (typeof workerId !== 'undefined') {
+                queryParts.push(aql`FILTER task.workerId == ${workerId}`);
+            }
 
-            const runningTasks = await dbService.execute({query, ctx});
+            queryParts.push(aql`RETURN task`);
+
+            const runningTasks = await dbService.execute({query: aql.join(queryParts), ctx});
 
             return runningTasks.length > 0;
         },
-        async getTasksToExecute({ctx}: {ctx: IQueryInfos}): Promise<IList<ITask>> {
+        async getTasksToExecute(ctx: IQueryInfos): Promise<IList<ITask>> {
             const collec = dbService.db.collection(TASKS_COLLECTION);
 
             const query = aql`FOR task IN ${collec}

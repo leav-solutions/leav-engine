@@ -2,6 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+export enum OrderType {
+    CREATE = 'CREATE',
+    CANCEL = 'CANCEL'
+}
 export enum TaskStatus {
     PENDING = 'PENDING',
     RUNNING = 'RUNNING',
@@ -15,12 +19,16 @@ export enum TaskPriority {
     HIGH = 2
 }
 
-export type ITaskOrderPayload = Pick<ITask, 'id' | 'name' | 'func' | 'startAt' | 'priority' | 'callback'>;
+export type ITaskCreatePayload = Pick<ITask, 'id' | 'name' | 'func' | 'startAt' | 'priority' | 'callback'>;
+export type ITaskCancelPayload = Pick<ITask, 'id'>;
+
+export type Payload = ITaskCreatePayload | ITaskCancelPayload;
 
 export interface ITaskOrder {
     time: number;
     userId: string;
-    payload: ITaskOrderPayload;
+    type: OrderType;
+    payload: Payload;
 }
 
 export interface ITaskFunc {
@@ -55,4 +63,5 @@ export interface ITask {
     completedAt?: number;
     links?: string[];
     callback?: ITaskCallback;
+    workerId?: number;
 }
