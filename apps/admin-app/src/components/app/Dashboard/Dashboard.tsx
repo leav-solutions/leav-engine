@@ -54,7 +54,7 @@ function Dashboard(): JSX.Element {
                 {menuItems.map(item => (
                     <Item to={'/' + item.id} key={item.id}>
                         <ItemIcon>
-                            {typeof item.icon === 'string' ? <Icon name={item.icon as SemanticICONS} /> : item.icon}
+                            <Icon name={item.icon as SemanticICONS} {...item.iconProps} />
                         </ItemIcon>
                         <ItemTitle>{item.label}</ItemTitle>
                     </Item>

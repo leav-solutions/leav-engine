@@ -4,20 +4,18 @@
 import React from 'react';
 import {MemoryRouter} from 'react-router';
 import {act, render, screen} from '_tests/testUtils';
-import AppMenu from './AppMenu';
+import Header from './Header';
 
-describe('AppMenu', () => {
+describe('Header', () => {
     test('Render menu', async () => {
         await act(async () => {
             render(
                 <MemoryRouter>
-                    <AppMenu isCollapsed={false} onToggle={jest.fn()} width={42} />
+                    <Header />
                 </MemoryRouter>
             );
         });
 
-        expect(screen.getByText(/libraries/)).toBeInTheDocument();
-        expect(screen.getByText(/attributes/)).toBeInTheDocument();
-        expect(screen.getByText(/trees/)).toBeInTheDocument();
+        expect(screen.getByRole('link', {name: /title/})).toBeInTheDocument();
     });
 });

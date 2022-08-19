@@ -11,6 +11,12 @@ jest.mock('../Routes', () => {
     };
 });
 
+jest.mock('../Header', () => {
+    return function Header() {
+        return <div>Header</div>;
+    };
+});
+
 jest.mock('../AppMenu', () => {
     return function AppMenu() {
         return <div>AppMenu</div>;
@@ -23,6 +29,7 @@ describe('Home', () => {
             render(<Home />);
         });
 
+        expect(screen.getByText('Header')).toBeInTheDocument();
         expect(screen.getByText('AppMenu')).toBeInTheDocument();
         expect(screen.getByText('Routes')).toBeInTheDocument();
     });

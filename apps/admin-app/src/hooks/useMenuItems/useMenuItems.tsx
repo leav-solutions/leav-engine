@@ -4,13 +4,13 @@
 import useUserData from 'hooks/useUserData';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Icon} from 'semantic-ui-react';
 import {SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
 
 export interface IMenuItem {
     id: string;
     label: string;
     icon: SemanticICONS | React.ReactNode;
+    iconProps?: Record<string, any>;
     protected: boolean;
 }
 
@@ -34,13 +34,16 @@ function useMenuItems(): IMenuItem[] {
         {
             id: 'trees',
             label: t('trees.title'),
-            icon: <Icon name="share alternate" rotated="clockwise" />,
+            icon: 'share alternate',
+            iconProps: {
+                rotated: 'clockwise'
+            },
             protected: true
         },
         {
             id: 'applications',
             label: t('applications.title'),
-            icon: <Icon name="th" />,
+            icon: 'th',
             protected: true
         },
         {
