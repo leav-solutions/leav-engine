@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ApolloHandler from 'components/app/ApolloHandler';
 import App from 'components/app/App';
-import 'fomantic-ui-css/semantic.min.css';
+import 'fomantic-ui-less/semantic.less';
 import React, {Suspense} from 'react';
 import ReactDOM from 'react-dom';
 import {Provider as ReduxProvider} from 'react-redux';

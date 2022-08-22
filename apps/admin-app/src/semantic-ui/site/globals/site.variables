@@ -1,0 +1,7 @@
+/*******************************
+     User Global Variables
+*******************************/
+@primaryColor: #0F97E4;
+@pageBackground: #FFFFFF;
+@activeItemColor: #DEF4FF;
+@linkHoverColor: @primaryColor;

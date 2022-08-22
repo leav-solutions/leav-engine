@@ -1,0 +1,6 @@
+/*******************************
+         Site Overrides
+*******************************/
+.ui.menu .menu .item:hover {
+    color: @primaryColor;
+}

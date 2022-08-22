@@ -1,0 +1,2 @@
+@primaryButtonGradient: linear-gradient(180deg,#2cceff 0,#0a8ee0 100%) 0 0 no-repeat padding-box;
+@primaryButtonGradientHover: transparent linear-gradient(0deg,#2cceff 0%,#0a8ee0 100%) 0% 0% no-repeat padding-box;

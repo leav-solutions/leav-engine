@@ -8,7 +8,7 @@
     "@types/react": "16.9.17",
     "@types/react-dom": "16.9.4",
     "dayjs": "1.10.6",
-    "fomantic-ui-css": "2.8.8",
+    "fomantic-ui-less": "2.8.8",
     "formik": "1.5.8",
     "graphql": "14.7.0",
     "graphql-tag": "2.10.1",
@@ -40,18 +40,20 @@
     "yup": "0.27.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --forceExit --detectOpenHandles",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test --forceExit --detectOpenHandles",
     "lint": "eslint src/",
-    "eject": "react-scripts eject",
+    "eject": "craco eject",
     "gen_types": "apollo codegen:generate ./src/_gqlTypes --target=typescript --no-addTypename --outputFlat --passthroughCustomScalars --excludes='**/*.test.*' && cd ../../ && yarn prettier --write apps/admin-app/src/_gqlTypes",
     "create_comp": "scripts/createComponent.js",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p ."
   },
   "devDependencies": {
+    "@craco/craco": "6.4.5",
     "@rushstack/eslint-patch": "1.0.6",
+    "@semantic-ui-react/craco-less": "1.2.6",
     "@testing-library/jest-dom": "5.11.9",
     "@testing-library/react": "11.2.5",
     "@testing-library/user-event": "13.5.0",
