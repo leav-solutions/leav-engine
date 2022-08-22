@@ -10,6 +10,7 @@ import {PubSub} from 'graphql-subscriptions';
 export interface IEventsManagerDomain {
     pubsub: PubSub;
     send(eventType: EventType[], payload: Payload | any, ctx: IQueryInfos): Promise<void>;
+    suscribe(events: string[]): AsyncIterator<any>;
 }
 
 interface IDeps {
@@ -37,6 +38,9 @@ export default function ({config = null, 'core.infra.amqpService': amqpService =
             //         taskProgress: 55
             //     });
             // }
+        },
+        suscribe(events: string[]): AsyncIterator<any> {
+            return pubsub.asyncIterator(events);
         }
     };
 }

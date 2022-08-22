@@ -134,7 +134,11 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                                     moduleName: 'utils',
                                     name: 'deleteFile',
                                     args: [`${config.import.directory}/${storedFileName}`],
-                                    type: TaskCallbackType.ALWAYS
+                                    type: [
+                                        TaskCallbackType.ON_SUCCESS,
+                                        TaskCallbackType.ON_FAILURE,
+                                        TaskCallbackType.ON_CANCEL
+                                    ]
                                 }
                             });
 

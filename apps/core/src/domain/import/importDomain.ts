@@ -741,7 +741,7 @@ export default function ({
                     moduleName: 'utils',
                     name: 'deleteFile',
                     args: [`${config.import.directory}/${JSONFilename}`],
-                    type: TaskCallbackType.ALWAYS
+                    type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
                 }
             });
         }

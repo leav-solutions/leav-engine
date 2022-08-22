@@ -10,7 +10,8 @@ export enum TaskStatus {
     PENDING = 'PENDING',
     RUNNING = 'RUNNING',
     FAILED = 'FAILED',
-    DONE = 'DONE'
+    DONE = 'DONE',
+    CANCELED = 'CANCELED'
 }
 
 export enum TaskPriority {
@@ -39,12 +40,12 @@ export interface ITaskFunc {
 }
 
 export enum TaskCallbackType {
-    ALWAYS = 'ALWAYS',
     ON_SUCCESS = 'ON_SUCCESS',
-    ON_FAILURE = 'ON_FAILURE'
+    ON_FAILURE = 'ON_FAILURE',
+    ON_CANCEL = 'ON_CANCEL'
 }
 
-export type ITaskCallback = ITaskFunc & {type: TaskCallbackType};
+export type ITaskCallback = ITaskFunc & {type: TaskCallbackType[]};
 
 export interface ITask {
     id: string;
