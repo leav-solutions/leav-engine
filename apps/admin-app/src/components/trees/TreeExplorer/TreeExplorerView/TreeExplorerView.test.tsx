@@ -4,7 +4,7 @@
 import {shallow} from 'enzyme';
 import React from 'react';
 import {mockTree} from '__mocks__/trees';
-import StructureView from './StructureView';
+import TreeExplorerView from './TreeExplorerView';
 
 jest.mock('react-sortable-tree', () => {
     return {
@@ -24,7 +24,7 @@ describe('StructureView', () => {
         const onDeleteNode = jest.fn();
 
         const comp = shallow(
-            <StructureView
+            <TreeExplorerView
                 treeSettings={mockTree}
                 readOnly={false}
                 treeData={[]}
@@ -46,7 +46,7 @@ describe('StructureView', () => {
         const onDeleteNode = jest.fn();
 
         const comp = shallow(
-            <StructureView
+            <TreeExplorerView
                 treeSettings={mockTree}
                 readOnly={false}
                 treeData={[{id: '1234', library: {id: 'test_lib'}}]}

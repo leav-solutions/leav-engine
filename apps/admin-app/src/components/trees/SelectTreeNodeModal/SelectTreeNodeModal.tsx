@@ -10,7 +10,7 @@ import {ITreeNodeData} from '_types/trees';
 import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
 import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import Loading from '../../shared/Loading';
-import TreeStructure from '../TreeStructure';
+import TreeExplorer from '../TreeExplorer';
 
 interface ISelectTreeNodeModalProps {
     tree: string;
@@ -53,7 +53,7 @@ const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeMod
         <Modal open={open} onClose={onClose} closeIcon>
             <Modal.Header>{t('trees.select_tree_node')}</Modal.Header>
             <Modal.Content style={{height: '80vh'}}>
-                <TreeStructure
+                <TreeExplorer
                     tree={treeSettings}
                     onClickNode={_handleNodeSelection}
                     readOnly

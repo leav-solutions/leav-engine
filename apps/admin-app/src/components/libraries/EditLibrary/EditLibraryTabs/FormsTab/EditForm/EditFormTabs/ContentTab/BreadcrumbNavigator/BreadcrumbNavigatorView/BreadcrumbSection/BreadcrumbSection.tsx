@@ -10,7 +10,7 @@ import {localizedLabel} from '../../../../../../../../../../../utils';
 import {GET_TREE_BY_ID_trees_list} from '../../../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {RecordIdentity_whoAmI} from '../../../../../../../../../../../_gqlTypes/RecordIdentity';
 import RecordCard from '../../../../../../../../../../shared/RecordCard';
-import TreeStructure from '../../../../../../../../../../trees/TreeStructure';
+import TreeExplorer from '../../../../../../../../../../trees/TreeExplorer';
 import {
     defaultDepAttribute,
     defaultDepValue,
@@ -100,7 +100,7 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
                     }
                     content={
                         <TreeWrapper>
-                            <TreeStructure
+                            <TreeExplorer
                                 tree={treeData}
                                 onClickNode={_handleTreeNodeSelection}
                                 readOnly

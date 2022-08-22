@@ -5,18 +5,18 @@ import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
 import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import {mockTree} from '../../../__mocks__/trees';
-import TreeStructure from './TreeStructure';
+import TreeExplorer from './TreeExplorer';
 
 jest.mock('../../../hooks/useLang');
 
-jest.mock('./StructureView', () => {
-    return function StructureView() {
-        return <div>StructureView</div>;
+jest.mock('./TreeExplorerView', () => {
+    return function TreeExplorerView() {
+        return <div>TreeExplorerView</div>;
     };
 });
 
-describe('EditTreeStructure', () => {
-    test('Render tree structure', async () => {
+describe('EditTreeExplorer', () => {
+    test('Render tree explorer', async () => {
         const mocks = [
             {
                 request: {
@@ -50,11 +50,11 @@ describe('EditTreeStructure', () => {
             }
         ];
 
-        render(<TreeStructure tree={mockTree} />, {
+        render(<TreeExplorer tree={mockTree} />, {
             apolloMocks: mocks,
             cacheSettings: {possibleTypes: {Record: ['UsersGroup']}}
         });
 
-        expect(screen.getByText('StructureView')).toBeInTheDocument();
+        expect(screen.getByText('TreeExplorerView')).toBeInTheDocument();
     });
 });

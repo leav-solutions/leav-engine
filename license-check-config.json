@@ -38,6 +38,8 @@
         "**/.env",
         "**/build",
         "**/dist",
-        "exports"
+        "exports",
+        "**/admin-app/src/semantic-ui/**/*",
+        "**/admin-app/craco.config.js"
     ]
 }

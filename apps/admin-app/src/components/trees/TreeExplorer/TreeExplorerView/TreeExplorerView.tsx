@@ -28,7 +28,7 @@ import {
 } from '../_types';
 import './rstOverride.css';
 
-interface IStructureViewProps {
+interface ITreeExplorerViewProps {
     treeSettings: GET_TREE_BY_ID_trees_list;
     treeData: ITreeNode[];
     onTreeChange: TreeChangeHandler;
@@ -59,7 +59,7 @@ const initialEditionState: IEditionState = {
     parent: null
 };
 
-const StructureView = ({
+const TreeExplorerView = ({
     treeSettings,
     treeData,
     onTreeChange,
@@ -71,7 +71,7 @@ const StructureView = ({
     readOnly,
     onAddElement,
     compact = false
-}: IStructureViewProps) => {
+}: ITreeExplorerViewProps) => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const [editRecordModalOpen, setEditRecordModalOpen] = useState<boolean>(false);
@@ -288,4 +288,4 @@ const StructureView = ({
         </div>
     );
 };
-export default StructureView;
+export default TreeExplorerView;
