@@ -4,7 +4,7 @@
 import {Formik, FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Form} from 'semantic-ui-react';
+import {Form, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
 import useLang from '../../../../../../hooks/useLang';
@@ -85,12 +85,13 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         : [];
 
     const libTreeAttributesOptions = library?.attributes
-        ? library.attributes.filter(a => a.type === AttributeType.tree)
-            .map(a => ({
-                key: a.id,
-                value: a.id,
-                text: localizedLabel(a.label, lang) || a.id
-            }))
+        ? library.attributes
+              .filter(a => a.type === AttributeType.tree)
+              .map(a => ({
+                  key: a.id,
+                  value: a.id,
+                  text: localizedLabel(a.label, lang) || a.id
+              }))
         : [];
     libAttributesOptions.unshift({key: '', value: '', text: ''});
 
@@ -274,14 +275,21 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             name="recordIdentityConf.treeColorPreview"
                             disabled={readonly}
                             label={t('libraries.record_identity_dependent_color_and_preview')}
-                            value={recordIdentityConf && recordIdentityConf.treeColorPreview ? recordIdentityConf.treeColorPreview : ''}
+                            value={
+                                recordIdentityConf && recordIdentityConf.treeColorPreview
+                                    ? recordIdentityConf.treeColorPreview
+                                    : ''
+                            }
                             onChange={_handleChange}
                         />
                     </FormFieldWrapper>
                 </Form.Group>
                 {!readonly && (
                     <FormGroupWithMargin>
-                        <Form.Button type="submit">{t('admin.submit')}</Form.Button>
+                        <Form.Button icon primary type="submit" labelPosition="left">
+                            <Icon name="save" />
+                            {t('admin.submit')}
+                        </Form.Button>
                     </FormGroupWithMargin>
                 )}
             </Form>

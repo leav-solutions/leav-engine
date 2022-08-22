@@ -1,0 +1,9 @@
+.ui.primary.buttons .button,
+.ui.primary.button {
+    background: @primaryButtonGradient;
+}
+
+.ui.primary.buttons .button:hover,
+.ui.primary.button:hover {
+    background: @primaryButtonGradientHover;
+}

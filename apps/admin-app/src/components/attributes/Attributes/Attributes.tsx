@@ -62,8 +62,8 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
                     </Header>
                 </Grid.Column>
                 {userData.permissions[PermissionsActions.admin_create_attribute] && (
-                    <Grid.Column floated="right" width={3} textAlign="right" verticalAlign="middle">
-                        <Button icon labelPosition="left" size="medium" as={Link} to={'/attributes/edit/'}>
+                    <Grid.Column floated="right" width={6} textAlign="right" verticalAlign="middle">
+                        <Button primary icon labelPosition="left" size="medium" as={Link} to={'/attributes/edit/'}>
                             <Icon name="plus" />
                             {t('attributes.new')}
                         </Button>

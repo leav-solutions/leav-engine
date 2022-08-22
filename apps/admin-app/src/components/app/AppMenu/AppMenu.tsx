@@ -11,19 +11,11 @@ import styled from 'styled-components';
 
 const StyledMenu = styled(Menu)<{width: number}>`
     &&&&& {
-        width: ${props => props.width}px;
+        width: ${props => props.width - 1}px; // -1 to avoid border issues
         transition: width 0.3s;
         border: none;
         box-shadow: none;
         background: transparent;
-
-        .item {
-            color: inherit;
-        }
-
-        .item:hover {
-            color: rgb(65, 131, 196);
-        }
     }
 `;
 

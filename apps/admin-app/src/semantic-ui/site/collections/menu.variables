@@ -1,0 +1,8 @@
+/*******************************
+    User Variable Overrides
+*******************************/
+@itemTextColor: @textColor;
+@subMenuTextColor: @textColor;
+@activeItemBackground: @activeItemColor;
+@activeHoverItemBackground: @activeItemColor;
+@secondaryPointingActiveBorderColor: @primaryColor;

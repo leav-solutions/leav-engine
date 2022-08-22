@@ -208,9 +208,10 @@ function ALCList({
             </ListContent>
             <div style={{textAlign: 'right'}}>
                 <Button
-                    style={{marginTop: '8px'}}
-                    color={connectionFailures && connectionFailures.length > 0 ? 'red' : 'blue'}
+                    primary={!connectionFailures?.length}
+                    negative={!!connectionFailures?.length}
                     disabled={connectionFailures && connectionFailures.length > 0 ? true : false}
+                    style={{marginTop: '8px'}}
                     className="ui button"
                     onClick={setConfig}
                 >
