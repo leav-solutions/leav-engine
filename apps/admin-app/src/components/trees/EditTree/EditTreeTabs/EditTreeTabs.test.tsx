@@ -16,9 +16,9 @@ jest.mock('./InfosTab', () => {
     };
 });
 
-jest.mock('components/trees/TreeStructure', () => {
-    return function TreeStructure() {
-        return <div>TreeStructure</div>;
+jest.mock('components/trees/TreeExplorer', () => {
+    return function TreeExplorer() {
+        return <div>TreeExplorer</div>;
     };
 });
 

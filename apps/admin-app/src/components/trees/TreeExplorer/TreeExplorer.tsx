@@ -26,7 +26,7 @@ import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../_gqlTy
 import {GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
 import RecordCard from '../../shared/RecordCard';
-import StructureView from './StructureView';
+import TreeExplorerView from './TreeExplorerView';
 import {
     AddTreeElementHandler,
     ClickNodeHandler,
@@ -35,7 +35,7 @@ import {
     NodeVisibilityToggleHandler
 } from './_types';
 
-interface ITreeStructureProps {
+interface ITreeExplorerProps {
     tree: GET_TREE_BY_ID_trees_list;
     readOnly?: boolean;
     onClickNode?: (nodeData: ITreeNodeData) => void;
@@ -78,7 +78,7 @@ const RootElem = styled.div`
     justify-content: center;
 `;
 
-const TreeStructure = ({
+const TreeExplorer = ({
     tree,
     readOnly,
     onClickNode,
@@ -87,7 +87,7 @@ const TreeStructure = ({
     fakeRootLabel,
     startAt,
     compact = false
-}: ITreeStructureProps) => {
+}: ITreeExplorerProps) => {
     const apolloClient = useApolloClient();
 
     const fakeRootData = [
@@ -342,7 +342,7 @@ const TreeStructure = ({
                     </Message.Header>
                 </Message>
             )}
-            <StructureView
+            <TreeExplorerView
                 treeSettings={tree}
                 treeData={treeData}
                 readOnly={readOnly || false}
@@ -359,4 +359,4 @@ const TreeStructure = ({
     );
 };
 
-export default TreeStructure;
+export default TreeExplorer;

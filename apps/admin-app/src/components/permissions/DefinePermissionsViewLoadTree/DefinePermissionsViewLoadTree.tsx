@@ -12,7 +12,7 @@ import {ITreeNodeData} from '_types/trees';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import Loading from '../../shared/Loading';
-import TreeStructure from '../../trees/TreeStructure';
+import TreeExplorer from '../../trees/TreeExplorer';
 
 interface IDefinePermissionsViewLoadTreeProps {
     treeId: string;
@@ -45,7 +45,7 @@ const DefinePermissionsViewLoadTree = ({
     return (
         <>
             <Header as="h4">{treeLabel}</Header>
-            <TreeStructure
+            <TreeExplorer
                 key={treeData.id}
                 tree={treeData}
                 onClickNode={onClick}

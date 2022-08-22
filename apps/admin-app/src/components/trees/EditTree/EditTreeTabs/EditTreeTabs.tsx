@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import TreeStructure from 'components/trees/TreeStructure';
+import TreeExplorer from 'components/trees/TreeExplorer';
 import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -42,12 +42,12 @@ function EditTreeTabs({tree, readonly, history, location}: IEditTreeTabsProps): 
             )
         },
         {
-            key: 'structure',
+            key: 'explorer',
             mustBeDisplayed: !isCreationMode,
-            menuItem: t('trees.structure'),
+            menuItem: t('trees.explorer'),
             render: () => (
-                <Tab.Pane key="structure" className="grow">
-                    <TreeStructure
+                <Tab.Pane key="explorer" className="grow">
+                    <TreeExplorer
                         withFakeRoot
                         fakeRootLabel={label}
                         tree={tree as GET_TREE_BY_ID_trees_list}

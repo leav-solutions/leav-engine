@@ -11,10 +11,10 @@ import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
 import SelectTreeNodeModal from './SelectTreeNodeModal';
 
 jest.mock(
-    '../../trees/TreeStructure',
+    '../../trees/TreeExplorer',
     () =>
-        function TreeStructure() {
-            return <div>Tree Structure</div>;
+        function TreeExplorer() {
+            return <div>Tree Explorer</div>;
         }
 );
 
@@ -86,7 +86,7 @@ describe('SelectTreeNodeModal', () => {
         });
 
         expect(comp.find('Modal').prop('open')).toBe(true);
-        expect(comp.find('TreeStructure')).toHaveLength(1);
+        expect(comp.find('TreeExplorer')).toHaveLength(1);
     });
 
     test('Calls onClose', async () => {

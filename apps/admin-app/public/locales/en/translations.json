@@ -149,6 +149,7 @@
         "isSystem": "System",
         "informations": "Informations",
         "structure": "Structure",
+        "explorer": "Explorer",
         "permissions": "Permissions",
         "libraries": "Binded libraries",
         "delete": "Delete",
