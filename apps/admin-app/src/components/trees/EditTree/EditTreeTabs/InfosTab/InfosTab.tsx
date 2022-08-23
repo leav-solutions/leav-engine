@@ -43,6 +43,7 @@ function TreeInfosTab({tree, history, readonly}: ITreeInfosTabProps): JSX.Elemen
             },
             refetchQueries: ['GET_TREES']
         });
+
         if (history) {
             history.replace({pathname: '/trees/edit/' + treeData.id});
         }

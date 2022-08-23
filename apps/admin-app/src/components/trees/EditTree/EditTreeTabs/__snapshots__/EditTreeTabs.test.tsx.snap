@@ -48,6 +48,107 @@ LoadedCheerio {
                 },
                 "children": Array [
                   Node {
+                    "data": "trees.structure",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": Node {
+                  "attribs": Object {
+                    "class": "item",
+                  },
+                  "children": Array [
+                    Node {
+                      "data": "trees.explorer",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": Node {
+                    "attribs": Object {
+                      "class": "item",
+                    },
+                    "children": Array [
+                      Node {
+                        "data": "trees.permissions",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": [Circular],
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
+                  "parent": [Circular],
+                  "prev": [Circular],
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            Node {
+              "attribs": Object {
+                "class": "item",
+              },
+              "children": Array [
+                Node {
+                  "data": "trees.structure",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": Object {
+                  "class": "item",
+                },
+                "children": Array [
+                  Node {
                     "data": "trees.explorer",
                     "next": null,
                     "parent": [Circular],
@@ -94,7 +195,32 @@ LoadedCheerio {
                 },
               },
               "parent": [Circular],
-              "prev": null,
+              "prev": Node {
+                "attribs": Object {
+                  "class": "active item",
+                },
+                "children": Array [
+                  Node {
+                    "data": "trees.informations",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
               "type": "tag",
               "x-attribsNamespace": Object {
                 "class": undefined,
@@ -147,11 +273,11 @@ LoadedCheerio {
               "parent": [Circular],
               "prev": Node {
                 "attribs": Object {
-                  "class": "active item",
+                  "class": "item",
                 },
                 "children": Array [
                   Node {
-                    "data": "trees.informations",
+                    "data": "trees.structure",
                     "next": null,
                     "parent": [Circular],
                     "prev": null,
@@ -162,7 +288,32 @@ LoadedCheerio {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
-                "prev": null,
+                "prev": Node {
+                  "attribs": Object {
+                    "class": "active item",
+                  },
+                  "children": Array [
+                    Node {
+                      "data": "trees.informations",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": [Circular],
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
                 "type": "tag",
                 "x-attribsNamespace": Object {
                   "class": undefined,
@@ -215,11 +366,11 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": Node {
                   "attribs": Object {
-                    "class": "active item",
+                    "class": "item",
                   },
                   "children": Array [
                     Node {
-                      "data": "trees.informations",
+                      "data": "trees.structure",
                       "next": null,
                       "parent": [Circular],
                       "prev": null,
@@ -230,7 +381,32 @@ LoadedCheerio {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": [Circular],
                   "parent": [Circular],
-                  "prev": null,
+                  "prev": Node {
+                    "attribs": Object {
+                      "class": "active item",
+                    },
+                    "children": Array [
+                      Node {
+                        "data": "trees.informations",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": [Circular],
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
                   "type": "tag",
                   "x-attribsNamespace": Object {
                     "class": undefined,
@@ -363,6 +539,107 @@ LoadedCheerio {
                   },
                   "children": Array [
                     Node {
+                      "data": "trees.structure",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": Node {
+                    "attribs": Object {
+                      "class": "item",
+                    },
+                    "children": Array [
+                      Node {
+                        "data": "trees.explorer",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": Node {
+                      "attribs": Object {
+                        "class": "item",
+                      },
+                      "children": Array [
+                        Node {
+                          "data": "trees.permissions",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": [Circular],
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "class": undefined,
+                      },
+                    },
+                    "parent": [Circular],
+                    "prev": [Circular],
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
+                  "parent": [Circular],
+                  "prev": [Circular],
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
+              Node {
+                "attribs": Object {
+                  "class": "item",
+                },
+                "children": Array [
+                  Node {
+                    "data": "trees.structure",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": Node {
+                  "attribs": Object {
+                    "class": "item",
+                  },
+                  "children": Array [
+                    Node {
                       "data": "trees.explorer",
                       "next": null,
                       "parent": [Circular],
@@ -409,7 +686,32 @@ LoadedCheerio {
                   },
                 },
                 "parent": [Circular],
-                "prev": null,
+                "prev": Node {
+                  "attribs": Object {
+                    "class": "active item",
+                  },
+                  "children": Array [
+                    Node {
+                      "data": "trees.informations",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": [Circular],
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
                 "type": "tag",
                 "x-attribsNamespace": Object {
                   "class": undefined,
@@ -462,11 +764,11 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": Node {
                   "attribs": Object {
-                    "class": "active item",
+                    "class": "item",
                   },
                   "children": Array [
                     Node {
-                      "data": "trees.informations",
+                      "data": "trees.structure",
                       "next": null,
                       "parent": [Circular],
                       "prev": null,
@@ -477,7 +779,32 @@ LoadedCheerio {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": [Circular],
                   "parent": [Circular],
-                  "prev": null,
+                  "prev": Node {
+                    "attribs": Object {
+                      "class": "active item",
+                    },
+                    "children": Array [
+                      Node {
+                        "data": "trees.informations",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": [Circular],
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
                   "type": "tag",
                   "x-attribsNamespace": Object {
                     "class": undefined,
@@ -530,11 +857,11 @@ LoadedCheerio {
                   "parent": [Circular],
                   "prev": Node {
                     "attribs": Object {
-                      "class": "active item",
+                      "class": "item",
                     },
                     "children": Array [
                       Node {
-                        "data": "trees.informations",
+                        "data": "trees.structure",
                         "next": null,
                         "parent": [Circular],
                         "prev": null,
@@ -545,7 +872,32 @@ LoadedCheerio {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": null,
+                    "prev": Node {
+                      "attribs": Object {
+                        "class": "active item",
+                      },
+                      "children": Array [
+                        Node {
+                          "data": "trees.informations",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": [Circular],
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "class": undefined,
+                      },
+                    },
                     "type": "tag",
                     "x-attribsNamespace": Object {
                       "class": undefined,
@@ -650,6 +1002,107 @@ LoadedCheerio {
                     },
                     "children": Array [
                       Node {
+                        "data": "trees.structure",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": Node {
+                      "attribs": Object {
+                        "class": "item",
+                      },
+                      "children": Array [
+                        Node {
+                          "data": "trees.explorer",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": Node {
+                        "attribs": Object {
+                          "class": "item",
+                        },
+                        "children": Array [
+                          Node {
+                            "data": "trees.permissions",
+                            "next": null,
+                            "parent": [Circular],
+                            "prev": null,
+                            "type": "text",
+                          },
+                        ],
+                        "name": "a",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": [Circular],
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "class": undefined,
+                        },
+                      },
+                      "parent": [Circular],
+                      "prev": [Circular],
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "class": undefined,
+                      },
+                    },
+                    "parent": [Circular],
+                    "prev": [Circular],
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                Node {
+                  "attribs": Object {
+                    "class": "item",
+                  },
+                  "children": Array [
+                    Node {
+                      "data": "trees.structure",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": Node {
+                    "attribs": Object {
+                      "class": "item",
+                    },
+                    "children": Array [
+                      Node {
                         "data": "trees.explorer",
                         "next": null,
                         "parent": [Circular],
@@ -696,7 +1149,32 @@ LoadedCheerio {
                     },
                   },
                   "parent": [Circular],
-                  "prev": null,
+                  "prev": Node {
+                    "attribs": Object {
+                      "class": "active item",
+                    },
+                    "children": Array [
+                      Node {
+                        "data": "trees.informations",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": [Circular],
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
                   "type": "tag",
                   "x-attribsNamespace": Object {
                     "class": undefined,
@@ -749,11 +1227,11 @@ LoadedCheerio {
                   "parent": [Circular],
                   "prev": Node {
                     "attribs": Object {
-                      "class": "active item",
+                      "class": "item",
                     },
                     "children": Array [
                       Node {
-                        "data": "trees.informations",
+                        "data": "trees.structure",
                         "next": null,
                         "parent": [Circular],
                         "prev": null,
@@ -764,7 +1242,32 @@ LoadedCheerio {
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": [Circular],
                     "parent": [Circular],
-                    "prev": null,
+                    "prev": Node {
+                      "attribs": Object {
+                        "class": "active item",
+                      },
+                      "children": Array [
+                        Node {
+                          "data": "trees.informations",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": [Circular],
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "class": undefined,
+                      },
+                    },
                     "type": "tag",
                     "x-attribsNamespace": Object {
                       "class": undefined,
@@ -817,11 +1320,11 @@ LoadedCheerio {
                     "parent": [Circular],
                     "prev": Node {
                       "attribs": Object {
-                        "class": "active item",
+                        "class": "item",
                       },
                       "children": Array [
                         Node {
-                          "data": "trees.informations",
+                          "data": "trees.structure",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
@@ -832,7 +1335,32 @@ LoadedCheerio {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": null,
+                      "prev": Node {
+                        "attribs": Object {
+                          "class": "active item",
+                        },
+                        "children": Array [
+                          Node {
+                            "data": "trees.informations",
+                            "next": null,
+                            "parent": [Circular],
+                            "prev": null,
+                            "type": "text",
+                          },
+                        ],
+                        "name": "a",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": [Circular],
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "class": undefined,
+                        },
+                      },
                       "type": "tag",
                       "x-attribsNamespace": Object {
                         "class": undefined,
@@ -965,6 +1493,107 @@ LoadedCheerio {
                       },
                       "children": Array [
                         Node {
+                          "data": "trees.structure",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": Node {
+                        "attribs": Object {
+                          "class": "item",
+                        },
+                        "children": Array [
+                          Node {
+                            "data": "trees.explorer",
+                            "next": null,
+                            "parent": [Circular],
+                            "prev": null,
+                            "type": "text",
+                          },
+                        ],
+                        "name": "a",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": Node {
+                          "attribs": Object {
+                            "class": "item",
+                          },
+                          "children": Array [
+                            Node {
+                              "data": "trees.permissions",
+                              "next": null,
+                              "parent": [Circular],
+                              "prev": null,
+                              "type": "text",
+                            },
+                          ],
+                          "name": "a",
+                          "namespace": "http://www.w3.org/1999/xhtml",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": [Circular],
+                          "type": "tag",
+                          "x-attribsNamespace": Object {
+                            "class": undefined,
+                          },
+                          "x-attribsPrefix": Object {
+                            "class": undefined,
+                          },
+                        },
+                        "parent": [Circular],
+                        "prev": [Circular],
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "class": undefined,
+                        },
+                      },
+                      "parent": [Circular],
+                      "prev": [Circular],
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "class": undefined,
+                      },
+                    },
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
+                  Node {
+                    "attribs": Object {
+                      "class": "item",
+                    },
+                    "children": Array [
+                      Node {
+                        "data": "trees.structure",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": Node {
+                      "attribs": Object {
+                        "class": "item",
+                      },
+                      "children": Array [
+                        Node {
                           "data": "trees.explorer",
                           "next": null,
                           "parent": [Circular],
@@ -1011,7 +1640,32 @@ LoadedCheerio {
                       },
                     },
                     "parent": [Circular],
-                    "prev": null,
+                    "prev": Node {
+                      "attribs": Object {
+                        "class": "active item",
+                      },
+                      "children": Array [
+                        Node {
+                          "data": "trees.informations",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": [Circular],
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": Object {
+                        "class": undefined,
+                      },
+                    },
                     "type": "tag",
                     "x-attribsNamespace": Object {
                       "class": undefined,
@@ -1064,11 +1718,11 @@ LoadedCheerio {
                     "parent": [Circular],
                     "prev": Node {
                       "attribs": Object {
-                        "class": "active item",
+                        "class": "item",
                       },
                       "children": Array [
                         Node {
-                          "data": "trees.informations",
+                          "data": "trees.structure",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
@@ -1079,7 +1733,32 @@ LoadedCheerio {
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": [Circular],
                       "parent": [Circular],
-                      "prev": null,
+                      "prev": Node {
+                        "attribs": Object {
+                          "class": "active item",
+                        },
+                        "children": Array [
+                          Node {
+                            "data": "trees.informations",
+                            "next": null,
+                            "parent": [Circular],
+                            "prev": null,
+                            "type": "text",
+                          },
+                        ],
+                        "name": "a",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": [Circular],
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "class": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "class": undefined,
+                        },
+                      },
                       "type": "tag",
                       "x-attribsNamespace": Object {
                         "class": undefined,
@@ -1132,11 +1811,11 @@ LoadedCheerio {
                       "parent": [Circular],
                       "prev": Node {
                         "attribs": Object {
-                          "class": "active item",
+                          "class": "item",
                         },
                         "children": Array [
                           Node {
-                            "data": "trees.informations",
+                            "data": "trees.structure",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
@@ -1147,7 +1826,32 @@ LoadedCheerio {
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": [Circular],
                         "parent": [Circular],
-                        "prev": null,
+                        "prev": Node {
+                          "attribs": Object {
+                            "class": "active item",
+                          },
+                          "children": Array [
+                            Node {
+                              "data": "trees.informations",
+                              "next": null,
+                              "parent": [Circular],
+                              "prev": null,
+                              "type": "text",
+                            },
+                          ],
+                          "name": "a",
+                          "namespace": "http://www.w3.org/1999/xhtml",
+                          "next": [Circular],
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "tag",
+                          "x-attribsNamespace": Object {
+                            "class": undefined,
+                          },
+                          "x-attribsPrefix": Object {
+                            "class": undefined,
+                          },
+                        },
                         "type": "tag",
                         "x-attribsNamespace": Object {
                           "class": undefined,
@@ -1255,6 +1959,107 @@ LoadedCheerio {
               },
               "children": Array [
                 Node {
+                  "data": "trees.structure",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": Object {
+                  "class": "item",
+                },
+                "children": Array [
+                  Node {
+                    "data": "trees.explorer",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": Node {
+                  "attribs": Object {
+                    "class": "item",
+                  },
+                  "children": Array [
+                    Node {
+                      "data": "trees.permissions",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": [Circular],
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
+          },
+          Node {
+            "attribs": Object {
+              "class": "item",
+            },
+            "children": Array [
+              Node {
+                "data": "trees.structure",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": Object {
+                "class": "item",
+              },
+              "children": Array [
+                Node {
                   "data": "trees.explorer",
                   "next": null,
                   "parent": [Circular],
@@ -1301,7 +2106,32 @@ LoadedCheerio {
               },
             },
             "parent": [Circular],
-            "prev": null,
+            "prev": Node {
+              "attribs": Object {
+                "class": "active item",
+              },
+              "children": Array [
+                Node {
+                  "data": "trees.informations",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
             "type": "tag",
             "x-attribsNamespace": Object {
               "class": undefined,
@@ -1354,11 +2184,11 @@ LoadedCheerio {
             "parent": [Circular],
             "prev": Node {
               "attribs": Object {
-                "class": "active item",
+                "class": "item",
               },
               "children": Array [
                 Node {
-                  "data": "trees.informations",
+                  "data": "trees.structure",
                   "next": null,
                   "parent": [Circular],
                   "prev": null,
@@ -1369,7 +2199,32 @@ LoadedCheerio {
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": [Circular],
               "parent": [Circular],
-              "prev": null,
+              "prev": Node {
+                "attribs": Object {
+                  "class": "active item",
+                },
+                "children": Array [
+                  Node {
+                    "data": "trees.informations",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
               "type": "tag",
               "x-attribsNamespace": Object {
                 "class": undefined,
@@ -1422,11 +2277,11 @@ LoadedCheerio {
               "parent": [Circular],
               "prev": Node {
                 "attribs": Object {
-                  "class": "active item",
+                  "class": "item",
                 },
                 "children": Array [
                   Node {
-                    "data": "trees.informations",
+                    "data": "trees.structure",
                     "next": null,
                     "parent": [Circular],
                     "prev": null,
@@ -1437,7 +2292,32 @@ LoadedCheerio {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
-                "prev": null,
+                "prev": Node {
+                  "attribs": Object {
+                    "class": "active item",
+                  },
+                  "children": Array [
+                    Node {
+                      "data": "trees.informations",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": [Circular],
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
                 "type": "tag",
                 "x-attribsNamespace": Object {
                   "class": undefined,
@@ -1570,6 +2450,107 @@ LoadedCheerio {
                 },
                 "children": Array [
                   Node {
+                    "data": "trees.structure",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": Node {
+                  "attribs": Object {
+                    "class": "item",
+                  },
+                  "children": Array [
+                    Node {
+                      "data": "trees.explorer",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": Node {
+                    "attribs": Object {
+                      "class": "item",
+                    },
+                    "children": Array [
+                      Node {
+                        "data": "trees.permissions",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": [Circular],
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
+                  "parent": [Circular],
+                  "prev": [Circular],
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "class": undefined,
+              },
+            },
+            Node {
+              "attribs": Object {
+                "class": "item",
+              },
+              "children": Array [
+                Node {
+                  "data": "trees.structure",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": Object {
+                  "class": "item",
+                },
+                "children": Array [
+                  Node {
                     "data": "trees.explorer",
                     "next": null,
                     "parent": [Circular],
@@ -1616,7 +2597,32 @@ LoadedCheerio {
                 },
               },
               "parent": [Circular],
-              "prev": null,
+              "prev": Node {
+                "attribs": Object {
+                  "class": "active item",
+                },
+                "children": Array [
+                  Node {
+                    "data": "trees.informations",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "class": undefined,
+                },
+              },
               "type": "tag",
               "x-attribsNamespace": Object {
                 "class": undefined,
@@ -1669,11 +2675,11 @@ LoadedCheerio {
               "parent": [Circular],
               "prev": Node {
                 "attribs": Object {
-                  "class": "active item",
+                  "class": "item",
                 },
                 "children": Array [
                   Node {
-                    "data": "trees.informations",
+                    "data": "trees.structure",
                     "next": null,
                     "parent": [Circular],
                     "prev": null,
@@ -1684,7 +2690,32 @@ LoadedCheerio {
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
-                "prev": null,
+                "prev": Node {
+                  "attribs": Object {
+                    "class": "active item",
+                  },
+                  "children": Array [
+                    Node {
+                      "data": "trees.informations",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": [Circular],
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": Object {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": Object {
+                    "class": undefined,
+                  },
+                },
                 "type": "tag",
                 "x-attribsNamespace": Object {
                   "class": undefined,
@@ -1737,11 +2768,11 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": Node {
                   "attribs": Object {
-                    "class": "active item",
+                    "class": "item",
                   },
                   "children": Array [
                     Node {
-                      "data": "trees.informations",
+                      "data": "trees.structure",
                       "next": null,
                       "parent": [Circular],
                       "prev": null,
@@ -1752,7 +2783,32 @@ LoadedCheerio {
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": [Circular],
                   "parent": [Circular],
-                  "prev": null,
+                  "prev": Node {
+                    "attribs": Object {
+                      "class": "active item",
+                    },
+                    "children": Array [
+                      Node {
+                        "data": "trees.informations",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": [Circular],
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": Object {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": Object {
+                      "class": undefined,
+                    },
+                  },
                   "type": "tag",
                   "x-attribsNamespace": Object {
                     "class": undefined,
