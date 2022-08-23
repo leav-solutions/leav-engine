@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Checkbox, Grid, Icon, Segment, Form} from 'semantic-ui-react';
+import {Button, Checkbox, Grid, Icon, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {TreeLibraryInput} from '../../../../../../../_gqlTypes/globalTypes';
 import LibrariesSelector from '../../../../../../libraries/LibrariesSelector';
@@ -120,51 +120,6 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
                                                     label={t('trees.allow_multiple_positions')}
                                                     onChange={_handleSettingsChange(index)}
                                                     disabled={readonly}
-                                                />
-                                            </Grid.Column>
-                                        </Grid.Row>
-                                        <Grid.Row verticalAlign="middle">
-                                            <Grid.Column textAlign="left">
-                                                <Checkbox
-                                                    data-test-id={`settings-allowedAtRoot-${treeLib.library}`}
-                                                    toggle
-                                                    name="allowedAtRoot"
-                                                    checked={treeLib.settings.allowedAtRoot}
-                                                    label={t('trees.allowed_at_root')}
-                                                    onChange={_handleSettingsChange(index)}
-                                                    disabled={readonly}
-                                                />
-                                            </Grid.Column>
-                                        </Grid.Row>
-                                        <Grid.Row verticalAlign="middle">
-                                            <Grid.Column textAlign="left">
-                                                <Checkbox
-                                                    data-test-id={`settings-allowChildren-${treeLib.library}`}
-                                                    toggle
-                                                    name="allowedChildren"
-                                                    checked={!!treeLib.settings.allowedChildren.length}
-                                                    label={t('trees.allow_children')}
-                                                    onChange={_handleSettingsChange(index)}
-                                                    disabled={readonly}
-                                                />
-                                            </Grid.Column>
-                                        </Grid.Row>
-                                        <Grid.Row verticalAlign="middle">
-                                            <Grid.Column>
-                                                <LibrariesSelector
-                                                    placeholder={t('trees.all_libraries_authorized')}
-                                                    data-test-id="allowed-libs-selector"
-                                                    disabled={readonly || !treeLib.settings.allowedChildren.length}
-                                                    multiple={true}
-                                                    fluid
-                                                    selection
-                                                    name="allowedChildren"
-                                                    onChange={_handleSettingsChange(index)}
-                                                    value={
-                                                        treeLib.settings.allowedChildren[0] === '__all__'
-                                                            ? treeLib.settings.allowedChildren.slice(1)
-                                                            : treeLib.settings.allowedChildren
-                                                    }
                                                 />
                                             </Grid.Column>
                                         </Grid.Row>

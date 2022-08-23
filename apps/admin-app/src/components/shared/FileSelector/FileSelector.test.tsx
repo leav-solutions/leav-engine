@@ -63,7 +63,7 @@ describe('FileSelector', () => {
             render(<FileSelector onChange={jest.fn()} value={null} label="icon" />, {apolloMocks: mocks});
         });
 
-        const selectBtn = screen.getByRole('button', {name: /select/});
+        const selectBtn = await screen.findByRole('button', {name: /select/});
         expect(selectBtn).toBeInTheDocument();
 
         userEvent.click(selectBtn);

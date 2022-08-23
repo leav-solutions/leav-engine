@@ -5,6 +5,8 @@
         "save": "Save",
         "cancel": "Cancel",
         "close": "Close",
+        "add": "Add",
+        "remove": "Remove",
         "loading": "Loading...",
         "any_record": "Any {libLabel}",
         "forbidden_route": "Access denied",
@@ -160,12 +162,16 @@
         "behavior": "Behavior",
         "behavior_files": "Files",
         "behavior_standard": "Standard",
-        "allow_children": "Allow children",
+        "allow_children": "Allowed children",
         "default_view": "Default view",
         "allow_multiple_positions": "Allow multiple positions",
         "allowed_at_root": "Allowed at root",
         "add_library": "Add library",
-        "alternative_paths": "Alternative paths"
+        "alternative_paths": "Alternative paths",
+        "dependencies": "Dependencies",
+        "no_children_allowed": "No children allowed",
+        "root": "Tree root",
+        "no_root_libraries": "Drag libraries here to allow them at root"
     },
     "permissions": {
         "title": "App Permissions",

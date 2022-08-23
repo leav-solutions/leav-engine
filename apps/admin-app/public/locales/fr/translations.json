@@ -5,6 +5,8 @@
         "save": "Enregistrer",
         "cancel": "Annuler",
         "close": "Fermer",
+        "add": "Ajouter",
+        "remove": "Supprimer",
         "loading": "Chargement...",
         "forbidden_route": "Accès interdit",
         "validation_errors": {
@@ -160,12 +162,16 @@
         "behavior": "Comportement",
         "behavior_files": "Fichiers",
         "behavior_standard": "Standard",
-        "allow_children": "Autoriser les enfants",
+        "allow_children": "Enfants autorisés",
         "all_libraries_authorized": "Toutes les bibliothèques sont autorisées par défaut",
         "allow_multiple_positions": "Autoriser l'ajout multiple",
         "allowed_at_root": "Autoriser à la racine",
         "add_library": "Ajouter une bibliothèque",
-        "alternative_paths": "Chemins alternatifs"
+        "alternative_paths": "Chemins alternatifs",
+        "dependencies": "Dépendances",
+        "no_children_allowed": "Aucun enfant autorisé",
+        "root": "Racine de l'arbre",
+        "no_root_libraries": "Glissez des bibliothèques ici pour les autoriser à la racine de l'arbre"
     },
     "permissions": {
         "title": "Permissions application",

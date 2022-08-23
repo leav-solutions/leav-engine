@@ -11,6 +11,7 @@ import {localizedLabel} from '../../../../utils';
 import {GET_TREE_BY_ID_trees_list} from '../../../../_gqlTypes/GET_TREE_BY_ID';
 import TreeInfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
+import TreeStructure from './TreeStructure';
 
 export interface IEditTreeMatchParams {
     id: string;
@@ -38,6 +39,16 @@ function EditTreeTabs({tree, readonly, history, location}: IEditTreeTabsProps): 
             render: () => (
                 <Tab.Pane key="infos" className="grow">
                     <TreeInfosTab tree={tree} readonly={readonly} history={history} />
+                </Tab.Pane>
+            )
+        },
+        {
+            key: 'structure',
+            mustBeDisplayed: !isCreationMode,
+            menuItem: t('trees.structure'),
+            render: () => (
+                <Tab.Pane key="structure" className="grow">
+                    <TreeStructure tree={tree} readOnly={readonly} />
                 </Tab.Pane>
             )
         },
