@@ -88,7 +88,11 @@ module.exports = {
     },
     eventsManager: {
         routingKeys: {
-            events: 'database.event'
+            database_events: 'database.events',
+            pubsub_events: 'pubsub.events'
+        },
+        queues: {
+            pubsub_events: 'pubsub_events'
         }
     },
     indexationManager: {

@@ -4,7 +4,7 @@
 import {extractArgsFromString} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import tasksManagerDomain, {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
@@ -430,6 +430,8 @@ export default function ({
                 return newTaskId;
             }
 
+            await tasksManager.updateProgress(task.id, 10, ctx);
+
             try {
                 await _jsonSchemaValidation(filename);
             } catch (err) {
@@ -507,6 +509,8 @@ export default function ({
                 }
             );
 
+            await tasksManager.updateProgress(task.id, 50, ctx);
+
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
                 try {
@@ -521,6 +525,8 @@ export default function ({
                     continue;
                 }
             }
+
+            await tasksManager.updateProgress(task.id, 80, ctx);
 
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);

@@ -97,7 +97,11 @@ export const validateConfig = (conf: IConfig) => {
         }),
         eventsManager: Joi.object().keys({
             routingKeys: Joi.object().keys({
-                events: Joi.string().required()
+                database_events: Joi.string().required(),
+                pubsub_events: Joi.string().required()
+            }),
+            queues: Joi.object().keys({
+                pubsub_events: Joi.string().required()
             })
         }),
         debug: Joi.boolean(),

@@ -21,11 +21,9 @@ import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 import {WebSocketServer} from 'ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
 import {createServer} from 'http';
-import {PubSub} from 'graphql-subscriptions';
 
 export interface IServer {
     init(): Promise<void>;
-    pubsub: PubSub;
 }
 
 interface IDeps {
@@ -101,7 +99,6 @@ export default function ({
     };
 
     return {
-        pubsub: new PubSub(),
         async init(): Promise<void> {
             const app = express();
             const httpServer = createServer(app);

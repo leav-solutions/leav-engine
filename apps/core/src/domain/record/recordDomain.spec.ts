@@ -30,7 +30,9 @@ import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
 
-const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
+const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
+    routingKeys: {database_events: 'test.database.events', pubsub_events: 'test.pubsub.events'}
+};
 
 const mockConfig: Mockify<Config.IConfig> = {
     eventsManager: eventsManagerMockConfig as Config.IEventsManager,
@@ -64,7 +66,7 @@ describe('RecordDomain', () => {
             };
 
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
 
             const recDomain = recordDomain({
@@ -132,7 +134,7 @@ describe('RecordDomain', () => {
                 // getLibraryFullTextAttributes: global.__mockPromise([])
             };
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
 
             const mockValidateHelper: Mockify<IValidateHelper> = {

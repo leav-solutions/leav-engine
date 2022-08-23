@@ -49,6 +49,7 @@ import {IApplicationService} from 'infra/application/applicationService';
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
+    const eventsManager = coreContainer.cradle['core.domain.eventsManager'];
 
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 
@@ -77,6 +78,7 @@ import {IApplicationService} from 'infra/application/applicationService';
 
         if (typeof opt !== 'undefined' && opt.indexOf('server') !== -1) {
             await server.init();
+            await eventsManager.init();
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);

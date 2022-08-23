@@ -22,7 +22,9 @@ import {mockLibrary} from '../../__tests__/mocks/library';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain from './libraryDomain';
 
-const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
+const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
+    routingKeys: {database_events: 'test.database.events', pubsub_events: 'test.pubsub.events'}
+};
 
 const mockConfig: Mockify<Config.IConfig> = {
     eventsManager: eventsManagerMockConfig as Config.IEventsManager,
@@ -167,7 +169,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -245,7 +247,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -277,7 +279,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -337,7 +339,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -402,7 +404,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -462,7 +464,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -536,7 +538,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -596,7 +598,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -657,7 +659,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -714,7 +716,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -746,7 +748,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -796,7 +798,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                    send: global.__mockPromise()
+                    sendDatabaseEvent: global.__mockPromise()
                 };
 
                 const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -847,7 +849,7 @@ describe('LibraryDomain', () => {
         test('Should delete a library and return deleted library', async function () {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
@@ -881,7 +883,7 @@ describe('LibraryDomain', () => {
         test('Should throw if unknown library', async function () {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
 
             const libDomain = libraryDomain({
@@ -899,7 +901,7 @@ describe('LibraryDomain', () => {
         test('Should throw if system library', async function () {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
 
             const libDomain = libraryDomain({
@@ -913,7 +915,7 @@ describe('LibraryDomain', () => {
 
         test('Should throw if forbidden action', async function () {
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
@@ -929,7 +931,7 @@ describe('LibraryDomain', () => {
 
         test('When deleting a files library, delete linked tree', async () => {
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
 

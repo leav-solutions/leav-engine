@@ -106,7 +106,11 @@ export interface IFilesManager {
 
 export interface IEventsManager {
     routingKeys: {
-        events: string;
+        database_events: string;
+        pubsub_events: string;
+    };
+    queues: {
+        pubsub_events: string;
     };
 }
 

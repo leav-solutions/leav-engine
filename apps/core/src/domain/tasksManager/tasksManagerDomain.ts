@@ -70,6 +70,8 @@ interface IMasterMsg {
     data?: any;
 }
 
+export const TRIGGER_NAME_TASK = 'TASK';
+
 export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
@@ -187,8 +189,6 @@ export default function ({
             status = TaskStatus.FAILED;
         }
 
-        await new Promise(resolve => setTimeout(resolve, 30000)); // 300s
-
         return _updateTask(
             task.id,
             {
@@ -301,6 +301,8 @@ export default function ({
             ctx
         );
 
+        await eventsManager.sendPubSubEvent({triggerName: TRIGGER_NAME_TASK, data: {task}}, ctx);
+
         return task;
     };
 
@@ -395,7 +397,6 @@ export default function ({
         },
         async updateProgress(taskId: string, progress: number, ctx: IQueryInfos): Promise<void> {
             await _updateTask(taskId, {progress}, ctx);
-            // await eventsManager.send([EventType.PUBSUB], {taskId, progress}, ctx);
         },
         async setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {
             await _updateTask(taskId, {links}, ctx);

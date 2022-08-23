@@ -68,7 +68,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -87,6 +87,7 @@ export default function ({
             userId: config.filesManager.userId,
             queryId: uuidv4()
         };
+
         try {
             msgBody = JSON.parse(msg);
             _validateMsg(msgBody);

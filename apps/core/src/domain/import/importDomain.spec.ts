@@ -161,7 +161,8 @@ describe('importDomain', () => {
         };
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise()
+            sendOrder: global.__mockPromise(),
+            updateProgress: global.__mockPromise()
         };
 
         const imprtDomain = importDomain({
@@ -267,7 +268,8 @@ describe('importDomain', () => {
         };
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise()
+            sendOrder: global.__mockPromise(),
+            updateProgress: global.__mockPromise()
         };
 
         const imprtDomain = importDomain({
@@ -339,7 +341,8 @@ describe('importDomain', () => {
         };
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise()
+            sendOrder: global.__mockPromise(),
+            updateProgress: global.__mockPromise()
         };
 
         const imprtDomain = importDomain({
@@ -418,7 +421,8 @@ describe('importDomain', () => {
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise()
+            sendOrder: global.__mockPromise(),
+            updateProgress: global.__mockPromise()
         };
 
         const imprtDomain = importDomain({
@@ -495,7 +499,8 @@ describe('importDomain', () => {
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise()
+            sendOrder: global.__mockPromise(),
+            updateProgress: global.__mockPromise()
         };
 
         const imprtDomain = importDomain({
@@ -572,7 +577,8 @@ describe('importDomain', () => {
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise()
+            sendOrder: global.__mockPromise(),
+            updateProgress: global.__mockPromise()
         };
 
         const imprtDomain = importDomain({

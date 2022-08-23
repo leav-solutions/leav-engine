@@ -16,7 +16,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
-import {EventAction, EventType} from '../../_types/event';
+import {EventAction} from '../../_types/event';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
@@ -463,8 +463,7 @@ const valueDomain = function ({
                         prevRes.values.push(processedValue);
 
                         // TODO: get old value ?
-                        await eventsManager.send(
-                            [EventType.MESSAGE_BROKER],
+                        await eventsManager.sendDatabaseEvent(
                             {
                                 action: EventAction.VALUE_SAVE,
                                 data: {
@@ -612,8 +611,7 @@ const valueDomain = function ({
             res.attribute = attribute;
 
             // delete value on elasticsearch
-            await eventsManager.send(
-                [EventType.MESSAGE_BROKER],
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.VALUE_DELETE,
                     data: {

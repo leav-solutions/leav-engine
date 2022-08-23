@@ -5,6 +5,13 @@ import {IRecord} from './record';
 import {ILibrary} from './library';
 import {IValue} from './value';
 
+export interface IEvent {
+    time: number;
+    userId: string;
+}
+
+/* Database events */
+
 export enum EventAction {
     RECORD_SAVE = 'RECORD_SAVE',
     RECORD_DELETE = 'RECORD_DELETE',
@@ -14,16 +21,11 @@ export enum EventAction {
     VALUE_DELETE = 'VALUE_DELETE'
 }
 
-export enum EventType {
-    MESSAGE_BROKER = 'MESSAGE_BROKER',
-    PUBSUB = 'PUBSUB'
-}
-
-export interface IPayload {
+export interface IDbPayload {
     action: EventAction;
 }
 
-export interface IRecordPayload extends IPayload {
+export interface IRecordPayload extends IDbPayload {
     data: {
         id: string;
         libraryId: string;
@@ -37,14 +39,14 @@ export type DataLibrary = Omit<ILibrary, 'attributes' | 'fullTextAttributes'> & 
     fullTextAttributes?: string[];
 };
 
-export interface ILibraryPayload extends IPayload {
+export interface ILibraryPayload extends IDbPayload {
     data: {
         old?: DataLibrary;
         new?: DataLibrary;
     };
 }
 
-export interface IValuePayload extends IPayload {
+export interface IValuePayload extends IDbPayload {
     data: {
         libraryId: string;
         recordId: string;
@@ -56,10 +58,19 @@ export interface IValuePayload extends IPayload {
     };
 }
 
-export type Payload = IRecordPayload | ILibraryPayload | IValuePayload;
+export type DbPayload = IRecordPayload | ILibraryPayload | IValuePayload;
 
-export interface IEvent {
-    time: number;
-    userId: string;
-    payload: Payload;
+export interface IDbEvent extends IEvent {
+    payload: DbPayload;
+}
+
+/* PubSub events */
+
+export interface IPubSubEvent extends IEvent {
+    payload: IPubSubPayload;
+}
+
+export interface IPubSubPayload {
+    triggerName: string;
+    data: any;
 }

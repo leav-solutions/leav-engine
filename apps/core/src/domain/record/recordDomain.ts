@@ -24,7 +24,7 @@ import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {EventAction, EventType} from '../../_types/event';
+import {EventAction} from '../../_types/event';
 import {FilesAttributes} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
@@ -616,8 +616,7 @@ export default function({
 
             const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
-            await eventsManager.send(
-                [EventType.MESSAGE_BROKER],
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
                     data: {
@@ -716,8 +715,7 @@ export default function({
             // Everything is clean, we can actually delete the record
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            await eventsManager.send(
-                [EventType.MESSAGE_BROKER],
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_DELETE,
                     data: {

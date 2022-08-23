@@ -1,20 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {TaskStatus, TaskPriority, ITask, TaskCallbackType, OrderType} from '../../_types/tasksManager';
+import {TaskStatus, TaskPriority, ITask, OrderType} from '../../_types/tasksManager';
 import {IPaginationParams, ISortParams, IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUtils} from 'utils/utils';
-import {GraphQLEnumType} from 'graphql';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {withFilter} from 'graphql-subscriptions';
-import {IServer} from 'interface/server';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {EventType} from '../../_types/event';
+import {ITasksManagerDomain, TRIGGER_NAME_TASK} from '../../domain/tasksManager/tasksManagerDomain';
 
 export interface ITasksManagerApp {
     init(): Promise<void>;
@@ -27,7 +24,6 @@ interface IDeps {
     config?: IConfig;
     'core.utils'?: IUtils;
     'core.domain.record'?: IRecordDomain;
-    'core.interface.server'?: IServer;
     'core.domain.eventsManager'?: IEventsManagerDomain;
 }
 
@@ -40,7 +36,6 @@ export interface IGetTasksArgs {
 }
 
 export default function ({
-    'core.interface.server': server = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null
 }: IDeps): ITasksManagerApp {
@@ -92,10 +87,11 @@ export default function ({
                     extend type Mutation {
                         cancelTask(taskId: ID!): Boolean!
                     }
+
+                    type Subscription {
+                        task(taskId: ID!): Task!
+                    }
                 `,
-                // type Subscription {
-                //     taskProgress: Int!
-                // }
                 resolvers: {
                     TaskPriority,
                     Query: {
@@ -104,9 +100,6 @@ export default function ({
                             {filters, pagination, sort}: IGetTasksArgs,
                             ctx: IQueryInfos
                         ): Promise<IList<ITask>> {
-                            // FIXME: test publish pubsub, to del
-                            await eventsManager.send([EventType.PUBSUB], {}, ctx);
-
                             return tasksManagerDomain.getTasks({
                                 params: {filters, pagination, sort, withCount: true},
                                 ctx
@@ -118,26 +111,17 @@ export default function ({
                             await tasksManagerDomain.sendOrder(OrderType.CANCEL, {id: taskId}, ctx);
                             return true;
                         }
+                    },
+                    Subscription: {
+                        task: {
+                            subscribe: withFilter(
+                                () => eventsManager.suscribe([TRIGGER_NAME_TASK]),
+                                (payload, variables) => {
+                                    return payload.task.id === variables.taskId;
+                                }
+                            )
+                        }
                     }
-                    // ,
-                    // Subscription: {
-                    //     taskProgress: {
-                    //         subscribe: () => eventsManager.pubsub.asyncIterator('TASK_PROGRESS')
-                    //         // withFilter(
-                    //         //     () => server.pubsub.asyncIterator('TASK_PROGRESS'),
-                    //         //     (payload, variables) => {
-                    //         //         return payload.taskProgress.taskId === variables.taskId;
-                    //         //     }
-                    //         // )
-                    //     }
-                    //     // taskProgress: () => pubsub.asyncIterator(['TASK_PROGRESS'])
-                    //     // {
-                    //     //     subscribe: async (_, {taskId}, ctx: IQueryInfos) => {
-                    //     //         console.debug({taskId});
-                    //     //         return tasksManagerDomain.getProgress(taskId, ctx);
-                    //     //     }
-                    //     // }
-                    // }
                 }
             };
 

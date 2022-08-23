@@ -13,7 +13,7 @@ import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {EventAction, EventType, IEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
+import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, Operator} from '../../_types/record';
 
 export interface IIndexationManagerDomain {
@@ -179,7 +179,7 @@ export default function ({
     };
 
     const _onMessage = async (msg: string): Promise<void> => {
-        const event: IEvent = JSON.parse(msg);
+        const event: IDbEvent = JSON.parse(msg);
         const ctx: IQueryInfos = {
             userId: '1',
             queryId: uuidv4()
@@ -337,14 +337,14 @@ export default function ({
         }
     };
 
-    const _validateMsg = (msg: IEvent) => {
+    const _validateMsg = (msg: IDbEvent) => {
         const msgBodySchema = Joi.object().keys({
             time: Joi.number().required(),
             userId: Joi.string().required(),
             payload: Joi.object()
                 .keys({
-                    type: Joi.string()
-                        .valid(...Object.values(EventType))
+                    action: Joi.string()
+                        .valid(...Object.values(EventAction))
                         .required(),
                     data: Joi.object().required()
                 })
@@ -365,12 +365,12 @@ export default function ({
             await amqpService.consumer.channel.bindQueue(
                 config.indexationManager.queues.events,
                 config.amqp.exchange,
-                config.eventsManager.routingKeys.events
+                config.eventsManager.routingKeys.database_events
             );
 
             return amqpService.consume(
                 config.indexationManager.queues.events,
-                config.eventsManager.routingKeys.events,
+                config.eventsManager.routingKeys.database_events,
                 _onMessage
             );
         },
