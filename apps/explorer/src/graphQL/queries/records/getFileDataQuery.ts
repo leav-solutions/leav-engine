@@ -14,7 +14,9 @@ export interface IFileDataElement extends RecordIdentity {
     file_name: string;
     file_path: string;
     file_type: 'image' | 'video' | 'document' | 'other';
-    is_directory: boolean;
+    library: {
+        behavior: 'standard' | 'files' | 'directories';
+    };
 }
 
 export interface IFileDataQuery {
@@ -46,7 +48,9 @@ export const getFileDataQuery = (libraryId: string) => gqlUnchecked`
                 file_name
                 file_path
                 file_type
-                is_directory
+                library {
+                    behavior
+                }
             }
         }
     }`;

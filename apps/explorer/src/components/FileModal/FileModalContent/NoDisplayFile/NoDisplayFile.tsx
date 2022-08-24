@@ -37,11 +37,12 @@ function NoDisplayFile({fileData, noPreviewMessage = false}: INoDisplayFileProps
     const extension = fileData.file_name.split('.').pop().toUpperCase();
     const bgColor = fileData.whoAmI.color || stringToColor(fileData.whoAmI.label);
     const fontColor = getInvertColor(bgColor);
+    const isDirectory = fileData.library.behavior === 'directories';
 
     return (
         <Wrapper style={{backgroundColor: bgColor, color: fontColor}}>
-            <ExtensionWrapper isDirectory={fileData.is_directory}>
-                {fileData.is_directory ? (
+            <ExtensionWrapper isDirectory={isDirectory}>
+                {isDirectory ? (
                     <Space>
                         <FolderOutlined />
                         {t('file_data.directory')}

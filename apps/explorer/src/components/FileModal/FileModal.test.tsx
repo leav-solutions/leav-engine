@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getFileDataQuery, IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
+import {getFileDataQuery,IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
 import React from 'react';
-import {render, screen, waitFor, within} from '_tests/testUtils';
+import {render,screen,waitFor,within} from '_tests/testUtils';
 import {mockRecord} from '__mocks__/common/record';
 import FileModal from './FileModal';
 
@@ -21,7 +21,9 @@ describe('FileModal', () => {
         file_path: 'path/to/',
         file_name: 'my_file.jpg',
         file_type: 'image',
-        is_directory: false
+        library: {
+            behavior: 'files'
+        }
     };
 
     const cacheSettings = {

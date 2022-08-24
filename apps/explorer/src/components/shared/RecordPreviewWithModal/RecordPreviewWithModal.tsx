@@ -14,11 +14,11 @@ interface IRecordPreviewWithModalProps extends Omit<IRecordPreviewProps, 'onClic
     fileLibraryId?: string;
 }
 
-const ClickHandler = styled.div`
+const ClickHandler = styled.div<{hasPreview: boolean}>`
     position: relative;
     cursor: pointer;
-    height: fit-content;
-    width: fit-content;
+    width: ${p => (p.hasPreview ? 'fit-content' : '100%')};
+    height: ${p => (p.hasPreview ? 'fit-content' : '100%')};
     margin: auto;
 `;
 
@@ -45,7 +45,7 @@ function RecordPreviewWithModal({
     ...recordPreviewProps
 }: IRecordPreviewWithModalProps): JSX.Element {
     const [isPreviewModalOpen, setPreviewModalOpen] = useState(false);
-    const hasPreview = fileId && fileLibraryId;
+    const hasPreview = !!(fileId && fileLibraryId && recordPreviewProps.image);
 
     const _handlePreviewClick = () => {
         if (!hasPreview) {
@@ -58,7 +58,7 @@ function RecordPreviewWithModal({
 
     return (
         <>
-            <ClickHandler onClick={_handlePreviewClick} data-testid="click-handler">
+            <ClickHandler onClick={_handlePreviewClick} data-testid="click-handler" hasPreview={hasPreview}>
                 <RecordPreview {...recordPreviewProps} />
                 {hasPreview && (
                     <Overlay>
