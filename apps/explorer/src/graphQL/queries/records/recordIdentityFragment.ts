@@ -24,7 +24,7 @@ const recordIdentityFragment = gql`
                 medium
                 big
                 huge
-                pages
+                pdf
                 original
                 file {
                     id

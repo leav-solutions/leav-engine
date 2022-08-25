@@ -42,7 +42,7 @@ export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview_file | null;
 }
@@ -86,7 +86,7 @@ export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview_file | null;
 }
@@ -151,7 +151,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_who
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview_file | null;
 }
@@ -195,7 +195,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_wh
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview_file | null;
 }
@@ -249,7 +249,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoA
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview_file | null;
 }
@@ -303,7 +303,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_who
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview_file | null;
 }
@@ -347,7 +347,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_wh
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview_file | null;
 }
@@ -401,7 +401,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_reco
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview_file | null;
 }
@@ -445,7 +445,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ance
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview_file | null;
 }
@@ -675,7 +675,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkVal
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview_file | null;
 }
@@ -802,7 +802,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview_file | null;
 }
@@ -846,7 +846,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview_file | null;
 }

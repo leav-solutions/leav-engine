@@ -147,14 +147,18 @@ export const updateRecordFile = async (
     }));
 
     try {
-        await deps.valueDomain.saveValueBatch({
+        const res = await deps.valueDomain.saveValueBatch({
             library,
             recordId,
             values,
             ctx
         });
+
+        if (res.errors) {
+            throw new Error(res.errors.map(err => `${err.attribute}: ${err.message}`).join(', '));
+        }
     } catch (e) {
-        deps.logger.warn(`[${ctx.queryId}] Error when updating record: ${recordId}`);
+        deps.logger.warn(`[${ctx.queryId}] Error when updating record: ${recordId}, ${e.message}`);
         deps.logger.warn(`[${ctx.queryId}] ${e.stack}`);
     }
 };
@@ -250,13 +254,13 @@ export const getPreviewsDatas = (previewVersions: IPreviewVersion[]) => {
         })
     );
 
-    // pages default value
-    previewsStatus.pages = {
-        status: -1,
-        message: 'waiting for creation'
-    };
-
-    previews.pages = '';
+    if (previewVersions.some(version => version.pdf)) {
+        previewsStatus.pdf = {
+            status: -1,
+            message: 'waiting for creation'
+        };
+        previews.pdf = '';
+    }
 
     return {
         previewsStatus,

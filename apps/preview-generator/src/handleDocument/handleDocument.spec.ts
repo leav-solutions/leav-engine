@@ -28,6 +28,7 @@ describe('getDocumentArgs', () => {
     const name = 'big';
     const rootPaths = {input: '/data/', output: '/data/'};
     const version: IVersion = {
+        pdf: '/path/to/file.pdf',
         sizes: [
             {
                 size,
@@ -37,20 +38,22 @@ describe('getDocumentArgs', () => {
         ]
     };
 
-    (async () => handleDocument({input, output, size, name, version, rootPaths, results: []}))();
-
     afterAll(() => jest.resetAllMocks());
 
-    test('check unoconv command', () => {
+    test('check unoconv command', async () => {
+        await handleDocument({input, output, size, name, version, rootPaths, results: []});
+
         expect(execFile).toHaveBeenCalledWith(
             'unoconv',
-            expect.arrayContaining([input, `${output}.pdf`]),
+            expect.arrayContaining([input, '/data/path/to/file.pdf']),
             expect.anything(),
             expect.anything()
         );
     });
 
-    test('check convert command', () => {
+    test('check convert command', async () => {
+        await handleDocument({input, output, size, name, version, rootPaths, results: []});
+
         expect(execFile).toHaveBeenCalledWith(
             'convert',
             expect.arrayContaining([`${output}.pdf[0]`, 'png:' + output]),

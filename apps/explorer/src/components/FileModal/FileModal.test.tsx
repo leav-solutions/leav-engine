@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getFileDataQuery,IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
+import {getFileDataQuery, IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
 import React from 'react';
-import {render,screen,waitFor,within} from '_tests/testUtils';
+import {render, screen, waitFor, within} from '_tests/testUtils';
 import {mockRecord} from '__mocks__/common/record';
 import FileModal from './FileModal';
 
@@ -11,7 +11,13 @@ describe('FileModal', () => {
     const mockFileData: IFileDataElement & {__typename: string} = {
         __typename: 'RecordLib',
         id: mockRecord.id,
-        whoAmI: mockRecord,
+        whoAmI: {
+            ...mockRecord,
+            preview: {
+                ...mockRecord.preview,
+                pdf: '/path/to/file.pdf'
+            }
+        },
         created_at: '2020-01-01T00:00:00.000Z',
         // @ts-ignore
         created_by: {__typename: 'RecordLib', id: '1', whoAmI: mockRecord},

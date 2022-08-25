@@ -40,6 +40,8 @@
         "**/dist",
         "exports",
         "**/admin-app/src/semantic-ui/**/*",
-        "**/admin-app/craco.config.js"
+        "**/admin-app/craco.config.js",
+        "**/craco.config.js",
+        "**/theme.config"
     ]
 }

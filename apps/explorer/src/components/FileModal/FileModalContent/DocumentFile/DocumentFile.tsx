@@ -18,7 +18,7 @@ const FullscreenBtn = styled(Button)`
 function DocumentFile({fileData, fallback}: IFileViewerProps): JSX.Element {
     const viewerRef = useRef<HTMLIFrameElement>();
 
-    if (!fileData?.whoAmI?.preview?.original) {
+    if (!fileData?.whoAmI?.preview?.pdf) {
         return fallback as JSX.Element;
     }
 
@@ -32,7 +32,7 @@ function DocumentFile({fileData, fallback}: IFileViewerProps): JSX.Element {
             <iframe
                 data-testid="document-viewer"
                 ref={viewerRef}
-                src={`${fileData.whoAmI.preview.original}#toolbar=0`}
+                src={`${fileData.whoAmI.preview.pdf}#toolbar=0`}
                 width="100%"
                 height="100%"
                 allowFullScreen

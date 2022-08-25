@@ -53,7 +53,7 @@ export interface IMessageConsume {
 export interface IVersion {
     background?: true | false | string;
     density?: number;
-    multiPage?: string;
+    pdf?: string;
     sizes: ISize[];
 }
 

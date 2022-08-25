@@ -19,7 +19,7 @@
     "license": "LGPL3",
     "devDependencies": {
         "@types/jest": "^24.0.23",
-        "@types/node": "^12.11.5",
+        "@types/node": "14",
         "jest": "^24.9.0",
         "lint-staged": "^9.4.3",
         "nodemon": "^1.19.4",

@@ -38,7 +38,7 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview 
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview_file | null;
 }

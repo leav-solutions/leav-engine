@@ -50,7 +50,7 @@ export interface IPreviewVersionSize {
 export interface IPreviewVersion {
     background: boolean | string;
     density: number;
-    multiPage?: string;
+    pdf?: string;
     sizes: IPreviewVersionSize[];
 }
 
