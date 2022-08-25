@@ -36,7 +36,7 @@ export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview {
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: GET_APPLICATIONS_applications_list_icon_whoAmI_preview_file | null;
 }

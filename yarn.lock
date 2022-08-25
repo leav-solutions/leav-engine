@@ -5135,6 +5135,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:14":
+  version: 14.18.26
+  resolution: "@types/node@npm:14.18.26"
+  checksum: c6ac3f9d4f6f77c0fa5ac17757779ad4d9835abfe3af5708b7552597cb5c7c1103e83499ccaf767a1cfa70040990bcf3f58761c547051dc8d5077f3c419091b1
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:14.14.31":
   version: 14.14.31
   resolution: "@types/node@npm:14.14.31"
@@ -5156,7 +5163,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^12.11.5, @types/node@npm:^12.12.38, @types/node@npm:^12.12.6, @types/node@npm:^12.19.15":
+"@types/node@npm:^12.12.38, @types/node@npm:^12.12.6, @types/node@npm:^12.19.15":
   version: 12.20.48
   resolution: "@types/node@npm:12.20.48"
   checksum: 48bd705bda1af2332c50fb24819bba7b0eac791b07c24c098c39b10940170a53bd3c4755aedc3409c7114c539f1f86ea657aa6838d164fd135e3b89b9f9aa772
@@ -26327,7 +26334,7 @@ __metadata:
     "@leav/config-manager": "workspace:libs/config-manager"
     "@types/amqplib": 0.8.2
     "@types/jest": ^24.0.23
-    "@types/node": ^12.11.5
+    "@types/node": 14
     "@types/uuid": ^3.4.6
     amqplib: 0.8.0
     app-root-path: ^3.0.0

@@ -84,7 +84,7 @@ export default function ({
                             .getPreviewVersion()
                             .reduce((sizes, version) => [...sizes, ...version.sizes.map(s => `${s.name}: String,`)], [])
                             .join(' ')}
-                        pages: String
+                        pdf: String
                         file: Record
                         original: String!
                     }

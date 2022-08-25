@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as Config from '_types/config';
 import {IAmqpService} from '@leav/message-broker';
+import * as Config from '_types/config';
 import {IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
 
 export const sendPreviewMessage = async (
@@ -27,12 +27,12 @@ export const generatePreviewMsg = (
 
     const output = `${firstDigit}/${secondDigit}/${recordId}`;
     const extension = 'png';
-    const multiPageFolderName = 'pages';
+    const pdfFolderName = 'pdf';
 
     // add output to version
     const versionsWithOutput = versions.map(version => ({
         ...version,
-        multiPage: `${multiPageFolderName}/${output}`,
+        pdf: `${pdfFolderName}/${output}.pdf`,
         sizes: version.sizes.map(size => ({...size, output: `${size.name}/${output}.${extension}`}))
     }));
 

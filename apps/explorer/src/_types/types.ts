@@ -38,15 +38,6 @@ export enum LinkedType {
     tree = 'tree'
 }
 
-export type FilePreview = {
-    tiny: string;
-    small: string;
-    medium: string;
-    big: string;
-    huge: string;
-    pages: string;
-} | null;
-
 export interface IItemBase {
     fields: {[x: string]: any};
     whoAmI: RecordIdentity_whoAmI;

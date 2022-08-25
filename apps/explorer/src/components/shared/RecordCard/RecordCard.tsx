@@ -7,7 +7,8 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, localizedTranslation} from 'utils';
-import {FilePreview, IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
+import {RecordIdentity_whoAmI_preview} from '_gqlTypes/RecordIdentity';
+import {IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
 import {_getPreviewSize} from '../RecordPreview/RecordPreview';
 
 export interface IRecordCardProps {
@@ -78,7 +79,7 @@ const SubLabel = styled.div`
     line-height: 1.3em;
 `;
 
-const _getPreviewBySize = (preview?: FilePreview, size?: PreviewSize) => {
+const _getPreviewBySize = (preview?: RecordIdentity_whoAmI_preview, size?: PreviewSize) => {
     const fileSizeByPreviewSize: {[size in PreviewSize]: string} = {
         [PreviewSize.small]: 'tiny',
         [PreviewSize.medium]: 'small',

@@ -38,7 +38,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI_preview_file | null;
 }
@@ -82,7 +82,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_created_by_whoAmI_
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_Value_created_by_whoAmI_preview_file | null;
 }
@@ -133,7 +133,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_mod
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_modified_by_whoAmI_preview_file | null;
 }
@@ -177,7 +177,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_cre
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_created_by_whoAmI_preview_file | null;
 }
@@ -250,7 +250,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_wh
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_whoAmI_preview_file | null;
 }
@@ -294,7 +294,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_created_by_who
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_created_by_whoAmI_preview_file | null;
 }
@@ -345,7 +345,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_modified_by_whoAmI_preview_file | null;
 }
@@ -389,7 +389,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_created_by_whoAmI_preview_file | null;
 }
@@ -449,7 +449,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoA
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoAmI_preview_file | null;
 }
@@ -505,7 +505,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_wh
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_whoAmI_preview_file | null;
 }
@@ -549,7 +549,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_created_by_who
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_created_by_whoAmI_preview_file | null;
 }
@@ -600,7 +600,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_modified_by_whoAmI_preview_file | null;
 }
@@ -644,7 +644,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_created_by_whoAmI_preview_file | null;
 }
@@ -704,7 +704,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_reco
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI_preview_file | null;
 }
@@ -748,7 +748,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ance
     medium: string | null;
     big: string | null;
     huge: string | null;
-    pages: string | null;
+    pdf: string | null;
     original: string;
     file: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record_whoAmI_preview_file | null;
 }

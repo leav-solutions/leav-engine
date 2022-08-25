@@ -2,13 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {execFile} from 'child_process';
-import {unlink} from 'fs';
-import {extname} from 'path';
+import fs from 'fs/promises';
+import {extname, join} from 'path';
 import {ErrorPreview} from '../errors/ErrorPreview';
 import {getImageArgs} from '../getArgs/getImageArgs/getImageArgs';
 import {IResult, IRootPaths, IVersion} from '../types/types';
 import {handleError} from './../utils/log';
-import {handleMultiPage} from './handleMultiPage/handleMultiPage';
 
 interface IHandleDocument {
     input: string;
@@ -22,21 +21,30 @@ interface IHandleDocument {
 
 // convert document in tmp pdf, convert the pdf in png and delete the pdf
 export const handleDocument = async ({input, output, size, name, version, rootPaths, results}: IHandleDocument) => {
-    const ext = extname(input)
-        .toLowerCase()
-        .replace('.', '');
+    const ext = extname(input).toLowerCase().replace('.', '');
 
     const isPdfLike = ext === 'pdf' || ext === 'ai';
 
-    let pdfFile = input;
+    let pdfFile;
+    const pdfOutput = join(rootPaths.output, version.pdf);
     if (!isPdfLike) {
-        pdfFile = await _createDocumentTmpFile(input, output, size, name);
+        pdfFile = await _createDocumentPdf(input, pdfOutput, size, name);
+    } else {
+        pdfFile = input;
+        fs.copyFile(input, pdfOutput);
     }
 
-    if (version.multiPage) {
-        await handleMultiPage(pdfFile, version.multiPage, rootPaths, results);
-    }
+    const result: IResult = {
+        error: 0,
+        params: {
+            output: pdfOutput.replace(rootPaths.output, ''),
+            name: 'pdf'
+        }
+    };
 
+    results.push(result);
+
+    // TODO: how results work?? refactor documents handling?
     const commands = await getImageArgs('pdf', pdfFile, output, size, name, version, true);
 
     for (const commandAndArgs of commands) {
@@ -59,17 +67,11 @@ export const handleDocument = async ({input, output, size, name, version, rootPa
             }
         }
     }
-
-    if (!isPdfLike) {
-        await new Promise(r => unlink(pdfFile, r));
-    }
 };
 
-const _createDocumentTmpFile = async (input: string, output: string, size: number, name: string) => {
-    const tmpOutput = `${output}.pdf`;
-
+const _createDocumentPdf = async (input: string, output: string, size: number, name: string) => {
     const command = 'unoconv';
-    const args = ['-f', 'pdf', '-o', tmpOutput, input];
+    const args = ['-f', 'pdf', '-o', output, input];
 
     const error = await new Promise(r =>
         execFile(command, args, {}, e => {
@@ -91,5 +93,5 @@ const _createDocumentTmpFile = async (input: string, output: string, size: numbe
         });
     }
 
-    return tmpOutput;
+    return output;
 };
