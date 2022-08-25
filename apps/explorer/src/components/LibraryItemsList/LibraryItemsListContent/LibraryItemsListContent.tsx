@@ -127,7 +127,7 @@ function LibraryItemsListContent({
         searchDispatch({
             type: SearchActionTypes.UPDATE_RESULT,
             records: newRecords,
-            totalCount: data?.[library.gqlNames.query]?.totalCount || searchState.totalCount
+            totalCount: data?.[library.gqlNames.query]?.totalCount ?? searchState.totalCount
         });
     };
 
