@@ -430,7 +430,7 @@ export default function ({
                 return newTaskId;
             }
 
-            await tasksManager.updateProgress(task.id, 10, ctx);
+            await tasksManager.updateProgress(task.id, {percent: 10, description: 'init'}, ctx);
 
             try {
                 await _jsonSchemaValidation(filename);
@@ -509,7 +509,7 @@ export default function ({
                 }
             );
 
-            await tasksManager.updateProgress(task.id, 50, ctx);
+            await tasksManager.updateProgress(task.id, {percent: 50, description: 'middle'}, ctx);
 
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
@@ -526,7 +526,7 @@ export default function ({
                 }
             }
 
-            await tasksManager.updateProgress(task.id, 80, ctx);
+            await tasksManager.updateProgress(task.id, {percent: 80, description: 'almost end'}, ctx);
 
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);

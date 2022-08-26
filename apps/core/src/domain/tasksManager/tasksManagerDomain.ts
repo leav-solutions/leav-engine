@@ -33,7 +33,7 @@ const numCPUs = cpus().length;
 
 export interface IUpdateData {
     status?: TaskStatus;
-    progress?: number;
+    progress?: {percent: number; description?: string};
     startedAt?: number;
     completedAt?: number;
     links?: string[];
@@ -52,7 +52,7 @@ export interface ITasksManagerDomain {
     sendOrder(type: OrderType, payload: Payload, ctx: IQueryInfos): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
     setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
-    updateProgress(taskId: string, progress: number, ctx: IQueryInfos): Promise<void>;
+    updateProgress(taskId: string, progress: {percent: number; description?: string}, ctx: IQueryInfos): Promise<void>;
 }
 
 interface IDeps {
@@ -170,7 +170,11 @@ export default function ({
     };
 
     const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<ITask> => {
-        await _updateTask(task.id, {startedAt: utils.getUnixTime(), status: TaskStatus.RUNNING, progress: 0}, ctx);
+        await _updateTask(
+            task.id,
+            {startedAt: utils.getUnixTime(), status: TaskStatus.RUNNING, progress: {percent: 0}},
+            ctx
+        );
 
         let status = task.status;
 
@@ -192,7 +196,7 @@ export default function ({
         return _updateTask(
             task.id,
             {
-                ...(status === TaskStatus.DONE ? {completedAt: utils.getUnixTime(), progress: 100} : {}),
+                ...(status === TaskStatus.DONE ? {completedAt: utils.getUnixTime(), progress: {percent: 100}} : {}),
                 status
             },
             ctx
@@ -395,7 +399,11 @@ export default function ({
                 JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, type, payload})
             );
         },
-        async updateProgress(taskId: string, progress: number, ctx: IQueryInfos): Promise<void> {
+        async updateProgress(
+            taskId: string,
+            progress: {percent: number; description?: string},
+            ctx: IQueryInfos
+        ): Promise<void> {
             await _updateTask(taskId, {progress}, ctx);
         },
         async setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {

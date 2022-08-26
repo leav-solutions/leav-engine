@@ -58,7 +58,7 @@ export interface ITask {
     startAt: number;
     status: TaskStatus;
     priority: TaskPriority;
-    progress?: number; // percent //TODO: maybe add more explicit progress status
+    progress?: {percent: number; description?: string};
     startedAt?: number;
     completedAt?: number;
     links?: string[];

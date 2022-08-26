@@ -60,10 +60,15 @@ export default function ({
                         startAt: Int,
                         status: TaskStatus,
                         priority: TaskPriority,
-                        progress: Int,
+                        progress: Progress,
                         startedAt: Int,
                         completedAt: Int,
                         links: [String]
+                    }
+
+                    type Progress {
+                        percent: Int!
+                        description: String
                     }
 
                     type TasksList {
