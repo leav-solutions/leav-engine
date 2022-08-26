@@ -7,7 +7,7 @@ x-traefik-image: &traefik_image "traefik:2.6"
 x-redis-image: &redis_image "redis"
 x-elasticsearch-image: &elastisearch_image "docker.elastic.co/elasticsearch/elasticsearch:7.8.0"
 x-kibana-image: &kibana_image "docker.elastic.co/kibana/kibana:7.8.1" # must match elasticsearch image
-x-arango-image: &arango_image "arangodb:3.7"
+x-arango-image: &arango_image "arangodb:3.9"
 
 x-dir-core: &dir-core /app/apps/core
 x-dir-admin: &dir-admin /app/apps/admin-app

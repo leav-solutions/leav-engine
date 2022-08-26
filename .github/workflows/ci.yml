@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       arangodb:
-        image: arangodb:3.7
+        image: arangodb:3.9
         env:
           ARANGO_NO_AUTH: 1
         ports:
@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       arangodb:
-        image: arangodb:3.7
+        image: arangodb:3.9
         env:
           ARANGO_NO_AUTH: 1
         ports:
