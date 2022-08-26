@@ -54,7 +54,6 @@ export interface ITask {
     created_by?: string;
     modified_at?: number;
     modified_by?: string;
-    active?: boolean;
     func: ITaskFunc;
     startAt: number;
     status: TaskStatus;
