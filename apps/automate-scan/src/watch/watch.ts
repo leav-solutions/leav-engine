@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {isFileAllowed} from '@leav/utils';
 import * as chokidar from 'chokidar';
 import {createHash} from 'crypto';
 import {createReadStream, Stats} from 'fs';
 import {join} from 'path';
+import {getConfig} from '../';
 import {getInode, initRedis} from '../redis/redis';
 import {IAmqpParams, IParams, IParamsExtends, IWatcherParams} from '../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
-import {isFileAllowed} from '@leav/utils';
-import {getConfig} from '../';
 
 const inodesTmp: {[i: number]: string} = {};
 const timeoutRefs: {[i: number]: any} = {};
@@ -97,16 +97,8 @@ export const manageIsDirectory = (stats?: Stats): boolean => {
 
 const checkMove = async (event: string, path: string, isDirectory: boolean, inode: any, params: IParamsExtends) => {
     if (inodesTmp[inode] && path !== inodesTmp[inode]) {
-        let pathBefore: string;
-        let pathAfter: string;
-
-        if (event === 'add' || event === 'addDir') {
-            pathBefore = path;
-            pathAfter = inodesTmp[inode];
-        } else {
-            pathBefore = inodesTmp[inode];
-            pathAfter = path;
-        }
+        const pathBefore = inodesTmp[inode];
+        const pathAfter = path;
 
         // save the inode if the next unlink arrive before the create finish to stock data in redis
         pathsTmp[path] = inode;
@@ -122,7 +114,7 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
                     res(
                         handleEvent(
                             'move',
-                            pathBefore,
+                            pathAfter,
                             isDirectory,
                             inode,
                             {
@@ -131,7 +123,7 @@ const checkMove = async (event: string, path: string, isDirectory: boolean, inod
                                 amqp: params.amqp || {},
                                 verbose: params.verbose
                             },
-                            pathAfter
+                            pathBefore
                         )
                     ),
                 params.delay
