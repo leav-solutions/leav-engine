@@ -97,7 +97,7 @@ export const handleMoveEvent = async (
               )[0]
             : null;
 
-        if (filePathDest && !parentNode) {
+        if (filePathDest && filePathDest !== '.' && !parentNode) {
             throw new Error('Parent not found');
         }
 
