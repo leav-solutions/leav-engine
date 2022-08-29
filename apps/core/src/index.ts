@@ -13,6 +13,7 @@ import {initRedis} from './infra/cache';
 import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 import {amqpService} from '@leav/message-broker';
+import {IApplicationService} from 'infra/application/applicationService';
 
 (async function () {
     let conf: Config.IConfig;
@@ -77,6 +78,12 @@ import {amqpService} from '@leav/message-broker';
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);
+            // Make sure we always exit process. Sometimes we don't and we're stuck here forever
+            process.exit(0);
+        } else if (typeof opt !== 'undefined' && opt.indexOf('build-apps') !== -1) {
+            // Run apps builds
+            const applicationService: IApplicationService = coreContainer.cradle['core.infra.application.service'];
+            await applicationService.runInstallAll();
             // Make sure we always exit process. Sometimes we don't and we're stuck here forever
             process.exit(0);
         } else if (typeof opt !== 'undefined' && opt.indexOf('filesManager') !== -1) {

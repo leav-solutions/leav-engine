@@ -21,6 +21,7 @@
     "dev": "run-p lint:watch start:watch test:watch",
     "db:migrate": "ts-node src/ --migrate",
     "import": "ts-node src/ import --clear",
+    "buildapps": "ts-node src/ build-apps",
     "benchmark": "ts-node src/ benchmark",
     "build": "scripts/build.js",
     "tscheck": "tsc --noEmit -p .",

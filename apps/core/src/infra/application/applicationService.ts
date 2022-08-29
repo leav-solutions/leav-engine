@@ -2,9 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
+import {aql} from 'arangojs';
 import {exec} from 'child_process';
 import {R_OK} from 'constants';
 import fs from 'fs/promises';
+import {IDbService} from 'infra/db/dbService';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
@@ -21,18 +23,22 @@ import {
 export interface IApplicationService {
     runInstall(params: {application: IApplication; ctx: IQueryInfos}): Promise<IApplicationInstall>;
     runUninstall(params: {application: IApplication; ctx: IQueryInfos}): Promise<boolean>;
+    runInstallAll(): void; //Promise<IApplicationInstall[]>;
+    runUninstallAll(): void; //Promise<boolean[]>;
 }
 
 export const APPLICATION_INSTALL_SCRIPT_NAME = 'app_install.sh';
 export const APPLICATION_UNINSTALL_SCRIPT_NAME = 'app_uninstall.sh';
 
 interface IDeps {
+    'core.infra.db.dbService'?: IDbService;
     'core.utils'?: IUtils;
     'core.utils.logger'?: winston.Winston;
     config?: IConfig;
 }
 
 export default function ({
+    'core.infra.db.dbService': dbService = null,
     'core.utils': utils = null,
     'core.utils.logger': logger = null,
     config
@@ -74,7 +80,7 @@ export default function ({
     const _createInstanceFolder = async (instanceFolderPath: string) => {
         try {
             await fs.mkdir(instanceFolderPath);
-        } catch (err) {
+        } catch (err: any) {
             if (err.code === 'EEXIST') {
                 return;
             }
@@ -84,93 +90,136 @@ export default function ({
         }
     };
 
-    return {
-        async runInstall({application}): Promise<IApplicationInstall> {
-            const rootPath = appRootPath();
-            const appFolder = path.resolve(
-                rootPath,
-                config.applications.rootFolder,
-                APPS_MODULES_FOLDER,
-                application.module
-            );
-            const scriptPath = `${appFolder}/${APPLICATION_INSTALL_SCRIPT_NAME}`;
+    const _getAllApps = async ctx => {
+        const existingApps = await dbService.execute({
+            query: aql`
+                FOR app IN core_applications
+                    RETURN app
+            `,
+            ctx
+        });
 
-            try {
-                const fd = await fs.open(scriptPath, 'r');
-                await fd.close();
-            } catch (err) {
-                return {
-                    status: ApplicationInstallStatuses.ERROR,
-                    lastCallResult: err.message
-                };
+        return existingApps;
+    };
+
+    const _runInstall = async ({application}): Promise<IApplicationInstall> => {
+        const rootPath = appRootPath();
+        const appFolder = path.resolve(
+            rootPath,
+            config.applications.rootFolder,
+            APPS_MODULES_FOLDER,
+            application.module
+        );
+        const scriptPath = `${appFolder}/${APPLICATION_INSTALL_SCRIPT_NAME}`;
+
+        try {
+            const fd = await fs.open(scriptPath, 'r');
+            await fd.close();
+        } catch (err: any) {
+            return {
+                status: ApplicationInstallStatuses.ERROR,
+                lastCallResult: err.message
+            };
+        }
+
+        // Make sure instances folder exists
+        const instanceFolderPath = _getInstancesFolder(rootPath);
+        try {
+            await fs.stat(instanceFolderPath);
+        } catch (err: any) {
+            if (err.code === 'ENOENT') {
+                await _createInstanceFolder(instanceFolderPath);
+            } else {
+                logger.error(err);
+                throw err;
             }
+        }
 
-            // Make sure instances folder exists
-            const instanceFolderPath = _getInstancesFolder(rootPath);
-            try {
-                await fs.stat(instanceFolderPath);
-            } catch (err) {
-                if (err.code === 'ENOENT') {
-                    await _createInstanceFolder(instanceFolderPath);
-                } else {
-                    logger.error(err);
-                    throw err;
-                }
-            }
+        //console.log("application", application, "application.id", application.id, "rootPath", rootPath);
+        // Define env variables
+        const leavEnv = {
+            LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
+            LEAV_AUTH_URL: `${config.server.publicUrl}/auth/authenticate`,
+            LEAV_DEFAULT_LANG: config.lang.default,
+            LEAV_AVAILABLE_LANG: config.lang.available.join(','),
+            LEAV_LOGIN_ENDPOINT: utils.getFullApplicationEndpoint('login'),
+            LEAV_APP_ENDPOINT: utils.getFullApplicationEndpoint(application.endpoint),
+            LEAV_APPLICATION_ID: application.id,
+            LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
+        };
 
-            // Define env variables
+        try {
+            const res = await _execCommand(`${scriptPath}`, leavEnv);
+
+            return {status: ApplicationInstallStatuses.SUCCESS, lastCallResult: String(res.out)};
+        } catch (err) {
+            return {status: ApplicationInstallStatuses.ERROR, lastCallResult: String(err)};
+        }
+    };
+
+    const _runUninstall = async ({application}): Promise<boolean> => {
+        const rootPath = appRootPath();
+        const appFolder = path.resolve(
+            rootPath,
+            config.applications.rootFolder,
+            APPS_MODULES_FOLDER,
+            application.module
+        );
+        const destinationFolder = _getDestinationFolder(application.id, rootPath);
+
+        // Check if an uninstall script exists. If so, run it before removing the folder
+        const scriptPath = `${appFolder}/${APPLICATION_UNINSTALL_SCRIPT_NAME}`;
+
+        let doesScriptExist: boolean;
+        try {
+            await fs.access(scriptPath, R_OK);
+            doesScriptExist = true;
+        } catch (err) {
+            doesScriptExist = false;
+        }
+
+        if (doesScriptExist) {
             const leavEnv = {
-                LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
-                LEAV_AUTH_URL: `${config.server.publicUrl}/auth/authenticate`,
-                LEAV_DEFAULT_LANG: config.lang.default,
-                LEAV_AVAILABLE_LANG: config.lang.available.join(','),
-                LEAV_LOGIN_ENDPOINT: utils.getFullApplicationEndpoint('login'),
-                LEAV_APP_ENDPOINT: utils.getFullApplicationEndpoint(application.endpoint),
                 LEAV_APPLICATION_ID: application.id,
                 LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
             };
+            await _execCommand(`${scriptPath}`, leavEnv);
+        }
 
-            try {
-                const res = await _execCommand(`${scriptPath}`, leavEnv);
+        // Remove destination folder
+        await fs.rm(destinationFolder, {recursive: true, force: true});
 
-                return {status: ApplicationInstallStatuses.SUCCESS, lastCallResult: String(res.out)};
-            } catch (err) {
-                return {status: ApplicationInstallStatuses.ERROR, lastCallResult: String(err)};
+        return true;
+    };
+
+    return {
+        runInstall: _runInstall,
+        runUninstall: _runUninstall,
+        async runInstallAll() {
+            const ctx: IQueryInfos = {
+                userId: '1',
+                queryId: 'applicationService_runInstallAll'
+            };
+            const allApps = await _getAllApps(ctx);
+
+            for (const application of allApps) {
+                console.info('Building ', application._key);
+                const res = await _runInstall({application: {...application, id: application._key}});
+                console.info(res.status);
             }
         },
-        async runUninstall({application}) {
-            const rootPath = appRootPath();
-            const appFolder = path.resolve(
-                rootPath,
-                config.applications.rootFolder,
-                APPS_MODULES_FOLDER,
-                application.module
-            );
-            const destinationFolder = _getDestinationFolder(application.id, rootPath);
+        async runUninstallAll() {
+            const ctx: IQueryInfos = {
+                userId: '1',
+                queryId: 'applicationService_runUninstallAll'
+            };
+            const allApps = await _getAllApps(ctx);
 
-            // Check if an uninstall script exists. If so, run it before removing the folder
-            const scriptPath = `${appFolder}/${APPLICATION_UNINSTALL_SCRIPT_NAME}`;
-
-            let doesScriptExist: boolean;
-            try {
-                await fs.access(scriptPath, R_OK);
-                doesScriptExist = true;
-            } catch (err) {
-                doesScriptExist = false;
+            for (const application of allApps) {
+                console.info('Removing ', application._key);
+                const res = await _runUninstall({application: {...application, id: application._key}});
+                console.info('done');
             }
-
-            if (doesScriptExist) {
-                const leavEnv = {
-                    LEAV_APPLICATION_ID: application.id,
-                    LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
-                };
-                await _execCommand(`${scriptPath}`, leavEnv);
-            }
-
-            // Remove destination folder
-            await fs.rm(destinationFolder, {recursive: true, force: true});
-
-            return true;
         }
     };
 }
