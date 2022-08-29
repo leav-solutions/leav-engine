@@ -32,7 +32,6 @@ export const APPLICATION_INSTALL_SCRIPT_NAME = 'app_install.sh';
 export const APPLICATION_UNINSTALL_SCRIPT_NAME = 'app_uninstall.sh';
 
 interface IDeps {
-    'core.infra.db.dbService'?: IDbService;
     'core.infra.application'?: IApplicationRepo;
     'core.utils'?: IUtils;
     'core.utils.logger'?: winston.Winston;
@@ -40,7 +39,6 @@ interface IDeps {
 }
 
 export default function ({
-    'core.infra.db.dbService': dbService = null,
     'core.infra.application': applicationRepo = null,
     'core.utils': utils = null,
     'core.utils.logger': logger = null,
