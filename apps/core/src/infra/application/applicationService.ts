@@ -19,12 +19,13 @@ import {
     IApplication,
     IApplicationInstall
 } from '../../_types/application';
+import {IApplicationRepo} from './applicationRepo';
 
 export interface IApplicationService {
     runInstall(params: {application: IApplication; ctx: IQueryInfos}): Promise<IApplicationInstall>;
     runUninstall(params: {application: IApplication; ctx: IQueryInfos}): Promise<boolean>;
-    runInstallAll(): void; //Promise<IApplicationInstall[]>;
-    runUninstallAll(): void; //Promise<boolean[]>;
+    runInstallAll(): void;
+    runUninstallAll(): void;
 }
 
 export const APPLICATION_INSTALL_SCRIPT_NAME = 'app_install.sh';
@@ -32,6 +33,7 @@ export const APPLICATION_UNINSTALL_SCRIPT_NAME = 'app_uninstall.sh';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
+    'core.infra.application'?: IApplicationRepo;
     'core.utils'?: IUtils;
     'core.utils.logger'?: winston.Winston;
     config?: IConfig;
@@ -39,6 +41,7 @@ interface IDeps {
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
+    'core.infra.application': applicationRepo = null,
     'core.utils': utils = null,
     'core.utils.logger': logger = null,
     config
@@ -80,7 +83,7 @@ export default function ({
     const _createInstanceFolder = async (instanceFolderPath: string) => {
         try {
             await fs.mkdir(instanceFolderPath);
-        } catch (err: any) {
+        } catch (err) {
             if (err.code === 'EEXIST') {
                 return;
             }
@@ -88,18 +91,6 @@ export default function ({
             logger.error(err);
             throw err;
         }
-    };
-
-    const _getAllApps = async ctx => {
-        const existingApps = await dbService.execute({
-            query: aql`
-                FOR app IN core_applications
-                    RETURN app
-            `,
-            ctx
-        });
-
-        return existingApps;
     };
 
     const _runInstall = async ({application}): Promise<IApplicationInstall> => {
@@ -115,7 +106,7 @@ export default function ({
         try {
             const fd = await fs.open(scriptPath, 'r');
             await fd.close();
-        } catch (err: any) {
+        } catch (err) {
             return {
                 status: ApplicationInstallStatuses.ERROR,
                 lastCallResult: err.message
@@ -135,7 +126,6 @@ export default function ({
             }
         }
 
-        //console.log("application", application, "application.id", application.id, "rootPath", rootPath);
         // Define env variables
         const leavEnv = {
             LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
@@ -147,12 +137,15 @@ export default function ({
             LEAV_APPLICATION_ID: application.id,
             LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
         };
-
+        const timer = logger.startTimer();
         try {
+            logger.info(`START build of ${application.id}`);
             const res = await _execCommand(`${scriptPath}`, leavEnv);
-
+            timer.done(`END build of ${application.id}, `);
             return {status: ApplicationInstallStatuses.SUCCESS, lastCallResult: String(res.out)};
         } catch (err) {
+            timer.done(`ERROR build of ${application.id}, `);
+            logger.error(String(err));
             return {status: ApplicationInstallStatuses.ERROR, lastCallResult: String(err)};
         }
     };
@@ -177,18 +170,19 @@ export default function ({
         } catch (err) {
             doesScriptExist = false;
         }
-
+        const timer = logger.startTimer();
         if (doesScriptExist) {
             const leavEnv = {
                 LEAV_APPLICATION_ID: application.id,
                 LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
             };
+            logger.info(`START uninstall of ${application.id}`);
             await _execCommand(`${scriptPath}`, leavEnv);
         }
 
         // Remove destination folder
         await fs.rm(destinationFolder, {recursive: true, force: true});
-
+        timer.done(`END uninstall of ${application.id}, `);
         return true;
     };
 
@@ -200,12 +194,14 @@ export default function ({
                 userId: '1',
                 queryId: 'applicationService_runInstallAll'
             };
-            const allApps = await _getAllApps(ctx);
-
-            for (const application of allApps) {
-                console.info('Building ', application._key);
-                const res = await _runInstall({application: {...application, id: application._key}});
-                console.info(res.status);
+            const allApps = await applicationRepo.getApplications({ctx});
+            logger.info(
+                `${allApps.list.length} application(s) to build (${allApps.list
+                    .map(application => application.id)
+                    .join(', ')})`
+            );
+            for (const application of allApps.list) {
+                const res = await _runInstall({application});
             }
         },
         async runUninstallAll() {
@@ -213,12 +209,14 @@ export default function ({
                 userId: '1',
                 queryId: 'applicationService_runUninstallAll'
             };
-            const allApps = await _getAllApps(ctx);
-
-            for (const application of allApps) {
-                console.info('Removing ', application._key);
-                const res = await _runUninstall({application: {...application, id: application._key}});
-                console.info('done');
+            const allApps = await applicationRepo.getApplications({ctx});
+            logger.info(
+                `${allApps.list.length} application(s) to uninstall (${allApps.list
+                    .map(application => application.id)
+                    .join(', ')})`
+            );
+            for (const application of allApps.list) {
+                const res = await _runUninstall({application});
             }
         }
     };
