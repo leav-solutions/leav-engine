@@ -11,7 +11,6 @@ export const saveValueBatchQuery = gql`
         $recordId: ID!
         $version: [ValueVersionInput!]
         $values: [ValueBatchInput!]!
-        $lang: [AvailableLanguage!]
     ) {
         saveValueBatch(library: $library, recordId: $recordId, version: $version, values: $values) {
             values {

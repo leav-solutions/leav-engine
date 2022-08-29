@@ -6,7 +6,7 @@ import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 
 export const getApplicationsQuery = gql`
     ${recordIdentityFragment}
-    query GET_APPLICATIONS($filters: ApplicationsFiltersInput, $sort: SortApplications, $lang: [AvailableLanguage!]) {
+    query GET_APPLICATIONS($filters: ApplicationsFiltersInput, $sort: SortApplications) {
         applications(filters: $filters, sort: $sort) {
             list {
                 id

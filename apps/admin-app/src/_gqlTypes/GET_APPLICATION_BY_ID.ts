@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, ApplicationType, ApplicationInstallStatus} from './globalTypes';
+import {ApplicationType, ApplicationInstallStatus} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATION_BY_ID
@@ -20,7 +20,7 @@ export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library {
 export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -81,5 +81,4 @@ export interface GET_APPLICATION_BY_ID {
 
 export interface GET_APPLICATION_BY_IDVariables {
     id: string;
-    lang?: AvailableLanguage[] | null;
 }

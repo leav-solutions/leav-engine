@@ -7,7 +7,7 @@ import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 export const getMe = gql`
     ${recordIdentityFragment}
 
-    query ME($lang: [AvailableLanguage!]) {
+    query ME {
         me {
             login
             ...RecordIdentity

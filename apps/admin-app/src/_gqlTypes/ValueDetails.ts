@@ -10,14 +10,34 @@
 // GraphQL fragment: ValueDetails
 // ====================================================
 
+export interface ValueDetails_Value_metadata_value {
+    value: Any | null;
+    raw_value: Any | null;
+}
+
+export interface ValueDetails_Value_metadata {
+    name: string;
+    value: ValueDetails_Value_metadata_value | null;
+}
+
 export interface ValueDetails_Value {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
     version: ValueVersion | null;
-    metadata: ValueMetadata | null;
+    metadata: (ValueDetails_Value_metadata | null)[] | null;
     value: Any | null;
     raw_value: Any | null;
+}
+
+export interface ValueDetails_LinkValue_metadata_value {
+    value: Any | null;
+    raw_value: Any | null;
+}
+
+export interface ValueDetails_LinkValue_metadata {
+    name: string;
+    value: ValueDetails_LinkValue_metadata_value | null;
 }
 
 export interface ValueDetails_LinkValue_linkValue_whoAmI_library {
@@ -28,7 +48,7 @@ export interface ValueDetails_LinkValue_linkValue_whoAmI_library {
 export interface ValueDetails_LinkValue_linkValue_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -49,8 +69,18 @@ export interface ValueDetails_LinkValue {
     created_at: number | null;
     modified_at: number | null;
     version: ValueVersion | null;
-    metadata: ValueMetadata | null;
+    metadata: (ValueDetails_LinkValue_metadata | null)[] | null;
     linkValue: ValueDetails_LinkValue_linkValue;
+}
+
+export interface ValueDetails_TreeValue_metadata_value {
+    value: Any | null;
+    raw_value: Any | null;
+}
+
+export interface ValueDetails_TreeValue_metadata {
+    name: string;
+    value: ValueDetails_TreeValue_metadata_value | null;
 }
 
 export interface ValueDetails_TreeValue_treeValue_record_whoAmI_library {
@@ -61,7 +91,7 @@ export interface ValueDetails_TreeValue_treeValue_record_whoAmI_library {
 export interface ValueDetails_TreeValue_treeValue_record_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -85,7 +115,7 @@ export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_librar
 export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -115,7 +145,7 @@ export interface ValueDetails_TreeValue {
     created_at: number | null;
     modified_at: number | null;
     version: ValueVersion | null;
-    metadata: ValueMetadata | null;
+    metadata: (ValueDetails_TreeValue_metadata | null)[] | null;
     treeValue: ValueDetails_TreeValue_treeValue;
 }
 

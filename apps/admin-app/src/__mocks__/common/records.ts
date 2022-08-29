@@ -17,7 +17,7 @@ export const mockRecord: RecordIdentity_whoAmI = {
     preview: {
         small: 'path/to/preview.png',
         medium: 'path/to/preview.png',
-        pages: 'path/to/preview.png',
+        pdf: 'path/to/file.pdf',
         big: 'path/to/preview.png'
     }
 };
