@@ -6,7 +6,7 @@ import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 
 export const saveApplicationMutation = gql`
     ${recordIdentityFragment}
-    mutation SAVE_APPLICATION($application: ApplicationInput!, $lang: [AvailableLanguage!]) {
+    mutation SAVE_APPLICATION($application: ApplicationInput!) {
         saveApplication(application: $application) {
             id
             color

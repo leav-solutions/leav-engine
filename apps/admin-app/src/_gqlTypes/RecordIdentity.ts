@@ -18,7 +18,7 @@ export interface RecordIdentity_whoAmI_library {
 export interface RecordIdentity_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 

@@ -6,7 +6,7 @@ import {recordIdentityFragment} from './recordIdentityFragment';
 
 export const createRecordQuery = gql`
     ${recordIdentityFragment}
-    mutation CREATE_RECORD($library: ID!, $lang: [AvailableLanguage!]) {
+    mutation CREATE_RECORD($library: ID!) {
         createRecord(library: $library) {
             id
             ...RecordIdentity

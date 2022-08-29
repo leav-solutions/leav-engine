@@ -153,7 +153,7 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
                         preview {
                             small
                             medium
-                            pages
+                            pdf
                             big
                         },
                         library{

@@ -51,7 +51,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -95,7 +95,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -119,7 +119,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 

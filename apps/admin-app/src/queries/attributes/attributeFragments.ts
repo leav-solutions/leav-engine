@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
+import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 
 export const attributeDetailsFragment = gql`
     fragment AttributeDetails on Attribute {
@@ -55,6 +56,7 @@ export const attributeDetailsFragment = gql`
 `;
 
 export const attributeValuesListDetailsFragment = gql`
+    ${recordIdentityFragment}
     fragment AttributeValuesListDetails on Attribute {
         ... on StandardAttribute {
             values_list {
@@ -79,21 +81,7 @@ export const attributeValuesListDetailsFragment = gql`
                 enable
                 allowFreeEntry
                 linkValues: values {
-                    whoAmI {
-                        id
-                        library {
-                            id
-                            label
-                        }
-                        label
-                        color
-                        preview {
-                            small
-                            medium
-                            pages
-                            big
-                        }
-                    }
+                    ...RecordIdentity
                 }
             }
         }
@@ -103,39 +91,11 @@ export const attributeValuesListDetailsFragment = gql`
                 allowFreeEntry
                 treeValues: values {
                     record {
-                        whoAmI {
-                            id
-                            library {
-                                id
-                                label
-                            }
-                            label
-                            color
-                            preview {
-                                small
-                                medium
-                                pages
-                                big
-                            }
-                        }
+                        ...RecordIdentity
                     }
                     ancestors {
                         record {
-                            whoAmI {
-                                id
-                                library {
-                                    id
-                                    label
-                                }
-                                label
-                                color
-                                preview {
-                                    small
-                                    medium
-                                    pages
-                                    big
-                                }
-                            }
+                            ...RecordIdentity
                         }
                     }
                 }

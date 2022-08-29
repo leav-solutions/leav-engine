@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationInput, AvailableLanguage} from './globalTypes';
+import {ApplicationInput} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_APPLICATION
@@ -20,7 +20,7 @@ export interface SAVE_APPLICATION_saveApplication_icon_whoAmI_library {
 export interface SAVE_APPLICATION_saveApplication_icon_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -53,5 +53,4 @@ export interface SAVE_APPLICATION {
 
 export interface SAVE_APPLICATIONVariables {
     application: ApplicationInput;
-    lang?: AvailableLanguage[] | null;
 }

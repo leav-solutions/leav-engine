@@ -73,6 +73,7 @@ export enum IOTypes {
 }
 
 export enum LibraryBehavior {
+    directories = 'directories',
     files = 'files',
     standard = 'standard'
 }
@@ -351,7 +352,7 @@ export interface ValueBatchInput {
     attribute?: string | null;
     id_value?: string | null;
     value?: string | null;
-    metadata?: ValueMetadata | null;
+    metadata?: (ValueMetadataInput | null)[] | null;
 }
 
 export interface ValueInput {

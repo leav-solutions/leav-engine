@@ -9,14 +9,14 @@ export const recordIdentityFragment = gql`
             id
             library {
                 id
-                label(lang: $lang)
+                label
             }
             label
             color
             preview {
                 small
                 medium
-                pages
+                pdf
                 big
             }
         }

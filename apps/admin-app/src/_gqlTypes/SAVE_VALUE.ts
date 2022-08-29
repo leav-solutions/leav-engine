@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueInput, AvailableLanguage} from './globalTypes';
+import {ValueInput} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_VALUE
@@ -35,7 +35,7 @@ export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_library {
 export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -69,7 +69,7 @@ export interface SAVE_VALUE_saveValue_TreeValue_treeValue_record_whoAmI_library 
 export interface SAVE_VALUE_saveValue_TreeValue_treeValue_record_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -112,5 +112,4 @@ export interface SAVE_VALUEVariables {
     recordId: string;
     attribute: string;
     value: ValueInput;
-    lang?: AvailableLanguage[] | null;
 }

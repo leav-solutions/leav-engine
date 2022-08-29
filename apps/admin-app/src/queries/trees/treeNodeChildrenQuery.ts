@@ -6,7 +6,7 @@ import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 
 export const getTreeNodeChildrenQuery = gql`
     ${recordIdentityFragment}
-    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination, $lang: [AvailableLanguage!]) {
+    query TREE_NODE_CHILDREN($treeId: ID!, $node: ID, $pagination: Pagination) {
         treeNodeChildren(treeId: $treeId, node: $node, pagination: $pagination) {
             list {
                 id

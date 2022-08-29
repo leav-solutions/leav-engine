@@ -6,8 +6,6 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage} from './globalTypes';
-
 // ====================================================
 // GraphQL mutation operation: CREATE_RECORD
 // ====================================================
@@ -20,7 +18,7 @@ export interface CREATE_RECORD_createRecord_whoAmI_library {
 export interface CREATE_RECORD_createRecord_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -43,5 +41,4 @@ export interface CREATE_RECORD {
 
 export interface CREATE_RECORDVariables {
     library: string;
-    lang?: AvailableLanguage[] | null;
 }

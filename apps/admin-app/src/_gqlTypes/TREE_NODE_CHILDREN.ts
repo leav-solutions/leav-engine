@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {Pagination, AvailableLanguage} from './globalTypes';
+import {Pagination} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: TREE_NODE_CHILDREN
@@ -20,7 +20,7 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -58,5 +58,4 @@ export interface TREE_NODE_CHILDRENVariables {
     treeId: string;
     node?: string | null;
     pagination?: Pagination | null;
-    lang?: AvailableLanguage[] | null;
 }

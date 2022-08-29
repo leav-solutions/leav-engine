@@ -237,6 +237,7 @@ export interface SAVE_LIBRARY_saveLibrary_recordIdentityConf {
     label: string | null;
     color: string | null;
     preview: string | null;
+    treeColorPreview: string | null;
 }
 
 export interface SAVE_LIBRARY_saveLibrary_defaultView {

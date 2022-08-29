@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationsFiltersInput, SortApplications, AvailableLanguage, ApplicationType} from './globalTypes';
+import {ApplicationsFiltersInput, SortApplications, ApplicationType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATIONS
@@ -20,7 +20,7 @@ export interface GET_APPLICATIONS_applications_list_icon_whoAmI_library {
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview {
     small: string | null;
     medium: string | null;
-    pages: string | null;
+    pdf: string | null;
     big: string | null;
 }
 
@@ -58,5 +58,4 @@ export interface GET_APPLICATIONS {
 export interface GET_APPLICATIONSVariables {
     filters?: ApplicationsFiltersInput | null;
     sort?: SortApplications | null;
-    lang?: AvailableLanguage[] | null;
 }
