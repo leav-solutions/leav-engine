@@ -13,10 +13,13 @@ import ApplicationsList from './ApplicationsList';
 import ApplicationsSearch from './ApplicationsSearch';
 
 function Applications(): JSX.Element {
+    const hiddenApps = ['portal', 'login'];
     const {lang} = useLang();
     const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery, {
         onCompleted: dataRes => {
-            const apps = (dataRes?.applications.list ?? []).filter(app => app.permissions.access_application);
+            const apps = (dataRes?.applications.list ?? []).filter(
+                app => app.permissions.access_application && !hiddenApps.includes(app.id)
+            );
             setApplications(apps);
         }
     });
