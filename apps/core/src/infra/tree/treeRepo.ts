@@ -138,6 +138,11 @@ export interface ITreeRepo {
      * Return nodes linked to given record
      */
     getNodesByRecord(params: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<string[]>;
+
+    /**
+     * Return all nodes for given library
+     */
+    getNodesByLibrary(params: {treeId: string; libraryId: string; ctx: IQueryInfos}): Promise<string[]>;
 }
 
 export const TREES_COLLECTION_NAME = 'core_trees';
@@ -154,7 +159,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
 }
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): ITreeRepo {
@@ -653,6 +658,18 @@ export default function({
             const query = aql`
                 FOR n IN ${nodesCollec}
                     FILTER n.${NODE_LIBRARY_ID_FIELD} == ${record.library} && n.${NODE_RECORD_ID_FIELD} == ${record.id}
+                    RETURN n._key
+            `;
+            const nodes = await dbService.execute<string[]>({query, ctx});
+
+            return nodes;
+        },
+        async getNodesByLibrary({treeId, libraryId, ctx}) {
+            const nodesCollec = dbService.db.collection(getNodesCollectionName(treeId));
+
+            const query = aql`
+                FOR n IN ${nodesCollec}
+                    FILTER n.${NODE_LIBRARY_ID_FIELD} == ${libraryId}
                     RETURN n._key
             `;
             const nodes = await dbService.execute<string[]>({query, ctx});

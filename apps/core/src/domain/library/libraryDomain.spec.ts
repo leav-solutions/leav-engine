@@ -840,6 +840,8 @@ describe('LibraryDomain', () => {
     });
 
     describe('deleteLibrary', () => {
+        const mockRunPreDelete = jest.fn();
+
         const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
 
         test('Should delete a library and return deleted library', async function () {
@@ -858,6 +860,7 @@ describe('LibraryDomain', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.domain.library.helpers.runPreDelete': mockRunPreDelete,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.utils': mockUtils as IUtils
             });
@@ -868,6 +871,7 @@ describe('LibraryDomain', () => {
 
             expect(mockLibRepo.deleteLibrary.mock.calls.length).toBe(1);
 
+            expect(mockRunPreDelete).toBeCalled();
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_LIBRARY
@@ -881,12 +885,14 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
+                'core.domain.library.helpers.runPreDelete': mockRunPreDelete,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             libDomain.getLibraries = global.__mockPromise([]);
 
+            expect(mockRunPreDelete).not.toBeCalled();
             await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow();
         });
 
@@ -942,6 +948,7 @@ describe('LibraryDomain', () => {
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperFilesLibrary,
+                'core.domain.library.helpers.runPreDelete': mockRunPreDelete,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.utils': mockUtils as IUtils
@@ -958,7 +965,7 @@ describe('LibraryDomain', () => {
 
             await libDomain.deleteLibrary(libData.id, ctx);
 
-            expect(mockTreeRepo.deleteTree).toBeCalled();
+            expect(mockRunPreDelete).toBeCalled();
         });
     });
 });

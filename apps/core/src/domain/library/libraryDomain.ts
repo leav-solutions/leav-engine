@@ -29,8 +29,8 @@ import getPermissionCachePatternKey from '../permission/helpers/getPermissionCac
 import {IRecordDomain} from '../record/recordDomain';
 import checkSavePermission from './helpers/checkSavePermission';
 import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
-import runBehaviorPostDelete from './helpers/runBehaviorPostDelete';
 import runBehaviorPostSave from './helpers/runBehaviorPostSave';
+import {RunPreDeleteFunc} from './helpers/runPreDelete';
 import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
@@ -53,6 +53,7 @@ interface IDeps {
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
+    'core.domain.library.helpers.runPreDelete'?: RunPreDeleteFunc;
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.cache.cacheService'?: ICachesService;
@@ -69,6 +70,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
+    'core.domain.library.helpers.runPreDelete': runPreDelete = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.helpers.validate': validateHelper = null,
     'core.infra.cache.cacheService': cacheService = null,
@@ -304,9 +306,9 @@ export default function ({
                 throw new ValidationError({id: Errors.SYSTEM_LIBRARY_DELETION});
             }
 
-            await runBehaviorPostDelete(library, {treeRepo, utils}, ctx);
+            await runPreDelete(library, ctx);
 
-            // get all records and delete them
+            // Get all records and delete them
             const records = await recordDomain.find({params: {library: id}, ctx});
             for (const r of records.list) {
                 await recordDomain.deleteRecord({library: id, id: r.id, ctx});
