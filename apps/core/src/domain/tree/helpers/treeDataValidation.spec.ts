@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
@@ -20,7 +20,7 @@ describe('TreeDataValidation', () => {
             isIdValid: jest.fn().mockReturnValue(true)
         };
 
-        const mockLibDomain: Mockify<ILibraryDomain> = {
+        const mockLibRepo: Mockify<ILibraryRepo> = {
             getLibraries: global.__mockPromise({
                 list: [
                     {...mockLibrary, id: 'lib1'},
@@ -35,7 +35,7 @@ describe('TreeDataValidation', () => {
             };
 
             const validationHelper = treeDataValidation({
-                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.utils': mockUtilsInvalidId as IUtils
             });
 
@@ -45,12 +45,12 @@ describe('TreeDataValidation', () => {
         });
 
         test('Should throw if unkown library', async () => {
-            const mockLibDomainNotFound: Mockify<ILibraryDomain> = {
+            const mockLibRepoNotFound: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise({list: []})
             };
 
             const validationHelper = treeDataValidation({
-                'core.domain.library': mockLibDomainNotFound as ILibraryDomain,
+                'core.infra.library': mockLibRepoNotFound as ILibraryRepo,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -59,7 +59,7 @@ describe('TreeDataValidation', () => {
 
         test('Should throw if saving permissions conf on invalid library', async () => {
             const validationHelper = treeDataValidation({
-                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -80,11 +80,11 @@ describe('TreeDataValidation', () => {
         });
 
         test('Should throw if, on files behavior, binding a non-files library', async () => {
-            const mockLibDomainNotFiles: Mockify<ILibraryDomain> = {
+            const mockLibRepoNotFiles: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise({list: [{...mockLibrary, id: 'lib1'}]})
             };
             const validationHelper = treeDataValidation({
-                'core.domain.library': mockLibDomainNotFiles as ILibraryDomain,
+                'core.infra.library': mockLibRepoNotFiles as ILibraryRepo,
                 'core.utils': mockUtils as IUtils
             });
 

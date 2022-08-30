@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import difference from 'lodash/difference';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
@@ -15,12 +15,12 @@ export interface ITreeDataValidationHelper {
 }
 
 interface IDeps {
-    'core.domain.library'?: ILibraryDomain;
+    'core.infra.library'?: ILibraryRepo;
     'core.utils'?: IUtils;
 }
 
 export default function ({
-    'core.domain.library': libraryDomain = null,
+    'core.infra.library': libraryRepo = null,
     'core.utils': utils = null
 }: IDeps): ITreeDataValidationHelper {
     const _validateId = (treeData: ITree) => {
@@ -72,7 +72,7 @@ export default function ({
     };
 
     const validate = async (treeData: ITree, ctx: IQueryInfos): Promise<void> => {
-        const {list: existingLibraries} = await libraryDomain.getLibraries({ctx});
+        const {list: existingLibraries} = await libraryRepo.getLibraries({ctx});
 
         _validateId(treeData);
         _checkLibExists(treeData, existingLibraries);

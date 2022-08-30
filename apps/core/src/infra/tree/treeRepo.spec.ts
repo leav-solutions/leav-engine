@@ -27,7 +27,6 @@ describe('TreeRepo', () => {
         userId: '0',
         queryId: '132456'
     };
-
     describe('createTree', () => {
         test('Should create a tree', async function () {
             const mockEnsureIndex = jest.fn();
@@ -1148,6 +1147,33 @@ describe('TreeRepo', () => {
             const record = await repo.getNodesByRecord({
                 treeId: 'test_tree',
                 record: {id: '123456', library: 'mylib'},
+                ctx
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
+
+            expect(record).toEqual(['123456', '654321']);
+        });
+    });
+
+    describe('getNodesByLibrary', () => {
+        test('Return nodes linked to library', async () => {
+            const queryRes = ['123456', '654321'];
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(queryRes)
+            };
+
+            const repo = treeRepo({
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const record = await repo.getNodesByLibrary({
+                treeId: 'test_tree',
+                libraryId: 'mylib',
                 ctx
             });
 

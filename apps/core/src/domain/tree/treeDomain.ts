@@ -6,7 +6,7 @@ import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
 import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {omit} from 'lodash';
 import {IUtils} from 'utils/utils';
@@ -33,11 +33,11 @@ import {
     TreePaths
 } from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import {ILibraryDomain} from '../library/libraryDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
 import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
+import {HandleRemovedLibrariesFunc} from './helpers/handleRemovedLibraries';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 
 export interface ITreeDomain {
@@ -142,11 +142,11 @@ interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.permission.tree'?: ITreePermissionDomain;
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.value'?: IValueDomain;
     'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
+    'core.domain.tree.helpers.handleRemovedLibraries'?: HandleRemovedLibrariesFunc;
+    'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
     'core.infra.cache.cacheService'?: ICachesService;
@@ -158,11 +158,11 @@ export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.permission.tree': treePermissionDomain = null,
     'core.domain.permission.treeNode': treeNodePermissionDomain = null,
-    'core.domain.library': libraryDomain = null,
-    'core.domain.value': valueDomain = null,
     'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper = null,
+    'core.domain.tree.helpers.handleRemovedLibraries': handleRemovedLibraries = null,
+    'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.utils': utils = null,
     'core.infra.cache.cacheService': cacheService = null
@@ -260,7 +260,7 @@ export default function ({
 
         const attributes = (await attributeDomain.getAttributes({params: {filters: {linked_tree: treeId}}, ctx})).list;
 
-        const libraries = (await libraryDomain.getLibraries({ctx})).list
+        const libraries = (await libraryRepo.getLibraries({ctx})).list
             .filter(l => !!l.permissions_conf)
             .filter(library => {
                 let isUsingAttributes = false;
@@ -346,6 +346,8 @@ export default function ({
             if (isExistingTree) {
                 const cacheKey = utils.getCoreEntityCacheKey('tree', dataToSave.id);
                 await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+
+                await handleRemovedLibraries(treeProps, dataToSave as ITree, ctx);
             }
 
             return savedTree;
