@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttribute} from './attribute';
 import {ITreePermissionsConf} from './permissions';
-import {IRecordIdentityConf} from './record';
+import {IRecord, IRecordIdentityConf} from './record';
 
 export interface ILibrary extends ICoreEntity {
     system?: boolean;
@@ -33,6 +33,8 @@ export interface ILibrary extends ICoreEntity {
      * ID of default view
      */
     defaultView?: string;
+
+    icon?: IRecord;
 }
 
 export interface ILibraryFilterOptions extends ICoreEntityFilterOptions {

@@ -1,35 +1,30 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import userEvent from '@testing-library/user-event';
 import {History} from 'history';
+import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
+import {getViewsQuery} from 'queries/views/getViewsQuery';
 import React from 'react';
-import {wait} from 'utils/testUtils';
-import {act, render, screen} from '_tests/testUtils';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {Mockify} from '../../../../../_types/Mockify';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
-import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import InfosTab from './InfosTab';
 
 jest.mock('../../../../../hooks/useLang');
 
-jest.mock(
-    './InfosForm',
-    () =>
-        function InfosForm() {
-            return <div>InfosForm</div>;
-        }
-);
 describe('InfosTab', () => {
     const variables = {
         libData: {
             id: 'products',
-            label: {fr: 'Produits', en: 'Products'},
+            label: {fr: 'My new label', en: 'Products'},
+            icon: {libraryId: 'library-id', recordId: 'record-id'},
             behavior: 'standard',
-            recordIdentityConf: null,
             defaultView: null,
-            fullTextAttributes: []
+            fullTextAttributes: [],
+            recordIdentityConf: null
         }
     };
 
@@ -37,24 +32,49 @@ describe('InfosTab', () => {
         replace: jest.fn()
     };
 
-    test('Render form', async () => {
-        await act(async () => {
-            render(<InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />);
-        });
+    const commonMocks = [
+        {
+            request: {
+                query: getViewsQuery,
+                variables: {
+                    library: mockLibrary.id
+                }
+            },
+            result: {
+                data: {
+                    views: []
+                }
+            }
+        },
+        {
+            request: {
+                query: getLibsQuery,
+                variables: {
+                    behavior: [LibraryBehavior.files]
+                }
+            },
+            result: {
+                data: {
+                    libraries: {
+                        totalCount: 1,
+                        list: [{...mockLibrary, id: 'files', behavior: LibraryBehavior.files}]
+                    }
+                }
+            }
+        }
+    ];
 
-        expect(screen.getByText('InfosForm')).toBeInTheDocument();
-    });
-
-    test('Save data on submit', async () => {
-        let saveQueryCalled = false;
+    test('Display form, edit value and submit on blur', async () => {
+        let saveCalled = false;
         const mocks = [
+            ...commonMocks,
             {
                 request: {
                     query: saveLibQuery,
                     variables
                 },
                 result: () => {
-                    saveQueryCalled = true;
+                    saveCalled = true;
                     return {
                         data: {
                             saveLibrary: {
@@ -67,25 +87,32 @@ describe('InfosTab', () => {
             }
         ];
 
-        const comp = mount(
-            <MockedProviderWithFragments mocks={mocks} addTypename>
-                <InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />
-            </MockedProviderWithFragments>
-        );
-        const submitFunc: any = comp.find('InfosForm').prop('onSubmit');
-
-        if (!!submitFunc) {
-            await act(async () => {
-                await submitFunc({...mockLibrary});
-                await wait(0);
+        await act(async () => {
+            render(<InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />, {
+                apolloMocks: mocks
             });
-        }
+        });
 
-        expect(saveQueryCalled).toBe(true);
+        expect(screen.getByRole('textbox', {name: /id/})).toBeInTheDocument();
+        expect(screen.getByRole('textbox', {name: /id/})).toBeDisabled();
+        expect(screen.getByRole('textbox', {name: /id/})).toHaveValue(mockLibrary.id);
+        expect(screen.getByRole('textbox', {name: /id/})).toBeDisabled();
+        expect(screen.getAllByRole('textbox', {name: /label/})).toHaveLength(2);
+
+        const firstLabeLInput = screen.getAllByRole('textbox', {name: /label/})[0];
+
+        userEvent.clear(firstLabeLInput);
+        userEvent.type(firstLabeLInput, 'My new label');
+        await act(async () => {
+            fireEvent.blur(firstLabeLInput);
+        });
+
+        await waitFor(() => expect(saveCalled).toBe(true));
     });
 
     test('Pass saving errors to form', async () => {
-        const mocksError = [
+        const mocks = [
+            ...commonMocks,
             {
                 request: {
                     query: saveLibQuery,
@@ -112,27 +139,46 @@ describe('InfosTab', () => {
             }
         ];
 
-        let comp;
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocksError} addTypename>
-                    <InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />
-                </MockedProviderWithFragments>
-            );
+            render(<InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />, {
+                apolloMocks: mocks
+            });
         });
-        const submitFunc: any = comp.find('InfosForm').prop('onSubmit');
 
-        if (!!submitFunc) {
-            await act(async () => {
-                await submitFunc({...mockLibrary});
-                await wait(0);
+        const firstLabeLInput = screen.getAllByRole('textbox', {name: /label/})[0];
+
+        userEvent.clear(firstLabeLInput);
+        userEvent.type(firstLabeLInput, 'My new label');
+        await act(async () => {
+            fireEvent.blur(firstLabeLInput);
+        });
+
+        expect(await screen.findByText(/invalid id/)).toBeInTheDocument();
+    });
+
+    test('Render form for new library', async () => {
+        await act(async () => {
+            render(<InfosTab library={null} readonly={false} history={mockHistory as History} />, {
+                apolloMocks: commonMocks
             });
+        });
 
-            await act(async () => {
-                comp.update();
+        expect(screen.getByRole('textbox', {name: /id/})).not.toBeDisabled();
+    });
+
+    test('Autofill ID with label on new lib', async () => {
+        await act(async () => {
+            render(<InfosTab library={null} readonly={false} history={mockHistory as History} />, {
+                apolloMocks: commonMocks
             });
-        }
+        });
 
-        expect(comp.find('InfosForm').prop('errors')).not.toBe(null);
+        const labelFrInput = screen.getByRole('textbox', {name: 'label.fr'});
+
+        await act(async () => {
+            await userEvent.type(labelFrInput, 'Mon libellé', {delay: 1});
+        });
+
+        expect(screen.getByRole('textbox', {name: /id/})).toHaveValue('mon_libelle');
     });
 });

@@ -253,6 +253,30 @@ export interface LibraryDetails_permissions {
     delete_record: boolean;
 }
 
+export interface LibraryDetails_icon_whoAmI_library {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface LibraryDetails_icon_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pdf: string | null;
+    big: string | null;
+}
+
+export interface LibraryDetails_icon_whoAmI {
+    id: string;
+    library: LibraryDetails_icon_whoAmI_library;
+    label: string | null;
+    color: string | null;
+    preview: LibraryDetails_icon_whoAmI_preview | null;
+}
+
+export interface LibraryDetails_icon {
+    whoAmI: LibraryDetails_icon_whoAmI;
+}
+
 export interface LibraryDetails {
     id: string;
     system: boolean | null;
@@ -265,4 +289,5 @@ export interface LibraryDetails {
     defaultView: LibraryDetails_defaultView | null;
     gqlNames: LibraryDetails_gqlNames;
     permissions: LibraryDetails_permissions | null;
+    icon: LibraryDetails_icon | null;
 }

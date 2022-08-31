@@ -1,12 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import FileSelector from 'components/shared/FileSelector';
 import {Formik, FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError, localizedLabel} from '../../../../../../utils';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
@@ -46,6 +48,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             fr: '',
             en: ''
         },
+        icon: null,
         behavior: LibraryBehavior.standard,
         attributes: [],
         permissions_conf: null,
@@ -118,12 +121,15 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             [defaultLang || lang[0]]: yup.string().required()
         }),
         id: idValidator,
-        recordIdentityConf: yup.object().shape({
-            label: yup.string().nullable(),
-            color: yup.string().nullable(),
-            preview: yup.string().nullable(),
-            treeColorPreview: yup.string().nullable()
-        })
+        recordIdentityConf: yup
+            .object()
+            .shape({
+                label: yup.string().nullable(),
+                color: yup.string().nullable(),
+                preview: yup.string().nullable(),
+                treeColorPreview: yup.string().nullable()
+            })
+            .nullable()
     });
 
     const _renderForm = ({
@@ -132,7 +138,11 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         setFieldValue,
         errors: inputErrors,
         values,
-        touched
+        touched,
+        submitForm,
+        isValid,
+        isValidating,
+        isSubmitting
     }: FormikProps<LibraryFormValues>) => {
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
@@ -146,11 +156,40 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             }
         };
 
-        const _handleChange = (e, data) => {
+        const _handleChange = async (e, data) => {
             const value = data.type === 'checkbox' ? data.checked : data.value;
             const name: string = data.name;
 
-            setFieldValue(name, value);
+            await setFieldValue(name, value);
+        };
+
+        const _handleChangeWithSubmit = async (e, data) => {
+            await _handleChange(e, data);
+
+            if (isExistingLib) {
+                submitForm();
+            }
+        };
+
+        const _handleBlur = (e: React.FocusEvent) => {
+            if (!isExistingLib) {
+                handleBlur(e);
+            } else {
+                submitForm();
+            }
+        };
+
+        const _handleKeyPress = (e: React.KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                submitForm();
+            }
+        };
+
+        const _handleIconChange = async (selectedIcon: RecordIdentity_whoAmI) => {
+            _handleChangeWithSubmit(null, {
+                name: 'icon',
+                value: {whoAmI: selectedIcon}
+            });
         };
 
         const {id, label, behavior, recordIdentityConf, defaultView, fullTextAttributes} = values;
@@ -164,8 +203,12 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             text: t(`libraries.behavior_${b}`)
         }));
 
+        const _onSubmit = () => {
+            return handleSubmit();
+        };
+
         return (
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={_onSubmit}>
                 <Form.Group grouped>
                     <label>{t('libraries.label')}</label>
                     {availableLangs.map(availableLang => (
@@ -173,9 +216,12 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             <Form.Input
                                 label={`${availableLang} ${availableLang === defaultLang ? '*' : ''}`}
                                 name={'label.' + availableLang}
+                                aria-label={'label.' + availableLang}
                                 disabled={readonly}
                                 value={label?.[availableLang] ?? ''}
                                 onChange={_handleLabelChange}
+                                onBlur={_handleBlur}
+                                onKeyPress={_handleKeyPress}
                             />
                         </FormFieldWrapper>
                     ))}
@@ -185,8 +231,9 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         label={t('attributes.ID')}
                         disabled={isExistingLib || readonly}
                         name="id"
+                        aria-label="id"
                         onChange={_handleChange}
-                        onBlur={handleBlur}
+                        onBlur={_handleBlur}
                         value={id}
                     />
                 </FormFieldWrapper>
@@ -195,8 +242,9 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         label={t('libraries.behavior')}
                         disabled={isExistingLib || readonly}
                         name="behavior"
-                        onChange={_handleChange}
-                        onBlur={handleBlur}
+                        aria-label="behavior"
+                        onChange={_handleChangeWithSubmit}
+                        onBlur={_handleBlur}
                         value={behavior}
                         options={behaviorOptions}
                     />
@@ -208,10 +256,12 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         multiple
                         options={libAttributesOptions}
                         name="fullTextAttributes"
+                        aria-label="fullTextAttributes"
                         disabled={readonly}
                         label={t('libraries.fulltext_attributes')}
                         value={fullTextAttributes}
-                        onChange={_handleChange}
+                        onChange={_handleChangeWithSubmit}
+                        onBlur={_handleBlur}
                     />
                 </FormFieldWrapper>
                 {isExistingLib && (
@@ -222,9 +272,10 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             label={t('libraries.default_view')}
                             disabled={readonly}
                             name="defaultView"
+                            aria-label="defaultView"
                             value={defaultView ?? ''}
                             library={library!.id}
-                            onChange={_handleChange}
+                            onChange={_handleChangeWithSubmit}
                             onBlur={handleBlur}
                         />
                     </FormFieldWrapper>
@@ -240,7 +291,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             disabled={readonly}
                             label={t('libraries.record_identity_label')}
                             value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
-                            onChange={_handleChange}
+                            onChange={_handleChangeWithSubmit}
                         />
                     </FormFieldWrapper>
                     <FormFieldWrapper error={_getErrorByField('recordIdentityConf.color')}>
@@ -252,7 +303,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             disabled={readonly}
                             label={t('libraries.record_identity_color')}
                             value={recordIdentityConf && recordIdentityConf.color ? recordIdentityConf.color : ''}
-                            onChange={_handleChange}
+                            onChange={_handleChangeWithSubmit}
                         />
                     </FormFieldWrapper>
                     <FormFieldWrapper error={_getErrorByField('recordIdentityConf.preview')}>
@@ -264,7 +315,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                             disabled={readonly}
                             label={t('libraries.record_identity_preview')}
                             value={recordIdentityConf && recordIdentityConf.preview ? recordIdentityConf.preview : ''}
-                            onChange={_handleChange}
+                            onChange={_handleChangeWithSubmit}
                         />
                     </FormFieldWrapper>
                     <FormFieldWrapper error={_getErrorByField('recordIdentityConf.preview')}>
@@ -280,11 +331,18 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                                     ? recordIdentityConf.treeColorPreview
                                     : ''
                             }
-                            onChange={_handleChange}
+                            onChange={_handleChangeWithSubmit}
                         />
                     </FormFieldWrapper>
                 </Form.Group>
-                {!readonly && (
+                <FormFieldWrapper error={_getErrorByField('icon.whoAmI')}>
+                    <FileSelector
+                        onChange={_handleIconChange}
+                        value={values.icon?.whoAmI ?? null}
+                        label={t('applications.icon')}
+                    />
+                </FormFieldWrapper>
+                {!readonly && !isExistingLib && (
                     <FormGroupWithMargin>
                         <Form.Button icon primary type="submit" labelPosition="left">
                             <Icon name="save" />
@@ -295,6 +353,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             </Form>
         );
     };
+
     return (
         <Formik
             initialValues={initialValues}

@@ -261,6 +261,30 @@ export interface SAVE_LIBRARY_saveLibrary_permissions {
     delete_record: boolean;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_icon_whoAmI_library {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_LIBRARY_saveLibrary_icon_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pdf: string | null;
+    big: string | null;
+}
+
+export interface SAVE_LIBRARY_saveLibrary_icon_whoAmI {
+    id: string;
+    library: SAVE_LIBRARY_saveLibrary_icon_whoAmI_library;
+    label: string | null;
+    color: string | null;
+    preview: SAVE_LIBRARY_saveLibrary_icon_whoAmI_preview | null;
+}
+
+export interface SAVE_LIBRARY_saveLibrary_icon {
+    whoAmI: SAVE_LIBRARY_saveLibrary_icon_whoAmI;
+}
+
 export interface SAVE_LIBRARY_saveLibrary {
     id: string;
     system: boolean | null;
@@ -273,6 +297,7 @@ export interface SAVE_LIBRARY_saveLibrary {
     defaultView: SAVE_LIBRARY_saveLibrary_defaultView | null;
     gqlNames: SAVE_LIBRARY_saveLibrary_gqlNames;
     permissions: SAVE_LIBRARY_saveLibrary_permissions | null;
+    icon: SAVE_LIBRARY_saveLibrary_icon | null;
 }
 
 export interface SAVE_LIBRARY {
