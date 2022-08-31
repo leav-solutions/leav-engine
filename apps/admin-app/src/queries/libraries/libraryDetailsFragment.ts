@@ -3,9 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
 import {attributeDetailsFragment} from 'queries/attributes/attributeFragments';
+import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
 
 export const libraryDetailsFragment = gql`
     ${attributeDetailsFragment}
+    ${recordIdentityFragment}
     fragment LibraryDetails on Library {
         id
         system
@@ -53,6 +55,9 @@ export const libraryDetailsFragment = gql`
             create_record
             edit_record
             delete_record
+        }
+        icon {
+            ...RecordIdentity
         }
     }
 `;

@@ -260,6 +260,30 @@ export interface GET_LIB_BY_ID_libraries_list_permissions {
     delete_record: boolean;
 }
 
+export interface GET_LIB_BY_ID_libraries_list_icon_whoAmI_library {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_LIB_BY_ID_libraries_list_icon_whoAmI_preview {
+    small: string | null;
+    medium: string | null;
+    pdf: string | null;
+    big: string | null;
+}
+
+export interface GET_LIB_BY_ID_libraries_list_icon_whoAmI {
+    id: string;
+    library: GET_LIB_BY_ID_libraries_list_icon_whoAmI_library;
+    label: string | null;
+    color: string | null;
+    preview: GET_LIB_BY_ID_libraries_list_icon_whoAmI_preview | null;
+}
+
+export interface GET_LIB_BY_ID_libraries_list_icon {
+    whoAmI: GET_LIB_BY_ID_libraries_list_icon_whoAmI;
+}
+
 export interface GET_LIB_BY_ID_libraries_list {
     id: string;
     system: boolean | null;
@@ -272,6 +296,7 @@ export interface GET_LIB_BY_ID_libraries_list {
     defaultView: GET_LIB_BY_ID_libraries_list_defaultView | null;
     gqlNames: GET_LIB_BY_ID_libraries_list_gqlNames;
     permissions: GET_LIB_BY_ID_libraries_list_permissions | null;
+    icon: GET_LIB_BY_ID_libraries_list_icon | null;
 }
 
 export interface GET_LIB_BY_ID_libraries {

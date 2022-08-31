@@ -248,9 +248,15 @@ export interface FormInput {
     elements?: FormElementsByDepsInput[] | null;
 }
 
+export interface LibraryIconInput {
+    libraryId: string;
+    recordId: string;
+}
+
 export interface LibraryInput {
     id: string;
     label?: SystemTranslation | null;
+    icon?: LibraryIconInput | null;
     attributes?: string[] | null;
     fullTextAttributes?: string[] | null;
     behavior?: LibraryBehavior | null;

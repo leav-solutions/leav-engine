@@ -45,27 +45,34 @@ function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
     };
 
     const _handleSubmit = async libData => {
+        const dataToSave = {
+            id: libData.id,
+            label: {
+                fr: libData.label.fr,
+                en: libData.label.en
+            },
+            icon: libData.icon?.whoAmI
+                ? {
+                      libraryId: libData.icon.whoAmI.library.id,
+                      recordId: libData.icon.whoAmI.id
+                  }
+                : null,
+            behavior: libData.behavior,
+            defaultView: libData.defaultView || null,
+            fullTextAttributes: libData.fullTextAttributes,
+            recordIdentityConf:
+                libData.recordIdentityConf !== null
+                    ? {
+                          label: libData.recordIdentityConf.label,
+                          preview: libData.recordIdentityConf.preview,
+                          color: libData.recordIdentityConf.color,
+                          treeColorPreview: libData.recordIdentityConf.treeColorPreview
+                      }
+                    : null
+        };
         await saveLibrary({
             variables: {
-                libData: {
-                    id: libData.id,
-                    label: {
-                        fr: libData.label.fr,
-                        en: libData.label.en
-                    },
-                    behavior: libData.behavior,
-                    defaultView: libData.defaultView || null,
-                    fullTextAttributes: libData.fullTextAttributes,
-                    recordIdentityConf:
-                        libData.recordIdentityConf !== null
-                            ? {
-                                  label: libData.recordIdentityConf.label,
-                                  preview: libData.recordIdentityConf.preview,
-                                  color: libData.recordIdentityConf.color,
-                                  treeColorPreview: libData.recordIdentityConf.treeColorPreview
-                              }
-                            : null
-                }
+                libData: dataToSave
             }
         });
         history.replace({pathname: '/libraries/edit/' + libData.id});

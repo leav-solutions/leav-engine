@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getFileType, getLibraryGraphqlNames} from '@leav/utils';
+import {getFileType, getLibraryGraphqlNames, Override} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
@@ -22,7 +22,7 @@ import {Errors} from '../../_types/errors';
 import {FilesAttributes} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
-import {IRecord} from '../../_types/record';
+import {AttributeCondition, IRecord} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {ICoreApp} from './coreApp';
@@ -93,6 +93,7 @@ export default function ({
                         id: ID!,
                         system: Boolean,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
+                        icon: Record,
                         behavior: LibraryBehavior!,
                         attributes: [Attribute!],
                         fullTextAttributes: [Attribute!],
@@ -104,9 +105,15 @@ export default function ({
                         permissions: LibraryPermissions
                     }
 
+                    input LibraryIconInput {
+                        libraryId: String!,
+                        recordId: String!
+                    }
+
                     input LibraryInput {
                         id: ID!
                         label: SystemTranslation,
+                        icon: LibraryIconInput,
                         attributes: [ID!],
                         fullTextAttributes: [ID!],
                         behavior: LibraryBehavior,
@@ -199,7 +206,28 @@ export default function ({
                         label: (libData, args): ISystemTranslation => {
                             return coreApp.filterSysTranslationField(libData.label, args.lang || []);
                         },
-                        linkedTrees: async (parent, args, ctx, info): Promise<ITree[]> => {
+                        icon: async (
+                            libData: Override<ILibrary, {icon: {libraryId: string; recordId: string}}>,
+                            _,
+                            ctx: IQueryInfos
+                        ): Promise<IRecord> => {
+                            if (!libData.icon) {
+                                return null;
+                            }
+
+                            const record = await recordDomain.find({
+                                params: {
+                                    library: libData.icon.libraryId,
+                                    filters: [
+                                        {field: 'id', value: libData.icon.recordId, condition: AttributeCondition.EQUAL}
+                                    ]
+                                },
+                                ctx
+                            });
+
+                            return record.list.length ? record.list[0] : null;
+                        },
+                        linkedTrees: async (parent, args, ctx): Promise<ITree[]> => {
                             const trees = await treeDomain.getTrees({
                                 params: {
                                     filters: {

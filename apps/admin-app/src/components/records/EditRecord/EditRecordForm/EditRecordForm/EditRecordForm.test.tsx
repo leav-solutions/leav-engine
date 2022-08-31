@@ -5,12 +5,13 @@ import React from 'react';
 import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {act, render, screen} from '_tests/testUtils';
 import {mockAttrAdv, mockAttrSimple, mockAttrSimpleLink} from '__mocks__/attributes';
+import {mockLibrary} from '__mocks__/libraries';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 import {
     GET_LIB_BY_ID_libraries_list,
     GET_LIB_BY_ID_libraries_list_attributes
 } from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {AttributeFormat, LibraryBehavior} from '../../../../../_gqlTypes/globalTypes';
+import {AttributeFormat} from '../../../../../_gqlTypes/globalTypes';
 import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 import EditRecordForm from './EditRecordForm';
 
@@ -73,30 +74,10 @@ const attributes: GET_ATTRIBUTE_BY_ID_attributes_list[] = [
 ];
 
 const library: GET_LIB_BY_ID_libraries_list = {
+    ...mockLibrary,
     id: 'produits',
-    system: false,
-    behavior: LibraryBehavior.standard,
     label: {fr: 'produits', en: 'products'},
-    attributes: attributes as GET_LIB_BY_ID_libraries_list_attributes[],
-    permissions_conf: null,
-    recordIdentityConf: {label: null, color: null, preview: null, treeColorPreview: null},
-    defaultView: null,
-    fullTextAttributes: [],
-    gqlNames: {
-        query: 'produits',
-        type: 'Produit',
-        list: 'ProduitList',
-        filter: 'ProduitFilter',
-        searchableFields: 'ProduitSearchableFields'
-    },
-    permissions: {
-        admin_library: true,
-        access_library: true,
-        access_record: true,
-        create_record: true,
-        edit_record: true,
-        delete_record: true
-    }
+    attributes: attributes as GET_LIB_BY_ID_libraries_list_attributes[]
 };
 
 const query = getRecordDataQuery(library, attributes as GET_LIB_BY_ID_libraries_list_attributes[]);
