@@ -267,10 +267,12 @@ export interface SAVE_LIBRARY_saveLibrary_icon_whoAmI_library {
 }
 
 export interface SAVE_LIBRARY_saveLibrary_icon_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface SAVE_LIBRARY_saveLibrary_icon_whoAmI {

@@ -44,10 +44,12 @@ export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI_library {
 }
 
 export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI {
@@ -87,10 +89,12 @@ export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_library 
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI {
@@ -111,10 +115,12 @@ export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAm
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI {

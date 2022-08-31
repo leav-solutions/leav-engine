@@ -18,10 +18,12 @@ export interface GET_APPLICATIONS_applications_list_icon_whoAmI_library {
 }
 
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI {

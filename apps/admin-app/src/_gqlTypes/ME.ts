@@ -16,10 +16,12 @@ export interface ME_me_whoAmI_library {
 }
 
 export interface ME_me_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface ME_me_whoAmI {

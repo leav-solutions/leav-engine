@@ -1,16 +1,26 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import LibraryIcon from 'components/shared/LibraryIcon';
 import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import AttributesTab from './AttributesTab';
 import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';
 import NavigatorTab from './NavigatorTab';
 import PermissionsTab from './PermissionsTab';
+
+const Title = styled(Header)`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+`;
+Title.displayName = 'Title';
 
 interface IEditLibraryTabsProps {
     library: GET_LIB_BY_ID_libraries_list | null;
@@ -101,7 +111,10 @@ const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTab
 
     return (
         <>
-            <Header className="no-grow">{label}</Header>
+            <Title className="no-grow" role="heading" aria-label="title">
+                <LibraryIcon library={library} />
+                {label}
+            </Title>
             <Tab
                 activeIndex={activeIndex}
                 onTabChange={_handleOnTabChange}

@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
 import {History, Location} from 'history';
 import React from 'react';
+import {render, screen, within} from '_tests/testUtils';
 import {mockAttrSimple} from '__mocks__/attributes';
 import {mockLibrary} from '__mocks__/libraries';
 import EditLibraryTabs from '.';
@@ -21,6 +21,32 @@ jest.mock('../../../../hooks/useUserData', () => ({
         permissions: {admin_access_forms: true}
     }))
 }));
+
+jest.mock('./InfosTab', () => {
+    return function InfosTab() {
+        return <div>InfosTab</div>;
+    };
+});
+jest.mock('./PermissionsTab', () => {
+    return function PermissionsTab() {
+        return <div>PermissionsTab</div>;
+    };
+});
+jest.mock('./AttributesTab', () => {
+    return function AttributesTab() {
+        return <div>AttributesTab</div>;
+    };
+});
+jest.mock('./FormsTab', () => {
+    return function FormsTab() {
+        return <div>FormsTab</div>;
+    };
+});
+jest.mock('./NavigatorTab', () => {
+    return function NavigatorTab() {
+        return <div>NavigatorTab</div>;
+    };
+});
 
 describe('EditLibraryForm', () => {
     const mockHistory: Mockify<History> = {};
@@ -56,8 +82,8 @@ describe('EditLibraryForm', () => {
 
     beforeEach(() => jest.clearAllMocks());
 
-    test('Render form for existing lib', async () => {
-        const comp = shallow(
+    test('Render tabs for existing lib', async () => {
+        render(
             <EditLibraryTabs
                 library={library as GET_LIB_BY_ID_libraries_list}
                 readOnly={false}
@@ -65,20 +91,23 @@ describe('EditLibraryForm', () => {
             />
         );
 
-        expect(comp.find('Header').shallow().text()).toBe('Test');
+        const header = screen.getByRole('heading');
 
-        // Check forms pane is present
-        const panes = comp.find('Tab').prop('panes');
-        expect(Array.isArray(panes)).toBe(true);
-        if (Array.isArray(panes)) {
-            expect(panes.filter(p => p.key === 'forms')).toHaveLength(1);
-        }
+        expect(within(header).getByText('Test')).toBeInTheDocument();
+
+        expect(screen.getByText(/forms/)).toBeInTheDocument();
+        expect(screen.getByText(/information/)).toBeInTheDocument();
+        expect(screen.getByText(/permissions/)).toBeInTheDocument();
+        expect(screen.getByText(/attributes/)).toBeInTheDocument();
+        expect(screen.getByText(/navigator/)).toBeInTheDocument();
     });
 
-    test('Render form for new lib', async () => {
-        const comp = shallow(<EditLibraryTabs library={null} readOnly={false} history={mockHistory as History} />);
+    test('Render tabs for new lib', async () => {
+        render(<EditLibraryTabs library={null} readOnly={false} history={mockHistory as History} />);
 
-        expect(comp.find('Header').shallow().text()).toBe('libraries.new');
+        const header = screen.getByRole('heading');
+
+        expect(within(header).getByText('libraries.new')).toBeInTheDocument();
     });
 
     test('Should open the tab in anchor', async () => {
@@ -87,18 +116,15 @@ describe('EditLibraryForm', () => {
             hash: '#' + tabName
         };
 
-        const comp = shallow(
+        render(
             <EditLibraryTabs
-                library={null}
+                library={library as GET_LIB_BY_ID_libraries_list}
                 readOnly={false}
                 history={mockHistory as History}
                 location={mockLocation as Location}
             />
         );
 
-        const activeIndex: number = comp.find('Tab').prop('activeIndex');
-        const panes: any[] = comp.find('Tab').prop('panes');
-
-        expect(panes.findIndex(p => p.key === tabName)).toBe(activeIndex);
+        expect(screen.getByText('PermissionsTab')).toBeInTheDocument();
     });
 });
