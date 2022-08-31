@@ -38,6 +38,7 @@ describe('FileSelector', () => {
                                     en: 'Files',
                                     fr: 'Fichiers'
                                 },
+                                icon: null,
                                 behavior: 'files',
                                 gqlNames: {
                                     query: 'files',

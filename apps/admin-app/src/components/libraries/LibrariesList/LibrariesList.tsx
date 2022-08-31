@@ -1,14 +1,21 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import LibraryIcon from 'components/shared/LibraryIcon';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Checkbox, Icon, Input, Table} from 'semantic-ui-react';
+import {Checkbox, Input, Table} from 'semantic-ui-react';
+import styled from 'styled-components';
 import useLang from '../../../hooks/useLang';
 import {localizedLabel} from '../../../utils/utils';
 import {GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIES';
 import Loading from '../../shared/Loading';
 import DeleteLibrary from '../DeleteLibrary';
+
+const IconCell = styled(Table.Cell)`
+    display: flex;
+    justify-content: center;
+`;
 
 interface ILibrariesListProps {
     libraries: GET_LIBRARIES_libraries_list[] | null;
@@ -97,9 +104,9 @@ const LibrariesList = ({
                             const onClick = () => onRowClick(l);
                             return (
                                 <Table.Row key={l.id} onClick={onClick}>
-                                    <Table.Cell>
-                                        <Icon name="book" size="large" />
-                                    </Table.Cell>
+                                    <IconCell>
+                                        <LibraryIcon library={l} />
+                                    </IconCell>
                                     <Table.Cell>{libLabel}</Table.Cell>
                                     <Table.Cell>{l.id}</Table.Cell>
                                     <Table.Cell>

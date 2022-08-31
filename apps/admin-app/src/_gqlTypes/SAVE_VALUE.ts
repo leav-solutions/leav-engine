@@ -33,10 +33,12 @@ export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_library {
 }
 
 export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI {
@@ -67,10 +69,12 @@ export interface SAVE_VALUE_saveValue_TreeValue_treeValue_record_whoAmI_library 
 }
 
 export interface SAVE_VALUE_saveValue_TreeValue_treeValue_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface SAVE_VALUE_saveValue_TreeValue_treeValue_record_whoAmI {

@@ -64,10 +64,12 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValu
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues_whoAmI {
@@ -157,10 +159,12 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record_whoAmI {
@@ -181,10 +185,12 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview {
+    tiny: string | null;
     small: string | null;
     medium: string | null;
-    pdf: string | null;
     big: string | null;
+    huge: string | null;
+    pdf: string | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI {
