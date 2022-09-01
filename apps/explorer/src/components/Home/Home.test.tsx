@@ -7,6 +7,7 @@ import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {act, render, screen, within} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import Home from './Home';
@@ -35,6 +36,8 @@ describe('Home', () => {
                                 id: 'test',
                                 system: false,
                                 label: {fr: 'First lib'},
+                                behavior: LibraryBehavior.standard,
+                                icon: null,
                                 gqlNames: {
                                     __typename: 'Test',
                                     query: 'test',
@@ -61,6 +64,8 @@ describe('Home', () => {
                                 id: 'test2',
                                 system: false,
                                 label: {fr: 'Second lib'},
+                                behavior: LibraryBehavior.standard,
+                                icon: null,
                                 gqlNames: {
                                     __typename: 'Test2',
                                     query: 'test2',

@@ -2,13 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
+import recordIdentityFragment from '../records/recordIdentityFragment';
 
 export const getLibrariesListQuery = gql`
+    ${recordIdentityFragment}
     query GET_LIBRARIES_LIST {
         libraries {
             list {
                 id
                 label
+                behavior
+                icon {
+                    ...RecordIdentity
+                }
                 gqlNames {
                     query
                     filter

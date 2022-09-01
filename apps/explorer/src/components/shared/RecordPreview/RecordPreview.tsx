@@ -23,6 +23,9 @@ export const _getPreviewSize = (size?: PreviewSize) => {
         case PreviewSize.big:
             return '7rem';
         case PreviewSize.small:
+            return '3rem';
+        case PreviewSize.tiny:
+            return '1.7rem';
         default:
             return '3rem';
     }

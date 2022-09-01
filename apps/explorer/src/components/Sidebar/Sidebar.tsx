@@ -1,13 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DatabaseOutlined, HomeOutlined, ShareAltOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
+import {DatabaseOutlined, HomeOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {Menu, Spin} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {FAVORITE_LIBRARIES_KEY} from 'components/Home/LibrariesList/LibrariesList';
+import LibraryIcon from 'components/Home/LibrariesList/LibraryIcon';
 import {FAVORITE_TREES_KEY} from 'components/Home/TreeList/TreeList';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import TreeIcon from 'components/shared/TreeIcon';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
@@ -53,6 +55,7 @@ const MenuItemContent = styled.span`
     justify-content: space-between;
     align-items: center;
     min-width: 200px;
+    gap: 0.5rem;
 `;
 
 const Link = styled.span`
@@ -197,9 +200,9 @@ function Sidebar(): JSX.Element {
 
                     return {
                         key: `library.${lib.id}`,
-                        icon: <DatabaseOutlined />,
                         label: (
                             <MenuItemContent>
+                                <LibraryIcon library={lib} />
                                 <Link onClick={() => _goTo(getLibraryLink(lib.id))}>
                                     {localizedTranslation(lib.label, lang)}
                                 </Link>
@@ -249,9 +252,9 @@ function Sidebar(): JSX.Element {
 
                     return {
                         key: `tree.${tree.id}`,
-                        icon: <ShareAltOutlined />,
                         label: (
                             <MenuItemContent>
+                                <TreeIcon style={{fontSize: '1.2rem'}} />
                                 <Link onClick={() => _goTo(getTreeLink(tree.id))}>
                                     {localizedTranslation(tree.label, lang)}
                                 </Link>
@@ -275,7 +278,7 @@ function Sidebar(): JSX.Element {
             children: libsMenuItems
         },
         {
-            icon: <ShareAltOutlined onClick={_goToActiveTree} />,
+            icon: <TreeIcon onClick={_goToActiveTree} />,
             label: !!activeTree?.label ? activeTree.label : t('sidebar.tree'),
             key: 'tree',
             onTitleClick: _goToActiveTree,
