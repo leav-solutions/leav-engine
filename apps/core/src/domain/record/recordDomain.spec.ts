@@ -6,9 +6,11 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {ICachesService} from 'infra/cache/cacheService';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IStandardValue, IValue} from '_types/value';
@@ -773,6 +775,7 @@ describe('RecordDomain', () => {
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 config: mockConfig as Config.IConfig
             });
+
             recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
                 Promise.resolve([
                     attributeId === 'previews'
@@ -848,10 +851,20 @@ describe('RecordDomain', () => {
             };
             const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
+            const mockUtils: Mockify<IUtils> = {
+                getCoreEntityCacheKey: jest.fn().mockReturnValue('core_entity_cache_key')
+            };
+
+            const mockCacheService: Mockify<ICachesService> = {
+                memoize: jest.fn().mockReturnValue(null)
+            };
+
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                'core.infra.library': mockLibRepo as ILibraryRepo
+                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.utils': mockUtils as IUtils,
+                'core.infra.cache.cacheService': mockCacheService as ICachesService
             });
 
             const res = await recDomain.getRecordIdentity(record, ctx);
