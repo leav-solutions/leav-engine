@@ -45,6 +45,12 @@ export enum ImportType {
     STANDARD = 'STANDARD'
 }
 
+export enum LibraryBehavior {
+    directories = 'directories',
+    files = 'files',
+    standard = 'standard'
+}
+
 export enum RecordFilterCondition {
     BEGIN_WITH = 'BEGIN_WITH',
     BETWEEN = 'BETWEEN',

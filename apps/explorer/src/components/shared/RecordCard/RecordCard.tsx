@@ -81,6 +81,7 @@ const SubLabel = styled.div`
 
 const _getPreviewBySize = (preview?: RecordIdentity_whoAmI_preview, size?: PreviewSize) => {
     const fileSizeByPreviewSize: {[size in PreviewSize]: string} = {
+        [PreviewSize.tiny]: 'tiny',
         [PreviewSize.small]: 'tiny',
         [PreviewSize.medium]: 'small',
         [PreviewSize.big]: 'medium'

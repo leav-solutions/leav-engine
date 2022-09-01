@@ -18,19 +18,32 @@ import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {getLibraryLink, localizedTranslation} from 'utils';
+import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import {IBaseNotification, NotificationType} from '../../../_types/types';
 import ErrorDisplay from '../../shared/ErrorDisplay';
 import FavoriteStar from '../FavoriteStar';
 import ImportModal from './ImportModal';
+import LibraryIcon from './LibraryIcon';
 
 export const FAVORITE_LIBRARIES_KEY = 'favorites_libraries_ids';
+
+const LibraryLink = styled(Link)`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    color: inherit;
+`;
 
 interface IListItem {
     key: string;
     id: string;
     label: string;
+    behavior: GET_LIBRARIES_LIST_libraries_list['behavior'];
+    icon: GET_LIBRARIES_LIST_libraries_list['icon'];
     isFavorite: boolean;
 }
 
@@ -73,6 +86,8 @@ function LibrariesList(): JSX.Element {
         .map(library => ({
             key: library.id,
             id: library.id,
+            behavior: library.behavior,
+            icon: library.icon,
             label: localizedTranslation(library.label, lang),
             isFavorite: favoriteIds.includes(library.id)
         }))
@@ -94,13 +109,10 @@ function LibrariesList(): JSX.Element {
                 ];
 
                 return (
-                    <Link
-                        to={getLibraryLink(item.id)}
-                        style={{display: 'inline-block', width: '100%', color: 'inherit'}}
-                    >
-                        <DatabaseOutlined /> {label}
+                    <LibraryLink to={getLibraryLink(item.id)}>
+                        <LibraryIcon library={item} /> {label}
                         <FloatingMenu style={{right: '28px'}} actions={actions} />
-                    </Link>
+                    </LibraryLink>
                 );
             }
         },
@@ -136,7 +148,11 @@ function LibrariesList(): JSX.Element {
     return (
         <Wrapper className="wrapper-page">
             <PageHeader
-                avatar={{icon: <DatabaseOutlined />, shape: 'square', style: {background: 'none', color: '#000'}}}
+                avatar={{
+                    icon: <DatabaseOutlined style={{fontSize: '1.5rem'}} />,
+                    shape: 'square',
+                    style: {background: 'none', color: '#000'}
+                }}
                 title={t('home.libraries')}
             />
             <Table

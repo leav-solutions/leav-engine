@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ShareAltOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {PageHeader, Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
+import TreeIcon from 'components/shared/TreeIcon';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -14,6 +14,7 @@ import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
+import styled from 'styled-components';
 import {getTreeLink, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
@@ -22,6 +23,15 @@ import ErrorDisplay from '../../shared/ErrorDisplay';
 import FavoriteStar from '../FavoriteStar';
 
 export const FAVORITE_TREES_KEY = 'favorites_trees_ids';
+
+const TreeLink = styled(Link)`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    color: inherit;
+`;
 
 interface IListItem {
     key: string;
@@ -75,9 +85,9 @@ function TreeList(): JSX.Element {
             key: 'label',
             render: (label, item) => {
                 return (
-                    <Link to={getTreeLink(item.id)} style={{display: 'inline-block', width: '100%', color: 'inherit'}}>
-                        <ShareAltOutlined /> {label}
-                    </Link>
+                    <TreeLink to={getTreeLink(item.id)}>
+                        <TreeIcon style={{fontSize: '1.2rem'}} /> {label}
+                    </TreeLink>
                 );
             }
         },
@@ -113,7 +123,11 @@ function TreeList(): JSX.Element {
     return (
         <div className="wrapper-page">
             <PageHeader
-                avatar={{icon: <ShareAltOutlined />, shape: 'square', style: {background: 'none', color: '#000'}}}
+                avatar={{
+                    icon: <TreeIcon style={{fontSize: '1.5rem'}} />,
+                    shape: 'square',
+                    style: {background: 'none', color: '#000'}
+                }}
                 title={t('home.trees')}
             />
             <Table bordered columns={columns} dataSource={list} loading={treeListQuery.loading} pagination={false} />

@@ -8,7 +8,7 @@ import TreeList from './TreeList';
 
 function Home(): JSX.Element {
     return (
-        <Row gutter={10}>
+        <Row gutter={10} style={{paddingBottom: '1rem'}}>
             <Col span={12} data-testid="libraries-list">
                 <LibrariesList />
             </Col>
