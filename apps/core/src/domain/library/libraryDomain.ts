@@ -285,7 +285,7 @@ export default function ({
 
             if (existingLib) {
                 const cacheKey = utils.getCoreEntityCacheKey('library', savedLib.id);
-                await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+                await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
             }
 
             return savedLib;
@@ -326,7 +326,7 @@ export default function ({
             );
 
             const cacheKey = utils.getCoreEntityCacheKey('library', id);
-            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
 
             return deletedLibrary;
         }

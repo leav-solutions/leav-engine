@@ -6,11 +6,13 @@ import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
+import {ICachesService} from 'infra/cache/cacheService';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import moment from 'moment';
 import {join} from 'path';
+import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IPreview} from '_types/preview';
@@ -177,6 +179,8 @@ interface IDeps {
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.infra.cache.cacheService'?: ICachesService;
+    'core.utils'?: IUtils;
 }
 
 export default function ({
@@ -189,7 +193,9 @@ export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
-    'core.domain.eventsManager': eventsManager = null
+    'core.domain.eventsManager': eventsManager = null,
+    'core.infra.cache.cacheService': cacheService = null,
+    'core.utils': utils = null
 }: IDeps = {}): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
@@ -394,8 +400,6 @@ export default function ({
         conf: IRecordIdentityConf;
         lib: ILibrary;
         record: IRecord;
-        valueDomain: IValueDomain;
-        libraryRepo: ILibraryRepo;
         ctx: any;
     }) => {
         const previewBaseUrl = getPreviewUrl();
@@ -459,6 +463,41 @@ export default function ({
         return previewsWithUrl;
     };
 
+    const _getLibraryIconPreview = async (library: ILibrary, ctx: IQueryInfos) => {
+        const cacheKey = `${utils.getCoreEntityCacheKey('library', library.id)}:icon_preview`;
+
+        const _execute = async () => {
+            // Retrieve library icon
+            const libraryIcon = library.icon;
+
+            if (!libraryIcon?.libraryId || !libraryIcon?.recordId) {
+                return null;
+            }
+
+            const libraryIconRecord = await ret.find({
+                params: {
+                    library: libraryIcon.libraryId,
+                    filters: [{condition: AttributeCondition.EQUAL, field: 'id', value: libraryIcon.recordId}]
+                },
+                ctx
+            });
+
+            if (!libraryIconRecord?.list?.length) {
+                return null;
+            }
+
+            const libraryIconLib = await getCoreEntityById<ILibrary>('library', libraryIcon.libraryId, ctx);
+            return _getPreviews({
+                conf: libraryIconLib.recordIdentityConf,
+                lib: libraryIconLib,
+                record: libraryIconRecord.list[0],
+                ctx
+            });
+        };
+
+        return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: true, ctx});
+    };
+
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
 
@@ -468,7 +507,7 @@ export default function ({
 
         const conf = lib.recordIdentityConf || {};
 
-        let label = null;
+        let label: string = null;
         if (conf.label) {
             const labelValues = await valueDomain.getValues({
                 library: lib.id,
@@ -480,7 +519,7 @@ export default function ({
             label = labelValues.length ? labelValues.pop().value : null;
         }
 
-        let color = null;
+        let color: string = null;
         if (conf.color) {
             const colorValues = await valueDomain.getValues({
                 library: lib.id,
@@ -492,9 +531,9 @@ export default function ({
             color = colorValues.length ? colorValues.pop().value : null;
         }
 
-        let preview = null;
+        let preview: IPreview = null;
         if (conf.preview || lib.behavior === LibraryBehavior.FILES) {
-            preview = (await _getPreviews({conf, lib, record, valueDomain, libraryRepo, ctx})) ?? null;
+            preview = (await _getPreviews({conf, lib, record, ctx})) ?? null;
         }
 
         //look in tree if not defined on current record
@@ -514,9 +553,9 @@ export default function ({
                     ctx
                 });
 
-                const heritedDatas = await ancestors.reduceRight(
-                    async (res: any, ancestor, index) => {
-                        res = await res; // cause async function so res is a promise
+                const inheritedData = await ancestors.reduceRight(
+                    async (resProm: Promise<{color: string; preview: IPreview}>, ancestor) => {
+                        const res = await resProm; // cause async function so res is a promise
                         if (res.color !== null && res.preview !== null) {
                             // already found data, nothing to do
                             return res;
@@ -528,12 +567,18 @@ export default function ({
                             preview: res.preview === null ? ancestorIdentity.preview : res.preview
                         };
                     },
-                    {color, preview}
+                    Promise.resolve({color, preview})
                 );
-                color = color === null ? heritedDatas.color : color;
-                preview = preview === null ? heritedDatas.preview : preview;
+                color = color === null ? inheritedData.color : color;
+                preview = preview === null ? inheritedData.preview : preview;
             }
         }
+
+        // If no preview found, or preview is not available, use library icon if any
+        if (preview === null || !Object.keys(preview?.file?.previews ?? {}).length) {
+            preview = await _getLibraryIconPreview(lib, ctx);
+        }
+
         return {
             id: record.id,
             library: lib,
@@ -637,7 +682,7 @@ export default function ({
 
             return deletedRecord;
         },
-        async find({params, ctx}): Promise<IListWithCursor<IRecord>> {
+        async find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>> {
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;
             let {filters = [] as IRecordFilterLight[], searchQuery} = params;
             const fullFilters: IRecordFilterOption[] = [];
