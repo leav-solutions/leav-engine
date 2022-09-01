@@ -4,8 +4,14 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Modal} from 'semantic-ui-react';
+import styled from 'styled-components';
 import {RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import Navigator from '../../navigator';
+
+const NavigatorModal = styled(Modal)`
+    max-height: 90vh;
+    overflow: auto;
+`;
 
 interface IEditRecordFormSelectRecordProps {
     open: boolean;
@@ -23,7 +29,7 @@ const EditRecordFormSelectRecord = ({
     const {t} = useTranslation();
 
     return (
-        <Modal open={open} onClose={onClose}>
+        <NavigatorModal open={open} onClose={onClose}>
             <Modal.Header>{t('records.select_record')}</Modal.Header>
             <Navigator onEditRecordClick={onSelect} restrictToRoots={Array.isArray(library) ? library : [library]} />
             <Modal.Actions>
@@ -31,7 +37,7 @@ const EditRecordFormSelectRecord = ({
                     {t('admin.cancel')}
                 </Button>
             </Modal.Actions>
-        </Modal>
+        </NavigatorModal>
     );
 };
 

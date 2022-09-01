@@ -165,10 +165,24 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
             }
         }
     `;
-    const filtersVar = filters.map(f => ({
-        field: f.attribute,
-        value: f.value
-    }));
+    const filtersVar = filters.reduce((queryFilters, filter, index) => {
+        if (filters.length > 1 && index > 0) {
+            queryFilters.push({
+                operator: 'AND'
+            });
+        }
+
+        const newFilter = {
+            field: filter.attribute,
+            condition: 'EQUAL',
+            value: filter.value
+        };
+
+        queryFilters.push(newFilter);
+
+        return queryFilters;
+    }, []);
+
     const pagination =
         limit === null
             ? null
