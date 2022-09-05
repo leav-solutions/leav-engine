@@ -1,17 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/client/testing';
-import {mount, shallow} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {render, screen, waitFor} from '_tests/testUtils';
 import {mockAttrSimple} from '__mocks__/attributes';
-import {wait} from '../../utils/testUtils';
 import MainPanel, {QUERY_LIBRARY_CONFIG} from './MainPanel';
 import {ActionTypes, initialState} from './NavigatorReducer';
 
 const lang = ['fr'];
-export const DATAMOCK = [
+export const dataMock = [
     {
         request: {
             query: QUERY_LIBRARY_CONFIG,
@@ -86,8 +83,9 @@ export const DATAMOCK = [
         }
     }
 ];
+
 const errorText = 'too bad';
-const ERRORMOCKS = [
+const errorMocks = [
     {
         request: {
             query: QUERY_LIBRARY_CONFIG,
@@ -99,6 +97,25 @@ const ERRORMOCKS = [
         error: new Error(errorText)
     }
 ];
+
+jest.mock('./TopPanel', () => {
+    return function TopPanel() {
+        return <div>TopPanel</div>;
+    };
+});
+
+jest.mock('./FiltersPanel', () => {
+    return function FiltersPanel() {
+        return <div>FiltersPanel</div>;
+    };
+});
+
+jest.mock('./ListPanel', () => {
+    return function ListPanel() {
+        return <div>ListPanel</div>;
+    };
+});
+
 describe('<MainPanel />', () => {
     describe('Query states', () => {
         const state = {
@@ -108,52 +125,35 @@ describe('<MainPanel />', () => {
         };
         const dispatch = () => undefined;
         test('loading renders a loader', async () => {
-            let wrapper;
-            await act(async () => {
-                wrapper = mount(
-                    <MockedProvider mocks={[]} addTypename={false}>
-                        <MainPanel state={state} dispatch={dispatch} />
-                    </MockedProvider>
-                );
-            });
-            expect(wrapper.find('Loading')).toHaveLength(1);
+            render(<MainPanel state={state} dispatch={dispatch} />, {apolloMocks: dataMock});
+
+            expect(screen.getByText(/loading/)).toBeInTheDocument();
         });
+
         test('error state', async () => {
-            let wrapper;
-            await act(async () => {
-                wrapper = mount(
-                    <MockedProvider mocks={ERRORMOCKS} addTypename={false}>
-                        <MainPanel state={state} dispatch={dispatch} />
-                    </MockedProvider>
-                );
-            });
-            wrapper.update();
-            expect(wrapper.find('[data-testid="error"]').text()).toContain(errorText);
+            render(<MainPanel state={state} dispatch={dispatch} />, {apolloMocks: errorMocks});
+
+            expect(await screen.findByText(errorText)).toBeInTheDocument();
         });
+
         test('data state trigger dispatch', async () => {
-            let wrapper;
             const mockDispatch = jest.fn(() => undefined);
-            await act(async () => {
-                wrapper = mount(
-                    <MockedProvider mocks={DATAMOCK} addTypename={false}>
-                        <MainPanel state={state} dispatch={mockDispatch} />
-                    </MockedProvider>
-                );
-            });
-            await act(async () => {
-                wrapper.update();
-            });
-            await wait(1);
-            expect(mockDispatch.mock.calls.length).toBe(1);
+            render(<MainPanel state={state} dispatch={mockDispatch} />, {apolloMocks: dataMock});
+
+            await waitFor(() => expect(mockDispatch.mock.calls.length).toBe(1));
+
             const mockCall = mockDispatch.mock.calls[0];
             expect(mockCall.length).toBe(1);
+
             // @ts-ignore : mockCall may be empty, handled on previous expect
             const firstArg = mockCall[0];
             expect(firstArg).toHaveProperty('type');
+
             // @ts-ignore : firstArg may not have type property, handled on previous expect
             expect(firstArg.type).toBe(ActionTypes.SET_ROOT_INFOS);
         });
     });
+
     test('Renders elements', async () => {
         const dispatch = () => undefined;
         const state = {
@@ -174,12 +174,10 @@ describe('<MainPanel />', () => {
             ],
             lang
         };
-        let wrapper;
-        await act(async () => {
-            wrapper = shallow(<MainPanel state={state} dispatch={dispatch} />);
-        });
-        expect(wrapper.find('TopPanel')).toHaveLength(1);
-        expect(wrapper.find('FiltersPanel')).toHaveLength(1);
-        expect(wrapper.find('ListPanel')).toHaveLength(1);
+
+        render(<MainPanel state={state} dispatch={dispatch} />, {apolloMocks: dataMock});
+
+        expect(await screen.findByText('TopPanel')).toBeInTheDocument();
+        expect(await screen.findByText('ListPanel')).toBeInTheDocument();
     });
 });
