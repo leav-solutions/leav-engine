@@ -3,16 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Dimmer, Loader} from 'semantic-ui-react';
+import {Dimmer, Loader, SemanticSIZES} from 'semantic-ui-react';
 
 interface ILoadingProps {
     withDimmer?: boolean;
+    size?: SemanticSIZES;
 }
 
-const Loading = ({withDimmer}: ILoadingProps): JSX.Element => {
+const Loading = ({withDimmer, size}: ILoadingProps): JSX.Element => {
     const {t} = useTranslation();
     const loader = (
-        <Loader active inline="centered">
+        <Loader active inline="centered" size={size}>
             {t('admin.loading')}
         </Loader>
     );
@@ -24,10 +25,6 @@ const Loading = ({withDimmer}: ILoadingProps): JSX.Element => {
     ) : (
         loader
     );
-};
-
-Loading.defaultProps = {
-    withDimmer: false
 };
 
 export default Loading;

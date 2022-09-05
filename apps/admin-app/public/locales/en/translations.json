@@ -336,5 +336,14 @@
         "select": "Select a file",
         "delete_confirm": "Do you really want to delete this file?",
         "select_library": "Select library"
+    },
+    "permissions_settings": {
+        "title": "Extend permissions",
+        "permissions_attributes": "Permissions attributes",
+        "add_permissions_attribute": "Add permissions attribute",
+        "operator": "Operator",
+        "operator_and": "AND",
+        "operator_or": "OR",
+        "no_attributes_to_add": "No attribute available"
     }
 }

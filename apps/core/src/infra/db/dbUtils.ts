@@ -263,7 +263,7 @@ export default function ({
                             : _getFilterCondition;
                     const conds = filterCondsFunc(filterKey, filterVal, strictFilters, nonStrictFields);
 
-                    if (conds.query) {
+                    if (conds?.query) {
                         queryParts.push(aql`FILTER`, conds);
                     }
                 }

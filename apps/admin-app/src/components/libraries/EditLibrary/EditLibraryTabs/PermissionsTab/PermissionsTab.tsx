@@ -15,7 +15,6 @@ interface IPermissionsTabProps {
 }
 
 function PermissionsTab({library, readonly}: IPermissionsTabProps): JSX.Element {
-    // TODO: handle errors
     const [saveLibrary] = useMutation<SAVE_LIBRARY, SAVE_LIBRARYVariables>(saveLibQuery);
 
     const _handleSubmitSettings = (conf: Treepermissions_confInput) =>

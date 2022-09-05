@@ -7,3 +7,8 @@
 .ui.primary.button:hover {
     background: @primaryButtonGradientHover;
 }
+
+.ui.basic.buttons .active.button, .ui.basic.active.button {
+    background: @activeItemColor;
+    border: 1px solid @primaryColor;
+}
