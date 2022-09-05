@@ -1,14 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// import {ApolloProvider} from '@apollo/react-common';
-// import {
-//     defaultDataIdFromObject,
-//     InMemoryCache,
-//     IntrospectionFragmentMatcher,
-//     IntrospectionResultData
-// } from 'apollo-cache-inmemory';
-// import {ApolloClient} from 'apollo-client';
 import {
     ApolloClient,
     ApolloLink,
@@ -24,6 +16,7 @@ import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 import {addMessage, MessagesTypes} from 'redux/messages/messages';
+import {endMutation, startMutation} from 'redux/mutationsWatcher/mutationsWatcher';
 import {Message, SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
@@ -108,13 +101,34 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
         );
     });
 
+    const _mutationsWatcherLink = new ApolloLink((operation, forward) => {
+        const isMutation = operation.query.definitions.some(
+            def => def.kind === 'OperationDefinition' && def.operation === 'mutation'
+        );
+        operation.setContext({isMutation});
+
+        if (isMutation) {
+            dispatch(startMutation());
+        }
+
+        return forward(operation).map(data => {
+            if (operation.getContext().isMutation) {
+                dispatch(endMutation());
+            }
+
+            return data;
+        });
+    });
+
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
             _handleApolloError,
+            _mutationsWatcherLink,
             new HttpLink({
                 uri: process.env.REACT_APP_API_URL
             })
         ]),
+        connectToDevTools: process.env.NODE_ENV === 'development',
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up
             // with the ID attribute (eg. in the getRecordPropertiesQuery).

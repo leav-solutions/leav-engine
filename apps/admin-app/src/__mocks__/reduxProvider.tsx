@@ -9,6 +9,10 @@ import {RootState} from 'redux/store';
 export const mockStoreInitialState: RootState = {
     messages: {
         messages: []
+    },
+    mutationsWatcher: {
+        mutationsCount: 0,
+        hasPendingMutations: false
     }
 };
 
