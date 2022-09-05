@@ -6,6 +6,7 @@ import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {wait} from 'utils/testUtils';
+import {render, screen} from '_tests/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {AttributeType, PermissionsRelation, Treepermissions_confInput} from '../../../../../_gqlTypes/globalTypes';
@@ -18,7 +19,7 @@ jest.mock(
     './PermissionsContent',
     () =>
         function PermissionsContent() {
-            return <div>Permissions</div>;
+            return <div>PermissionsContent</div>;
         }
 );
 
@@ -53,54 +54,14 @@ describe('PermissionsTab', () => {
             }
         ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <PermissionsTab attribute={attribute} readonly={false} />
-                </MockedProviderWithFragments>
-            );
-        });
+        render(
+            <MockedProviderWithFragments mocks={mocks}>
+                <PermissionsTab attribute={attribute} readonly={false} />
+            </MockedProviderWithFragments>,
+            {apolloMocks: mocks}
+        );
 
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('PermissionsContent')).toHaveLength(1);
-    });
-
-    test('Error state', async () => {
-        const mocks = [
-            {
-                request: {
-                    query: getAttributesQuery,
-                    variables: {id: 'test_attr'}
-                },
-                error: new Error('boom!')
-            }
-        ];
-
-        let comp;
-
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <PermissionsTab attribute={attribute} readonly={false} />
-                </MockedProviderWithFragments>
-            );
-        });
-
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('div.error')).toHaveLength(1);
+        expect(screen.getByText('PermissionsContent')).toBeInTheDocument();
     });
 
     test('Save data on submit', async () => {

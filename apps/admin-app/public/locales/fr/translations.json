@@ -340,5 +340,14 @@
         "select": "Sélectionner un fichier",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce fichier?",
         "select_library": "Sélectionner une bibliothèque"
+    },
+    "permissions_settings": {
+        "title": "Étendre les permissions",
+        "permissions_attributes": "Attributs de permissions",
+        "add_permissions_attribute": "Ajouter un attribut de permissions",
+        "operator": "Opérateur",
+        "operator_and": "ET",
+        "operator_or": "OU",
+        "no_attributes_to_add": "Aucun attribut disponible"
     }
 }

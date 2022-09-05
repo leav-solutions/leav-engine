@@ -3,13 +3,62 @@
 exports[`NodePermissionTabContent Snapshot test 1`] = `
 LoadedCheerio {
   "0": Node {
-    "attribs": Object {},
+    "attribs": Object {
+      "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
+    },
     "children": Array [
       Node {
-        "data": "PermissionsAttributesSelector",
-        "next": null,
+        "attribs": Object {
+          "aria-hidden": "true",
+          "class": "cog icon",
+        },
+        "children": Array [],
+        "name": "i",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": Node {
+          "data": "permissions_settings.title",
+          "next": null,
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "text",
+        },
         "parent": [Circular],
         "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": Object {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+        "x-attribsPrefix": Object {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+      },
+      Node {
+        "data": "permissions_settings.title",
+        "next": null,
+        "parent": [Circular],
+        "prev": Node {
+          "attribs": Object {
+            "aria-hidden": "true",
+            "class": "cog icon",
+          },
+          "children": Array [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
         "type": "text",
       },
     ],
@@ -711,8 +760,12 @@ LoadedCheerio {
     },
     "prev": null,
     "type": "tag",
-    "x-attribsNamespace": Object {},
-    "x-attribsPrefix": Object {},
+    "x-attribsNamespace": Object {
+      "class": undefined,
+    },
+    "x-attribsPrefix": Object {
+      "class": undefined,
+    },
   },
   "1": Node {
     "attribs": Object {
@@ -1044,13 +1097,62 @@ LoadedCheerio {
     "parent": Node {
       "children": Array [
         Node {
-          "attribs": Object {},
+          "attribs": Object {
+            "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
+          },
           "children": Array [
             Node {
-              "data": "PermissionsAttributesSelector",
-              "next": null,
+              "attribs": Object {
+                "aria-hidden": "true",
+                "class": "cog icon",
+              },
+              "children": Array [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "data": "permissions_settings.title",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "text",
+              },
               "parent": [Circular],
               "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": Object {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+            Node {
+              "data": "permissions_settings.title",
+              "next": null,
+              "parent": [Circular],
+              "prev": Node {
+                "attribs": Object {
+                  "aria-hidden": "true",
+                  "class": "cog icon",
+                },
+                "children": Array [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": Object {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
               "type": "text",
             },
           ],
@@ -1060,8 +1162,12 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {},
-          "x-attribsPrefix": Object {},
+          "x-attribsNamespace": Object {
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "class": undefined,
+          },
         },
         [Circular],
       ],
@@ -1072,13 +1178,62 @@ LoadedCheerio {
       "type": "root",
     },
     "prev": Node {
-      "attribs": Object {},
+      "attribs": Object {
+        "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
+      },
       "children": Array [
         Node {
-          "data": "PermissionsAttributesSelector",
-          "next": null,
+          "attribs": Object {
+            "aria-hidden": "true",
+            "class": "cog icon",
+          },
+          "children": Array [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "data": "permissions_settings.title",
+            "next": null,
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "text",
+          },
           "parent": [Circular],
           "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": Object {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+        Node {
+          "data": "permissions_settings.title",
+          "next": null,
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": Object {
+              "aria-hidden": "true",
+              "class": "cog icon",
+            },
+            "children": Array [],
+            "name": "i",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+          },
           "type": "text",
         },
       ],
@@ -1098,8 +1253,12 @@ LoadedCheerio {
       },
       "prev": null,
       "type": "tag",
-      "x-attribsNamespace": Object {},
-      "x-attribsPrefix": Object {},
+      "x-attribsNamespace": Object {
+        "class": undefined,
+      },
+      "x-attribsPrefix": Object {
+        "class": undefined,
+      },
     },
     "type": "tag",
     "x-attribsNamespace": Object {

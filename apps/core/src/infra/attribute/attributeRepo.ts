@@ -106,6 +106,10 @@ export default function ({
                     return aql``;
                 }
 
+                if (!filterVal) {
+                    return null;
+                }
+
                 const libs = utils.forceArray(filterVal);
 
                 const valParts = libs.map(l => aql`v._key == ${l}`);

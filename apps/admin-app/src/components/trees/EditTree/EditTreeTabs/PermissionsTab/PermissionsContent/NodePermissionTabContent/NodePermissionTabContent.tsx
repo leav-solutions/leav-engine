@@ -1,9 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import PermissionsSettings from 'components/shared/PermissionsSettings';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
+import styled from 'styled-components';
+import {GET_LIB_BY_ID_libraries_list} from '_gqlTypes/GET_LIB_BY_ID';
 import useLang from '../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../utils';
 import {
@@ -11,15 +14,15 @@ import {
     GET_TREE_BY_ID_trees_list_libraries,
     GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
 } from '../../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {
-    AttributeType,
-    PermissionsRelation,
-    PermissionTypes,
-    Treepermissions_confInput
-} from '../../../../../../../_gqlTypes/globalTypes';
+import {PermissionTypes,Treepermissions_confInput} from '../../../../../../../_gqlTypes/globalTypes';
 import DefinePermByUserGroupView from '../../../../../../permissions/DefinePermByUserGroupView';
 import DefineTreePermissionsView from '../../../../../../permissions/DefineTreePermissionsView';
-import PermissionsAttributesSelector from '../../../../../../permissions/PermissionsAttributesSelector';
+
+const PermissionsSettingsBtn = styled(PermissionsSettings)`
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+`;
 
 interface INodePermissionTabContentProps {
     tree: GET_TREE_BY_ID_trees_list;
@@ -36,11 +39,8 @@ function NodePermissionTabContent({
 }: INodePermissionTabContentProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useTranslation();
-    const _handleSubmit = (conf: Treepermissions_confInput) => onSubmitSettings(treeLibraries.library.id, conf);
+    const _handleChangeSettings = (conf: Treepermissions_confInput) => onSubmitSettings(treeLibraries.library.id, conf);
 
-    const attributes = treeLibraries.library.attributes
-        ? treeLibraries.library.attributes.filter(a => a.type === AttributeType.tree)
-        : [];
     const treePermsConf =
         tree.permissions_conf?.filter(p => p.libraryId === treeLibraries.library.id)?.[0]?.permissionsConf ?? null;
 
@@ -85,14 +85,11 @@ function NodePermissionTabContent({
 
     return (
         <>
-            <PermissionsAttributesSelector
-                attributes={attributes}
+            <PermissionsSettingsBtn
+                permissionsSettings={treePermsConf}
+                onChangeSettings={_handleChangeSettings}
+                library={treeLibraries.library as GET_LIB_BY_ID_libraries_list}
                 readonly={readonly}
-                permissionsConf={{
-                    relation: treePermsConf?.relation ?? PermissionsRelation.and,
-                    permissionTreeAttributes: treePermsConf?.permissionTreeAttributes.map(a => a.id) ?? []
-                }}
-                onSubmitSettings={_handleSubmit}
             />
             <Tab panes={permissionsPanes} className="grow flex-col height100" />
         </>

@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount, shallow} from 'enzyme';
+import {shallow} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {PermissionsRelation} from '../../../../../../_gqlTypes/globalTypes';
 import {mockAttrTree} from '../../../../../../__mocks__/attributes';
@@ -44,25 +43,9 @@ describe('PermissionsContent', () => {
     };
     const onSubmit = jest.fn();
 
-    test('If readonly, cannot edit settings', async () => {
-        const comp = shallow(<PermissionsContent library={library} readonly onSubmitSettings={onSubmit} />);
-
-        expect(comp.find('FormDropdown[name="permissionTreeAttributes"]').prop('disabled')).toBe(true);
-    });
-
     test('Display 1 tab per tree + "library" tab', async () => {
         const comp = shallow(<PermissionsContent library={library} readonly={false} onSubmitSettings={onSubmit} />);
 
         expect(comp.find('Tab').prop('panes')).toHaveLength(3);
-    });
-
-    test('Calls submit function', async () => {
-        const comp = mount(<PermissionsContent library={library} readonly={false} onSubmitSettings={onSubmit} />);
-
-        await act(async () => {
-            comp.find('form').simulate('submit');
-        });
-
-        expect(onSubmit).toBeCalled();
     });
 });

@@ -6,12 +6,6 @@ import React from 'react';
 import {mockTreeWithPermConf} from '../../../../../../../__mocks__/trees';
 import NodePermissionTabContent from './NodePermissionTabContent';
 
-jest.mock('../../../../../../permissions/PermissionsAttributesSelector', () => {
-    return function PermissionsAttributesSelector() {
-        return <div>PermissionsAttributesSelector</div>;
-    };
-});
-
 jest.mock('../../../../../../permissions/DefineTreePermissionsView', () => {
     return function DefineTreePermissionsView() {
         return <div>DefineTreePermissionsView</div>;

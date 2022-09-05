@@ -4,7 +4,7 @@
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router';
-import {Button, Icon, Message, SemanticICONS} from 'semantic-ui-react';
+import {Button, Icon, Message, MessageSizeProp, SemanticICONS} from 'semantic-ui-react';
 
 export enum ErrorDisplayTypes {
     ERROR = 'error',
@@ -16,6 +16,7 @@ interface IErrorDisplayProps {
     type?: ErrorDisplayTypes;
     actionButton?: JSX.Element;
     showActionButton?: boolean;
+    size?: MessageSizeProp;
 }
 
 type IErrorByType = {
@@ -31,7 +32,8 @@ function ErrorDisplay({
     message,
     actionButton,
     showActionButton = true,
-    type = ErrorDisplayTypes.ERROR
+    type = ErrorDisplayTypes.ERROR,
+    size
 }: IErrorDisplayProps): JSX.Element {
     const {t} = useTranslation();
     const history = useHistory();
@@ -58,7 +60,7 @@ function ErrorDisplay({
     };
 
     return (
-        <Message negative icon className="error">
+        <Message negative icon className="error" size={size}>
             <Icon name={errorByType[type].icon} />
             <Message.Content>
                 <Message.Header>{errorByType[type].title}</Message.Header>
