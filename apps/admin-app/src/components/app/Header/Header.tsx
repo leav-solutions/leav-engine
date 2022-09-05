@@ -7,7 +7,8 @@ import useUserData from 'hooks/useUserData';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
-import {Icon, Menu} from 'semantic-ui-react';
+import {RootState, useAppSelector} from 'redux/store';
+import {Icon, Loader, Menu} from 'semantic-ui-react';
 import styled from 'styled-components';
 import UserPanel from '../UserPanel';
 
@@ -26,6 +27,7 @@ const Header = (): JSX.Element => {
     const _toggleUserPanel = () => {
         setSidebarVisible(!userPanelVisible);
     };
+    const mutationsWatcher = useAppSelector((state: RootState) => state.mutationsWatcher);
 
     return (
         <>
@@ -34,6 +36,11 @@ const Header = (): JSX.Element => {
                     <Icon name="home" size="big" />
                 </Menu.Item>
                 <Menu.Menu position="right">
+                    {mutationsWatcher?.hasPendingMutations && (
+                        <Menu.Item>
+                            <Loader active inline />
+                        </Menu.Item>
+                    )}
                     <Menu.Item>
                         <ApplicationsSwitcher />
                     </Menu.Item>
