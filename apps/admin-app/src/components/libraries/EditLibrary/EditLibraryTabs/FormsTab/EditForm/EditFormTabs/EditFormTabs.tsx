@@ -39,7 +39,12 @@ function EditFormTabs(): JSX.Element {
             <Header className="no-grow" data-testid="header">
                 {label}
             </Header>
-            <Tab menu={{secondary: true, pointing: true}} panes={panes} className="grow flex-col height100" />
+            <Tab
+                menu={{secondary: true, pointing: true}}
+                panes={panes}
+                className="grow flex-col height100"
+                renderActiveOnly
+            />
         </>
     );
 }

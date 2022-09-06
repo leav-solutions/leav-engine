@@ -1,17 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Formik, FormikProps} from 'formik';
-import React, {useEffect, useState} from 'react';
+import {Formik,FormikProps} from 'formik';
+import React,{useEffect,useRef,useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Form} from 'semantic-ui-react';
+import {Button,Form,Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useLang from '../../../../../../../../../hooks/useLang';
-import {arrayPick, formatIDString, getFieldError, omit, pick} from '../../../../../../../../../utils';
+import {arrayPick,formatIDString,getFieldError,omit,pick} from '../../../../../../../../../utils';
 import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {AttributeType, FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
+import {AttributeType,FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
 import AttributeSelector from '../../../../../../../../attributes/AttributeSelector';
 import FormFieldWrapper from '../../../../../../../../shared/FormFieldWrapper';
+import {useEditFormModalButtonsContext} from '../../../../EditFormModal/EditFormModalButtonsContext';
 import {useEditFormContext} from '../../../hooks/useEditFormContext';
 
 interface IInfosFormProps {
@@ -30,6 +31,9 @@ const FormGroupWithMargin = styled(Form.Group)`
 function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
     const {defaultLang, availableLangs} = useLang();
     const {form, library, readonly} = useEditFormContext();
+    const {setButton, removeButton} = useEditFormModalButtonsContext();
+    const submitFunc = useRef<() => void>();
+
     const existingForm = form !== null;
     const {t} = useTranslation();
     const defaultForm: FormValues = {
@@ -40,6 +44,23 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
     };
 
     const [formValues, setFormValues] = useState<FormValues>(defaultForm);
+
+    // This useEffect is used to transmit the submit button to parent modal when creating a new form
+    useEffect(() => {
+        if (readonly || existingForm) {
+            return;
+        }
+        const buttonKey = 'saveForm';
+        setButton(
+            buttonKey,
+            <Button key={buttonKey} type="submit" primary icon labelPosition="left" onClick={submitFunc.current}>
+                <Icon name="save" />
+                {t('admin.submit')}
+            </Button>
+        );
+
+        return () => removeButton(buttonKey);
+    }, [readonly, existingForm, library, form]);
 
     useEffect(() => {
         if (!form) {
@@ -66,10 +87,13 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
         handleSubmit,
         handleBlur,
         setFieldValue,
+        submitForm,
         errors: inputErrors,
         values,
         touched
     }: FormikProps<FormValues>) => {
+        submitFunc.current = handleSubmit;
+
         const _handleLabelChange = (e, data) => {
             _handleChange(e, data);
 
@@ -89,6 +113,28 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
             setFieldValue(name, value);
         };
 
+        const _handleChangeWithSubmit = async (e, data) => {
+            await _handleChange(e, data);
+
+            if (existingForm) {
+                submitForm();
+            }
+        };
+
+        const _handleBlur = (e: React.FocusEvent) => {
+            if (!existingForm) {
+                handleBlur(e);
+            } else {
+                submitForm();
+            }
+        };
+
+        const _handleKeyPress = (e: React.KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                submitForm();
+            }
+        };
+
         const {id, label, dependencyAttributes} = values;
 
         const _getErrorByField = (fieldName: string): string =>
@@ -103,9 +149,12 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                             <Form.Input
                                 label={`${lang} ${lang === defaultLang ? '*' : ''}`}
                                 name={'label.' + lang}
+                                aria-label={'label.' + lang}
                                 disabled={readonly}
                                 value={label?.[lang] || ''}
                                 onChange={_handleLabelChange}
+                                onBlur={_handleBlur}
+                                onKeyPress={_handleKeyPress}
                             />
                         </FormFieldWrapper>
                     ))}
@@ -117,7 +166,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                         name="id"
                         aria-label="id"
                         onChange={_handleChange}
-                        onBlur={handleBlur}
+                        onBlur={_handleBlur}
                         value={id}
                     />
                 </FormFieldWrapper>
@@ -128,15 +177,10 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                         multiple
                         name="dependencyAttributes"
                         value={dependencyAttributes}
-                        onChange={_handleChange}
+                        onChange={_handleChangeWithSubmit}
                         disabled={readonly}
                     />
                 </FormFieldWrapper>
-                {!readonly && (
-                    <FormGroupWithMargin>
-                        <Form.Button type="submit">{t('admin.submit')}</Form.Button>
-                    </FormGroupWithMargin>
-                )}
             </Form>
         );
     };

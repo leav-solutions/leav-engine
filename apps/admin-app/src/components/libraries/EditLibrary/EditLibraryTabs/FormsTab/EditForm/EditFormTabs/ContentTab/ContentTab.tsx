@@ -3,11 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import useMessages from 'hooks/useMessages';
-import React, {useReducer, useState} from 'react';
+import React, {useCallback, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {MessagesTypes} from 'redux/messages/messages';
 import {Button, Grid, Icon} from 'semantic-ui-react';
-import styled from 'styled-components';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {
     FormElementInput,
@@ -15,6 +14,7 @@ import {
     TreeElementInput
 } from '../../../../../../../../_gqlTypes/globalTypes';
 import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
+import {useEditFormModalButtonsContext} from '../../../EditFormModal/EditFormModalButtonsContext';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
 import DependencySettings from './DependencySettings';
@@ -25,25 +25,20 @@ import {defaultDepAttribute, defaultDepValue} from './formBuilderReducer/formBui
 import {FormBuilderReducerContext} from './formBuilderReducer/hook/useFormBuilderReducer';
 import FormLayout from './FormLayout';
 
-const SaveButton = styled(Button)`
-    && {
-        margin: 1em 0;
-    }
-`;
-
 function ContentTab(): JSX.Element {
     const {t} = useTranslation();
     const {addMessage} = useMessages();
     const {form, library, readonly} = useEditFormContext();
     const [state, dispatch] = useReducer(formBuilderReducer, computateInitialState(library, form));
     const [isSaving, setIsSaving] = useState<boolean>(false);
+    const {setButton, removeButton} = useEditFormModalButtonsContext();
 
     const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
         onCompleted: () => setIsSaving(false),
         onError: () => setIsSaving(false)
     });
 
-    const _handleSubmit = async () => {
+    const _handleSubmit = useCallback(async () => {
         if (readonly) {
             return;
         }
@@ -108,7 +103,28 @@ function ContentTab(): JSX.Element {
             content: t('forms.save_success')
         });
         setIsSaving(false);
-    };
+    }, [state]);
+
+    // This useEffect is used to transmit submit button to parent modal
+    useEffect(() => {
+        if (readonly) {
+            return;
+        }
+
+        const buttonKey = 'saveContent';
+
+        setButton(
+            buttonKey,
+            <Button loading={isSaving} key={buttonKey} primary icon labelPosition="left" onClick={_handleSubmit}>
+                <Icon name="save" />
+                {t('admin.save')}
+            </Button>
+        );
+
+        return () => {
+            removeButton(buttonKey);
+        };
+    }, [isSaving, _handleSubmit]);
 
     return (
         <FormBuilderReducerContext.Provider value={{state, dispatch}}>
@@ -121,12 +137,6 @@ function ContentTab(): JSX.Element {
                 <Grid.Row stretched>
                     <Grid.Column width={4} className="elements">
                         <DependencySettings />
-                        {!readonly && (
-                            <SaveButton loading={isSaving} primary icon labelPosition="left" onClick={_handleSubmit}>
-                                <Icon name="save" />
-                                {t('admin.save')}
-                            </SaveButton>
-                        )}
                         <ElementsReserve />
                     </Grid.Column>
                     <Grid.Column className="layout" width={12}>
