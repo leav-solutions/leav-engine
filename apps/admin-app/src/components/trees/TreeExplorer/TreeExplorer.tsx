@@ -54,7 +54,7 @@ const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): I
                 n.id !== fakeRootId && !compact ? (
                     <RecordCard record={n.record.whoAmI} style={{height: '100%'}} />
                 ) : (
-                    <RootElem>{n.record.whoAmI.label}</RootElem>
+                    <RootElem>{n.record.whoAmI.label ?? n.record.whoAmI.id}</RootElem>
                 );
 
             return {
@@ -72,7 +72,7 @@ const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): I
 
 const RootElem = styled.div`
     height: 100%;
-    padding-left: 1em;
+    padding-left: 0.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
