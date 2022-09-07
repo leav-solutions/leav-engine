@@ -10,9 +10,9 @@ import {
     ServerError
 } from '@apollo/client';
 import {onError} from '@apollo/link-error';
-import {Spin} from 'antd';
 import {createUploadLink} from 'apollo-upload-client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import Loading from 'components/shared/Loading';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -36,7 +36,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {loading, error, possibleTypes} = useGraphqlPossibleTypes(process.env.REACT_APP_API_URL);
 
     if (loading) {
-        return <Spin />;
+        return <Loading />;
     }
 
     if (error) {

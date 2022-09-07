@@ -32,12 +32,23 @@ export default function useGetTreesListQuery(params: IUseGetTreesListQueryHookPa
         variables,
         skip,
         onCompleted: data => {
+            const allowedTrees = data.trees.list.filter(
+                tree => (!onlyAllowed || tree.permissions.access_tree) && isTreeInApp(currentApp, tree.id)
+            );
+
+            if (currentApp.trees.length) {
+                allowedTrees.sort((treeA, treeB) => {
+                    const indexTreeA = currentApp.trees.findIndex(tree => tree.id === treeA.id);
+                    const indexLibB = currentApp.trees.findIndex(tree => tree.id === treeB.id);
+
+                    return indexTreeA - indexLibB;
+                });
+            }
+
             const cleanData: GET_TREE_LIST_QUERY = {
                 ...data,
                 trees: {
-                    list: data.trees.list.filter(
-                        tree => (!onlyAllowed || tree.permissions.access_tree) && isTreeInApp(currentApp, tree.id)
-                    )
+                    list: allowedTrees
                 }
             };
 
