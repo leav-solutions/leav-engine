@@ -33,9 +33,9 @@ describe('Home', () => {
                         list: [
                             {
                                 __typename: 'Library',
-                                id: 'test',
+                                id: 'libA',
                                 system: false,
-                                label: {fr: 'First lib'},
+                                label: {fr: 'Lib A'},
                                 behavior: LibraryBehavior.standard,
                                 icon: null,
                                 gqlNames: {
@@ -61,9 +61,9 @@ describe('Home', () => {
                             },
                             {
                                 __typename: 'Library',
-                                id: 'test2',
+                                id: 'libB',
                                 system: false,
-                                label: {fr: 'Second lib'},
+                                label: {fr: 'Lib B'},
                                 behavior: LibraryBehavior.standard,
                                 icon: null,
                                 gqlNames: {
@@ -102,7 +102,7 @@ describe('Home', () => {
                     userData: {
                         __typename: 'UserData',
                         global: false,
-                        data: {[FAVORITE_LIBRARIES_KEY]: ['test2']}
+                        data: {[FAVORITE_LIBRARIES_KEY]: ['libB']}
                     }
                 }
             }
@@ -116,8 +116,8 @@ describe('Home', () => {
                     trees: {
                         list: [
                             {
-                                id: 'idTree',
-                                label: {fr: 'First tree'},
+                                id: 'treeA',
+                                label: {fr: 'Tree A'},
                                 libraries: [
                                     {
                                         library: {
@@ -133,8 +133,8 @@ describe('Home', () => {
                                 }
                             },
                             {
-                                id: 'idTree2',
-                                label: {fr: 'Second tree'},
+                                id: 'treeB',
+                                label: {fr: 'Tree B'},
                                 libraries: [
                                     {
                                         library: {
@@ -164,7 +164,7 @@ describe('Home', () => {
                     userData: {
                         __typename: 'UserData',
                         global: false,
-                        data: {[FAVORITE_TREES_KEY]: ['idTree2']}
+                        data: {[FAVORITE_TREES_KEY]: ['treeB']}
                     }
                 }
             }
@@ -197,6 +197,46 @@ describe('Home', () => {
         expect(within(treesListBlock).getAllByRole('row')).toHaveLength(3);
     });
 
+    test('Sort libraries and tree lists according to order in application', async () => {
+        const currentAppWithLibraries = {
+            ...mockApplicationDetails,
+            libraries: [
+                {
+                    id: 'libB'
+                },
+                {
+                    id: 'libA'
+                }
+            ],
+            trees: [
+                {
+                    id: 'treeB'
+                },
+                {
+                    id: 'treeA'
+                }
+            ]
+        };
+
+        await act(async () => {
+            render(
+                <MemoryRouter>
+                    <Home />
+                </MemoryRouter>,
+                {apolloMocks: mocks, currentApp: currentAppWithLibraries}
+            );
+        });
+
+        const librariesListBlock = screen.getByTestId('libraries-list');
+        const treesListBlock = screen.getByTestId('trees-list');
+
+        expect(within(librariesListBlock).getAllByRole('row')[1]).toHaveTextContent('Lib B');
+        expect(within(librariesListBlock).getAllByRole('row')[2]).toHaveTextContent('Lib A');
+
+        expect(within(treesListBlock).getAllByRole('row')[1]).toHaveTextContent('Tree B');
+        expect(within(treesListBlock).getAllByRole('row')[2]).toHaveTextContent('Tree A');
+    });
+
     test('Display favorites first in libraries', async () => {
         await act(async () => {
             render(
@@ -213,8 +253,8 @@ describe('Home', () => {
 
         const firstRow = within(librariesListBlock).getAllByRole('row')[1];
         const secondRow = within(librariesListBlock).getAllByRole('row')[2];
-        expect(within(firstRow).getByText('Second lib')).toBeInTheDocument();
-        expect(within(secondRow).getByText('First lib')).toBeInTheDocument();
+        expect(within(firstRow).getByText('Lib B')).toBeInTheDocument();
+        expect(within(secondRow).getByText('Lib A')).toBeInTheDocument();
 
         const favoriteStarIcon = within(secondRow).getByTestId('favorite-star');
         expect(favoriteStarIcon).toBeInTheDocument();
@@ -236,8 +276,8 @@ describe('Home', () => {
 
         const firstRow = within(treesListBlock).getAllByRole('row')[1];
         const secondRow = within(treesListBlock).getAllByRole('row')[2];
-        expect(within(firstRow).getByText('Second tree')).toBeInTheDocument();
-        expect(within(secondRow).getByText('First tree')).toBeInTheDocument();
+        expect(within(firstRow).getByText('Tree B')).toBeInTheDocument();
+        expect(within(secondRow).getByText('Tree A')).toBeInTheDocument();
 
         const favoriteStarIcon = within(secondRow).getByTestId('favorite-star');
         expect(favoriteStarIcon).toBeInTheDocument();

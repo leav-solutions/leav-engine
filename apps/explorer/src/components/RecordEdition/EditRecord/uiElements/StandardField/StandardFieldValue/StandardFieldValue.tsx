@@ -452,12 +452,14 @@ function StandardFieldValue({
 
     const valuesList = _getFilteredValuesList();
 
-    const valueActions: FloatingMenuAction[] = [
-        {
+    const valueActions: FloatingMenuAction[] = [];
+
+    if (!fieldValue.isEditing) {
+        valueActions.push({
             title: t('record_edition.value_details'),
             button: <ValueDetailsBtn value={fieldValue.value} attribute={attribute} shape="circle" />
-        }
-    ];
+        });
+    }
 
     if (canDeleteValue && !fieldValue.isEditing && fieldValue.displayValue) {
         valueActions.push({

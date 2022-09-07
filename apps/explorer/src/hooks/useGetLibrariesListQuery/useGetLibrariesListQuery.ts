@@ -23,12 +23,23 @@ export default function useGetLibrariesListQuery({
 
     const query = useQuery<GET_LIBRARIES_LIST>(getLibrariesListQuery, {
         onCompleted: data => {
+            const allowedLibraries = data.libraries.list.filter(
+                lib => (!onlyAllowed || lib.permissions.access_library) && isLibraryInApp(currentApp, lib.id)
+            );
+
+            if (currentApp.libraries.length) {
+                allowedLibraries.sort((libA, libB) => {
+                    const indexLibA = currentApp.libraries.findIndex(lib => lib.id === libA.id);
+                    const indexLibB = currentApp.libraries.findIndex(lib => lib.id === libB.id);
+
+                    return indexLibA - indexLibB;
+                });
+            }
+
             const cleanData: GET_LIBRARIES_LIST = {
                 ...data,
                 libraries: {
-                    list: data.libraries.list.filter(
-                        lib => (!onlyAllowed || lib.permissions.access_library) && isLibraryInApp(currentApp, lib.id)
-                    )
+                    list: allowedLibraries
                 }
             };
 
