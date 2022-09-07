@@ -11,17 +11,15 @@ import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
-import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {getLibraryLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
-import {IBaseNotification, NotificationType} from '../../../_types/types';
 import ErrorDisplay from '../../shared/ErrorDisplay';
 import FavoriteStar from '../FavoriteStar';
 import ImportModal from './ImportModal';
@@ -66,14 +64,6 @@ function LibrariesList(): JSX.Element {
     });
 
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
-
-    useEffect(() => {
-        const baseNotification: IBaseNotification = {
-            content: t('notification.base-message'),
-            type: NotificationType.basic
-        };
-        dispatch(setNotificationBase(baseNotification));
-    }, [t, dispatch]);
 
     if (librariesListQuery.error || userDataQuery.error) {
         return <ErrorDisplay message={librariesListQuery.error?.message || userDataQuery.error?.message} />;

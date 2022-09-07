@@ -4,6 +4,7 @@
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
+import {useApplicationContext} from 'context/ApplicationContext';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -21,6 +22,8 @@ interface INavigationProps {
 
 function Navigation({tree}: INavigationProps): JSX.Element {
     const {t} = useTranslation();
+
+    const currentApp = useApplicationContext();
 
     const dispatch = useAppDispatch();
     const {activePanel} = useAppSelector(state => state);
@@ -49,7 +52,10 @@ function Navigation({tree}: INavigationProps): JSX.Element {
             });
 
             const baseNotification: IBaseNotification = {
-                content: t('notification.active-tree', {tree: treeName}),
+                content: t('notification.active-tree', {
+                    tree: treeName,
+                    appLabel: localizedTranslation(currentApp.label, lang)
+                }),
                 type: NotificationType.basic
             };
 

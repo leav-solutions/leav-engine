@@ -27,7 +27,8 @@
         "go_back_home": "Go back home",
         "logout": "Log out",
         "choose-lang": "Language",
-        "permissions": "Permissions"
+        "permissions": "Permissions",
+        "document_title": "LEAV Engine - {{appLabel}}"
     },
     "dashboard": {
         "title": "LEAV Engine administration"

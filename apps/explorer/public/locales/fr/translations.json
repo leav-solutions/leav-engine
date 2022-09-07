@@ -18,7 +18,8 @@
         "go_back_home": "Retourner à l'accueil",
         "details": "Détails",
         "element_not_found": "Élément introuvable",
-        "refresh_page": "Rafraîchir la page"
+        "refresh_page": "Rafraîchir la page",
+        "document_title": "LEAV Engine - {{appLabel}}"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
@@ -304,9 +305,9 @@
         "access_denied": "Vous ne pouvez pas accéder à cet élément"
     },
     "notification": {
-        "base-message": "Bienvenue sur l'explorateur",
-        "active-lib": "Vous êtes sur la bibliothèque {{lib}}",
-        "active-tree": "Vous êtes sur l'arbre {{tree}}"
+        "base-message": "Bienvenue dans {{appLabel}}",
+        "active-lib": "{{appLabel}} - Vous êtes sur la bibliothèque {{lib}}",
+        "active-tree": "{{appLabel}} - Vous êtes sur l'arbre {{tree}}"
     },
     "view": {
         "views": "Vues",

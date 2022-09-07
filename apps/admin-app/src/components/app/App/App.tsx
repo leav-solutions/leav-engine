@@ -1,21 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// import {ApolloProvider} from '@apollo/react-common';
-// import {
-//     defaultDataIdFromObject,
-//     InMemoryCache,
-//     IntrospectionFragmentMatcher,
-//     IntrospectionResultData
-// } from 'apollo-cache-inmemory';
-// import {ApolloClient} from 'apollo-client';
 import {useQuery} from '@apollo/client';
+import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import ApplicationContext from 'context/CurrentApplicationContext';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {getMe} from 'queries/users/me';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
@@ -54,6 +47,12 @@ const App = (): JSX.Element => {
     >(getApplicationByIdQuery, {variables: {id: appId ?? ''}});
     const [lang, setLang] = useState<AvailableLanguage[]>(getSysTranslationQueryLanguage(i18n));
 
+    const currentApp = applicationData?.applications?.list?.[0];
+
+    useEffect(() => {
+        document.title = t('admin.document_title', {appLabel: localizedTranslation(currentApp?.label, lang)});
+    }, [currentApp, lang, t]);
+
     // Load yup messages translations
     yup.setLocale({
         string: {matches: t('admin.validation_errors.matches')},
@@ -82,8 +81,6 @@ const App = (): JSX.Element => {
             </Message>
         );
     }
-
-    const currentApp = applicationData?.applications?.list?.[0];
 
     if (!currentApp) {
         return <ErrorDisplay message={t('applications.current_app_error', {appId})} />;
