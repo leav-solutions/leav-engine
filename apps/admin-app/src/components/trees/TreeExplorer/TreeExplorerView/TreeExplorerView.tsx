@@ -14,6 +14,7 @@ import {
 } from 'react-sortable-tree';
 import {Button, Confirm, Dropdown, Icon, Label, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {activeItemColor} from 'themingVar';
 import {getTreeNodeKey, localizedLabel, stringToColor} from 'utils';
 import {GET_TREE_BY_ID_trees_list} from '_gqlTypes/GET_TREE_BY_ID';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
@@ -26,7 +27,65 @@ import {
     NodeVisibilityToggleHandler,
     TreeChangeHandler
 } from '../_types';
-import './rstOverride.css';
+
+const Wrapper = styled.div<{compact: boolean}>`
+    /** Overrides some SortableTree CSS rules **/
+    .rst__rowContents {
+        padding: 0;
+        background: transparent;
+        height: 100%;
+        ${props =>
+            props.compact
+                ? `
+        min-width: 130px;
+        border: none;
+        box-shadow: none;
+        `
+                : ''}
+    }
+
+    .rst__rowLabel {
+        height: 100%;
+    }
+
+    .rst__rowTitle {
+        height: 100%;
+    }
+
+    .rst__row.tree-node {
+        cursor: pointer;
+        height: 100%;
+    }
+
+    .rst__row.tree-node.selected {
+        background: ${activeItemColor};
+    }
+    .rst__rowWrapper {
+        padding: 3px 0;
+    }
+    .rst__moveHandle,
+    .rst__loadingHandle {
+        width: 30px;
+    }
+
+    ${props =>
+        props.compact
+            ? `
+    .rst__collapseButton,
+    .rst__expandButton {
+        background-size: 16px;
+        width: 12px;
+        height: 12px;
+    }
+    .rst__collapseButton:hover:not(:active),
+    .rst__expandButton:hover:not(:active) {
+        background-size: 20px;
+        width: 16px;
+        height: 16px;
+    }
+    `
+            : ''}
+`;
 
 interface ITreeExplorerViewProps {
     treeSettings: GET_TREE_BY_ID_trees_list;
@@ -217,16 +276,14 @@ const TreeExplorerView = ({
 
     const orTxt = t('admin.or');
 
-    const theme = compact
-        ? {
-              scaffoldBlockPxWidth: 50,
-              rowHeight: 40,
-              slideRegionSize: 50
-          }
-        : undefined;
+    const theme = {
+        scaffoldBlockPxWidth: compact ? 25 : 35,
+        rowHeight: compact ? 35 : 50,
+        slideRegionSize: compact ? 30 : 50
+    };
 
     return (
-        <div className="grow height100">
+        <Wrapper className="grow height100" compact={compact}>
             {!treeData?.length ? (
                 <Loading withDimmer />
             ) : (
@@ -285,7 +342,7 @@ const TreeExplorerView = ({
                     />
                 </>
             )}
-        </div>
+        </Wrapper>
     );
 };
 export default TreeExplorerView;

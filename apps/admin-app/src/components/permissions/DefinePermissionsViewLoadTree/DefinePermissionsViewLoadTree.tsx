@@ -46,6 +46,7 @@ const DefinePermissionsViewLoadTree = ({
         <>
             <Header as="h4">{treeLabel}</Header>
             <TreeExplorer
+                compact
                 key={treeData.id}
                 tree={treeData}
                 onClickNode={onClick}
