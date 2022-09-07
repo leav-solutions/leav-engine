@@ -9,16 +9,14 @@ import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
-import {default as React, useEffect} from 'react';
+import {default as React} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
-import {setNotificationBase} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {getTreeLink, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
-import {IBaseNotification, NotificationType} from '../../../_types/types';
 import ErrorDisplay from '../../shared/ErrorDisplay';
 import FavoriteStar from '../FavoriteStar';
 
@@ -53,14 +51,6 @@ function TreeList(): JSX.Element {
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData, {
         ignoreResults: true
     });
-
-    useEffect(() => {
-        const baseNotification: IBaseNotification = {
-            content: t('notification.base-message'),
-            type: NotificationType.basic
-        };
-        dispatch(setNotificationBase(baseNotification));
-    }, [t, dispatch]);
 
     if (treeListQuery.error || userDataQuery.error) {
         return <ErrorDisplay message={treeListQuery.error.message || userDataQuery.error.message} />;

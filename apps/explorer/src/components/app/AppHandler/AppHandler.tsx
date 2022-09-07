@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -42,6 +43,8 @@ function AppHandler(): JSX.Element {
         GET_APPLICATION_BY_IDVariables
     >(getApplicationByIdQuery, {variables: {id: appId ?? ''}});
 
+    const currentApp = applicationData?.applications?.list?.[0];
+
     useEffect(() => {
         if (!langInfo.lang.length) {
             updateLang({lang, availableLangs, defaultLang});
@@ -64,6 +67,10 @@ function AppHandler(): JSX.Element {
         }
     }, [updateUser, user, meLoading, userData]);
 
+    useEffect(() => {
+        document.title = t('global.document_title', {appLabel: localizedTranslation(currentApp?.label, langInfo.lang)});
+    }, [currentApp, langInfo.lang, t]);
+
     if (meLoading || applicationLoading) {
         return <Loading />;
     }
@@ -71,8 +78,6 @@ function AppHandler(): JSX.Element {
     if (meError || applicationError) {
         return <ErrorDisplay message={meError?.message || applicationError?.message} />;
     }
-
-    const currentApp = applicationData?.applications?.list?.[0];
 
     if (!currentApp) {
         return <ErrorDisplay message={t('applications.current_app_error', {appId})} />;

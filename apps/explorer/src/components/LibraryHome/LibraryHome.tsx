@@ -5,6 +5,7 @@ import LibraryItemsList from 'components/LibraryItemsList';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
+import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
@@ -22,6 +23,7 @@ export interface ILibraryHomeProps {
 function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
+    const currentApp = useApplicationContext();
     const dispatch = useAppDispatch();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {activePanel} = useAppSelector(state => state);
@@ -66,7 +68,10 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
 
         // Base Notification
         const baseNotification: IBaseNotification = {
-            content: t('notification.active-lib', {lib: currentLibLabel}),
+            content: t('notification.active-lib', {
+                lib: currentLibLabel,
+                appLabel: localizedTranslation(currentApp.label, lang)
+            }),
             type: NotificationType.basic
         };
 

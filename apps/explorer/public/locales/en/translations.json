@@ -18,7 +18,8 @@
         "go_back_home": "Back Home",
         "details": "Details",
         "element_not_found": "Element not found",
-        "refresh_page": "Refresh Page"
+        "refresh_page": "Refresh Page",
+        "document_title": "LEAV Engine - {{appLabel}}"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
@@ -305,7 +306,7 @@
         "access_denied": "You cannot access this element"
     },
     "notification": {
-        "base-message": "Welcome to the explorer",
+        "base-message": "Welcome to {{appLabel}}",
         "active-lib": "You are currently on the library {{lib}}",
         "active-tree": "You are currently on the tree {{tree}}"
     },
