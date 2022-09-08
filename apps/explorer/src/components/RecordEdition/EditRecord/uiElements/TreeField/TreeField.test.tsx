@@ -95,53 +95,78 @@ describe('TreeField', () => {
         expect(screen.getByText('SelectTreeNode')).toBeInTheDocument();
     });
 
+    test('If readonly attribute, cannot add a new value', async () => {
+        await act(async () => {
+            render(
+                <TreeField
+                    element={{
+                        ...mockFormElementTree,
+                        attribute: {...mockFormElementTree.attribute, multiple_values: true, readonly: true}
+                    }}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
+        });
+
+        expect(screen.queryByRole('button', {name: /add/})).not.toBeInTheDocument();
+    });
+
     test('If not multiple values, cannot add a new value', async () => {
-        render(
-            <TreeField
-                element={{
-                    ...mockFormElementTree,
-                    attribute: {...mockFormElementTree.attribute, multiple_values: false}
-                }}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
+        await act(async () => {
+            render(
+                <TreeField
+                    element={{
+                        ...mockFormElementTree,
+                        attribute: {...mockFormElementTree.attribute, multiple_values: false}
+                    }}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
+        });
 
         expect(screen.queryByRole('button', {name: /add/})).not.toBeInTheDocument();
     });
 
     test('Can delete existing value', async () => {
-        render(
-            <TreeField
-                element={mockFormElementTree}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
+        await act(async () => {
+            render(
+                <TreeField
+                    element={mockFormElementTree}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
+        });
 
         expect(screen.getAllByRole('button', {name: /delete/, hidden: true})).toHaveLength(2);
     });
 
     test('Can edit linked node', async () => {
-        render(
-            <TreeField
-                element={mockFormElementTree}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
+        await act(async () => {
+            render(
+                <TreeField
+                    element={mockFormElementTree}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
+        });
 
         expect(screen.getAllByRole('button', {name: 'edit-record', hidden: true})).toHaveLength(2);
     });
 
     test('Can display value details', async () => {
-        render(
-            <TreeField
-                element={mockFormElementTree}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
+        await act(async () => {
+            render(
+                <TreeField
+                    element={mockFormElementTree}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                />
+            );
+        });
 
         const valueDetailsButtons = screen.getAllByRole('button', {name: /info/, hidden: true});
         expect(valueDetailsButtons).toHaveLength(2);

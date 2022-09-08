@@ -95,6 +95,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
+    readonly: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
@@ -225,6 +226,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
+    readonly: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;
@@ -306,6 +308,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
+    readonly: boolean;
     label: SystemTranslation | null;
     description: SystemTranslation | null;
     multiple_values: boolean;

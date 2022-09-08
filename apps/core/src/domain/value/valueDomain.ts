@@ -267,7 +267,7 @@ const valueDomain = function ({
             };
 
             // Check permissions
-            const {canSave, reason: forbiddenPermission, fields} = await canSaveValue({
+            const {canSave, reason: forbiddenSaveReason, fields} = await canSaveValue({
                 ...valueChecksParams,
                 ctx,
                 deps: {
@@ -277,7 +277,14 @@ const valueDomain = function ({
             });
 
             if (!canSave) {
-                throw new PermissionError(forbiddenPermission, fields);
+                if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
+                    throw new ValidationError<IValue>({attribute: Errors.READONLY_ATTRIBUTE});
+                }
+
+                throw new PermissionError(
+                    forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions,
+                    fields
+                );
             }
 
             // Validate value
@@ -292,6 +299,10 @@ const valueDomain = function ({
                 },
                 ctx
             });
+
+            if (attributeProps.readonly) {
+                validationErrors.attribute = {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}};
+            }
 
             if (Object.keys(validationErrors).length) {
                 throw new ValidationError<IValue>(validationErrors);
@@ -362,7 +373,7 @@ const valueDomain = function ({
                         };
 
                         // Check permissions
-                        const {canSave, reason: forbiddenPermission} = await canSaveValue({
+                        const {canSave, reason: forbiddenSaveReason} = await canSaveValue({
                             ...valueChecksParams,
                             ctx,
                             deps: {
@@ -372,7 +383,13 @@ const valueDomain = function ({
                         });
 
                         if (!canSave) {
-                            throw new PermissionError(forbiddenPermission);
+                            if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
+                                throw new ValidationError<IValue>({attribute: Errors.READONLY_ATTRIBUTE});
+                            }
+
+                            throw new PermissionError(
+                                forbiddenSaveReason as RecordAttributePermissionsActions | RecordPermissionsActions
+                            );
                         }
 
                         // Validate value
@@ -512,27 +529,39 @@ const valueDomain = function ({
                 throw new PermissionError(RecordAttributePermissionsActions.EDIT_VALUE);
             }
 
-            const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+
+            if (attributeProps.readonly) {
+                throw new ValidationError<IValue>({attribute: Errors.READONLY_ATTRIBUTE});
+            }
 
             let reverseLink: IAttribute;
-            if (!!attr.reverse_link) {
+            if (!!attributeProps.reverse_link) {
                 reverseLink = await attributeDomain.getAttributeProperties({
-                    id: attr.reverse_link as string,
+                    id: attributeProps.reverse_link as string,
                     ctx
                 });
             }
 
             // if simple attribute type
             let v: IValue;
-            if (attr.type === AttributeTypes.SIMPLE || attr.type === AttributeTypes.SIMPLE_LINK) {
+            if (attributeProps.type === AttributeTypes.SIMPLE || attributeProps.type === AttributeTypes.SIMPLE_LINK) {
                 v = (
-                    await valueRepo.getValues({library, recordId, attribute: {...attr, reverse_link: reverseLink}, ctx})
+                    await valueRepo.getValues({
+                        library,
+                        recordId,
+                        attribute: {...attributeProps, reverse_link: reverseLink},
+                        ctx
+                    })
                 ).pop();
-            } else if (attr.type === AttributeTypes.ADVANCED_LINK && reverseLink?.type === AttributeTypes.SIMPLE_LINK) {
+            } else if (
+                attributeProps.type === AttributeTypes.ADVANCED_LINK &&
+                reverseLink?.type === AttributeTypes.SIMPLE_LINK
+            ) {
                 const values = await valueRepo.getValues({
                     library,
                     recordId,
-                    attribute: {...attr, reverse_link: reverseLink},
+                    attribute: {...attributeProps, reverse_link: reverseLink},
                     ctx
                 });
 
@@ -541,7 +570,7 @@ const valueDomain = function ({
                 v = await valueRepo.getValueById({
                     library,
                     recordId,
-                    attribute: attr,
+                    attribute: attributeProps,
                     valueId: value.id_value,
                     ctx
                 });
@@ -552,9 +581,9 @@ const valueDomain = function ({
             }
 
             const actionsListRes =
-                !!attr.actions_list && !!attr.actions_list.deleteValue
-                    ? await actionsListDomain.runActionsList(attr.actions_list.deleteValue, v, {
-                          attribute: attr,
+                !!attributeProps.actions_list && !!attributeProps.actions_list.deleteValue
+                    ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, v, {
+                          attribute: attributeProps,
                           recordId,
                           library,
                           v
@@ -564,7 +593,7 @@ const valueDomain = function ({
             const res: IValue = await valueRepo.deleteValue({
                 library,
                 recordId,
-                attribute: {...attr, reverse_link: reverseLink},
+                attribute: {...attributeProps, reverse_link: reverseLink},
                 value: actionsListRes,
                 ctx
             });

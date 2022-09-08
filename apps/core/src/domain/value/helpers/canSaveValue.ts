@@ -12,7 +12,7 @@ import doesValueExist from './doesValueExist';
 
 interface ICanSaveValueRes {
     canSave: boolean;
-    reason?: RecordAttributePermissionsActions | RecordPermissionsActions;
+    reason?: RecordAttributePermissionsActions | RecordPermissionsActions | Errors;
     fields?: ErrorFieldDetail<IValue>;
 }
 
@@ -70,6 +70,11 @@ const _canSaveMetadata = async (
 
 export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> => {
     const {attributeProps, value, library, recordId, ctx, deps, keepEmpty = false} = params;
+
+    if (attributeProps.readonly) {
+        return {canSave: false, reason: Errors.READONLY_ATTRIBUTE};
+    }
+
     const valueExists = doesValueExist(value, attributeProps);
 
     // Check permission

@@ -67,6 +67,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                           },
                 type: dataToSave.type,
                 format: dataToSave.format,
+                readonly: dataToSave.readonly,
                 linked_tree: dataToSave.linked_tree,
                 linked_library: dataToSave.linked_library,
                 reverse_link: dataToSave.reverse_link,

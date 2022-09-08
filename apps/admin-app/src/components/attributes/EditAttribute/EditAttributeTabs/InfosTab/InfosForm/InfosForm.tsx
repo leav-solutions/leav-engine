@@ -37,6 +37,7 @@ interface IInfosFormProps {
 const defaultAttributeData: AttributeInfosFormValues = {
     id: '',
     system: false,
+    readonly: false,
     label: {
         fr: '',
         en: ''
@@ -137,7 +138,7 @@ function InfosForm({
             .nullable(),
         id: idValidator,
         type: yup.string().required(),
-        format: yup.string(),
+        format: yup.string().nullable(),
         multiple_values: yup.boolean(),
         versions_conf: yup
             .object()
@@ -328,6 +329,19 @@ function InfosForm({
                         />
                     </FormFieldWrapper>
                 )}
+                <FormFieldWrapper error={_getErrorByField('readonly')}>
+                    <Form.Checkbox
+                        label={t('attributes.readonly')}
+                        width="4"
+                        disabled={readonly || values.system}
+                        name="readonly"
+                        aria-label="readonly"
+                        onChange={_handleChangeWithSubmit}
+                        onBlur={_handleBlur}
+                        checked={values.readonly}
+                        toggle
+                    />
+                </FormFieldWrapper>
                 {isLinkAttribute && !!values.linked_library && (
                     <FormFieldWrapper error={_getErrorByField('reverse_link')}>
                         <AttributeSelector

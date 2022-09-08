@@ -122,6 +122,7 @@ function StandardValuesWrapper({
                     key={attribute.id + '_' + i}
                     attribute={attribute}
                     value={v}
+                    readonly={readonly}
                     onChange={_handleChange(i)}
                     onSubmit={_handleSubmit(i)}
                     onDelete={_handleDelete(i)}

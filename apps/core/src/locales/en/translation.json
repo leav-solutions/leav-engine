@@ -36,6 +36,7 @@
         "NON_FILES_LIBRARY": "Cannot bind a non-files library",
         "PAGINATION_OFFSET_AND_CURSOR": "Cannot use offset and cursor at the same time",
         "PROTECTED_ENDPOINT": "This endpoint is not allowed: {{endpoint}}",
+        "READONLY_ATTRIBUTE": "Attribute is readonly",
         "REQUIRED_ATTRIBUTE_FORMAT": "Attribute's format must be specified",
         "REQUIRED_ATTRIBUTE_LABEL": "Attribute's label for default language ({{lang}}) must be specified",
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Attribute's linked library must be specified",

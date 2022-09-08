@@ -67,7 +67,7 @@ function TreeField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
 
     const [errorMessage, setErrorMessage] = useState<string | string[]>();
     const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
-    const isReadOnly = element.attribute?.system || isRecordReadOnly || !attribute.permissions.edit_value;
+    const isReadOnly = element.attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value;
 
     const data = fieldValues.map(val => ({
         ...val,

@@ -103,6 +103,7 @@ export const mockFormAttribute: RECORD_FORM_recordForm_elements_attribute = {
         en: 'My attribute'
     },
     system: false,
+    readonly: false,
     multiple_values: false,
     values_list: {
         enable: false,

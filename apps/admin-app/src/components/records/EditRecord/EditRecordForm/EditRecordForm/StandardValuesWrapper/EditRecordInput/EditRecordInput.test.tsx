@@ -34,6 +34,7 @@ describe('EditRecordInput', () => {
         const comp = shallow(
             <EditRecordInput
                 value={mockValue}
+                readonly={false}
                 attribute={mockAttribute}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
@@ -49,6 +50,7 @@ describe('EditRecordInput', () => {
         const comp = shallow(
             <EditRecordInput
                 value={mockValue}
+                readonly={false}
                 attribute={mockAttribute}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
@@ -70,6 +72,7 @@ describe('EditRecordInput', () => {
         const comp = shallow(
             <EditRecordInput
                 value={mockValue}
+                readonly={false}
                 attribute={mockAttribute}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
@@ -94,6 +97,7 @@ describe('EditRecordInput', () => {
         const comp = shallow(
             <EditRecordInput
                 value={mockValue}
+                readonly={false}
                 attribute={mockAttribute}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
@@ -116,6 +120,7 @@ describe('EditRecordInput', () => {
         const comp = shallow(
             <EditRecordInput
                 value={mockValue}
+                readonly={false}
                 attribute={mockAttribute}
                 onSubmit={onSubmit}
                 onDelete={onDelete}
@@ -134,6 +139,7 @@ describe('EditRecordInput', () => {
         const comp = shallow(
             <EditRecordInput
                 value={mockValue}
+                readonly={false}
                 attribute={mockAttribute}
                 onSubmit={onSubmit}
                 onDelete={onDelete}

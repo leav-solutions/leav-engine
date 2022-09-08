@@ -171,7 +171,7 @@ describe('LinkField', () => {
                 <LinkField
                     element={{
                         ...mockFormElementLink,
-                        attribute: {...mockFormElementLink.attribute, system: true},
+                        attribute: {...mockFormElementLink.attribute, readonly: true},
                         values: []
                     }}
                     onValueSubmit={mockHandleSubmit}

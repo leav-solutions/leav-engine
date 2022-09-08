@@ -196,7 +196,7 @@ function LinkField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
         }
     };
 
-    const isReadOnly = element.attribute?.system || isRecordReadOnly || !attribute.permissions.edit_value;
+    const isReadOnly = element.attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value;
 
     // If no column is selected, force whoAmI column
     let colsToDisplay = [];

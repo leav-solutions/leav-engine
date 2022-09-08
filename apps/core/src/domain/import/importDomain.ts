@@ -164,12 +164,17 @@ export default function ({
             }
 
             for (const v of data.values) {
-                const valueId =
-                    data.action === Action.REPLACE && !libraryAttribute.multiple_values
-                        ? currentValues[0]?.id_value
-                        : undefined;
+                try {
+                    const valueId =
+                        data.action === Action.REPLACE && !libraryAttribute.multiple_values
+                            ? currentValues[0]?.id_value
+                            : undefined;
 
-                await _addValue(library, libraryAttribute, recordId, v, ctx, valueId);
+                    await _addValue(library, libraryAttribute, recordId, v, ctx, valueId);
+                } catch (err) {
+                    //TODO: handle errors properly (generate a report or something)
+                    continue;
+                }
             }
         }
     };
