@@ -7,7 +7,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import RecordPreview from '../RecordPreview';
-import {IRecordPreviewProps} from '../RecordPreview/RecordPreview';
+import {IRecordPreviewProps} from '../RecordPreview/_types';
 
 interface IRecordPreviewWithModalProps extends Omit<IRecordPreviewProps, 'onClick'> {
     fileId?: string;

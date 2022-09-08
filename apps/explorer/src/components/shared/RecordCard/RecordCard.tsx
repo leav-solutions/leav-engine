@@ -6,10 +6,9 @@ import RecordPreview from 'components/shared/RecordPreview';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {getFileUrl, localizedTranslation} from 'utils';
+import {getFileUrl, getPreviewSize, localizedTranslation} from 'utils';
 import {RecordIdentity_whoAmI_preview} from '_gqlTypes/RecordIdentity';
 import {IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
-import {_getPreviewSize} from '../RecordPreview/RecordPreview';
 
 export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;
@@ -20,6 +19,7 @@ export interface IRecordCardProps {
     withPreview?: boolean;
     withLibrary?: boolean;
     tile?: boolean;
+    simplistic?: boolean;
 }
 
 interface IWrapperProps {
@@ -29,19 +29,32 @@ interface IWrapperProps {
     withLibrary: boolean;
     tile: boolean;
     style?: CSSObject;
+    simplistic?: boolean;
 }
 
-/* tslint:disable:variable-name */
 const Wrapper = styled.div<IWrapperProps>`
     border-left: 5px solid ${props => props.recordColor || 'transparent'};
     display: grid;
     grid-template-areas: ${props => {
-        const previewPart = props.withPreview ? ' preview ' : '';
-        const subLabelPart = props.withLibrary ? ' sub-label ' : '';
-        return (props.tile
-            ? `"${previewPart}" "label" "${subLabelPart}"`
-            : `"${previewPart}label" "${previewPart}${subLabelPart}"`
-        ).replace('""', ''); // Remove empty rows
+        if (props.withPreview && props.withLibrary) {
+            return `
+                'preview label'
+                'preview sub-label'
+            `;
+        } else if (props.withPreview && !props.withLibrary) {
+            return `
+                'preview label'
+            `;
+        } else if (!props.withPreview && props.withLibrary) {
+            return `
+                'label'
+                'sub-label'
+            `;
+        } else {
+            return `
+                'label'
+            `;
+        }
     }};
 
     grid-template-columns:
@@ -50,7 +63,7 @@ const Wrapper = styled.div<IWrapperProps>`
                 return '100%';
             }
 
-            const previewSize = _getPreviewSize(props.size);
+            const previewSize = getPreviewSize(props.size, props?.simplistic ?? false);
             const previewColSize = `calc(${previewSize} + 1.5rem)`;
             return `${previewColSize} calc(100% - ${previewColSize})`;
         }}
@@ -63,11 +76,11 @@ const PreviewWrapper = styled.div<{tile: boolean}>`
     margin: ${props => (props.tile ? '0.3rem 0' : '0 0.8em')};
 `;
 
-const RecordLabel = styled.div`
+const RecordLabel = styled.div<{simplistic: boolean}>`
     grid-area: label;
     font-weight: bold;
     overflow: hidden;
-    align-self: end;
+    align-self: ${props => (props.simplistic ? 'center' : 'end')};
     line-height: 1.3em;
 `;
 
@@ -100,7 +113,8 @@ const RecordCard = ({
     lang,
     withPreview = true,
     withLibrary = true,
-    tile = false
+    tile = false,
+    simplistic = false
 }: IRecordCardProps): JSX.Element => {
     const label = record.label || record.id;
     const [{lang: userLang}] = useLang();
@@ -114,6 +128,7 @@ const RecordCard = ({
             withPreview={withPreview}
             withLibrary={withLibrary}
             tile={tile}
+            simplistic={simplistic}
         >
             {withPreview && (
                 <PreviewWrapper className="preview" tile={tile}>
@@ -124,10 +139,11 @@ const RecordCard = ({
                         size={size}
                         style={previewStyle}
                         tile={tile}
+                        simplistic={simplistic}
                     />
                 </PreviewWrapper>
             )}
-            <RecordLabel className="label">
+            <RecordLabel className="label" simplistic={simplistic}>
                 <Paragraph ellipsis={{rows: 1, tooltip: label}} style={{marginBottom: 0}}>
                     {label}
                 </Paragraph>
