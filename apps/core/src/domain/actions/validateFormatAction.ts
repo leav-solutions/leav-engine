@@ -18,7 +18,7 @@ interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
 }
 
-export default function ({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
+export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
     return {
         id: 'validateFormat',
         name: 'Validate Format',
@@ -52,7 +52,10 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
                         schema = Joi.number().allow('', null);
                         break;
                     case AttributeFormats.DATE:
-                        schema = Joi.date().allow('', null).timestamp('unix').raw();
+                        schema = Joi.date()
+                            .allow('', null)
+                            .timestamp('unix')
+                            .raw();
                         break;
                     case AttributeFormats.BOOLEAN:
                         schema = Joi.boolean();
@@ -70,11 +73,19 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
                             );
                         }
 
+                        schema = schema.allow(null);
+
                         break;
                     case AttributeFormats.DATE_RANGE:
                         schema = Joi.object({
-                            from: Joi.date().timestamp('unix').raw().required(),
-                            to: Joi.date().timestamp('unix').raw().required()
+                            from: Joi.date()
+                                .timestamp('unix')
+                                .raw()
+                                .required(),
+                            to: Joi.date()
+                                .timestamp('unix')
+                                .raw()
+                                .required()
                         });
                         break;
                 }
@@ -87,7 +98,6 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
 
             const validationRes = formatSchema.validate(value);
 
-            let error;
             if (!!validationRes.error) {
                 throw new ValidationError(actionsListDomain.handleJoiError(ctx.attribute, validationRes.error));
             }
