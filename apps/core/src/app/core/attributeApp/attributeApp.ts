@@ -118,6 +118,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                 type: AttributeType!,
                 format: AttributeFormat,
                 system: Boolean!,
+                readonly: Boolean!,
                 label(lang: [AvailableLanguage!]): SystemTranslation,
                 description(lang: [AvailableLanguage!]): SystemTranslationOptional,
                 actions_list: ActionsListConfiguration,
@@ -201,6 +202,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         type: AttributeType
                         format: AttributeFormat
                         label: SystemTranslation,
+                        readonly: Boolean,
                         description: SystemTranslationOptional,
                         linked_library: String,
                         linked_tree: String,

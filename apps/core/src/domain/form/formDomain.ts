@@ -10,16 +10,15 @@ import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomai
 import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {i18n} from 'i18next';
-import attributeTypes from 'infra/attributeTypes';
 import {IFormRepo} from 'infra/form/formRepo';
 import {difference, uniqueId} from 'lodash';
 import omit from 'lodash/omit';
 import {IUtils} from 'utils/utils';
-import {AttributeTypes} from '../../_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {
     FormElementTypes,
@@ -124,8 +123,8 @@ export default function (deps: IDeps = {}): IFormDomain {
         ];
 
         const attributes = await attributeDomain.getLibraryAttributes(library, ctx);
-        const nonSystemAttributes = attributes.filter(att => !att?.system);
-        const attributesElements = nonSystemAttributes.map(
+        const nonReadonlyAttributes = attributes.filter(att => !att?.readonly);
+        const attributesElements = nonReadonlyAttributes.map(
             (att, index): IFormElement => {
                 const data: IFormElement = {
                     id: uniqueId(),

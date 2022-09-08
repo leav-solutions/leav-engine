@@ -11,6 +11,7 @@ import {IDateRangeValue} from './value';
 
 export interface IAttribute extends ICoreEntity {
     system?: boolean;
+    readonly?: boolean;
     type: AttributeTypes;
     format?: AttributeFormats;
     linked_library?: string;

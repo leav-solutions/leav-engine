@@ -164,7 +164,7 @@ const EditRecordForm = ({
                 key={attribute.id}
                 values={values as IValue[]}
                 attribute={attribute}
-                readonly={attribute.system}
+                readonly={attribute.readonly}
                 onSubmit={_submitValue(attribute)}
                 onDelete={_deleteValue(attribute)}
             />

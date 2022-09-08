@@ -33,6 +33,7 @@ describe('InfosTab', () => {
                 fr: mockAttrAdv.description?.fr ?? '',
                 en: mockAttrAdv.description?.en ?? ''
             },
+            readonly: false,
             type: mockAttrAdv.type,
             format: mockAttrAdv.format,
             multiple_values: mockAttrAdv.multiple_values,

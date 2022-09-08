@@ -10,6 +10,7 @@ export const attributeDetailsFragment = gql`
         type
         format
         system
+        readonly
         label
         description
         multiple_values

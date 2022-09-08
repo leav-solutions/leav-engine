@@ -201,11 +201,20 @@ export default function ({
             const query = aql.join(queryParts);
             const treeElements = await dbService.execute({query, ctx});
 
-            return treeElements.map(r => {
-                r.record.library = r.record._id.split('/')[0];
+            return treeElements.reduce((acc, r) => {
+                if (!r.record) {
+                    return acc;
+                }
 
-                return _buildTreeValue(attribute.linked_tree, r.id, dbUtils.cleanup(r.record), r.edge);
-            });
+                const record = {
+                    ...r.record,
+                    library: r?.record?._id.split('/')[0]
+                };
+
+                acc.push(_buildTreeValue(attribute.linked_tree, r.id, dbUtils.cleanup(record), r.edge));
+
+                return acc;
+            }, []);
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);

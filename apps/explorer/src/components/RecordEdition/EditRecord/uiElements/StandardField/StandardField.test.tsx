@@ -182,10 +182,10 @@ describe('StandardField', () => {
         expect(mockHandleSubmit).toHaveBeenCalled();
     });
 
-    test('Disable system attribute', async () => {
+    test('Disable readonly attribute', async () => {
         render(
             <StandardField
-                element={{...mockFormElementInput, attribute: {...mockFormAttribute, system: true}}}
+                element={{...mockFormElementInput, attribute: {...mockFormAttribute, readonly: true}}}
                 onValueSubmit={mockHandleSubmit}
                 onValueDelete={mockHandleDelete}
             />

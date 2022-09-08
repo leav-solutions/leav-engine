@@ -87,6 +87,7 @@ export const getRecordFormQuery = gql`
                     type
                     format
                     system
+                    readonly
                     multiple_values
                     permissions(record: {id: $recordId, library: $libraryId}) {
                         access_attribute

@@ -11,6 +11,7 @@ import {IGenericValue, IValue} from '../../../../../../../_types/records';
 interface IEditRecordInputProps {
     attribute: GET_LIB_BY_ID_libraries_list_attributes;
     value: IGenericValue;
+    readonly: boolean;
     onSubmit: () => void;
     onDelete: () => void;
     onCancel: () => void;
@@ -45,6 +46,7 @@ StyledInput.displayName = 'Input';
 function EditRecordInput({
     value,
     attribute,
+    readonly,
     onChange,
     onSubmit,
     onDelete,
@@ -111,7 +113,7 @@ function EditRecordInput({
                 type="text"
                 name={`${attribute.id}_${value?.id_value || 'newVal'}`}
                 value={(value as IValue)?.value || ''}
-                disabled={attribute.system}
+                disabled={readonly}
                 onFocus={_handleFocus}
                 onChange={_handleChange}
                 onKeyPress={_handleKeyPress}

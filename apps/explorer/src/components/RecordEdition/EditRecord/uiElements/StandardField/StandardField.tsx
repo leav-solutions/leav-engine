@@ -85,7 +85,7 @@ function StandardField({
         attribute,
         record,
         formElement: element,
-        isReadOnly: attribute?.system || isRecordReadOnly || !attribute.permissions.edit_value,
+        isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value,
         values: initialValues,
         metadataEdit
     };

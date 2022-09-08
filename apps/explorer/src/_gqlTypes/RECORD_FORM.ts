@@ -574,6 +574,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
+    readonly: boolean;
     multiple_values: boolean;
     /**
      * Permissions for this attribute.
@@ -706,6 +707,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
+    readonly: boolean;
     multiple_values: boolean;
     /**
      * Permissions for this attribute.
@@ -887,6 +889,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute {
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
+    readonly: boolean;
     multiple_values: boolean;
     /**
      * Permissions for this attribute.
