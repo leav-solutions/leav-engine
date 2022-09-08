@@ -4,7 +4,7 @@
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
 import {mockSelectedAttributeB} from '../__mocks__/common/attribute';
-import {getTreeRecordKey, isAttributeSelected, isLibraryInApp, isTreeInApp} from './utils';
+import {getInitials, getTreeRecordKey, isAttributeSelected, isLibraryInApp, isTreeInApp} from './utils';
 
 describe('utils', () => {
     describe('isAttributeSelected', () => {
@@ -52,6 +52,14 @@ describe('utils', () => {
             expect(isTreeInApp(mockApplicationDetails, 'treeB')).toBe(true);
             expect(isTreeInApp(mockApplicationDetails, 'treeC')).toBe(false);
             expect(isTreeInApp({...mockApplicationDetails, trees: []}, 'treeC')).toBe(true);
+        });
+    });
+
+    describe('getInitials', () => {
+        test('Return label initials for given length', async () => {
+            expect(getInitials('Dwight Schrute', 2)).toBe('DS');
+            expect(getInitials('Dwight Schrute', 1)).toBe('D');
+            expect(getInitials('Dwight', 2)).toBe('DW');
         });
     });
 });

@@ -369,3 +369,33 @@ export const stopEvent = (e: React.SyntheticEvent<any>) => {
     e.preventDefault();
     e.stopPropagation();
 };
+
+export const getPreviewSize = (size?: PreviewSize, simplistic: boolean = false) => {
+    if (simplistic) {
+        return '1.2rem';
+    }
+
+    switch (size) {
+        case PreviewSize.medium:
+            return '4.5rem';
+        case PreviewSize.big:
+            return '7rem';
+        case PreviewSize.small:
+            return '3rem';
+        case PreviewSize.tiny:
+            return '1.7rem';
+        default:
+            return '3rem';
+    }
+};
+
+export const getInitials = (label: string, length: number = 2) => {
+    if (typeof label !== 'string') {
+        return '?';
+    }
+
+    const words = label.split(' ').slice(0, length);
+    const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
+
+    return letters.toUpperCase();
+};

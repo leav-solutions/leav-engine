@@ -8,7 +8,9 @@ import RecordPreview from './RecordPreview';
 
 jest.mock('../../../utils/utils', () => ({
     getInvertColor: jest.fn().mockImplementation(() => '#FFFFFF'),
-    stringToColor: jest.fn().mockImplementation(() => '#000000')
+    stringToColor: jest.fn().mockImplementation(() => '#000000'),
+    getPreviewSize: jest.fn().mockImplementation(() => '1rem'),
+    getInitials: jest.fn().mockImplementation((label, length) => (length === 1 ? 'T' : 'TE'))
 }));
 
 describe('RecordPreview', () => {
@@ -37,7 +39,7 @@ describe('RecordPreview', () => {
 
         expect(screen.queryByRole('image')).not.toBeInTheDocument();
         expect(screen.getByTestId('generated-preview')).toBeInTheDocument();
-        expect(screen.getByTestId('generated-preview')).toHaveTextContent('T');
+        expect(screen.getByTestId('generated-preview')).toHaveTextContent('TE');
         expect(screen.getByTestId('generated-preview')).toHaveStyleRule('background-color', '#FF0000');
     });
 
@@ -47,5 +49,13 @@ describe('RecordPreview', () => {
         });
 
         expect(screen.getByTestId('generated-preview')).toHaveStyleRule('background-color', /.*/);
+    });
+
+    test('Can show simplistic preview', async () => {
+        render(<RecordPreview color="#FF0000" label="TestLabel" simplistic />);
+
+        expect(screen.queryByRole('image')).not.toBeInTheDocument();
+        expect(screen.getByTestId('simplistic-preview')).toBeInTheDocument();
+        expect(screen.getByTestId('simplistic-preview')).toHaveTextContent('T');
     });
 });

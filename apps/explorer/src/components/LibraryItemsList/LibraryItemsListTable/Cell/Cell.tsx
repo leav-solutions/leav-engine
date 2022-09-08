@@ -54,11 +54,12 @@ const Cell = ({columnName, data}: ICellProps) => {
                 <RecordCardCellWrapper>
                     <RecordCard
                         record={whoAmI}
-                        size={previewSize}
+                        size={PreviewSize.small}
                         lang={lang}
                         key={whoAmI.id}
-                        withPreview={false}
+                        withPreview={true}
                         withLibrary={false}
+                        simplistic
                     />
 
                     {otherValues.length ?? 0 ? <AllValuesCount values={valuesToDisplay} /> : <></>}
