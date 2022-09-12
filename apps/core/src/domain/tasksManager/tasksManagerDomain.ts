@@ -149,11 +149,10 @@ export default function ({
         }
 
         if (
-            (!!task.callback &&
-                task.callback.type.includes(TaskCallbackType.ON_FAILURE) &&
-                task.status === TaskStatus.FAILED) ||
-            (task.callback.type.includes(TaskCallbackType.ON_SUCCESS) && task.status === TaskStatus.DONE) ||
-            (task.callback.type.includes(TaskCallbackType.ON_CANCEL) && task.status === TaskStatus.CANCELED)
+            !!task.callback &&
+            ((task.callback.type.includes(TaskCallbackType.ON_FAILURE) && task.status === TaskStatus.FAILED) ||
+                (task.callback.type.includes(TaskCallbackType.ON_SUCCESS) && task.status === TaskStatus.DONE) ||
+                (task.callback.type.includes(TaskCallbackType.ON_CANCEL) && task.status === TaskStatus.CANCELED))
         ) {
             try {
                 const callbackFunc = _getDepsManagerFunc({
