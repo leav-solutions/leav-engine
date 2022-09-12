@@ -20288,7 +20288,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "login@workspace:apps/login"
   dependencies:
-    "@craco/craco": 6.4.5
     "@testing-library/jest-dom": 5.16.4
     "@testing-library/react": 13.0.1
     "@testing-library/user-event": 13.5.0
