@@ -6,7 +6,6 @@ import {FormikErrors, FormikTouched} from 'formik';
 import gql from 'graphql-tag';
 import {i18n} from 'i18next';
 import get from 'lodash/get';
-import {join} from 'path';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
@@ -242,12 +241,6 @@ export const isValueNull = (val: IGenericValue): boolean => {
         (isLinkValue(val) && val.linkValue === null) ||
         (isTreeValue(val) && val.treeValue === null)
     );
-};
-
-export const urlCore = process.env.REACT_APP_CORE_URL || '';
-
-export const getAbsoluteUrlCore = (relativeUrl: string) => {
-    return join(urlCore, relativeUrl).replace(':/', '://');
 };
 /*************/
 
