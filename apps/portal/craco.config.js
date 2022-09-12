@@ -1,5 +1,5 @@
+// craco.config.js
 module.exports = {
-    plugins: [{plugin: require('@semantic-ui-react/craco-less')}],
     webpack: {
         configure: {
             resolve: {
