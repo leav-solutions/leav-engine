@@ -1,7 +1,7 @@
 version: "3.4"
 
 ##### Common properties #####
-x-node-image: &node_image node:14-alpine
+x-node-image: &node_image node:18-alpine
 x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
 x-traefik-image: &traefik_image "traefik:2.6"
 x-redis-image: &redis_image "redis"
@@ -161,7 +161,7 @@ services:
     command: [
         sh,
         -c,
-        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- yarn install && yarn run db:migrate && yarn run start:watch",
+        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/start-core.sh",
       ]
     logging:
       driver: local
@@ -189,6 +189,7 @@ services:
 
   admin-app:
     image: *node_image
+    user: node
     labels:
       - traefik.enable=true
       - traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) && Path(`/app/admin`, `/app/admin/{route:.*}`)) || Host(`admin.leav.localhost`)
@@ -217,6 +218,7 @@ services:
 
   explorer:
     image: *node_image
+    user: node
     stdin_open: true
     labels:
       - traefik.enable=true
@@ -246,6 +248,7 @@ services:
 
   login:
     image: *node_image
+    user: node
     stdin_open: true
     labels:
       - traefik.enable=true
@@ -273,6 +276,7 @@ services:
 
   portal:
     image: *node_image
+    user: node
     stdin_open: true
     labels:
       - traefik.enable=true
