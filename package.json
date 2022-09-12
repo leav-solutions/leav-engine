@@ -56,5 +56,5 @@
       "license-check-and-add add -f license-check-config.json"
     ]
   },
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "yarn@3.2.3"
 }
