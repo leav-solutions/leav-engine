@@ -42,6 +42,7 @@ export REACT_APP_ENDPOINT=$LEAV_APP_ENDPOINT
 export PUBLIC_URL=/$LEAV_APP_ENDPOINT
 
 echo 'Building application...'
+export HOME=$(getent passwd `whoami`  | cut -d: -f6) # To avoid issue when trying to read /root folder as non-root user
 export SKIP_PREFLIGHT_CHECK=true
 yarn workspace portal build
 checkExitCode
