@@ -10,7 +10,7 @@ import {
     PlusOutlined,
     SearchOutlined
 } from '@ant-design/icons';
-import {useApolloClient, useMutation, useQuery} from '@apollo/client';
+import {ApolloError, useApolloClient, useMutation, useQuery} from '@apollo/client';
 import {Dropdown, Menu, message} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
@@ -100,7 +100,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
 
                     messages = {...messages, countValid: messages.countValid + 1};
                 } catch (e) {
-                    if (e.graphQLErrors && e.graphQLErrors.length) {
+                    if (e instanceof ApolloError && (e?.graphQLErrors ?? [])?.length) {
                         const errorMessageParent = e.graphQLErrors[0].extensions.fields?.parent;
                         const errorMessageElement = e.graphQLErrors[0].extensions.fields?.element;
 
@@ -121,7 +121,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                             addNotification({
                                 channel: NotificationChannel.trigger,
                                 type: NotificationType.error,
-                                content: `${t('error.error_occurred')}: ${e.message}`
+                                content: `${t('error.error_occurred')}: ${(e as Error).message}`
                             })
                         );
                     }
@@ -187,7 +187,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 content: t('navigation.notifications.success-add', {nb: 1})
             };
         } catch (err) {
-            if (err.graphQLErrors && err.graphQLErrors.length) {
+            if (err instanceof ApolloError && (err?.graphQLErrors ?? [])?.length) {
                 const errorMessageParent = err.graphQLErrors[0].extensions.fields?.parent;
                 const errorMessageElement = err.graphQLErrors[0].extensions.fields?.element;
 
@@ -203,7 +203,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 notification = {
                     channel: NotificationChannel.trigger,
                     type: NotificationType.error,
-                    content: `${t('error.error_occurred')}: ${err.message}`
+                    content: `${t('error.error_occurred')}: ${(err as Error).message}`
                 };
             }
         }
@@ -243,7 +243,7 @@ function DefaultActions({activeTree, isDetail, parent}: IDefaultActionsProps): J
                 type: NotificationType.error,
                 content: t('navigation.notifications.error-detach', {
                     elementName: label ?? parent.record.id,
-                    errorMessage: e.message
+                    errorMessage: (e as Error).message
                 })
             };
         }

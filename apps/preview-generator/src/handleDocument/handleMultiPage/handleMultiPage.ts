@@ -1,13 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {execFile} from 'child_process';
+import {execFile, ExecFileException} from 'child_process';
 import {access} from 'fs';
 import {join} from 'path';
 import {createDirectoryRecursively} from '../../check/checkOutput/checkOutput';
 import {ErrorPreview} from '../../errors/ErrorPreview';
 import {IResult, IRootPaths} from '../../types/types';
 import {handleError} from './../../utils/log';
+
+interface IExecResult {
+    result?: string;
+    error?: ExecFileException;
+}
 
 export const handleMultiPage = async (
     pdfFile: string,
@@ -70,7 +75,7 @@ const _createFolderRec = async (folderDestinationPath: string) => {
 };
 
 const _countPage = async (pdfFile: string) => {
-    const {result: resultCountPage, error: errorCountPage} = await new Promise(resolve => {
+    const {result: resultCountPage, error: errorCountPage} = (await new Promise(resolve => {
         execFile(
             'gs',
             [
@@ -83,7 +88,7 @@ const _countPage = async (pdfFile: string) => {
             ],
             (err, stdout) => resolve({result: stdout, error: err})
         );
-    });
+    })) as IExecResult;
 
     if (errorCountPage) {
         const errorId = handleError(`${resultCountPage} ${errorCountPage}`);
@@ -96,13 +101,13 @@ const _countPage = async (pdfFile: string) => {
         });
     }
 
-    return resultCountPage;
+    return Number(resultCountPage);
 };
 
 const _split = async (folderDestinationPath: string, nbDigit: number, pdfFile: string) => {
     const fullPath = join(folderDestinationPath, `%${'0' + nbDigit}d.pdf`);
 
-    const {error} = await new Promise(resolve =>
+    const {error} = (await new Promise(resolve =>
         execFile(
             'gs',
             [
@@ -116,7 +121,8 @@ const _split = async (folderDestinationPath: string, nbDigit: number, pdfFile: s
             ],
             err => resolve({error: err})
         )
-    );
+    )) as IExecResult;
+
     if (error) {
         const errorId = handleError(error);
 

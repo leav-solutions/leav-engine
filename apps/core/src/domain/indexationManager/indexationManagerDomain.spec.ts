@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -8,7 +9,6 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {IAmqpService, amqpService} from '@leav/message-broker';
 import indexationManager from './indexationManagerDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
@@ -26,10 +26,6 @@ const mockAmqpConnection: Mockify<amqp.Connection> = {
     close: jest.fn(),
     createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
 };
-
-jest.mock('amqplib', () => ({
-    connect: jest.fn().mockImplementation(() => mockAmqpConnection)
-}));
 
 const ctx: IQueryInfos = {
     userId: '1',
@@ -62,18 +58,22 @@ describe('Indexation Manager', () => {
     };
 
     test('Init message listening', async () => {
-        const amqpServ = await amqpService({
-            config: conf.amqp
-        });
+        const mockAmqpService: Mockify<IAmqpService> = {
+            consume: jest.fn(),
+            consumer: {
+                connection: mockAmqpConnection as amqp.Connection,
+                channel: mockAmqpChannel as amqp.ConfirmChannel
+            }
+        };
 
         const indexation = indexationManager({
             config: conf as IConfig,
-            'core.infra.amqpService': amqpServ as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await indexation.init();
 
-        expect(mockAmqpChannel.consume).toBeCalledTimes(1);
+        expect(mockAmqpService.consume).toBeCalledTimes(1);
     });
 
     test('index database', async () => {

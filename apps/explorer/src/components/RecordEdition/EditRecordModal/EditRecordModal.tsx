@@ -266,7 +266,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
             } catch (err) {
                 addNotification({
                     type: NotificationType.error,
-                    content: err.message,
+                    content: (err as Error).message,
                     priority: NotificationPriority.high
                 });
                 return;

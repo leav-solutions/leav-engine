@@ -98,7 +98,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                 }
             });
         } catch (err) {
-            dispatch({type: ImportReducerActionTypes.SET_IMPORT_ERROR, importError: err.message});
+            dispatch({type: ImportReducerActionTypes.SET_IMPORT_ERROR, importError: (err as Error).message});
         } finally {
             dispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
         }

@@ -47,7 +47,7 @@ export interface IPermissionDomain {
         type,
         applyTo,
         actions,
-        usersGroupNodeId: usersGroupId,
+        usersGroupNodeId,
         permissionTreeTarget,
         ctx
     }: IGetPermissionsByActionsParams): Promise<PermByActionsRes>;

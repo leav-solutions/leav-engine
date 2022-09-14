@@ -91,7 +91,7 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
                     ? gqlError.extensions.code === ErrorTypes.VALIDATION_ERROR
                         ? Object.values(gqlError.extensions.fields).join('\n')
                         : t(`error.${gqlError.extensions.code}`)
-                    : err.message;
+                    : (err as Error).message;
 
                 return {status: APICallStatus.ERROR, error: message};
             }

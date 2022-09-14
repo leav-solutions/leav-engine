@@ -19,7 +19,7 @@ window.matchMedia = query => ({
 });
 
 jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+    ...(jest.requireActual('react-router-dom') as {}),
     useParams: jest.fn()
 }));
 

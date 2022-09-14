@@ -49,7 +49,7 @@ export default function useDeleteValueMutation(record: IRecordIdentityWhoAmI): I
                     ? gqlError.extensions.code === ErrorTypes.VALIDATION_ERROR
                         ? gqlError.extensions.fields[attribute]
                         : t(`error.${gqlError.extensions.code}`)
-                    : err.message;
+                    : (err as Error).message;
 
                 return {status: APICallStatus.ERROR, error: message};
             }
