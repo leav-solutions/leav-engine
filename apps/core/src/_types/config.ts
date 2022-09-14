@@ -106,7 +106,7 @@ export interface IFilesManager {
 
 export interface IEventsManager {
     routingKeys: {
-        database_events: string;
+        data_events: string;
         pubsub_events: string;
     };
     queues: {
@@ -121,6 +121,7 @@ export interface IIndexationManager {
 }
 
 export interface ITasksManager {
+    nbWorkers: number;
     checkingInterval: number; // in milliseconds
     queues: {
         orders: string;

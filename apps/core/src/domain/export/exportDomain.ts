@@ -230,7 +230,7 @@ export default function ({
             // This is a public URL users will use to retrieve files.
             // It must match the route defined in the server.
             const url = `${DIR_PATH}/${filename}`;
-            await tasksManager.setLinks(task.id, [url], ctx);
+            await tasksManager.setLinks(task.id, [{name: 'export file', link: url}], ctx);
 
             return task.id;
         }

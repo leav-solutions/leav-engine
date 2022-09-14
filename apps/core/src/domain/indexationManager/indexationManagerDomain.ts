@@ -365,12 +365,12 @@ export default function ({
             await amqpService.consumer.channel.bindQueue(
                 config.indexationManager.queues.events,
                 config.amqp.exchange,
-                config.eventsManager.routingKeys.database_events
+                config.eventsManager.routingKeys.data_events
             );
 
             return amqpService.consume(
                 config.indexationManager.queues.events,
-                config.eventsManager.routingKeys.database_events,
+                config.eventsManager.routingKeys.data_events,
                 _onMessage
             );
         },

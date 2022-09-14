@@ -53,7 +53,7 @@ export interface ITask {
     created_at?: number;
     created_by?: string;
     modified_at?: number;
-    modified_by?: string;
+    canceled_by?: string;
     func: ITaskFunc;
     startAt: number;
     status: TaskStatus;
@@ -61,7 +61,7 @@ export interface ITask {
     progress?: {percent: number; description?: string};
     startedAt?: number;
     completedAt?: number;
-    links?: string[];
+    links?: Array<{name: string; link: string}>;
     callback?: ITaskCallback;
     workerId?: number;
 }

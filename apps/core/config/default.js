@@ -78,7 +78,8 @@ module.exports = {
         userId: process.env.FM_USER_ID || '2'
     },
     tasksManager: {
-        checkingInterval: 10000,
+        nbWorkers: process.env.TM_NB_WORKERS,
+        checkingInterval: 3000,
         queues: {
             orders: process.env.TM_ORDERS_QUEUE || 'tasks_orders'
         },
@@ -88,7 +89,7 @@ module.exports = {
     },
     eventsManager: {
         routingKeys: {
-            database_events: 'database.events',
+            data_events: 'data.events',
             pubsub_events: 'pubsub.events'
         },
         queues: {

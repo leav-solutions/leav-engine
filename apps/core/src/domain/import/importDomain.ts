@@ -413,7 +413,7 @@ export default function ({
                     OrderType.CREATE,
                     {
                         id: newTaskId,
-                        name: `Import file ${filename}`, // FIXME: translator or get name from frontend
+                        name: `Import file ${filename}`, // FIXME: translate
                         func: {
                             moduleName: 'domain',
                             subModuleName: 'import',

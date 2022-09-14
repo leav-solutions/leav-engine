@@ -87,6 +87,7 @@ export const validateConfig = (conf: IConfig) => {
             })
         }),
         tasksManager: Joi.object().keys({
+            nbWorkers: Joi.number(),
             checkingInterval: Joi.number().required(),
             queues: Joi.object().keys({
                 orders: Joi.string().required()
@@ -97,7 +98,7 @@ export const validateConfig = (conf: IConfig) => {
         }),
         eventsManager: Joi.object().keys({
             routingKeys: Joi.object().keys({
-                database_events: Joi.string().required(),
+                data_events: Joi.string().required(),
                 pubsub_events: Joi.string().required()
             }),
             queues: Joi.object().keys({

@@ -55,6 +55,7 @@ export default function ({
             const query = aql`FOR task IN ${collec}
                     FILTER task.status == ${TaskStatus.PENDING}
                     FILTER task.startAt <= ${utils.getUnixTime()}
+                    FILTER task.workerId == null
                     SORT task.priority DESC, task.startAt ASC
                 RETURN task`;
 
@@ -99,8 +100,7 @@ export default function ({
                     ...docToInsert,
                     created_at: utils.getUnixTime(),
                     created_by: ctx.userId,
-                    modified_at: utils.getUnixTime(),
-                    modified_by: ctx.userId
+                    modified_at: utils.getUnixTime()
                 }} IN ${collec} RETURN NEW`,
                 ctx
             });
@@ -114,8 +114,7 @@ export default function ({
             const updatedTask = await dbService.execute({
                 query: aql`UPDATE ${{
                     ...docToInsert,
-                    modified_at: utils.getUnixTime(),
-                    modified_by: ctx.userId
+                    modified_at: utils.getUnixTime()
                 }} IN ${collec} RETURN NEW`,
                 ctx
             });

@@ -29,15 +29,14 @@ import cluster from 'cluster';
 import {cpus} from 'os';
 import process from 'process';
 
-const numCPUs = cpus().length;
-
 export interface IUpdateData {
     status?: TaskStatus;
     progress?: {percent: number; description?: string};
     startedAt?: number;
     completedAt?: number;
-    links?: string[];
+    links?: Array<{name: string; link: string}>;
     workerId?: number;
+    canceledBy?: number;
 }
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
@@ -51,7 +50,7 @@ export interface ITasksManagerDomain {
     init(): Promise<void>;
     sendOrder(type: OrderType, payload: Payload, ctx: IQueryInfos): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
-    setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void>;
+    setLinks(taskId: string, links: Array<{name: string; link: string}>, ctx: IQueryInfos): Promise<void>;
     updateProgress(taskId: string, progress: {percent: number; description?: string}, ctx: IQueryInfos): Promise<void>;
 }
 
@@ -81,8 +80,9 @@ export default function ({
     'core.utils.logger': logger = null,
     'core.utils': utils = null
 }: IDeps): ITasksManagerDomain {
+    const maxNbWorkers = config.tasksManager.nbWorkers || cpus().length;
+
     if (cluster.isWorker) {
-        const ctx = {userId: '1'};
         let taskId = null;
 
         // We send a message on initialization to the master to let it know that this worker is ready to receive a task
@@ -94,9 +94,13 @@ export default function ({
                     let task = msg.data.task;
                     taskId = task.id;
 
-                    task = await _executeTask(task, {userId: '1'});
+                    task = await _executeTask(task, {userId: task.created_by});
                 } else if (msg.type === 'cancel') {
-                    await _updateTask(taskId, {status: TaskStatus.CANCELED}, ctx);
+                    await _updateTask(
+                        taskId,
+                        {status: TaskStatus.CANCELED, canceledBy: msg.data.canceledBy},
+                        {userId: msg.data.canceledBy}
+                    );
                 }
             } finally {
                 await amqpService.close();
@@ -109,7 +113,7 @@ export default function ({
         // check if tasks waiting for execution and execute them
         return setInterval(async () => {
             // too much workers running, waiting...
-            if (Object.keys(cluster.workers).length > numCPUs) {
+            if (Object.keys(cluster.workers).length > maxNbWorkers) {
                 return;
             }
 
@@ -123,11 +127,11 @@ export default function ({
 
             // We have a task to execute, we create a worker
             const worker = cluster.fork();
+            await _attachWorker(task.id, worker.id, ctx);
 
             worker.on('message', async msg => {
                 if (msg === 'alive') {
                     // send execution order to new worker created when it's alive
-                    await _attachWorker(task.id, worker.id, ctx);
                     worker.send({type: 'execute', data: {task}} as IMasterMsg);
                 }
             });
@@ -257,10 +261,6 @@ export default function ({
 
     const _onMessage = async (msg: string): Promise<void> => {
         const order: ITaskOrder = JSON.parse(msg);
-        const ctx: IQueryInfos = {
-            userId: '1',
-            queryId: uuidv4()
-        };
 
         try {
             _validateMsg(order);
@@ -269,9 +269,9 @@ export default function ({
         }
 
         if (order.type === OrderType.CREATE) {
-            await _createTask(order.payload as ITaskCreatePayload, ctx);
+            await _createTask(order.payload as ITaskCreatePayload, {userId: order.userId});
         } else if (order.type === OrderType.CANCEL) {
-            await _cancelTask(order.payload as ITaskCancelPayload, ctx);
+            await _cancelTask(order.payload as ITaskCancelPayload, {userId: order.userId});
         }
     };
 
@@ -369,7 +369,7 @@ export default function ({
         }
 
         // send cancel signal to worker
-        cluster.workers[task.workerId].send({type: 'cancel'});
+        cluster.workers[task.workerId].send({type: 'cancel', data: {canceledBy: ctx.userId}} as IMasterMsg);
     };
 
     return {
@@ -405,7 +405,7 @@ export default function ({
         ): Promise<void> {
             await _updateTask(taskId, {progress}, ctx);
         },
-        async setLinks(taskId: string, links: string[], ctx: IQueryInfos): Promise<void> {
+        async setLinks(taskId: string, links: Array<{name: string; link: string}>, ctx: IQueryInfos): Promise<void> {
             await _updateTask(taskId, {links}, ctx);
         },
         getTasks: _getTasks

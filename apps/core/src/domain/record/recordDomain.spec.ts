@@ -31,7 +31,7 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
-    routingKeys: {database_events: 'test.database.events', pubsub_events: 'test.pubsub.events'}
+    routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
 };
 
 const mockConfig: Mockify<Config.IConfig> = {

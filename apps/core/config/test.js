@@ -21,7 +21,7 @@ module.exports = {
     },
     eventsManager: {
         routingKeys: {
-            events: 'test.database.event'
+            data_events: 'test.data.event'
         }
     },
     indexationManager: {
