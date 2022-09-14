@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ArrowDownOutlined, DeleteOutlined, PlusOutlined} from '@ant-design/icons';
-import {useMutation} from '@apollo/client';
+import {ApolloError, useMutation} from '@apollo/client';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMutation';
@@ -110,7 +110,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                     });
                     messages = {...messages, countValid: messages.countValid + 1};
                 } catch (e) {
-                    if (e.graphQLErrors && e.graphQLErrors.length) {
+                    if (e instanceof ApolloError && (e?.graphQLErrors ?? [])?.length) {
                         const errorMessageParent = e.graphQLErrors[0].extensions.fields?.parent;
                         const errorMessageElement = e.graphQLErrors[0].extensions.fields?.element;
 
@@ -163,7 +163,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
                     }
                 });
                 messages.countValid++;
-            } catch (e) {
+            } catch (e: any) {
                 if (e.graphQLErrors && e.graphQLErrors.length) {
                     const errorMessageParent = e.graphQLErrors[0].extensions.fields?.parent;
                     const errorMessageElement = e.graphQLErrors[0].extensions.fields?.element;
@@ -208,7 +208,7 @@ function SelectionActions({parent, depth}: ISelectionActionsProps): JSX.Element 
 
                     messages.countValid++;
                     deletedNodes.push(elementSelected.nodeId);
-                } catch (e) {
+                } catch (e: any) {
                     if (e.graphQLErrors && e.graphQLErrors.length) {
                         const errorMessageParent = e.graphQLErrors[0].extensions.fields?.parent;
                         const errorMessageElement = e.graphQLErrors[0].extensions.fields?.element;

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {access, lstat} from 'fs';
+import {access, lstat, Stats} from 'fs';
 import {join} from 'path';
 import {ErrorPreview} from '../../errors/ErrorPreview';
 import {handleError} from './../../utils/log';
@@ -21,7 +21,11 @@ export const checkInput = async (input: string, inputRootPath: string) => {
         });
     }
 
-    const [errorStats, stats] = await new Promise(res => lstat(absInput, (e, r) => res([e, r])));
+    const [errorStats, stats] = (await new Promise(res => lstat(absInput, (e, r) => res([e, r])))) as [
+        NodeJS.ErrnoException,
+        Stats
+    ];
+
     if (errorStats) {
         const errorId = handleError(errorStats);
         throw new ErrorPreview({

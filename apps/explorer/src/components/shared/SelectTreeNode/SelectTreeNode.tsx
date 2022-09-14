@@ -152,7 +152,7 @@ function SelectTreeNode({
 
             setFetchError(null);
         } catch (err) {
-            setFetchError(err.message);
+            setFetchError((err as Error).message);
         }
     };
 

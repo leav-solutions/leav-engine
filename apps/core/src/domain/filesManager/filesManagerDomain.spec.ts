@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {amqpService, IAmqpService} from '@leav/message-broker';
+import {IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
@@ -65,8 +65,6 @@ jest.mock('amqplib', () => ({
     connect: jest.fn().mockImplementation(() => mockAmqpConnection)
 }));
 
-let mockAmqpService;
-
 const logger: Mockify<winston.Winston> = {
     error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
     warn: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
@@ -86,17 +84,13 @@ describe('FilesManager', () => {
         getLibraryProperties: global.__mockPromise(mockLibraryFiles)
     };
 
-    const mockLibraryDomainDirectories: Mockify<ILibraryDomain> = {
-        getLibraryProperties: global.__mockPromise({...mockLibraryFiles, behavior: LibraryBehavior.DIRECTORIES})
+    const mockAmqpService: Mockify<IAmqpService> = {
+        consume: jest.fn(),
+        consumer: {
+            connection: mockAmqpConnection as amqp.Connection,
+            channel: mockAmqpChannel as amqp.ConfirmChannel
+        }
     };
-
-    beforeAll(async done => {
-        mockAmqpService = await amqpService({
-            config: mockConfig.amqp
-        });
-
-        done();
-    });
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -111,9 +105,9 @@ describe('FilesManager', () => {
 
         await files.init();
 
-        expect(mockAmqpChannel.consume).toBeCalled();
-        expect(mockAmqpChannel.assertQueue).toBeCalled();
-        expect(mockAmqpChannel.bindQueue).toBeCalled();
+        expect(mockAmqpService.consume).toBeCalled();
+        expect(mockAmqpService.consumer.channel.assertQueue).toBeCalled();
+        expect(mockAmqpService.consumer.channel.bindQueue).toBeCalled();
     });
 
     test('Force preview generation one file', async () => {

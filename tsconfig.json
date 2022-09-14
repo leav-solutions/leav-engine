@@ -29,7 +29,8 @@
     "noFallthroughCasesInSwitch": false,
     "sourceMap": true,
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "useUnknownInCatchVariables": false
   },
   "exclude": [
       "node_modules",
