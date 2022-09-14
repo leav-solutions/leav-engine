@@ -1,12 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {render, screen} from '_tests/testUtils';
 import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
-import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 import ExportModal from './ExportModal';
 
 jest.mock('../../../../../hooks/ActiveLibHook/ActiveLibHook');
@@ -35,25 +33,12 @@ describe('ExportModal', () => {
             }
         ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks}>
-                    <MockStore>
-                        <ExportModal open onClose={onClose} />
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
-        });
+        render(<ExportModal open onClose={onClose} />, {apolloMocks: mocks});
 
-        expect(comp.find('AttributesSelectionList')).toHaveLength(1);
+        expect(screen.getByText('AttributesSelectionList')).toBeInTheDocument();
 
-        await act(async () => {
-            comp.find('Button.submit-btn').simulate('click');
-        });
+        userEvent.click(screen.getByRole('button', {name: /start/}));
 
-        comp.update();
-
-        expect(comp.find('div[data-test-id="done"]')).toHaveLength(1);
+        expect(await screen.findByText(/done/)).toBeInTheDocument();
     });
 });

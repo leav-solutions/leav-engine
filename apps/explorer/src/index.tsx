@@ -4,7 +4,7 @@
 import App from 'components/app';
 import React from 'react';
 import {ThemeSwitcherProvider} from 'react-css-theme-switcher';
-import ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import './i18n';
 import './index.less';
 import * as serviceWorker from './serviceWorker';
@@ -14,11 +14,12 @@ const themes = {
     light: `${process.env.PUBLIC_URL}/light-theme.css`
 };
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root'));
+
+root.render(
     <ThemeSwitcherProvider themeMap={themes} defaultTheme="light">
         <App />
-    </ThemeSwitcherProvider>,
-    document.getElementById('root')
+    </ThemeSwitcherProvider>
 );
 
 // If you want your app to work offline and load faster, you can change

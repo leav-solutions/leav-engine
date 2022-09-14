@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
 import React from 'react';
+import {render, screen} from '_tests/testUtils';
 import {mockFilterAttribute} from '__mocks__/common/filter';
 import BooleanFilter from './BooleanFilter';
 
@@ -24,16 +24,16 @@ beforeEach(() => {
 
 describe('BooleanFilter', () => {
     test('Should show switch, checked', async () => {
-        const comp = shallow(<BooleanFilter filter={{...mockFilterAttribute}} updateFilterValue={jest.fn()} />);
+        render(<BooleanFilter filter={{...mockFilterAttribute}} updateFilterValue={jest.fn()} />);
 
-        expect(comp.find('Switch').prop('checked')).toBe(true);
+        expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe('true');
     });
 
     test('Should show switch, unchecked', async () => {
-        const comp = shallow(
+        render(
             <BooleanFilter filter={{...mockFilterAttribute, value: {value: false}}} updateFilterValue={jest.fn()} />
         );
 
-        expect(comp.find('Switch').prop('checked')).toBe(false);
+        expect(screen.getByRole('switch').getAttribute('aria-checked')).toBe('false');
     });
 });

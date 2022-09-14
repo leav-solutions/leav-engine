@@ -5,7 +5,7 @@ import {MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {GET_ATTRIBUTES_BY_LIB} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
+import {act, render, screen, within} from '_tests/testUtils';
 import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes/globalTypes';
 import AttributesSelectionList from './AttributesSelectionList';
@@ -110,10 +110,10 @@ describe('AttributesSelectionList', () => {
         expect(within(attributesList).getAllByTestId('attribute-in-list')).toHaveLength(2);
 
         await act(async () => {
-            userEvent.type(screen.getByRole('textbox', {name: /search/}), 'attributeB');
+            userEvent.type(screen.getByRole('textbox', {name: /search/}), 'attributeb');
         });
 
-        await waitFor(() => within(attributesList).getAllByTestId('attribute-in-list'));
+        await within(attributesList).findAllByTestId('attribute-in-list');
 
         expect(within(attributesList).getAllByTestId('attribute-in-list')).toHaveLength(1);
         expect(within(attributesList).queryByText('attributeA')).not.toBeInTheDocument();

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook, waitFor} from '@testing-library/react';
 import {defaultView, getSelectedViewKey} from 'constants/constants';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {getViewByIdQuery} from 'graphQL/queries/views/getViewById';
@@ -54,27 +54,23 @@ describe('useLibraryView', () => {
     test('Nothing defined on user data nor library default view, return default view', async () => {
         const mocks = [mockNoUserData];
 
-        const {result, waitFor} = renderHook(
-            () => useLibraryView({...mockGetLibraryDetailExtendedElement, defaultView: null}),
-            {
-                wrapper: ({children}) => (
-                    <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
-                )
-            }
-        );
+        const {result} = renderHook(() => useLibraryView({...mockGetLibraryDetailExtendedElement, defaultView: null}), {
+            wrapper: ({children}) => (
+                <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
+            )
+        });
         expect(result.current.loading).toBe(true);
 
-        await waitFor(() => !result.current.loading);
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.view).toEqual(defaultView);
         expect(result.current.error).toBe(null);
-        expect(result.current.loading).toBe(false);
     });
 
     test('Nothing defined on user data, return library default view', async () => {
         const mocks = [mockNoUserData];
 
-        const {result, waitFor} = renderHook(
+        const {result} = renderHook(
             () =>
                 useLibraryView({
                     ...mockGetLibraryDetailExtendedElement,
@@ -88,11 +84,10 @@ describe('useLibraryView', () => {
         );
         expect(result.current.loading).toBe(true);
 
-        await waitFor(() => !result.current.loading);
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.view.id).toBe('some_view');
         expect(result.current.error).toBe(null);
-        expect(result.current.loading).toBe(false);
     });
 
     test('Get user data and return last used view', async () => {
@@ -111,40 +106,32 @@ describe('useLibraryView', () => {
             }
         ];
 
-        const {result, waitFor} = renderHook(
-            () => useLibraryView({...mockGetLibraryDetailExtendedElement, defaultView: null}),
-            {
-                wrapper: ({children}) => (
-                    <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
-                )
-            }
-        );
+        const {result} = renderHook(() => useLibraryView({...mockGetLibraryDetailExtendedElement, defaultView: null}), {
+            wrapper: ({children}) => (
+                <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
+            )
+        });
         expect(result.current.loading).toBe(true);
 
-        await waitFor(() => !result.current.loading);
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.view).toEqual(defaultView);
         expect(result.current.error).toBe(null);
-        expect(result.current.loading).toBe(false);
     });
 
     test('If something went wrong, return error', async () => {
         const mocks = [mockUserDataThrowing];
 
-        const {result, waitFor} = renderHook(
-            () => useLibraryView({...mockGetLibraryDetailExtendedElement, defaultView: null}),
-            {
-                wrapper: ({children}) => (
-                    <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
-                )
-            }
-        );
+        const {result} = renderHook(() => useLibraryView({...mockGetLibraryDetailExtendedElement, defaultView: null}), {
+            wrapper: ({children}) => (
+                <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
+            )
+        });
         expect(result.current.loading).toBe(true);
 
-        await waitFor(() => !result.current.loading);
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.view).toEqual(defaultView);
         expect(result.current.error).toBeDefined();
-        expect(result.current.loading).toBe(false);
     });
 });

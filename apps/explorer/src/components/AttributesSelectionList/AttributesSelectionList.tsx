@@ -87,6 +87,16 @@ function AttributesSelectionList({
         setSearchValue(search);
     };
 
+    const attributesList = state.attributes.filter(attribute => {
+        if (!searchValue) {
+            return true;
+        }
+
+        const attributeLabel = localizedTranslation(attribute.label, lang).toLowerCase();
+
+        return attributeLabel.indexOf(searchValue) !== -1 || attribute.id.indexOf(searchValue) !== -1;
+    });
+
     return (
         <AttributesSelectionListStateContext.Provider value={{state, dispatch}}>
             <Wrapper multiple={state.multiple}>
@@ -103,28 +113,15 @@ function AttributesSelectionList({
                         <ErrorDisplay message={error.message} />
                     ) : (
                         <List>
-                            {state.attributes
-                                .filter(attribute => {
-                                    if (!searchValue) {
-                                        return true;
-                                    }
-
-                                    const attributeLabel = localizedTranslation(attribute.label, lang).toLowerCase();
-
-                                    return (
-                                        attributeLabel.indexOf(searchValue) !== -1 ||
-                                        attribute.id.indexOf(searchValue) !== -1
-                                    );
-                                })
-                                .map(attribute => (
-                                    <Attribute
-                                        key={attribute.id}
-                                        attribute={attribute}
-                                        depth={0}
-                                        library={library}
-                                        path=""
-                                    />
-                                ))}
+                            {attributesList.map(attribute => (
+                                <Attribute
+                                    key={attribute.id}
+                                    attribute={attribute}
+                                    depth={0}
+                                    library={library}
+                                    path=""
+                                />
+                            ))}
                         </List>
                     )}
                 </ListWrapper>

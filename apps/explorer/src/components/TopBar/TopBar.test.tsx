@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
+import {act, render, screen} from '_tests/testUtils';
 import TopBar from './TopBar';
 
 jest.mock(
@@ -17,16 +15,10 @@ jest.mock(
 
 describe('TopBar', () => {
     test('should display HeaderNotification', async () => {
-        let comp: any;
-
         await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <TopBar userPanelVisible={false} toggleUserPanelVisible={jest.fn()} />
-                </MockedProviderWithFragments>
-            );
+            render(<TopBar userPanelVisible={false} toggleUserPanelVisible={jest.fn()} />);
         });
 
-        expect(comp.find('HeaderNotification')).toHaveLength(1);
+        expect(screen.getByText('HeaderNotification')).toBeInTheDocument();
     });
 });

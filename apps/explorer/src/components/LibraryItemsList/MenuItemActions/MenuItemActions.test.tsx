@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount, shallow} from 'enzyme';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {render, screen} from '_tests/testUtils';
 import MenuItemActions from './MenuItemActions';
 
 jest.mock(
@@ -16,36 +17,28 @@ jest.mock(
 
 describe('MenuItemActions', () => {
     test('should get a button', async () => {
-        let comp: any;
+        render(<MenuItemActions />);
 
-        await act(async () => {
-            comp = mount(<MenuItemActions />);
-        });
-
-        expect(comp.find('Button')).toHaveLength(1);
+        expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
     test('should get sort-advance', async () => {
-        let comp: any;
-        let menu: any;
+        render(<MenuItemActions />);
 
         await act(async () => {
-            comp = shallow(<MenuItemActions />);
-            menu = shallow(comp.find('Dropdown').first().props().overlay);
+            userEvent.click(screen.getByRole('button'));
         });
 
-        expect(menu.html()).toContain('items_list.table.header-cell-menu.sort-advance');
+        expect(screen.getByText(/sort-advance/)).toBeInTheDocument();
     });
 
     test('should get regroup', async () => {
-        let comp: any;
-        let menu: any;
+        render(<MenuItemActions />);
 
         await act(async () => {
-            comp = shallow(<MenuItemActions />);
-            menu = shallow(comp.find('Dropdown').first().props().overlay);
+            userEvent.click(screen.getByRole('button'));
         });
 
-        expect(menu.html()).toContain('items_list.table.header-cell-menu.regroup');
+        expect(screen.getByText(/regroup/)).toBeInTheDocument();
     });
 });

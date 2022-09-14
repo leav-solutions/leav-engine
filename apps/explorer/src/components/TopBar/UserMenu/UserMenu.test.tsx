@@ -2,18 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache} from '@apollo/client';
-import {MockedProvider} from '@apollo/client/testing';
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import wait from 'waait';
+import {render, screen} from '_tests/testUtils';
 import {getUser} from '../../../graphQL/queries/cache/user/userQuery';
 import UserMenu from './UserMenu';
 
-describe('UserMenu', () => {
-    const userId = 'testUserId';
-    const userName = 'testUserName';
+const userId = 'testUserId';
+const userName = 'testUserName';
+jest.mock('../../../hooks/UserHook/UserHook', () => {
+    return {
+        useUser: () => [
+            {
+                id: userId,
+                userName
+            },
+            jest.fn()
+        ]
+    };
+});
 
+describe('UserMenu', () => {
     test('should show username', async () => {
         let comp: any;
 
@@ -24,18 +32,8 @@ describe('UserMenu', () => {
             data: {userId, userName, userPermissions: {}}
         });
 
-        await act(async () => {
-            comp = mount(
-                <MockedProvider cache={mockCache} addTypename={false}>
-                    <UserMenu />
-                </MockedProvider>
-            );
+        render(<UserMenu />);
 
-            await wait();
-
-            comp.update();
-        });
-
-        expect(comp.text()).toContain(userName);
+        expect(screen.getByText(userName)).toBeInTheDocument();
     });
 });

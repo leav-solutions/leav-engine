@@ -1,14 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook, waitFor} from '@testing-library/react';
 import useGraphqlPossibleTypes from './useGraphqlPossibleTypes';
-
-// jest.mock('fetch', () =>
-//     Promise.resolve({
-//         json: () => Promise.resolve({})
-//     })
-// );
 
 describe('useGraphqlPossibleTypes', () => {
     test('Return loading then possible types', async () => {
@@ -55,9 +49,8 @@ describe('useGraphqlPossibleTypes', () => {
 
         expect(result.current.loading).toBe(true);
 
-        await hook.waitForNextUpdate();
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current.loading).toBe(false);
         expect(result.current.possibleTypes).toBeDefined();
         expect(result.current.possibleTypes.Record).toHaveLength(3);
     });
@@ -70,7 +63,7 @@ describe('useGraphqlPossibleTypes', () => {
 
         expect(result.current.loading).toBe(true);
 
-        await hook.waitForNextUpdate();
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.loading).toBe(false);
         expect(result.current.error).toBe('Boom!');
