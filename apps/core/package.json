@@ -42,7 +42,7 @@
     "@types/jest-when": "3.5.2",
     "@types/jsonwebtoken": "8.5.9",
     "@types/lodash": "4.14.185",
-    "@types/node": "12.20.55",
+    "@types/node": "18.7.18",
     "@types/uuid": "7.0.5",
     "@types/winston": "2.3.9",
     "apollo-server-testing": "2.26.0",
