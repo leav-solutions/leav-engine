@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {render} from '_tests/testUtils';
 import {mockLibraryPermissions} from '__mocks__/common/library';
 import {IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {initialActiveLibrary, useActiveLibrary} from './ActiveLibHook';
 
 describe('ActiveLibHook', () => {
@@ -25,8 +24,7 @@ describe('ActiveLibHook', () => {
     };
 
     test('should get empty library if no activeLibrary set', async () => {
-        let givenActiveLibrary: any;
-
+        let givenActiveLibrary;
         const ComponentUsingNotification = () => {
             const [activeLibrary] = useActiveLibrary();
 
@@ -35,18 +33,14 @@ describe('ActiveLibHook', () => {
         };
 
         await act(async () => {
-            mount(
-                <MockedProviderWithFragments>
-                    <ComponentUsingNotification />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingNotification />);
         });
 
         expect(givenActiveLibrary).toEqual(initialActiveLibrary);
     });
 
     test('should get activeLibrary', async () => {
-        let givenActiveLibrary: any;
+        let givenActiveLibrary;
 
         const ComponentUsingNotification = () => {
             const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
@@ -58,11 +52,7 @@ describe('ActiveLibHook', () => {
         };
 
         await act(async () => {
-            mount(
-                <MockedProviderWithFragments>
-                    <ComponentUsingNotification />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingNotification />);
         });
 
         expect(givenActiveLibrary).toEqual(mockActiveLibrary);

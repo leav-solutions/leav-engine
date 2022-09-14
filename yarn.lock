@@ -4531,7 +4531,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.0.0, @testing-library/dom@npm:^8.5.0":
+"@testing-library/dom@npm:^8.5.0":
   version: 8.13.0
   resolution: "@testing-library/dom@npm:8.13.0"
   dependencies:
@@ -4619,6 +4619,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/react-hooks@npm:8.0.1":
+  version: 8.0.1
+  resolution: "@testing-library/react-hooks@npm:8.0.1"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    react-error-boundary: ^3.1.0
+  peerDependencies:
+    "@types/react": ^16.9.0 || ^17.0.0
+    react: ^16.9.0 || ^17.0.0
+    react-dom: ^16.9.0 || ^17.0.0
+    react-test-renderer: ^16.9.0 || ^17.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react-dom:
+      optional: true
+    react-test-renderer:
+      optional: true
+  checksum: 7fe44352e920deb5cb1876f80d64e48615232072c9d5382f1e0284b3aab46bb1c659a040b774c45cdf084a5257b8fe463f7e08695ad8480d8a15635d4d3d1f6d
+  languageName: node
+  linkType: hard
+
 "@testing-library/react@npm:11.2.5":
   version: 11.2.5
   resolution: "@testing-library/react@npm:11.2.5"
@@ -4629,20 +4651,6 @@ __metadata:
     react: "*"
     react-dom: "*"
   checksum: d30daf11a52b17af845faa5757e0ea36c89feb8053cbf26ac273195b774da74ecd1d76377031d44d3741841ff0809ce2a294b2f64f3025d08a5015274bfca54d
-  languageName: node
-  linkType: hard
-
-"@testing-library/react@npm:12.1.3":
-  version: 12.1.3
-  resolution: "@testing-library/react@npm:12.1.3"
-  dependencies:
-    "@babel/runtime": ^7.12.5
-    "@testing-library/dom": ^8.0.0
-    "@types/react-dom": "*"
-  peerDependencies:
-    react: "*"
-    react-dom: "*"
-  checksum: 2f059e93dc3f161c4d15910d1fa80cd4f5cfb6eff8a733939a72ac720c2499b74761e8980c02983a6e49153b776e82bd770a1c3e66e05c4429db0e01612f7d0a
   languageName: node
   linkType: hard
 
@@ -4671,6 +4679,20 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
   checksum: 9a0043be5623630936e6badcd87bcbed14d6d6c64c2b16413b66de90c36670bbd6766b7fc6c09cfc67aa6c1c49d8123ed97d3897c4103836c77de40349b187c6
+  languageName: node
+  linkType: hard
+
+"@testing-library/react@npm:13.4.0":
+  version: 13.4.0
+  resolution: "@testing-library/react@npm:13.4.0"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    "@testing-library/dom": ^8.5.0
+    "@types/react-dom": ^18.0.0
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 51ec548c1fdb1271089a5c63e0908f0166f2c7fcd9cacd3108ebbe0ce64cb4351812d885892020dc37608418cfb15698514856502b3cab0e5cc58d6cc1bd4a3e
   languageName: node
   linkType: hard
 
@@ -6606,8 +6628,8 @@ __metadata:
     "@types/lodash": 4.14.156
     "@types/node": 14.14.31
     "@types/node-fetch": 2.1.4
-    "@types/react": 16.9.17
-    "@types/react-dom": 16.9.4
+    "@types/react": 16.14.32
+    "@types/react-dom": 16.9.16
     "@types/react-router": 5.1.8
     "@types/react-router-dom": 5.1.5
     "@types/react-rte": 0.16.1
@@ -6640,11 +6662,11 @@ __metadata:
     license-check-and-add: 3.0.4
     lodash: 4.17.20
     node-fetch: 2.6.1
-    react: 16.12.0
+    react: 16.14.0
     react-dnd: 11.1.3
     react-dnd-html5-backend: 11.1.3
     react-dnd-test-backend: 11.1.1
-    react-dom: 16.12.0
+    react-dom: 16.14.0
     react-i18next: 11.2.2
     react-markdown: 5.0.3
     react-redux: 7.2.6
@@ -13834,8 +13856,8 @@ __metadata:
     "@leav/utils": "workspace:libs/utils"
     "@reduxjs/toolkit": 1.5.1
     "@testing-library/jest-dom": 4.2.4
-    "@testing-library/react": 12.1.3
-    "@testing-library/react-hooks": 8.0.0
+    "@testing-library/react": 13.4.0
+    "@testing-library/react-hooks": 8.0.1
     "@testing-library/user-event": 13.0.4
     "@types/enzyme": 3.10.12
     "@types/enzyme-adapter-react-16": 1.0.6
@@ -13845,9 +13867,9 @@ __metadata:
     "@types/lodash": 4.14.185
     "@types/node": 12.20.55
     "@types/object-path": 0.11.1
-    "@types/react": 16.14.31
+    "@types/react": 18.0.20
     "@types/react-beautiful-dnd": 13.1.2
-    "@types/react-dom": 16.9.16
+    "@types/react-dom": 18.0.6
     "@types/react-resizable": 1.7.4
     "@types/react-router-dom": 5.3.3
     "@types/react-table": 7.7.12
@@ -13878,10 +13900,10 @@ __metadata:
     lodash: 4.17.21
     lodash-move: 1.1.1
     object-path: 0.11.8
-    react: 16.14.0
+    react: 18.2.0
     react-beautiful-dnd: 13.1.1
     react-css-theme-switcher: 0.3.0
-    react-dom: 16.14.0
+    react-dom: 18.2.0
     react-i18next: 11.18.6
     react-markdown: 5.0.3
     react-redux: 7.2.8
@@ -20895,14 +20917,14 @@ __metadata:
     "@testing-library/user-event": 13.5.0
     "@types/jest": 27.4.1
     "@types/node": 16.11.27
-    "@types/react": 18.0.5
-    "@types/react-dom": 18.0.0
+    "@types/react": 18.0.20
+    "@types/react-dom": 18.0.6
     antd: 4.19.5
     i18next: 21.6.16
     i18next-browser-languagedetector: 6.1.4
     i18next-http-backend: 1.4.0
-    react: 18.0.0
-    react-dom: 18.0.0
+    react: 18.2.0
+    react-dom: 18.2.0
     react-i18next: 11.16.6
     react-router-dom: 6.3.0
     react-scripts: 5.0.1
@@ -23165,20 +23187,17 @@ __metadata:
     "@testing-library/user-event": 13.5.0
     "@types/jest": 27.4.1
     "@types/node": 16.11.27
-    "@types/react": 18.0.5
-    "@types/react-dom": 18.0.1
+    "@types/react": 18.0.20
+    "@types/react-dom": 18.0.6
     antd: 4.19.5
     apollo: 2.33.10
     i18next: 21.6.16
-    react: 18.1.0
-    react-dom: 18.1.0
+    react: 18.2.0
+    react-dom: 18.2.0
     react-i18next: 11.16.7
     react-scripts: 5.0.1
     styled-components: 5.3.5
     typescript: 4.6.3
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
   languageName: unknown
   linkType: soft
 
@@ -25500,20 +25519,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:16.12.0":
-  version: 16.12.0
-  resolution: "react-dom@npm:16.12.0"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-    scheduler: ^0.18.0
-  peerDependencies:
-    react: ^16.0.0
-  checksum: e3bc9bf9ea4e28abfe83ec9200ebc45c86795ded9ad486c955d28c6df4ebde94359c841b8096209d13b017c0a3a751b6be34fd123105faad73467bfbbe8c84fb
-  languageName: node
-  linkType: hard
-
 "react-dom@npm:16.14.0, react-dom@npm:^16.3.0":
   version: 16.14.0
   resolution: "react-dom@npm:16.14.0"
@@ -25528,27 +25533,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.0.0":
-  version: 18.0.0
-  resolution: "react-dom@npm:18.0.0"
+"react-dom@npm:18.2.0":
+  version: 18.2.0
+  resolution: "react-dom@npm:18.2.0"
   dependencies:
     loose-envify: ^1.1.0
-    scheduler: ^0.21.0
+    scheduler: ^0.23.0
   peerDependencies:
-    react: ^18.0.0
-  checksum: dd0ba9f2f31dd728076c892a95b2f5a8dfe79136431b0289afb46eec39d0ca6b6f0f40a60fd8aa6ef702c98ce7c26100d3d4dbc35c7c9e87429cd04f84cb58bd
-  languageName: node
-  linkType: hard
-
-"react-dom@npm:18.1.0":
-  version: 18.1.0
-  resolution: "react-dom@npm:18.1.0"
-  dependencies:
-    loose-envify: ^1.1.0
-    scheduler: ^0.22.0
-  peerDependencies:
-    react: ^18.1.0
-  checksum: bb0d48eeb0b297c79c2a03978baa29f5b3ff7ba3d070b21e34c9af1a6e7fdf0ca8b8d73e41f9214d91ad40eeb6d1f3559f884cbbc338713374a51320637c23df
+    react: ^18.2.0
+  checksum: 7d323310bea3a91be2965f9468d552f201b1c27891e45ddc2d6b8f717680c95a75ae0bc1e3f5cf41472446a2589a75aed4483aee8169287909fcd59ad149e8cc
   languageName: node
   linkType: hard
 
@@ -26062,17 +26055,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:16.12.0":
-  version: 16.12.0
-  resolution: "react@npm:16.12.0"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-    prop-types: ^15.6.2
-  checksum: 6c5b5740c7521a41142d012d937db7520658a8317ea6ea9ae5d40ec1ef650596088e048ffebe673f9ddb640f876050d54720905b92250ce43cad0fd1103e7f4c
-  languageName: node
-  linkType: hard
-
 "react@npm:16.14.0, react@npm:^16.3.0":
   version: 16.14.0
   resolution: "react@npm:16.14.0"
@@ -26084,21 +26066,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.0.0":
-  version: 18.0.0
-  resolution: "react@npm:18.0.0"
+"react@npm:18.2.0":
+  version: 18.2.0
+  resolution: "react@npm:18.2.0"
   dependencies:
     loose-envify: ^1.1.0
-  checksum: 293020b96536b3c7113ee57ca5c990a3f25649d1751b1c7a3aabd16dff0691fe9f1eed1206616d0906d05933536052037340a0c8d0941ff870b0eb469a2f975b
-  languageName: node
-  linkType: hard
-
-"react@npm:18.1.0":
-  version: 18.1.0
-  resolution: "react@npm:18.1.0"
-  dependencies:
-    loose-envify: ^1.1.0
-  checksum: 5bb296b561b43ef2220395da4faac86c14a087c8c80e1a7598a5740f01ee605c11eaf249985c1e2000971c4cd32ccb46d40f00479bbd9fb6b1c7cf857393b7d4
+  checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
   languageName: node
   linkType: hard
 
@@ -27181,16 +27154,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.18.0":
-  version: 0.18.0
-  resolution: "scheduler@npm:0.18.0"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: b6e0b9e0086b200b114f1ef7f9fcac966ad5d84cd3b1867174be0549d3ff713d1fd22d5574cb024b7d3eadf3307f2afc1cb5bfbf28b0d3bc34b200183800fcae
-  languageName: node
-  linkType: hard
-
 "scheduler@npm:^0.19.1":
   version: 0.19.1
   resolution: "scheduler@npm:0.19.1"
@@ -27201,21 +27164,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.21.0":
-  version: 0.21.0
-  resolution: "scheduler@npm:0.21.0"
+"scheduler@npm:^0.23.0":
+  version: 0.23.0
+  resolution: "scheduler@npm:0.23.0"
   dependencies:
     loose-envify: ^1.1.0
-  checksum: 4f8285076041ed2c81acdd1faa987f1655fdbd30554bc667c1ea64743fc74fb3a04ca7d27454b3d678735df5a230137a3b84756061b43dc5796e80701b66d124
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.22.0":
-  version: 0.22.0
-  resolution: "scheduler@npm:0.22.0"
-  dependencies:
-    loose-envify: ^1.1.0
-  checksum: a8ef5cab769c020cd6382ad9ecc3f72dbde56a50a36639b3a42ad9c11f7724f03700bcad373044059b8067d4a6365154dc7c0ca8027ef20ff4900cf58a0fc2c5
+  checksum: d79192eeaa12abef860c195ea45d37cbf2bbf5f66e3c4dcd16f54a7da53b17788a70d109ee3d3dde1a0fd50e6a8fc171f4300356c5aee4fc0171de526bf35f8a
   languageName: node
   linkType: hard
 

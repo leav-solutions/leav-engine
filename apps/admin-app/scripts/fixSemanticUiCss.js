@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 // Remove a double semicolon in the Semantic UI CSS which makes build in webpack 5 fail
 // Unfortunately, as Semantic UI is not maintained anymore, we have to fix it manually.
 // This script should become unnecessary when the next version of Fomantic UI is released.

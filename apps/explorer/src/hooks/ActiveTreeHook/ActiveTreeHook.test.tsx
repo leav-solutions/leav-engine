@@ -1,11 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {act, render} from '_tests/testUtils';
 import {IActiveTree} from '../../graphQL/queries/cache/activeTree/getActiveTreeQuery';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useActiveTree} from './ActiveTreeHook';
 
 describe('ActiveTreeHook', () => {
@@ -20,7 +18,7 @@ describe('ActiveTreeHook', () => {
     };
 
     test('should get undefined if no activeTree set', async () => {
-        let givenActiveTree: any;
+        let givenActiveTree;
 
         const ComponentUsingNotification = () => {
             const [activeTree] = useActiveTree();
@@ -30,11 +28,7 @@ describe('ActiveTreeHook', () => {
         };
 
         await act(async () => {
-            mount(
-                <MockedProviderWithFragments>
-                    <ComponentUsingNotification />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingNotification />);
         });
 
         expect(givenActiveTree).toEqual(undefined);
@@ -53,11 +47,7 @@ describe('ActiveTreeHook', () => {
         };
 
         await act(async () => {
-            mount(
-                <MockedProviderWithFragments>
-                    <ComponentUsingNotification />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingNotification />);
         });
 
         expect(givenActiveTree).toEqual(mockActiveTree);

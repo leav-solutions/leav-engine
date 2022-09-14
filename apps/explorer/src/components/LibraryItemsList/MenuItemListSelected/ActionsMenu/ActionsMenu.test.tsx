@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render} from 'enzyme';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
+import {act, render, screen} from '_tests/testUtils';
 import ActionsMenu from './ActionsMenu';
 
 jest.mock('./ExportModal', () => {
@@ -12,9 +13,15 @@ jest.mock('./ExportModal', () => {
 });
 
 describe('ActionsMenu', () => {
-    test('Snapshot test', async () => {
-        const comp = render(<ActionsMenu />);
+    test('Render menu', async () => {
+        render(<ActionsMenu />);
 
-        expect(comp).toMatchSnapshot();
+        expect(screen.getByRole('button')).toBeInTheDocument();
+
+        await act(async () => {
+            userEvent.click(screen.getByRole('button'));
+        });
+
+        expect(await screen.findByText(/export/)).toBeInTheDocument();
     });
 });

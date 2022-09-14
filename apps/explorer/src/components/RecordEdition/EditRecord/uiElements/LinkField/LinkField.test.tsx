@@ -616,9 +616,7 @@ describe('LinkField', () => {
                 await userEvent.type(searchInput, 'a{enter}', {delay: 5});
             });
 
-            await new Promise(resolve => setTimeout(resolve, 0));
-
-            expect(valuesAddBlock.getByText('label0')).toBeInTheDocument();
+            expect(await valuesAddBlock.findByText('label0')).toBeInTheDocument();
         });
     });
 });

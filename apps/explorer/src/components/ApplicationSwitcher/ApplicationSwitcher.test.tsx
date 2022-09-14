@@ -4,7 +4,7 @@
 import userEvent from '@testing-library/user-event';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
 import React from 'react';
-import {render, screen} from '_tests/testUtils';
+import {act, render, screen} from '_tests/testUtils';
 import {mockApplication} from '__mocks__/common/applications';
 import ApplicationSwitcher from './ApplicationSwitcher';
 
@@ -45,7 +45,10 @@ describe('ApplicationSwitcher', () => {
                 }
             }
         ];
-        render(<ApplicationSwitcher />, {apolloMocks: mocks});
+
+        await act(async () => {
+            render(<ApplicationSwitcher />, {apolloMocks: mocks});
+        });
 
         userEvent.click(screen.getByRole('button', {name: /applications/}));
 

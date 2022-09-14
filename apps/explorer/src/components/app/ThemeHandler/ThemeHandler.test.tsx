@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {render, screen} from '_tests/testUtils';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import ThemeHandler from './ThemeHandler';
 
@@ -15,16 +14,12 @@ jest.mock('../AppHandler', () => {
 
 describe('ThemeHandler', () => {
     test('should call AppHandler', async () => {
-        let comp: any;
+        render(
+            <MockedProviderWithFragments>
+                <ThemeHandler />
+            </MockedProviderWithFragments>
+        );
 
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <ThemeHandler />
-                </MockedProviderWithFragments>
-            );
-        });
-
-        expect(comp.find('AppHandler')).toHaveLength(1);
+        expect(screen.getByText('AppHandler')).toBeInTheDocument();
     });
 });

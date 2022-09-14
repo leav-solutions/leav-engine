@@ -1,14 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act, render, screen, waitFor} from '_tests/testUtils';
+import {render, screen} from '_tests/testUtils';
 import {mockLibraryPermissions} from '__mocks__/common/library';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockSearchContextProvider from '__mocks__/common/mockSearch/mockSearchContextProvider';
 import {mockGetLibraryDetailExtendedElement} from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
-import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import MenuItemList from './MenuItemList';
 
 jest.mock(
@@ -31,94 +28,70 @@ jest.mock('../MenuItemActions', () => {
     };
 });
 
+jest.mock('../SearchItems', () => {
+    return function SearchItems() {
+        return <div>SearchItems</div>;
+    };
+});
+
+jest.mock('../DisplayOptions', () => {
+    return function DisplayOptions() {
+        return <div>DisplayOptions</div>;
+    };
+});
+
 jest.mock('../../../hooks/ActiveLibHook/ActiveLibHook', () => ({
     useActiveLibrary: () => [{id: 'test', permissions: mockLibraryPermissions}, jest.fn()]
 }));
 
 describe('MenuItemList', () => {
     test('should have MenuView', async () => {
-        await act(async () => {
-            render(
-                <MockSearchContextProvider>
-                    <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
-                </MockSearchContextProvider>
-            );
+        render(
+            <MockSearchContextProvider>
+                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+            </MockSearchContextProvider>
+        );
 
-            await waitFor(() => screen.getByText('MenuView'));
-
-            const menuViewMockContent = screen.getByText('MenuView');
-
-            expect(menuViewMockContent).toBeInTheDocument();
-        });
+        expect(screen.getByText('MenuView')).toBeInTheDocument();
     });
 
     test('should have MenuSelection', async () => {
-        await act(async () => {
-            render(
-                <MockSearchContextProvider>
-                    <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
-                </MockSearchContextProvider>
-            );
+        render(
+            <MockSearchContextProvider>
+                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+            </MockSearchContextProvider>
+        );
 
-            await waitFor(() => screen.getByText('MenuSelection'));
-
-            const menuSelectionMockContent = screen.getByText('MenuSelection');
-
-            expect(menuSelectionMockContent).toBeInTheDocument();
-        });
+        expect(screen.getByText('MenuSelection')).toBeInTheDocument();
     });
 
     test('should have SearchItems', async () => {
-        let comp: any;
+        render(
+            <MockSearchContextProvider>
+                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+            </MockSearchContextProvider>
+        );
 
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <MockSearchContextProvider>
-                            <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
-                        </MockSearchContextProvider>
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
-
-            expect(comp.find('SearchItems')).toHaveLength(1);
-        });
+        expect(await screen.findByText('SearchItems')).toBeInTheDocument();
     });
 
     test('should have DisplayOptions', async () => {
-        let comp: any;
+        render(
+            <MockSearchContextProvider>
+                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+            </MockSearchContextProvider>
+        );
 
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <MockSearchContextProvider>
-                            <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
-                        </MockSearchContextProvider>
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
-
-            expect(comp.find('DisplayOptions')).toHaveLength(1);
-        });
+        expect(screen.getByText('DisplayOptions')).toBeInTheDocument();
     });
 
     test('should have menu item actions', async () => {
-        let comp: any;
+        render(
+            <MockSearchContextProvider>
+                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+            </MockSearchContextProvider>
+        );
 
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments>
-                    <MockStore>
-                        <MockSearchContextProvider>
-                            <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
-                        </MockSearchContextProvider>
-                    </MockStore>
-                </MockedProviderWithFragments>
-            );
-        });
-
-        expect(comp.find('MenuItemActions')).toHaveLength(1);
+        expect(screen.getByText('MenuItemActions')).toBeInTheDocument();
     });
 });

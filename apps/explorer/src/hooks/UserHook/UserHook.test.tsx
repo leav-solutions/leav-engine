@@ -1,11 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
+import {act, render} from '_tests/testUtils';
 import {IGetUser} from '../../graphQL/queries/cache/user/userQuery';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import {useUser} from './UserHook';
 
 describe('UserHook', () => {
@@ -15,10 +13,10 @@ describe('UserHook', () => {
         userPermissions: []
     };
 
-    test('should get anything if no lang set', async () => {
-        let givenUser: any;
+    test('should get anything if no user set', async () => {
+        let givenUser;
 
-        const ComponentUsingNotification = () => {
+        const ComponentUsingHook = () => {
             const [lang] = useUser();
 
             givenUser = lang;
@@ -26,34 +24,26 @@ describe('UserHook', () => {
         };
 
         await act(async () => {
-            mount(
-                <MockedProviderWithFragments>
-                    <ComponentUsingNotification />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingHook />);
         });
 
         expect(givenUser).toEqual(undefined);
     });
 
     test('should get lang', async () => {
-        let givenUser: any;
+        let givenUser;
 
-        const ComponentUsingNotification = () => {
-            const [lang, updateUser] = useUser();
+        const ComponentUsingHook = () => {
+            const [user, updateUser] = useUser();
 
             updateUser(mockUser);
 
-            givenUser = lang;
+            givenUser = user;
             return <></>;
         };
 
         await act(async () => {
-            mount(
-                <MockedProviderWithFragments>
-                    <ComponentUsingNotification />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingHook />);
         });
 
         expect(givenUser).toEqual(mockUser);
