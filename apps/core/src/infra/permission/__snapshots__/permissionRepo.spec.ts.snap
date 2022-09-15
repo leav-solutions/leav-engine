@@ -12,12 +12,12 @@ exports[`PermissionRepo GetPermissions Should return a permission 1`] = `
 `;
 
 exports[`PermissionRepo GetPermissions Should return a permission 2`] = `
-Object {
+{
   "@value0": "core_permissions",
   "value1": "record",
   "value2": "test_lib",
   "value3": "12345",
-  "value4": Object {
+  "value4": {
     "nodeId": "123",
     "tree": "categories",
   },
@@ -35,25 +35,25 @@ exports[`PermissionRepo SavePermission Should save permission 1`] = `
 `;
 
 exports[`PermissionRepo SavePermission Should save permission 2`] = `
-Object {
+{
   "@value2": "core_permissions",
-  "value0": Object {
+  "value0": {
     "applyTo": "test_lib",
-    "permissionTreeTarget": Object {
+    "permissionTreeTarget": {
       "nodeId": "123445",
       "tree": "test_tree",
     },
     "type": "record",
     "usersGroup": "12345",
   },
-  "value1": Object {
-    "actions": Object {
+  "value1": {
+    "actions": {
       "access_record": true,
       "delete_record": false,
       "edit_record": false,
     },
     "applyTo": "test_lib",
-    "permissionTreeTarget": Object {
+    "permissionTreeTarget": {
       "nodeId": "123445",
       "tree": "test_tree",
     },

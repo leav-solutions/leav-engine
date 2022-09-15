@@ -3,9 +3,9 @@
 exports[`LibraryRepo createLibrary Should insert a library and create a new collection 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
 exports[`LibraryRepo createLibrary Should insert a library and create a new collection 2`] = `
-Object {
+{
   "@value1": "core_libraries",
-  "value0": Object {
+  "value0": {
     "_key": "test_library",
     "system": true,
   },
@@ -19,7 +19,7 @@ exports[`LibraryRepo deleteLibrary Should delete a library and return deleted li
 `;
 
 exports[`LibraryRepo deleteLibrary Should delete a library and return deleted library 2`] = `
-Object {
+{
   "@value0": "core_edge_libraries_attributes",
   "value1": "core_libraries/test_lib",
 }
@@ -39,9 +39,9 @@ exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library a
 `;
 
 exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 2`] = `
-Object {
+{
   "@value1": "core_edge_libraries_attributes",
-  "value0": Array [
+  "value0": [
     "other_attr",
   ],
   "value2": "core_libraries/users",
@@ -67,9 +67,9 @@ exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library a
 `;
 
 exports[`LibraryRepo saveLibraryAttributes Should link attributes to a library and return linked attributes 4`] = `
-Object {
+{
   "@value2": "core_edge_libraries_attributes",
-  "value0": Array [
+  "value0": [
     "id",
     "my_attr",
   ],
@@ -90,10 +90,10 @@ exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attribut
 `;
 
 exports[`LibraryRepo saveLibraryFullTextAttributes Should set full text attributes of a library and return full text attributes 2`] = `
-Object {
+{
   "@value0": "core_edge_libraries_attributes",
   "value1": "core_libraries/users",
-  "value2": Array [
+  "value2": [
     "id",
   ],
 }
@@ -102,9 +102,9 @@ Object {
 exports[`LibraryRepo updateLibrary Should update library 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
 exports[`LibraryRepo updateLibrary Should update library 2`] = `
-Object {
+{
   "@value1": "core_libraries",
-  "value0": Object {
+  "value0": {
     "_key": "test_library",
     "system": true,
   },

@@ -36,20 +36,20 @@ exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advan
 `;
 
 exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advanced link value 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
-  "value0": Object {
+  "value0": {
     "_from": "test_linked_lib/987654",
     "_to": "test_lib/12345",
     "attribute": "test",
     "created_at": 400999999,
     "created_by": "0",
-    "metadata": Object {
+    "metadata": {
       "my_attribute": "metadata value",
     },
     "modified_at": 400999999,
     "modified_by": "0",
-    "version": Object {
+    "version": {
       "my_tree": "1",
     },
   },

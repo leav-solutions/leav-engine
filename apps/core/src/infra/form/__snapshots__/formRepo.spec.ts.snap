@@ -3,29 +3,29 @@
 exports[`FormRepo Create form 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
 exports[`FormRepo Create form 2`] = `
-Object {
+{
   "@value1": "core_forms",
-  "value0": Object {
+  "value0": {
     "_key": "my_lib__test_form",
-    "dependencyAttributes": Array [],
-    "elements": Array [
-      Object {
-        "elements": Array [
-          Object {
+    "dependencyAttributes": [],
+    "elements": [
+      {
+        "elements": [
+          {
             "containerId": "987654",
             "id": "123456",
             "order": 0,
-            "settings": Object {
+            "settings": {
               "attribute": "test_attribute",
             },
             "type": "field",
             "uiElementType": "input_field",
           },
-          Object {
+          {
             "containerId": "__root",
             "id": "987654",
             "order": 0,
-            "settings": Object {},
+            "settings": {},
             "type": "layout",
             "uiElementType": "fields_container",
           },
@@ -33,7 +33,7 @@ Object {
       },
     ],
     "id": "test_form",
-    "label": Object {
+    "label": {
       "fr": "Test Form",
     },
     "library": "my_lib",
@@ -45,29 +45,29 @@ Object {
 exports[`FormRepo Delete form 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
 exports[`FormRepo Delete form 2`] = `
-Object {
+{
   "@value1": "core_forms",
-  "value0": Object {
+  "value0": {
     "_key": "my_lib__test_form",
-    "dependencyAttributes": Array [],
-    "elements": Array [
-      Object {
-        "elements": Array [
-          Object {
+    "dependencyAttributes": [],
+    "elements": [
+      {
+        "elements": [
+          {
             "containerId": "987654",
             "id": "123456",
             "order": 0,
-            "settings": Object {
+            "settings": {
               "attribute": "test_attribute",
             },
             "type": "field",
             "uiElementType": "input_field",
           },
-          Object {
+          {
             "containerId": "__root",
             "id": "987654",
             "order": 0,
-            "settings": Object {},
+            "settings": {},
             "type": "layout",
             "uiElementType": "fields_container",
           },
@@ -75,7 +75,7 @@ Object {
       },
     ],
     "id": "test_form",
-    "label": Object {
+    "label": {
       "fr": "Test Form",
     },
     "library": "my_lib",
@@ -87,29 +87,29 @@ Object {
 exports[`FormRepo Update form 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
 exports[`FormRepo Update form 2`] = `
-Object {
+{
   "@value1": "core_forms",
-  "value0": Object {
+  "value0": {
     "_key": "my_lib__test_form",
-    "dependencyAttributes": Array [],
-    "elements": Array [
-      Object {
-        "elements": Array [
-          Object {
+    "dependencyAttributes": [],
+    "elements": [
+      {
+        "elements": [
+          {
             "containerId": "987654",
             "id": "123456",
             "order": 0,
-            "settings": Object {
+            "settings": {
               "attribute": "test_attribute",
             },
             "type": "field",
             "uiElementType": "input_field",
           },
-          Object {
+          {
             "containerId": "__root",
             "id": "987654",
             "order": 0,
-            "settings": Object {},
+            "settings": {},
             "type": "layout",
             "uiElementType": "fields_container",
           },
@@ -117,7 +117,7 @@ Object {
       },
     ],
     "id": "test_form",
-    "label": Object {
+    "label": {
       "fr": "Test Form",
     },
     "library": "my_lib",

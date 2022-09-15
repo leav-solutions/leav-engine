@@ -3,40 +3,40 @@
 exports[`viewRepo createView Should create a new view 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
 exports[`viewRepo createView Should create a new view 2`] = `
-Object {
+{
   "@value1": "core_views",
-  "value0": Object {
+  "value0": {
     "_key": "test_view",
     "color": "#123456",
     "created_at": 1234567890,
     "created_by": "1",
-    "description": Object {
+    "description": {
       "fr": "My test view",
     },
-    "display": Object {
+    "display": {
       "size": "MEDIUM",
       "type": "list",
     },
-    "filters": Array [
-      Object {
+    "filters": [
+      {
         "field": "id",
         "value": "fake_id_filter",
       },
     ],
     "id": "test_view",
-    "label": Object {
+    "label": {
       "fr": "My view",
     },
     "library": "test_lib",
     "modified_at": 1234567890,
-    "settings": Object {
-      "columns": Array [
+    "settings": {
+      "columns": [
         "id",
         "label",
       ],
     },
     "shared": true,
-    "sort": Object {
+    "sort": {
       "field": "id",
       "order": "asc",
     },
@@ -47,9 +47,9 @@ Object {
 exports[`viewRepo deleteView Should delete view 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
 exports[`viewRepo deleteView Should delete view 2`] = `
-Object {
+{
   "@value1": "core_views",
-  "value0": Object {
+  "value0": {
     "_key": "test_view",
   },
 }
@@ -63,40 +63,40 @@ exports[`viewRepo updateView Should update an existing view 1`] = `
 `;
 
 exports[`viewRepo updateView Should update an existing view 2`] = `
-Object {
+{
   "@value1": "core_views",
-  "value0": Object {
+  "value0": {
     "_key": "test_view",
     "color": "#123456",
     "created_at": 1234567890,
     "created_by": "1",
-    "description": Object {
+    "description": {
       "fr": "My test view",
     },
-    "display": Object {
+    "display": {
       "size": "MEDIUM",
       "type": "list",
     },
-    "filters": Array [
-      Object {
+    "filters": [
+      {
         "field": "id",
         "value": "fake_id_filter",
       },
     ],
     "id": "test_view",
-    "label": Object {
+    "label": {
       "fr": "My view",
     },
     "library": "test_lib",
     "modified_at": 1234567890,
-    "settings": Object {
-      "columns": Array [
+    "settings": {
+      "columns": [
         "id",
         "label",
       ],
     },
     "shared": true,
-    "sort": Object {
+    "sort": {
       "field": "id",
       "order": "asc",
     },

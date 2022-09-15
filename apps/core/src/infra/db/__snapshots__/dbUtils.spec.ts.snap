@@ -3,7 +3,7 @@
 exports[`dbUtils findCoreEntity Filter with a LIKE on ID 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true) RETURN el"`;
 
 exports[`dbUtils findCoreEntity Filter with a LIKE on ID 2`] = `
-Object {
+{
   "@value0": "core_trees",
   "value1": "_key",
   "value2": "categories",
@@ -18,7 +18,7 @@ Object {
 exports[`dbUtils findCoreEntity Find core entity without filters 1`] = `"FOR el IN @@value0 RETURN el"`;
 
 exports[`dbUtils findCoreEntity Find core entity without filters 2`] = `
-Object {
+{
   "@value0": "core_trees",
 }
 `;
@@ -26,7 +26,7 @@ Object {
 exports[`dbUtils findCoreEntity Should filter label on any language 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true) RETURN el"`;
 
 exports[`dbUtils findCoreEntity Should filter label on any language 2`] = `
-Object {
+{
   "@value0": "core_trees",
   "value1": "_key",
   "value2": "categories",
@@ -41,7 +41,7 @@ Object {
 exports[`dbUtils findCoreEntity Should limit results 1`] = `"FOR el IN @@value0 LIMIT @value1, @value2 RETURN el"`;
 
 exports[`dbUtils findCoreEntity Should limit results 2`] = `
-Object {
+{
   "@value0": "core_trees",
   "value1": 0,
   "value2": 5,
@@ -51,7 +51,7 @@ Object {
 exports[`dbUtils findCoreEntity Should sort results 1`] = `"FOR el IN @@value0 SORT el.@value1 @value2 RETURN el"`;
 
 exports[`dbUtils findCoreEntity Should sort results 2`] = `
-Object {
+{
   "@value0": "core_trees",
   "value1": "system",
   "value2": "asc",

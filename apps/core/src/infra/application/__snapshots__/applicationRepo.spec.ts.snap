@@ -3,17 +3,17 @@
 exports[`applicationRepo createApplication Create new application 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
 exports[`applicationRepo createApplication Create new application 2`] = `
-Object {
+{
   "@value1": "core_applications",
-  "value0": Object {
+  "value0": {
     "_key": "test_application",
     "color": "orange",
     "description": "Super application",
     "endpoint": "my-application",
-    "label": Object {
+    "label": {
       "fr": "Test",
     },
-    "libraries": Array [
+    "libraries": [
       "products",
       "categories",
     ],
@@ -27,9 +27,9 @@ Object {
 exports[`applicationRepo deleteApplication Delete application 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
 exports[`applicationRepo deleteApplication Delete application 2`] = `
-Object {
+{
   "@value1": "core_applications",
-  "value0": Object {
+  "value0": {
     "_key": "test_application",
   },
 }
@@ -38,17 +38,17 @@ Object {
 exports[`applicationRepo updateApplication Update application 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
 
 exports[`applicationRepo updateApplication Update application 2`] = `
-Object {
+{
   "@value1": "core_applications",
-  "value0": Object {
+  "value0": {
     "_key": "test_application",
     "color": "orange",
     "description": "Super application",
     "endpoint": "my-application",
-    "label": Object {
+    "label": {
       "fr": "Test",
     },
-    "libraries": Array [
+    "libraries": [
       "products",
       "categories",
     ],

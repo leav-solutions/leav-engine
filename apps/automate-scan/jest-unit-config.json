@@ -4,15 +4,15 @@
         "js"
     ],
     "transform": {
-        "\\.(ts|tsx)$": "ts-jest"
+        "\\.(ts|tsx)$": [
+            "ts-jest",
+            {
+                "isolatedModules": true
+            }
+        ]
     },
     "testRegex": ".spec.(ts)$",
     "setupFiles": [
         "<rootDir>/src/__tests__/jestUtils.ts"
-    ],
-    "globals": {
-        "ts-jest": {
-            "isolatedModules": true
-        }
-    }
+    ]
 }

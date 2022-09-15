@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AttributeSimpleLinkRepo filterQueryPart Should return simple link filter 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": undefined,
     "value1": "label",
     "value2": null,
@@ -14,9 +14,9 @@ Object {
 `;
 
 exports[`AttributeSimpleLinkRepo getReverseValues Should return values for advanced reverse link attribute into simple link 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": "test_lib",
     "@value2": "test_linked_lib",
     "value1": "123456",
@@ -35,9 +35,9 @@ Object {
 exports[`AttributeSimpleLinkRepo getReverseValues Should return values for advanced reverse link attribute into simple link 2`] = `undefined`;
 
 exports[`AttributeSimpleLinkRepo getValues Should return values for simple link attribute 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": "test_lib",
     "@value2": "test_linked_lib",
     "value1": "123456",
@@ -56,9 +56,9 @@ Object {
 exports[`AttributeSimpleLinkRepo getValues Should return values for simple link attribute 2`] = `undefined`;
 
 exports[`AttributeSimpleLinkRepo sortQueryPart Should return simple link sort 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": undefined,
     "value1": "label",
     "value2": "linked",
