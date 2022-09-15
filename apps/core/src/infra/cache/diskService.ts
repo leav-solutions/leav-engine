@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import cacache from 'cacache';
 import {IConfig} from '_types/config';
-import fs from 'fs';
 import {ICacheService} from './cacheService';
 
 interface IDeps {
@@ -31,7 +30,7 @@ export default function({config = null}: IDeps): ICacheService {
             }
         },
         async deleteAll(path?: string): Promise<void> {
-            await fs.promises.rmdir(`${config.diskCache.directory}/${path}`, {recursive: true});
+            await cacache.rm.all(path ?? '');
         }
     };
 }

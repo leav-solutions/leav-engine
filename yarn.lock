@@ -17159,6 +17159,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-jasmine2@npm:29.0.3":
+  version: 29.0.3
+  resolution: "jest-jasmine2@npm:29.0.3"
+  dependencies:
+    "@jest/environment": ^29.0.3
+    "@jest/expect": ^29.0.3
+    "@jest/source-map": ^29.0.0
+    "@jest/test-result": ^29.0.3
+    "@jest/types": ^29.0.3
+    "@types/node": "*"
+    chalk: ^4.0.0
+    co: ^4.6.0
+    is-generator-fn: ^2.0.0
+    jest-each: ^29.0.3
+    jest-matcher-utils: ^29.0.3
+    jest-message-util: ^29.0.3
+    jest-runtime: ^29.0.3
+    jest-snapshot: ^29.0.3
+    jest-util: ^29.0.3
+    p-limit: ^3.1.0
+    pretty-format: ^29.0.3
+  checksum: 615f481f286e9fd2998c33a54e8ce54549362e7692dfa4112449e1c91c4696fdb8817fd74aba3e873edd39ae87df0ce3a40436670bf88d1977925e1c354f1021
+  languageName: node
+  linkType: hard
+
 "jest-jasmine2@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-jasmine2@npm:27.5.1"
@@ -26585,6 +26610,7 @@ __metadata:
     graphql: 14.7.0
     graphql-tag: 2.12.6
     jest: 29.0.3
+    jest-jasmine2: 29.0.3
     joi: 14.3.1
     moment: 2.29.4
     node-fetch: 2.6.7
