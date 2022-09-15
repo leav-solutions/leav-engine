@@ -8,10 +8,10 @@ exports[`UserDataRepo get user data 1`] = `
 `;
 
 exports[`UserDataRepo get user data 2`] = `
-Object {
+{
   "@value0": "core_user_data",
   "value1": "1",
-  "value2": Array [
+  "value2": [
     "test",
   ],
 }
@@ -28,19 +28,19 @@ exports[`UserDataRepo save user data 1`] = `
 `;
 
 exports[`UserDataRepo save user data 2`] = `
-Object {
+{
   "@value3": "core_user_data",
-  "value0": Object {
+  "value0": {
     "userId": "1",
   },
-  "value1": Object {
-    "data": Object {
+  "value1": {
+    "data": {
       "test": "value",
     },
     "userId": "1",
   },
-  "value2": Object {
-    "data": Object {
+  "value2": {
+    "data": {
       "test": "value",
     },
   },

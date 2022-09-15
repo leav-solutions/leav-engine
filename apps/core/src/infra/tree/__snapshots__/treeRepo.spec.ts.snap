@@ -8,7 +8,7 @@ exports[`TreeRepo AddElement Should add an element to the root 1`] = `
 `;
 
 exports[`TreeRepo AddElement Should add an element to the root 2`] = `
-Object {
+{
   "@value4": "core_nodes_test_tree",
   "value0": "libraryId",
   "value1": "test_lib",
@@ -26,7 +26,7 @@ exports[`TreeRepo AddElement Should add an element to the root 3`] = `
 `;
 
 exports[`TreeRepo AddElement Should add an element to the root 4`] = `
-Object {
+{
   "@value3": "core_edge_tree_test_tree",
   "value0": "core_trees/test_tree",
   "value1": "core_nodes_my_tree/19610667",
@@ -42,7 +42,7 @@ exports[`TreeRepo AddElement Should add an element under another 1`] = `
 `;
 
 exports[`TreeRepo AddElement Should add an element under another 2`] = `
-Object {
+{
   "@value4": "core_nodes_test_tree",
   "value0": "libraryId",
   "value1": "test_lib",
@@ -60,7 +60,7 @@ exports[`TreeRepo AddElement Should add an element under another 3`] = `
 `;
 
 exports[`TreeRepo AddElement Should add an element under another 4`] = `
-Object {
+{
   "@value3": "core_edge_tree_test_tree",
   "value0": "core_nodes_test_tree/6789",
   "value1": "core_nodes_my_tree/19610667",
@@ -83,7 +83,7 @@ exports[`TreeRepo DeleteElement Should delete an element and its children 1`] = 
 `;
 
 exports[`TreeRepo DeleteElement Should delete an element and its children 2`] = `
-Object {
+{
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
   "value1": "core_nodes_test_tree/13445",
@@ -100,7 +100,7 @@ exports[`TreeRepo DeleteElement Should delete an element and its children 3`] = 
 `;
 
 exports[`TreeRepo DeleteElement Should delete an element and its children 4`] = `
-Object {
+{
   "@value0": "core_edge_tree_test_tree",
   "value1": "core_nodes_test_tree/13445",
 }
@@ -109,7 +109,7 @@ Object {
 exports[`TreeRepo DeleteElement Should delete an element and its children 5`] = `"REMOVE {_id: @value0, _key: @value1} IN @@value2 RETURN OLD"`;
 
 exports[`TreeRepo DeleteElement Should delete an element and its children 6`] = `
-Object {
+{
   "@value2": "core_nodes_test_tree",
   "value0": "core_nodes_test_tree/13445",
   "value1": "13445",
@@ -125,7 +125,7 @@ exports[`TreeRepo DeleteElement Should delete an element and move its children u
 `;
 
 exports[`TreeRepo DeleteElement Should delete an element and move its children up 2`] = `
-Object {
+{
   "@value1": "core_edge_tree_test_tree",
   "value0": "core_nodes_test_tree/13445",
 }
@@ -141,7 +141,7 @@ exports[`TreeRepo DeleteElement Should delete an element and move its children u
 `;
 
 exports[`TreeRepo DeleteElement Should delete an element and move its children up 4`] = `
-Object {
+{
   "@value0": "core_edge_tree_test_tree",
   "value1": "core_nodes_test_tree/13445",
 }
@@ -158,7 +158,7 @@ exports[`TreeRepo MoveElement Should move an element 1`] = `
 `;
 
 exports[`TreeRepo MoveElement Should move an element 2`] = `
-Object {
+{
   "@value0": "core_edge_tree_test_tree",
   "value1": "core_nodes_test_tree/13445",
   "value2": "core_nodes_test_tree/6789",
@@ -169,15 +169,15 @@ Object {
 exports[`TreeRepo createTree Should create a tree 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
 exports[`TreeRepo createTree Should create a tree 2`] = `
-Object {
+{
   "@value1": "core_trees",
-  "value0": Object {
+  "value0": {
     "_key": "test_tree",
-    "label": Object {
+    "label": {
       "en": "test",
       "fr": "test",
     },
-    "libraries": Array [
+    "libraries": [
       "test_lib",
     ],
     "system": false,
@@ -188,9 +188,9 @@ Object {
 exports[`TreeRepo deleteTree Should delete tree 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
 exports[`TreeRepo deleteTree Should delete tree 2`] = `
-Object {
+{
   "@value1": "core_trees",
-  "value0": Object {
+  "value0": {
     "_key": "test_tree",
   },
 }
@@ -219,7 +219,7 @@ exports[`TreeRepo getDefaultElement Should return the first element of a tree 1`
 `;
 
 exports[`TreeRepo getDefaultElement Should return the first element of a tree 2`] = `
-Object {
+{
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
   "value1": "core_trees/test_tree",
@@ -239,7 +239,7 @@ exports[`TreeRepo getElementAncestors Should return element ancestors 1`] = `
 `;
 
 exports[`TreeRepo getElementAncestors Should return element ancestors 2`] = `
-Object {
+{
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
   "value1": "core_nodes_test_tree/123458",
@@ -272,7 +272,7 @@ exports[`TreeRepo getElementChildren Should return element children 1`] = `
 `;
 
 exports[`TreeRepo getElementChildren Should return element children 2`] = `
-Object {
+{
   "@value1": "core_edge_tree_test_tree",
   "value0": "core_nodes_test_tree/123458",
   "value2": "libraryId",
@@ -291,7 +291,7 @@ exports[`TreeRepo getLinkedRecords Should return linked records 1`] = `
 `;
 
 exports[`TreeRepo getLinkedRecords Should return linked records 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
   "value0": "core_nodes_test_tree/123458",
   "value2": "test_attr",
@@ -307,7 +307,7 @@ exports[`TreeRepo getNodesByLibrary Return nodes linked to library 1`] = `
 `;
 
 exports[`TreeRepo getNodesByLibrary Return nodes linked to library 2`] = `
-Object {
+{
   "@value0": "core_nodes_test_tree",
   "value1": "libraryId",
   "value2": "mylib",
@@ -323,7 +323,7 @@ exports[`TreeRepo getNodesByRecord Return nodes linked to record 1`] = `
 `;
 
 exports[`TreeRepo getNodesByRecord Return nodes linked to record 2`] = `
-Object {
+{
   "@value0": "core_nodes_test_tree",
   "value1": "libraryId",
   "value2": "mylib",
@@ -342,7 +342,7 @@ exports[`TreeRepo getRecordByNodeId Return record linked to node 1`] = `
 `;
 
 exports[`TreeRepo getRecordByNodeId Return record linked to node 2`] = `
-Object {
+{
   "@value0": "core_nodes_test_tree",
   "value1": "123458",
   "value2": "libraryId",
@@ -379,7 +379,7 @@ exports[`TreeRepo getTreeContent Should return children count of elements 1`] = 
 `;
 
 exports[`TreeRepo getTreeContent Should return children count of elements 2`] = `
-Object {
+{
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
   "value1": "core_trees/test_tree",
@@ -411,7 +411,7 @@ exports[`TreeRepo getTreeContent Should return content of a tree starting from a
 `;
 
 exports[`TreeRepo getTreeContent Should return content of a tree starting from a given node 2`] = `
-Object {
+{
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
   "value1": "core_nodes_test_tree/223588185",
@@ -443,7 +443,7 @@ exports[`TreeRepo getTreeContent Should return full content of a tree 1`] = `
 `;
 
 exports[`TreeRepo getTreeContent Should return full content of a tree 2`] = `
-Object {
+{
   "@value2": "core_edge_tree_test_tree",
   "value0": 1000,
   "value1": "core_trees/test_tree",
@@ -461,7 +461,7 @@ exports[`TreeRepo isElementPresent Should check if an element is present in the 
 `;
 
 exports[`TreeRepo isElementPresent Should check if an element is present in the tree 2`] = `
-Object {
+{
   "@value0": "core_edge_tree_test_tree",
   "value1": "core_nodes_test_tree/13445",
 }
@@ -477,7 +477,7 @@ exports[`TreeRepo isRecordPresent Should check if a record is present in the tre
 `;
 
 exports[`TreeRepo isRecordPresent Should check if a record is present in the tree 2`] = `
-Object {
+{
   "@value0": "core_nodes_test_tree",
   "value1": "users",
   "value2": "223536900",
@@ -494,7 +494,7 @@ exports[`TreeRepo isRecordPresent Should check if an element is present in the t
 `;
 
 exports[`TreeRepo isRecordPresent Should check if an element is present in the tree 2`] = `
-Object {
+{
   "@value0": "core_nodes_test_tree",
   "value1": "users",
   "value2": "223536900",
@@ -504,15 +504,15 @@ Object {
 exports[`TreeRepo updateTree Should update a tree 1`] = `"UPDATE @value0 IN @@value1 OPTIONS { mergeObjects: false } RETURN NEW"`;
 
 exports[`TreeRepo updateTree Should update a tree 2`] = `
-Object {
+{
   "@value1": "core_trees",
-  "value0": Object {
+  "value0": {
     "_key": "test_tree",
-    "label": Object {
+    "label": {
       "en": "test",
       "fr": "test",
     },
-    "libraries": Array [
+    "libraries": [
       "test_lib",
     ],
     "system": false,

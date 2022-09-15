@@ -8,9 +8,9 @@ exports[`AttributeStandardRepo createValue Should create a new advanced value 1`
 `;
 
 exports[`AttributeStandardRepo createValue Should create a new advanced value 2`] = `
-Object {
+{
   "@value1": "core_values",
-  "value0": Object {
+  "value0": {
     "value": "test val",
   },
 }
@@ -24,15 +24,15 @@ exports[`AttributeStandardRepo createValue Should create a new advanced value 3`
 `;
 
 exports[`AttributeStandardRepo createValue Should create a new advanced value 4`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
-  "value0": Object {
+  "value0": {
     "_from": "test_lib/12345",
     "_to": "core_values/987654",
     "attribute": "test_attr",
     "created_at": 400999999,
     "created_by": "0",
-    "metadata": Object {
+    "metadata": {
       "my_attribute": "metadata value",
     },
     "modified_at": 400999999,
@@ -50,9 +50,9 @@ exports[`AttributeStandardRepo createValue Should save version on value 1`] = `
 `;
 
 exports[`AttributeStandardRepo createValue Should save version on value 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
-  "value0": Object {
+  "value0": {
     "_from": "test_lib/12345",
     "_to": "core_values/987654",
     "attribute": "test_attr",
@@ -60,7 +60,7 @@ Object {
     "created_by": "0",
     "modified_at": 400999999,
     "modified_by": "0",
-    "version": Object {
+    "version": {
       "my_tree": "1",
     },
   },
@@ -68,9 +68,9 @@ Object {
 `;
 
 exports[`AttributeStandardRepo filterQueryPart Should return advanced filter 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": "core_edge_values_links",
     "value1": "label",
     "value2": "MyLabel",
@@ -123,7 +123,7 @@ exports[`AttributeStandardRepo getValues Should return values for advanced attri
 `;
 
 exports[`AttributeStandardRepo getValues Should return values for advanced attribute 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
   "value2": "test_attr",
@@ -131,9 +131,9 @@ Object {
 `;
 
 exports[`AttributeStandardRepo sortQueryPart Should return advanced filter 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": "core_edge_values_links",
     "value1": "label",
     "value2": "ASC",
@@ -155,12 +155,12 @@ exports[`AttributeStandardRepo updateValue Should update an advanced value 1`] =
 `;
 
 exports[`AttributeStandardRepo updateValue Should update an advanced value 2`] = `
-Object {
+{
   "@value2": "core_values",
-  "value0": Object {
+  "value0": {
     "_key": "987654",
   },
-  "value1": Object {
+  "value1": {
     "value": "test val",
   },
 }
@@ -177,17 +177,17 @@ exports[`AttributeStandardRepo updateValue Should update an advanced value 3`] =
 `;
 
 exports[`AttributeStandardRepo updateValue Should update an advanced value 4`] = `
-Object {
+{
   "@value0": "core_edge_values_links",
   "value1": "test_lib/12345",
   "value2": "core_values/987654",
-  "value3": Object {
+  "value3": {
     "_from": "test_lib/12345",
     "_to": "core_values/987654",
     "attribute": "test_attr",
     "created_at": undefined,
     "created_by": undefined,
-    "metadata": Object {
+    "metadata": {
       "my_attribute": "metadata value",
     },
     "modified_at": 500999999,

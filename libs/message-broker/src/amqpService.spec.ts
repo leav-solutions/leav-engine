@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import {IAmqp} from './_types/amqp';
 import amqpService, {IAmqpService} from './amqpService';
+import {IAmqp} from './_types/amqp';
 
 type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};
 
@@ -32,17 +32,14 @@ jest.mock('amqplib', () => ({
 describe('amqp', () => {
     let amqpServ: IAmqpService;
 
-    beforeAll(async done => {
+    beforeAll(async () => {
         amqpServ = await amqpService({
             config: amqpMockConfig as IAmqp
         });
-
-        done();
     });
 
-    afterAll(async done => {
+    afterAll(async () => {
         await amqpServ.close();
-        done();
     });
 
     beforeEach(() => {

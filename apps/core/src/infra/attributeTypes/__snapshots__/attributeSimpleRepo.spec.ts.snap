@@ -14,12 +14,12 @@ exports[`AttributeIndexRepo createValue Should create a new index value 1`] = `
 `;
 
 exports[`AttributeIndexRepo createValue Should create a new index value 2`] = `
-Object {
+{
   "@value2": "test_lib",
-  "value0": Object {
+  "value0": {
     "_key": "12345",
   },
-  "value1": Object {
+  "value1": {
     "test_attr": "test val",
   },
 }
@@ -35,21 +35,21 @@ exports[`AttributeIndexRepo deleteValue Should delete a value 1`] = `
 `;
 
 exports[`AttributeIndexRepo deleteValue Should delete a value 2`] = `
-Object {
+{
   "@value2": "test_lib",
-  "value0": Object {
+  "value0": {
     "_key": "12345",
   },
-  "value1": Object {
+  "value1": {
     "test_attr": null,
   },
 }
 `;
 
 exports[`AttributeIndexRepo filterQueryPart Should return simple filter 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "value0": "_key",
     "value1": "123456",
   },
@@ -68,7 +68,7 @@ exports[`AttributeIndexRepo getValues Should return values for index attribute 1
 `;
 
 exports[`AttributeIndexRepo getValues Should return values for index attribute 2`] = `
-Object {
+{
   "@value0": "test_lib",
   "value1": "123456",
   "value2": "test_attr",
@@ -76,9 +76,9 @@ Object {
 `;
 
 exports[`AttributeIndexRepo sortQueryPart Should return simple sort 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "value0": "_key",
     "value1": "ASC",
   },

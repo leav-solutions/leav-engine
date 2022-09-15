@@ -9,21 +9,21 @@ exports[`RecordRepo deleteRecord Should delete a record and return deleted recor
 `;
 
 exports[`RecordRepo deleteRecord Should delete a record and return deleted record 2`] = `
-Object {
+{
   "@value0": "core_edge_values_links",
   "value1": "users/222435651",
 }
 `;
 
 exports[`RecordRepo find Should find records 1`] = `
-Object {
-  "ctx": Object {
+{
+  "ctx": {
     "requestId": "123465",
     "userId": "0",
   },
-  "query": Object {
+  "query": {
     "_source": [Function],
-    "bindVars": Object {
+    "bindVars": {
       "@value0": "test_lib",
       "value1": "test_lib",
     },
@@ -37,25 +37,25 @@ RETURN MERGE(r, {library: @value1})",
 `;
 
 exports[`RecordRepo find with filters Should filter records - simple 1`] = `
-Object {
-  "ctx": Object {
+{
+  "ctx": {
     "requestId": "123465",
     "userId": "0",
   },
-  "query": Object {
+  "query": {
     "_source": [Function],
-    "bindVars": Object {
+    "bindVars": {
       "@value0": "test_lib",
       "@value2": "test_lib",
-      "value1": Object {
-        "bindVars": Object {
+      "value1": {
+        "bindVars": {
           "filterField0": "test_attr",
           "filterValue0": "test",
         },
         "query": "FILTER r.@filterField0 == @filterValue0",
       },
-      "value3": Object {
-        "bindVars": Object {
+      "value3": {
+        "bindVars": {
           "filterField1": "test_attr2",
           "filterValue1": "test2",
         },
