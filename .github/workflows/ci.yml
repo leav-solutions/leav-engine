@@ -16,7 +16,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 18.x
           cache: 'yarn'
       - run: yarn install
       - run: yarn lint
@@ -29,7 +29,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 18.x
           cache: 'yarn'
       - run: yarn install
       - run: yarn tscheck
@@ -42,7 +42,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 18.x
           cache: 'yarn'
       - run: yarn install
       - run: yarn test --all
@@ -72,7 +72,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 18.x
           cache: 'yarn'
       - name: Configure sysctl limits for ElasticSearch
         run: |
@@ -125,7 +125,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 18.x
           cache: 'yarn'
       - name: Configure sysctl limits for ElasticSearch
         run: |
@@ -166,7 +166,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 18.x
           cache: 'yarn'
       - run: yarn install
       - name: Run e2e tests

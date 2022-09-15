@@ -27,7 +27,7 @@ describe('Values', () => {
     let treeElemId: string;
     let nodeTreeElem: string;
 
-    beforeAll(async done => {
+    beforeAll(async () => {
         // Create attributes
         await makeGraphQlCall(`mutation {
                 saveAttribute(
@@ -211,8 +211,6 @@ describe('Values', () => {
 
         // Add element to tree
         nodeTreeElem = await gqlAddElemToTree(treeName, {id: treeElemId, library: treeLibName});
-
-        done();
     });
 
     test('Save value tree', async () => {

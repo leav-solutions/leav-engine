@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {amqpService, IAmqpService} from '@leav/message-broker';
 import fs from 'fs';
 import automate from '../../automate';
 import {getConfig} from '../../config';
-import {IAmqpService, amqpService} from '@leav/message-broker';
 import * as scan from '../../scan';
 import {IConfig} from '../../_types/config';
 import {FilesystemContent} from '../../_types/filesystem';
@@ -44,7 +44,7 @@ beforeAll(async () => {
     }
 });
 
-afterAll(async done => {
+afterAll(async () => {
     try {
         await amqp.close();
 
@@ -52,8 +52,6 @@ afterAll(async done => {
         if (fs.existsSync(cfg.filesystem.absolutePath)) {
             fs.rmdirSync(cfg.filesystem.absolutePath, {recursive: true});
         }
-
-        done();
     } catch (e) {
         console.error(e);
     }

@@ -97,5 +97,6 @@ export async function setup() {
         await server.init();
     } catch (e) {
         console.error(e);
+        console.error(e.stack);
     }
 }
