@@ -7,7 +7,7 @@ import {createHash} from 'crypto';
 import {createReadStream, Stats} from 'fs';
 import {join} from 'path';
 import {getConfig} from '../';
-import {getInode, initRedis} from '../redis/redis';
+import {getInode, setData} from '../redis/redis';
 import {IAmqpParams, IParams, IParamsExtends, IWatcherParams} from '../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
 
@@ -18,13 +18,17 @@ const pathsTmp: {[i: string]: any} = {};
 const SEPARATOR_CHARACTERS = ', ';
 const getSplittedListFiles = (list: string): string[] => list.split(SEPARATOR_CHARACTERS).filter(p => p);
 
+// Temporary array of the infos to set in redis at init
+const inits: Array<{path: string; inode: number}> = [];
+let initsCount = 0;
+
 export const start = async (
     rootPathProps: string,
     rootKey: string,
     watchParams?: IWatcherParams,
     amqpParams?: IAmqpParams
 ) => {
-    const verbose = (watchParams && watchParams.verbose) || false;
+    const verbose = watchParams?.verbose ?? false;
     let ready = false;
     const watcherConfig = (watchParams && watchParams.awaitWriteFinish) || false;
     const delay = (watchParams && watchParams.delay) || 100;
@@ -55,6 +59,7 @@ export const start = async (
     );
 
     watcher.on('ready', () => {
+        console.info(`Initialized ${initsCount} files. Waiting for events...`);
         ready = true;
     });
 
@@ -72,9 +77,9 @@ export const checkEvent = async (event: string, path: string, params: IParamsExt
     if (params.ready) {
         const inode = await manageInode(path, stats);
         const isDirectory = manageIsDirectory(stats);
-        await checkMove(event, path, isDirectory, inode, params);
+        await _checkMove(event, path, isDirectory, inode, params);
     } else if (isAllowed) {
-        handleInit(path, stats?.ino, params.verbose);
+        _handleInit(path, stats?.ino, params.verbose);
     }
 };
 
@@ -95,7 +100,7 @@ export const manageIsDirectory = (stats?: Stats): boolean => {
     return (!!stats && stats.isDirectory()) || false;
 };
 
-const checkMove = async (event: string, path: string, isDirectory: boolean, inode: any, params: IParamsExtends) => {
+const _checkMove = async (event: string, path: string, isDirectory: boolean, inode: any, params: IParamsExtends) => {
     if (inodesTmp[inode] && path !== inodesTmp[inode]) {
         const pathBefore = inodesTmp[inode];
         const pathAfter = path;
@@ -231,15 +236,13 @@ export const handleEvent = async (
 // Flag to check if already sending inits to redis
 let working = false;
 
-// Temporary array of the infos to set in redis at init
-const inits: Array<{path: string; inode: number}> = [];
-
-const handleInit = async (path: string, inode: number, verbose: boolean) => {
+const _handleInit = async (path: string, inode: number, verbose: IWatcherParams['verbose']) => {
     inits.push({path, inode}); // add init infos to queue
-    manageRedisInit(verbose);
+    initsCount++;
+    _manageRedisInit(verbose);
 };
 
-const manageRedisInit = async (verbose: boolean) => {
+const _manageRedisInit = async (verbose: IWatcherParams['verbose']) => {
     // if not already working, shit
     if (!working) {
         working = true;
@@ -249,9 +252,9 @@ const manageRedisInit = async (verbose: boolean) => {
             const init = inits.shift();
 
             if (init) {
-                await initRedis(init.path, init.inode); // set data in redis and wait until finish
+                await setData(init.path, init.inode); // set data in redis and wait until finish
 
-                if (verbose) {
+                if (verbose === 'very') {
                     console.info('init', init.path);
                 }
             }
