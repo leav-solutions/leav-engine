@@ -8,12 +8,12 @@ import {useApplicationContext} from 'context/ApplicationContext';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setNotificationBase} from 'redux/notifications';
+import {setInfoBase} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../utils';
-import {IBaseNotification, NotificationType, WorkspacePanels} from '../../_types/types';
+import {IBaseInfo, InfoType, WorkspacePanels} from '../../_types/types';
 import NavigationView from './NavigationView';
 
 interface INavigationProps {
@@ -51,15 +51,15 @@ function Navigation({tree}: INavigationProps): JSX.Element {
                 permissions: currentTree.permissions
             });
 
-            const baseNotification: IBaseNotification = {
-                content: t('notification.active-tree', {
+            const baseInfo: IBaseInfo = {
+                content: t('info.active-tree', {
                     tree: treeName,
                     appLabel: localizedTranslation(currentApp.label, lang)
                 }),
-                type: NotificationType.basic
+                type: InfoType.basic
             };
 
-            dispatch(setNotificationBase(baseNotification));
+            dispatch(setInfoBase(baseInfo));
         }
     }, [data, loading, lang, updateActiveTree, t, dispatch, activePanel, activeTree, tree, hasAccess]);
 

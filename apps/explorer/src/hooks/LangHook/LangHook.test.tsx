@@ -25,7 +25,11 @@ describe('LangHook', () => {
         };
 
         await act(async () => {
-            render(<ComponentUsingLang />);
+            render(
+                <MockedProviderWithFragments>
+                    <ComponentUsingLang />
+                </MockedProviderWithFragments>
+            );
         });
 
         expect(givenLang).toEqual({

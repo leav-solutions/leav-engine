@@ -295,7 +295,7 @@
             "detach-selected": "Détacher la sélection",
             "add-selected": "Ajouter la sélection"
         },
-        "notifications": {
+        "infos": {
             "success-add": "{{nb}} elements had been add",
             "error-add": "An error occurs while add elements {{elements}}: {{errorMessage}}",
             "warning-add-no-selection": "Aucun élément sélectionner a ajouté",
@@ -306,7 +306,7 @@
         },
         "access_denied": "You cannot access this element"
     },
-    "notification": {
+    "info": {
         "base-message": "Welcome to {{appLabel}}",
         "active-lib": "You are currently on the library {{lib}}",
         "active-tree": "You are currently on the tree {{tree}}"

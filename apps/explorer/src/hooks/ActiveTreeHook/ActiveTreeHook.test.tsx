@@ -5,6 +5,7 @@ import React from 'react';
 import {act, render} from '_tests/testUtils';
 import {IActiveTree} from '../../graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import {useActiveTree} from './ActiveTreeHook';
+import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 
 describe('ActiveTreeHook', () => {
     const mockActiveTree: IActiveTree = {
@@ -20,7 +21,7 @@ describe('ActiveTreeHook', () => {
     test('should get undefined if no activeTree set', async () => {
         let givenActiveTree;
 
-        const ComponentUsingNotification = () => {
+        const ComponentUsingInfo = () => {
             const [activeTree] = useActiveTree();
 
             givenActiveTree = activeTree;
@@ -28,7 +29,11 @@ describe('ActiveTreeHook', () => {
         };
 
         await act(async () => {
-            render(<ComponentUsingNotification />);
+            render(
+                <MockedProviderWithFragments>
+                    <ComponentUsingInfo />
+                </MockedProviderWithFragments>
+            );
         });
 
         expect(givenActiveTree).toEqual(undefined);
@@ -37,7 +42,7 @@ describe('ActiveTreeHook', () => {
     test('should get activeTree', async () => {
         let givenActiveTree: any;
 
-        const ComponentUsingNotification = () => {
+        const ComponentUsingInfo = () => {
             const [activeTree, updateActiveTree] = useActiveTree();
 
             updateActiveTree(mockActiveTree);
@@ -47,7 +52,11 @@ describe('ActiveTreeHook', () => {
         };
 
         await act(async () => {
-            render(<ComponentUsingNotification />);
+            render(
+                <MockedProviderWithFragments>
+                    <ComponentUsingInfo />
+                </MockedProviderWithFragments>
+            );
         });
 
         expect(givenActiveTree).toEqual(mockActiveTree);

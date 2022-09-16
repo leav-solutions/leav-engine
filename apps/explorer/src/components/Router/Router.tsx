@@ -8,17 +8,19 @@ import React, {useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import themingVar from 'themingVar';
 import UserPanel from '../UserPanel';
+import NotifsPanel from '../NotifsPanel';
 import Routes from './Routes';
 
 const {Header, Content, Sider} = Layout;
 
 function Router(): JSX.Element {
     const [userPanelVisible, setUserPanelVisible] = useState<boolean>(false);
+    const [notifsPanelVisible, setNotifsPanelVisible] = useState<boolean>(false);
 
-    const toggleUserPanelVisible = () => {
-        setUserPanelVisible(visible => !visible);
-    };
+    const toggleUserPanelVisible = () => setUserPanelVisible(visible => !visible);
+    const toggleNotifsPanelVisible = () => setNotifsPanelVisible(visible => !visible);
 
+    const hideNotifsPanel = () => setNotifsPanelVisible(false);
     const hideUserPanel = () => setUserPanelVisible(false);
 
     return (
@@ -39,12 +41,15 @@ function Router(): JSX.Element {
                         <Header style={{height: themingVar['@leav-header-height'], padding: 0}}>
                             <TopBar
                                 userPanelVisible={userPanelVisible}
+                                notifsPanelVisible={notifsPanelVisible}
                                 toggleUserPanelVisible={toggleUserPanelVisible}
+                                toggleNotifsPanelVisible={toggleNotifsPanelVisible}
                             />
                         </Header>
                         <Layout style={{overflow: 'hidden', position: 'relative'}}>
                             <Content style={{background: themingVar['@default-bg'], overflow: 'hidden'}}>
                                 <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
+                                <NotifsPanel notifsPanelVisible={notifsPanelVisible} hideNotifsPanel={hideNotifsPanel} />
                                 <Routes />
                             </Content>
                         </Layout>

@@ -4,7 +4,7 @@
 import {getLibraryDetailExtendedQuery} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
 import React from 'react';
 import {RootState} from 'redux/store';
-import {NotificationType, WorkspacePanels} from '_types/types';
+import {InfoType, WorkspacePanels} from '_types/types';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
 import {
     mockGetLibraryDetailExtendedQuery,
@@ -32,10 +32,10 @@ jest.mock('hooks/ActiveLibHook/ActiveLibHook', () => ({
 
 describe('LibraryHome', () => {
     const mockStoreState: Partial<RootState> = {
-        notification: {
+        info: {
             base: {
-                content: 'base notification',
-                type: NotificationType.basic
+                content: 'base info',
+                type: InfoType.basic
             },
             stack: []
         },

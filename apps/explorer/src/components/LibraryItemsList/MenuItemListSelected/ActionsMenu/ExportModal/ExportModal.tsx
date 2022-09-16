@@ -10,7 +10,7 @@ import {getRequestFromFilters} from 'components/LibraryItemsList/FiltersPanel/ge
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addNotification} from 'redux/notifications';
+import {addInfo} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
@@ -24,11 +24,11 @@ import {
     RecordFilterOperator
 } from '../../../../../_gqlTypes/globalTypes';
 import {
-    INotification,
+    IInfo,
     ISelectedAttribute,
-    NotificationChannel,
-    NotificationPriority,
-    NotificationType,
+    InfoChannel,
+    InfoPriority,
+    InfoType,
     SharedStateSelectionType
 } from '../../../../../_types/types';
 import ErrorDisplay from '../../../../shared/ErrorDisplay';
@@ -75,14 +75,14 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
             setFilepath(data?.export);
         },
         onError: error => {
-            const notification: INotification = {
-                type: NotificationType.error,
-                priority: NotificationPriority.high,
-                channel: NotificationChannel.serverError,
+            const info: IInfo = {
+                type: InfoType.error,
+                priority: InfoPriority.high,
+                channel: InfoChannel.serverError,
                 content: `${t('error.error_occurred')}: ${error.message}`
             };
 
-            dispatch(addNotification(notification));
+            dispatch(addInfo(info));
 
             setCurrentStep(ExportSteps.DONE);
         }

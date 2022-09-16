@@ -9,10 +9,10 @@ import {
 } from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     IAttribute,
-    IBaseNotification,
+    IBaseInfo,
     IField,
     IItem,
-    INotification,
+    IInfo,
     IQueryFilter,
     ISharedStateSelectionSearch,
     SharedStateSelection,
@@ -75,7 +75,7 @@ export interface INavigationState {
     path: INavigationElement[];
 }
 
-export interface INotificationsState {
-    base?: IBaseNotification;
-    stack: INotification[];
+export interface IInfosState {
+    base?: IBaseInfo;
+    stack: IInfo[];
 }

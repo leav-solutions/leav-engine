@@ -13258,6 +13258,7 @@ __metadata:
     exceljs: 4.3.0
     graphql: 15.0.0
     graphql-tag: 2.12.6
+    graphql-ws: 5.10.2
     gulp: 4.0.2
     gulp-csso: 4.0.1
     gulp-debug: 4.0.0
@@ -14963,6 +14964,15 @@ __metadata:
   peerDependencies:
     graphql: ">=0.11 <=16"
   checksum: 6a5ead12ecfc6a448ac2828d981349288591c82a6f8ae0552a866c05fc17eb498325522c7d20c9169e9263799f78b085ecfda2dffb84a7b4ec2fc85c10ce1a0d
+  languageName: node
+  linkType: hard
+
+"graphql-ws@npm:5.10.2":
+  version: 5.10.2
+  resolution: "graphql-ws@npm:5.10.2"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: 7a2cdcb0e960da37fcc56eee5dffef5318eb0ec8bc426441f79557bb7d69a96b49c51ec07cb9255e5ee0770a727ce7588c9add47a1812577b254b977282c1e5b
   languageName: node
   linkType: hard
 

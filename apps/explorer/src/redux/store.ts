@@ -6,7 +6,7 @@ import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import activePanelReducer from './activePanel';
 import displayReducer from './display';
 import navigationReducer from './navigation';
-import notificationsReducer from './notifications';
+import infosReducer from './infos';
 import selectionReducer from './selection';
 
 const store = configureStore({
@@ -14,7 +14,7 @@ const store = configureStore({
         display: displayReducer,
         selection: selectionReducer,
         navigation: navigationReducer,
-        notification: notificationsReducer,
+        info: infosReducer,
         activePanel: activePanelReducer
     }
 });
