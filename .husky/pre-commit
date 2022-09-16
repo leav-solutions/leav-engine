@@ -13,6 +13,13 @@ if [ -f $NVM_DIR ]; then
     export PATH="$NVM_DIR/versions/node/$v/bin:$PATH"
 fi
 
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$branch" = "master" ]; then
+  echo "Cannot commit to master"
+  exit 1
+fi
+
 export SKIP_PREFLIGHT_CHECK=true
 export CI=true
 
