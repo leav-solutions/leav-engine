@@ -15,6 +15,13 @@ const _slugifyPath = (path: string): string => {
         .replace(/_{2,}/g, '_'); // replace all __, ___, ... with a single _
 };
 
+const _getRedisKey = (path: string): string => {
+    const prefix = 'automate_scan';
+    const key = `${prefix}:${_slugifyPath(path)}`;
+
+    return key;
+};
+
 export const createClient = (host: string, port: number) => {
     client = new Tedis({
         host,
@@ -31,28 +38,28 @@ export const createClient = (host: string, port: number) => {
     return client;
 };
 
-export const initRedis = async (path: string, inode: number) => {
-    return client.set(_slugifyPath(path), inode.toString());
+export const setData = async (path: string, inode: number) => {
+    return client.set(_getRedisKey(path), inode.toString());
 };
 
 export const updateData = async (path: string, inode: number, oldPath?: string) => {
     if (oldPath) {
-        client.del(_slugifyPath(oldPath));
+        client.del(_getRedisKey(oldPath));
     }
 
-    return client.set(_slugifyPath(path), inode.toString());
+    return client.set(_getRedisKey(path), inode.toString());
 };
 
 export const deleteData = (path: string) => {
-    return client.del(_slugifyPath(path));
+    return client.del(_getRedisKey(path));
 };
 
 export const getInode = async (path: string) => {
-    const value = await client.get(_slugifyPath(path));
+    const value = await client.get(_getRedisKey(path));
     if (value) {
         return parseInt(value.toString(), 10);
     } else {
-        console.error(_slugifyPath(path) + ' not found in redis');
+        console.error(_getRedisKey(path) + ' not found in redis');
         return 0;
     }
 };

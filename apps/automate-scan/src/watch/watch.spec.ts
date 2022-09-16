@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {sendToRabbitMQ} from '../rabbitmq/rabbitmq';
-import {initRedis} from '../redis/redis';
-import {IParamsExtends} from './../types';
-import {checkEvent} from './watch';
-import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
 import {getConfig} from '../';
+import {sendToRabbitMQ} from '../rabbitmq/rabbitmq';
+import {setData} from '../redis/redis';
+import {IParamsExtends} from './../types';
+import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
+import {checkEvent} from './watch';
 
 const file = 'test';
 const inode = 123456;
@@ -32,7 +32,7 @@ jest.mock('fs', () => ({
 }));
 
 jest.mock('../redis/redis', () => ({
-    initRedis: jest.fn(),
+    setData: jest.fn(),
     updateData: jest.fn(),
     getInode: jest.fn(() => 123456)
 }));
@@ -73,7 +73,7 @@ describe('test checkEvent', () => {
 
         await checkEvent('add', file, params, {...stats, isDirectory: jest.fn(() => false)});
 
-        expect(initRedis).toBeCalledWith(file, inode);
+        expect(setData).toBeCalledWith(file, inode);
         expect(sendToRabbitMQ).not.toBeCalled();
     });
 
@@ -88,7 +88,7 @@ describe('test checkEvent', () => {
 
         await checkEvent('addDir', file, params, {...stats, isDirectory: jest.fn(() => true)});
 
-        expect(initRedis).toBeCalledWith(file, inode);
+        expect(setData).toBeCalledWith(file, inode);
         expect(sendToRabbitMQ).not.toBeCalled();
     });
 

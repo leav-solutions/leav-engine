@@ -15,7 +15,7 @@ export interface IWatcherParams {
         pollInterval: 100;
     };
     delay?: number;
-    verbose?: boolean;
+    verbose?: boolean | 'very';
 }
 
 export interface IConfig {
@@ -44,13 +44,13 @@ export interface IConfig {
             pollInterval: number;
         };
     };
-    verbose?: boolean;
+    verbose?: IWatcherParams['verbose'];
 }
 
 export interface IParams {
     rootPath: string;
     rootKey: string;
-    verbose: boolean;
+    verbose: IWatcherParams['verbose'];
     amqp?: IAmqpParams;
 }
 
