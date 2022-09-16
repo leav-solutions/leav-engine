@@ -51,6 +51,53 @@ export enum LibraryBehavior {
     standard = 'standard'
 }
 
+export enum PermissionTypes {
+    admin = 'admin',
+    application = 'application',
+    attribute = 'attribute',
+    library = 'library',
+    record = 'record',
+    record_attribute = 'record_attribute',
+    tree = 'tree',
+    tree_library = 'tree_library',
+    tree_node = 'tree_node'
+}
+
+export enum PermissionsActions {
+    access_application = 'access_application',
+    access_attribute = 'access_attribute',
+    access_library = 'access_library',
+    access_record = 'access_record',
+    access_tree = 'access_tree',
+    admin_access_applications = 'admin_access_applications',
+    admin_access_attributes = 'admin_access_attributes',
+    admin_access_libraries = 'admin_access_libraries',
+    admin_access_permissions = 'admin_access_permissions',
+    admin_access_trees = 'admin_access_trees',
+    admin_application = 'admin_application',
+    admin_create_application = 'admin_create_application',
+    admin_create_attribute = 'admin_create_attribute',
+    admin_create_library = 'admin_create_library',
+    admin_create_tree = 'admin_create_tree',
+    admin_delete_application = 'admin_delete_application',
+    admin_delete_attribute = 'admin_delete_attribute',
+    admin_delete_library = 'admin_delete_library',
+    admin_delete_tree = 'admin_delete_tree',
+    admin_edit_application = 'admin_edit_application',
+    admin_edit_attribute = 'admin_edit_attribute',
+    admin_edit_library = 'admin_edit_library',
+    admin_edit_permission = 'admin_edit_permission',
+    admin_edit_tree = 'admin_edit_tree',
+    admin_library = 'admin_library',
+    admin_manage_global_preferences = 'admin_manage_global_preferences',
+    create_record = 'create_record',
+    delete_record = 'delete_record',
+    detach = 'detach',
+    edit_children = 'edit_children',
+    edit_record = 'edit_record',
+    edit_value = 'edit_value'
+}
+
 export enum RecordFilterCondition {
     BEGIN_WITH = 'BEGIN_WITH',
     BETWEEN = 'BETWEEN',
@@ -108,6 +155,18 @@ export enum ViewTypes {
 export interface Pagination {
     limit: number;
     offset: number;
+}
+
+/**
+ * Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
+ * attributeId is only required for attribute permission
+ * libraryId and recordId are mandatory for tree node permission
+ */
+export interface PermissionTarget {
+    attributeId?: string | null;
+    recordId?: string | null;
+    libraryId?: string | null;
+    nodeId?: string | null;
 }
 
 export interface RecordFilterInput {

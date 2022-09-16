@@ -3,12 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {getLibraryPermissionsQuery} from 'graphQL/queries/libraries/getLibraryPermissionsQuery';
-import {
-    getRecordPermissionsQuery,
-    IGetRecordPermissions,
-    IGetRecordPermissionsVariables
-} from 'graphQL/queries/records/getRecordPermissions';
+import {isAllowedQuery} from 'graphQL/queries/permissions/isAllowedQuery';
 import {GET_LIBRARY_PERMISSIONS, GET_LIBRARY_PERMISSIONSVariables} from '_gqlTypes/GET_LIBRARY_PERMISSIONS';
+import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
+import {IS_ALLOWED, IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
 import {RecordIdentity_whoAmI_library_gqlNames} from '_gqlTypes/RecordIdentity';
 
 export interface IUseCanEditRecordHook {
@@ -25,11 +23,24 @@ export const useCanEditRecord = (
 
     // Query runs if record is specified (= record edition)
     const {loading: recordPermissionsLoading, error: recordPermissionsError, data: recordPermissionsData} = useQuery<
-        IGetRecordPermissions,
-        IGetRecordPermissionsVariables
-    >(getRecordPermissionsQuery(library.gqlNames?.query), {
-        variables: {recordId},
-        skip: isCreationMode
+        IS_ALLOWED,
+        IS_ALLOWEDVariables
+    >(isAllowedQuery, {
+        variables: {
+            type: PermissionTypes.record,
+            applyTo: library.id,
+            target: {
+                recordId
+            },
+            actions: [
+                PermissionsActions.access_record,
+                PermissionsActions.create_record,
+                PermissionsActions.edit_record,
+                PermissionsActions.delete_record
+            ]
+        },
+        skip: isCreationMode,
+        fetchPolicy: 'cache-and-network'
     });
 
     // Query runs if record is not specified (= record creation)
@@ -38,7 +49,8 @@ export const useCanEditRecord = (
         GET_LIBRARY_PERMISSIONSVariables
     >(getLibraryPermissionsQuery, {
         variables: {libraryId: library.id},
-        skip: !isCreationMode
+        skip: !isCreationMode,
+        fetchPolicy: 'cache-and-network'
     });
 
     if (recordPermissionsError || libraryPermissionsError) {
@@ -46,15 +58,21 @@ export const useCanEditRecord = (
     }
 
     const libraryPermissionsElem = libraryPermissionsData?.libraries.list[0];
-    const recordPermissionsElem = recordPermissionsData?.[library.gqlNames?.query]?.list[0];
+    const recordPermissionsElem: {[key in PermissionsActions]?: boolean} = recordPermissionsData?.isAllowed.reduce(
+        (recordPerms, perm) => {
+            recordPerms[perm.name] = perm.allowed;
+            return recordPerms;
+        },
+        {}
+    );
 
     return {
         loading: recordPermissionsLoading || libraryPermissionsLoading,
         canEdit: isCreationMode
             ? libraryPermissionsElem?.permissions.create_record
-            : recordPermissionsElem?.permissions.access_record,
+            : recordPermissionsElem?.access_record,
         isReadOnly: isCreationMode
             ? !libraryPermissionsElem?.permissions.create_record
-            : !recordPermissionsElem?.permissions.edit_record
+            : !recordPermissionsElem?.edit_record
     };
 };
