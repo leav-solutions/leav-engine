@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
+import {ILibrary} from '_types/library';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {LibraryPermissionsActions, PermissionTypes} from '../../_types/permissions';
@@ -26,39 +27,34 @@ export interface IRecordPermissionDomain {
 
 interface IDeps {
     'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.infra.library'?: ILibraryRepo;
     'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.value'?: IValueRepo;
 }
 
 export default function (deps: IDeps = {}): IRecordPermissionDomain {
     const {
         'core.domain.permission.library': libraryPermissionDomain = null,
-        'core.infra.library': libraryRepo = null,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper = null,
         'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
         'core.domain.attribute': attributeDomain = null,
+        'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
         'core.infra.value': valueRepo = null
     } = deps;
 
     return {
         async getRecordPermission({action, userId, library, recordId, ctx}): Promise<boolean> {
-            const libs = await libraryRepo.getLibraries({
-                params: {filters: {id: library}, strictFilters: true},
-                ctx
-            });
+            const libProps = await getCoreEntityById<ILibrary>('library', library, ctx);
 
-            if (!libs.list.length) {
+            if (!libProps) {
                 throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
             }
 
-            const lib = libs.list[0];
-
-            if (typeof lib.permissions_conf === 'undefined') {
+            if (typeof libProps.permissions_conf === 'undefined') {
                 // Check if action is present in library permissions
                 const isLibAction =
                     Object.values(LibraryPermissionsActions).indexOf(
@@ -76,7 +72,7 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
             }
 
             const treesAttrValues = await Promise.all(
-                lib.permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
+                libProps.permissions_conf.permissionTreeAttributes.map(async permTreeAttr => {
                     const permTreeAttrProps = await attributeDomain.getAttributeProperties({id: permTreeAttr, ctx});
                     return valueRepo.getValues({
                         library,
@@ -89,7 +85,7 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
 
             const valuesByAttr: IGetTreeBasedPermissionParams['treeValues'] = treesAttrValues.reduce(
                 (allVal, treeVal, i) => {
-                    allVal[lib.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
+                    allVal[libProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
 
                     return allVal;
                 },
@@ -103,7 +99,7 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
                     userId,
                     applyTo: library,
                     treeValues: valuesByAttr,
-                    permissions_conf: lib.permissions_conf,
+                    permissions_conf: libProps.permissions_conf,
                     getDefaultPermission: params =>
                         libraryPermissionDomain.getLibraryPermission({
                             action: params.action,

@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {RecordPermissionsActions} from '../../_types/permissions';
@@ -79,15 +78,13 @@ describe('recordPermissionDomain', () => {
             })
         };
 
-        test('Return tree permission', async () => {
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibSimplePerms]})
-            };
+        test('Return record permission', async () => {
+            const mockGetCoreEntityById = global.__mockPromise(mockLibSimplePerms);
 
             const recordPermDomain = recordPermissionDomain({
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
-                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });
@@ -106,14 +103,12 @@ describe('recordPermissionDomain', () => {
         });
 
         test('Return default permission if no config', async () => {
-            const mockLibRepo: Mockify<ILibraryRepo> = {
-                getLibraries: global.__mockPromise({totalCount: 1, list: [{system: false}]})
-            };
+            const mockGetCoreEntityById = global.__mockPromise({system: false});
 
             const recordPermDomain = recordPermissionDomain({
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
-                'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
             });

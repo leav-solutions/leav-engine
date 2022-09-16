@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
 import {getLibraryPermissionsQuery} from 'graphQL/queries/libraries/getLibraryPermissionsQuery';
-import {getRecordPermissionsQuery} from 'graphQL/queries/records/getRecordPermissions';
-import React from 'react';
+import {isAllowedQuery} from 'graphQL/queries/permissions/isAllowedQuery';
+import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {useCanEditRecord} from './useCanEditRecord';
 
-describe('ActiveTreeHook', () => {
+describe('useCanEditRecord', () => {
     const mockLib = {id: 'my_lib', gqlNames: {type: 'myLib', query: 'MyLib'}};
     const mockRecordId = '123456';
 
@@ -16,24 +16,29 @@ describe('ActiveTreeHook', () => {
         const mocks: MockedResponse[] = [
             {
                 request: {
-                    query: getRecordPermissionsQuery(mockLib.gqlNames.query),
-                    variables: {recordId: mockRecordId}
+                    query: isAllowedQuery,
+                    variables: {
+                        type: PermissionTypes.record,
+                        applyTo: mockLib.id,
+                        target: {
+                            recordId: mockRecordId
+                        },
+                        actions: [
+                            PermissionsActions.access_record,
+                            PermissionsActions.create_record,
+                            PermissionsActions.edit_record,
+                            PermissionsActions.delete_record
+                        ]
+                    }
                 },
                 result: {
                     data: {
-                        [mockLib.gqlNames.query]: {
-                            list: [
-                                {
-                                    permissions: {
-                                        access_library: true,
-                                        access_record: true,
-                                        create_record: true,
-                                        edit_record: true,
-                                        delete_record: true
-                                    }
-                                }
-                            ]
-                        }
+                        isAllowed: [
+                            {name: 'access_record', allowed: true},
+                            {name: 'create_record', allowed: true},
+                            {name: 'edit_record', allowed: true},
+                            {name: 'delete_record', allowed: true}
+                        ]
                     }
                 }
             }
@@ -58,23 +63,29 @@ describe('ActiveTreeHook', () => {
         const mocks: MockedResponse[] = [
             {
                 request: {
-                    query: getRecordPermissionsQuery(mockLib.gqlNames.query),
-                    variables: {recordId: mockRecordId}
+                    query: isAllowedQuery,
+                    variables: {
+                        type: PermissionTypes.record,
+                        applyTo: mockLib.id,
+                        target: {
+                            recordId: mockRecordId
+                        },
+                        actions: [
+                            PermissionsActions.access_record,
+                            PermissionsActions.create_record,
+                            PermissionsActions.edit_record,
+                            PermissionsActions.delete_record
+                        ]
+                    }
                 },
                 result: {
                     data: {
-                        [mockLib.gqlNames.query]: {
-                            list: [
-                                {
-                                    permissions: {
-                                        access_record: false,
-                                        create_record: true,
-                                        edit_record: false,
-                                        delete_record: true
-                                    }
-                                }
-                            ]
-                        }
+                        isAllowed: [
+                            {name: 'access_record', allowed: false},
+                            {name: 'create_record', allowed: true},
+                            {name: 'edit_record', allowed: false},
+                            {name: 'delete_record', allowed: true}
+                        ]
                     }
                 }
             }

@@ -51,7 +51,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
         }
 
         if (
-            (networkError as ServerError).statusCode === 401 ||
+            (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? []).some(err => err.extensions.code === 'UNAUTHENTICATED')
         ) {
             window.location.replace(`${process.env.REACT_APP_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
