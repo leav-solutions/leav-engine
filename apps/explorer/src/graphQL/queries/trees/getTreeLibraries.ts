@@ -14,6 +14,11 @@ export const getTreeLibraries = gql`
                         id
                         label
                     }
+                    settings {
+                        allowMultiplePositions
+                        allowedChildren
+                        allowedAtRoot
+                    }
                 }
             }
         }

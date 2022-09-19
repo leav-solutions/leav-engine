@@ -87,7 +87,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     }
 
     if (!data?.libraries?.list.length) {
-        return <ErrorDisplay message={t('lib_detail.not_found')} />;
+        return <ErrorDisplay message={t('lib_detail.not_found', {libraryId: library})} />;
     }
 
     if (!hasAccess) {

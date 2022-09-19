@@ -4,6 +4,7 @@
 import {MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {treeNavigationPageSize} from 'constants/constants';
+import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
@@ -45,6 +46,20 @@ describe('Navigation', () => {
         }
     };
 
+    const mockTreeLibrary = {
+        __typename: 'TreeLibrary',
+        library: {
+            id: 'my_lib',
+            label: {fr: 'My Lib', en: 'My lib'},
+            __typename: 'Library'
+        },
+        settings: {
+            allowMultiplePositions: false,
+            allowedAtRoot: true,
+            allowedChildren: ['my_lib']
+        }
+    };
+
     const getTreeListMock = {
         request: {
             query: getTreeListQuery,
@@ -56,22 +71,38 @@ describe('Navigation', () => {
             data: {
                 trees: {
                     __typename: 'TreesList',
+                    totalCount: 1,
                     list: [
                         {
                             __typename: 'Tree',
                             id: 'my_tree',
                             label: {fr: 'My Tree Label', en: 'My Tree Label'},
-                            libraries: [
-                                {
-                                    __typename: 'TreeLibrary',
-                                    library: {
-                                        id: 'my_lib',
-                                        label: {fr: 'My Lib', en: 'My lib'},
-                                        __typename: 'Library'
-                                    }
-                                }
-                            ],
+                            libraries: [mockTreeLibrary],
                             permissions: mockTreeNodePermissions
+                        }
+                    ]
+                }
+            }
+        }
+    };
+
+    const getTreeLibrariesMock = {
+        request: {
+            query: getTreeLibraries,
+            variables: {
+                treeId: 'my_tree'
+            }
+        },
+        result: {
+            data: {
+                trees: {
+                    __typename: 'TreesList',
+                    totalCount: 1,
+                    list: [
+                        {
+                            __typename: 'Tree',
+                            id: 'my_tree',
+                            libraries: [mockTreeLibrary]
                         }
                     ]
                 }
@@ -189,6 +220,7 @@ describe('Navigation', () => {
 
     const mocks: MockedResponse[] = [
         getTreeListMock,
+        getTreeLibrariesMock,
         // Call on first level
         {
             request: {
@@ -343,7 +375,17 @@ describe('Navigation', () => {
                         path: [
                             {
                                 id: '12345',
-                                record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
+                                record: {
+                                    id: '1',
+                                    whoAmI: {
+                                        ...mockRecordWithTypenames,
+                                        label: 'first-child',
+                                        library: {
+                                            ...mockRecordWithTypenames.library,
+                                            id: 'my_lib'
+                                        }
+                                    }
+                                },
                                 permissions: mockTreeNodePermissions,
                                 childrenCount: 0
                             }
@@ -481,7 +523,17 @@ describe('Navigation', () => {
                         path: [
                             {
                                 id: '12345',
-                                record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
+                                record: {
+                                    id: '1',
+                                    whoAmI: {
+                                        ...mockRecordWithTypenames,
+                                        label: 'first-child',
+                                        library: {
+                                            ...mockRecordWithTypenames.library,
+                                            id: 'my_lib'
+                                        }
+                                    }
+                                },
                                 permissions: mockTreeNodePermissions,
                                 childrenCount: 0
                             }
@@ -527,7 +579,17 @@ describe('Navigation', () => {
                         path: [
                             {
                                 id: '12345',
-                                record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
+                                record: {
+                                    id: '1',
+                                    whoAmI: {
+                                        ...mockRecordWithTypenames,
+                                        label: 'first-child',
+                                        library: {
+                                            ...mockRecordWithTypenames.library,
+                                            id: 'my_lib'
+                                        }
+                                    }
+                                },
                                 permissions: mockTreeNodePermissions,
                                 childrenCount: 0
                             }

@@ -68,8 +68,8 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
         return renderModal(<ErrorDisplay message={error.message} />);
     }
 
-    if (!data.libraries.list.length) {
-        return renderModal(<ErrorDisplay message={t('lib_detail.not_found')} />);
+    if (!data?.libraries?.list?.length) {
+        return renderModal(<ErrorDisplay message={t('lib_detail.not_found', {libraryId: libId})} />);
     }
 
     if (!data.libraries.list[0].permissions.access_library) {
