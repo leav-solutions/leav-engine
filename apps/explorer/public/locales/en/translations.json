@@ -92,7 +92,7 @@
         "add_filter": "Add Filter",
         "last_views": "Last Views",
         "new": "New",
-        "not_found": "Unknown library"
+        "not_found": "Unknown library \"{{libraryId}}\""
     },
     "loading": "Loading",
     "items_list": {

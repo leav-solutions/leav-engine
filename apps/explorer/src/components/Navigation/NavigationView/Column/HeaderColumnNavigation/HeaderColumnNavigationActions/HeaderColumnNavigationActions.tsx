@@ -3,10 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button} from 'antd';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import {useTreeLibraryAllowedAsChild} from 'hooks/useTreeLibraryAllowedAsChild';
 import React from 'react';
-import {useAppSelector} from 'redux/store';
+import {useTranslation} from 'react-i18next';
+import {addNotification} from 'redux/notifications';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {INotification, NotificationChannel, NotificationType} from '_types/types';
 import DefaultActions from './DefaultActions';
 import SelectionActions from './SelectionActions';
+import {OnMessagesFunc} from './_types';
 
 interface IActiveHeaderCellNavigationProps {
     depth: number;
@@ -14,20 +19,67 @@ interface IActiveHeaderCellNavigationProps {
 }
 
 function HeaderColumnNavigationActions({depth, isDetail}: IActiveHeaderCellNavigationProps): JSX.Element {
-    const currentPositionInPath = depth;
-
+    const {t} = useTranslation();
     const navigation = useAppSelector(state => state.navigation);
+    const dispatch = useAppDispatch();
     const [activeTree] = useActiveTree();
 
+    const currentPositionInPath = depth;
     const parent = navigation.path[currentPositionInPath - 1];
+    const {libraries: allowedChildrenLibraries} = useTreeLibraryAllowedAsChild(activeTree?.id, parent);
+    const allowedLibrariesIds = allowedChildrenLibraries.map(l => l.library.id);
 
-    return activeTree ? (
+    const _displayMessages: OnMessagesFunc = (tMessageSuccess, tMessageFail, messages) => {
+        if (messages.countValid) {
+            const notification: INotification = {
+                channel: NotificationChannel.trigger,
+                type: NotificationType.success,
+                content: t(tMessageSuccess, {
+                    nb: messages.countValid
+                })
+            };
+
+            dispatch(addNotification(notification));
+        }
+
+        delete messages.countValid;
+        const errors = Object.keys(messages.errors);
+
+        for (const error of errors) {
+            const notification: INotification = {
+                channel: NotificationChannel.trigger,
+                type: NotificationType.warning,
+                content: t(tMessageFail, {
+                    elements: (messages.errors[error] as string[]).reduce(
+                        (acc, elementLabel) => (acc ? `${acc}, ${elementLabel}` : `${elementLabel}`),
+                        ''
+                    ),
+                    errorMessage: error
+                })
+            };
+
+            dispatch(addNotification(notification));
+        }
+    };
+
+    if (!activeTree) {
+        return null;
+    }
+
+    return (
         <Button.Group style={{height: '30px'}}>
-            <SelectionActions parent={parent} depth={depth} />
-            <DefaultActions activeTree={activeTree} parent={parent} isDetail={isDetail} />
+            <SelectionActions
+                parent={parent}
+                allowedChildrenLibraries={allowedLibrariesIds}
+                onMessages={_displayMessages}
+            />
+            <DefaultActions
+                parent={parent}
+                isDetail={isDetail}
+                allowedChildrenLibraries={allowedChildrenLibraries}
+                onMessages={_displayMessages}
+            />
         </Button.Group>
-    ) : (
-        <></>
     );
 }
 

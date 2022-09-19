@@ -92,7 +92,7 @@
         "add_filter": "Ajouter un Filtre",
         "last_views": "Derniers vues",
         "new": "Nouveau",
-        "not_found": "Bibliothèque inconnue"
+        "not_found": "Bibliothèque \"{{libraryId}}\" inconnue"
     },
     "loading": "Chargement",
     "items_list": {

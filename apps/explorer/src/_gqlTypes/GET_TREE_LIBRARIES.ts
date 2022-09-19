@@ -15,8 +15,15 @@ export interface GET_TREE_LIBRARIES_trees_list_libraries_library {
     label: any | null;
 }
 
+export interface GET_TREE_LIBRARIES_trees_list_libraries_settings {
+    allowMultiplePositions: boolean;
+    allowedChildren: string[];
+    allowedAtRoot: boolean;
+}
+
 export interface GET_TREE_LIBRARIES_trees_list_libraries {
     library: GET_TREE_LIBRARIES_trees_list_libraries_library;
+    settings: GET_TREE_LIBRARIES_trees_list_libraries_settings;
 }
 
 export interface GET_TREE_LIBRARIES_trees_list {
