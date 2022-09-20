@@ -4,7 +4,6 @@
 import {FormUIElementTypes, IFormTabsSettings, TabsDirection} from '@leav/utils';
 import {Tabs} from 'antd';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {localizedTranslation} from 'utils';
@@ -37,6 +36,7 @@ function FormTabs({element, onValueSubmit, onValueDelete}: IFormElementProps<IFo
                     type: FormElementTypes.layout,
                     uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER],
                     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
+                    valueError: null,
                     values: null
                 };
 

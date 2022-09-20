@@ -15,7 +15,6 @@ import {
 } from 'components/RecordEdition/EditRecord/_types';
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
 import {AttributeFormat, FormElementTypes} from '_gqlTypes/globalTypes';
 import {
     RECORD_FORM_recordForm_elements_attribute,
@@ -69,6 +68,7 @@ function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps
                     containerId: '__root',
                     type: FormElementTypes.field,
                     uiElementType: _inputTypeByFormat[field.format],
+                    valueError: null,
                     values:
                         [
                             value?.metadata?.find(({name}) => name === field.id)

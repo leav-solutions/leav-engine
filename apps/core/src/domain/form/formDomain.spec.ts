@@ -58,7 +58,8 @@ describe('formDomain', () => {
     };
 
     const mockUtils: Mockify<IUtils> = {
-        isIdValid: jest.fn().mockReturnValue(true)
+        isIdValid: jest.fn().mockReturnValue(true),
+        translateError: jest.fn().mockReturnValue('boom!')
     };
 
     describe('Get forms by lib', () => {
@@ -421,10 +422,88 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 elements: [
-                    {...mockContainer, values: null},
-                    {...field1, values: [mockStandardValue]},
-                    {...field2, values: [mockStandardValue]},
-                    {...mockDivider, values: null}
+                    {...mockContainer, valueError: null, values: null},
+                    {...field1, valueError: null, values: [mockStandardValue]},
+                    {...field2, valueError: null, values: [mockStandardValue]},
+                    {...mockDivider, valueError: null, values: null}
+                ]
+            });
+        });
+
+        test('Return error encountered when fetching values', async () => {
+            const mockRecordDomainThrowing: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest.fn().mockRejectedValue(new Error('boom!'))
+            };
+
+            const domain = formDomain({
+                'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+            });
+
+            const mockContainer = {...formLayoutElement};
+            const field1 = {...formField, id: 'field1'};
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, mockContainer]}]
+            });
+
+            const res = await domain.getRecordForm({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx
+            });
+
+            expect(res).toEqual({
+                id: 'edition',
+                library: 'my_lib',
+                recordId: '123456',
+                system: false,
+                elements: [
+                    {...mockContainer, valueError: null, values: null},
+                    {...field1, values: null, valueError: 'boom!'}
+                ]
+            });
+        });
+
+        test('Return ValidationError encountered when fetching values', async () => {
+            const mockRecordDomainThrowing: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest.fn().mockRejectedValue(
+                    new ValidationError({
+                        test_attribute: 'boom!'
+                    })
+                )
+            };
+
+            const domain = formDomain({
+                'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.utils': mockUtils as IUtils
+            });
+            const mockContainer = {...formLayoutElement};
+            const field1 = {...formField, id: 'field1'};
+
+            domain.getFormProperties = global.__mockPromise({
+                ...mockForm,
+                elements: [{elements: [field1, mockContainer]}]
+            });
+
+            const res = await domain.getRecordForm({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx
+            });
+
+            expect(res).toEqual({
+                id: 'edition',
+                library: 'my_lib',
+                recordId: '123456',
+                system: false,
+                elements: [
+                    {...mockContainer, valueError: null, values: null},
+                    {...field1, values: null, valueError: 'boom!'}
                 ]
             });
         });
@@ -480,8 +559,8 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 elements: [
-                    {...formField, containerId: FORM_ROOT_CONTAINER_ID, values: [mockStandardValue]},
-                    {...mockDepField1, values: [mockStandardValue]}
+                    {...formField, containerId: FORM_ROOT_CONTAINER_ID, valueError: null, values: [mockStandardValue]},
+                    {...mockDepField1, valueError: null, values: [mockStandardValue]}
                 ]
             });
         });
@@ -570,8 +649,8 @@ describe('formDomain', () => {
                 recordId: '123456',
                 system: false,
                 elements: [
-                    {...filledContainer, values: null},
-                    {...mockField1, values: [mockStandardValue]}
+                    {...filledContainer, valueError: null, values: null},
+                    {...mockField1, valueError: null, values: [mockStandardValue]}
                 ]
             });
         });
@@ -706,11 +785,12 @@ describe('formDomain', () => {
                                 }
                             ]
                         },
+                        valueError: null,
                         values: null
                     },
-                    {...mockField1, values: [mockStandardValue]},
-                    {...mockContainer, values: null},
-                    {...mockField2, values: [mockStandardValue]}
+                    {...mockField1, valueError: null, values: [mockStandardValue]},
+                    {...mockContainer, valueError: null, values: null},
+                    {...mockField2, valueError: null, values: [mockStandardValue]}
                 ]
             });
         });

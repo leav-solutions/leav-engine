@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RECORD_FORM_recordForm} from '_gqlTypes/RECORD_FORM';
 import {formComponents} from '../../uiElements';
+import ErrorField from '../../uiElements/ErrorField';
 import {IFormElementsByContainer} from '../../_types';
 
 export const extractFormElements = (form: RECORD_FORM_recordForm): IFormElementsByContainer =>
@@ -11,9 +12,10 @@ export const extractFormElements = (form: RECORD_FORM_recordForm): IFormElements
             allElements[element.containerId] = [];
         }
 
+        const uiElement = element.valueError ? ErrorField : formComponents[element.uiElementType];
         allElements[element.containerId].push({
             ...element,
-            uiElement: formComponents[element.uiElementType],
+            uiElement,
             settings: element.settings.reduce(
                 (allSettings, curSettings) => ({...allSettings, [curSettings.key]: curSettings.value}),
                 {}

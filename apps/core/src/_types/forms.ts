@@ -48,6 +48,7 @@ export interface IFormElement {
 
 export interface IFormElementWithValues extends IFormElement {
     values?: IValue[];
+    valueError?: string;
 }
 
 export type IFormElementWithValuesAndChildren = IFormElementWithValues & {

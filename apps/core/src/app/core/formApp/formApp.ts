@@ -181,6 +181,7 @@ export default function ({
                         attribute: Attribute,
                         settings: [FormElementSettings!]!
                         values: [GenericValue!]
+                        valueError: String
                     }
 
                     input FormElementInput {

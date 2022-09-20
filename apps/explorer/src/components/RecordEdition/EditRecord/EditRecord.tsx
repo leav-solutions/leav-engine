@@ -6,7 +6,6 @@ import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {getRecordFormQuery} from 'graphQL/queries/forms/getRecordFormQuery';
 import useRecordsConsultationHistory from 'hooks/useRecordsConsultationHistory';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {RECORD_FORM, RECORD_FORMVariables} from '_gqlTypes/RECORD_FORM';
@@ -60,6 +59,7 @@ function EditRecord({record, library, onValueSubmit, onValueDelete, readonly}: I
         uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
         settings: {},
         attribute: null,
+        valueError: null,
         values: null,
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
