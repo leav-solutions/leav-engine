@@ -24,6 +24,7 @@ import {mockModifier} from './value';
 const formElementBase = {
     type: FormElementTypes.layout,
     attribute: null,
+    valueError: null,
     values: [
         {
             value: 'My value formatted',

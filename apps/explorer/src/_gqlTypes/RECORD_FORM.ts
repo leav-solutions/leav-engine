@@ -916,6 +916,7 @@ export interface RECORD_FORM_recordForm_elements {
     containerId: string;
     uiElementType: string;
     type: FormElementTypes;
+    valueError: string | null;
     values: RECORD_FORM_recordForm_elements_values[] | null;
     attribute: RECORD_FORM_recordForm_elements_attribute | null;
     settings: RECORD_FORM_recordForm_elements_settings[];

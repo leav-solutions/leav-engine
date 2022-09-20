@@ -14,6 +14,7 @@ import {IFormRepo} from 'infra/form/formRepo';
 import {difference, uniqueId} from 'lodash';
 import omit from 'lodash/omit';
 import {IUtils} from 'utils/utils';
+import winston from 'winston';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import PermissionError from '../../errors/PermissionError';
@@ -70,6 +71,7 @@ interface IDeps {
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.infra.form'?: IFormRepo;
     'core.utils'?: IUtils;
+    'core.utils.logger'?: winston.Winston;
     translator?: i18n;
 }
 
@@ -82,6 +84,7 @@ export default function (deps: IDeps = {}): IFormDomain {
         'core.domain.helpers.validate': validateHelper = null,
         'core.infra.form': formRepo = null,
         'core.utils': utils = null,
+        'core.utils.logger': logger = null,
         translator = null
     } = deps;
 
@@ -201,7 +204,7 @@ export default function (deps: IDeps = {}): IFormDomain {
 
             const flatElementsList: IFormElementWithValuesAndChildren[] = [];
 
-            // Retrieve all relevant atributs in a hash map. It will be used later on to filters out empty containers
+            // Retrieve all relevant attributes in a hash map. It will be used later on to filters out empty containers
             const elementsHashMap: {[id: string]: IFormElementWithValuesAndChildren} = await formProps.elements.reduce(
                 async (allElemsProm: Promise<{[id: string]: IFormElementWithValuesAndChildren}>, elementsWithDeps) => {
                     const allElems = await allElemsProm;
@@ -213,15 +216,33 @@ export default function (deps: IDeps = {}): IFormDomain {
 
                     // Retrieve all visible form elements (based on permissions), with their values
                     for (const depElement of elementsWithDeps.elements) {
-                        const _isElementVisible =
-                            depElement.uiElementType === FormElementTypes.layout ||
-                            !depElement.settings?.attribute ||
-                            (await _canAccessAttribute(depElement.settings.attribute, libraryId, recordId, ctx));
+                        let isElementVisible: boolean;
+                        let elementError: string;
+                        try {
+                            isElementVisible =
+                                depElement.uiElementType === FormElementTypes.layout ||
+                                !depElement.settings?.attribute ||
+                                (await _canAccessAttribute(depElement.settings.attribute, libraryId, recordId, ctx));
+                        } catch (error) {
+                            // If something went wrong, we assume the element is not visible
+                            isElementVisible = false;
+                            logger.error(error);
+                            logger.error('Form element was ', depElement);
+                        }
 
-                        if (_isElementVisible) {
+                        if (isElementVisible) {
+                            const {error: valueError, values} = await getElementValues(
+                                depElement,
+                                recordId,
+                                libraryId,
+                                deps,
+                                ctx
+                            );
+
                             const depElementWithValues: IFormElementWithValuesAndChildren = {
                                 ...depElement,
-                                values: await getElementValues(depElement, recordId, libraryId, deps, ctx),
+                                values,
+                                valueError: elementError || valueError,
                                 children: []
                             };
 

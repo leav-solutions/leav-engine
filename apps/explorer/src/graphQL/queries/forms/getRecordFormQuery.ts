@@ -36,6 +36,7 @@ export const getRecordFormQuery = gql`
                 containerId
                 uiElementType
                 type
+                valueError
                 values {
                     id_value
                     created_at
