@@ -104,6 +104,8 @@ describe('ValueDomain', () => {
         ])
     };
 
+    const mockUpdateRecordLastModif = jest.fn();
+
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'valueDomainTest'
@@ -142,6 +144,7 @@ describe('ValueDomain', () => {
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -187,6 +190,7 @@ describe('ValueDomain', () => {
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -241,6 +245,7 @@ describe('ValueDomain', () => {
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -376,6 +381,7 @@ describe('ValueDomain', () => {
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -387,10 +393,7 @@ describe('ValueDomain', () => {
                 ctx
             });
 
-            expect(mockRecRepo.updateRecord).toBeCalled();
-            expect(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_at).toBeDefined();
-            expect(Number.isInteger(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
-            expect(mockRecRepo.updateRecord.mock.calls[0][0].recordData.modified_by).toBe('1');
+            expect(mockUpdateRecordLastModif).toBeCalledWith('test_lib', '12345', ctx);
 
             expect(savedValue).toMatchObject(savedValueData);
         });
@@ -425,6 +428,7 @@ describe('ValueDomain', () => {
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -465,6 +469,7 @@ describe('ValueDomain', () => {
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -522,6 +527,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -743,6 +749,7 @@ describe('ValueDomain', () => {
                     'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                     'core.utils': mockUtilsStandardAttribute as IUtils
                 });
 
@@ -906,6 +913,7 @@ describe('ValueDomain', () => {
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                     'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                     'core.utils': mockUtilsStandardAttribute as IUtils
                 });
 
@@ -1064,7 +1072,8 @@ describe('ValueDomain', () => {
                 'core.utils': mockUtils as IUtils,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1148,6 +1157,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -1209,6 +1219,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomainNoEdit as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -1275,7 +1286,8 @@ describe('ValueDomain', () => {
                 'core.utils': mockUtils as IUtils,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1333,7 +1345,8 @@ describe('ValueDomain', () => {
                 'core.utils': mockUtils as IUtils,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif
             });
 
             await valDomain.saveValueBatch({
@@ -1435,7 +1448,8 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif
             });
 
             const deletedValue = await valDomain.deleteValue({
@@ -1503,7 +1517,8 @@ describe('ValueDomain', () => {
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
-                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif
             });
 
             const deleteVal = valDomain.deleteValue({

@@ -2,8 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IRecordRepo} from 'infra/record/recordRepo';
 import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
@@ -21,7 +23,9 @@ export interface IHandlePreviewResponseDeps {
     amqpService: IAmqpService;
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
+    recordRepo: IRecordRepo;
     previewVersions: IPreviewVersion[];
+    updateRecordLastModif: UpdateRecordLastModifFunc;
     config: Config.IConfig;
     logger: winston.Winston;
 }
@@ -86,6 +90,8 @@ const _onMessage = async (msg: string, logger: winston.Winston, deps: IHandlePre
         library,
         {
             valueDomain: deps.valueDomain,
+            recordRepo: deps.recordRepo,
+            updateRecordLastModif: deps.updateRecordLastModif,
             config: deps.config,
             logger: deps.logger
         },

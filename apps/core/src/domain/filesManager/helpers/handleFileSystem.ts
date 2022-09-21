@@ -2,9 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IRecordRepo} from 'infra/record/recordRepo';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
@@ -19,7 +21,9 @@ export interface IHandleFileSystemDeps {
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
     treeDomain: ITreeDomain;
+    recordRepo: IRecordRepo;
     amqpService: IAmqpService;
+    updateRecordLastModif: UpdateRecordLastModifFunc;
     logger: winston.Winston;
     config: Config.IConfig;
     utils: IUtils;

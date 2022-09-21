@@ -2,12 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {i18n} from 'i18next';
+import {IRecordRepo} from 'infra/record/recordRepo';
 import Joi from 'joi';
-import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
 import * as Config from '_types/config';
@@ -62,7 +63,8 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
     'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
     'core.domain.library'?: ILibraryDomain;
-    'core.utils'?: IUtils;
+    'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
+    'core.infra.record'?: IRecordRepo;
     translator?: i18n;
 }
 
@@ -75,7 +77,8 @@ export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.filesManager.helpers.messagesHandler': messagesHandler = null,
     'core.domain.library': libraryDomain = null,
-    'core.utils': utils = null,
+    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
+    'core.infra.record': recordRepo = null,
     translator = null
 }: IDeps): IFilesManagerDomain {
     const _onMessage = async (msg: string): Promise<void> => {
@@ -137,6 +140,8 @@ export default function ({
                 amqpService,
                 recordDomain,
                 valueDomain,
+                recordRepo,
+                updateRecordLastModif,
                 previewVersions: systemPreviewVersions,
                 config,
                 logger
