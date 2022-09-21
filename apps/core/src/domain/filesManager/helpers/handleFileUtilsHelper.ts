@@ -1,13 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IRecordRepo} from 'infra/record/recordRepo';
 import {basename, dirname, join} from 'path';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {IValue} from '_types/value';
 import {
     FilesAttributes,
     IFilesAttributes,
@@ -16,6 +17,7 @@ import {
     IPreviewVersion
 } from '../../../_types/filesManager';
 import {AttributeCondition, IRecord, Operator} from '../../../_types/record';
+import updateRecordLastModif from '../../value/helpers/updateRecordLastModif';
 import {IHandleFileSystemDeps} from './handleFileSystem';
 import winston = require('winston');
 
@@ -132,20 +134,21 @@ export const createRecordFile = async (
     }
 
     if (newRecord.id) {
-        const values: IValue[] = Object.keys(recordData).map(key => ({
-            attribute: FilesAttributes[key],
-            value: typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key]
-        }));
+        const dataToSave: IRecord = Object.keys(recordData).reduce((acc, key) => {
+            acc[FilesAttributes[key]] =
+                typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key];
+            return acc;
+        }, {});
+        dataToSave.id = newRecord.id;
 
         try {
-            await deps.valueDomain.saveValueBatch({
-                library,
-                recordId: newRecord.id,
-                values,
+            await deps.recordRepo.updateRecord({
+                libraryId: library,
+                recordData: dataToSave,
                 ctx
             });
         } catch (e) {
-            deps.logger.warn(`[FilesManager] Error when save values for new record : ${newRecord.id}`);
+            deps.logger.warn(`[FilesManager] Error when saving values for new record : ${newRecord.id}`, e.message);
         }
     }
 
@@ -158,28 +161,28 @@ export const updateRecordFile = async (
     library: string,
     deps: {
         valueDomain: IValueDomain;
+        recordRepo: IRecordRepo;
+        updateRecordLastModif: UpdateRecordLastModifFunc;
         config: Config.IConfig;
         logger: winston.Winston;
     },
     ctx: IQueryInfos
 ) => {
     // Update record file attributes
-    const values: IValue[] = Object.keys(recordData).map(key => ({
-        attribute: FilesAttributes[key],
-        value: typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key]
-    }));
+    const dataToSave: IRecord = Object.keys(recordData).reduce((acc, key) => {
+        acc[FilesAttributes[key]] = recordData[key];
+        return acc;
+    }, {});
+    dataToSave.id = recordId;
 
     try {
-        const res = await deps.valueDomain.saveValueBatch({
-            library,
-            recordId,
-            values,
+        await deps.recordRepo.updateRecord({
+            libraryId: library,
+            recordData: dataToSave,
             ctx
         });
 
-        if (res.errors) {
-            throw new Error(res.errors.map(err => `${err.attribute}: ${err.message}`).join(', '));
-        }
+        await updateRecordLastModif(library, recordId, deps, ctx);
     } catch (e) {
         deps.logger.warn(`[${ctx.queryId}] Error when updating record: ${recordId}, ${e.message}`);
         deps.logger.warn(`[${ctx.queryId}] ${e.stack}`);

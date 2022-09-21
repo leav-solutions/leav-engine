@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -27,7 +28,6 @@ import canSaveValue from './helpers/canSaveValue';
 import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
-import updateRecordLastModif from './helpers/updateRecordLastModif';
 import validateValue from './helpers/validateValue';
 
 export interface ISaveBatchValueError {
@@ -133,6 +133,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.helpers.validate'?: IValidateHelper;
+    'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
 }
 
@@ -148,6 +149,7 @@ const valueDomain = function ({
     'core.utils': utils = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.helpers.validate': validate = null,
+    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.utils.logger': logger = null,
     'core.domain.tree.helpers.elementAncestors': elementAncestors = null
 }: IDeps = {}): IValueDomain {
@@ -342,7 +344,7 @@ const valueDomain = function ({
                 ctx
             });
 
-            await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
+            await updateRecordLastModif(library, recordId, ctx);
 
             return {...savedVal, ...processedValue};
         },
@@ -494,7 +496,7 @@ const valueDomain = function ({
             );
 
             if (saveRes.values.length) {
-                await updateRecordLastModif(library, recordId, {recordRepo}, ctx);
+                await updateRecordLastModif(library, recordId, ctx);
             }
 
             return saveRes;

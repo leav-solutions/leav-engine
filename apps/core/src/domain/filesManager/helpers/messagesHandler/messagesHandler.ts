@@ -2,9 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IRecordRepo} from 'infra/record/recordRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IConfig} from '_types/config';
@@ -22,7 +24,9 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.infra.record'?: IRecordRepo;
     'core.utils'?: IUtils;
+    'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     config?: IConfig;
 }
 
@@ -37,6 +41,8 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.infra.record': recordRepo = null,
+    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.utils': utils = null
 }: IDeps): IMessagesHandlerHelper {
     const _messagesQueue: IFileEventData[] = [];
@@ -60,7 +66,9 @@ export default function ({
                     recordDomain,
                     valueDomain,
                     treeDomain,
+                    recordRepo,
                     amqpService,
+                    updateRecordLastModif,
                     logger,
                     config,
                     utils

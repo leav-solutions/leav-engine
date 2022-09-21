@@ -7,7 +7,6 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
-import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
@@ -142,10 +141,6 @@ describe('FilesManager', () => {
     });
 
     test('Force preview generation one directory', async () => {
-        const mockUtils: Mockify<IUtils> = {
-            getLibraryTreeId: jest.fn(() => 'files_tree')
-        };
-
         const mockRecordDomain: Mockify<IRecordDomain> = {
             find: global.__mockPromise({
                 cursor: {},
@@ -200,8 +195,7 @@ describe('FilesManager', () => {
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.domain.tree': mockTreeDomain as ITreeDomain,
-            'core.utils': mockUtils as IUtils
+            'core.domain.tree': mockTreeDomain as ITreeDomain
         });
 
         await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordId: 'id'});
