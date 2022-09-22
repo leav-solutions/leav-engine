@@ -4,10 +4,10 @@
 import {asFunction, AwilixContainer} from 'awilix';
 import {Winston} from 'winston';
 import {IMigration} from '_types/migration';
+import {IQueryInfos} from '_types/queryInfos';
 import {IDbService} from '../dbService';
 import {MIGRATIONS_COLLECTION_NAME} from '../dbUtils';
 import loadMigrationFile from './loadMigrationFile';
-import {IQueryInfos} from '_types/queryInfos';
 
 interface IExecuteMigrationParams {
     files: string[];
@@ -48,8 +48,9 @@ export default async (params: IExecuteMigrationParams): Promise<void> => {
                     file: fileKey,
                     date: Date.now()
                 });
-            } catch (e) {
-                throw new Error(`[DB Migration Error] ${fileKey}: ${e}`);
+            } catch (err) {
+                err.message = `[DB Migration Error] ${fileKey}: } ${err.message}`;
+                throw err;
             }
         }
     }

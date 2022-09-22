@@ -75,7 +75,7 @@ module.exports = {
         rootKeys: {
             files1: 'files'
         },
-        userId: process.env.FM_USER_ID || '1'
+        userId: process.env.FM_USER_ID || '2'
     },
     eventsManager: {
         routingKeys: {
@@ -88,7 +88,7 @@ module.exports = {
         }
     },
     debug: process.env.DEBUG || false,
-    defaultUserId: '1', // Used for DB migration and any other action that is not bound to a real user
+    defaultUserId: '2', // Used for DB migration and any other action that is not bound to a real user
     export: {
         directory: process.env.EXPORT_DIR || '/exports'
     },
