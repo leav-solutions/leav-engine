@@ -85,19 +85,16 @@ export default function ({
 
                     // If not, create it
                     if (!existingApp.length) {
-                        const installRes = await applicationService.runInstall({
-                            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                            application: {...app, id: app._key} as IApplication,
-                            ctx
-                        });
-                        const appData = {...app, install: installRes};
                         await dbService.execute({
-                            query: aql`INSERT ${appData} INTO core_applications RETURN NEW`,
+                            query: aql`INSERT ${app} INTO core_applications RETURN NEW`,
                             ctx
                         });
                     }
                 })
             );
+
+            //Install Applications
+            await applicationService.runInstallAll();
         }
     };
 }
