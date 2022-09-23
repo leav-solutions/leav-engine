@@ -1,20 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RecordRepo deleteRecord Should delete a record and return deleted record 1`] = `
-"
-                    FOR l IN @@value0
-                        FILTER l._from == @value1 OR l._to == @value1
-                        REMOVE {_key: l._key} IN @@value0
-                "
-`;
-
-exports[`RecordRepo deleteRecord Should delete a record and return deleted record 2`] = `
-{
-  "@value0": "core_edge_values_links",
-  "value1": "users/222435651",
-}
-`;
-
 exports[`RecordRepo find Should find records 1`] = `
 {
   "ctx": {

@@ -1,10 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {aql} from 'arangojs';
+import {IDbService} from 'infra/db/dbService';
 import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValuesOptions} from '_types/value';
 import {IAttributeTypesRepo, IAttributeWithRevLink} from '../attributeTypes/attributeTypesRepo';
+
+export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
+export const VALUES_COLLECTION = 'core_values';
 
 export interface IValueRepo {
     createValue({
@@ -96,13 +101,19 @@ export interface IValueRepo {
     }): Promise<IValue>;
 
     clearAllValues({attribute, ctx}: {attribute: IAttribute; ctx: IQueryInfos}): Promise<boolean>;
+
+    deleteAllValuesByRecord(params: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<void>;
 }
 
 interface IDeps {
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
+    'core.infra.db.dbService'?: IDbService;
 }
 
-export default function ({'core.infra.attributeTypes': attributeTypesRepo = null}: IDeps = {}): IValueRepo {
+export default function({
+    'core.infra.attributeTypes': attributeTypesRepo = null,
+    'core.infra.db.dbService': dbService = null
+}: IDeps = {}): IValueRepo {
     return {
         createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
@@ -140,6 +151,18 @@ export default function ({'core.infra.attributeTypes': attributeTypesRepo = null
         clearAllValues({attribute, ctx}): Promise<boolean> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
             return typeRepo.clearAllValues({attribute, ctx});
+        },
+        async deleteAllValuesByRecord({libraryId, recordId, ctx}) {
+            const edgeCollection = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+
+            await dbService.execute({
+                query: aql`
+                    FOR l IN ${edgeCollection}
+                        FILTER l._from == ${libraryId + '/' + recordId} OR l._to == ${libraryId + '/' + recordId}
+                        REMOVE {_key: l._key} IN ${edgeCollection}
+                `,
+                ctx
+            });
         }
     };
 }

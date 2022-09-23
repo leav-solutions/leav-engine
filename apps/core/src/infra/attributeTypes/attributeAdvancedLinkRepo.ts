@@ -4,6 +4,7 @@
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IUtils} from 'utils/utils';
 import {ILinkValue, IValueEdge} from '_types/value';
+import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition, IRecord, IRecordFilterOption} from '../../_types/record';
 import {IDbService} from '../db/dbService';
@@ -16,8 +17,6 @@ import {
 } from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
-const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
-
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
@@ -26,7 +25,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,

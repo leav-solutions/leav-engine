@@ -30,7 +30,7 @@ interface IDeps {
     'core.app.core.indexationManager'?: IIndexationManagerApp;
 }
 
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
@@ -171,6 +171,8 @@ export default function ({
                         createRecord(library: ID): Record!
                         deleteRecord(library: ID, id: ID): Record!
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
+                        deactivateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
+                        purgeInactiveRecords(libraryId: String!): [Record!]!
                     }
                 `,
                 resolvers: {
@@ -188,6 +190,12 @@ export default function ({
                         },
                         async indexRecords(parent, {libraryId, records}, ctx): Promise<boolean> {
                             return indexationManagerApp.indexDatabase(ctx, libraryId, records);
+                        },
+                        async deactivateRecords(parent, {libraryId, recordsIds, filters}, ctx): Promise<IRecord[]> {
+                            return recordDomain.deactivateRecordsBatch({libraryId, recordsIds, filters, ctx});
+                        },
+                        async purgeInactiveRecords(parent, {libraryId}, ctx): Promise<IRecord[]> {
+                            return recordDomain.purgeInactiveRecords({libraryId, ctx});
                         }
                     },
                     RecordFilter: {
