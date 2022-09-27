@@ -106,6 +106,7 @@
         "header_table": "Items from {{libName}}",
         "show-filter-panel": "Show filters",
         "show_more_links": "Show more",
+        "deactivate_records": "Deactivate records",
         "table": {
             "preview": "Preview",
             "selected": "Selected",
@@ -475,5 +476,11 @@
         "path": "Path",
         "no_preview": "Preview unavailable",
         "directory": "Dossier"
+    },
+    "records_deactivation": {
+        "title": "Deactivate records",
+        "title_one": "Deactivate",
+        "confirm": "Do you really want to deactivate the {{count}} records selected?",
+        "confirm_one": "Do you really want to deactivate this record?"
     }
 }

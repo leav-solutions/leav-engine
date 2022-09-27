@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DownOutlined, ExportOutlined} from '@ant-design/icons';
+import {DeleteOutlined, DownOutlined, ExportOutlined} from '@ant-design/icons';
 import {Button, Dropdown, Menu} from 'antd';
-import React, {ReactNode, useState} from 'react';
+import {ReactNode, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import DeactivateRecordsModal from '../DeactivateRecordsModal';
 import ExportModal from './ExportModal';
 
 interface IMenuAction {
@@ -24,6 +25,12 @@ function ActionsMenu(): JSX.Element {
             icon: <ExportOutlined rotate={270} />,
             title: t('export.title'),
             modalComp: ExportModal
+        },
+        {
+            key: 'deactivate',
+            icon: <DeleteOutlined />,
+            title: t('records_deactivation.title'),
+            modalComp: DeactivateRecordsModal
         }
     ];
 
