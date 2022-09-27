@@ -13,6 +13,7 @@ import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';
 import NavigatorTab from './NavigatorTab';
 import PermissionsTab from './PermissionsTab';
+import PurgeTab from './PurgeTab';
 
 const Title = styled(Header)`
     display: flex;
@@ -91,6 +92,18 @@ const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTab
                 return (
                     <Tab.Pane key="navigator" className="height100" style={{padding: '0', border: '0px none'}}>
                         <NavigatorTab library={library} />
+                    </Tab.Pane>
+                );
+            }
+        },
+        {
+            key: 'purge',
+            mustBeDisplayed: !isCreationMode,
+            menuItem: t('libraries.purge.title'),
+            render: () => {
+                return (
+                    <Tab.Pane key="purge" className="height100" style={{padding: '0', border: '0px none'}}>
+                        <PurgeTab library={library} readonly={readOnly} />
                     </Tab.Pane>
                 );
             }

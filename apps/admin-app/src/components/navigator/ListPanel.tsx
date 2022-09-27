@@ -2,11 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {
+    getRecordsListQuery,
+    IGetRecordsListQuery,
+    IGetRecordsListQueryVariables
+} from 'queries/records/recordsListQuery';
 import React, {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Pagination, Select, Table} from 'semantic-ui-react';
-import {gqlUnchecked} from '../../utils';
-import {IGetRecordData} from '../../_types/records';
 import Loading from '../shared/Loading';
 import RecordCard from '../shared/RecordCard';
 import {IListProps} from './MainPanel';
@@ -141,30 +144,8 @@ function List({state, dispatch}: IListProps) {
 
 function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
     const {t} = useTranslation();
-    const LISTQUERY = gqlUnchecked`
-        query($filters:[RecordFilterInput], $pagination: RecordsPagination){
-            ${selectedRootQuery} (filters:$filters, pagination:$pagination){
-                totalCount
-                list {
-                    whoAmI{
-                        id,
-                        label,
-                        color,
-                        preview {
-                            small
-                            medium
-                            pdf
-                            big
-                        },
-                        library{
-                            id,
-                            label
-                        }
-                    }
-                }
-            }
-        }
-    `;
+    const listQuery = getRecordsListQuery(selectedRootQuery);
+
     const filtersVar = filters.reduce((queryFilters, filter, index) => {
         if (filters.length > 1 && index > 0) {
             queryFilters.push({
@@ -190,13 +171,15 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
                   offset: offset !== null ? offset : 0,
                   limit
               };
-    const {loading, error, data} = useQuery<IGetRecordData>(LISTQUERY, {
+
+    const {loading, error, data} = useQuery<IGetRecordsListQuery, IGetRecordsListQueryVariables>(listQuery, {
         fetchPolicy: 'network-only',
         variables: {
             filters: filtersVar,
             pagination
         }
     });
+
     if (loading) {
         return <Loading withDimmer />;
     }

@@ -72,7 +72,14 @@
         "behavior_files": "Fichiers",
         "behavior_standard": "Standard",
         "default_view": "Vue par défault",
-        "fulltext_attributes": "Attributs de recherche fulltext"
+        "fulltext_attributes": "Attributs de recherche fulltext",
+        "purge": {
+            "title": "Purge",
+            "summary": "Il y a {{count}} éléments inactifs à purger",
+            "launch_button": "Lancer la purge",
+            "warning": "La purge va supprimer définitivement tous les éléments inactifs.\n Il n'y a pas de retour en arrière possible.",
+            "confirm": "Êtes-vous sûr de vouloir continuer?"
+        }
     },
     "attributes": {
         "title": "Attributs",
