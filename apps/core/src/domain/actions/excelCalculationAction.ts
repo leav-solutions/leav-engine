@@ -25,7 +25,7 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
     ): Promise<ActionsListExcelValueType> => {
         const variableValues = await calculationVariable.processVariableString(context, variable, initialValue);
         const stringValues = variableValues.map(v => {
-            return typeof v.value === 'object' ? v.value.value : v.value;
+            return v.value === null ? '' : typeof v.value === 'object' ? v.value.value : v.value;
         });
 
         return stringValues.join(' ');
