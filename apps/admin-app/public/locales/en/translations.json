@@ -55,7 +55,7 @@
         "ID": "ID",
         "isSystem": "System",
         "confirm_delete": "Do you really want to delete library {{libLabel}}?",
-        "informations": "Informations",
+        "informations": "Information",
         "attributes": "Attributes",
         "confirm_unlink_attr": "Do you really want to detach this attribute from library {{libLabel}}?",
         "link_existing_attribute": "Link existing attribute",
@@ -72,7 +72,14 @@
         "behavior": "Behavior",
         "behavior_files": "Files",
         "behavior_standard": "Standard",
-        "fulltext_attributes": "Fulltext search attributes"
+        "fulltext_attributes": "Fulltext search attributes",
+        "purge": {
+            "title": "Purge",
+            "summary": "There are {{count}} inactive records to purge",
+            "launch_button": "Start purge",
+            "warning": "The purge is going to definitely delete inactive records. \n There is no way back.",
+            "confirm": "Do you really want to continue?"
+        }
     },
     "attributes": {
         "title": "Attributes",
@@ -255,9 +262,9 @@
         "delete_confirm": "Do you really want to delete this element?"
     },
     "forms": {
-        "title": "Formulaires",
+        "title": "Forms",
         "new": "New form",
-        "informations": "Informations",
+        "informations": "Information",
         "layout": "Layout",
         "fields": "Input fields",
         "dependency_attributes": "Depends on",

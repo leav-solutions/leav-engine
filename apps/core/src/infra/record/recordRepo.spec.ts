@@ -15,7 +15,7 @@ describe('RecordRepo', () => {
         requestId: '123465'
     };
     describe('createRecord', () => {
-        test('Should create a new record', async function () {
+        test('Should create a new record', async function() {
             const recordData = {created_at: 1519303348, modified_at: 1519303348};
             const createdRecordData = {
                 _id: 'users/222435651',
@@ -63,7 +63,7 @@ describe('RecordRepo', () => {
     });
 
     describe('updateRecord', () => {
-        test('Should update a record', async function () {
+        test('Should update a record', async function() {
             const recordData = {id: '222435651', modified_at: 1519303348};
             const updatedRecordData = {
                 _id: 'users/222435651',
@@ -112,7 +112,7 @@ describe('RecordRepo', () => {
     });
 
     describe('deleteRecord', () => {
-        test('Should delete a record and return deleted record', async function () {
+        test('Should delete a record and return deleted record', async function() {
             const recordData = {id: '222435651', created_at: 1519303348, modified_at: 1519303348};
             const deletedRecordData = {
                 _id: 'users/222435651',
@@ -162,12 +162,6 @@ describe('RecordRepo', () => {
 
             const deleteRes = await recRepo.deleteRecord({libraryId: 'users', recordId: recordData.id, ctx});
 
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/REMOVE/);
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
-
             expect(mockDbCollec.remove.mock.calls.length).toBe(1);
             expect(mockDbCollec.remove).toBeCalledWith({_key: String(recordData.id)}, {returnOld: true});
 
@@ -178,7 +172,7 @@ describe('RecordRepo', () => {
     });
 
     describe('find', () => {
-        test('Should find records', async function () {
+        test('Should find records', async function() {
             const mockQueryRes = {
                 totalCount: 2,
                 results: [
@@ -224,7 +218,10 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest
+                    .fn()
+                    .mockReturnValueOnce(mockCleanupRes[0])
+                    .mockReturnValueOnce(mockCleanupRes[1])
             };
 
             const recRepo = recordRepo({
@@ -250,7 +247,7 @@ describe('RecordRepo', () => {
             });
         });
 
-        test('Should paginate with offset', async function () {
+        test('Should paginate with offset', async function() {
             const mockQueryRes = {
                 totalCount: 5,
                 results: [
@@ -296,7 +293,10 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest
+                    .fn()
+                    .mockReturnValueOnce(mockCleanupRes[0])
+                    .mockReturnValueOnce(mockCleanupRes[1])
             };
 
             const recRepo = recordRepo({
@@ -319,7 +319,7 @@ describe('RecordRepo', () => {
             expect(records.list.length).toBe(2);
         });
 
-        test('Should paginate with cursor', async function () {
+        test('Should paginate with cursor', async function() {
             const mockQueryRes = [
                 {
                     _key: '222536283',
@@ -362,7 +362,10 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest
+                    .fn()
+                    .mockReturnValueOnce(mockCleanupRes[0])
+                    .mockReturnValueOnce(mockCleanupRes[1])
             };
 
             const recRepo = recordRepo({
@@ -469,7 +472,7 @@ describe('RecordRepo', () => {
             }
         ];
 
-        test('Should filter records - simple', async function () {
+        test('Should filter records - simple', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise({
@@ -555,7 +558,7 @@ describe('RecordRepo', () => {
     });
 
     describe('search', () => {
-        test('should search records', async function () {
+        test('should search records', async function() {
             const mockQueryRes = {
                 took: 322,
                 timed_out: false,
@@ -598,7 +601,7 @@ describe('RecordRepo', () => {
             });
         });
 
-        test('should search record with from/size params', async function () {
+        test('should search record with from/size params', async function() {
             const mockQueryRes = {
                 took: 322,
                 timed_out: false,

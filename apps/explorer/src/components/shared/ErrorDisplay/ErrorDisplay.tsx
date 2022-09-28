@@ -4,7 +4,7 @@
 import {CloseCircleFilled, FrownOutlined, MinusCircleFilled} from '@ant-design/icons';
 import {Result} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
-import React, {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
 

@@ -4,7 +4,6 @@
 import {aql} from 'arangojs';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {IMigration} from '_types/migration';
-import {VALUES_LINKS_COLLECTION} from '../../../infra/record/recordRepo';
 import {
     getEdgesCollectionName,
     getFullNodeId,
@@ -12,6 +11,7 @@ import {
     getRootId
 } from '../../../infra/tree/helpers/utils';
 import {ITreeRepo, MAX_TREE_DEPTH, TO_RECORD_PROP_NAME} from '../../../infra/tree/treeRepo';
+import {VALUES_LINKS_COLLECTION} from '../../../infra/value/valueRepo';
 import {AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {IDbService} from '../dbService';
 import {IDbDocument, IDbEdge} from '../_types';

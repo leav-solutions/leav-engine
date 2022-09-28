@@ -4,12 +4,14 @@
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IValidateHelper} from 'domain/helpers/validate';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ICachesService} from 'infra/cache/cacheService';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
@@ -18,10 +20,11 @@ import PermissionError from '../../errors/PermissionError';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
-import {AttributeCondition, IRecord} from '../../_types/record';
+import {AttributeCondition, IRecord, Operator} from '../../_types/record';
 import {mockAttrAdvLink, mockAttrSimple, mockAttrSimpleLink, mockAttrTree} from '../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockRecord} from '../../__tests__/mocks/record';
+import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -47,7 +50,7 @@ describe('RecordDomain', () => {
     };
 
     describe('createRecord', () => {
-        test('Should create a new record', async function () {
+        test('Should create a new record', async function() {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -85,7 +88,7 @@ describe('RecordDomain', () => {
     });
 
     describe('updateRecord', () => {
-        test('Should update a record', async function () {
+        test('Should update a record', async function() {
             const updatedRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -116,10 +119,11 @@ describe('RecordDomain', () => {
     describe('deleteRecord', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
-        test('Should delete an record and return deleted record', async function () {
+        test('Should delete an record and return deleted record', async function() {
             const recRepo: Mockify<IRecordRepo> = {
                 deleteRecord: global.__mockPromise(recordData)
             };
+
             const recordPermDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromise(true)
             };
@@ -131,8 +135,22 @@ describe('RecordDomain', () => {
                 send: global.__mockPromise()
             };
 
+            const mockValidateHelper: Mockify<IValidateHelper> = {
+                validateLibrary: jest.fn()
+            };
+
             const attrDomain: Mockify<IAttributeDomain> = {
                 getAttributes: global.__mockPromise({totalCount: 0, list: []})
+            };
+
+            const mockValueRepo: Mockify<IValueRepo> = {
+                deleteAllValuesByRecord: global.__mockPromise()
+            };
+
+            const mockTreeRepo: Mockify<ITreeRepo> = {
+                getTrees: global.__mockPromise({totalCount: 0, list: [mockTree]}),
+                getNodesByRecord: global.__mockPromise(['1', '2', '3']),
+                deleteElement: jest.fn()
             };
 
             const recDomain = recordDomain({
@@ -140,13 +158,20 @@ describe('RecordDomain', () => {
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.infra.library': libRepo as ILibraryRepo,
+                'core.infra.value': mockValueRepo as IValueRepo,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.attribute': attrDomain as IAttributeDomain,
-                'core.domain.permission.record': recordPermDomain as IRecordPermissionDomain
+                'core.domain.permission.record': recordPermDomain as IRecordPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
             await recDomain.deleteRecord({library: 'test', id: recordData.id, ctx});
 
             expect(recRepo.deleteRecord.mock.calls.length).toBe(1);
+            expect(mockValueRepo.deleteAllValuesByRecord).toBeCalled();
+            expect(mockTreeRepo.getTrees).toBeCalled();
+            expect(mockTreeRepo.getNodesByRecord).toBeCalled();
+            expect(mockTreeRepo.deleteElement).toBeCalledTimes(3);
         });
 
         // TODO: handle unknown record?
@@ -175,7 +200,7 @@ describe('RecordDomain', () => {
             getLibraryPermission: global.__mockPromise(true)
         };
 
-        test('Should find records', async function () {
+        test('Should find records', async function() {
             const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
             const recDomain = recordDomain({
@@ -668,7 +693,7 @@ describe('RecordDomain', () => {
             });
         });
 
-        test('Should search records', async function () {
+        test('Should search records', async function() {
             const mockSearchRes = {
                 totalCount: 1,
                 list: [
@@ -1144,6 +1169,68 @@ describe('RecordDomain', () => {
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(true);
             expect(recordAfter.active).toBe(true);
+        });
+    });
+
+    describe('deactivateRecordsBatch', () => {
+        test('Deactivate records from a list of records ids', async () => {
+            const domain = recordDomain();
+            domain.find = jest.fn();
+            domain.deactivateRecord = jest.fn().mockImplementation(() => Promise.resolve(mockRecord));
+
+            const records = await domain.deactivateRecordsBatch({
+                libraryId: 'test_lib',
+                recordsIds: ['1', '2', '3'],
+                ctx: mockCtx
+            });
+
+            expect(domain.deactivateRecord).toBeCalledTimes(3);
+            expect(domain.find).not.toBeCalled();
+            expect(records).toEqual([mockRecord, mockRecord, mockRecord]);
+        });
+
+        test('Deactivate records from filters', async () => {
+            const domain = recordDomain();
+            domain.find = jest
+                .fn()
+                .mockImplementation(() => Promise.resolve({list: [mockRecord, mockRecord, mockRecord]}));
+            domain.deactivateRecord = jest.fn().mockImplementation(() => Promise.resolve(mockRecord));
+
+            const records = await domain.deactivateRecordsBatch({
+                libraryId: 'test_lib',
+                filters: [
+                    {
+                        field: 'label',
+                        condition: AttributeCondition.EQUAL,
+                        value: 'foo'
+                    },
+                    {
+                        operator: Operator.OR
+                    },
+                    {
+                        field: 'label',
+                        condition: AttributeCondition.EQUAL,
+                        value: 'bar'
+                    }
+                ],
+                ctx: mockCtx
+            });
+
+            expect(domain.find).toBeCalled();
+            expect(domain.deactivateRecord).toBeCalledTimes(3);
+            expect(records).toEqual([mockRecord, mockRecord, mockRecord]);
+        });
+    });
+
+    describe('purgeInactiveRecords', () => {
+        test('Delete all inactive records', async () => {
+            const domain = recordDomain();
+            domain.find = jest.fn().mockImplementation(() => Promise.resolve({list: [mockRecord, mockRecord]}));
+            domain.deleteRecord = jest.fn().mockImplementation(() => Promise.resolve());
+
+            await domain.purgeInactiveRecords({libraryId: 'test_lib', ctx: mockCtx});
+
+            expect(domain.deleteRecord).toBeCalledTimes(2);
         });
     });
 });

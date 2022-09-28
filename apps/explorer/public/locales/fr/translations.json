@@ -106,6 +106,7 @@
         "header_table": "Éléments de {{libName}}",
         "show-filter-panel": "Montrer les filtres",
         "show_more_links": "Voir plus",
+        "deactivate_records": "Désactiver les éléments",
         "table": {
             "preview": "Vignette",
             "selected": "Sélectionner",
@@ -474,5 +475,11 @@
         "path": "Emplacement",
         "no_preview": "Aperçu indisponible",
         "directory": "Dossier"
+    },
+    "records_deactivation": {
+        "title": "Désactiver les éléments",
+        "title_one": "Désactiver",
+        "confirm": "Êtes-vous sûr de vouloir désactiver les {{count}} éléments sélectionnés?",
+        "confirm_one": "Êtes-vous sûr de vouloir désactiver cet élément?"
     }
 }

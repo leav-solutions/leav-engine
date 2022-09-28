@@ -8,9 +8,9 @@ import {IRecord} from '_types/record';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, ITreeNodeLight, TreePaths} from '_types/tree';
 import {IDbDocument, IDbEdge, IExecuteWithCount, isExecuteWithCount} from '../../infra/db/_types';
+import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {collectionTypes, IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {VALUES_LINKS_COLLECTION} from '../record/recordRepo';
 import {
     getEdgesCollectionName,
     getFullNodeId,
@@ -159,7 +159,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
 }
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): ITreeRepo {

@@ -1,18 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DeleteOutlined} from '@ant-design/icons';
-import {message} from 'antd';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
-import SelectCellsBtn, {
-    SelectCellsBtnType
-} from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
+import DeactivateRecordBtn from 'components/LibraryItemsList/shared/DeactivateRecordBtn';
+import SelectCellsBtn, {SelectCellsBtnType} from 'components/LibraryItemsList/shared/SelectCellsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
@@ -51,10 +47,8 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
 
     if (canDeleteRecord) {
         menuActions.push({
-            title: t('items_list.table.actions-tooltips.remove'),
-            icon: <DeleteOutlined />,
-            size: menuBtnSize,
-            onClick: () => message.warn(t('global.feature_not_available'))
+            title: t('records_deactivation.title_one'),
+            button: <DeactivateRecordBtn record={record} />
         });
     }
 

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
+import {IValidateHelper} from 'domain/helpers/validate';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
@@ -10,6 +11,7 @@ import {ICachesService} from 'infra/cache/cacheService';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IValueRepo} from 'infra/value/valueRepo';
 import moment from 'moment';
 import {join} from 'path';
 import {IUtils} from 'utils/utils';
@@ -166,6 +168,15 @@ export interface IRecordDomain {
     deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord>;
 
     activateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord>;
+
+    deactivateRecordsBatch(params: {
+        libraryId: string;
+        recordsIds?: string[];
+        filters?: IRecordFilterLight[];
+        ctx: IQueryInfos;
+    }): Promise<IRecord[]>;
+
+    purgeInactiveRecords(params: {libraryId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 }
 
 interface IDeps {
@@ -176,14 +187,16 @@ interface IDeps {
     'core.domain.permission.record'?: IRecordPermissionDomain;
     'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
+    'core.domain.helpers.validate'?: IValidateHelper;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
+    'core.infra.value'?: IValueRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -191,8 +204,10 @@ export default function ({
     'core.domain.permission.record': recordPermissionDomain = null,
     'core.domain.permission.library': libraryPermissionDomain = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
+    'core.domain.helpers.validate': validateHelper = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
+    'core.infra.value': valueRepo = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils': utils = null
@@ -297,16 +312,17 @@ export default function ({
         });
 
         const linkedValuesToDel: Array<{records: IRecord[]; attribute: string}> = [];
-        const libraryAttrs: {[library: string]: IAttribute[]} = {};
+        const libraryAttributes: {[library: string]: IAttribute[]} = {};
 
+        // Get libraries using link attributes
         for (const attr of attributes.list) {
             const libs = await libraryRepo.getLibrariesUsingAttribute(attr.id, ctx);
             for (const l of libs) {
-                libraryAttrs[l] = !!libraryAttrs[l] ? [...libraryAttrs[l], attr] : [attr];
+                libraryAttributes[l] = !!libraryAttributes[l] ? [...libraryAttributes[l], attr] : [attr];
             }
         }
 
-        for (const [lib, attrs] of Object.entries(libraryAttrs)) {
+        for (const [lib, attrs] of Object.entries(libraryAttributes)) {
             for (const attr of attrs) {
                 let reverseLink: IAttribute;
                 if (!!attr.reverse_link) {
@@ -631,13 +647,7 @@ export default function ({
             return recordRepo.updateRecord({libraryId: library, recordData, ctx});
         },
         async deleteRecord({library, id, ctx}): Promise<IRecord> {
-            // Get library
-            const lib = await libraryRepo.getLibraries({params: {filters: {id: library}, strictFilters: true}, ctx});
-
-            // Check if exists and can delete
-            if (!lib.list.length) {
-                throw new Error('Unknown library');
-            }
+            await validateHelper.validateLibrary(library, ctx);
 
             // Check permission
             const canDelete = await recordPermissionDomain.getRecordPermission({
@@ -654,8 +664,6 @@ export default function ({
 
             const simpleLinkedRecords = await _getSimpleLinkedRecords(library, id, ctx);
 
-            const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
-
             // delete simple linked values
             for (const e of simpleLinkedRecords) {
                 for (const r of e.records) {
@@ -667,6 +675,45 @@ export default function ({
                     });
                 }
             }
+
+            // Delete linked values (advanced, advanced link and tree)
+            await valueRepo.deleteAllValuesByRecord({libraryId: library, recordId: id, ctx});
+
+            // Remove element from all trees
+            const libraryTrees = await treeRepo.getTrees({
+                params: {
+                    filters: {
+                        library
+                    }
+                },
+                ctx
+            });
+
+            // For each tree, get all record nodes
+            await Promise.all(
+                libraryTrees.list.map(async tree => {
+                    const nodes = await treeRepo.getNodesByRecord({
+                        treeId: tree.id,
+                        record: {
+                            id,
+                            library
+                        },
+                        ctx
+                    });
+
+                    for (const node of nodes) {
+                        await treeRepo.deleteElement({
+                            treeId: tree.id,
+                            nodeId: node,
+                            deleteChildren: true,
+                            ctx
+                        });
+                    }
+                })
+            );
+
+            // Everything is clean, we can actually delete the record
+            const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
             await eventsManager.send(
                 {
@@ -926,6 +973,55 @@ export default function ({
             });
 
             return {...record, active: savedVal.value};
+        },
+        async deactivateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
+            let recordsToDeactivate: string[] = recordsIds ?? [];
+
+            if (filters) {
+                const records = await this.find({
+                    params: {
+                        library: libraryId,
+                        filters,
+                        options: {forceArray: true, forceGetAllValues: true},
+                        retrieveInactive: false,
+                        withCount: false
+                    },
+                    ctx
+                });
+                recordsToDeactivate = records.list.map(record => record.id);
+            }
+
+            if (!recordsToDeactivate.length) {
+                return [];
+            }
+
+            const inactiveRecords = await Promise.all(
+                recordsToDeactivate.map(recordId => this.deactivateRecord({id: recordId, library: libraryId}, ctx))
+            );
+
+            return inactiveRecords;
+        },
+        async purgeInactiveRecords({libraryId, ctx}): Promise<IRecord[]> {
+            const inactiveRecords = await this.find({
+                params: {
+                    library: libraryId,
+                    filters: [{field: 'active', condition: AttributeCondition.EQUAL, value: 'false'}]
+                },
+                ctx
+            });
+
+            const purgedRecords: IRecord[] = [];
+            for (const record of inactiveRecords.list) {
+                purgedRecords.push(
+                    await this.deleteRecord({
+                        library: libraryId,
+                        id: record.id,
+                        ctx
+                    })
+                );
+            }
+
+            return purgedRecords;
         }
     };
 

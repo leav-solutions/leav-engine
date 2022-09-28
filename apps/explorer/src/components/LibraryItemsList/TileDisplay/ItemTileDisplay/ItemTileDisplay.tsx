@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckCircleFilled, CheckOutlined, DeleteOutlined} from '@ant-design/icons';
+import {CheckCircleFilled, CheckOutlined} from '@ant-design/icons';
 import {Button, Card, message, Space, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import SelectCellsBtn, {
-    SelectCellsBtnType
-} from 'components/LibraryItemsList/LibraryItemsListTable/BodyCell/SelectCellsBtn';
+import DeactivateRecordBtn from 'components/LibraryItemsList/shared/DeactivateRecordBtn';
+import SelectCellsBtn, {SelectCellsBtnType} from 'components/LibraryItemsList/shared/SelectCellsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import {SelectionModeContext} from 'context';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
@@ -310,7 +309,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                                     </Tooltip>
                                     {canDeleteRecord ? (
                                         <Tooltip title={t('global.delete')} key="delete">
-                                            <Button shape="circle" icon={<DeleteOutlined />} onClick={_handleDelete} />
+                                            <DeactivateRecordBtn record={item.whoAmI} />
                                         </Tooltip>
                                     ) : (
                                         // Keep this empty div for styling purpose

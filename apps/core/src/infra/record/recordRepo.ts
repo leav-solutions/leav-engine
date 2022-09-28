@@ -29,8 +29,6 @@ import {IDbUtils} from '../db/dbUtils';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
 import {MAX_TREE_DEPTH} from '../tree/treeRepo';
 
-export const VALUES_LINKS_COLLECTION = 'core_edge_values_links';
-
 export interface IFindRequestResult {
     initialVars: GeneratedAqlQuery[]; // Some "global" variables needed later on the query (eg. "classified in" subquery)
     queryPart: GeneratedAqlQuery;
@@ -83,7 +81,7 @@ interface IDeps {
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.db.dbUtils': dbUtils = null,
@@ -339,17 +337,6 @@ export default function ({
         },
         async deleteRecord({libraryId, recordId, ctx}): Promise<IRecord> {
             const collection = dbService.db.collection(libraryId);
-            const edgeCollection = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
-
-            // Delete record values
-            await dbService.execute({
-                query: aql`
-                    FOR l IN ${edgeCollection}
-                        FILTER l._from == ${libraryId + '/' + recordId} OR l._to == ${libraryId + '/' + recordId}
-                        REMOVE {_key: l._key} IN ${edgeCollection}
-                `,
-                ctx
-            });
 
             // Delete record
             const deletedRecord = await collection.remove({_key: String(recordId)}, {returnOld: true});
