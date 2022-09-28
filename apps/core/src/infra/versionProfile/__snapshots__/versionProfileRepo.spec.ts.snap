@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`versionProfileRepo Delete versionProfile Should delete a version profile 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`versionProfileRepo Delete versionProfile Should delete a version profile 2`] = `
+{
+  "@value1": "core_version_profiles",
+  "value0": {
+    "_key": "test_profile",
+  },
+}
+`;
+
+exports[`versionProfileRepo createVersionProfile Should create a new version profile 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`versionProfileRepo createVersionProfile Should create a new version profile 2`] = `
+{
+  "@value1": "core_version_profiles",
+  "value0": {
+    "_key": "test_profile",
+    "label": {
+      "fr": "Test",
+    },
+    "trees": [
+      "treeA",
+      "treeB",
+    ],
+  },
+}
+`;
+
+exports[`versionProfileRepo getAttributesUsingProfile Should return a list of attributes using a profile 1`] = `
+"
+                    FOR attrib IN @@value0
+                        FILTER attrib.versions_conf.profile == @value1
+                        RETURN attrib
+                "
+`;
+
+exports[`versionProfileRepo getAttributesUsingProfile Should return a list of attributes using a profile 2`] = `
+{
+  "@value0": "core_attributes",
+  "value1": "my_profile",
+}
+`;
+
+exports[`versionProfileRepo updateVersionProfile Should update an existing version profile 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+
+exports[`versionProfileRepo updateVersionProfile Should update an existing version profile 2`] = `
+{
+  "@value1": "core_version_profiles",
+  "value0": {
+    "_key": "test_profile",
+    "label": {
+      "fr": "Test",
+    },
+    "trees": [
+      "treeA",
+      "treeB",
+    ],
+  },
+}
+`;

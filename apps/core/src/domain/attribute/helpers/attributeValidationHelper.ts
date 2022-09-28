@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
+import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {difference, intersection} from 'lodash';
@@ -34,44 +35,6 @@ const _validateSettings = (
         attrData.multiple_values
     ) {
         errors.multiple_values = Errors.MULTIPLE_VALUES_NOT_ALLOWED;
-    }
-
-    return errors;
-};
-
-/**
- * Check if versions conf are valid
- *
- * @param attrData
- * @param deps
- */
-const _validateVersionsConf = async (
-    attrData: IAttribute,
-    deps: {
-        utils: IUtils;
-        treeRepo: ITreeRepo;
-        config: any;
-        attributeRepo: IAttributeRepo;
-        actionsListDomain: IActionsListDomain;
-    },
-    ctx: IQueryInfos
-): Promise<ErrorFieldDetail<IAttribute>> => {
-    const errors: ErrorFieldDetail<IAttribute> = {};
-    if (
-        attrData.versions_conf &&
-        attrData.versions_conf.versionable &&
-        attrData.versions_conf.trees &&
-        attrData.versions_conf.trees.length
-    ) {
-        const existingTrees = await deps.treeRepo.getTrees({ctx});
-        const unknownTrees = difference(
-            attrData.versions_conf.trees,
-            existingTrees.list.map(a => a.id)
-        );
-
-        if (unknownTrees.length) {
-            errors.versions_conf = {msg: Errors.UNKNOWN_TREES, vars: {trees: unknownTrees.join(', ')}};
-        }
     }
 
     return errors;
@@ -252,6 +215,38 @@ const _validateRequiredFields = (attrData: IAttribute, deps: {config: any}): Err
     return requiredFieldsErrors;
 };
 
+/**
+ * Check if attribute has are required fields based on its type and format
+ *
+ * @param attrData
+ * @param deps
+ */
+const _validateVersionProfile = async (
+    attrData: IAttribute,
+    deps: {versionProfileDomain: IVersionProfileDomain},
+    ctx: IQueryInfos
+): Promise<ErrorFieldDetail<IAttribute>> => {
+    if (!attrData?.versions_conf?.profile) {
+        return {};
+    }
+
+    const versionProfileErrors: ErrorFieldDetail<IAttribute> = {};
+
+    const versionProfile = await deps.versionProfileDomain.getVersionProfiles({
+        params: {filters: {id: attrData.versions_conf.profile}},
+        ctx
+    });
+
+    if (!versionProfile.list.length) {
+        versionProfileErrors.versions_conf = {
+            msg: Errors.UNKNOWN_VERSION_PROFILE,
+            vars: {profile: attrData.versions_conf.profile}
+        };
+    }
+
+    return versionProfileErrors;
+};
+
 export const validateAttributeData = async (
     attrData: IAttribute,
     deps: {
@@ -260,17 +255,18 @@ export const validateAttributeData = async (
         config: any;
         attributeRepo: IAttributeRepo;
         actionsListDomain: IActionsListDomain;
+        versionProfileDomain: IVersionProfileDomain;
     },
     ctx: IQueryInfos
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     const validationFuncs = [
         _validateSettings(attrData, deps, ctx),
-        _validateVersionsConf(attrData, deps, ctx),
         _validateRequiredFields(attrData, deps),
         _validateId(attrData, deps),
         _validateMetadataFields(attrData, deps, ctx),
         _validateInputType(attrData, deps),
-        _validateRequiredActions(attrData, deps)
+        _validateRequiredActions(attrData, deps),
+        _validateVersionProfile(attrData, deps, ctx)
     ];
 
     const validationRes = await Promise.all(validationFuncs);

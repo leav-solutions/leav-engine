@@ -59,9 +59,10 @@
         "UNKNOWN_NODE": "Noeud inconnu",
         "UNKNOWN_PARENT": "Parent inconnu",
         "UNKNOWN_RECORD": "Élément inconnu",
-        "UNKNOWN_TREE": "Arbre inconnu",
+        "UNKNOWN_TREE": "Arbre inconnu: {{tree}}",
         "UNKNOWN_TREES": "Arbres inconnus : {{trees}}",
         "UNKNOWN_VALUE": "Valeur inconnue",
+        "UNKNOWN_VERSION_PROFILE": "Profil de version inconnu {{profile}}",
         "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}",
         "UNKNOWN_VIEW": "Vue inconnue"
     },

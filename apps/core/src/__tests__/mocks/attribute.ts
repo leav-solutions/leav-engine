@@ -38,7 +38,7 @@ export const mockAttrAdv: IAttribute = {
 export const mockAttrAdvMultiVal: IAttribute = {...mockAttrAdv, multiple_values: true};
 export const mockAttrAdvVersionable: IAttribute = {
     ...mockAttrAdv,
-    versions_conf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
+    versions_conf: {versionable: true, mode: ValueVersionMode.SMART, profile: 'my_profile'}
 };
 export const mockAttrAdvVersionableSimple: IAttribute = {
     ...mockAttrAdvVersionable,
@@ -65,6 +65,7 @@ export const mockAttrAdvLink: IAttribute = {
     type: AttributeTypes.ADVANCED_LINK,
     linked_library: 'test_lib'
 };
+
 export const mockAttrAdvLinkMultiVal: IAttribute = {...mockAttrAdvLink, multiple_values: true};
 
 export const mockAttrTree: IAttribute = {
@@ -73,12 +74,15 @@ export const mockAttrTree: IAttribute = {
     type: AttributeTypes.TREE,
     linked_tree: 'my_tree'
 };
+
 export const mockAttrTreeVersionable: IAttribute = {
     ...mockAttrTree,
-    versions_conf: {versionable: true, mode: ValueVersionMode.SMART, trees: ['my_tree']}
+    versions_conf: {versionable: true, mode: ValueVersionMode.SMART, profile: 'my_profile'}
 };
+
 export const mockAttrTreeVersionableSimple: IAttribute = {
     ...mockAttrTreeVersionable,
     versions_conf: {...mockAttrTreeVersionable.versions_conf, mode: ValueVersionMode.SIMPLE}
 };
+
 export const mockAttrTreeMultival: IAttribute = {...mockAttrTree, multiple_values: true};

@@ -156,9 +156,10 @@ export async function gqlSaveAttribute(params: {
                 metadata_fields: ${metadataFields ? `[${metadataFields.map(t => `"${t}"`).join(', ')}]` : 'null'},
                 versions_conf: ${
                     versionsConf
-                        ? `{versionable: ${
-                              versionsConf.versionable ? 'true' : 'false'
-                          }, trees: [${versionsConf.trees.map(t => `"${t}"`).join(', ')}]}`
+                        ? `{
+                            versionable: ${versionsConf.versionable ? 'true' : 'false'},
+                            profile: "${versionsConf.profile}"
+                        }`
                         : 'null'
                 },
                 embedded_fields: ${embeddedFields ? `${embeddedFields.map(_convertEmbeddedFields).join(', ')}` : 'null'}
@@ -269,6 +270,21 @@ export async function gqlSaveValue(attributeId: string, libraryId: string, recor
             value: ${typeof value === 'string' ? `"${value}"` : value}
         }) {
             id_value
+        }
+    }`,
+        true
+    );
+}
+
+export async function gqlSaveVersionProfile(profileId: string, label: string, trees: string[]) {
+    await makeGraphQlCall(
+        `mutation {
+            saveVersionProfile(versionProfile: {
+                id: "${profileId}",
+                label: {fr: "label"},
+                trees: [${trees.map(a => `"${a}"`).join(', ')}]
+            }) {
+            id
         }
     }`,
         true
