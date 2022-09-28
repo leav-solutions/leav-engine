@@ -6,17 +6,14 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {SheetInput} from './globalTypes';
-
 // ====================================================
-// GraphQL mutation operation: IMPORT_EXCEL
+// GraphQL mutation operation: CANCEL_TASK
 // ====================================================
 
-export interface IMPORT_EXCEL {
-    importExcel: string;
+export interface CANCEL_TASK {
+    cancelTask: boolean;
 }
 
-export interface IMPORT_EXCELVariables {
-    file: any;
-    sheets?: (SheetInput | null)[] | null;
+export interface CANCEL_TASKVariables {
+    taskId: string;
 }

@@ -12,6 +12,9 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {withFilter} from 'graphql-subscriptions';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ITasksManagerDomain, TRIGGER_NAME_TASK} from '../../domain/tasksManager/tasksManagerDomain';
+import {IRecord} from '_types/record';
+import {AttributeCondition} from '../../_types/record';
+import {USERS_LIBRARY} from '../../_types/library';
 
 export interface ITasksManagerApp {
     init(): Promise<void>;
@@ -29,6 +32,7 @@ interface IDeps {
 
 export interface IGetTasksArgs {
     filters?: ICoreEntityFilterOptions & {
+        created_by: string;
         status: TaskStatus;
     };
     pagination?: IPaginationParams;
@@ -36,6 +40,7 @@ export interface IGetTasksArgs {
 }
 
 export default function ({
+    'core.domain.record': recordDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null
 }: IDeps): ITasksManagerApp {
@@ -50,12 +55,16 @@ export default function ({
                         ${Object.values(TaskStatus).join(' ')}
                     }
 
+                    type TaskLink {
+                        name: String!,
+                        url: String!
+                    }
+
                     type Task {
                         id: ID!,
                         name: String!,
                         modified_at: Int,
                         created_at: Int,
-                        modified_by: User,
                         created_by: User,
                         startAt: Int,
                         status: TaskStatus,
@@ -63,7 +72,8 @@ export default function ({
                         progress: Progress,
                         startedAt: Int,
                         completedAt: Int,
-                        links: [String]
+                        link: TaskLink,
+                        canceledBy: ID
                     }
 
                     type Progress {
@@ -78,6 +88,7 @@ export default function ({
 
                     input TaskFiltersInput {
                         id: ID,
+                        created_by: ID,
                         status: TaskStatus
                     }
 
@@ -91,13 +102,29 @@ export default function ({
 
                     extend type Mutation {
                         cancelTask(taskId: ID!): Boolean!
+                        deleteTask(taskId: ID!): Task!
                     }
 
                     type Subscription {
-                        task(taskId: ID!): Task!
+                        task(createdBy: ID): Task!
                     }
                 `,
                 resolvers: {
+                    Task: {
+                        created_by: async (task: ITask, _, ctx): Promise<IRecord> => {
+                            const record = await recordDomain.find({
+                                params: {
+                                    library: USERS_LIBRARY,
+                                    filters: [
+                                        {field: 'id', value: task.created_by, condition: AttributeCondition.EQUAL}
+                                    ]
+                                },
+                                ctx
+                            });
+
+                            return record.list.length ? record.list[0] : null;
+                        }
+                    },
                     TaskPriority,
                     Query: {
                         async tasks(
@@ -112,8 +139,11 @@ export default function ({
                         }
                     },
                     Mutation: {
+                        async deleteTask(_, {taskId}, ctx: IQueryInfos): Promise<ITask> {
+                            return tasksManagerDomain.deleteTask(taskId, ctx);
+                        },
                         async cancelTask(_, {taskId}, ctx: IQueryInfos): Promise<boolean> {
-                            await tasksManagerDomain.sendOrder(OrderType.CANCEL, {id: taskId}, ctx);
+                            await tasksManagerDomain.cancelTask({id: taskId}, ctx);
                             return true;
                         }
                     },
@@ -122,7 +152,12 @@ export default function ({
                             subscribe: withFilter(
                                 () => eventsManager.suscribe([TRIGGER_NAME_TASK]),
                                 (payload, variables) => {
-                                    return payload.task.id === variables.taskId;
+                                    console.debug({payload});
+                                    console.debug({variables});
+
+                                    return typeof variables.createdBy !== 'undefined'
+                                        ? payload.task.created_by === variables.createdBy
+                                        : true;
                                 }
                             )
                         }

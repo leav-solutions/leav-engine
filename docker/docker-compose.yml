@@ -72,6 +72,7 @@ x-env-amqp: &env-amqp
 x-env-react: &env-react
   REACT_APP_CORE_URL: http://core.leav.localhost
   REACT_APP_API_URL: http://core.leav.localhost/graphql
+  REACT_APP_WS_URL: ws://core.leav.localhost/graphql
   REACT_APP_DEFAULT_LANG: fr
   REACT_APP_AVAILABLE_LANG: fr,en
   REACT_APP_LOGIN_ENDPOINT: /app/login
@@ -197,6 +198,7 @@ services:
       - *mount_point-repo
       - *mount_point-scripts
       - *mount_point-imports
+      - *mount_point-exports
       - *volume-yarn-cache
       - *volume-shared-modules
       - *volume-core-modules

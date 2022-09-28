@@ -29,6 +29,14 @@ jest.mock(
         }
 );
 
+jest.mock(
+    '../NotifsPanel',
+    () =>
+        function NotifsPanel() {
+            return <div>NotifsPanel</div>;
+        }
+);
+
 jest.mock('./Routes', () => {
     return function Routes() {
         return <div>Routes</div>;
@@ -45,5 +53,6 @@ describe('Router', () => {
         expect(screen.getByText('Sidebar')).toBeInTheDocument();
         expect(screen.getByText('TopBar')).toBeInTheDocument();
         expect(screen.getByText('UserPanel')).toBeInTheDocument();
+        expect(screen.getByText('NotifsPanel')).toBeInTheDocument();
     });
 });

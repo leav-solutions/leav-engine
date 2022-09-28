@@ -486,5 +486,19 @@
     "values_version": {
         "title": "Values versions",
         "select_version": "Select a version"
+    },
+    "notifications": {
+        "title": "Notifications",
+        "inProgress": "In progress",
+        "done": "Completed",
+        "task-infos": "Informations",
+        "task-cancel": "Cancel",
+        "task-createdAt": "Created at",
+        "task-startAt": "Start at",
+        "task-startedAt": "Started at",
+        "task-completedAt": "Completed at",
+        "task-canceledAt": "Canceled at",
+        "task-canceledBy": "Canceled by",
+        "task-duration": "Duration"
     }
 }

@@ -144,6 +144,14 @@ export enum SortOrder {
     desc = 'desc'
 }
 
+export enum TaskStatus {
+    CANCELED = 'CANCELED',
+    DONE = 'DONE',
+    FAILED = 'FAILED',
+    PENDING = 'PENDING',
+    RUNNING = 'RUNNING'
+}
+
 export enum ViewSizes {
     BIG = 'BIG',
     MEDIUM = 'MEDIUM',
@@ -195,6 +203,12 @@ export interface SheetInput {
     linkAttribute?: string | null;
     keyToIndex?: number | null;
     treeLinkLibrary?: string | null;
+}
+
+export interface TaskFiltersInput {
+    id?: string | null;
+    created_by?: string | null;
+    status?: TaskStatus | null;
 }
 
 export interface TreeElementInput {

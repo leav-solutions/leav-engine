@@ -2,11 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getApplicationByIdQuery} from 'graphQL/queries/applications/getApplicationByIdQuery';
+import {getTasks} from 'graphQL/queries/tasks/getTasks';
 import {getMe} from 'graphQL/queries/userData/me';
 import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
+import {mockTask} from '__mocks__/common/task';
 import AppHandler from './AppHandler';
+import {getTaskUpdates} from 'graphQL/subscribes/tasks/getTaskUpdates';
 
 jest.mock(
     '../../Router',
@@ -70,8 +73,41 @@ describe('AppHandler', () => {
                         }
                     }
                 }
+            },
+            {
+                request: {
+                    query: getTasks,
+                    variables: {
+                        filters: {
+                            created_by: '1'
+                        }
+                    }
+                },
+                result: {
+                    data: {
+                        tasks: {
+                            list: [mockTask]
+                        }
+                    }
+                }
+            },
+            {
+                request: {
+                    query: getTaskUpdates,
+                    variables: {
+                        created_by: '1'
+                    }
+                },
+                result: {
+                    data: {
+                        tasks: {
+                            list: [mockTask]
+                        }
+                    }
+                }
             }
         ];
+
         render(<AppHandler />, {apolloMocks: mocks});
 
         expect(await screen.findByText('Router')).toBeInTheDocument();

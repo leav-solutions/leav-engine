@@ -61,7 +61,7 @@ export interface ITask {
     progress?: {percent: number; description?: string};
     startedAt?: number;
     completedAt?: number;
-    links?: Array<{name: string; link: string}>;
+    link?: {name: string; url: string};
     callback?: ITaskCallback;
     workerId?: number;
 }

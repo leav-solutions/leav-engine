@@ -53,7 +53,6 @@ function DisplayInfo({
     setTriggerInfos
 }: IDisplayInfoProps): JSX.Element {
     const {stack} = useAppSelector(state => {
-        console.debug('state', state);
         return {stack: state.info.stack};
     });
 

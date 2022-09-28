@@ -8,6 +8,7 @@ import displayReducer from './display';
 import navigationReducer from './navigation';
 import infosReducer from './infos';
 import selectionReducer from './selection';
+import tasksReducer from './tasks';
 
 const store = configureStore({
     reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
         selection: selectionReducer,
         navigation: navigationReducer,
         info: infosReducer,
-        activePanel: activePanelReducer
+        activePanel: activePanelReducer,
+        tasks: tasksReducer
     }
 });
 

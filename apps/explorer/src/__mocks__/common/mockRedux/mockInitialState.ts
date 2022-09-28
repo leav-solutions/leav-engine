@@ -10,5 +10,5 @@ export const mockInitialState = {
     display: displayInitialState,
     selection: selectionInitialState,
     navigation: navigationInitialState,
-    notification: infosInitialState
+    info: infosInitialState
 };

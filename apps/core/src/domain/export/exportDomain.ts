@@ -149,11 +149,10 @@ export default function ({
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
 
-                await tasksManager.sendOrder(
-                    OrderType.CREATE,
+                await tasksManager.createTask(
                     {
                         id: newTaskId,
-                        name: `Export data from ${library} library`, // FIXME: translator or get name from frontend
+                        name: `Export data from ${library} library`, // FIXME: translation
                         func: {
                             moduleName: 'domain',
                             subModuleName: 'export',
@@ -230,9 +229,11 @@ export default function ({
             // This is a public URL users will use to retrieve files.
             // It must match the route defined in the server.
             const url = `${DIR_PATH}/${filename}`;
-            await tasksManager.setLinks(task.id, [{name: 'export file', link: url}], ctx);
+            await tasksManager.setLink(task.id, {name: 'export file', url}, ctx);
 
             return task.id;
         }
     };
 }
+
+// TODO: path to url field for task

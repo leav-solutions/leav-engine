@@ -409,8 +409,7 @@ export default function ({
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
 
-                await tasksManager.sendOrder(
-                    OrderType.CREATE,
+                await tasksManager.createTask(
                     {
                         id: newTaskId,
                         name: `Import file ${filename}`, // FIXME: translate

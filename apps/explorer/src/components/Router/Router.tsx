@@ -16,12 +16,15 @@ const {Header, Content, Sider} = Layout;
 function Router(): JSX.Element {
     const [userPanelVisible, setUserPanelVisible] = useState<boolean>(false);
     const [notifsPanelVisible, setNotifsPanelVisible] = useState<boolean>(false);
+    const [nbNotifs, setNbNotifs] = useState<number>(0);
 
     const toggleUserPanelVisible = () => setUserPanelVisible(visible => !visible);
     const toggleNotifsPanelVisible = () => setNotifsPanelVisible(visible => !visible);
 
     const hideNotifsPanel = () => setNotifsPanelVisible(false);
     const hideUserPanel = () => setUserPanelVisible(false);
+
+    const _setNbNotifs = (count: number) => setNbNotifs(count);
 
     return (
         <>
@@ -44,12 +47,17 @@ function Router(): JSX.Element {
                                 notifsPanelVisible={notifsPanelVisible}
                                 toggleUserPanelVisible={toggleUserPanelVisible}
                                 toggleNotifsPanelVisible={toggleNotifsPanelVisible}
+                                nbNotifs={nbNotifs}
                             />
                         </Header>
                         <Layout style={{overflow: 'hidden', position: 'relative'}}>
                             <Content style={{background: themingVar['@default-bg'], overflow: 'hidden'}}>
                                 <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
-                                <NotifsPanel notifsPanelVisible={notifsPanelVisible} hideNotifsPanel={hideNotifsPanel} />
+                                <NotifsPanel
+                                    notifsPanelVisible={notifsPanelVisible}
+                                    hideNotifsPanel={hideNotifsPanel}
+                                    setNbNotifs={_setNbNotifs}
+                                />
                                 <Routes />
                             </Content>
                         </Layout>

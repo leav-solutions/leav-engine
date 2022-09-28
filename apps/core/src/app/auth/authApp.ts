@@ -162,7 +162,7 @@ export default function ({
             );
         },
         async validateRequestToken(req: Request): Promise<jwt.JwtPayload> {
-            let token = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
+            let token = req.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
 
             // In development, we allow token to be passed in the header instead of the cookie
             // (for easier testing and tooling)

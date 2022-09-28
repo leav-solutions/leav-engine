@@ -34,7 +34,7 @@ export interface IUpdateData {
     progress?: {percent: number; description?: string};
     startedAt?: number;
     completedAt?: number;
-    links?: Array<{name: string; link: string}>;
+    link?: {name: string; url: string};
     workerId?: number;
     canceledBy?: number;
 }
@@ -43,15 +43,18 @@ interface IGetTasksParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
         status?: TaskStatus;
         startAt?: number;
+        created_by?: string;
     };
 }
 
 export interface ITasksManagerDomain {
     init(): Promise<void>;
-    sendOrder(type: OrderType, payload: Payload, ctx: IQueryInfos): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
-    setLinks(taskId: string, links: Array<{name: string; link: string}>, ctx: IQueryInfos): Promise<void>;
+    setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void>;
     updateProgress(taskId: string, progress: {percent: number; description?: string}, ctx: IQueryInfos): Promise<void>;
+    createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<void>;
+    cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void>;
+    deleteTask(taskId: string, ctx: IQueryInfos): Promise<ITask>;
 }
 
 interface IDeps {
@@ -95,12 +98,6 @@ export default function ({
                     taskId = task.id;
 
                     task = await _executeTask(task, {userId: task.created_by});
-                } else if (msg.type === 'cancel') {
-                    await _updateTask(
-                        taskId,
-                        {status: TaskStatus.CANCELED, canceledBy: msg.data.canceledBy},
-                        {userId: msg.data.canceledBy}
-                    );
                 }
             } finally {
                 await amqpService.close();
@@ -199,7 +196,8 @@ export default function ({
         return _updateTask(
             task.id,
             {
-                ...(status === TaskStatus.DONE ? {completedAt: utils.getUnixTime(), progress: {percent: 100}} : {}),
+                ...(status === TaskStatus.DONE ? {progress: {percent: 100}} : {}),
+                completedAt: utils.getUnixTime(),
                 status
             },
             ctx
@@ -353,23 +351,43 @@ export default function ({
             throw new Error('Task not found');
         }
 
-        // if task is still pending, cancel it
-        if (task.status === TaskStatus.PENDING) {
-            await _updateTask(task.id, {status: TaskStatus.CANCELED}, ctx);
+        // if task is still pending or running, cancel it
+        if (task.status === TaskStatus.PENDING || task.status === TaskStatus.RUNNING) {
+            await _updateTask(
+                task.id,
+                {status: TaskStatus.CANCELED, canceledBy: Number(ctx.userId), completedAt: utils.getUnixTime()},
+                ctx
+            );
 
-            if (!!task.callback) {
+            if (typeof task.workerId !== 'undefined') {
+                // sending kill signal to worker
+                cluster.workers[task.workerId].kill();
+            } else if (!!task.callback) {
                 await _executeCallback(task.id, ctx);
             }
+        }
+    };
 
-            return;
+    const _deleteTask = async (taskId: string, ctx: IQueryInfos): Promise<ITask> => {
+        const res = await _getTasks({params: {filters: {id: taskId}}, ctx});
+
+        const task = res.list[0];
+
+        if (!task) {
+            throw new Error('Task not found');
+        } else if (!!task.workerId) {
+            throw new Error(`Cannot delete: task ${taskId} is still running.`);
         }
 
-        if (task.status !== TaskStatus.RUNNING || typeof task.workerId === 'undefined') {
-            throw new Error('Task not running');
-        }
+        return taskRepo.deleteTask(taskId, ctx);
+    };
 
-        // send cancel signal to worker
-        cluster.workers[task.workerId].send({type: 'cancel', data: {canceledBy: ctx.userId}} as IMasterMsg);
+    const _sendOrder = async (type: OrderType, payload: Payload, ctx: IQueryInfos): Promise<void> => {
+        await amqpService.publish(
+            config.amqp.exchange,
+            config.tasksManager.routingKeys.orders,
+            JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, type, payload})
+        );
     };
 
     return {
@@ -391,12 +409,14 @@ export default function ({
                 _monitorTasks({userId: '1'});
             }
         },
-        async sendOrder(type: OrderType, payload: Payload, ctx: IQueryInfos): Promise<void> {
-            await amqpService.publish(
-                config.amqp.exchange,
-                config.tasksManager.routingKeys.orders,
-                JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, type, payload})
-            );
+        async createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<void> {
+            await _sendOrder(OrderType.CREATE, task, ctx);
+        },
+        async cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void> {
+            await _sendOrder(OrderType.CANCEL, task, ctx);
+        },
+        async deleteTask(taskId: string, ctx: IQueryInfos): Promise<ITask> {
+            return _deleteTask(taskId, ctx);
         },
         async updateProgress(
             taskId: string,
@@ -405,8 +425,8 @@ export default function ({
         ): Promise<void> {
             await _updateTask(taskId, {progress}, ctx);
         },
-        async setLinks(taskId: string, links: Array<{name: string; link: string}>, ctx: IQueryInfos): Promise<void> {
-            await _updateTask(taskId, {links}, ctx);
+        async setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void> {
+            await _updateTask(taskId, {link}, ctx);
         },
         getTasks: _getTasks
     };

@@ -11,7 +11,6 @@ import DisplayInfo from './DisplayInfo';
 
 function HeaderInfo(): JSX.Element {
     const {stack, base} = useAppSelector(state => {
-        console.debug('state', state);
         return state.info;
     });
     const dispatch = useAppDispatch();

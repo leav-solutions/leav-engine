@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {
     TREE_NODE_CHILDREN_treeNodeChildren_list,
     TREE_NODE_CHILDREN_treeNodeChildren_list_permissions
@@ -73,6 +74,10 @@ export interface INavigationElement extends TREE_NODE_CHILDREN_treeNodeChildren_
 export interface INavigationState {
     activeTree: string;
     path: INavigationElement[];
+}
+
+export interface ITasksState {
+    tasks: {[taskId: string]: GET_TASKS_tasks_list};
 }
 
 export interface IInfosState {

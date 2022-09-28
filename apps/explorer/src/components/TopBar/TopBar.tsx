@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Tooltip} from 'antd';
+import {Badge, Button, Tooltip} from 'antd';
 import ApplicationSwitcher from 'components/ApplicationSwitcher';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import {default as themingVar, default as themingVars} from '../../themingVar';
 import HeaderInfo from '../HeaderInfo';
@@ -16,6 +16,7 @@ interface ITopBarProps {
     notifsPanelVisible: boolean;
     toggleUserPanelVisible: () => void;
     toggleNotifsPanelVisible: () => void;
+    nbNotifs: number;
 }
 
 const Wrapper = styled.div`
@@ -73,8 +74,13 @@ const InfoButton = styled(Button)`
     }
 `;
 
-
-function TopBar({userPanelVisible, notifsPanelVisible, toggleUserPanelVisible, toggleNotifsPanelVisible}: ITopBarProps): JSX.Element {
+function TopBar({
+    userPanelVisible,
+    notifsPanelVisible,
+    toggleUserPanelVisible,
+    toggleNotifsPanelVisible,
+    nbNotifs
+}: ITopBarProps): JSX.Element {
     const userPanelKey = 'trigger-user-panel';
     const notifsPanelKey = 'trigger-notifs-panel';
 
@@ -92,16 +98,18 @@ function TopBar({userPanelVisible, notifsPanelVisible, toggleUserPanelVisible, t
                 <HeaderInfo />
             </WrapperHeaderInfo>
             <ApplicationSwitcher />
-            <InfoButton
-                key={notifsPanelKey}
-                name="infos"
-                ghost
-                shape="circle"
-                size="large"
-                icon={<BellOutlined  style={{fontSize: '1.5em'}} />}
-                aria-label="infos"
-                onClick={handleNotifsPanelClick}
-            />
+            <Badge count={nbNotifs} offset={[-10, 15]}>
+                <InfoButton
+                    key={notifsPanelKey}
+                    name="infos"
+                    ghost
+                    shape="circle"
+                    size="large"
+                    icon={<BellOutlined style={{fontSize: '1.5em'}} />}
+                    aria-label="infos"
+                    onClick={handleNotifsPanelClick}
+                />
+            </Badge>
             <MenuItemUser key={userPanelKey} onClick={handleUserPanelClick} isActive={userPanelVisible}>
                 <UserMenu />
             </MenuItemUser>

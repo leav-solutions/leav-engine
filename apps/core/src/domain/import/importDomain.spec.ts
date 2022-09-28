@@ -161,7 +161,7 @@ describe('importDomain', () => {
         };
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise(),
+            createTask: global.__mockPromise(),
             updateProgress: global.__mockPromise()
         };
 
@@ -268,7 +268,7 @@ describe('importDomain', () => {
         };
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise(),
+            createTask: global.__mockPromise(),
             updateProgress: global.__mockPromise()
         };
 
@@ -341,7 +341,7 @@ describe('importDomain', () => {
         };
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise(),
+            createTask: global.__mockPromise(),
             updateProgress: global.__mockPromise()
         };
 
@@ -421,7 +421,7 @@ describe('importDomain', () => {
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise(),
+            createTask: global.__mockPromise(),
             updateProgress: global.__mockPromise()
         };
 
@@ -499,7 +499,7 @@ describe('importDomain', () => {
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise(),
+            createTask: global.__mockPromise(),
             updateProgress: global.__mockPromise()
         };
 
@@ -577,7 +577,7 @@ describe('importDomain', () => {
         const mockCachesService: Mockify<ICachesService> = {getCache: jest.fn().mockReturnValue(mockCacheService)};
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
-            sendOrder: global.__mockPromise(),
+            createTask: global.__mockPromise(),
             updateProgress: global.__mockPromise()
         };
 
