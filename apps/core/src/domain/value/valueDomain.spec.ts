@@ -1611,7 +1611,7 @@ describe('ValueDomain', () => {
 
     describe('getValues', () => {
         test('Should return values', async function () {
-            const valueData = {value: 'test val', attribute: 'test_attr'};
+            const valueData = [{value: 'test val', attribute: 'test_attr'}];
 
             const mockValRepo = {
                 getValues: global.__mockPromise(valueData)
@@ -1642,11 +1642,13 @@ describe('ValueDomain', () => {
 
         test('Should return versioned values in simple mode', async function () {
             const version = {my_tree: '12345'};
-            const valueData = {
-                value: 'test val',
-                attribute: 'test_attr',
-                version
-            };
+            const valueData = [
+                {
+                    value: 'test val',
+                    attribute: 'test_attr',
+                    version
+                }
+            ];
 
             const mockValRepo = {
                 getValues: global.__mockPromise(valueData)
