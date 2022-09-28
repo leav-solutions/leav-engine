@@ -8,6 +8,7 @@ import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDom
 import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
 import {omit} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
@@ -148,6 +149,7 @@ interface IDeps {
     'core.domain.tree.helpers.handleRemovedLibraries'?: HandleRemovedLibrariesFunc;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
+    'core.infra.versionProfile'?: IVersionProfileRepo;
     'core.utils'?: IUtils;
     'core.infra.cache.cacheService'?: ICachesService;
 }
@@ -164,6 +166,7 @@ export default function ({
     'core.domain.tree.helpers.handleRemovedLibraries': handleRemovedLibraries = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
+    'core.infra.versionProfile': versionProfileRepo = null,
     'core.utils': utils = null,
     'core.infra.cache.cacheService': cacheService = null
 }: IDeps = {}): ITreeDomain {
@@ -375,6 +378,23 @@ export default function ({
             await _cleanPermissionsCacheRelatedToTree(treeProps.id, ctx);
             await elementAncestorsHelper.clearElementAncestorsCache({treeId: treeProps.id, ctx});
 
+            // Remove tree from versions profile using it
+            const versionProfiles = await versionProfileRepo.getVersionProfiles({
+                params: {filters: {trees: treeProps.id}},
+                ctx
+            });
+            if (versionProfiles.list.length) {
+                await Promise.all(
+                    versionProfiles.list.map(async versionProfile => {
+                        const trees = versionProfile.trees.filter(t => t !== treeProps.id);
+                        await versionProfileRepo.updateVersionProfile({
+                            profileData: {...versionProfile, trees},
+                            ctx
+                        });
+                    })
+                );
+            }
+
             const deletedTree = treeRepo.deleteTree({id, ctx});
 
             const cacheKey = utils.getCoreEntityCacheKey('tree', id);
@@ -394,9 +414,11 @@ export default function ({
             const tree = await getCoreEntityById<ITree>('tree', treeId, ctx);
 
             if (!tree) {
-                throw new ValidationError({
-                    id: Errors.UNKNOWN_TREE
-                });
+                throw utils.generateExplicitValidationError(
+                    'id',
+                    {msg: Errors.UNKNOWN_TREE, vars: {tree: treeId}},
+                    ctx.lang
+                );
             }
 
             return tree;

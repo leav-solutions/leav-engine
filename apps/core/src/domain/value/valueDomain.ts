@@ -4,6 +4,7 @@
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
@@ -126,15 +127,16 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
     'core.domain.permission.record'?: IRecordPermissionDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.domain.helpers.validate'?: IValidateHelper;
+    'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
+    'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
+    'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.infra.record'?: IRecordRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
     'core.utils'?: IUtils;
     'core.utils.logger'?: winston.Winston;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
-    'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
 }
 
 const valueDomain = function ({
@@ -143,15 +145,16 @@ const valueDomain = function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
     'core.domain.permission.record': recordPermissionDomain = null,
+    'core.domain.eventsManager': eventsManager = null,
+    'core.domain.helpers.validate': validate = null,
+    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
+    'core.domain.tree.helpers.elementAncestors': elementAncestors = null,
+    'core.domain.versionProfile': versionProfileDomain = null,
     'core.infra.record': recordRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.value': valueRepo = null,
     'core.utils': utils = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.domain.helpers.validate': validate = null,
-    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
-    'core.utils.logger': logger = null,
-    'core.domain.tree.helpers.elementAncestors': elementAncestors = null
+    'core.utils.logger': logger = null
 }: IDeps = {}): IValueDomain {
     /**
      * Run actions list on a value
@@ -222,10 +225,14 @@ const valueDomain = function ({
                     options,
                     ctx
                 });
+                const versionProfile = await versionProfileDomain.getVersionProfileProperties({
+                    id: attr.versions_conf.profile,
+                    ctx
+                });
 
                 // Get trees ancestors
                 const trees: IFindValueTree[] = await Promise.all(
-                    attr.versions_conf.trees.map(
+                    versionProfile.trees.map(
                         async (treeName: string): Promise<IFindValueTree> => {
                             const treeElem =
                                 options?.version && options.version[treeName]

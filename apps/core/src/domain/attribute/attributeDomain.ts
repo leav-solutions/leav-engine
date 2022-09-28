@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -57,6 +58,7 @@ interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
+    'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.infra.library'?: ILibraryRepo;
     'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
@@ -64,11 +66,12 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
+    'core.domain.versionProfile': versionProfileDomain = null,
     'core.infra.library': libraryRepo = null,
     'core.utils': utils = null,
     'core.infra.tree': treeRepo = null,
@@ -170,7 +173,8 @@ export default function({
                     treeRepo,
                     config,
                     attributeRepo,
-                    actionsListDomain
+                    actionsListDomain,
+                    versionProfileDomain
                 },
                 ctx
             );

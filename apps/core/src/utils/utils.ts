@@ -5,8 +5,9 @@ import {i18n} from 'i18next';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
 import {IActionsListConfig} from '_types/actionsList';
-import {Errors, IExtendedErrorMsg} from '_types/errors';
+import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
 import {LibraryBehavior} from '_types/library';
+import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
 import {AttributeTypes, IAttribute} from '../_types/attribute';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
@@ -89,6 +90,12 @@ export interface IUtils {
     getFullApplicationEndpoint(endpoint: string): string;
 
     getCoreEntityCacheKey(entityType: string, entityId: string): string;
+
+    generateExplicitValidationError<T>(
+        field: keyof T,
+        message: ErrorFieldDetailMessage,
+        lang: string
+    ): ValidationError<T>;
 }
 
 export interface IUtilsDeps {
@@ -203,7 +210,7 @@ export default function ({translator = null}: IUtilsDeps = {}): IUtils {
 
             return {library, id};
         },
-        translateError(error: Errors | IExtendedErrorMsg | string, lang: string): string {
+        translateError(error: ErrorFieldDetailMessage, lang: string): string {
             const toTranslate = typeof error === 'string' ? {msg: error, vars: {}} : (error as IExtendedErrorMsg);
 
             return translator.t(('errors.' + toTranslate.msg) as string, {
@@ -217,6 +224,17 @@ export default function ({translator = null}: IUtilsDeps = {}): IUtils {
         },
         getCoreEntityCacheKey(entityType: string, entityId: string): string {
             return `coreEntity:${entityType}:${entityId}`;
+        },
+        generateExplicitValidationError<T>(
+            field: keyof T,
+            message: ErrorFieldDetailMessage,
+            lang: string
+        ): ValidationError<T> {
+            const fieldDetails: ErrorFieldDetail<T> = {};
+            fieldDetails[field] = message;
+
+            //TODO: test this
+            return new ValidationError<T>(fieldDetails, this.translateError(message, lang));
         }
     };
 }

@@ -8,6 +8,7 @@ import {
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
+    gqlSaveVersionProfile,
     makeGraphQlCall
 } from '../e2eUtils';
 
@@ -17,6 +18,7 @@ describe('Versions', () => {
     const attrAdvName = 'versions_attribute_test';
     const treeName = 'versions_tree';
     const treeElementLibName = 'versions_library_tree_test';
+    const versionProfileName = 'versions_version_profile_test';
 
     let treeElement1: string;
     let treeElement2: string;
@@ -26,6 +28,7 @@ describe('Versions', () => {
     beforeAll(async () => {
         await gqlSaveLibrary(treeElementLibName, 'Test Tree Lib');
         await gqlSaveTree(treeName, 'Test Tree', [treeElementLibName]);
+        await gqlSaveVersionProfile(versionProfileName, 'Test Version Profile', [treeName]);
 
         // Create attribute
         // Add tree to versions conf on attribute
@@ -36,7 +39,7 @@ describe('Versions', () => {
             format: AttributeFormats.TEXT,
             versionsConf: {
                 versionable: true,
-                trees: [treeName]
+                profile: versionProfileName
             }
         });
 

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -673,7 +674,7 @@ describe('attributeDomain', () => {
             );
         });
 
-        test('Should throw if using invalid tree on versions conf', async function () {
+        test('Should throw if using invalid profile on versions conf', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: jest.fn().mockImplementation(filters => {
                     const list = filters.type === AttributeTypes.TREE ? [mockAttrTree] : [];
@@ -681,6 +682,10 @@ describe('attributeDomain', () => {
                 }),
                 createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
                 updateAttribute: jest.fn()
+            };
+
+            const mockVersionProfileDomain: Mockify<IVersionProfileDomain> = {
+                getVersionProfiles: jest.fn().mockImplementation(() => Promise.resolve({list: []}))
             };
 
             const mockTreeRepo: Mockify<ITreeRepo> = {
@@ -692,6 +697,7 @@ describe('attributeDomain', () => {
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
                 'core.utils': mockUtils as IUtils,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 config: mockConf

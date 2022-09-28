@@ -34,7 +34,7 @@ export enum ValueVersionMode {
 export interface IAttributeVersionsConf {
     versionable: boolean;
     mode?: ValueVersionMode;
-    trees?: string[];
+    profile?: string;
 }
 
 export interface IEmbeddedAttribute {
