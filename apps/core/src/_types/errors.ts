@@ -74,6 +74,7 @@ export enum Errors {
     UNKNOWN_TREE = 'UNKNOWN_TREE',
     UNKNOWN_TREES = 'UNKNOWN_TREES',
     UNKNOWN_VALUE = 'UNKNOWN_VALUE',
+    UNKNOWN_VERSION_PROFILE = 'UNKNOWN_VERSION_PROFILE',
     UNKNOWN_VERSION_TREE = 'UNKNOWN_VERSION_TREE',
     UNKNOWN_VIEW = 'UNKNOWN_VIEW',
     USER_IS_NOT_VIEW_OWNER = 'USER_IS_NOT_VIEW_OWNER'
@@ -84,10 +85,12 @@ export interface IExtendedErrorMsg {
     vars: {[varName: string]: any};
 }
 
+export type ErrorFieldDetailMessage = Errors | IExtendedErrorMsg | string;
+
 /**
  * Field error details
  * must be "fieldName: 'message about what failed'"
  */
 export type ErrorFieldDetail<T> = {
-    [P in keyof T]?: Errors | IExtendedErrorMsg | string;
+    [P in keyof T]?: ErrorFieldDetailMessage;
 };

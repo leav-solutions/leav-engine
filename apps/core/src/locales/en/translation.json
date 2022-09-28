@@ -60,9 +60,10 @@
         "UNKNOWN_NODE": "Unknown node",
         "UNKNOWN_PARENT": "Unknown parent",
         "UNKNOWN_RECORD": "Unknown record",
-        "UNKNOWN_TREE": "Unknown tree",
+        "UNKNOWN_TREE": "Unknown tree: {{tree}}",
         "UNKNOWN_TREES": "Unknown trees : {{trees}}",
         "UNKNOWN_VALUE": "Unknown value",
+        "UNKNOWN_VERSION_PROFILE": "Unknown version profile {{profile}}",
         "UNKNOWN_VERSION_TREE": "Unknown tree {{tree}}",
         "UNKNOWN_VIEW": "Unknown view"
     },

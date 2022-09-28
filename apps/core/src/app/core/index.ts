@@ -16,4 +16,5 @@ export {default as record} from './recordApp';
 export {default as tree} from './treeApp/treeApp';
 export {default as userData} from './userDataApp';
 export {default as value} from './valueApp';
+export {default as versionProfile} from './versionProfileApp/versionProfileApp';
 export {default as view} from './viewApp';

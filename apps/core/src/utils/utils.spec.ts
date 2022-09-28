@@ -317,4 +317,17 @@ describe('Utils', () => {
             expect(utilsModule.translateError('custom_error', 'fr')).toMatch('custom_error');
         });
     });
+
+    describe('generateExplicitValidationError', () => {
+        test('Generate a validation error with explicit message', async () => {
+            const mockTranslator: Mockify<i18n> = {
+                t: jest.fn().mockImplementation((str, options) => `[TRANSLATED] ${str}_${JSON.stringify(options)}`)
+            };
+
+            const utilsModule = utils({translator: mockTranslator as i18n});
+            const error = utilsModule.generateExplicitValidationError('id', Errors.UNKNOWN_ELEMENT, 'fr');
+            expect(error.fields.id).toMatch('UNKNOWN_ELEMENT');
+            expect(error.message).toMatch('[TRANSLATED]');
+        });
+    });
 });

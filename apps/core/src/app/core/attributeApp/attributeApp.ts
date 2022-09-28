@@ -7,6 +7,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
+import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {GraphQLResolveInfo} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
@@ -15,11 +16,13 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
+import {IVersionProfile} from '_types/versionProfile';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {
     AttributeFormats,
     AttributeTypes,
     IAttribute,
+    IAttributeVersionsConf,
     IGetCoreAttributesParams,
     IValuesListConf
 } from '../../../_types/attribute';
@@ -41,6 +44,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
     'core.domain.actionsList'?: IActionsListDomain;
     'core.domain.permission'?: IPermissionDomain;
+    'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core'?: ICoreApp;
     'core.utils'?: IUtils;
@@ -53,6 +57,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
         'core.domain.library': libraryDomain = null,
         'core.domain.tree': treeDomain = null,
         'core.domain.permission': permissionDomain = null,
+        'core.domain.versionProfile': versionProfileDomain = null,
         'core.app.graphql': graphqlApp = null,
         'core.app.core': coreApp = null,
         'core.utils': utils = null
@@ -237,13 +242,13 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     type ValuesVersionsConf {
                         versionable: Boolean!,
                         mode: ValueVersionMode,
-                        trees: [String!]
+                        profile: VersionProfile
                     }
 
                     input ValuesVersionsConfInput {
                         versionable: Boolean!,
                         mode: ValueVersionMode,
-                        trees: [String!]
+                        profile: String
                     }
 
                     union StandardValuesListConf = StandardStringValuesListConf | StandardDateRangeValuesListConf
@@ -446,6 +451,18 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                             return obj.attributeFormat === AttributeFormats.DATE_RANGE
                                 ? 'StandardDateRangeValuesListConf'
                                 : 'StandardStringValuesListConf';
+                        }
+                    },
+                    ValuesVersionsConf: {
+                        profile: async (
+                            conf: IAttributeVersionsConf,
+                            args,
+                            ctx: IQueryInfos
+                        ): Promise<IVersionProfile> => {
+                            return versionProfileDomain.getVersionProfileProperties({
+                                id: conf.profile,
+                                ctx
+                            });
                         }
                     }
                 }

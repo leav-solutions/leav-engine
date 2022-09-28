@@ -8,6 +8,7 @@ import {ITreePermissionDomain} from 'domain/permission/treePermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
@@ -16,6 +17,7 @@ import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {ITree} from '../../_types/tree';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
+import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
@@ -71,7 +73,8 @@ describe('treeDomain', () => {
 
     const mockUtils: Mockify<IUtils> = {
         isIdValid: jest.fn().mockReturnValue(true),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:tree:1')
+        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:tree:1'),
+        generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({}, ''))
     };
 
     describe('saveTree', () => {
@@ -241,6 +244,11 @@ describe('treeDomain', () => {
                 deleteTree: global.__mockPromise({list: [mockTree], totalCount: 1})
             };
 
+            const mockVersionProfileRepo: Mockify<IVersionProfileRepo> = {
+                getVersionProfiles: global.__mockPromise({list: [mockVersionProfile]}),
+                updateVersionProfile: global.__mockPromise(mockVersionProfile)
+            };
+
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
@@ -248,6 +256,7 @@ describe('treeDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
+                'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.utils': mockUtils as IUtils
@@ -263,6 +272,10 @@ describe('treeDomain', () => {
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_TREE
             );
+
+            // Remove tree from version profiles using it
+            expect(mockVersionProfileRepo.getVersionProfiles).toBeCalled();
+            expect(mockVersionProfileRepo.updateVersionProfile).toBeCalled();
         });
 
         test('Should throw if unknown tree', async function () {
@@ -372,7 +385,8 @@ describe('treeDomain', () => {
 
             const domain = treeDomain({
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
+                'core.utils': mockUtils as IUtils
             });
 
             await expect(domain.getTreeProperties('test', ctx)).rejects.toThrow(ValidationError);

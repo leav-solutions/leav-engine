@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
@@ -25,6 +26,7 @@ import {
     mockAttrTree
 } from '../../__tests__/mocks/attribute';
 import {mockTree} from '../../__tests__/mocks/tree';
+import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
@@ -105,6 +107,10 @@ describe('ValueDomain', () => {
     };
 
     const mockUpdateRecordLastModif = jest.fn();
+
+    const mockVersionProfileDomain: Mockify<IVersionProfileDomain> = {
+        getVersionProfileProperties: global.__mockPromise({...mockVersionProfile, trees: ['my_tree']})
+    };
 
     const ctx: IQueryInfos = {
         userId: '1',
@@ -1700,7 +1706,8 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain
             });
 
             const version: IValueVersion = {my_tree: '9'};
@@ -1858,13 +1865,21 @@ describe('ValueDomain', () => {
                 })
             };
 
+            const mockVersionProfileDomainMultipleTrees: Mockify<IVersionProfileDomain> = {
+                getVersionProfileProperties: global.__mockPromise({
+                    ...mockVersionProfile,
+                    trees: ['my_tree', 'other_tree', 'third_tree']
+                })
+            };
+
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
+                'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain
             });
 
             const version: IValueVersion = {
@@ -1926,7 +1941,8 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain
             });
 
             const version: IValueVersion = {my_tree: '9'};
