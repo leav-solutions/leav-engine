@@ -2,9 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as bcrypt from 'bcryptjs';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {Express, NextFunction, Request, Response} from 'express';
+import {IValueRepo} from 'infra/value/valueRepo';
 import jwt, {Algorithm} from 'jsonwebtoken';
 import ms from 'ms';
 import {IConfig} from '_types/config';
@@ -22,13 +24,17 @@ export interface IAuthApp {
 
 interface IDeps {
     'core.domain.value'?: IValueDomain;
+    'core.infra.value'?: IValueRepo;
     'core.domain.record'?: IRecordDomain;
+    'core.domain.attribute'?: IAttributeDomain;
     config?: IConfig;
 }
 
 export default function ({
     'core.domain.value': valueDomain = null,
+    'core.infra.value': valueRepo = null,
     'core.domain.record': recordDomain = null,
+    'core.domain.attribute': attributeDomain = null,
     config = null
 }: IDeps = {}): IAuthApp {
     return {
@@ -88,10 +94,12 @@ export default function ({
 
                         // Check password
                         const user = users.list[0];
-                        const userPwd = await valueDomain.getValues({
+                        const passwordAttr = await attributeDomain.getAttributeProperties({id: 'password', ctx});
+                        // we use valueRepo to bypass actionslist processing which hides the value for password
+                        const userPwd = await valueRepo.getValues({
                             library: 'users',
                             recordId: user.id,
-                            attribute: 'password',
+                            attribute: {...passwordAttr, reverse_link: undefined},
                             ctx
                         });
 
