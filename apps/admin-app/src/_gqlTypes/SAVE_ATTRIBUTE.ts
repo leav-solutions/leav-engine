@@ -43,10 +43,21 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_permissions_conf {
     relation: PermissionsRelation;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf_profile_trees[];
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_versions_conf_profile | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_libraries {
@@ -139,10 +150,21 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_permissions_conf {
     relation: PermissionsRelation;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf_profile_trees[];
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_versions_conf_profile | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_libraries {
@@ -269,10 +291,21 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf
     relation: PermissionsRelation;
 }
 
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile_trees[];
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries {

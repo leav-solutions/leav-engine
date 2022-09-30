@@ -1,6 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
@@ -13,13 +15,17 @@ export interface ICoreVersionProfileApp {
 }
 
 interface IDeps {
+    'core.app.graphql'?: IGraphqlApp;
     'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.permission'?: IPermissionDomain;
 }
 
-export default function ({
+export default function({
+    'core.app.graphql': graphqlApp,
     'core.domain.versionProfile': versionProfileDomain = null,
-    'core.domain.tree': treeDomain = null
+    'core.domain.tree': treeDomain = null,
+    'core.domain.permission': permissionDomain = null
 }: IDeps): ICoreVersionProfileApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -30,12 +36,13 @@ export default function ({
                         label: SystemTranslation!
                         description: SystemTranslation,
                         trees: [Tree!]!
+                        linkedAttributes: [Attribute!]!
                     }
 
                     input VersionProfileInput {
                         id: String!,
                         label: SystemTranslation,
-                        description: SystemTranslation,
+                        description: SystemTranslationOptional,
                         trees: [String!]
                     }
 
@@ -94,6 +101,9 @@ export default function ({
                             return Promise.all(
                                 versionProfile.trees.map(treeId => treeDomain.getTreeProperties(treeId, ctx))
                             );
+                        },
+                        linkedAttributes(versionProfile: IVersionProfile, _, ctx: IQueryInfos) {
+                            return versionProfileDomain.getAttributesUsingProfile({id: versionProfile.id, ctx});
                         }
                     }
                 }

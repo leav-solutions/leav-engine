@@ -43,10 +43,21 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissio
     relation: PermissionsRelation;
 }
 
+export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf_profile_trees[];
+}
+
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf_profile | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_libraries {
@@ -100,10 +111,21 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_c
     relation: PermissionsRelation;
 }
 
+export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf_profile_trees[];
+}
+
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf_profile | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_libraries {
@@ -163,10 +185,21 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_c
     relation: PermissionsRelation;
 }
 
+export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf_profile_trees[];
+}
+
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf_profile | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_libraries {

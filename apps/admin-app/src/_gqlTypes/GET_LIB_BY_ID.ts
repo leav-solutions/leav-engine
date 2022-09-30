@@ -50,10 +50,21 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_permi
     relation: PermissionsRelation;
 }
 
+export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versions_conf_profile_trees[];
+}
+
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versions_conf_profile | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_libraries {
@@ -107,10 +118,21 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissio
     relation: PermissionsRelation;
 }
 
+export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_conf_profile_trees[];
+}
+
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_conf_profile | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_libraries {
@@ -170,10 +192,21 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_permissio
     relation: PermissionsRelation;
 }
 
+export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_versions_conf_profile_trees[];
+}
+
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_versions_conf_profile | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_libraries {

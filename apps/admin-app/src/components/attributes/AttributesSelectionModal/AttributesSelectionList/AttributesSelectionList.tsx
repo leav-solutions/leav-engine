@@ -31,7 +31,7 @@ const AttributesSelectionList = (props: IAttributesSelectionListProps): JSX.Elem
                     const onClick = () => toggleSelection(a);
                     const isSelected = selection.indexOf(a.id) !== -1;
                     return (
-                        <Table.Row key={a.id} onClick={onClick} positive={isSelected}>
+                        <Table.Row key={a.id} onClick={onClick} active={isSelected}>
                             <Table.Cell>
                                 <Checkbox readOnly checked={isSelected} />
                             </Table.Cell>

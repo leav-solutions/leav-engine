@@ -168,6 +168,15 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
                             }
                         }
                     }
+                },
+                VersionProfile: {
+                    fields: {
+                        linkedAttributes: {
+                            merge(existing, incoming) {
+                                return incoming;
+                            }
+                        }
+                    }
                 }
             },
             possibleTypes

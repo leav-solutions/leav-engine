@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {Header, Icon, SemanticICONS} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {activeItemColor} from 'themingVar';
 
 const TitleWrapper = styled.div`
     text-align: center;
@@ -14,26 +15,39 @@ const TitleWrapper = styled.div`
 
 const ItemsWrapper = styled.div`
     display: flex;
+    gap: 1rem;
     justify-content: center;
     flex-direction: row;
+    flex-wrap: wrap;
 `;
 
 const Item = styled(NavLink)`
-    width: 10em;
-    height: 10em;
-    border: 1px solid #cccccc;
     margin: 1em;
-    border-radius: 5px;
     flex-wrap: wrap;
     margin-top: 3em;
-    padding: 1em;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     color: #000;
+
+    :hover {
+        color: inherit;
+    }
 `;
 
 const ItemIcon = styled.div`
-    font-size: 4em;
+    width: 8rem;
+    height: 8rem;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 1rem;
+    font-size: 3em;
+
+    ${Item}:hover & {
+        & {
+            border: 1px solid ${activeItemColor};
+        }
+    }
 `;
 
 const ItemTitle = styled.div`
@@ -54,7 +68,15 @@ function Dashboard(): JSX.Element {
                 {menuItems.map(item => (
                     <Item to={'/' + item.id} key={item.id}>
                         <ItemIcon>
-                            <Icon name={item.icon as SemanticICONS} {...item.iconProps} />
+                            {typeof item.icon === 'string' ? (
+                                <Icon name={item.icon as SemanticICONS} size="big" {...item.iconProps} />
+                            ) : (
+                                React.cloneElement(item.icon as JSX.Element, {
+                                    ...item.iconProps,
+                                    style: {padding: '1rem'},
+                                    size: '4.2rem'
+                                })
+                            )}
                         </ItemIcon>
                         <ItemTitle>{item.label}</ItemTitle>
                     </Item>
