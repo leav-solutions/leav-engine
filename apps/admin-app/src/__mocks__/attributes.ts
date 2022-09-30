@@ -28,7 +28,7 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     linked_library: null,
     reverse_link: null,
     permissions_conf: null,
-    versions_conf: {versionable: false, mode: ValueVersionMode.smart, trees: null},
+    versions_conf: {versionable: false, mode: ValueVersionMode.smart, profile: null},
     metadata_fields: null,
     libraries: null
 };

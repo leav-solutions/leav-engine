@@ -56,6 +56,7 @@ export enum ApplicationPermissionsActions {
     ADMIN_APPLICATION = 'admin_application',
     ACCESS_APPLICATION = 'access_application'
 }
+
 export enum AdminPermissionsActions {
     ACCESS_LIBRARIES = 'admin_access_libraries',
     CREATE_LIBRARY = 'admin_create_library',

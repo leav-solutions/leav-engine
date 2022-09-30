@@ -35,7 +35,14 @@ export const attributeDetailsFragment = gql`
         versions_conf {
             versionable
             mode
-            trees
+            profile {
+                id
+                label
+                trees {
+                    id
+                    label
+                }
+            }
         }
         libraries {
             id

@@ -6,7 +6,7 @@ import {getLibrariesWithAttributesQuery} from 'queries/libraries/getLibrariesWit
 import {saveLibAttributesMutation} from 'queries/libraries/saveLibAttributesMutation';
 import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {fireEvent, render, screen, within} from '_tests/testUtils';
+import {fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
 import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
@@ -21,6 +21,12 @@ jest.mock('../../../../../../utils', () => ({
 
 jest.mock('../../../../../../hooks/useLang');
 
+jest.mock('components/versionProfiles/VersionProfilesSelector', () => {
+    return function VersionProfilesSelector() {
+        return <div>VersionProfilesSelector</div>;
+    };
+});
+
 describe('InfosForm', () => {
     const attribute = {
         ...mockAttrSimple,
@@ -29,6 +35,75 @@ describe('InfosForm', () => {
     };
     const onSubmit = jest.fn();
     const onCheckIdExists = jest.fn().mockReturnValue(false);
+
+    const mockLibrariesWithAttributes = {
+        request: {
+            query: getLibrariesWithAttributesQuery,
+            variables: {}
+        },
+        result: {
+            data: {
+                libraries: {
+                    totalCount: 1,
+                    list: [
+                        {
+                            id: 'products',
+                            label: {
+                                en: '',
+                                fr: 'Produits'
+                            },
+                            gqlNames: {
+                                query: 'products',
+                                type: 'products',
+                                list: 'productsList',
+                                filter: 'productsFilter',
+                                searchableFields: 'productsSearchableFields',
+                                __typename: 'LibraryGraphqlNames'
+                            },
+                            attributes: [
+                                {
+                                    id: 'id',
+                                    label: {
+                                        fr: 'Identifiant',
+                                        en: 'Identifier'
+                                    },
+                                    __typename: 'StandardAttribute'
+                                }
+                            ],
+                            __typename: 'Library'
+                        },
+                        {
+                            id: 'categories',
+                            label: {
+                                en: '',
+                                fr: 'Categories'
+                            },
+                            gqlNames: {
+                                query: 'categories',
+                                type: 'categories',
+                                list: 'categoriesList',
+                                filter: 'categoriesFilter',
+                                searchableFields: 'categoriesSearchableFields',
+                                __typename: 'LibraryGraphqlNames'
+                            },
+                            attributes: [
+                                {
+                                    id: 'id',
+                                    label: {
+                                        fr: 'Identifiant',
+                                        en: 'Identifier'
+                                    },
+                                    __typename: 'StandardAttribute'
+                                }
+                            ],
+                            __typename: 'Library'
+                        }
+                    ],
+                    __typename: 'LibrariesList'
+                }
+            }
+        }
+    };
 
     test('If attribute exists, ID and type are not editable', async () => {
         await act(async () => {
@@ -73,6 +148,7 @@ describe('InfosForm', () => {
     });
 
     test('Calls onSubmit function', async () => {
+        const mocks = [mockLibrariesWithAttributes];
         await act(async () => {
             render(
                 <InfosForm
@@ -80,7 +156,8 @@ describe('InfosForm', () => {
                     readonly={false}
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
-                />
+                />,
+                {apolloMocks: mocks}
             );
         });
 
@@ -88,7 +165,7 @@ describe('InfosForm', () => {
             fireEvent.submit(screen.getByRole('form'));
         });
 
-        expect(onSubmit).toBeCalled();
+        await waitFor(() => expect(onSubmit).toBeCalled());
     });
 
     test('Autofill ID with label on new attribute', async () => {
@@ -146,74 +223,7 @@ describe('InfosForm', () => {
     test('Manage libraries linked to attribute', async () => {
         let saveLibCalled = false;
         const mocks = [
-            {
-                request: {
-                    query: getLibrariesWithAttributesQuery,
-                    variables: {}
-                },
-                result: {
-                    data: {
-                        libraries: {
-                            totalCount: 1,
-                            list: [
-                                {
-                                    id: 'products',
-                                    label: {
-                                        en: '',
-                                        fr: 'Produits'
-                                    },
-                                    gqlNames: {
-                                        query: 'products',
-                                        type: 'products',
-                                        list: 'productsList',
-                                        filter: 'productsFilter',
-                                        searchableFields: 'productsSearchableFields',
-                                        __typename: 'LibraryGraphqlNames'
-                                    },
-                                    attributes: [
-                                        {
-                                            id: 'id',
-                                            label: {
-                                                fr: 'Identifiant',
-                                                en: 'Identifier'
-                                            },
-                                            __typename: 'StandardAttribute'
-                                        }
-                                    ],
-                                    __typename: 'Library'
-                                },
-                                {
-                                    id: 'categories',
-                                    label: {
-                                        en: '',
-                                        fr: 'Categories'
-                                    },
-                                    gqlNames: {
-                                        query: 'categories',
-                                        type: 'categories',
-                                        list: 'categoriesList',
-                                        filter: 'categoriesFilter',
-                                        searchableFields: 'categoriesSearchableFields',
-                                        __typename: 'LibraryGraphqlNames'
-                                    },
-                                    attributes: [
-                                        {
-                                            id: 'id',
-                                            label: {
-                                                fr: 'Identifiant',
-                                                en: 'Identifier'
-                                            },
-                                            __typename: 'StandardAttribute'
-                                        }
-                                    ],
-                                    __typename: 'Library'
-                                }
-                            ],
-                            __typename: 'LibrariesList'
-                        }
-                    }
-                }
-            },
+            mockLibrariesWithAttributes,
             {
                 request: {
                     query: saveLibAttributesMutation,

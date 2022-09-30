@@ -11,6 +11,8 @@ import Libraries from 'components/libraries/Libraries';
 import ProtectedRoute from 'components/shared/ProtectedRoute';
 import EditTree from 'components/trees/EditTree';
 import Trees from 'components/trees/Trees';
+import EditVersionProfile from 'components/versionProfiles/EditVersionProfile';
+import VersionProfiles from 'components/versionProfiles/VersionProfiles';
 import React from 'react';
 import {Route} from 'react-router-dom';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
@@ -67,6 +69,18 @@ function Routes(): JSX.Element {
                 permissions={[PermissionsActions.admin_access_applications]}
                 path="/applications/edit/:id?"
                 component={EditApplication}
+                exact
+            />
+            <ProtectedRoute
+                permissions={[PermissionsActions.admin_access_version_profiles]}
+                path="/version_profiles"
+                component={VersionProfiles}
+                exact
+            />
+            <ProtectedRoute
+                permissions={[PermissionsActions.admin_access_version_profiles]}
+                path="/version_profiles/edit/:id?"
+                component={EditVersionProfile}
                 exact
             />
         </>

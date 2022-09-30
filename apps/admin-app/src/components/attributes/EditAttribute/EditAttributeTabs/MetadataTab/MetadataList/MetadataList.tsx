@@ -1,14 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {OnAttributePostSaveFunc} from 'components/attributes/EditAttribute/EditAttribute';
 import EditAttributeModal from 'components/attributes/EditAttributeModal';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Table} from 'semantic-ui-react';
-import {
-    GET_ATTRIBUTE_BY_ID_attributes_list,
-    GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields
-} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
+import {GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../utils';
 import {AttributeType} from '../../../../../../_gqlTypes/globalTypes';
@@ -54,10 +52,11 @@ function MetadataList({fields, readonly, onChange}: IMetadataListProps): JSX.Ele
     const _handleDelete = (fieldToDelete: string) =>
         onChange(fields.filter(f => f.id !== fieldToDelete).map(f => f.id));
 
-    const _handleAddNewField = (fieldToAdd: GET_ATTRIBUTE_BY_ID_attributes_list) => {
+    const _handleAddNewField: OnAttributePostSaveFunc = fieldToAdd => {
         onChange([...fields.map(f => f.id), fieldToAdd.id]);
         _closeNewAttrModal();
     };
+
     const _handleAddExistingField = (fieldIds: string[]) => {
         onChange([...fields.map(f => f.id), ...fieldIds]);
         _closeAddExistingAttrModal();

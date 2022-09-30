@@ -4,13 +4,13 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Modal} from 'semantic-ui-react';
-import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import EditAttribute from '../EditAttribute';
+import {OnAttributePostSaveFunc} from '../EditAttribute/EditAttribute';
 
 interface IAttributeCreationModalProps {
     open: boolean;
-    onPostSave: (fieldToAdd: GET_ATTRIBUTE_BY_ID_attributes_list) => void;
+    onPostSave: OnAttributePostSaveFunc;
     onClose: () => void;
     forcedType?: AttributeType;
 }

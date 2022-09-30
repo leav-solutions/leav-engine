@@ -28,7 +28,8 @@
         "logout": "Log out",
         "choose-lang": "Language",
         "permissions": "Permissions",
-        "document_title": "LEAV Engine - {{appLabel}}"
+        "document_title": "LEAV Engine - {{appLabel}}",
+        "search_placeholder": "Search..."
     },
     "dashboard": {
         "title": "LEAV Engine administration"
@@ -150,7 +151,8 @@
         "add_value": "Add value",
         "date_range_from": "From",
         "date_range_to": "To",
-        "linked_libraries": "Linked libraries"
+        "linked_libraries": "Linked libraries",
+        "select_attributes": "Select attributes"
     },
     "trees": {
         "title": "Trees",
@@ -217,7 +219,8 @@
             "permissions": "Permissions",
             "preferences": "Preferences",
             "applications": "Applications",
-            "application": "Application"
+            "application": "Application",
+            "version_profiles": "Version profiles"
         }
     },
     "login": {
@@ -354,5 +357,15 @@
         "operator_and": "AND",
         "operator_or": "OR",
         "no_attributes_to_add": "No attribute available"
+    },
+    "version_profiles": {
+        "title": "Version profiles",
+        "new": "Create profile",
+        "trees": "Versions trees",
+        "select_trees": "Select trees",
+        "linked_attributes": "Attributes using this profile",
+        "link_attributes": "Link attributes",
+        "unlink_attribute_confirm": "Do you really to remove this profile from attribute {{attributeLabel}}?",
+        "confirm_delete": "Do you really want to delete profile {{profileLabel}}?"
     }
 }

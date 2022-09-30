@@ -53,7 +53,7 @@ const attributes: GET_ATTRIBUTE_BY_ID_attributes_list[] = [
         system: true,
         label: {fr: 'Créé par', en: 'Created by'},
         linked_library: {id: 'users'},
-        versions_conf: {versionable: false, mode: null, trees: []}
+        versions_conf: {versionable: false, mode: null, profile: null}
     },
     {
         ...mockAttrSimple,
@@ -61,7 +61,7 @@ const attributes: GET_ATTRIBUTE_BY_ID_attributes_list[] = [
         format: AttributeFormat.numeric,
         system: true,
         label: {fr: 'Date de modification', en: 'Modification date'},
-        versions_conf: {versionable: false, mode: null, trees: []}
+        versions_conf: {versionable: false, mode: null, profile: null}
     },
     {
         ...mockAttrSimpleLink,
@@ -69,7 +69,7 @@ const attributes: GET_ATTRIBUTE_BY_ID_attributes_list[] = [
         system: true,
         label: {fr: 'Modifié par', en: 'Modified by'},
         linked_library: {id: 'users'},
-        versions_conf: {versionable: false, mode: null, trees: []}
+        versions_conf: {versionable: false, mode: null, profile: null}
     }
 ];
 
