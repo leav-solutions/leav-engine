@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import ValueVersionsIcon from 'components/shared/icons/ValueVersionsIcon';
 import useUserData from 'hooks/useUserData';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -44,6 +45,15 @@ function useMenuItems(): IMenuItem[] {
             id: 'applications',
             label: t('applications.title'),
             icon: 'th',
+            protected: true
+        },
+        {
+            id: 'version_profiles',
+            label: t('version_profiles.title'),
+            icon: <ValueVersionsIcon style={{justifySelf: 'center', marginTop: '4px'}} />,
+            iconProps: {
+                size: '1.5rem'
+            },
             protected: true
         },
         {

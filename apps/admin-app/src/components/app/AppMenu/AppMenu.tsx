@@ -21,8 +21,9 @@ const StyledMenu = styled(Menu)<{width: number}>`
 
 const ItemContent = styled.div`
     display: grid;
-    grid-template-columns: 40px 1fr;
+    grid-template-columns: 30px 1fr;
     align-items: center;
+    grid-gap: 1rem;
 `;
 
 const ToggleButton = styled.div<{isCollapsed: boolean; width: number}>`
@@ -35,6 +36,12 @@ const ToggleButton = styled.div<{isCollapsed: boolean; width: number}>`
     padding: 0.5rem;
     cursor: pointer;
     font-size: 0.6rem;
+`;
+
+const ItemLabel = styled.span`
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 `;
 
 interface IAppMenuProps {
@@ -55,9 +62,13 @@ const AppMenu = ({isCollapsed, onToggle, width}: IAppMenuProps): JSX.Element => 
                     {menuItems.map(item => (
                         <Menu.Item key={item.id} as={NavLink} to={'/' + item.id} name={item.id} title={item.label}>
                             <ItemContent>
-                                <Icon name={item.icon as SemanticICONS} size="big" {...item.iconProps} />
+                                {typeof item.icon === 'string' ? (
+                                    <Icon name={item.icon as SemanticICONS} size="big" {...item.iconProps} />
+                                ) : (
+                                    React.cloneElement(item.icon as JSX.Element, {...item.iconProps})
+                                )}
                                 <Transition visible={!isCollapsed} animation="slide right" duration={300}>
-                                    <span>{item.label}</span>
+                                    <ItemLabel>{item.label}</ItemLabel>
                                 </Transition>
                             </ItemContent>
                         </Menu.Item>

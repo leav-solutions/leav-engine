@@ -6,13 +6,15 @@ import {Button, ButtonProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 
 const SimpleButton = styled(Button)`
-    &&&,
-    &&&:hover,
-    &&&:focus {
+    &&&&&&,
+    &&&&&&:hover,
+    &&&&&&:focus {
         border: none;
         box-shadow: none;
+        padding: 0;
+        margin: 0;
         background: transparent;
-        display: flex;
+        display: inline-flex;
     }
 `;
 

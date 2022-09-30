@@ -43,7 +43,7 @@ describe('InfosTab', () => {
             versions_conf: {
                 versionable: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.versionable : false,
                 mode: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.mode : null,
-                trees: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.trees : null
+                profile: mockAttrAdv.versions_conf ? mockAttrAdv.versions_conf.profile : null
             }
         }
     };

@@ -51,7 +51,7 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
     };
 
     const onSubmitInfos = async (dataToSave: AttributeInfosFormValues) => {
-        const variables = {
+        const variables: SAVE_ATTRIBUTEVariables = {
             attrData: {
                 id: dataToSave.id,
                 label: {
@@ -73,9 +73,9 @@ function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps):
                 reverse_link: dataToSave.reverse_link,
                 multiple_values: dataToSave.multiple_values,
                 versions_conf: {
-                    versionable: dataToSave.versions_conf ? dataToSave.versions_conf.versionable : false,
-                    mode: dataToSave.versions_conf ? dataToSave.versions_conf.mode : null,
-                    trees: dataToSave.versions_conf ? dataToSave.versions_conf.trees : null
+                    versionable: dataToSave?.versions_conf?.versionable ?? false,
+                    mode: dataToSave?.versions_conf?.mode,
+                    profile: dataToSave?.versions_conf?.profile
                 }
             }
         };

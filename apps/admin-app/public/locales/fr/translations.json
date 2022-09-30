@@ -27,7 +27,8 @@
         "logout": "Se déconnecter",
         "choose-lang": "Langue",
         "permissions": "Permissions",
-        "document_title": "LEAV Engine - {{appLabel}}"
+        "document_title": "LEAV Engine - {{appLabel}}",
+        "search_placeholder": "Rechercher..."
     },
     "dashboard": {
         "title": "Administration de LEAV Engine"
@@ -150,7 +151,9 @@
         "add_value": "Ajouter une valeur",
         "date_range_from": "Du",
         "date_range_to": "Au",
-        "linked_libraries": "Bibliothèques associées"
+        "linked_libraries": "Bibliothèques associées",
+        "select_attributes": "Sélectionner des attributs",
+        "version_profile": "Profil de version"
     },
     "trees": {
         "title": "Arbres",
@@ -221,7 +224,8 @@
             "permissions": "Permissions",
             "preferences": "Préférences",
             "applications": "Applications",
-            "application": "Application"
+            "application": "Application",
+            "version_profiles": "Profils de version"
         }
     },
     "login": {
@@ -358,5 +362,15 @@
         "operator_and": "ET",
         "operator_or": "OU",
         "no_attributes_to_add": "Aucun attribut disponible"
+    },
+    "version_profiles": {
+        "title": "Profils de version",
+        "new": "Créer un profil",
+        "trees": "Arbres des versions",
+        "select_trees": "Sélectionner des arbres",
+        "linked_attributes": "Attributs utilisant ce profil",
+        "link_attributes": "Lier des attributs",
+        "unlink_attribute_confirm": "Êtes-vous sûr de vouloir supprimer ce profil de l'attribut {{attributeLabel}}?",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer le profil {{profileLabel}}?"
     }
 }

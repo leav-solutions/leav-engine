@@ -16,12 +16,13 @@ import {
 import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import EditAttributeTabs from './EditAttributeTabs';
+import {AttributeInfosFormValues} from './EditAttributeTabs/InfosTab/_types';
 
 export interface IEditAttributeMatchParams {
     id: string;
 }
 
-export type OnAttributePostSaveFunc = (attrData: GET_ATTRIBUTE_BY_ID_attributes_list) => void;
+export type OnAttributePostSaveFunc = (attrData: AttributeInfosFormValues) => void;
 
 const Wrapper = styled.div`
     display: grid;

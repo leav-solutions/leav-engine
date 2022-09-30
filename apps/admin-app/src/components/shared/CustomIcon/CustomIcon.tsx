@@ -4,21 +4,22 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface ICustomIconProps {
+export interface ICustomIconProps {
     svg: string;
     label?: string;
+    size?: string;
+    style?: React.CSSProperties;
 }
 
-const CustomImg = styled.img`
+const CustomImg = styled.img<{size?: string}>`
     transform: translate(0px, -1px) scale(1.5);
-    width: 1em;
-    height: 1em;
+    width: ${props => props?.size ?? '1em'};
 `;
 
-function CustomIcon({svg, label}: ICustomIconProps): JSX.Element {
+function CustomIcon({svg, label, size, style}: ICustomIconProps): JSX.Element {
     return (
-        <div>
-            <CustomImg src={svg} alt={label} />
+        <div style={{width: size, height: size, display: 'inline-block', ...style}}>
+            <CustomImg src={svg} alt={label} size={size} />
         </div>
     );
 }

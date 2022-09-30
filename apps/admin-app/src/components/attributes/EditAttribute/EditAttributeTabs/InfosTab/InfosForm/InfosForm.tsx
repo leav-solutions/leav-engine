@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import AttributeSelector from 'components/attributes/AttributeSelector';
+import VersionProfilesSelector from 'components/versionProfiles/VersionProfilesSelector';
 import {Formik, FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -57,7 +58,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     versions_conf: {
         versionable: false,
         mode: ValueVersionMode.smart,
-        trees: []
+        profile: null
     },
     libraries: []
 };
@@ -93,7 +94,11 @@ function InfosForm({
                   linked_library:
                       (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute).linked_library?.id ?? null,
                   reverse_link: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute).reverse_link ?? null,
-                  linked_tree: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute).linked_tree?.id ?? null
+                  linked_tree: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute).linked_tree?.id ?? null,
+                  versions_conf: {
+                      ...attribute.versions_conf,
+                      profile: attribute.versions_conf.profile?.id ?? null
+                  }
               }
             : defaultAttributeData;
 
@@ -123,7 +128,7 @@ function InfosForm({
         Partial<
             Override<
                 AttributeInfosFormValues,
-                {type: string; format?: string; versions_conf: {versionable: boolean; mode: string; trees: string[]}}
+                {type: string; format?: string; versions_conf: {versionable: boolean; mode: string; profile: string}}
             >
         >
     > = yup.object().shape({
@@ -148,7 +153,7 @@ function InfosForm({
                     .string()
                     .oneOf([...Object.values(ValueVersionMode), null])
                     .nullable(),
-                trees: yup.array(yup.string()).nullable()
+                profile: yup.string().nullable()
             })
             .nullable()
     });
@@ -440,20 +445,19 @@ function InfosForm({
                                         }
                                     />
                                 </FormFieldWrapper>
-                                <FormFieldWrapper error={_getErrorByField('versions_conf.trees')}>
-                                    <TreesSelector
+                                <FormFieldWrapper error={_getErrorByField('versions_conf.profile')}>
+                                    <VersionProfilesSelector
                                         fluid
                                         selection
                                         width="4"
-                                        multiple
                                         disabled={values.system || readonly}
-                                        label={t('attributes.versions_trees')}
-                                        placeholder={t('attributes.versions_trees')}
-                                        value={values.versions_conf ? values.versions_conf.trees || [] : []}
-                                        name="versions_conf.trees"
-                                        aria-label="versions_conf.trees"
+                                        label={t('attributes.version_profile')}
+                                        placeholder={t('attributes.version_profile')}
+                                        value={values?.versions_conf?.profile}
+                                        name="versions_conf.profile"
+                                        aria-label="versions_conf.profile"
                                         onChange={_handleChangeWithSubmit}
-                                        filters={{type: [AttributeType.tree]}}
+                                        clearable
                                     />
                                 </FormFieldWrapper>
                             </>

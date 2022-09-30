@@ -51,10 +51,21 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_permissio
     relation: PermissionsRelation;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_versions_conf_profile_trees[];
+}
+
 export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_versions_conf_profile | null;
 }
 
 export interface SAVE_LIBRARY_saveLibrary_attributes_StandardAttribute_libraries {
@@ -108,10 +119,21 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_permissions_c
     relation: PermissionsRelation;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_versions_conf_profile_trees[];
+}
+
 export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_versions_conf_profile | null;
 }
 
 export interface SAVE_LIBRARY_saveLibrary_attributes_LinkAttribute_libraries {
@@ -171,10 +193,21 @@ export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_permissions_c
     relation: PermissionsRelation;
 }
 
+export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_versions_conf_profile_trees[];
+}
+
 export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_versions_conf_profile | null;
 }
 
 export interface SAVE_LIBRARY_saveLibrary_attributes_TreeAttribute_libraries {

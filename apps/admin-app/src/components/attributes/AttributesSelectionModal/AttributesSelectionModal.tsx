@@ -31,6 +31,7 @@ const AttributesSelectionModal = ({
 }: IAttributesSelectionProps): JSX.Element => {
     const {t} = useTranslation();
     const [pendingSelection, setPendingSelection] = useState<string[]>([]);
+    const [isSubmitPending, setIsSubmitPending] = useState(false);
     const {loading, error, data} = useQuery<GET_ATTRIBUTES, GET_ATTRIBUTESVariables>(getAttributesQuery, {
         variables: filter
     });
@@ -40,8 +41,10 @@ const AttributesSelectionModal = ({
         onClose();
     };
 
-    const _handleSubmit = () => {
-        onSubmit(pendingSelection);
+    const _handleSubmit = async () => {
+        setIsSubmitPending(true);
+        await onSubmit(pendingSelection);
+        setIsSubmitPending(false);
     };
 
     const _toggleSelection = (selectedAttr: GET_ATTRIBUTES_attributes_list) => {
@@ -67,8 +70,16 @@ const AttributesSelectionModal = ({
 
     return (
         data.attributes && (
-            <Modal size="small" open={openModal} onClose={_handleclose} centered closeOnDimmerClick closeOnEscape>
-                <Modal.Header>{t('libraries.link_existing_attribute')}</Modal.Header>
+            <Modal
+                size="small"
+                open={openModal}
+                onClose={_handleclose}
+                centered
+                closeOnDimmerClick
+                closeOnEscape
+                closeIcon
+            >
+                <Modal.Header>{t('attributes.select_attributes')}</Modal.Header>
                 <Modal.Content scrolling>
                     <AttributesSelectionList
                         attributes={data.attributes.list.filter(a => selection.indexOf(a.id) === -1)}
@@ -78,7 +89,9 @@ const AttributesSelectionModal = ({
                 </Modal.Content>
                 <Modal.Actions>
                     <Button onClick={_handleclose}>{t('admin.cancel')}</Button>
-                    <Button onClick={_handleSubmit}>{t('admin.submit')}</Button>
+                    <Button primary onClick={_handleSubmit} loading={isSubmitPending} disabled={isSubmitPending}>
+                        {t('admin.submit')}
+                    </Button>
                 </Modal.Actions>
             </Modal>
         )

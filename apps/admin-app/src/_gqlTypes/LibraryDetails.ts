@@ -43,10 +43,21 @@ export interface LibraryDetails_attributes_StandardAttribute_permissions_conf {
     relation: PermissionsRelation;
 }
 
+export interface LibraryDetails_attributes_StandardAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface LibraryDetails_attributes_StandardAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: LibraryDetails_attributes_StandardAttribute_versions_conf_profile_trees[];
+}
+
 export interface LibraryDetails_attributes_StandardAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: LibraryDetails_attributes_StandardAttribute_versions_conf_profile | null;
 }
 
 export interface LibraryDetails_attributes_StandardAttribute_libraries {
@@ -100,10 +111,21 @@ export interface LibraryDetails_attributes_LinkAttribute_permissions_conf {
     relation: PermissionsRelation;
 }
 
+export interface LibraryDetails_attributes_LinkAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface LibraryDetails_attributes_LinkAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: LibraryDetails_attributes_LinkAttribute_versions_conf_profile_trees[];
+}
+
 export interface LibraryDetails_attributes_LinkAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: LibraryDetails_attributes_LinkAttribute_versions_conf_profile | null;
 }
 
 export interface LibraryDetails_attributes_LinkAttribute_libraries {
@@ -163,10 +185,21 @@ export interface LibraryDetails_attributes_TreeAttribute_permissions_conf {
     relation: PermissionsRelation;
 }
 
+export interface LibraryDetails_attributes_TreeAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface LibraryDetails_attributes_TreeAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: LibraryDetails_attributes_TreeAttribute_versions_conf_profile_trees[];
+}
+
 export interface LibraryDetails_attributes_TreeAttribute_versions_conf {
     versionable: boolean;
     mode: ValueVersionMode | null;
-    trees: string[] | null;
+    profile: LibraryDetails_attributes_TreeAttribute_versions_conf_profile | null;
 }
 
 export interface LibraryDetails_attributes_TreeAttribute_libraries {

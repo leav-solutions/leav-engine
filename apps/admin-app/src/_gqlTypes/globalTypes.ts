@@ -101,20 +101,24 @@ export enum PermissionsActions {
     admin_access_libraries = 'admin_access_libraries',
     admin_access_permissions = 'admin_access_permissions',
     admin_access_trees = 'admin_access_trees',
+    admin_access_version_profiles = 'admin_access_version_profiles',
     admin_application = 'admin_application',
     admin_create_application = 'admin_create_application',
     admin_create_attribute = 'admin_create_attribute',
     admin_create_library = 'admin_create_library',
     admin_create_tree = 'admin_create_tree',
+    admin_create_version_profile = 'admin_create_version_profile',
     admin_delete_application = 'admin_delete_application',
     admin_delete_attribute = 'admin_delete_attribute',
     admin_delete_library = 'admin_delete_library',
     admin_delete_tree = 'admin_delete_tree',
+    admin_delete_version_profile = 'admin_delete_version_profile',
     admin_edit_application = 'admin_edit_application',
     admin_edit_attribute = 'admin_edit_attribute',
     admin_edit_library = 'admin_edit_library',
     admin_edit_permission = 'admin_edit_permission',
     admin_edit_tree = 'admin_edit_tree',
+    admin_edit_version_profile = 'admin_edit_version_profile',
     admin_library = 'admin_library',
     admin_manage_global_preferences = 'admin_manage_global_preferences',
     create_record = 'create_record',
@@ -143,6 +147,10 @@ export enum TreeBehavior {
 export enum ValueVersionMode {
     simple = 'simple',
     smart = 'smart'
+}
+
+export enum VersionProfilesSortableFields {
+    id = 'id'
 }
 
 export interface ActionConfigurationInput {
@@ -321,6 +329,11 @@ export interface SortApplications {
     order?: SortOrder | null;
 }
 
+export interface SortVersionProfilesInput {
+    field: VersionProfilesSortableFields;
+    order?: SortOrder | null;
+}
+
 export interface TreeElementInput {
     id: string;
     library: string;
@@ -388,7 +401,20 @@ export interface ValuesListConfInput {
 export interface ValuesVersionsConfInput {
     versionable: boolean;
     mode?: ValueVersionMode | null;
+    profile?: string | null;
+}
+
+export interface VersionProfileInput {
+    id: string;
+    label?: SystemTranslation | null;
+    description?: SystemTranslation | null;
     trees?: string[] | null;
+}
+
+export interface VersionProfilesFiltersInput {
+    id?: string | null;
+    label?: string | null;
+    trees?: string | null;
 }
 
 //==============================================================
