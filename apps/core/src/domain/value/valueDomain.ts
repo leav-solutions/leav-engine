@@ -175,7 +175,7 @@ const valueDomain = function ({
         library: string,
         ctx: IQueryInfos
     ) => {
-        return !!attrProps.actions_list && !!attrProps.actions_list?.[listName]
+        const processedValue = await (!!attrProps.actions_list && !!attrProps.actions_list?.[listName]
             ? actionsListDomain.runActionsList(attrProps.actions_list?.[listName], value, {
                   ...ctx,
                   attribute: attrProps,
@@ -183,7 +183,12 @@ const valueDomain = function ({
                   library,
                   value
               })
-            : value;
+            : value);
+
+        if (utils.isStandardAttribute(attrProps)) {
+            (processedValue as IStandardValue).raw_value = value.value;
+        }
+        return processedValue;
     };
 
     return {

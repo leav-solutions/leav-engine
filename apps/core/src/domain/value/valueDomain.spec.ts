@@ -1621,12 +1621,17 @@ describe('ValueDomain', () => {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
             };
 
+            const mockUtils: Mockify<IUtils> = {
+                isStandardAttribute: global.__mockPromise(true)
+            };
+
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtils as IUtils
             });
 
             const resValue = await valDomain.getValues({
@@ -1657,13 +1662,17 @@ describe('ValueDomain', () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableSimple)
             };
+            const mockUtils: Mockify<IUtils> = {
+                isStandardAttribute: global.__mockPromise(true)
+            };
 
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtils as IUtils
             });
 
             const resValue = await valDomain.getValues({
@@ -1700,6 +1709,10 @@ describe('ValueDomain', () => {
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const mockUtils: Mockify<IUtils> = {
+                isStandardAttribute: global.__mockPromise(true)
             };
 
             const valDomain = valueDomain({

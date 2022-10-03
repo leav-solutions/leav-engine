@@ -12,6 +12,7 @@ import ms from 'ms';
 import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
+import {IStandardValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {AttributeCondition, IRecord} from '../../_types/record';
@@ -32,9 +33,7 @@ interface IDeps {
 
 export default function ({
     'core.domain.value': valueDomain = null,
-    'core.infra.value': valueRepo = null,
     'core.domain.record': recordDomain = null,
-    'core.domain.attribute': attributeDomain = null,
     config = null
 }: IDeps = {}): IAuthApp {
     return {
@@ -94,16 +93,14 @@ export default function ({
 
                         // Check password
                         const user = users.list[0];
-                        const passwordAttr = await attributeDomain.getAttributeProperties({id: 'password', ctx});
-                        // we use valueRepo to bypass actionslist processing which hides the value for password
-                        const userPwd = await valueRepo.getValues({
+                        const userPwd: IStandardValue[] = await valueDomain.getValues({
                             library: 'users',
                             recordId: user.id,
-                            attribute: {...passwordAttr, reverse_link: undefined},
+                            attribute: 'password',
                             ctx
                         });
 
-                        const isValidPwd = await bcrypt.compare(password, userPwd[0].value);
+                        const isValidPwd = await bcrypt.compare(password, userPwd[0].raw_value);
                         if (!isValidPwd) {
                             return res.status(401).send('Invalid credentials');
                         }
