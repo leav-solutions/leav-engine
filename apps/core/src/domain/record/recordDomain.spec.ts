@@ -912,7 +912,8 @@ describe('RecordDomain', () => {
         };
 
         const mockValueDomainFormatValue: Mockify<IValueDomain> = {
-            formatValue: jest.fn(({value, library}) => Promise.resolve(value))
+            formatValue: jest.fn(({value, library}) => Promise.resolve(value)),
+            runActionsList: jest.fn((_, value) => Promise.resolve(value))
         };
 
         test('Return a value present on record', async () => {
@@ -992,7 +993,8 @@ describe('RecordDomain', () => {
             const mockValueDomainFormatValueDate: Mockify<IValueDomain> = {
                 formatValue: jest.fn(({value}) =>
                     Promise.resolve({...value, raw_value: value.value, value: '1/3/37 00:42'})
-                )
+                ),
+                runActionsList: jest.fn((_, value) => Promise.resolve(value))
             };
 
             const recDomain = recordDomain({
@@ -1024,7 +1026,8 @@ describe('RecordDomain', () => {
             const mockValueDomainFormatValueLink: Mockify<IValueDomain> = {
                 formatValue: jest.fn(({value, library}) =>
                     Promise.resolve({value: {...mockRecord, id: mockRecordWithValues.created_by, library: 'users'}})
-                )
+                ),
+                runActionsList: jest.fn((_, value) => Promise.resolve(value))
             };
 
             const recDomain = recordDomain({

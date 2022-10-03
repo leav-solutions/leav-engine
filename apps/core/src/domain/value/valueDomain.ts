@@ -120,6 +120,15 @@ export interface IValueDomain {
         library: string;
         ctx: IQueryInfos;
     }): Promise<IValue>;
+
+    runActionsList(
+        listName: ActionsListEvents,
+        value: IValue,
+        attrProps: IAttribute,
+        record: IRecord,
+        library: string,
+        ctx: IQueryInfos
+    ): Promise<IValue>;
 }
 
 interface IDeps {
@@ -697,7 +706,8 @@ const valueDomain = function ({
             }
 
             return processedValue;
-        }
+        },
+        runActionsList: _runActionsList
     };
 };
 
