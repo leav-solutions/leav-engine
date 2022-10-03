@@ -1,19 +1,26 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined, LoadingOutlined, RightOutlined} from '@ant-design/icons';
+import {
+    CheckOutlined,
+    LoadingOutlined,
+    RightOutlined,
+    FieldTimeOutlined,
+    DownOutlined,
+    UploadOutlined
+} from '@ant-design/icons';
 import {ServerError, useLazyQuery, useMutation} from '@apollo/client';
-import {message, Space, Steps} from 'antd';
+import {Button, Dropdown, Menu, message, Space, Steps} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
-import React, {ReactNode, useReducer} from 'react';
+import React, {ReactNode, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ImportType} from '_gqlTypes/globalTypes';
 import {IMPORT_EXCEL, IMPORT_EXCELVariables} from '_gqlTypes/IMPORT_EXCEL';
 import {getAttributesByLibQuery} from '../../../../graphQL/queries/attributes/getAttributesByLib';
-import {importExcel} from '../../../../graphQL/queries/import/importExcel';
+import {importExcel} from '../../../../graphQL/mutations/import/importExcel';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import ImportModalConfigStep from './ImportModalConfigStep';
 import ImportModalDoneStep from './ImportModalDoneStep';
@@ -23,6 +30,9 @@ import importReducer from './importReducer';
 import {ImportReducerActionTypes, initialState} from './importReducer/importReducer';
 import ImportReducerContext from './importReducer/ImportReducerContext';
 import {ImportSteps} from './_types';
+import ImportScheduleModal from './ImportModalConfigStep/ImportScheduleModal';
+import useNotification from 'hooks/useNotification';
+import moment from 'moment';
 
 const {Step} = Steps;
 
@@ -40,6 +50,11 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
 
     const [state, dispatch] = useReducer(importReducer, {...initialState, defaultLibrary: library});
     const {sheets, file, currentStep, okBtn} = state;
+
+    const [showImportScheduleModal, setShowImportScheduleModal] = useState<boolean>(false);
+    const [scheduleDate, setScheduleDate] = useState<moment.Moment | null>(null);
+
+    const notification = useNotification();
 
     // get libraries list
     const librariesListQuery = useGetLibrariesListQuery();
@@ -62,6 +77,16 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
         fetchPolicy: 'no-cache',
         onCompleted: () => {
             dispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
+
+            notification.triggerNotification({
+                message: t('import.import_notification_title'),
+                ...(!!scheduleDate && {
+                    description: `${t('import.import_notification_description')} ${new Date(
+                        scheduleDate.unix() * 1000
+                    ).toLocaleString()}`
+                }),
+                icon: <UploadOutlined style={{color: '#108ee9'}} />
+            });
         },
         onError: error => {
             // Extract human friendly error message
@@ -94,7 +119,8 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                             linkAttribute: sheet.linkAttribute,
                             keyToIndex: Number(sheet.keyToColumnIndex),
                             treeLinkLibrary: sheet.treeLinkLibrary
-                        }))
+                        })),
+                    ...(!!scheduleDate && {startAt: scheduleDate.unix()})
                 }
             });
         } catch (err) {
@@ -127,7 +153,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
 
     const validateButtonIcon: {[key in ImportSteps]: ReactNode} = {
         [ImportSteps.SELECT_FILE]: <RightOutlined />,
-        [ImportSteps.CONFIG]: <CheckOutlined />,
+        [ImportSteps.CONFIG]: null,
         [ImportSteps.PROCESSING]: null,
         [ImportSteps.DONE]: null
     };
@@ -184,36 +210,106 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                   .join('\n')
             : '';
 
+    const _onScheduleImportBtnClick = () => {
+        setShowImportScheduleModal(true);
+    };
+
+    const _onCancelScheduleImport = () => {
+        setShowImportScheduleModal(false);
+        setScheduleDate(null);
+    };
+
+    const _onChangeScheduleImport = (date: moment.Moment) => {
+        setScheduleDate(date);
+    };
+
+    const _onValidateScheduleImport = () => {
+        setShowImportScheduleModal(false);
+        _onOk();
+    };
+
     return (
-        <ImportReducerContext.Provider value={{state, dispatch}}>
-            <Modal
-                title={t('import.title')}
-                okText={validateButtonLabel}
-                cancelText={t('global.cancel')}
-                onOk={_onOk}
-                onCancel={onClose}
-                visible={open}
-                closable
-                width="90vw"
-                centered
-                confirmLoading={currentStep === ImportSteps.PROCESSING}
-                bodyStyle={{height: 'calc(100vh - 10rem)'}}
-                okButtonProps={{disabled: !okBtn, className: 'submit-btn', title: buttonTitle}}
-                cancelButtonProps={{disabled: currentStep === ImportSteps.DONE}}
-                destroyOnClose={true}
-            >
-                <Steps current={currentStep} style={{marginBottom: '2em'}}>
-                    <Step title={t('import.file_selection')}></Step>
-                    <Step title={t('import.file_configuration')}></Step>
-                    <Step
-                        title={t('import.in_progress')}
-                        icon={currentStep === ImportSteps.PROCESSING ? <LoadingOutlined /> : null}
-                    ></Step>
-                    <Step title={t('import.import_done')} status={importError ? 'error' : undefined}></Step>
-                </Steps>
-                <Content>{_getStepContent()}</Content>
-            </Modal>
-        </ImportReducerContext.Provider>
+        <>
+            {showImportScheduleModal && (
+                <ImportScheduleModal
+                    scheduleDate={scheduleDate}
+                    isModalOpen={showImportScheduleModal}
+                    onChangeScheduleDate={_onChangeScheduleImport}
+                    onCancelImportScheduleModal={_onCancelScheduleImport}
+                    onValidateScheduleImport={_onValidateScheduleImport}
+                />
+            )}
+            <ImportReducerContext.Provider value={{state, dispatch}}>
+                <Modal
+                    title={t('import.title')}
+                    okText={validateButtonLabel}
+                    cancelText={t('global.cancel')}
+                    onOk={_onOk}
+                    onCancel={onClose}
+                    visible={open}
+                    closable
+                    width="90vw"
+                    centered
+                    confirmLoading={currentStep === ImportSteps.PROCESSING}
+                    bodyStyle={{height: 'calc(100vh - 10rem)'}}
+                    okButtonProps={{disabled: !okBtn, className: 'submit-btn', title: buttonTitle}}
+                    cancelButtonProps={{disabled: currentStep === ImportSteps.DONE}}
+                    destroyOnClose={true}
+                    footer={
+                        <Space direction="horizontal">
+                            {currentStep === ImportSteps.CONFIG ? (
+                                <Dropdown.Button
+                                    disabled={!okBtn}
+                                    className="submit-btn"
+                                    title={buttonTitle}
+                                    type="primary"
+                                    onClick={_onOk}
+                                    icon={<DownOutlined />}
+                                    overlay={
+                                        <Menu
+                                            items={[
+                                                {
+                                                    label: t('import.import_schedule'),
+                                                    key: '1',
+                                                    icon: <FieldTimeOutlined />
+                                                }
+                                            ]}
+                                            onClick={_onScheduleImportBtnClick}
+                                        ></Menu>
+                                    }
+                                >
+                                    {validateButtonLabel}
+                                </Dropdown.Button>
+                            ) : (
+                                <Button
+                                    disabled={!okBtn}
+                                    className="submit-btn"
+                                    title={buttonTitle}
+                                    type="primary"
+                                    onClick={_onOk}
+                                >
+                                    {validateButtonLabel}
+                                </Button>
+                            )}
+                            <Button disabled={currentStep === ImportSteps.DONE} onClick={onClose}>
+                                {t('global.cancel')}
+                            </Button>
+                        </Space>
+                    }
+                >
+                    <Steps current={currentStep} style={{marginBottom: '2em'}}>
+                        <Step title={t('import.file_selection')}></Step>
+                        <Step title={t('import.file_configuration')}></Step>
+                        <Step
+                            title={t('import.in_progress')}
+                            icon={currentStep === ImportSteps.PROCESSING ? <LoadingOutlined /> : null}
+                        ></Step>
+                        <Step title={t('import.import_done')} status={importError ? 'error' : undefined}></Step>
+                    </Steps>
+                    <Content>{_getStepContent()}</Content>
+                </Modal>
+            </ImportReducerContext.Provider>
+        </>
     );
 }
 

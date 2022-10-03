@@ -24,6 +24,7 @@ interface IDeps {
 
 interface IImportParams {
     file: Promise<IFileUpload>;
+    startAt?: number;
 }
 
 interface IImportExcelParams {
@@ -37,6 +38,7 @@ interface IImportExcelParams {
         linkAttribute?: string;
         keyToIndex?: number;
     } | null>;
+    startAt?: number;
 }
 
 export default function ({'core.domain.import': importDomain = null, config = null}: IDeps = {}): ICoreImportApp {
@@ -111,14 +113,14 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                     }
 
                     extend type Mutation {
-                        import(file: Upload!): ID!
-                        importExcel(file: Upload!, sheets: [SheetInput]): ID!
+                        import(file: Upload!, startAt: Int): ID!
+                        importExcel(file: Upload!, sheets: [SheetInput], startAt: Int): ID!
                     }
                 `,
                 resolvers: {
                     Upload: GraphQLUpload,
                     Mutation: {
-                        async import(_, {file}: IImportParams, ctx: IQueryInfos): Promise<string> {
+                        async import(_, {file, startAt}: IImportParams, ctx: IQueryInfos): Promise<string> {
                             const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['json'];
@@ -130,6 +132,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             // try {
                             return importDomain.import(storedFileName, ctx, {
                                 // Delete remaining import file.
+                                ...(!!startAt && {startAt}),
                                 callback: {
                                     moduleName: 'utils',
                                     name: 'deleteFile',
@@ -144,7 +147,11 @@ export default function ({'core.domain.import': importDomain = null, config = nu
 
                             // FIXME: If import fail should we backup db?
                         },
-                        async importExcel(_, {file, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<string> {
+                        async importExcel(
+                            _,
+                            {file, sheets, startAt}: IImportExcelParams,
+                            ctx: IQueryInfos
+                        ): Promise<string> {
                             const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['xlsx'];
@@ -153,7 +160,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             // Store XLSX file in local filesystem.
                             const storedFileName = await _storeUploadFile(fileData);
 
-                            return importDomain.importExcel({filename: storedFileName, sheets}, ctx);
+                            return importDomain.importExcel({filename: storedFileName, sheets, startAt}, ctx);
                         }
                     }
                 }

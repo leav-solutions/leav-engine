@@ -68,7 +68,6 @@ function AppHandler(): JSX.Element {
         variables: {createdBy: userData?.me?.id},
         skip: !userData,
         onSubscriptionData: subData => {
-            console.debug(subData.subscriptionData.data);
             // we temporary add created_by field because of miss context for subscriptions on server side to resolve User object
             const task = {...subData.subscriptionData.data.task, created_by: {id: userData.me.id}};
             dispatch(addTask(task));

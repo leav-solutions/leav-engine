@@ -152,9 +152,6 @@ export default function ({
                             subscribe: withFilter(
                                 () => eventsManager.suscribe([TRIGGER_NAME_TASK]),
                                 (payload, variables) => {
-                                    console.debug({payload});
-                                    console.debug({variables});
-
                                     return typeof variables.createdBy !== 'undefined'
                                         ? payload.task.created_by === variables.createdBy
                                         : true;

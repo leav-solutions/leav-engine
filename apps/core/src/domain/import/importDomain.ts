@@ -14,7 +14,15 @@ import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
-import {TaskPriority, ITask, ITaskFunc, ITaskCallback, TaskCallbackType, OrderType} from '../../_types/tasksManager';
+import {
+    TaskPriority,
+    ITask,
+    ITaskFunc,
+    ITaskCallback,
+    TaskCallbackType,
+    OrderType,
+    ITaskFuncParams
+} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
@@ -53,11 +61,12 @@ export interface IImportExcelParams {
         linkAttribute?: string;
         treeLinkLibrary?: string;
     } | null>;
+    startAt?: number;
 }
 
 export interface IImportDomain {
-    import(filename: string, ctx: IQueryInfos, task?: {callback?: ITaskCallback; id?: string}): Promise<string>;
-    importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<string>;
+    import(filename: string, ctx: IQueryInfos, task?: ITaskFuncParams): Promise<string>;
+    importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string>;
 }
 
 interface IDeps {
@@ -401,11 +410,7 @@ export default function ({
     };
 
     return {
-        async import(
-            filename: string,
-            ctx: IQueryInfos,
-            task?: {callback?: ITaskCallback; id?: string}
-        ): Promise<string> {
+        async import(filename: string, ctx: IQueryInfos, task?: ITaskFuncParams): Promise<string> {
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
 
@@ -419,8 +424,8 @@ export default function ({
                             name: 'import',
                             args: [filename, ctx]
                         },
-                        startAt: Math.floor(Date.now() / 1000),
                         priority: TaskPriority.MEDIUM,
+                        startAt: !!task.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                         ...(!!task.callback && {callback: task.callback})
                     },
                     ctx
@@ -532,7 +537,7 @@ export default function ({
 
             return task.id;
         },
-        async importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<string> {
+        async importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string> {
             const buffer = await _getFileDataBuffer(filename);
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer);
@@ -741,6 +746,7 @@ export default function ({
             await utils.deleteFile(`${config.import.directory}/${filename}`);
 
             return this.import(JSONFilename, ctx, {
+                ...(!!startAt && {startAt}),
                 // Delete remaining import file.
                 callback: {
                     moduleName: 'utils',

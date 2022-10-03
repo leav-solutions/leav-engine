@@ -38,6 +38,8 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
     const dispatch = useAppDispatch();
 
     const {tasks} = useAppSelector(state => state.tasks);
+    const {stack, base} = useAppSelector(state => state.info);
+
     const [panel, setPanel] = useState<{inProgress: INotif[]; completed: INotif[]}>({inProgress: [], completed: []});
 
     const [runCancelTask] = useMutation<CANCEL_TASK, CANCEL_TASKVariables>(cancelTaskMutation);
@@ -153,16 +155,18 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
                     {!ellipsis && (
                         <Space style={{fontSize: 12}} direction="vertical" size={0} align={'baseline'}>
                             <Typography.Text>
-                                {`${t('notifications.task-createdAt')} ${moment(task.created_at * 1000).format('lll')}`}
+                                {`${t('notifications.task-createdAt')} ${new Date(
+                                    task.created_at * 1000
+                                ).toLocaleString()}`}
                             </Typography.Text>
                             <Typography.Text>
-                                {`${t('notifications.task-startAt')} ${moment(task.startAt * 1000).format('lll')}`}
+                                {`${t('notifications.task-startAt')} ${new Date(task.startAt * 1000).toLocaleString()}`}
                             </Typography.Text>
                             {!!task.startedAt && (
                                 <Typography.Text>
-                                    {`${t('notifications.task-startedAt')} ${moment(task.startedAt * 1000).format(
-                                        'lll'
-                                    )}`}
+                                    {`${t('notifications.task-startedAt')} ${new Date(
+                                        task.startedAt * 1000
+                                    ).toLocaleString()}`}
                                 </Typography.Text>
                             )}
                             {!!task.completedAt && (
@@ -171,7 +175,7 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
                                         task.status === TaskStatus.CANCELED
                                             ? 'notifications.task-canceledAt'
                                             : 'notifications.task-completedAt'
-                                    )} ${moment(task.completedAt * 1000).format('lll')}`}
+                                    )} ${new Date(task.completedAt * 1000).toLocaleString()}`}
                                 </Typography.Text>
                             )}
                             {!!task.canceledBy && (

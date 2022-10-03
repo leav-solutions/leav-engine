@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
+import Joi, {number, string} from 'joi';
 import * as Config from '_types/config';
 import {IAmqpService} from '@leav/message-broker';
 import {IQueryInfos} from '_types/queryInfos';
@@ -15,7 +15,8 @@ import {
     TaskCallbackType,
     OrderType,
     ITaskCreatePayload,
-    ITaskCancelPayload
+    ITaskCancelPayload,
+    ITaskFuncParams
 } from '../../_types/tasksManager';
 import winston from 'winston';
 import {IList, SortOrder} from '../../_types/list';
@@ -73,6 +74,8 @@ interface IMasterMsg {
 }
 
 export const TRIGGER_NAME_TASK = 'TASK';
+
+type DepsManagerFunc = <T extends any[]>(...args: [...args: T, task: ITaskFuncParams] | [...args: T]) => Promise<any>;
 
 export default function ({
     config = null,
@@ -140,35 +143,6 @@ export default function ({
         }, config.tasksManager.checkingInterval);
     };
 
-    const _executeCallback = async (taskId: string, ctx: IQueryInfos): Promise<void> => {
-        const res = await _getTasks({params: {filters: {id: taskId}}, ctx});
-
-        const task = res.list[0];
-
-        if (!task) {
-            throw new Error('Task not found');
-        }
-
-        if (
-            !!task.callback &&
-            ((task.callback.type.includes(TaskCallbackType.ON_FAILURE) && task.status === TaskStatus.FAILED) ||
-                (task.callback.type.includes(TaskCallbackType.ON_SUCCESS) && task.status === TaskStatus.DONE) ||
-                (task.callback.type.includes(TaskCallbackType.ON_CANCEL) && task.status === TaskStatus.CANCELED))
-        ) {
-            try {
-                const callbackFunc = _getDepsManagerFunc({
-                    moduleName: task.callback.moduleName,
-                    subModuleName: task.callback.subModuleName,
-                    funcName: task.callback.name
-                });
-
-                await callbackFunc(...task.callback.args);
-            } catch (e) {
-                logger.error('Error executing callback', e);
-            }
-        }
-    };
-
     const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<ITask> => {
         await _updateTask(
             task.id,
@@ -202,6 +176,35 @@ export default function ({
             },
             ctx
         );
+    };
+
+    const _executeCallback = async (taskId: string, ctx: IQueryInfos): Promise<void> => {
+        const res = await _getTasks({params: {filters: {id: taskId}}, ctx});
+
+        const task = res.list[0];
+
+        if (!task) {
+            throw new Error('Task not found');
+        }
+
+        if (
+            !!task.callback &&
+            ((task.callback.type.includes(TaskCallbackType.ON_FAILURE) && task.status === TaskStatus.FAILED) ||
+                (task.callback.type.includes(TaskCallbackType.ON_SUCCESS) && task.status === TaskStatus.DONE) ||
+                (task.callback.type.includes(TaskCallbackType.ON_CANCEL) && task.status === TaskStatus.CANCELED))
+        ) {
+            try {
+                const callbackFunc = _getDepsManagerFunc({
+                    moduleName: task.callback.moduleName,
+                    subModuleName: task.callback.subModuleName,
+                    funcName: task.callback.name
+                });
+
+                await callbackFunc(...task.callback.args);
+            } catch (e) {
+                logger.error('Error executing callback', e);
+            }
+        }
     };
 
     const _validateMsg = (msg: ITaskOrder) => {
@@ -290,6 +293,8 @@ export default function ({
             ctx
         );
 
+        await eventsManager.sendPubSubEvent({triggerName: TRIGGER_NAME_TASK, data: {task}}, ctx);
+
         return task;
     };
 
@@ -330,8 +335,10 @@ export default function ({
         moduleName: string;
         subModuleName?: string;
         funcName: string;
-    }): any => {
-        const func = depsManager.resolve(`core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}`)?.[funcName];
+    }): DepsManagerFunc => {
+        const func: DepsManagerFunc = depsManager.resolve(
+            `core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}`
+        )?.[funcName];
 
         if (!func) {
             throw new Error(

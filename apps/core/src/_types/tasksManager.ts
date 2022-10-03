@@ -47,6 +47,13 @@ export enum TaskCallbackType {
 
 export type ITaskCallback = ITaskFunc & {type: TaskCallbackType[]};
 
+// Interface to add as the least param of a new task function
+export interface ITaskFuncParams {
+    id?: string;
+    startAt?: number;
+    callback?: ITaskCallback;
+}
+
 export interface ITask {
     id: string;
     name: string;

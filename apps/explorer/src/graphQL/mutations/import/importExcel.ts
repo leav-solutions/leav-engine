@@ -4,7 +4,7 @@
 import gql from 'graphql-tag';
 
 export const importExcel = gql`
-    mutation IMPORT_EXCEL($file: Upload!, $sheets: [SheetInput]) {
-        importExcel(file: $file, sheets: $sheets)
+    mutation IMPORT_EXCEL($file: Upload!, $sheets: [SheetInput], $startAt: Int) {
+        importExcel(file: $file, sheets: $sheets, startAt: $startAt)
     }
 `;

@@ -345,7 +345,9 @@
         "attributes_selection": "Sélection des attributs",
         "export_generation": "Génération de l'export",
         "export_done": "Export terminé",
-        "download_file": "Télécharger le fichier"
+        "download_file": "Télécharger le fichier",
+        "export_notification_title": "Nouvel export en tâche de fond",
+        "export_notification_description": "Planifié le"
     },
     "import": {
         "title": "Importer des données",
@@ -355,9 +357,13 @@
         "in_progress": "Import en cours",
         "data_overview": "Aperçu des données",
         "file_configuration": "Configuration",
-        "import_done": "Import terminé",
+        "import_schedule": "Import planifié",
+        "import_schedule_title": "Date de planification",
+        "import_done": "Import du fichier terminé",
         "import_success": "Import terminé avec succès",
-        "import_failure": "Erreur lors de l'import des données",
+        "import_failure": "Erreur lors de l'import du fichier",
+        "import_notification_title": "Nouvel import en tâche de fond",
+        "import_notification_description": "Planifié le",
         "empty_file": "Le fichier ne contient pas de données",
         "mapping": "Sélection des attributs",
         "attribute_selection": "Sélectionner un attribut",

@@ -18,7 +18,7 @@ import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import validateLibAttributes from '../library/helpers/validateLibAttributes';
-import {ITaskCallback, OrderType, TaskPriority} from '../../_types/tasksManager';
+import {ITaskCallback, OrderType, TaskPriority, ITaskFuncParams} from '../../_types/tasksManager';
 import {v4 as uuidv4} from 'uuid';
 
 export const DIR_PATH = '/exports';
@@ -30,7 +30,7 @@ export interface IExportParams {
 }
 
 export interface IExportDomain {
-    export(params: IExportParams, ctx: IQueryInfos, task?: {callback?: ITaskCallback; id?: string}): Promise<string>;
+    export(params: IExportParams, ctx: IQueryInfos, task?: ITaskFuncParams): Promise<string>;
 }
 
 interface IDeps {
@@ -144,7 +144,7 @@ export default function ({
         async export(
             {library, attributes, filters}: IExportParams,
             ctx: IQueryInfos,
-            task?: {id?: string}
+            task?: ITaskFuncParams
         ): Promise<string> {
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
@@ -159,7 +159,7 @@ export default function ({
                             name: 'export',
                             args: [{library, attributes, filters}, ctx]
                         },
-                        startAt: Math.floor(Date.now() / 1000),
+                        startAt: !!task.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                         priority: TaskPriority.MEDIUM
                     },
                     ctx

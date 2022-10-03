@@ -32,6 +32,7 @@ import {
     SharedStateSelectionType
 } from '../../../../../_types/types';
 import ErrorDisplay from '../../../../shared/ErrorDisplay';
+import useNotification from 'hooks/useNotification';
 
 const {Step} = Steps;
 
@@ -59,6 +60,8 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
 
     const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
 
+    const notification = useNotification();
+
     const {state: searchState} = useSearchReducer();
     const dispatch = useAppDispatch();
 
@@ -72,6 +75,12 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
         fetchPolicy: 'no-cache',
         onCompleted: data => {
             setCurrentStep(ExportSteps.DONE);
+
+            notification.triggerNotification({
+                message: t('export.export_notification_title'),
+                icon: <DownloadOutlined style={{color: '#108ee9'}} />
+            });
+
             setFilepath(data?.export);
         },
         onError: error => {
@@ -171,6 +180,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
             confirmLoading={currentStep === ExportSteps.PROCESSING}
             bodyStyle={{height: 'calc(100vh - 10rem)'}}
             okButtonProps={{className: 'submit-btn'}}
+            cancelButtonProps={{disabled: currentStep === ExportSteps.DONE}}
             destroyOnClose
         >
             <Steps current={currentStep} style={{marginBottom: '2em'}}>
@@ -200,16 +210,19 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
                             <Result
                                 status="success"
                                 title={t('export.export_done')}
-                                extra={[
-                                    <Button
-                                        key="download-file"
-                                        type="primary"
-                                        icon={<DownloadOutlined />}
-                                        href={getFileUrl(filepath)}
-                                    >
-                                        {t('export.download_file')}
-                                    </Button>
-                                ]}
+                                //
+                                // TODO: Bouton pour ouvrir le panneau des notifications ?
+                                //
+                                // extra={[
+                                //     <Button
+                                //         key="download-file"
+                                //         type="primary"
+                                //         icon={<DownloadOutlined />}
+                                //         href={getFileUrl(filepath)}
+                                //     >
+                                //         {t('export.download_file')}
+                                //     </Button>
+                                // ]}
                             />
                         ) : (
                             <ErrorDisplay message={exportError.message} />

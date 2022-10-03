@@ -19,4 +19,5 @@ export interface IMPORT_EXCEL {
 export interface IMPORT_EXCELVariables {
     file: any;
     sheets?: (SheetInput | null)[] | null;
+    startAt?: number | null;
 }
