@@ -494,6 +494,7 @@
     "notifications": {
         "title": "Notifications",
         "inProgress": "In progress",
+        "pending": "Pending",
         "done": "Completed",
         "task-infos": "Informations",
         "task-cancel": "Cancel",

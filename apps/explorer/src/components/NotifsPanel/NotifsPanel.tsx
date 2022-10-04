@@ -150,7 +150,9 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
                             )
                         }
                         title={<Typography.Text ellipsis={ellipsis}>{task.name}</Typography.Text>}
-                        description={task.progress?.description}
+                        description={
+                            task.status === TaskStatus.PENDING ? t('notifications.pending') : task.progress?.description
+                        }
                     />
                     {!ellipsis && (
                         <Space style={{fontSize: 12}} direction="vertical" size={0} align={'baseline'}>
