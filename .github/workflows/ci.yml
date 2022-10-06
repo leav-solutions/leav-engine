@@ -154,6 +154,7 @@ jobs:
           REDIS_HOST: localhost
 
   e2e-sync-scan:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     services:
       rabbitmq:
