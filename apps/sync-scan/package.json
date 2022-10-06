@@ -6,7 +6,7 @@
     "scripts": {
         "start": "ts-node src/index.ts",
         "start:dev": "NODE_ENV=development ts-node src/index.ts",
-        "test:e2e": "NODE_ENV=test jest -c jest-e2e.config.json",
+        "test:e2e": "NODE_ENV=test jest -c jest-e2e.config.json --forceExit --detectOpenHandles",
         "test": "NODE_ENV=test jest -c jest-unit.config.json",
         "build": "tsc",
         "tscheck": "tsc --noEmit -p .",
