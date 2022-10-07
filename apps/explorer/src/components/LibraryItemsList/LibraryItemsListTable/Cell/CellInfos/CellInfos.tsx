@@ -12,11 +12,9 @@ import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import themingVar from '../../../../../themingVar';
 import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch, PreviewSize} from '../../../../../_types/types';
 
 const Info = styled.div`
-    border-left: 1px solid ${themingVar['@divider-color']};
     min-width: 150px;
 `;
 

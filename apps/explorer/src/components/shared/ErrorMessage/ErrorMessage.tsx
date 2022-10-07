@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {Button, Space} from 'antd';
-import React from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 
@@ -24,8 +23,8 @@ const ErrorsList = styled.ul`
 function ErrorMessage({error, onClose}: IErrorMessageProps): JSX.Element {
     const displayedError = Array.isArray(error) ? (
         <ErrorsList>
-            {error.map(e => (
-                <li>{e}</li>
+            {error.map((e, i) => (
+                <li key={i}>{e}</li>
             ))}
         </ErrorsList>
     ) : (

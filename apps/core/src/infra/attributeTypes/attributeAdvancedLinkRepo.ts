@@ -25,7 +25,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
@@ -51,7 +51,7 @@ export default function({
         const [recordLibrary] = valueEdge._to.split('/');
         return {
             id_value: valueEdge._key,
-            value: {...linkedRecord, library: recordLibrary},
+            value: linkedRecord ? {...linkedRecord, library: recordLibrary} : null,
             attribute: valueEdge.attribute,
             modified_at: valueEdge.modified_at,
             modified_by: valueEdge.modified_by,

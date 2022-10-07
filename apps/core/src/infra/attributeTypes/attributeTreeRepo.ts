@@ -21,7 +21,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
@@ -35,12 +35,13 @@ export default function({
     ): ITreeValue => {
         return {
             id_value: valueEdge._key,
-            value: linkedRecord
-                ? {
-                      id: nodeId,
-                      record: linkedRecord
-                  }
-                : null,
+            value:
+                linkedRecord && nodeId
+                    ? {
+                          id: nodeId,
+                          record: linkedRecord
+                      }
+                    : null,
             attribute: valueEdge.attribute,
             modified_at: valueEdge.modified_at,
             modified_by: valueEdge.modified_by,

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Paragraph from 'antd/lib/typography/Paragraph';
+import Loading from 'components/shared/Loading';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {isEqual} from 'lodash';
@@ -77,7 +78,7 @@ const TableHead = styled.div`
 `;
 
 const HeaderRow = styled.div`
-    margin-left: 3px; // For better alignment with rows
+    margin-left: 1px; // For better alignment with rows
 `;
 
 const HeaderCell = styled.div<{id: string}>`
@@ -188,6 +189,10 @@ const Table = () => {
 
     // data
     useEffect(() => {
+        if (!tableColumns.length) {
+            return;
+        }
+
         const data: ITableRow[] = searchState.records.reduce((allData, record, index) => {
             if (index < searchState.pagination) {
                 const tableItem: ITableRow = tableColumns.reduce(
@@ -252,7 +257,13 @@ const Table = () => {
         useSticky
     );
 
-    const {getTableProps, getTableBodyProps, headerGroups, prepareRow, rows} = tableInstance;
+    const {getTableProps, getTableBodyProps, headerGroups, prepareRow, rows, data} = tableInstance;
+
+    // It means we're still computing columns and data,
+    // so we don't want to render the table to avoid a first render with  empty cells
+    if (searchState.records.length && !data.length) {
+        return <Loading />;
+    }
 
     return (
         <>

@@ -128,6 +128,9 @@ export const getRecordFormQuery = gql`
                                 type
                                 query
                             }
+                            permissions {
+                                create_record
+                            }
                         }
                         linkValuesList: values_list {
                             enable

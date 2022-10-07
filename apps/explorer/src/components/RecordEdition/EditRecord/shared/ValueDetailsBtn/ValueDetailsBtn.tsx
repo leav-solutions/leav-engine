@@ -1,41 +1,45 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {InfoOutlined} from '@ant-design/icons';
-import {Button, ButtonProps} from 'antd';
-import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
-import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React from 'react';
+import {InfoCircleOutlined, InfoOutlined} from '@ant-design/icons';
+import {Button, ButtonProps, Tooltip} from 'antd';
+import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
+import BasicButton from 'components/shared/BasicButton';
+import {IRecordPropertyStandard, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {useTranslation} from 'react-i18next';
+import {isTypeStandard} from 'utils';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 
 interface IValueDetailsBtnProps extends Omit<ButtonProps, 'value'> {
     attribute: RECORD_FORM_recordForm_elements_attribute;
     value: RecordProperty;
+    basic?: boolean;
 }
 
-function ValueDetailsBtn({value, attribute, ...buttonProps}: IValueDetailsBtnProps): JSX.Element {
-    const {dispatch} = useEditRecordReducer();
+function ValueDetailsBtn({value, attribute, basic = false, ...buttonProps}: IValueDetailsBtnProps): JSX.Element {
+    const {dispatch} = useEditRecordModalReducer();
+    const {t} = useTranslation();
 
     const _handleClick = () => {
+        const editingValue = isTypeStandard(attribute.type) ? (value as IRecordPropertyStandard)?.value : null;
         dispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: {
                 value,
+                editingValue,
                 attribute
             }
         });
     };
 
-    return (
-        <Button
-            className="value-details-btn"
-            shape="circle"
-            {...buttonProps}
-            icon={<InfoOutlined />}
-            onClick={_handleClick}
-        />
+    const detailsButton = basic ? (
+        <BasicButton shape="circle" {...buttonProps} icon={<InfoCircleOutlined />} onClick={_handleClick} />
+    ) : (
+        <Button shape="circle" {...buttonProps} icon={<InfoOutlined />} onClick={_handleClick} />
     );
+
+    return <Tooltip title={t('record_edition.value_details_tooltip')}>{detailsButton}</Tooltip>;
 }
 
 export default ValueDetailsBtn;

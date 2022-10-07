@@ -4,7 +4,6 @@
 import {CheckOutlined, CloseOutlined, FileTextOutlined} from '@ant-design/icons';
 import {AnyPrimitive} from '@leav/utils';
 import {Switch, Tooltip, Typography} from 'antd';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {stringifyDateRangeValue} from 'utils';
@@ -49,6 +48,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                         rows: 1,
                         tooltip: displayedValues
                     }}
+                    style={{margin: 0}}
                 >
                     {cellData.format === AttributeFormat.boolean ? (
                         <Switch

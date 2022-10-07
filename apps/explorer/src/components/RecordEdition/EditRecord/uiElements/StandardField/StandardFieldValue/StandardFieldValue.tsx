@@ -12,12 +12,12 @@ import {
     IStandardInputProps,
     StandardValueTypes
 } from 'components/RecordEdition/EditRecord/_types';
-import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
-import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import Dimmer from 'components/shared/Dimmer';
 import FloatingMenu, {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import moment from 'moment';
-import React, {MutableRefObject, useEffect, useRef} from 'react';
+import {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -205,18 +205,38 @@ function StandardFieldValue({
     const actionsWrapperRef = useRef<HTMLDivElement>();
     const inputRef = useRef<InputRefPossibleTypes>();
 
-    const {dispatch: editRecordDispatch} = useEditRecordReducer();
+    const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordModalReducer();
 
     const attribute = state.formElement.attribute as RECORD_FORM_recordForm_elements_attribute_StandardAttribute;
 
     const isValuesListEnabled = !!attribute?.values_list?.enable;
     const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
 
+    // Scroll to input when editing field
     useEffect(() => {
         if (fieldValue.isEditing) {
             actionsWrapperRef?.current?.scrollIntoView({block: 'nearest'});
         }
     }, [fieldValue.isEditing]);
+
+    // Cancel value editing if value details panel is closed
+    useEffect(() => {
+        if (editRecordState.activeValue === null && fieldValue.isEditing) {
+            dispatch({
+                type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
+                idValue: fieldValue.idValue
+            });
+        }
+    }, [editRecordState.activeValue]);
+
+    useEffect(() => {
+        if (fieldValue.isEditing) {
+            editRecordDispatch({
+                type: EditRecordReducerActionsTypes.SET_EDITING_VALUE,
+                value: fieldValue.editingValue
+            });
+        }
+    }, [fieldValue.isEditing, fieldValue.editingValue]);
 
     const _handleSubmit = async (valueToSave: StandardValueTypes) => {
         if (valueToSave === '') {
@@ -225,15 +245,6 @@ function StandardFieldValue({
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
         onSubmit(fieldValue.idValue, convertedValue);
-
-        if (!state.metadataEdit) {
-            editRecordDispatch({
-                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                value: null
-            });
-        } else {
-            dispatch({type: StandardFieldReducerActionsTypes.UNEDIT_FIELD, idValue: fieldValue.idValue});
-        }
     };
 
     const _handlePressEnter = async () => {
@@ -270,7 +281,7 @@ function StandardFieldValue({
         if (!state.metadataEdit) {
             editRecordDispatch({
                 type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                value: {value: fieldValue.value, attribute}
+                value: {value: fieldValue.value, editingValue: fieldValue.editingValue, attribute}
             });
         }
     };
@@ -317,8 +328,9 @@ function StandardFieldValue({
     const _getInput = (): JSX.Element => {
         if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
             let displayedValue = String(fieldValue.displayValue);
+            const hasValue = fieldValue.value !== null;
 
-            if (fieldValue.displayValue) {
+            if (hasValue) {
                 switch (attribute.format) {
                     case AttributeFormat.date_range:
                         const dateRangeValue = fieldValue.displayValue as IDateRangeValue;
@@ -333,7 +345,7 @@ function StandardFieldValue({
             return (
                 <Input
                     key="display"
-                    className={fieldValue.displayValue ? 'has-value' : ''}
+                    className={hasValue ? 'has-value' : ''}
                     value={displayedValue}
                     onFocus={_handleFocus}
                     disabled={state.isReadOnly}
@@ -437,13 +449,11 @@ function StandardFieldValue({
         </ErrorMessage>
     );
 
-    const isErrorVisible =
-        (fieldValue.isEditing || attribute.format === AttributeFormat.boolean || !state.record) &&
-        fieldValue.isErrorDisplayed;
+    const isErrorVisible = fieldValue.isErrorDisplayed;
 
     const wrapperClasses = `
         ${attribute.format ? `format-${attribute.format}` : ''}
-        ${fieldValue.value?.value ? 'has-value' : ''}
+        ${fieldValue.value ? 'has-value' : ''}
         ${fieldValue.isEditing ? 'editing' : ''}
     `;
 
@@ -456,7 +466,6 @@ function StandardFieldValue({
 
     if (!fieldValue.isEditing) {
         valueActions.push({
-            title: t('record_edition.value_details'),
             button: <ValueDetailsBtn value={fieldValue.value} attribute={attribute} shape="circle" />
         });
     }

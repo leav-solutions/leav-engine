@@ -20,7 +20,7 @@ export interface IFloatingMenuActionWithIcon extends IFloatingMenuActionCommon {
 }
 
 export interface IFloatingMenuActionCommon {
-    title: string;
+    title?: string;
 }
 
 export type FloatingMenuAction = IFloatingMenuActionWithIcon | IFloatingMenuActionWithBtn;
@@ -63,8 +63,8 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                 e.preventDefault();
             }}
         >
-            {actions.map(action => (
-                <Tooltip title={action.title} key={action.title}>
+            {actions.map((action, i) => (
+                <Tooltip title={action.title} key={action.title ?? i}>
                     {(action as IFloatingMenuActionWithBtn).button ?? (
                         <Button
                             shape="circle"
@@ -76,7 +76,7 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                 </Tooltip>
             ))}
             {moreActions?.length && (
-                <Tooltip title={t('items_list.table.actions-tooltips.more')}>
+                <Tooltip title={t('items_list.table.actions-tooltips.more')} key="more_actions">
                     <Dropdown
                         placement="bottomRight"
                         overlay={

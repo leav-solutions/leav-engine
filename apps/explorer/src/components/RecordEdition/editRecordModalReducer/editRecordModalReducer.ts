@@ -4,10 +4,12 @@
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
+import {StandardValueTypes} from '../EditRecord/_types';
 
 export interface IRecordPropertyWithAttribute {
     attribute: RECORD_FORM_recordForm_elements_attribute;
     value: RecordProperty;
+    editingValue?: StandardValueTypes;
 }
 
 export interface IEditRecordReducerState {
@@ -19,7 +21,8 @@ export interface IEditRecordReducerState {
 export enum EditRecordReducerActionsTypes {
     SET_RECORD = 'SET_RECORD',
     TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR',
-    SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE'
+    SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE',
+    SET_EDITING_VALUE = 'SET_CURRENT_VALUE_CONTENT'
 }
 
 export type IEditRecordReducerActions =
@@ -33,6 +36,10 @@ export type IEditRecordReducerActions =
     | {
           type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE;
           value: IEditRecordReducerState['activeValue'];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_EDITING_VALUE;
+          value: StandardValueTypes;
       };
 
 export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void;
@@ -43,7 +50,7 @@ export const initialState: IEditRecordReducerState = {
     sidebarCollapsed: true
 };
 
-const editRecordReducer = (
+const editRecordModalReducer = (
     state: IEditRecordReducerState,
     action: IEditRecordReducerActions
 ): IEditRecordReducerState => {
@@ -54,9 +61,17 @@ const editRecordReducer = (
             return {...state, sidebarCollapsed: !state.sidebarCollapsed};
         case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
             return {...state, activeValue: action.value};
+        case EditRecordReducerActionsTypes.SET_EDITING_VALUE:
+            return {
+                ...state,
+                activeValue: {
+                    ...state.activeValue,
+                    editingValue: action.value
+                }
+            };
         default:
             return state;
     }
 };
 
-export default editRecordReducer;
+export default editRecordModalReducer;

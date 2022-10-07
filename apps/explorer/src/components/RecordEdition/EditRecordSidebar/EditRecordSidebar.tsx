@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import RecordSummary from 'components/shared/RecordSummary';
-import React from 'react';
 import {MetadataSubmitValueFunc} from '../EditRecord/_types';
-import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
+import {useEditRecordModalReducer} from '../editRecordModalReducer/useEditRecordModalReducer';
 import ValueDetails from './ValueDetails';
 
 interface IEditRecordSidebarProps {
@@ -12,7 +11,7 @@ interface IEditRecordSidebarProps {
 }
 
 function EditRecordSidebar({onMetadataSubmit}: IEditRecordSidebarProps): JSX.Element {
-    const {state} = useEditRecordReducer();
+    const {state} = useEditRecordModalReducer();
 
     return state.activeValue ? (
         <ValueDetails

@@ -3,7 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Input, InputRef} from 'antd';
 import {IStandardInputProps} from 'components/RecordEdition/EditRecord/_types';
-import React, {ChangeEvent, MutableRefObject} from 'react';
+import {ChangeEvent, MutableRefObject} from 'react';
+import styled from 'styled-components';
+
+const StyledInput = styled(Input)`
+    // Remove arrows on number input
+    && {
+        input {
+            -moz-appearance: textfield;
+            ::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+    }
+`;
 
 function NumberInput({state, fieldValue, onFocus, onPressEnter, onChange, inputRef}: IStandardInputProps): JSX.Element {
     const {editingValue} = fieldValue;
@@ -18,12 +32,14 @@ function NumberInput({state, fieldValue, onFocus, onPressEnter, onChange, inputR
 
     const editingValueNumber = Number(editingValue);
 
+    const inputValue = editingValue !== '' ? (editingValueNumber as number) : '';
+
     return (
-        <Input
+        <StyledInput
             type="number"
             ref={inputRef as MutableRefObject<InputRef>}
             className="nested-input"
-            value={isNaN(editingValueNumber) ? 0 : editingValueNumber}
+            value={inputValue}
             onFocus={onFocus}
             onChange={_handleNumberChange}
             onPressEnter={_handlePressEnter}
