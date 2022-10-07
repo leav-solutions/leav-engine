@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {Dispatch} from 'react';
-import {IEditRecordReducerActions, IEditRecordReducerState, initialState} from './editRecordReducer';
+import {IEditRecordReducerActions, IEditRecordReducerState, initialState} from './editRecordModalReducer';
 
-export const EditRecordReducerContext = React.createContext<{
+export const EditRecordModalReducerContext = React.createContext<{
     state: IEditRecordReducerState;
     dispatch: Dispatch<IEditRecordReducerActions>;
 }>({state: initialState, dispatch: () => initialState});

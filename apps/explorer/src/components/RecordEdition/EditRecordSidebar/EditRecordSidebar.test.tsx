@@ -2,14 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {render, screen} from '_tests/testUtils';
 import {mockFormAttribute, mockFormAttributeTree} from '__mocks__/common/attribute';
 import {mockRecord} from '__mocks__/common/record';
 import {mockTreeRecord, mockTreeRecordChild} from '__mocks__/common/treeElements';
 import {mockRecordPropertyWithAttribute} from '__mocks__/common/value';
-import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
+import {EditRecordModalReducerContext} from '../editRecordModalReducer/editRecordModalReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
 
 jest.mock('components/shared/RecordSummary', () => {
@@ -53,9 +52,9 @@ describe('EditRecordSidebar', () => {
         test('Display record summary', async () => {
             await act(async () => {
                 render(
-                    <EditRecordReducerContext.Provider value={mockReducer}>
+                    <EditRecordModalReducerContext.Provider value={mockReducer}>
                         <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                    </EditRecordReducerContext.Provider>
+                    </EditRecordModalReducerContext.Provider>
                 );
             });
 
@@ -68,9 +67,9 @@ describe('EditRecordSidebar', () => {
             const {value, attribute} = mockReducerWithValue.state.activeValue;
             await act(async () => {
                 render(
-                    <EditRecordReducerContext.Provider value={mockReducerWithValue}>
+                    <EditRecordModalReducerContext.Provider value={mockReducerWithValue}>
                         <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                    </EditRecordReducerContext.Provider>
+                    </EditRecordModalReducerContext.Provider>
                 );
             });
 
@@ -90,9 +89,9 @@ describe('EditRecordSidebar', () => {
         test("Don't display modifier if not set in value", async () => {
             await act(async () => {
                 render(
-                    <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
+                    <EditRecordModalReducerContext.Provider value={mockReducerWithValueSimple}>
                         <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                    </EditRecordReducerContext.Provider>
+                    </EditRecordModalReducerContext.Provider>
                 );
             });
 
@@ -120,9 +119,9 @@ describe('EditRecordSidebar', () => {
             };
             await act(async () => {
                 render(
-                    <EditRecordReducerContext.Provider value={mockReducerWithTreeValue}>
+                    <EditRecordModalReducerContext.Provider value={mockReducerWithTreeValue}>
                         <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                    </EditRecordReducerContext.Provider>
+                    </EditRecordModalReducerContext.Provider>
                 );
             });
 
@@ -152,9 +151,9 @@ describe('EditRecordSidebar', () => {
             const {value, attribute} = mockReducerWithValue.state.activeValue;
             await act(async () => {
                 render(
-                    <EditRecordReducerContext.Provider value={mockReducerWithValueAndMetadata}>
+                    <EditRecordModalReducerContext.Provider value={mockReducerWithValueAndMetadata}>
                         <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                    </EditRecordReducerContext.Provider>
+                    </EditRecordModalReducerContext.Provider>
                 );
             });
 

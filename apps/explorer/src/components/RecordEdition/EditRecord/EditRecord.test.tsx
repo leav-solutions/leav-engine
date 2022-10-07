@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getRecordFormQuery} from 'graphQL/queries/forms/getRecordFormQuery';
-import React from 'react';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockRecordForm} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
@@ -41,6 +40,7 @@ describe('EditRecord', () => {
                 library={mockRecordWhoAmI.library.id}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}
+                onDeleteMultipleValues={jest.fn()}
                 readonly={false}
             />,
             {

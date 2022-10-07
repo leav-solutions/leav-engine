@@ -5,8 +5,8 @@ import {Tree} from 'antd';
 import {DataNode} from 'antd/lib/tree';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
 import styled from 'styled-components';
+import themingVar from 'themingVar';
 import {localizedTranslation} from 'utils';
 import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
 
@@ -17,7 +17,7 @@ interface ITreeValuePathProps {
 
 const MyTree = styled(Tree)`
     && {
-        background: none;
+        border: 1px solid ${themingVar['@border-color-base']};
     }
 `;
 

@@ -16,7 +16,7 @@ import {
     IRecordPropertyTree
 } from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
-import React, {useReducer, useState} from 'react';
+import {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addNotification} from 'redux/notifications';
 import styled from 'styled-components';
@@ -37,6 +37,7 @@ import useDeleteValueMutation from '../EditRecord/hooks/useDeleteValueMutation';
 import useSaveValueBatchMutation from '../EditRecord/hooks/useSaveValueBatchMutation';
 import {
     APICallStatus,
+    DeleteMultipleValuesFunc,
     DeleteValueFunc,
     ISubmittedValueLink,
     ISubmittedValueStandard,
@@ -45,9 +46,9 @@ import {
     MetadataSubmitValueFunc,
     SubmitValueFunc
 } from '../EditRecord/_types';
-import editRecordReducer from '../editRecordReducer';
-import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
-import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
+import editRecordModalReducer from '../editRecordModalReducer';
+import {EditRecordReducerActionsTypes} from '../editRecordModalReducer/editRecordModalReducer';
+import {EditRecordModalReducerContext} from '../editRecordModalReducer/editRecordModalReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext from './creationErrorContext';
 
@@ -112,7 +113,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
     const {t} = useTranslation();
     const isCreationMode = !record;
 
-    const [state, dispatch] = useReducer(editRecordReducer, {
+    const [state, dispatch] = useReducer(editRecordModalReducer, {
         record,
         activeValue: null,
         sidebarCollapsed: false
@@ -338,6 +339,26 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
         };
     };
 
+    const _handleDeleteAllValues: DeleteMultipleValuesFunc = async (attribute, values) => {
+        if (!isCreationMode) {
+            const valuesToSave = values.map(value => ({
+                idValue: value.id_value,
+                attribute,
+                value: null
+            }));
+            return saveValues(record, valuesToSave, true);
+        }
+
+        const newPendingValues = {...pendingValues};
+        newPendingValues[attribute] = {};
+
+        setPendingValues(newPendingValues);
+
+        return {
+            status: APICallStatus.SUCCESS
+        };
+    };
+
     const title = record ? <RecordCard record={record} size={PreviewSize.small} /> : t('record_edition.new_record');
 
     const footerButtons = [
@@ -376,7 +397,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                 {permissionsLoading ? (
                     <Loading />
                 ) : (
-                    <EditRecordReducerContext.Provider value={{state, dispatch}}>
+                    <EditRecordModalReducerContext.Provider value={{state, dispatch}}>
                         <CreationErrorContext.Provider value={creationErrors}>
                             <Container isSidebarCollapsed={state.sidebarCollapsed}>
                                 <Title>{title}</Title>
@@ -387,6 +408,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                                             library={library}
                                             onValueSubmit={_handleValueSubmit}
                                             onValueDelete={_handleDeleteValue}
+                                            onDeleteMultipleValues={_handleDeleteAllValues}
                                             readonly={isReadOnly}
                                         />
                                     ) : (
@@ -401,7 +423,7 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                                 </Sidebar>
                             </Container>
                         </CreationErrorContext.Provider>
-                    </EditRecordReducerContext.Provider>
+                    </EditRecordModalReducerContext.Provider>
                 )}
             </Modal>
         </div>

@@ -20,30 +20,15 @@ interface IWrapperProps {
 }
 
 const Wrapper = styled.div<IWrapperProps>`
-    border-left: solid 3px transparent;
-    border-right: solid 3px transparent;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
 
-    ${({isHover}) =>
-        isHover &&
-        `
-        box-shadow: 0px 3px 6px #00000029;
-
-        .wrapper-arrow {
-            background: ${themingVar['@default-bg']};
-            box-shadow: 0px 3px 6px #00000029;
-            border: 1px solid ${themingVar['@leav-secondary-divider-color']};
-        }
-    `}
-
     &:hover {
         border-left: ${themingVar['@primary-color']} 3px solid;
         border-right: ${themingVar['@primary-color']} 3px solid;
         box-shadow: 0px 3px 6px #00000029;
-        transition: 200ms ease;
 
         .wrapper-arrow {
             background: ${themingVar['@default-bg']};

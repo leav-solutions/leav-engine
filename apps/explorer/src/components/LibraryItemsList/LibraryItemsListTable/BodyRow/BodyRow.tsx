@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SelectionModeContext} from 'context';
-import React, {useContext, useState} from 'react';
+import {useContext, useState} from 'react';
 import {Row} from 'react-table';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -16,7 +16,9 @@ import {isAllSelected, isSelected} from '../BodyCell/getSelectedCell';
 
 const CustomBodyRow = styled.div<{selected: boolean}>`
     position: relative;
-    border: 2px solid transparent;
+    border-bottom: 1px solid
+        ${props => (props.selected ? themingVar['@leav-background-active'] : themingVar['@leav-light-border-color'])};
+    border-collapse: collapse;
 
     // Must set background on row for the case where we just have the infos column (part of the row is empty)
     background-color: ${p =>
@@ -27,7 +29,6 @@ const CustomBodyRow = styled.div<{selected: boolean}>`
     }
 
     &:hover {
-        border: 2px solid ${themingVar['@primary-color']};
         background-color: ${p =>
             p.selected
                 ? themingVar['@leav-view-panel-label-background-active']

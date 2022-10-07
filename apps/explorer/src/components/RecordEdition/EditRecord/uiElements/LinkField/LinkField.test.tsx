@@ -5,23 +5,29 @@ import userEvent from '@testing-library/user-event';
 import {
     EditRecordReducerActionsTypes,
     initialState
-} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
-import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
+} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {IUseGetRecordColumnsValuesQueryHook} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import React from 'react';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI
 } from '_gqlTypes/RECORD_FORM';
-import {act, render, screen, within} from '_tests/testUtils';
+import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockAttributeLink} from '__mocks__/common/attribute';
 import {mockFormElementLink, mockLinkValue} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
 import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
-import {APICallStatus, DeleteValueFunc, FormElement, ISubmitMultipleResult, SubmitValueFunc} from '../../_types';
+import {
+    APICallStatus,
+    DeleteMultipleValuesFunc,
+    DeleteValueFunc,
+    FormElement,
+    ISubmitMultipleResult,
+    SubmitValueFunc
+} from '../../_types';
 import LinkField from './LinkField';
 
 jest.mock('hooks/LangHook/LangHook');
@@ -29,6 +35,12 @@ jest.mock('hooks/LangHook/LangHook');
 jest.mock('components/SearchModal', () => {
     return function SearchModal() {
         return <div>SearchModal</div>;
+    };
+});
+
+jest.mock('components/RecordEdition/EditRecordModal', () => {
+    return function EditRecordModal() {
+        return <div>EditRecordModal</div>;
     };
 });
 
@@ -47,10 +59,10 @@ jest.mock('hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
 }));
 
 describe('LinkField', () => {
-    const mockEditRecordDispatch = jest.fn();
-    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+    const mockEditRecordModalDispatch = jest.fn();
+    jest.spyOn(useEditRecordModalReducer, 'useEditRecordModalReducer').mockImplementation(() => ({
         state: initialState,
-        dispatch: mockEditRecordDispatch
+        dispatch: mockEditRecordModalDispatch
     }));
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -86,18 +98,21 @@ describe('LinkField', () => {
     };
     const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
+    const mockHandleDeleteMultipleValues: DeleteMultipleValuesFunc = jest
+        .fn()
+        .mockReturnValue({status: APICallStatus.SUCCESS});
+
+    const baseProps = {
+        onValueSubmit: mockHandleSubmit,
+        onValueDelete: mockHandleDelete,
+        onDeleteMultipleValues: mockHandleDeleteMultipleValues
+    };
 
     beforeEach(() => jest.clearAllMocks());
 
     test('Display list of values', async () => {
         await act(async () => {
-            render(
-                <LinkField
-                    element={mockFormElementLink}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<LinkField element={mockFormElementLink} {...baseProps} />);
         });
 
         expect(screen.getByRole('table')).toBeInTheDocument();
@@ -138,8 +153,7 @@ describe('LinkField', () => {
             render(
                 <LinkField
                     element={{...mockFormElementLinkWithColumns, values: recordValuesWithColumns}}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
+                    {...baseProps}
                 />
             );
         });
@@ -152,13 +166,7 @@ describe('LinkField', () => {
 
     test('If no value, display a button to add a value', async () => {
         await act(async () => {
-            render(
-                <LinkField
-                    element={{...mockFormElementLink, values: []}}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<LinkField element={{...mockFormElementLink, values: []}} {...baseProps} />);
         });
 
         expect(screen.getAllByRole('table').length).toBeGreaterThanOrEqual(1);
@@ -174,8 +182,7 @@ describe('LinkField', () => {
                         attribute: {...mockFormElementLink.attribute, readonly: true},
                         values: []
                     }}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
+                    {...baseProps}
                 />
             );
         });
@@ -185,20 +192,31 @@ describe('LinkField', () => {
 
     test('Can edit and delete linked record', async () => {
         await act(async () => {
-            render(
-                <LinkField
-                    element={mockFormElementLink}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<LinkField element={mockFormElementLink} {...baseProps} />);
         });
 
         const row = screen.getByRole('row', {name: /record/});
         userEvent.hover(row, null);
 
-        expect(screen.queryByRole('button', {name: /delete/, hidden: true})).toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /delete-value/, hidden: true})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: 'edit-record', hidden: true})).toBeInTheDocument();
+    });
+
+    test('Can delete all values', async () => {
+        await act(async () => {
+            render(<LinkField element={mockFormElementLink} {...baseProps} />);
+        });
+
+        const deleteAllValuesButton = screen.getByRole('button', {name: /delete-all-values/, hidden: true});
+        expect(deleteAllValuesButton).toBeInTheDocument();
+
+        userEvent.click(deleteAllValuesButton);
+
+        await act(async () => {
+            userEvent.click(screen.getByRole('button', {name: /confirm/}));
+        });
+
+        await waitFor(() => expect(baseProps.onDeleteMultipleValues).toBeCalled());
     });
 
     test('If multiple values, display add value button', async () => {
@@ -210,13 +228,7 @@ describe('LinkField', () => {
             }
         };
         await act(async () => {
-            render(
-                <LinkField
-                    element={mockFormElementLinkMultivalue}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<LinkField element={mockFormElementLinkMultivalue} {...baseProps} />);
         });
 
         expect(screen.getByRole('button', {name: /add/, hidden: true})).toBeInTheDocument();
@@ -232,13 +244,7 @@ describe('LinkField', () => {
         };
 
         await act(async () => {
-            render(
-                <LinkField
-                    element={mockFormElementLinkNoMultivalue}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<LinkField element={mockFormElementLinkNoMultivalue} {...baseProps} />);
         });
 
         expect(screen.queryByRole('button', {name: /add/, hidden: true})).not.toBeInTheDocument();
@@ -246,21 +252,15 @@ describe('LinkField', () => {
 
     test('Can display value details', async () => {
         await act(async () => {
-            render(
-                <LinkField
-                    element={mockFormElementLink}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<LinkField element={mockFormElementLink} {...baseProps} />);
         });
 
-        const valueDetailsButton = screen.getByRole('button', {name: /info/, hidden: true});
-        expect(valueDetailsButton).toBeInTheDocument();
+        const valueDetailsButtons = screen.getAllByRole('button', {name: /info/, hidden: true});
+        expect(valueDetailsButtons).toHaveLength(2);
 
-        userEvent.click(valueDetailsButton);
+        userEvent.click(valueDetailsButtons[0]);
 
-        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
+        expect(mockEditRecordModalDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 
     describe('Values list', () => {
@@ -304,6 +304,7 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalue}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
+                        onDeleteMultipleValues={jest.fn()}
                     />
                 );
             });
@@ -363,6 +364,7 @@ describe('LinkField', () => {
                         element={mockFormElementLinkValuesList}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
+                        onDeleteMultipleValues={jest.fn()}
                     />
                 );
             });
@@ -413,6 +415,7 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalue}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
+                        onDeleteMultipleValues={jest.fn()}
                     />
                 );
             });
@@ -438,6 +441,7 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalue}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
+                        onDeleteMultipleValues={jest.fn()}
                     />
                 );
             });
@@ -459,6 +463,7 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalue}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
+                        onDeleteMultipleValues={jest.fn()}
                     />
                 );
             });
@@ -505,6 +510,7 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalueNoFreeEntry}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
+                        onDeleteMultipleValues={jest.fn()}
                     />
                 );
             });
@@ -586,6 +592,7 @@ describe('LinkField', () => {
                         element={mockFormElementLinkMultivalue}
                         onValueSubmit={mockHandleSubmit}
                         onValueDelete={mockHandleDelete}
+                        onDeleteMultipleValues={jest.fn()}
                     />,
                     {
                         apolloMocks: mocks,
@@ -617,6 +624,25 @@ describe('LinkField', () => {
             });
 
             expect(await valuesAddBlock.findByText('label0')).toBeInTheDocument();
+        });
+
+        test('Can add an element via creation', async () => {
+            render(
+                <LinkField
+                    element={mockFormElementLinkMultivalue}
+                    onValueSubmit={mockHandleSubmit}
+                    onValueDelete={mockHandleDelete}
+                    onDeleteMultipleValues={jest.fn()}
+                />
+            );
+
+            const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
+            userEvent.click(addValueBtn);
+
+            const valuesAddBlock = within(screen.getByTestId('values-add'));
+            userEvent.click(valuesAddBlock.getByRole('button', {name: /new_record/}));
+
+            expect(screen.getByText('EditRecordModal')).toBeInTheDocument();
         });
     });
 });

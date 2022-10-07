@@ -14,7 +14,11 @@ import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {MutableRefObject} from 'react';
 import {ValueInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {RECORD_FORM_recordForm_elements, RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
+import {
+    RECORD_FORM_recordForm_elements,
+    RECORD_FORM_recordForm_elements_attribute,
+    RECORD_FORM_recordForm_elements_values
+} from '_gqlTypes/RECORD_FORM';
 import {
     SAVE_VALUE_BATCH_saveValueBatch_errors,
     SAVE_VALUE_BATCH_saveValueBatch_values
@@ -40,7 +44,8 @@ export enum APICallStatus {
 
 export type FieldSubmitMultipleFunc = (
     record: RecordIdentity_whoAmI,
-    values: IValueToSubmit[]
+    values: IValueToSubmit[],
+    deleteEmpty?: boolean
 ) => Promise<ISubmitMultipleResult>;
 export interface ISubmitMultipleResult {
     status: APICallStatus;
@@ -80,6 +85,11 @@ export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISu
 
 export type SubmitValueFunc = (values: SubmittedValue[]) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
+export type DeleteMultipleValuesFunc = (
+    attribute: string,
+    values: RECORD_FORM_recordForm_elements_values[]
+) => Promise<ISubmitMultipleResult>;
+
 export type MetadataSubmitValueFunc = (
     value: RecordProperty,
     attribute: RECORD_FORM_recordForm_elements_attribute,
@@ -94,8 +104,9 @@ export interface ISubmittedValueBase {
 
 export interface IFormElementProps<SettingsType> {
     element: FormElement<SettingsType>;
-    onValueSubmit: SubmitValueFunc;
-    onValueDelete: DeleteValueFunc;
+    onValueSubmit?: SubmitValueFunc;
+    onValueDelete?: DeleteValueFunc;
+    onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
 }
 

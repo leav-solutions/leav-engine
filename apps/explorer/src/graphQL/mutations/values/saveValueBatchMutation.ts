@@ -11,8 +11,15 @@ export const saveValueBatchMutation = gql`
         $recordId: ID!
         $version: [ValueVersionInput!]
         $values: [ValueBatchInput!]!
+        $deleteEmpty: Boolean
     ) {
-        saveValueBatch(library: $library, recordId: $recordId, version: $version, values: $values) {
+        saveValueBatch(
+            library: $library
+            recordId: $recordId
+            version: $version
+            values: $values
+            deleteEmpty: $deleteEmpty
+        ) {
             values {
                 id_value
                 modified_at

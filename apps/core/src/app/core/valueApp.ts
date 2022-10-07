@@ -137,7 +137,7 @@ export default function ({
 
                     type LinkValue implements GenericValue {
                         id_value: ID,
-                        value: Record!,
+                        value: Record,
                         modified_at: Int,
                         created_at: Int,
                         modified_by: User,
@@ -153,7 +153,7 @@ export default function ({
                         created_at: Int!
                         modified_by: User,
                         created_by: User,
-                        value: TreeNode!,
+                        value: TreeNode,
                         version: ValueVersion,
                         attribute: Attribute,
                         metadata: [ValueMetadata]
@@ -181,6 +181,7 @@ export default function ({
                     extend type Mutation {
                         # Save one value
                         saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): GenericValue!
+
                         # Save values for several attributes at once.
                         # If deleteEmpty is true, empty values will be deleted
                         saveValueBatch(
@@ -190,6 +191,7 @@ export default function ({
                             values: [ValueBatchInput],
                             deleteEmpty: Boolean
                         ): saveValueBatchResult!
+
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): GenericValue!
                     }
                 `,
@@ -227,7 +229,7 @@ export default function ({
                                 recordId,
                                 values: convertedValues,
                                 ctx,
-                                keepEmpty: deleteEmpty
+                                keepEmpty: !deleteEmpty
                             });
 
                             const res = {
@@ -282,20 +284,32 @@ export default function ({
                     Value: commonValueResolvers,
                     LinkValue: {
                         ...commonValueResolvers,
-                        value: parent => ({
-                            ...parent.value,
-                            // Add attribute on value as it might be useful for nested resolvers like ancestors
-                            attribute: parent.attribute
-                        })
+                        value: parent => {
+                            if (parent.value === null) {
+                                return null;
+                            }
+
+                            return {
+                                ...parent.value,
+                                // Add attribute on value as it might be useful for nested resolvers like ancestors
+                                attribute: parent.attribute
+                            };
+                        }
                     },
                     TreeValue: {
                         ...commonValueResolvers,
-                        value: parent => ({
-                            ...parent.value,
-                            // Add attribute and treeId on value as it might be useful for nested resolvers like ancestors
-                            attribute: parent.attribute,
-                            treeId: parent.treeId
-                        })
+                        value: parent => {
+                            if (parent.value === null) {
+                                return null;
+                            }
+
+                            return {
+                                ...parent.value,
+                                // Add attribute and treeId on value as it might be useful for nested resolvers like ancestors
+                                attribute: parent.attribute,
+                                treeId: parent.treeId
+                            };
+                        }
                     }
                 }
             };

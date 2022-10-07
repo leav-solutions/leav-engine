@@ -186,7 +186,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
     const metadataErrors = _validateMetadata(attributeProps, params.value);
     errors = {...errors, ...metadataErrors};
 
-    if (_mustCheckLinkedRecord(attributeProps)) {
+    if (_mustCheckLinkedRecord(attributeProps) && value.value !== null) {
         const linkedRecordValidationHandler: {
             [type: string]: (
                 value: IValue,

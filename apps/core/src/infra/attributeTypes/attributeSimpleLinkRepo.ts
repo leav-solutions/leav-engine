@@ -38,7 +38,7 @@ export default function ({
 
     const _buildLinkValue = (savedValue: IStandardValue, attribute: IAttribute): ILinkValue => ({
         ...savedValue,
-        value: {id: savedValue.value, library: attribute.linked_library}
+        value: savedValue.value !== null ? {id: savedValue.value, library: attribute.linked_library} : null
     });
 
     return {
