@@ -100,9 +100,11 @@ export enum PermissionsActions {
     admin_access_attributes = 'admin_access_attributes',
     admin_access_libraries = 'admin_access_libraries',
     admin_access_permissions = 'admin_access_permissions',
+    admin_access_tasks = 'admin_access_tasks',
     admin_access_trees = 'admin_access_trees',
     admin_access_version_profiles = 'admin_access_version_profiles',
     admin_application = 'admin_application',
+    admin_cancel_task = 'admin_cancel_task',
     admin_create_application = 'admin_create_application',
     admin_create_attribute = 'admin_create_attribute',
     admin_create_library = 'admin_create_library',
@@ -111,6 +113,7 @@ export enum PermissionsActions {
     admin_delete_application = 'admin_delete_application',
     admin_delete_attribute = 'admin_delete_attribute',
     admin_delete_library = 'admin_delete_library',
+    admin_delete_task = 'admin_delete_task',
     admin_delete_tree = 'admin_delete_tree',
     admin_delete_version_profile = 'admin_delete_version_profile',
     admin_edit_application = 'admin_edit_application',
@@ -137,6 +140,14 @@ export enum PermissionsRelation {
 export enum SortOrder {
     asc = 'asc',
     desc = 'desc'
+}
+
+export enum TaskStatus {
+    CANCELED = 'CANCELED',
+    DONE = 'DONE',
+    FAILED = 'FAILED',
+    PENDING = 'PENDING',
+    RUNNING = 'RUNNING'
 }
 
 export enum TreeBehavior {
@@ -176,16 +187,16 @@ export interface ApplicationIconInput {
 
 export interface ApplicationInput {
     id: string;
-    label?: SystemTranslation | null;
+    label?: any | null;
     type?: ApplicationType | null;
-    description?: SystemTranslation | null;
+    description?: any | null;
     libraries?: string[] | null;
     trees?: string[] | null;
     color?: string | null;
     icon?: ApplicationIconInput | null;
     module?: string | null;
     endpoint?: string | null;
-    settings?: JSONObject | null;
+    settings?: any | null;
 }
 
 export interface ApplicationsFiltersInput {
@@ -219,8 +230,8 @@ export interface AttributeInput {
 export interface EmbeddedAttributeInput {
     id: string;
     format?: AttributeFormat | null;
-    label?: SystemTranslation | null;
-    description?: SystemTranslation | null;
+    label?: any | null;
+    description?: any | null;
     validation_regex?: string | null;
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
 }
@@ -241,7 +252,7 @@ export interface FormElementInput {
 
 export interface FormElementSettingsInput {
     key: string;
-    value: Any;
+    value: any;
 }
 
 export interface FormElementsByDepsInput {
@@ -252,7 +263,7 @@ export interface FormElementsByDepsInput {
 export interface FormInput {
     id: string;
     library: string;
-    label?: SystemTranslation | null;
+    label?: any | null;
     dependencyAttributes?: string[] | null;
     elements?: FormElementsByDepsInput[] | null;
 }
@@ -264,7 +275,7 @@ export interface LibraryIconInput {
 
 export interface LibraryInput {
     id: string;
-    label?: SystemTranslation | null;
+    label?: any | null;
     icon?: LibraryIconInput | null;
     attributes?: string[] | null;
     fullTextAttributes?: string[] | null;
@@ -334,6 +345,12 @@ export interface SortVersionProfilesInput {
     order?: SortOrder | null;
 }
 
+export interface TaskFiltersInput {
+    id?: string | null;
+    created_by?: string | null;
+    status?: TaskStatus | null;
+}
+
 export interface TreeElementInput {
     id: string;
     library: string;
@@ -343,7 +360,7 @@ export interface TreeInput {
     id: string;
     libraries?: TreeLibraryInput[] | null;
     behavior?: TreeBehavior | null;
-    label?: SystemTranslation | null;
+    label?: any | null;
     permissions_conf?: TreeNodePermissionsConfInput[] | null;
 }
 

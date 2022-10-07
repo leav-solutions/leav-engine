@@ -14,14 +14,14 @@ import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} f
 
 export interface AttributeDetails_StandardAttribute_metadata_fields {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -30,7 +30,7 @@ export interface AttributeDetails_StandardAttribute_permissions_conf_permissionT
 
 export interface AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     linked_tree: AttributeDetails_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -62,7 +62,7 @@ export interface AttributeDetails_StandardAttribute_versions_conf {
 
 export interface AttributeDetails_StandardAttribute_libraries {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface AttributeDetails_StandardAttribute {
@@ -82,14 +82,14 @@ export interface AttributeDetails_StandardAttribute {
 
 export interface AttributeDetails_LinkAttribute_metadata_fields {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -98,7 +98,7 @@ export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeA
 
 export interface AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     linked_tree: AttributeDetails_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -130,7 +130,7 @@ export interface AttributeDetails_LinkAttribute_versions_conf {
 
 export interface AttributeDetails_LinkAttribute_libraries {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface AttributeDetails_LinkAttribute_linked_library {
@@ -156,14 +156,14 @@ export interface AttributeDetails_LinkAttribute {
 
 export interface AttributeDetails_TreeAttribute_metadata_fields {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -172,7 +172,7 @@ export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeA
 
 export interface AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     linked_tree: AttributeDetails_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -204,7 +204,7 @@ export interface AttributeDetails_TreeAttribute_versions_conf {
 
 export interface AttributeDetails_TreeAttribute_libraries {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface AttributeDetails_TreeAttribute_linked_tree {

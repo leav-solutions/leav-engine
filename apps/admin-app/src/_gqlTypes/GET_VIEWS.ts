@@ -12,7 +12,7 @@
 
 export interface GET_VIEWS_views_list {
     id: string;
-    label: SystemTranslation;
+    label: any;
 }
 
 export interface GET_VIEWS_views {

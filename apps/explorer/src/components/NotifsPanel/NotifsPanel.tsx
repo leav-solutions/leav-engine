@@ -12,6 +12,7 @@ import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
 import {DELETE_TASK, DELETE_TASKVariables} from '_gqlTypes/DELETE_TASK';
 import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
 import {getFileUrl} from '../../utils';
+import styled from 'styled-components';
 import {deleteTaskMutation} from 'graphQL/mutations/tasks/deleteTask';
 import {deleteTask} from 'redux/tasks';
 import {useEffect, useState} from 'react';
@@ -32,6 +33,12 @@ export interface INotif {
     ellipsis: boolean;
     data: any;
 }
+
+const WrapperProgress = styled.div<{isCanceled: boolean}>`
+    & .ant-progress-text {
+        color: ${props => (props.isCanceled ? '#F2C037 !important' : '')};
+    }
+`;
 
 function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifsPanelProps): JSX.Element {
     const {t} = useTranslation();
@@ -141,17 +148,24 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
                                     size={'large'}
                                 />
                             ) : (
-                                <Progress
-                                    width={45}
-                                    type="circle"
-                                    percent={task.progress?.percent || 0}
-                                    {...(_isExceptionTask(task) && {status: 'exception'})}
-                                />
+                                <WrapperProgress isCanceled={task.status === TaskStatus.CANCELED}>
+                                    <Progress
+                                        width={45}
+                                        type="circle"
+                                        percent={task.progress?.percent || 0}
+                                        {...(_isExceptionTask(task) && {
+                                            status: 'exception',
+                                            ...(task.status === TaskStatus.CANCELED && {strokeColor: '#F2C037'})
+                                        })}
+                                    />
+                                </WrapperProgress>
                             )
                         }
                         title={<Typography.Text ellipsis={ellipsis}>{task.name}</Typography.Text>}
                         description={
-                            task.status === TaskStatus.PENDING ? t('notifications.pending') : task.progress?.description
+                            _isCompletedTask(task) || !task.progress?.description
+                                ? t(`notifications.task-status.${TaskStatus[task.status]}`)
+                                : task.progress?.description
                         }
                     />
                     {!ellipsis && (

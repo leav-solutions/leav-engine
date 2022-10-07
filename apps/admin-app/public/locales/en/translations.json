@@ -344,6 +344,30 @@
         "settings": "Settings",
         "icon": "Icon"
     },
+    "tasks": {
+        "title": "Tasks",
+        "task-statuses": {
+            "CANCELED": "Canceled",
+            "DONE": "Done",
+            "FAILED": "Failed",
+            "PENDING": "Pending",
+            "RUNNING": "Running"
+        },
+        "confirm_cancel": "Do you really want to cancel task {{taskName}}?",
+        "delete_all": "Delete all",
+        "task-name": "Name",
+        "task-step": "Etape",
+        "task-progress": "Progress",
+        "task-status": "Status",
+        "task-cancel": "Cancel",
+        "task-createdAt": "Created at",
+        "task-startAt": "Start at",
+        "task-startedAt": "Started at",
+        "task-completedAt": "Completed at",
+        "task-canceledAt": "Canceled at",
+        "task-canceledBy": "Canceled by",
+        "task-duration": "Duration"
+    },
     "file_selector": {
         "select": "Select a file",
         "delete_confirm": "Do you really want to delete this file?",

@@ -14,7 +14,7 @@ import {Pagination} from './globalTypes';
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview {

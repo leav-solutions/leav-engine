@@ -24,7 +24,7 @@ export interface SAVE_FORM_saveForm_elements_dependencyValue {
 
 export interface SAVE_FORM_saveForm_elements_elements_settings {
     key: string;
-    value: Any;
+    value: any;
 }
 
 export interface SAVE_FORM_saveForm_elements_elements {
@@ -43,12 +43,12 @@ export interface SAVE_FORM_saveForm_elements {
 
 export interface SAVE_FORM_saveForm_dependencyAttributes {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface SAVE_FORM_saveForm {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     system: boolean;
     elements: SAVE_FORM_saveForm_elements[];
     dependencyAttributes: SAVE_FORM_saveForm_dependencyAttributes[] | null;

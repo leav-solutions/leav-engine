@@ -14,7 +14,7 @@ import {AttributeType, AttributeFormat} from './globalTypes';
 
 export interface GET_ATTRIBUTES_attributes_list_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
@@ -27,7 +27,7 @@ export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_linked_library {
 
 export interface GET_ATTRIBUTES_attributes_list_LinkAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;
@@ -42,7 +42,7 @@ export interface GET_ATTRIBUTES_attributes_list_TreeAttribute_linked_tree {
 
 export interface GET_ATTRIBUTES_attributes_list_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
     system: boolean;

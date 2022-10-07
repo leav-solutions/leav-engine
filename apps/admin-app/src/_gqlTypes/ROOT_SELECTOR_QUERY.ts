@@ -14,7 +14,7 @@ import {AvailableLanguage} from './globalTypes';
 
 export interface ROOT_SELECTOR_QUERY_libraries_list {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface ROOT_SELECTOR_QUERY_libraries {

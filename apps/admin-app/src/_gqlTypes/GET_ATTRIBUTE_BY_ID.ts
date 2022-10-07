@@ -14,14 +14,14 @@ import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode} f
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -30,7 +30,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissio
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     linked_tree: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -62,7 +62,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_libraries {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute {
@@ -82,14 +82,14 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute {
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_metadata_fields {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -98,7 +98,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_c
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     linked_tree: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -130,7 +130,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_libraries {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_linked_library {
@@ -156,14 +156,14 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute {
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_metadata_fields {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -172,7 +172,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_c
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     linked_tree: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -204,7 +204,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_libraries {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_linked_tree {

@@ -98,7 +98,7 @@ function TopBar({
                 <HeaderInfo />
             </WrapperHeaderInfo>
             <ApplicationSwitcher />
-            <Badge count={nbNotifs} offset={[-10, 15]}>
+            <Badge size="small" count={nbNotifs} offset={[-10, 15]}>
                 <InfoButton
                     key={notifsPanelKey}
                     name="infos"

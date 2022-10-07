@@ -12,7 +12,7 @@
 
 export interface GET_FORMS_LIST_forms_list {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     system: boolean;
 }
 

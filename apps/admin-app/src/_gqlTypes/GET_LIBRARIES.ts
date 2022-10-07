@@ -14,7 +14,7 @@ import {LibraryBehavior} from './globalTypes';
 
 export interface GET_LIBRARIES_libraries_list_icon_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_LIBRARIES_libraries_list_icon_whoAmI_preview {
@@ -49,7 +49,7 @@ export interface GET_LIBRARIES_libraries_list_gqlNames {
 export interface GET_LIBRARIES_libraries_list {
     id: string;
     system: boolean | null;
-    label: SystemTranslation | null;
+    label: any | null;
     behavior: LibraryBehavior;
     icon: GET_LIBRARIES_libraries_list_icon | null;
     gqlNames: GET_LIBRARIES_libraries_list_gqlNames;

@@ -24,7 +24,7 @@ export interface GET_FORM_forms_list_elements_dependencyValue {
 
 export interface GET_FORM_forms_list_elements_elements_settings {
     key: string;
-    value: Any;
+    value: any;
 }
 
 export interface GET_FORM_forms_list_elements_elements {
@@ -43,7 +43,7 @@ export interface GET_FORM_forms_list_elements {
 
 export interface GET_FORM_forms_list_dependencyAttributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_FORM_forms_list_dependencyAttributes_TreeAttribute_linked_tree {
@@ -52,7 +52,7 @@ export interface GET_FORM_forms_list_dependencyAttributes_TreeAttribute_linked_t
 
 export interface GET_FORM_forms_list_dependencyAttributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     linked_tree: GET_FORM_forms_list_dependencyAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -62,7 +62,7 @@ export type GET_FORM_forms_list_dependencyAttributes =
 
 export interface GET_FORM_forms_list {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     system: boolean;
     elements: GET_FORM_forms_list_elements[];
     dependencyAttributes: GET_FORM_forms_list_dependencyAttributes[] | null;

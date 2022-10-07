@@ -14,7 +14,7 @@ import {ApplicationInput} from './globalTypes';
 
 export interface SAVE_APPLICATION_saveApplication_icon_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface SAVE_APPLICATION_saveApplication_icon_whoAmI_preview {
@@ -42,9 +42,9 @@ export interface SAVE_APPLICATION_saveApplication {
     id: string;
     color: string | null;
     module: string;
-    description: SystemTranslation | null;
+    description: any | null;
     endpoint: string;
-    label: SystemTranslation;
+    label: any;
     system: boolean;
     icon: SAVE_APPLICATION_saveApplication_icon | null;
 }

@@ -24,7 +24,7 @@ export interface FormElementsByDeps_dependencyValue {
 
 export interface FormElementsByDeps_elements_settings {
     key: string;
-    value: Any;
+    value: any;
 }
 
 export interface FormElementsByDeps_elements {

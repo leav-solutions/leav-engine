@@ -11,8 +11,8 @@
 // ====================================================
 
 export interface ValueDetailsExtended_Value_metadata_value {
-    value: Any | null;
-    raw_value: Any | null;
+    value: any | null;
+    raw_value: any | null;
 }
 
 export interface ValueDetailsExtended_Value_metadata {
@@ -24,13 +24,13 @@ export interface ValueDetailsExtended_Value {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: ValueVersion | null;
+    version: any | null;
     metadata: (ValueDetailsExtended_Value_metadata | null)[] | null;
 }
 
 export interface ValueDetailsExtended_LinkValue_metadata_value {
-    value: Any | null;
-    raw_value: Any | null;
+    value: any | null;
+    raw_value: any | null;
 }
 
 export interface ValueDetailsExtended_LinkValue_metadata {
@@ -40,7 +40,7 @@ export interface ValueDetailsExtended_LinkValue_metadata {
 
 export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI_preview {
@@ -68,14 +68,14 @@ export interface ValueDetailsExtended_LinkValue {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: ValueVersion | null;
+    version: any | null;
     metadata: (ValueDetailsExtended_LinkValue_metadata | null)[] | null;
     linkValue: ValueDetailsExtended_LinkValue_linkValue;
 }
 
 export interface ValueDetailsExtended_TreeValue_metadata_value {
-    value: Any | null;
-    raw_value: Any | null;
+    value: any | null;
+    raw_value: any | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_metadata {
@@ -85,7 +85,7 @@ export interface ValueDetailsExtended_TreeValue_metadata {
 
 export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_preview {
@@ -111,7 +111,7 @@ export interface ValueDetailsExtended_TreeValue_treeValue_record {
 
 export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI_preview {
@@ -148,7 +148,7 @@ export interface ValueDetailsExtended_TreeValue {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: ValueVersion | null;
+    version: any | null;
     metadata: (ValueDetailsExtended_TreeValue_metadata | null)[] | null;
     treeValue: ValueDetailsExtended_TreeValue_treeValue;
 }

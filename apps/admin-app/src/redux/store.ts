@@ -5,11 +5,13 @@ import {configureStore} from '@reduxjs/toolkit';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import messagesReducer from './messages/messages';
 import mutationsWatcherReducer from './mutationsWatcher/mutationsWatcher';
+import tasksReducer from './tasks/tasks';
 
 export const store = configureStore({
     reducer: {
         messages: messagesReducer,
-        mutationsWatcher: mutationsWatcherReducer
+        mutationsWatcher: mutationsWatcherReducer,
+        tasks: tasksReducer
     }
 });
 

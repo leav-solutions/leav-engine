@@ -14,7 +14,7 @@ import {TreeInput, TreeBehavior, AttributeType, PermissionsRelation} from './glo
 
 export interface SAVE_TREE_saveTree_libraries_library_attributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
 }
 
@@ -24,7 +24,7 @@ export interface SAVE_TREE_saveTree_libraries_library_attributes_TreeAttribute_l
 
 export interface SAVE_TREE_saveTree_libraries_library_attributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
     linked_tree: SAVE_TREE_saveTree_libraries_library_attributes_TreeAttribute_linked_tree | null;
 }
@@ -35,7 +35,7 @@ export type SAVE_TREE_saveTree_libraries_library_attributes =
 
 export interface SAVE_TREE_saveTree_libraries_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     attributes: SAVE_TREE_saveTree_libraries_library_attributes[] | null;
 }
 
@@ -52,7 +52,7 @@ export interface SAVE_TREE_saveTree_libraries {
 
 export interface SAVE_TREE_saveTree_permissions_conf_permissionsConf_permissionTreeAttributes {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface SAVE_TREE_saveTree_permissions_conf_permissionsConf {
@@ -68,7 +68,7 @@ export interface SAVE_TREE_saveTree_permissions_conf {
 export interface SAVE_TREE_saveTree {
     id: string;
     system: boolean;
-    label: SystemTranslation | null;
+    label: any | null;
     behavior: TreeBehavior;
     libraries: SAVE_TREE_saveTree_libraries[];
     permissions_conf: SAVE_TREE_saveTree_permissions_conf[] | null;

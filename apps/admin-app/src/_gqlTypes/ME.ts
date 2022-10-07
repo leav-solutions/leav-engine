@@ -12,7 +12,7 @@
 
 export interface ME_me_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface ME_me_whoAmI_preview {

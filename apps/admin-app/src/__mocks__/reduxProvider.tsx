@@ -13,6 +13,9 @@ export const mockStoreInitialState: RootState = {
     mutationsWatcher: {
         mutationsCount: 0,
         hasPendingMutations: false
+    },
+    tasks: {
+        tasks: {}
     }
 };
 

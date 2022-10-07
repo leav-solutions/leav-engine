@@ -496,6 +496,13 @@
         "inProgress": "In progress",
         "pending": "Pending",
         "done": "Completed",
+        "task-status": {
+            "CANCELED": "Canceled",
+            "DONE": "Done",
+            "FAILED": "Failed",
+            "PENDING": "Pending",
+            "RUNNING": "Running"
+        },
         "task-infos": "Informations",
         "task-cancel": "Cancel",
         "task-createdAt": "Created at",

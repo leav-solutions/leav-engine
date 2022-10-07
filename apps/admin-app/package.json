@@ -42,7 +42,7 @@
     "scripts": {
         "start": "craco start",
         "build": "craco build",
-        "test": "craco test --forceExit --detectOpenHandles",
+        "test": "SKIP_PREFLIGHT_CHECK=true craco test --forceExit --detectOpenHandles",
         "lint": "eslint src/",
         "eject": "craco eject",
         "gen_types": "apollo codegen:generate ./src/_gqlTypes --target=typescript --no-addTypename --outputFlat --passthroughCustomScalars --excludes='**/*.test.*' && cd ../../ && yarn prettier --write apps/admin-app/src/_gqlTypes",

@@ -14,7 +14,7 @@ import {AvailableLanguage, TreeBehavior, PermissionsRelation, AttributeType} fro
 
 export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -23,7 +23,7 @@ export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_perm
 
 export interface GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     linked_tree: GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -43,13 +43,13 @@ export interface GET_TREE_BY_ID_trees_list_permissions_conf {
 
 export interface GET_TREE_BY_ID_trees_list_libraries_library_attributes {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     type: AttributeType;
 }
 
 export interface GET_TREE_BY_ID_trees_list_libraries_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     attributes: GET_TREE_BY_ID_trees_list_libraries_library_attributes[] | null;
 }
 
@@ -66,7 +66,7 @@ export interface GET_TREE_BY_ID_trees_list_libraries {
 
 export interface GET_TREE_BY_ID_trees_list {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
     system: boolean;
     behavior: TreeBehavior;
     permissions_conf: GET_TREE_BY_ID_trees_list_permissions_conf[] | null;

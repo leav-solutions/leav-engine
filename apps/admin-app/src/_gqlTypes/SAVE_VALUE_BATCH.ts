@@ -20,10 +20,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value {
     id_value: string | null;
     modified_at: number | null;
     created_at: number | null;
-    version: ValueVersion | null;
+    version: any | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute | null;
-    value: Any | null;
-    raw_value: Any | null;
+    value: any | null;
+    raw_value: any | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_attribute {
@@ -32,7 +32,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_attribute {
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoAmI_preview {
@@ -60,7 +60,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue {
     id_value: string | null;
     modified_at: number | null;
     created_at: number | null;
-    version: ValueVersion | null;
+    version: any | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_attribute | null;
     linkValue: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue;
 }
@@ -71,7 +71,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_attribute {
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI_preview {
@@ -97,7 +97,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_reco
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record_whoAmI_library {
     id: string;
-    label: SystemTranslation | null;
+    label: any | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record_whoAmI_preview {
@@ -134,7 +134,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue {
     id_value: string | null;
     modified_at: number | null;
     created_at: number | null;
-    version: ValueVersion | null;
+    version: any | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_attribute | null;
     treeValue: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue;
 }
