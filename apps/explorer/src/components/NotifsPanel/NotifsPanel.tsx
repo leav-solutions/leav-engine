@@ -45,7 +45,6 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
     const dispatch = useAppDispatch();
 
     const {tasks} = useAppSelector(state => state.tasks);
-    const {stack, base} = useAppSelector(state => state.info);
 
     const [panel, setPanel] = useState<{inProgress: INotif[]; completed: INotif[]}>({inProgress: [], completed: []});
 
@@ -106,116 +105,122 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
 
     const taskItem = ({type, ellipsis, data: task}: INotif, index: ['inProgress' | 'completed', number]) => {
         return (
-            <>
-                <List.Item
-                    key={task.id}
-                    {...{
-                        extra: [
-                            <Tooltip key={`${task.id}infos`} title={t('notifications.task-infos')}>
-                                <Button
-                                    type="link"
-                                    onClick={() => _onTaskInfoClick({type, ellipsis, data: task}, index)}
-                                    shape="circle"
-                                    icon={<InfoCircleOutlined />}
+            <List.Item
+                data-testid="itemList"
+                key={task.id}
+                extra={[
+                    <Tooltip key={`${task.id}infos`} title={t('notifications.task-infos')}>
+                        <Button
+                            type="link"
+                            onClick={() => _onTaskInfoClick({type, ellipsis, data: task}, index)}
+                            shape="circle"
+                            icon={<InfoCircleOutlined />}
+                        />
+                    </Tooltip>,
+                    ...[
+                        !_isCompletedTask(task) ? (
+                            <Button
+                                data-testid="cancelBtn"
+                                key={`${task.id}CancelBtn`}
+                                size={'small'}
+                                onClick={() => _onCancel(task)}
+                            >
+                                {t('notifications.task-cancel')}
+                            </Button>
+                        ) : (
+                            <Button
+                                data-testid="deleteBtn"
+                                key={`${task.id}DelBtn`}
+                                icon={<DeleteOutlined />}
+                                size={'small'}
+                                onClick={() => _onDelete(task)}
+                            />
+                        )
+                    ]
+                ]}
+            >
+                <List.Item.Meta
+                    avatar={
+                        !!task.link ? (
+                            <Button
+                                key="download-file"
+                                type="primary"
+                                shape="circle"
+                                icon={<DownloadOutlined />}
+                                href={getFileUrl(task.link.url)}
+                                size={'large'}
+                            />
+                        ) : (
+                            <WrapperProgress isCanceled={task.status === TaskStatus.CANCELED}>
+                                <Progress
+                                    width={45}
+                                    type="circle"
+                                    percent={task.progress?.percent || 0}
+                                    {...(_isExceptionTask(task) && {
+                                        status: 'exception',
+                                        ...(task.status === TaskStatus.CANCELED && {strokeColor: '#F2C037'})
+                                    })}
                                 />
-                            </Tooltip>,
-                            ...[
-                                !_isCompletedTask(task) ? (
-                                    <Button key={`${task.id}CancelBtn`} size={'small'} onClick={() => _onCancel(task)}>
-                                        {t('notifications.task-cancel')}
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        key={`${task.id}DelBtn`}
-                                        icon={<DeleteOutlined />}
-                                        size={'small'}
-                                        onClick={() => _onDelete(task)}
-                                    />
-                                )
-                            ]
-                        ]
-                    }}
-                >
-                    <List.Item.Meta
-                        avatar={
-                            !!task.link ? (
-                                <Button
-                                    key="download-file"
-                                    type="primary"
-                                    shape="circle"
-                                    icon={<DownloadOutlined />}
-                                    href={getFileUrl(task.link.url)}
-                                    size={'large'}
-                                />
-                            ) : (
-                                <WrapperProgress isCanceled={task.status === TaskStatus.CANCELED}>
-                                    <Progress
-                                        width={45}
-                                        type="circle"
-                                        percent={task.progress?.percent || 0}
-                                        {...(_isExceptionTask(task) && {
-                                            status: 'exception',
-                                            ...(task.status === TaskStatus.CANCELED && {strokeColor: '#F2C037'})
-                                        })}
-                                    />
-                                </WrapperProgress>
-                            )
-                        }
-                        title={<Typography.Text ellipsis={ellipsis}>{task.name}</Typography.Text>}
-                        description={
-                            _isCompletedTask(task) || !task.progress?.description
-                                ? t(`notifications.task-status.${TaskStatus[task.status]}`)
-                                : task.progress?.description
-                        }
-                    />
-                    {!ellipsis && (
-                        <Space style={{fontSize: 12}} direction="vertical" size={0} align={'baseline'}>
+                            </WrapperProgress>
+                        )
+                    }
+                    title={<Typography.Text ellipsis={ellipsis}>{task.name}</Typography.Text>}
+                    description={
+                        _isCompletedTask(task) || !task.progress?.description
+                            ? t(`notifications.task-status.${TaskStatus[task.status]}`)
+                            : task.progress?.description
+                    }
+                />
+                {!ellipsis && (
+                    <Space style={{fontSize: 12}} direction="vertical" size={0} align={'baseline'}>
+                        <Typography.Text>
+                            {`${t('notifications.task-createdAt')} ${new Date(
+                                task.created_at * 1000
+                            ).toLocaleString()}`}
+                        </Typography.Text>
+                        <Typography.Text>
+                            {`${t('notifications.task-startAt')} ${new Date(task.startAt * 1000).toLocaleString()}`}
+                        </Typography.Text>
+                        {!!task.startedAt && (
                             <Typography.Text>
-                                {`${t('notifications.task-createdAt')} ${new Date(
-                                    task.created_at * 1000
+                                {`${t('notifications.task-startedAt')} ${new Date(
+                                    task.startedAt * 1000
                                 ).toLocaleString()}`}
                             </Typography.Text>
+                        )}
+                        {!!task.completedAt && (
                             <Typography.Text>
-                                {`${t('notifications.task-startAt')} ${new Date(task.startAt * 1000).toLocaleString()}`}
+                                {`${t(
+                                    task.status === TaskStatus.CANCELED
+                                        ? 'notifications.task-canceledAt'
+                                        : 'notifications.task-completedAt'
+                                )} ${new Date(task.completedAt * 1000).toLocaleString()}`}
                             </Typography.Text>
-                            {!!task.startedAt && (
-                                <Typography.Text>
-                                    {`${t('notifications.task-startedAt')} ${new Date(
-                                        task.startedAt * 1000
-                                    ).toLocaleString()}`}
-                                </Typography.Text>
-                            )}
-                            {!!task.completedAt && (
-                                <Typography.Text>
-                                    {`${t(
-                                        task.status === TaskStatus.CANCELED
-                                            ? 'notifications.task-canceledAt'
-                                            : 'notifications.task-completedAt'
-                                    )} ${new Date(task.completedAt * 1000).toLocaleString()}`}
-                                </Typography.Text>
-                            )}
-                            {!!task.canceledBy && (
-                                <Typography.Text>
-                                    {`${t('notifications.task-canceledBy')} ${task.canceledBy}`}
-                                </Typography.Text>
-                            )}
-                            {!!task.completedAt && !_isExceptionTask(task) && (
-                                <Typography.Text>
-                                    {`${t('notifications.task-duration')}: ${_getTaskDuration(
-                                        task.startedAt,
-                                        task.completedAt
-                                    )}`}
-                                </Typography.Text>
-                            )}
-                        </Space>
-                    )}
-                </List.Item>
-            </>
+                        )}
+                        {!!task.canceledBy && (
+                            <Typography.Text>
+                                {`${t('notifications.task-canceledBy')} ${task.canceledBy}`}
+                            </Typography.Text>
+                        )}
+                        {!!task.completedAt && !_isExceptionTask(task) && (
+                            <Typography.Text>
+                                {`${t('notifications.task-duration')}: ${_getTaskDuration(
+                                    task.startedAt,
+                                    task.completedAt
+                                )}`}
+                            </Typography.Text>
+                        )}
+                    </Space>
+                )}
+            </List.Item>
         );
     };
 
+    console.debug({panel});
+
     return (
         <Drawer
+            data-testid="drawer"
             title={t('notifications.title')}
             visible={notifsPanelVisible}
             onClose={hideNotifsPanel}
@@ -225,6 +230,7 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
         >
             {!!panel.inProgress.length && (
                 <List
+                    data-testid="inProgressList"
                     header={t('notifications.inProgress')}
                     dataSource={panel.inProgress}
                     bordered
@@ -238,6 +244,7 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
             {!!panel.inProgress.length && !!panel.completed.length && <Divider plain />}
             {!!panel.completed.length && (
                 <List
+                    data-testid="completedList"
                     header={t('notifications.done')}
                     dataSource={panel.completed}
                     bordered

@@ -25,7 +25,6 @@ import Loading from '../../shared/Loading';
 import {createClient} from 'graphql-ws';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
-import {createUploadLink} from 'apollo-upload-client';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -106,24 +105,24 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
         );
     });
 
-    // const _mutationsWatcherLink = new ApolloLink((operation, forward) => {
-    //     const isMutation = operation.query.definitions.some(
-    //         def => def.kind === 'OperationDefinition' && def.operation === 'mutation'
-    //     );
-    //     operation.setContext({isMutation});
+    const _mutationsWatcherLink = new ApolloLink((operation, forward) => {
+        const isMutation = operation.query.definitions.some(
+            def => def.kind === 'OperationDefinition' && def.operation === 'mutation'
+        );
+        operation.setContext({isMutation});
 
-    //     if (isMutation) {
-    //         dispatch(startMutation());
-    //     }
+        if (isMutation) {
+            dispatch(startMutation());
+        }
 
-    //     return forward(operation).map(data => {
-    //         if (operation.getContext().isMutation) {
-    //             dispatch(endMutation());
-    //         }
+        return forward(operation).map(data => {
+            if (operation.getContext().isMutation) {
+                dispatch(endMutation());
+            }
 
-    //         return data;
-    //     });
-    // });
+            return data;
+        });
+    });
 
     const wsLink = new GraphQLWsLink(
         createClient({
@@ -131,24 +130,19 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
         })
     );
 
-    const splitLink = split(
-        ({query}) => {
-            const definition = getMainDefinition(query);
-
-            return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
-        },
-        (wsLink as unknown) as ApolloLink,
-        createUploadLink({uri: process.env.REACT_APP_API_URL})
-    );
+    const splitLink = split(({query}) => {
+        const definition = getMainDefinition(query);
+        return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+    }, (wsLink as unknown) as ApolloLink);
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
             _handleApolloError,
-            // _mutationsWatcherLink,
-            splitLink
-            // new HttpLink({
-            //     uri: process.env.REACT_APP_API_URL
-            // })
+            splitLink,
+            _mutationsWatcherLink,
+            new HttpLink({
+                uri: process.env.REACT_APP_API_URL
+            })
         ]),
         connectToDevTools: process.env.NODE_ENV === 'development',
         cache: new InMemoryCache({

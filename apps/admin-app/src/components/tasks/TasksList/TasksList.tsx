@@ -3,17 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Table, Progress, Button, Icon} from 'semantic-ui-react';
+import {Table, Progress} from 'semantic-ui-react';
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {TaskStatus} from '_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import moment from 'moment';
-import {string} from 'yup';
 
 interface ITasksListProps {
     striped?: boolean;
-    actionsBtn: (task: GET_TASKS_tasks_list) => JSX.Element[];
-    footerBtn?: JSX.Element[];
+    actionsBtn?: (task: GET_TASKS_tasks_list) => JSX.Element[]; // buttons on the end of the row
+    footerBtn?: JSX.Element[]; // global buttons on bottom of the list
     tasks: GET_TASKS_tasks_list[] | null;
     loading?: boolean;
 }
@@ -21,6 +20,7 @@ interface ITasksListProps {
 const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITasksListProps): JSX.Element => {
     const {t} = useTranslation();
 
+    const [maxNbBtnsInRown, setMaxNbBtnsInRown] = useState<number>(0);
     const [sort, setSort] = useState<{column: string; direction: 'ascending' | 'descending'}>({
         column: 'completedAt',
         direction: 'descending'
@@ -35,12 +35,15 @@ const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITa
         return `${d.hours() + 'h'} ${d.minutes() + 'm'} ${d.seconds() + 's'}`;
     };
 
-    const maxNbBtnsInRown = tasks
-        .map(task => actionsBtn(task).length)
-        .reduce((prev, curr) => (curr > prev ? curr : prev), 0);
+    useEffect(() => {
+        if (!!actionsBtn && tasks.length) {
+            setMaxNbBtnsInRown(
+                tasks.map(task => actionsBtn(task).length).reduce((prev, curr) => (curr > prev ? curr : prev), 0)
+            );
+        }
+    }, [actionsBtn]);
 
     const onSort = (column: string) => {
-        console.debug({column});
         setSort({column, direction: sort.direction === 'ascending' ? 'descending' : 'ascending'});
     };
 
@@ -50,7 +53,7 @@ const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITa
 
     return (
         <>
-            <Table compact sortable striped={striped} fixed>
+            <Table data-testid="TasksList" compact sortable striped={striped} fixed>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell
@@ -158,13 +161,14 @@ const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITa
                                 return 0;
                             })
                             .map(task => {
-                                const actions = actionsBtn(task);
+                                const actions = !!actionsBtn ? actionsBtn(task) : null;
 
                                 return (
                                     <Table.Row
                                         {...(task.status === TaskStatus.CANCELED && {warning: true})}
                                         {...(task.status === TaskStatus.FAILED && {error: true})}
-                                        key={task.id}
+                                        key={`row${task.id}`}
+                                        data-testid="TableRow"
                                     >
                                         <Table.Cell>{task.id}</Table.Cell>
                                         <Table.Cell>{task.name}</Table.Cell>
@@ -186,19 +190,19 @@ const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITa
                                         </Table.Cell>
                                         <Table.Cell>{task.progress?.description}</Table.Cell>
                                         <Table.Cell>{_getTaskDuration(task.startedAt, task.completedAt)}</Table.Cell>
-                                        {[...Array(maxNbBtnsInRown)].map((_, i) => {
-                                            return (
-                                                <Table.Cell textAlign="center">
-                                                    {
-                                                        actions[
-                                                            actions.length === maxNbBtnsInRown
-                                                                ? i
-                                                                : maxNbBtnsInRown - actions.length - i
-                                                        ]
-                                                    }
-                                                </Table.Cell>
-                                            );
-                                        })}
+                                        {!!actions &&
+                                            [...Array(maxNbBtnsInRown)].map((_, i) => {
+                                                const idx =
+                                                    actions.length === maxNbBtnsInRown
+                                                        ? i
+                                                        : maxNbBtnsInRown - actions.length - i;
+
+                                                return (
+                                                    <Table.Cell key={`actionBtn${idx}${task.id}`} textAlign="center">
+                                                        {actions[idx]}
+                                                    </Table.Cell>
+                                                );
+                                            })}
                                     </Table.Row>
                                 );
                             })

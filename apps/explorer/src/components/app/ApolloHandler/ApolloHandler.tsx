@@ -127,17 +127,13 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
         })
     );
 
-    const splitLink = split(
-        ({query}) => {
-            const definition = getMainDefinition(query);
-            return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
-        },
-        wsLink,
-        createUploadLink({uri: process.env.REACT_APP_API_URL})
-    );
+    const splitLink = split(({query}) => {
+        const definition = getMainDefinition(query);
+        return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+    }, wsLink);
 
     const gqlClient = new ApolloClient({
-        link: ApolloLink.from([_handleApolloError, splitLink]),
+        link: ApolloLink.from([_handleApolloError, splitLink, createUploadLink({uri: process.env.REACT_APP_API_URL})]),
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up
             // with the ID attribute (eg. in the getRecordPropertiesQuery).

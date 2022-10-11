@@ -5,10 +5,12 @@ import {displayInitialState} from 'redux/display';
 import {navigationInitialState} from 'redux/navigation';
 import {infosInitialState} from 'redux/infos';
 import {selectionInitialState} from 'redux/selection';
+import {tasksInitialState} from 'redux/tasks';
 
 export const mockInitialState = {
     display: displayInitialState,
     selection: selectionInitialState,
     navigation: navigationInitialState,
-    info: infosInitialState
+    info: infosInitialState,
+    tasks: tasksInitialState
 };
