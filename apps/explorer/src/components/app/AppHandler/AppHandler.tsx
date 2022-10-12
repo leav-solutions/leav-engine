@@ -56,7 +56,7 @@ function AppHandler(): JSX.Element {
                 created_by: userData?.me?.id
             }
         },
-        skip: !userData,
+        skip: !userData?.me?.id,
         onCompleted: data => {
             for (const task of data.tasks.list) {
                 dispatch(addTask(task));
@@ -66,7 +66,7 @@ function AppHandler(): JSX.Element {
 
     useSubscription(getTaskUpdates, {
         variables: {createdBy: userData?.me?.id},
-        skip: !userData,
+        skip: !userData?.me?.id,
         onSubscriptionData: subData => {
             // we temporary add created_by field because of miss context for subscriptions on server side to resolve User object
             const task = {...subData.subscriptionData.data.task, created_by: {id: userData.me.id}};

@@ -5,7 +5,7 @@ import {getApplicationByIdQuery} from 'graphQL/queries/applications/getApplicati
 import {getTasks} from 'graphQL/queries/tasks/getTasks';
 import {getMe} from 'graphQL/queries/userData/me';
 import React from 'react';
-import {render, screen} from '_tests/testUtils';
+import {render, screen, act} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTask} from '__mocks__/common/task';
 import AppHandler from './AppHandler';
@@ -108,7 +108,9 @@ describe('AppHandler', () => {
             }
         ];
 
-        render(<AppHandler />, {apolloMocks: mocks});
+        await act(async () => {
+            render(<AppHandler />, {apolloMocks: mocks});
+        });
 
         expect(await screen.findByText('Router')).toBeInTheDocument();
     });
