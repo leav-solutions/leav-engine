@@ -28,6 +28,7 @@ declare global {
         display?: IViewDisplay;
         filters?: IRecordFilterLight[];
         sort?: IRecordSortLight;
+        valuesVersions?: IViewValuesVersion;
         settings: IViewSettings;
     }
 
@@ -41,7 +42,8 @@ declare global {
         value: unknown;
     }
 
-    type ViewFromGraphQL = Omit<IView, 'settings'> & {
+    type ViewFromGraphQL = Omit<IView, 'valuesVersions' | 'settings'> & {
+        valuesVersions: IViewValuesVersionForGraphql[];
         settings: IViewSettingsNameVal[];
     };
 
@@ -55,5 +57,14 @@ declare global {
         created_by?: string;
         library?: string;
         type?: ViewTypes;
+    }
+
+    interface IViewValuesVersion {
+        [treeId: string]: string;
+    }
+
+    interface IViewValuesVersionForGraphql {
+        treeId: string;
+        treeNode: {id: string};
     }
 }

@@ -57,6 +57,7 @@ export interface IAttributeFilterOptions extends ICoreEntityFilterOptions {
     linked_tree?: string;
     multiple_values?: boolean;
     libraries?: string[];
+    versionable?: boolean;
 }
 
 export interface IGetCoreAttributesParams extends IGetCoreEntitiesParams {

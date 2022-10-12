@@ -9,7 +9,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IAttribute, IGetCoreAttributesParams} from '../../_types/attribute';
 import {IGetCoreEntitiesParams} from '../../_types/shared';
 import {IDbService} from '../db/dbService';
-import {IDbUtils} from '../db/dbUtils';
+import {CustomFilterConditionsFunc, IDbUtils} from '../db/dbUtils';
 import {LIB_ATTRIB_COLLECTION_NAME, LIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {IValueRepo} from '../value/valueRepo';
 
@@ -124,6 +124,13 @@ export default function ({
                 ) > 0`;
             };
 
+            const _generateVersionableFilterConds: CustomFilterConditionsFunc = (filterKey, filterVal) => {
+                const filterValBool = !!filterVal; // Ensure we're dealing with a boolean
+
+                // Check if there is links between given libraries and attribute
+                return aql`el.versions_conf.${filterKey} == ${filterValBool}`;
+            };
+
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
@@ -137,7 +144,10 @@ export default function ({
             return dbUtils.findCoreEntity<IAttribute>({
                 ...initializedParams,
                 collectionName: ATTRIB_COLLECTION_NAME,
-                customFilterConditions: {libraries: _generateLibrariesFilterConds},
+                customFilterConditions: {
+                    libraries: _generateLibrariesFilterConds,
+                    versionable: _generateVersionableFilterConds
+                },
                 ctx
             });
         },
