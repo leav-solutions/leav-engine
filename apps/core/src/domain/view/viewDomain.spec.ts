@@ -2,10 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IValidateHelper} from 'domain/helpers/validate';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IViewRepo} from 'infra/view/_types';
 import ValidationError from '../../errors/ValidationError';
-import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockView, mockViewBeforeCreation} from '../../__tests__/mocks/view';
 import viewDomain from './viewDomain';
@@ -24,14 +22,6 @@ describe('viewDomain', () => {
         getViews: global.__mockPromise({list: []})
     };
 
-    const mockLibDomain: Mockify<ILibraryDomain> = {
-        getLibraries: global.__mockPromise({list: [{...mockLibrary}], totalCount: 1})
-    };
-
-    const mockLibDomainNoLib: Mockify<ILibraryDomain> = {
-        getLibraries: global.__mockPromise({list: [], totalCount: 0})
-    };
-
     const mockValidationHelper: Mockify<IValidateHelper> = {
         validateLibrary: jest.fn()
     };
@@ -46,7 +36,6 @@ describe('viewDomain', () => {
         describe('Update view', () => {
             test('Should update view', async () => {
                 const domain = viewDomain({
-                    'core.domain.library': mockLibDomain as ILibraryDomain,
                     'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
                     'core.infra.view': mockViewRepo as IViewRepo
                 });
@@ -65,7 +54,6 @@ describe('viewDomain', () => {
 
             test('Should throw if unknown view', async () => {
                 const domain = viewDomain({
-                    'core.domain.library': mockLibDomain as ILibraryDomain,
                     'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
                     'core.infra.view': mockViewRepoNoView as IViewRepo
                 });
@@ -75,7 +63,6 @@ describe('viewDomain', () => {
 
             test('Should throw if user is not owner of this view', async () => {
                 const domain = viewDomain({
-                    'core.domain.library': mockLibDomain as ILibraryDomain,
                     'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
                     'core.infra.view': mockViewRepo as IViewRepo
                 });
@@ -89,7 +76,6 @@ describe('viewDomain', () => {
         describe('Create view', () => {
             test('Should create new view', async () => {
                 const domain = viewDomain({
-                    'core.domain.library': mockLibDomain as ILibraryDomain,
                     'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
                     'core.infra.view': mockViewRepo as IViewRepo
                 });
@@ -111,7 +97,6 @@ describe('viewDomain', () => {
 
             test('Should throw if unknown library', async () => {
                 const domain = viewDomain({
-                    'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                     'core.domain.helpers.validate': mockValidationHelperInvalid as IValidateHelper,
                     'core.infra.view': mockViewRepo as IViewRepo
                 });
@@ -126,7 +111,6 @@ describe('viewDomain', () => {
     describe('getViews', () => {
         test('Should get views for current user', async () => {
             const domain = viewDomain({
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
                 'core.infra.view': mockViewRepo as IViewRepo
             });
@@ -140,7 +124,6 @@ describe('viewDomain', () => {
 
         test('Should throw if unknown library', async () => {
             const domain = viewDomain({
-                'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.domain.helpers.validate': mockValidationHelperInvalid as IValidateHelper,
                 'core.infra.view': mockViewRepo as IViewRepo
             });
@@ -176,7 +159,6 @@ describe('viewDomain', () => {
     describe('deleteView', () => {
         test('Should delete a view', async () => {
             const domain = viewDomain({
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.view': mockViewRepo as IViewRepo
             });
 
@@ -188,7 +170,6 @@ describe('viewDomain', () => {
 
         test('Should throw if view does not exist', async () => {
             const domain = viewDomain({
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.view': mockViewRepoNoView as IViewRepo
             });
 
@@ -198,7 +179,6 @@ describe('viewDomain', () => {
 
         test('Should throw if user is not owner of this view', async () => {
             const domain = viewDomain({
-                'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.view': mockViewRepo as IViewRepo
             });
 

@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IValidateHelper} from 'domain/helpers/validate';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IViewRepo} from 'infra/view/_types';
 import moment from 'moment';
+import {IUtils} from 'utils/utils';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
@@ -18,14 +19,17 @@ export interface IViewDomain {
 }
 
 interface IViewDomainDeps {
-    'core.domain.library'?: ILibraryDomain;
     'core.domain.helpers.validate'?: IValidateHelper;
+    'core.domain.tree'?: ITreeDomain;
     'core.infra.view'?: IViewRepo;
+    'core.utils'?: IUtils;
 }
 
 export default function ({
     'core.domain.helpers.validate': validationHelper = null,
-    'core.infra.view': viewRepo = null
+    'core.domain.tree': treeDomain = null,
+    'core.infra.view': viewRepo = null,
+    'core.utils': utils = null
 }: IViewDomainDeps): IViewDomain {
     return {
         async saveView(view: IView, ctx: IQueryInfos): Promise<IView> {
@@ -51,6 +55,31 @@ export default function ({
 
                 if (existingViewData.created_by !== ctx.userId) {
                     throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
+                }
+            }
+
+            // Validate values versions settings
+            if (view.valuesVersions) {
+                // Check version settings are valid: treeId is part of the profile and tree node exist
+                for (const treeId of Object.keys(view.valuesVersions)) {
+                    await validationHelper.validateTree(treeId, true, ctx);
+
+                    const isNodePresent = await treeDomain.isNodePresent({
+                        treeId,
+                        nodeId: view.valuesVersions[treeId],
+                        ctx
+                    });
+
+                    if (!isNodePresent) {
+                        throw utils.generateExplicitValidationError(
+                            'version',
+                            {
+                                msg: Errors.INVALID_VALUES_VERSIONS_SETTINGS_BAD_NODE_ID,
+                                vars: {treeId, nodeId: view.valuesVersions[treeId]}
+                            },
+                            ctx.lang
+                        );
+                    }
                 }
             }
 

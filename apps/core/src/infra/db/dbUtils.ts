@@ -24,6 +24,12 @@ import {IExecuteWithCount} from './_types';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
+export type CustomFilterConditionsFunc = (
+    filterKey: string,
+    filterVal: string | boolean | string[],
+    strictFilters: boolean
+) => GeneratedAqlQuery;
+
 export interface IFindCoreEntityParams {
     collectionName: string;
     filters?: ICoreEntityFilterOptions;
@@ -31,9 +37,7 @@ export interface IFindCoreEntityParams {
     withCount?: boolean;
     pagination?: IPaginationParams;
     sort?: ISortParams;
-    customFilterConditions?: IKeyValue<
-        (filterKey: string, filterVal: string | boolean | string[], strictFilters: boolean) => GeneratedAqlQuery
-    >;
+    customFilterConditions?: IKeyValue<CustomFilterConditionsFunc>;
     nonStrictFields?: string[];
     ctx: IQueryInfos;
 }

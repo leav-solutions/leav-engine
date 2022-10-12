@@ -22,6 +22,7 @@
         "INVALID_MAPPING": "Invalid mapping",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "These libraries are not bound to the tree",
         "INVALID_SORT_FIELDS": "Invalid sort fields",
+        "INVALID_VALUES_VERSIONS_SETTINGS_BAD_NODE_ID": "Element {{nodeId}} does not belong to tree {{treeId}}",
         "INVALID_VARIABLE_FUNCTION": "Invalid variable function: {{functionName}}.",
         "INVALID_VERSION": "Invalid version: ",
         "LIBRARY_FORBIDDEN_AS_CHILD": "Library forbidden as child",

@@ -18,6 +18,7 @@ export interface IValidateHelper {
     validateLibrary(library: string, ctx: IQueryInfos): Promise<void>;
     validateRecord(library: string, recordId: string, ctx: IQueryInfos): Promise<IRecord>;
     validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
+    validateTree(tree: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
 }
 
 export default function ({
@@ -61,6 +62,19 @@ export default function ({
 
             if (throwIfNotFound) {
                 throw new ValidationError({id: Errors.UNKNOWN_VIEW});
+            }
+
+            return false;
+        },
+        async validateTree(tree, throwIfNotFound, ctx) {
+            const existingTree = await getCoreEntityById('tree', tree, ctx);
+
+            if (existingTree) {
+                return true;
+            }
+
+            if (throwIfNotFound) {
+                throw new ValidationError({tree: {msg: Errors.UNKNOWN_TREE, vars: {tree}}});
             }
 
             return false;

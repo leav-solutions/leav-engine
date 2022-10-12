@@ -3,19 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IViewDomain} from 'domain/view/viewDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {ViewTypes, ViewSizes} from '../../_types/views';
+import {ViewSizes, ViewTypes} from '../../_types/views';
 
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.view'?: IViewDomain;
-    'core.domain.tree'?: ITreeDomain;
     'core.utils'?: IUtils;
 }
 
@@ -60,6 +58,16 @@ export default function ({
                         size: ViewSizes!
                     }
 
+                    type ViewValuesVersion {
+                        treeId: String!,
+                        treeNode: TreeNode!
+                    }
+
+                    input ViewValuesVersionInput {
+                        treeId: String!,
+                        treeNode: String!
+                    }
+
                     type View {
                         id: String!,
                         library: String!,
@@ -73,6 +81,7 @@ export default function ({
                         filters: [RecordFilter!],
                         sort: RecordSort,
                         display: ViewDisplay!,
+                        valuesVersions: [ViewValuesVersion!],
                         settings: [ViewSettings!]
                     }
 
@@ -86,6 +95,7 @@ export default function ({
                         color: String,
                         filters: [RecordFilterInput!],
                         sort: RecordSortInput,
+                        valuesVersions: [ViewValuesVersionInput!],
                         settings: [ViewSettingsInput!]
                     }
 
@@ -114,7 +124,11 @@ export default function ({
                     Mutation: {
                         saveView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> => {
                             return viewDomain.saveView(
-                                {...view, settings: utils.nameValArrayToObj(view.settings)},
+                                {
+                                    ...view,
+                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode'),
+                                    settings: utils.nameValArrayToObj(view.settings)
+                                },
                                 ctx
                             );
                         },
@@ -134,6 +148,17 @@ export default function ({
                             });
 
                             return record.list.length ? record.list[0] : null;
+                        },
+                        valuesVersions: (view: IView, _, ctx): IViewValuesVersionForGraphql[] => {
+                            if (!view.valuesVersions) {
+                                return null;
+                            }
+
+                            const versions = Object.keys(view.valuesVersions).map(treeId => ({
+                                treeId,
+                                treeNode: {id: view.valuesVersions[treeId], treeId}
+                            }));
+                            return versions;
                         },
                         settings: (view: IView): IViewSettingsNameVal[] | null => {
                             return view.settings ? utils.objToNameValArray<IViewSettingsNameVal>(view.settings) : null;
