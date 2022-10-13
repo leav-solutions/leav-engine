@@ -216,8 +216,6 @@ function NotifsPanel({notifsPanelVisible, hideNotifsPanel, setNbNotifs}: INotifs
         );
     };
 
-    console.debug({panel});
-
     return (
         <Drawer
             data-testid="drawer"
