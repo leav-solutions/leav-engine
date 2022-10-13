@@ -67,49 +67,51 @@ describe('Events Manager', () => {
         }
     };
 
-    test('Init', async () => {
-        const amqpServ = await amqpService({
-            config: conf.amqp
-        });
+    const mockAmqpService: Mockify<IAmqpService> = {
+        consume: jest.fn(),
+        consumer: {
+            connection: mockAmqpConnection as amqp.Connection,
+            channel: mockAmqpChannel as amqp.ConfirmChannel
+        },
+        publish: jest.fn(),
+        publisher: {
+            connection: mockAmqpConnection as amqp.Connection,
+            channel: mockAmqpChannel as amqp.ConfirmChannel
+        },
+        close: jest.fn()
+    };
 
+    test('Init', async () => {
         const events = eventsManager({
             config: conf as IConfig,
             'core.utils.logger': logger as winston.Winston,
-            'core.infra.amqpService': amqpServ as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await events.init();
 
-        expect(mockAmqpChannel.consume).toBeCalledTimes(1);
+        expect(mockAmqpService.consume).toBeCalledTimes(1);
     });
 
     test('send database event', async () => {
-        const amqpServ = await amqpService({
-            config: conf.amqp
-        });
-
         const events = eventsManager({
             config: conf as IConfig,
-            'core.infra.amqpService': amqpServ as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await events.sendDatabaseEvent({action: EventAction.LIBRARY_SAVE, data: {new: {id: 'test'}}}, ctx);
 
-        expect(mockAmqpChannel.publish).toBeCalledTimes(1);
+        expect(mockAmqpService.publish).toBeCalledTimes(1);
     });
 
     test('send pubsub event', async () => {
-        const amqpServ = await amqpService({
-            config: conf.amqp
-        });
-
         const events = eventsManager({
             config: conf as IConfig,
-            'core.infra.amqpService': amqpServ as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await events.sendPubSubEvent({triggerName: 'test', data: {}}, ctx);
 
-        expect(mockAmqpChannel.publish).toBeCalledTimes(1);
+        expect(mockAmqpService.publish).toBeCalledTimes(1);
     });
 });

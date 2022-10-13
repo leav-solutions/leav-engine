@@ -3,14 +3,14 @@
 exports[`TaskRepo Create task 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
 
 exports[`TaskRepo Create task 2`] = `
-Object {
+{
   "@value1": "core_tasks",
-  "value0": Object {
+  "value0": {
     "_key": "_key",
     "created_at": 1,
     "created_by": "0",
-    "func": Object {
-      "args": Array [],
+    "func": {
+      "args": [],
       "moduleName": "moduleName",
       "name": "func",
       "subModuleName": "subModuleName",
@@ -28,9 +28,9 @@ Object {
 exports[`TaskRepo Delete task 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
 
 exports[`TaskRepo Delete task 2`] = `
-Object {
+{
   "@value1": "core_tasks",
-  "value0": Object {
+  "value0": {
     "_key": "id",
   },
 }
@@ -46,7 +46,7 @@ exports[`TaskRepo Retrieve tasks to execute 1`] = `
 `;
 
 exports[`TaskRepo Retrieve tasks to execute 2`] = `
-Object {
+{
   "@value0": "core_tasks",
   "value1": "PENDING",
   "value2": 1,
@@ -56,12 +56,12 @@ Object {
 exports[`TaskRepo Update task 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
 
 exports[`TaskRepo Update task 2`] = `
-Object {
+{
   "@value1": "core_tasks",
-  "value0": Object {
+  "value0": {
     "_key": "_key",
-    "func": Object {
-      "args": Array [],
+    "func": {
+      "args": [],
       "moduleName": "moduleName",
       "name": "func",
       "subModuleName": "subModuleName",
