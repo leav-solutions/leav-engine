@@ -94,12 +94,13 @@ function TopBar({
 
     return (
         <Wrapper>
-            <WrapperHeaderInfo key="lib-name">
-                <HeaderInfo />
+            <WrapperHeaderInfo data-testid="WrapperHeaderInfo" key="lib-name">
+                <HeaderInfo data-testid="HeaderInfo" />
             </WrapperHeaderInfo>
-            <ApplicationSwitcher />
+            <ApplicationSwitcher data-testid="ApplicationSwitcher" />
             <Badge size="small" count={nbNotifs} offset={[-10, 15]}>
                 <InfoButton
+                    data-testid="InfoButton"
                     key={notifsPanelKey}
                     name="infos"
                     ghost
@@ -110,8 +111,13 @@ function TopBar({
                     onClick={handleNotifsPanelClick}
                 />
             </Badge>
-            <MenuItemUser key={userPanelKey} onClick={handleUserPanelClick} isActive={userPanelVisible}>
-                <UserMenu />
+            <MenuItemUser
+                data-testid="MenuItemUser"
+                key={userPanelKey}
+                onClick={handleUserPanelClick}
+                isActive={userPanelVisible}
+            >
+                <UserMenu data-testid="UserMenu" />
             </MenuItemUser>
         </Wrapper>
     );

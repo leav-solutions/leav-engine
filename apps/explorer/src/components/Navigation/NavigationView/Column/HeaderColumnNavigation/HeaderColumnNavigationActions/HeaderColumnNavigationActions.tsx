@@ -6,9 +6,9 @@ import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useTreeLibraryAllowedAsChild} from 'hooks/useTreeLibraryAllowedAsChild';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {addNotification} from 'redux/notifications';
+import {addInfo} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
-import {INotification, NotificationChannel, NotificationType} from '_types/types';
+import {IInfo, InfoChannel, InfoType} from '_types/types';
 import DefaultActions from './DefaultActions';
 import SelectionActions from './SelectionActions';
 import {OnMessagesFunc} from './_types';
@@ -31,24 +31,24 @@ function HeaderColumnNavigationActions({depth, isDetail}: IActiveHeaderCellNavig
 
     const _displayMessages: OnMessagesFunc = (tMessageSuccess, tMessageFail, messages) => {
         if (messages.countValid) {
-            const notification: INotification = {
-                channel: NotificationChannel.trigger,
-                type: NotificationType.success,
+            const info: IInfo = {
+                channel: InfoChannel.trigger,
+                type: InfoType.success,
                 content: t(tMessageSuccess, {
                     nb: messages.countValid
                 })
             };
 
-            dispatch(addNotification(notification));
+            dispatch(addInfo(info));
         }
 
         delete messages.countValid;
         const errors = Object.keys(messages.errors);
 
         for (const error of errors) {
-            const notification: INotification = {
-                channel: NotificationChannel.trigger,
-                type: NotificationType.warning,
+            const info: IInfo = {
+                channel: InfoChannel.trigger,
+                type: InfoType.warning,
                 content: t(tMessageFail, {
                     elements: (messages.errors[error] as string[]).reduce(
                         (acc, elementLabel) => (acc ? `${acc}, ${elementLabel}` : `${elementLabel}`),
@@ -58,7 +58,7 @@ function HeaderColumnNavigationActions({depth, isDetail}: IActiveHeaderCellNavig
                 })
             };
 
-            dispatch(addNotification(notification));
+            dispatch(addInfo(info));
         }
     };
 

@@ -9,13 +9,13 @@ import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {addNotification} from 'redux/notifications';
+import {addInfo} from 'redux/infos';
 import {resetSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {INotification, ISharedSelected, NotificationChannel, NotificationType} from '_types/types';
+import {IInfo, ISharedSelected, InfoChannel, InfoType} from '_types/types';
 import {IMessages, OnMessagesFunc} from '../../_types';
 
 interface IAddSelectionButtonProps {
@@ -91,13 +91,13 @@ function AddSelectionButton({allowedLibraries, parent, onMessages}: IAddSelectio
             onMessages('navigation.notifications.success-add', 'navigation.notifications.error-add', messages);
             refreshTreeContent();
         } else {
-            const notification: INotification = {
-                channel: NotificationChannel.trigger,
-                type: NotificationType.warning,
+            const notification: IInfo = {
+                channel: InfoChannel.trigger,
+                type: InfoType.warning,
                 content: t('navigation.notifications.warning-add-no-selection')
             };
 
-            dispatch(addNotification(notification));
+            dispatch(addInfo(notification));
         }
 
         dispatch(resetSelection());

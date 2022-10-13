@@ -7,9 +7,9 @@ import {useApplicationContext} from 'context/ApplicationContext';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setNotificationBase} from 'redux/notifications';
+import {setInfoBase} from 'redux/infos';
 import {useAppDispatch} from 'redux/store';
-import {IBaseNotification, NotificationType} from '_types/types';
+import {IBaseInfo, InfoType} from '_types/types';
 import LibrariesList from './LibrariesList';
 import TreeList from './TreeList';
 
@@ -20,11 +20,11 @@ function Home(): JSX.Element {
     const currentApp = useApplicationContext();
 
     useEffect(() => {
-        const baseNotification: IBaseNotification = {
+        const baseInfo: IBaseInfo = {
             content: t('notification.base-message', {appLabel: localizedTranslation(currentApp.label, lang)}),
-            type: NotificationType.basic
+            type: InfoType.basic
         };
-        dispatch(setNotificationBase(baseNotification));
+        dispatch(setInfoBase(baseInfo));
     }, [t, dispatch]);
 
     return (
