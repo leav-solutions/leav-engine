@@ -7332,7 +7332,6 @@ __metadata:
     formik: 1.5.8
     graphql: 14.7.0
     graphql-tag: 2.10.1
-    graphql-ws: 5.11.2
     hex-rgba: 1.0.2
     i18next: 19.0.1
     i18next-browser-languagedetector: 4.0.1
@@ -16164,15 +16163,6 @@ __metadata:
   peerDependencies:
     graphql: ">=0.11 <=16"
   checksum: 7a2cdcb0e960da37fcc56eee5dffef5318eb0ec8bc426441f79557bb7d69a96b49c51ec07cb9255e5ee0770a727ce7588c9add47a1812577b254b977282c1e5b
-  languageName: node
-  linkType: hard
-
-"graphql-ws@npm:5.11.2":
-  version: 5.11.2
-  resolution: "graphql-ws@npm:5.11.2"
-  peerDependencies:
-    graphql: ">=0.11 <=16"
-  checksum: 2c94b06c1919217dc15a0556474673de7aabcc7179a2982a87ded51856c105e4f4ee6d54a6c135a0a7f55d85a5997a6a15cff514959258885814adec6a61ff00
   languageName: node
   linkType: hard
 
