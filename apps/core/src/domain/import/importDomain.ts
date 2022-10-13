@@ -425,8 +425,8 @@ export default function ({
                             args: [filename, ctx]
                         },
                         priority: TaskPriority.MEDIUM,
-                        startAt: !!task.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                        ...(!!task.callback && {callback: task.callback})
+                        startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                        ...(!!task?.callback && {callback: task.callback})
                     },
                     ctx
                 );

@@ -57,7 +57,7 @@ describe('Import', () => {
         await fs.promises.writeFile(`${conf.import.directory}/${filename}`, file.toString());
 
         try {
-            await importDomain.import(filename, ctx);
+            await importDomain.import(filename, ctx, {id: 'taskId'});
         } finally {
             await fs.promises.unlink(`${conf.import.directory}/${filename}`);
         }
