@@ -18,8 +18,10 @@ const ctx: IQueryInfos = {
     queryId: 'importDomainTest'
 };
 
+jest.setTimeout(45000);
+
 describe('Import', () => {
-    beforeAll(async () => {
+    beforeAll(async done => {
         await gqlSaveAttribute({
             id: 'simple',
             type: AttributeTypes.SIMPLE,
@@ -61,9 +63,11 @@ describe('Import', () => {
         } finally {
             await fs.promises.unlink(`${conf.import.directory}/${filename}`);
         }
+
+        done();
     });
 
-    test('check record creation: simple, simple_link and advanced_link', async () => {
+    test('check record creation: simple, simple_link and advanced_link', async done => {
         expect.assertions(7);
 
         const res = await makeGraphQlCall(`{
@@ -102,9 +106,11 @@ describe('Import', () => {
                 }
             }
         ]);
+
+        done();
     });
 
-    test('check tree', async () => {
+    test('check tree', async done => {
         expect.assertions(5);
 
         const usersGroups = await makeGraphQlCall('{ usersGroups { totalCount list { id simple } } }');
@@ -126,5 +132,7 @@ describe('Import', () => {
                 })
             ])
         );
+
+        done();
     });
 });

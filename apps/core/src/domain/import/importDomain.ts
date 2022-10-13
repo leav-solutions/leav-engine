@@ -4,7 +4,7 @@
 import {extractArgsFromString} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
-import tasksManagerDomain, {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
@@ -14,15 +14,7 @@ import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
-import {
-    TaskPriority,
-    ITask,
-    ITaskFunc,
-    ITaskCallback,
-    TaskCallbackType,
-    OrderType,
-    ITaskFuncParams
-} from '../../_types/tasksManager';
+import {TaskPriority, TaskCallbackType, ITaskFuncParams} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
@@ -89,7 +81,7 @@ export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.infra.cache.cacheService': cacheService = null,
-    'core.domain.tasksManager': tasksManager = null,
+    'core.domain.tasksManager': tasksManagerDomain = null,
     'core.utils': utils = null,
     config = null,
     translator = null
@@ -414,7 +406,7 @@ export default function ({
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
 
-                await tasksManager.createTask(
+                await tasksManagerDomain.createTask(
                     {
                         id: newTaskId,
                         name: `Import file ${filename}`, // FIXME: translate
@@ -434,7 +426,7 @@ export default function ({
                 return newTaskId;
             }
 
-            await tasksManager.updateProgress(task.id, {percent: 10, description: 'init'}, ctx);
+            await tasksManagerDomain.updateProgress(task.id, {percent: 10, description: 'init'}, ctx);
 
             try {
                 await _jsonSchemaValidation(filename);
@@ -513,7 +505,7 @@ export default function ({
                 }
             );
 
-            await tasksManager.updateProgress(task.id, {percent: 50, description: 'middle'}, ctx);
+            await tasksManagerDomain.updateProgress(task.id, {percent: 50, description: 'middle'}, ctx);
 
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
@@ -530,7 +522,7 @@ export default function ({
                 }
             }
 
-            await tasksManager.updateProgress(task.id, {percent: 80, description: 'almost end'}, ctx);
+            await tasksManagerDomain.updateProgress(task.id, {percent: 80, description: 'almost end'}, ctx);
 
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
