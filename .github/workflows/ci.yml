@@ -166,6 +166,7 @@ jobs:
           APP_ROOT_PATH: .
           ELASTICSEARCH_URL: "http://localhost:9200"
           REDIS_HOST: localhost
+          REDIS_PORT: 6379
 
   e2e-sync-scan:
     timeout-minutes: 20
