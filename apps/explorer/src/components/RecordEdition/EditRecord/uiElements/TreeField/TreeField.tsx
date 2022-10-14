@@ -7,7 +7,6 @@ import Paragraph from 'antd/lib/typography/Paragraph';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import Dimmer from 'components/shared/Dimmer';
 import ErrorMessage from 'components/shared/ErrorMessage';
-import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components';
@@ -17,6 +16,7 @@ import {
     RECORD_FORM_recordForm_elements_values_TreeValue
 } from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {ITreeNodeWithRecord} from '_types/types';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
 import NoValue from '../../shared/NoValue';

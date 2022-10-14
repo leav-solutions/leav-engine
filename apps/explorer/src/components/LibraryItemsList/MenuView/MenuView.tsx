@@ -5,19 +5,20 @@ import {
     AppstoreFilled,
     FilterOutlined,
     MenuOutlined,
-    MoreOutlined,
     PlusOutlined,
     RollbackOutlined,
     SaveFilled
 } from '@ant-design/icons';
+import {objectToNameValueArray} from '@leav/utils';
 import {Badge, Button, Dropdown, Menu, Space, Tooltip} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {VscLayers} from 'react-icons/vsc';
 import {setDisplaySide} from 'redux/display';
+import {addNotification} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
@@ -26,7 +27,7 @@ import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {IAddViewMutationVariablesView} from '../../../graphQL/mutations/views/saveViewMutation';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../utils';
-import {TypeSideItem} from '../../../_types/types';
+import {NotificationChannel, NotificationType, TypeSideItem} from '../../../_types/types';
 import IconViewType from '../../IconViewType/IconViewType';
 import FiltersDropdown from '../FiltersDropdown';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
@@ -90,6 +91,12 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                             : undefined,
                         display: searchState.display,
                         filters: getRequestFromFilters(searchState.filters),
+                        valuesVersions: objectToNameValueArray(searchState.valuesVersions)
+                            .map(version => ({
+                                treeId: version?.name ?? null,
+                                treeNode: version?.value?.id ?? null
+                            }))
+                            .filter(v => v.treeId !== null && v.treeNode !== null),
                         settings: [
                             {
                                 name: viewSettingsField,
@@ -104,6 +111,13 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                     sync: true
                 });
             } catch (e) {
+                dispatch(
+                    addNotification({
+                        type: NotificationType.error,
+                        content: `${t('error.error_occurred')}: ${e.message}`,
+                        channel: NotificationChannel.trigger
+                    })
+                );
                 console.error(e);
             }
         }
@@ -181,6 +195,15 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         );
     };
 
+    const _toggleShowVersions = () => {
+        dispatch(
+            setDisplaySide({
+                visible: !display.side.visible || display.side.type !== TypeSideItem.versions,
+                type: TypeSideItem.versions
+            })
+        );
+    };
+
     return (
         <Space size="large">
             <Button.Group>
@@ -229,6 +252,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                     />
                 </Button.Group>
             </Badge>
+            <Button onClick={_toggleShowVersions} icon={<VscLayers />} style={{paddingTop: '5px'}} />
         </Space>
     );
 }

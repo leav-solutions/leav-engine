@@ -219,4 +219,37 @@ describe('searchReducer', () => {
         expect(newState.filters).toHaveLength(1);
         expect(newState.loading).toBe(true);
     });
+
+    test('SET_VALUES_VERSIONS', async () => {
+        const valuesVersions = {
+            my_tree: {
+                title: 'My node',
+                id: '123456',
+                key: null,
+                children: []
+            }
+        };
+
+        const newState = searchReducer(
+            {
+                ...initialSearchState,
+                valuesVersions: {
+                    some_tree: {
+                        title: 'Some node',
+                        id: '987654',
+                        key: null,
+                        children: []
+                    }
+                }
+            },
+            {
+                type: SearchActionTypes.SET_VALUES_VERSIONS,
+                valuesVersions
+            }
+        );
+
+        expect(Object.keys(newState.valuesVersions)).toHaveLength(2);
+        expect(newState.valuesVersions.my_tree.id).toBe('123456');
+        expect(newState.valuesVersions.some_tree.id).toBe('987654');
+    });
 });

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FetchResult, useMutation} from '@apollo/client';
-import {WithTypename} from '@leav/utils/src';
+import {WithTypename} from '@leav/utils';
 import {DELETE_VIEW, DELETE_VIEWVariables, DELETE_VIEW_deleteView} from '_gqlTypes/DELETE_VIEW';
 import deleteViewMutation from '../deleteViewMutation';
 

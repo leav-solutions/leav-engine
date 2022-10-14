@@ -4,7 +4,7 @@
 import getFieldsFromView from 'components/LibraryItemsList/helpers/getFieldsFromView';
 import {defaultSort, defaultView, viewSettingsField} from 'constants/constants';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
-import {IAttribute, IField, IFilter, IView, IViewDisplay} from '_types/types';
+import {IAttribute, IField, IFilter, ITreeNode, IView, IViewDisplay} from '_types/types';
 import {ISearchRecord, ISearchSort, ISearchState} from './_types';
 
 export enum SearchActionTypes {
@@ -26,7 +26,8 @@ export enum SearchActionTypes {
     SET_DISPLAY = 'SET_DISPLAY',
     RESET_FILTERS = 'RESET_FILTERS',
     DISABLE_FILTERS = 'DISABLE_FILTERS',
-    APPLY_FILTERS = 'APPLY_FILTERS'
+    APPLY_FILTERS = 'APPLY_FILTERS',
+    SET_VALUES_VERSIONS = 'SET_VALUES_VERSIONS'
 }
 
 export type SearchAction =
@@ -48,7 +49,8 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER; sharedViewsOrder: string[]}
     | {type: SearchActionTypes.RESET_FILTERS}
     | {type: SearchActionTypes.DISABLE_FILTERS}
-    | {type: SearchActionTypes.APPLY_FILTERS};
+    | {type: SearchActionTypes.APPLY_FILTERS}
+    | {type: SearchActionTypes.SET_VALUES_VERSIONS; valuesVersions: {[treeId: string]: ITreeNode}};
 
 export const initialSearchState: ISearchState = {
     library: null,
@@ -66,12 +68,13 @@ export const initialSearchState: ISearchState = {
     view: {current: defaultView, reload: false, sync: true},
     userViewsOrder: [],
     sharedViewsOrder: [],
+    valuesVersions: {},
     lang: null
 };
 
 const checkSync = (
     state: ISearchState,
-    toCheck: {sort: boolean; filters: boolean; display: boolean; fields: boolean}
+    toCheck: {sort: boolean; filters: boolean; display: boolean; fields: boolean; valuesVersions: boolean}
 ): boolean => {
     let sync = true;
 
@@ -108,7 +111,8 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         sort: action.type !== SearchActionTypes.SET_SORT, // FIXME: probleme avec le sort
         filters: action.type !== SearchActionTypes.SET_FILTERS,
         display: action.type !== SearchActionTypes.SET_DISPLAY,
-        fields: action.type !== SearchActionTypes.SET_FIELDS
+        fields: action.type !== SearchActionTypes.SET_FIELDS,
+        valuesVersions: action.type !== SearchActionTypes.SET_VALUES_VERSIONS
     });
 
     switch (action.type) {
@@ -155,7 +159,8 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                 fields: getFieldsFromView(action.view, state.library, state.lang),
                 filters: action.view.filters,
                 sort: {...(action.view?.sort ?? defaultSort), active: true},
-                display: action.view.display
+                display: action.view.display,
+                valuesVersions: action.view.valuesVersions
             };
         case SearchActionTypes.SET_VIEW_RELOAD:
             return {...state, view: {...state.view, reload: action.reload}};
@@ -187,6 +192,14 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                 offset: 0,
                 loading: true
             };
+        case SearchActionTypes.SET_VALUES_VERSIONS: {
+            sync = sync && JSON.stringify(state.view.current.valuesVersions) === JSON.stringify(action.valuesVersions);
+            return {
+                ...state,
+                view: {...state.view, sync},
+                valuesVersions: {...state.valuesVersions, ...action.valuesVersions}
+            };
+        }
     }
 };
 

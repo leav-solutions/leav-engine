@@ -11,6 +11,7 @@ import {
     getInvertColor,
     getLibraryGraphqlNames,
     localizedTranslation,
+    nameValArrayToObj,
     objectToNameValueArray,
     stringToColor
 } from './utils';
@@ -97,6 +98,34 @@ describe('utils', () => {
                 {name: 'a', value: 'b'},
                 {name: 'c', value: 'd'}
             ]);
+        });
+    });
+
+    describe('nameValArrayToObj', () => {
+        test('Convert name/value array to object', async () => {
+            expect(
+                nameValArrayToObj([
+                    {name: 'a', value: 'b'},
+                    {name: 'c', value: 'd'}
+                ])
+            ).toEqual({
+                a: 'b',
+                c: 'd'
+            });
+
+            expect(
+                nameValArrayToObj(
+                    [
+                        {foo: 'a', bar: 'b'},
+                        {foo: 'c', bar: 'd'}
+                    ],
+                    'foo',
+                    'bar'
+                )
+            ).toEqual({
+                a: 'b',
+                c: 'd'
+            });
         });
     });
 

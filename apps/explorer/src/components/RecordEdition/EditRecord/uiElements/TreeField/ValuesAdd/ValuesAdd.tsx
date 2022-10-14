@@ -6,7 +6,6 @@ import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import List from 'components/shared/List';
 import RecordCard from 'components/shared/RecordCard';
 import SelectTreeNode from 'components/shared/SelectTreeNode';
-import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {useLang} from 'hooks/LangHook/LangHook';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -17,7 +16,7 @@ import {
     RECORD_FORM_recordForm_elements_attribute_TreeAttribute,
     RECORD_FORM_recordForm_elements_values_TreeValue_treeValue
 } from '_gqlTypes/RECORD_FORM';
-import {PreviewSize} from '_types/types';
+import {ITreeNodeWithRecord, PreviewSize} from '_types/types';
 
 interface IValuesAddProps {
     attribute: RECORD_FORM_recordForm_elements_attribute_TreeAttribute;

@@ -21,10 +21,7 @@ interface IMenuItemListProps {
     refetch?: () => void;
 }
 
-const Wrapper = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+const Wrapper = styled(Space)`
     width: 100%;
 `;
 

@@ -17,9 +17,8 @@ import {
     TREE_NODE_CHILDRENVariables,
     TREE_NODE_CHILDREN_treeNodeChildren_list
 } from '_gqlTypes/TREE_NODE_CHILDREN';
-import {ISystemTranslation} from '_types/types';
+import {ISystemTranslation, ITreeNodeWithRecord} from '_types/types';
 import ErrorDisplay from '../ErrorDisplay';
-import {ITreeNodeWithRecord} from '../SelectTreeNodeModal/SelectTreeNodeModal';
 
 interface ISelectTreeNodeProps {
     tree: {id: string; label?: ISystemTranslation | null};

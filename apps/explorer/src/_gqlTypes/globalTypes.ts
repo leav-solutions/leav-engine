@@ -241,12 +241,18 @@ export interface ViewInput {
     color?: string | null;
     filters?: RecordFilterInput[] | null;
     sort?: RecordSortInput | null;
+    valuesVersions?: ViewValuesVersionInput[] | null;
     settings?: ViewSettingsInput[] | null;
 }
 
 export interface ViewSettingsInput {
     name: string;
     value?: any | null;
+}
+
+export interface ViewValuesVersionInput {
+    treeId: string;
+    treeNode: string;
 }
 
 //==============================================================

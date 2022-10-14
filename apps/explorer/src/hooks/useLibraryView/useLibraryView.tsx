@@ -8,18 +8,12 @@ import {defaultView, getSelectedViewKey} from 'constants/constants';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {getViewByIdQuery} from 'graphQL/queries/views/getViewById';
 import {useUser} from 'hooks/UserHook/UserHook';
-import _ from 'lodash';
 import {useState} from 'react';
+import {prepareView} from 'utils';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {
-    GET_VIEW,
-    GET_VIEWVariables,
-    GET_VIEW_view,
-    GET_VIEW_view_display,
-    GET_VIEW_view_sort
-} from '_gqlTypes/GET_VIEW';
-import {IAttribute, IQueryFilter, IView} from '_types/types';
+import {GET_VIEW, GET_VIEWVariables} from '_gqlTypes/GET_VIEW';
+import {IAttribute, IView} from '_types/types';
 
 const useLibraryView = (
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list
@@ -57,20 +51,12 @@ const useLibraryView = (
                 setIsLoading(false);
             }
 
-            const viewFilters: IQueryFilter[] = data.view.filters.map(filter => ({
-                ...filter,
-                treeId: filter.tree?.id
-            }));
-            const viewDetails: IView = {
-                ...(_.omit(data.view, ['created_by', '__typename']) as GET_VIEW_view),
-                owner: data.view.created_by.id === user?.userId,
-                filters: Array.isArray(data.view.filters)
-                    ? getFiltersFromRequest(viewFilters, library.id, extractAttributesFromLibrary(library))
-                    : [],
-                sort: _.omit(data.view.sort, ['__typename']) as GET_VIEW_view_sort,
-                display: _.omit(data.view.display, ['__typename']) as GET_VIEW_view_display,
-                settings: data.view.settings?.map(s => _.omit(s, '__typename'))
-            };
+            const viewDetails: IView = prepareView(
+                data.view,
+                extractAttributesFromLibrary(library),
+                library.id,
+                user?.userId
+            );
 
             setView(viewDetails);
             setIsLoading(false);

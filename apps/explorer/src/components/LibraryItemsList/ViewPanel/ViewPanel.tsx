@@ -8,7 +8,6 @@ import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
@@ -16,21 +15,16 @@ import {setDisplaySide} from 'redux/display';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {GET_VIEWS_LIST, GET_VIEWS_LISTVariables, GET_VIEWS_LIST_views_list} from '_gqlTypes/GET_VIEWS_LIST';
+import {GET_VIEWS_LIST, GET_VIEWS_LISTVariables} from '_gqlTypes/GET_VIEWS_LIST';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
-import {IQueryFilter, TypeSideItem} from '_types/types';
+import {TypeSideItem} from '_types/types';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
-import {
-    getViewsListQuery,
-    IGetViewListDisplay,
-    IGetViewListSort
-} from '../../../graphQL/queries/views/getViewsListQuery';
+import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import themingVar from '../../../themingVar';
-import {localizedTranslation} from '../../../utils';
+import {localizedTranslation, prepareView} from '../../../utils';
 import {IView} from '../../../_types/types';
-import {getFiltersFromRequest} from '../FiltersPanel/getFiltersFromRequest';
 import EditView from './EditView';
 import View from './View';
 
@@ -169,21 +163,7 @@ function ViewPanel(): JSX.Element {
 
     const {sharedViews, userViews}: {sharedViews: IView[]; userViews: IView[]} = data?.views.list.reduce(
         (acc, view) => {
-            const viewFilters: IQueryFilter[] = (view?.filters ?? []).map(f => ({
-                ...f,
-                treeId: f.tree?.id
-            }));
-
-            const v: IView = {
-                ...(_.omit(view, ['created_by', '__typename']) as GET_VIEWS_LIST_views_list),
-                owner: view.created_by.id === user?.userId,
-                filters: Array.isArray(viewFilters)
-                    ? getFiltersFromRequest(viewFilters, searchState.library.id, searchState.attributes)
-                    : [],
-                sort: _.omit(view.sort, ['__typename']) as IGetViewListSort,
-                display: _.omit(view.display, ['__typename']) as IGetViewListDisplay,
-                settings: view.settings?.map(s => _.omit(s, '__typename'))
-            };
+            const v: IView = prepareView(view, searchState.attributes, searchState.library.id, user?.userId);
 
             if (search && !localizedTranslation(v.label, lang).toUpperCase().includes(search.toUpperCase())) {
                 return acc;

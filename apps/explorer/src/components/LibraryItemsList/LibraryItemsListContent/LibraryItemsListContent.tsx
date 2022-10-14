@@ -110,7 +110,8 @@ function LibraryItemsListContent({
             reload: false,
             sync: true
         },
-        lang
+        lang,
+        valuesVersions: defaultView.valuesVersions
     });
 
     const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);

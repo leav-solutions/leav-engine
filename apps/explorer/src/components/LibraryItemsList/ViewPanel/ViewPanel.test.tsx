@@ -56,6 +56,7 @@ describe('ViewPanel', () => {
             field: 'id',
             order: SortOrder.asc
         },
+        valuesVersions: [],
         settings: null
     };
 

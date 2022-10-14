@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -22,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -31,11 +35,11 @@ const minimatch_1 = __importDefault(require("minimatch"));
 const extensions = __importStar(require("./MIMEByExtension.json"));
 const files_1 = require("./types/files");
 const getGraphqlTypeFromLibraryName = (library) => {
-    return lodash_1.flow([lodash_1.camelCase, lodash_1.upperFirst, lodash_1.trimEnd, lodash_1.partialRight(lodash_1.trimEnd, 's')])(library);
+    return (0, lodash_1.flow)([lodash_1.camelCase, lodash_1.upperFirst, lodash_1.trimEnd, (0, lodash_1.partialRight)(lodash_1.trimEnd, 's')])(library);
 };
 exports.getGraphqlTypeFromLibraryName = getGraphqlTypeFromLibraryName;
 const getGraphqlQueryNameFromLibraryName = (library) => {
-    return lodash_1.flow([lodash_1.camelCase, lodash_1.trimEnd])(library);
+    return (0, lodash_1.flow)([lodash_1.camelCase, lodash_1.trimEnd])(library);
 };
 exports.getGraphqlQueryNameFromLibraryName = getGraphqlQueryNameFromLibraryName;
 const isFileAllowed = (fsPath, allowList, ignoreList, filePath) => {
@@ -43,8 +47,8 @@ const isFileAllowed = (fsPath, allowList, ignoreList, filePath) => {
     if (!allowList.length) {
         allowList = ['**'];
     }
-    const isAllowed = allowList.some(pattern => minimatch_1.default(filePath, `${fsPath}/${pattern}`));
-    const isIgnored = ignoreList.some(pattern => minimatch_1.default(filePath, `${fsPath}/${pattern}`));
+    const isAllowed = allowList.some(pattern => (0, minimatch_1.default)(filePath, `${fsPath}/${pattern}`));
+    const isIgnored = ignoreList.some(pattern => (0, minimatch_1.default)(filePath, `${fsPath}/${pattern}`));
     return !isIgnored && isAllowed;
 };
 exports.isFileAllowed = isFileAllowed;
@@ -158,9 +162,18 @@ const objectToNameValueArray = (obj) => {
     return Object.keys(obj).map(key => ({ name: key, value: obj[key] }));
 };
 exports.objectToNameValueArray = objectToNameValueArray;
+const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => {
+    return Array.isArray(arr) && arr.length
+        ? arr.reduce((formattedElem, elem) => {
+            formattedElem[elem[keyFieldName]] = elem[valueFieldName];
+            return formattedElem;
+        }, {})
+        : null;
+};
+exports.nameValArrayToObj = nameValArrayToObj;
 const getLibraryGraphqlNames = (libraryId) => {
-    const libQueryName = exports.getGraphqlQueryNameFromLibraryName(libraryId);
-    const libTypeName = exports.getGraphqlTypeFromLibraryName(libraryId);
+    const libQueryName = (0, exports.getGraphqlQueryNameFromLibraryName)(libraryId);
+    const libTypeName = (0, exports.getGraphqlTypeFromLibraryName)(libraryId);
     return {
         query: libQueryName,
         type: libTypeName,

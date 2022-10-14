@@ -56,6 +56,60 @@ export interface GET_VIEWS_LIST_views_list_sort {
     order: SortOrder;
 }
 
+export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library_gqlNames {
+    query: string;
+    type: string;
+}
+
+export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library {
+    id: string;
+    label: any | null;
+    gqlNames: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
+}
+
+export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview_file_library {
+    id: string;
+}
+
+export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview_file {
+    id: string;
+    library: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview_file_library;
+}
+
+export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview {
+    tiny: string | null;
+    small: string | null;
+    medium: string | null;
+    big: string | null;
+    huge: string | null;
+    pdf: string | null;
+    original: string;
+    file: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview_file | null;
+}
+
+export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    color: string | null;
+    library: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library;
+    preview: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview | null;
+}
+
+export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record {
+    id: string;
+    whoAmI: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI;
+}
+
+export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode {
+    id: string;
+    record: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record;
+}
+
+export interface GET_VIEWS_LIST_views_list_valuesVersions {
+    treeId: string;
+    treeNode: GET_VIEWS_LIST_views_list_valuesVersions_treeNode;
+}
+
 export interface GET_VIEWS_LIST_views_list_settings {
     name: string;
     value: any | null;
@@ -71,6 +125,7 @@ export interface GET_VIEWS_LIST_views_list {
     color: string | null;
     filters: GET_VIEWS_LIST_views_list_filters[] | null;
     sort: GET_VIEWS_LIST_views_list_sort | null;
+    valuesVersions: GET_VIEWS_LIST_views_list_valuesVersions[] | null;
     settings: GET_VIEWS_LIST_views_list_settings[] | null;
 }
 

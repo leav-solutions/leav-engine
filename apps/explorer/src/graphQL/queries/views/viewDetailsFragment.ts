@@ -2,8 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
+import recordIdentityFragment from '../records/recordIdentityFragment';
 
 const viewDetailsFragment = gql`
+    ${recordIdentityFragment}
     fragment ViewDetails on View {
         id
         display {
@@ -41,6 +43,15 @@ const viewDetailsFragment = gql`
         sort {
             field
             order
+        }
+        valuesVersions {
+            treeId
+            treeNode {
+                id
+                record {
+                    ...RecordIdentity
+                }
+            }
         }
         settings {
             name
