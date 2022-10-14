@@ -127,6 +127,7 @@ export default function ({
 
             // We have a task to execute, we create a worker
             const worker = cluster.fork();
+
             await _attachWorker(task.id, worker.id, ctx);
 
             worker.on('message', async msg => {

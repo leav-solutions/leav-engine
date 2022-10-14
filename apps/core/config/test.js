@@ -31,7 +31,7 @@ module.exports = {
     },
     tasksManager: {
         queues: {
-            orders: process.env.TM_ORDERS_QUEUE || 'test_tasks_orders'
+            orders: 'test_tasks_orders'
         },
         routingKeys: {
             orders: 'test.tasks.orders'
@@ -43,7 +43,7 @@ module.exports = {
     debug: true,
     redis: {
         host: 'redis',
-        port: 6379,
+        host: '6379',
         database: 15
     }
 };

@@ -85,7 +85,9 @@ jobs:
         with:
           stack-version: 7.8.0
       - run: yarn install
-      - run: yarn run start:tasks &
+      - name: Run tasks manager
+        working-directory: ./apps/core
+        run: yarn run start:tasks &
         env:
           NODE_ENV: test
           ARANGO_URL: 'http://root:@localhost:8529'
@@ -116,7 +118,6 @@ jobs:
           IMPORT_DIR: ${{ github.workspace }}/imports
           DISK_CACHE_DIRECTORY: ${{ github.workspace }}/cache
           REDIS_HOST: localhost
-          REDIS_PORT: 6379
 
   e2e-indexation-manager:
     runs-on: ubuntu-latest
@@ -168,7 +169,6 @@ jobs:
           APP_ROOT_PATH: .
           ELASTICSEARCH_URL: "http://localhost:9200"
           REDIS_HOST: localhost
-          REDIS_PORT: 6379
 
   e2e-sync-scan:
     timeout-minutes: 20
