@@ -116,6 +116,7 @@ jobs:
           IMPORT_DIR: ${{ github.workspace }}/imports
           DISK_CACHE_DIRECTORY: ${{ github.workspace }}/cache
           REDIS_HOST: localhost
+          REDIS_PORT: 6379
 
   e2e-indexation-manager:
     runs-on: ubuntu-latest
