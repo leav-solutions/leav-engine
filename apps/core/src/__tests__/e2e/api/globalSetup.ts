@@ -94,7 +94,10 @@ export async function setup() {
         await dbUtils.migrate(coreContainer);
 
         const server = coreContainer.cradle['core.interface.server'];
+        const tasksManager = coreContainer.cradle['core.interface.tasksManager'];
+
         await server.init();
+        await tasksManager.init();
     } catch (e) {
         console.error(e);
         console.error(e.stack);

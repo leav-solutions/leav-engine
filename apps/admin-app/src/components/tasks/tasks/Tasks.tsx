@@ -31,11 +31,6 @@ const Tasks = (): JSX.Element => {
     const [completedTasks, setCompletedTasks] = useState<GET_TASKS_tasks_list[]>([]);
 
     const {loading, error} = useQuery(getTasks, {
-        variables: {
-            filters: {
-                created_by: userData?.id
-            }
-        },
         skip: !userData,
         onCompleted: tasksData => {
             for (const task of tasksData.tasks.list) {
@@ -46,6 +41,7 @@ const Tasks = (): JSX.Element => {
 
     useSubscription(subTaskUpdates, {
         onSubscriptionData: subData => {
+            console.debug({subData});
             // we temporary add created_by field because of miss context for subscriptions on server side to resolve User object
             const task = {...subData.subscriptionData.data.task, created_by: {id: 'toFix'}};
             dispatch(addTask(task));

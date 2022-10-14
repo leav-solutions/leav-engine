@@ -299,7 +299,14 @@ export default function ({
     };
 
     const _updateTask = async (taskId: string, data: IUpdateData, ctx: IQueryInfos): Promise<ITask> => {
-        const task = await taskRepo.updateTask(
+        const res = await _getTasks({params: {filters: {id: taskId}}, ctx});
+        let task = res.list[0];
+
+        if (!task) {
+            throw new Error('Task not found');
+        }
+
+        task = await taskRepo.updateTask(
             {
                 id: taskId,
                 ...data

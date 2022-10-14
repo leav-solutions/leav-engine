@@ -29,6 +29,14 @@ module.exports = {
             events: 'test_indexation_event'
         }
     },
+    tasksManager: {
+        queues: {
+            orders: process.env.TM_ORDERS_QUEUE || 'test_tasks_orders'
+        },
+        routingKeys: {
+            orders: 'test.tasks.orders'
+        }
+    },
     logs: {
         transport: 'console'
     },

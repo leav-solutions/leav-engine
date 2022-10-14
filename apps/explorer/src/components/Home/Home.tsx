@@ -21,7 +21,7 @@ function Home(): JSX.Element {
 
     useEffect(() => {
         const baseInfo: IBaseInfo = {
-            content: t('notification.base-message', {appLabel: localizedTranslation(currentApp.label, lang)}),
+            content: t('info.base-message', {appLabel: localizedTranslation(currentApp.label, lang)}),
             type: InfoType.basic
         };
         dispatch(setInfoBase(baseInfo));

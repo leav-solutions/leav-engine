@@ -508,7 +508,6 @@ services:
       - traefik.http.services.kibana.loadbalancer.server.port=5601
     depends_on:
       - elasticsearch
-    restart: always
 
 volumes:
   arango_data:

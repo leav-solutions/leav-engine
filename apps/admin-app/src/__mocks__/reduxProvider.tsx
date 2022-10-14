@@ -24,9 +24,9 @@ interface IMockReduxProps {
     children: React.ReactNode;
 }
 
-export const MockStore = ({state, children}: IMockReduxProps) => {
-    const mockStore = configureStore();
-    const store = mockStore({...mockStoreInitialState, ...state});
+const mockStore = configureStore();
 
+export const MockStore = ({state, children}: IMockReduxProps) => {
+    const store = mockStore({...mockStoreInitialState, ...state});
     return <Provider store={store}>{children}</Provider>;
 };

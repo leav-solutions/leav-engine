@@ -9,6 +9,7 @@ import {AttributeTypes} from '../../../../_types/attribute';
 import {IQueryInfos} from '../../../../_types/queryInfos';
 import {gqlSaveAttribute, gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 import {init} from '../globalSetup';
+import {setTimeout} from 'timers/promises';
 
 const testLibName = 'test_import';
 const testLibNameQuery = 'testImport';
@@ -18,10 +19,8 @@ const ctx: IQueryInfos = {
     queryId: 'importDomainTest'
 };
 
-jest.setTimeout(45000);
-
 describe('Import', () => {
-    beforeAll(async done => {
+    beforeAll(async () => {
         await gqlSaveAttribute({
             id: 'simple',
             type: AttributeTypes.SIMPLE,
@@ -59,16 +58,16 @@ describe('Import', () => {
         await fs.promises.writeFile(`${conf.import.directory}/${filename}`, file.toString());
 
         try {
-            await importDomain.import(filename, ctx, {id: 'taskId'});
+            await importDomain.import(filename, ctx);
         } finally {
             await fs.promises.unlink(`${conf.import.directory}/${filename}`);
         }
-
-        done();
     });
 
-    test('check record creation: simple, simple_link and advanced_link', async done => {
+    test('check record creation: simple, simple_link and advanced_link', async () => {
         expect.assertions(7);
+
+        await setTimeout(45000);
 
         const res = await makeGraphQlCall(`{
             ${testLibNameQuery} {
@@ -106,11 +105,9 @@ describe('Import', () => {
                 }
             }
         ]);
-
-        done();
     });
 
-    test('check tree', async done => {
+    test('check tree', async () => {
         expect.assertions(5);
 
         const usersGroups = await makeGraphQlCall('{ usersGroups { totalCount list { id simple } } }');
@@ -132,7 +129,5 @@ describe('Import', () => {
                 })
             ])
         );
-
-        done();
     });
 });
