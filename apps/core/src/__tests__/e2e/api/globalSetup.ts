@@ -97,7 +97,6 @@ export async function setup() {
         const tasksManager = coreContainer.cradle['core.interface.tasksManager'];
 
         await server.init();
-        await tasksManager.init();
     } catch (e) {
         console.error(e);
         console.error(e.stack);
