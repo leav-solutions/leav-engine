@@ -32,10 +32,11 @@ import {
     IFilterAttribute,
     IFilterLibrary,
     IFilterTree,
+    ITreeNode,
     ThroughConditionFilter,
     TreeConditionFilter
 } from '../../../../_types/types';
-import SelectTreeNodeModal, {ITreeNode} from '../../../shared/SelectTreeNodeModal/SelectTreeNodeModal';
+import SelectTreeNodeModal from '../../../shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import FiltersDropdown from '../../FiltersDropdown';
 import FilterDropdownButton from '../FilterDropdownButton';
 import FilterTreeCondition from '../FilterTreeCondition';

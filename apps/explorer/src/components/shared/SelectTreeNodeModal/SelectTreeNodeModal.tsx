@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
-import React, {ReactNode, useState} from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {RecordIdentity} from '_gqlTypes/RecordIdentity';
-import {ISystemTranslation} from '../../../_types/types';
+import {ISystemTranslation, ITreeNode, ITreeNodeWithRecord} from '../../../_types/types';
 import SelectTreeNode from '../SelectTreeNode';
 
 interface ISelectTreeNodeModalProps {
@@ -15,17 +14,6 @@ interface ISelectTreeNodeModalProps {
     visible: boolean;
     onSubmit: (treeNode: ITreeNode) => void;
     onClose: () => void;
-}
-
-export interface ITreeNode {
-    title: string | ReactNode;
-    id: string;
-    key: string | null;
-    children: ITreeNode[];
-}
-export interface ITreeNodeWithRecord extends ITreeNode {
-    record: RecordIdentity;
-    children: ITreeNodeWithRecord[];
 }
 
 export default function SelectTreeNodeModal({

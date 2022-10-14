@@ -56,6 +56,60 @@ export interface ADD_VIEW_saveView_sort {
     order: SortOrder;
 }
 
+export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library_gqlNames {
+    query: string;
+    type: string;
+}
+
+export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library {
+    id: string;
+    label: any | null;
+    gqlNames: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
+}
+
+export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview_file_library {
+    id: string;
+}
+
+export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview_file {
+    id: string;
+    library: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview_file_library;
+}
+
+export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview {
+    tiny: string | null;
+    small: string | null;
+    medium: string | null;
+    big: string | null;
+    huge: string | null;
+    pdf: string | null;
+    original: string;
+    file: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview_file | null;
+}
+
+export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    color: string | null;
+    library: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library;
+    preview: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview | null;
+}
+
+export interface ADD_VIEW_saveView_valuesVersions_treeNode_record {
+    id: string;
+    whoAmI: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI;
+}
+
+export interface ADD_VIEW_saveView_valuesVersions_treeNode {
+    id: string;
+    record: ADD_VIEW_saveView_valuesVersions_treeNode_record;
+}
+
+export interface ADD_VIEW_saveView_valuesVersions {
+    treeId: string;
+    treeNode: ADD_VIEW_saveView_valuesVersions_treeNode;
+}
+
 export interface ADD_VIEW_saveView_settings {
     name: string;
     value: any | null;
@@ -71,6 +125,7 @@ export interface ADD_VIEW_saveView {
     color: string | null;
     filters: ADD_VIEW_saveView_filters[] | null;
     sort: ADD_VIEW_saveView_sort | null;
+    valuesVersions: ADD_VIEW_saveView_valuesVersions[] | null;
     settings: ADD_VIEW_saveView_settings[] | null;
 }
 

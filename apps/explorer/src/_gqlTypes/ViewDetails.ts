@@ -56,6 +56,60 @@ export interface ViewDetails_sort {
     order: SortOrder;
 }
 
+export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_library_gqlNames {
+    query: string;
+    type: string;
+}
+
+export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_library {
+    id: string;
+    label: any | null;
+    gqlNames: ViewDetails_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
+}
+
+export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_preview_file_library {
+    id: string;
+}
+
+export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_preview_file {
+    id: string;
+    library: ViewDetails_valuesVersions_treeNode_record_whoAmI_preview_file_library;
+}
+
+export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_preview {
+    tiny: string | null;
+    small: string | null;
+    medium: string | null;
+    big: string | null;
+    huge: string | null;
+    pdf: string | null;
+    original: string;
+    file: ViewDetails_valuesVersions_treeNode_record_whoAmI_preview_file | null;
+}
+
+export interface ViewDetails_valuesVersions_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    color: string | null;
+    library: ViewDetails_valuesVersions_treeNode_record_whoAmI_library;
+    preview: ViewDetails_valuesVersions_treeNode_record_whoAmI_preview | null;
+}
+
+export interface ViewDetails_valuesVersions_treeNode_record {
+    id: string;
+    whoAmI: ViewDetails_valuesVersions_treeNode_record_whoAmI;
+}
+
+export interface ViewDetails_valuesVersions_treeNode {
+    id: string;
+    record: ViewDetails_valuesVersions_treeNode_record;
+}
+
+export interface ViewDetails_valuesVersions {
+    treeId: string;
+    treeNode: ViewDetails_valuesVersions_treeNode;
+}
+
 export interface ViewDetails_settings {
     name: string;
     value: any | null;
@@ -71,5 +125,6 @@ export interface ViewDetails {
     color: string | null;
     filters: ViewDetails_filters[] | null;
     sort: ViewDetails_sort | null;
+    valuesVersions: ViewDetails_valuesVersions[] | null;
     settings: ViewDetails_settings[] | null;
 }

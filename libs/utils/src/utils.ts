@@ -144,6 +144,20 @@ export const objectToNameValueArray = <T>(obj: IKeyValue<T>): Array<{name: strin
     return Object.keys(obj).map(key => ({name: key, value: obj[key]}));
 };
 
+export const nameValArrayToObj = (
+    arr: Array<{}> = [],
+    keyFieldName = 'name',
+    valueFieldName = 'value'
+): {[key: string]: any} => {
+    return Array.isArray(arr) && arr.length
+        ? arr.reduce((formattedElem, elem) => {
+              formattedElem[elem[keyFieldName]] = elem[valueFieldName];
+
+              return formattedElem;
+          }, {})
+        : null;
+};
+
 export const getLibraryGraphqlNames = (libraryId: string) => {
     const libQueryName = getGraphqlQueryNameFromLibraryName(libraryId);
     const libTypeName = getGraphqlTypeFromLibraryName(libraryId);

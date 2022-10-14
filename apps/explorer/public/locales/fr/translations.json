@@ -481,5 +481,9 @@
         "title_one": "Désactiver",
         "confirm": "Êtes-vous sûr de vouloir désactiver les {{count}} éléments sélectionnés?",
         "confirm_one": "Êtes-vous sûr de vouloir désactiver cet élément?"
+    },
+    "values_version": {
+        "title": "Versions de valeurs",
+        "select_version": "Sélectionner une version"
     }
 }

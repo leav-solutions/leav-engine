@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {ReactNode} from 'react';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeFormat,
@@ -305,7 +306,8 @@ export type ILang = string[];
 
 export enum TypeSideItem {
     filters = 'filters',
-    view = 'view'
+    view = 'view',
+    versions = 'versions'
 }
 
 export interface IView {
@@ -318,6 +320,7 @@ export interface IView {
     description?: ISystemTranslation;
     color?: string;
     filters?: IFilter[];
+    valuesVersions?: IViewValuesVersion;
     settings?: IGetViewListSettings[];
     sort?: IGetViewListSort;
 }
@@ -396,4 +399,20 @@ export interface ITreeContentRecordAndChildren {
     record: RecordIdentity;
     children?: ITreeContentRecordAndChildren[];
     permissions: TREE_NODE_CHILDREN_treeNodeChildren_list_permissions;
+}
+
+export interface ITreeNode {
+    title: string | ReactNode;
+    id: string;
+    key: string | null;
+    children: ITreeNode[];
+}
+
+export interface ITreeNodeWithRecord extends ITreeNode {
+    record: RecordIdentity;
+    children: ITreeNodeWithRecord[];
+}
+
+export interface IViewValuesVersion {
+    [treeId: string]: ITreeNode;
 }

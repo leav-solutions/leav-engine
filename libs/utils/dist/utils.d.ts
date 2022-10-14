@@ -40,6 +40,13 @@ export declare const objectToNameValueArray: <T>(
     name: string;
     value: T;
 }>;
+export declare const nameValArrayToObj: (
+    arr?: Array<{}>,
+    keyFieldName?: string,
+    valueFieldName?: string
+) => {
+    [key: string]: any;
+};
 export declare const getLibraryGraphqlNames: (
     libraryId: string
 ) => {

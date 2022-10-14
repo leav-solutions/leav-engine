@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EllipsisOutlined} from '@ant-design/icons';
+import {objectToNameValueArray} from '@leav/utils';
 import {Button, Dropdown, Menu, Typography} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
 import useDeleteViewMutation from 'graphQL/mutations/views/hooks/useDeleteViewMutation';
@@ -89,7 +90,6 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
     const {addView} = useAddViewMutation(searchState.library.id);
 
-    // const [deleteView] = useMutation<IDeleteViewMutation, IDeleteViewMutationVariables>(deleteViewMutation);
     const {deleteView} = useDeleteViewMutation();
 
     const _changeView = () => {
@@ -136,6 +136,10 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                     filters: getRequestFromFilters(view.filters),
                     id: undefined,
                     library: searchState.library.id,
+                    valuesVersions: objectToNameValueArray(searchState.valuesVersions).map(version => ({
+                        treeId: version.name,
+                        treeNode: version.value.id
+                    })),
                     shared: false
                 }
             });

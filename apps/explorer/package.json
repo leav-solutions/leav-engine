@@ -30,6 +30,7 @@
         "react-css-theme-switcher": "0.3.0",
         "react-dom": "18.2.0",
         "react-i18next": "11.18.6",
+        "react-icons": "4.4.0",
         "react-markdown": "5.0.3",
         "react-redux": "7.2.8",
         "react-resizable": "1.11.1",

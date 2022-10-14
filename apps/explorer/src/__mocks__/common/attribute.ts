@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GET_VERSIONABLE_ATTRIBUTES_BY_LIBRARY_attributes_list} from '_gqlTypes/GET_VERSIONABLE_ATTRIBUTES_BY_LIBRARY';
 import {
     RECORD_FORM_recordForm_elements_attribute,
     RECORD_FORM_recordForm_elements_attribute_TreeAttribute
@@ -88,6 +89,25 @@ export const mockAttribute: IAttribute = {
     },
     isLink: false,
     isMultiple: false
+};
+
+export const mockAttributeVersionable: GET_VERSIONABLE_ATTRIBUTES_BY_LIBRARY_attributes_list = {
+    id: 'testId',
+    versions_conf: {
+        versionable: true,
+        profile: {
+            id: 'testProfile',
+            trees: [
+                {
+                    id: 'testTree',
+                    label: {
+                        fr: 'testTree',
+                        en: 'testTree'
+                    }
+                }
+            ]
+        }
+    }
 };
 
 export const mockFormAttribute: RECORD_FORM_recordForm_elements_attribute = {

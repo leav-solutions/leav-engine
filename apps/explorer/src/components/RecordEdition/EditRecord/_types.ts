@@ -10,7 +10,6 @@ import {
     Override
 } from '@leav/utils';
 import {Checkbox, DatePicker, InputRef} from 'antd';
-import {ITreeNodeWithRecord} from 'components/shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {MutableRefObject} from 'react';
 import {ValueInput} from '_gqlTypes/globalTypes';
@@ -20,7 +19,7 @@ import {
     SAVE_VALUE_BATCH_saveValueBatch_errors,
     SAVE_VALUE_BATCH_saveValueBatch_values
 } from '_gqlTypes/SAVE_VALUE_BATCH';
-import {IDateRangeValue, IRecordIdentityWhoAmI} from '_types/types';
+import {IDateRangeValue, IRecordIdentityWhoAmI, ITreeNodeWithRecord} from '_types/types';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue

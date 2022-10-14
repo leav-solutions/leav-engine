@@ -6,6 +6,7 @@ import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {TypeSideItem} from '../../../_types/types';
 import FiltersPanel from '../FiltersPanel';
+import VersionsPanel from '../VersionsPanel';
 import ViewPanel from '../ViewPanel';
 
 interface IWrapperProps {
@@ -28,6 +29,7 @@ function SideItems(): JSX.Element {
         <Wrapper visible={visible} className={visible ? 'wrapped-filter-open' : 'wrapped-filter-close'}>
             {visible && type === TypeSideItem.filters && <FiltersPanel />}
             {visible && type === TypeSideItem.view && <ViewPanel />}
+            {visible && type === TypeSideItem.versions && <VersionsPanel />}
         </Wrapper>
     );
 }

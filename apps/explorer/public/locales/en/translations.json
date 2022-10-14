@@ -482,5 +482,9 @@
         "title_one": "Deactivate",
         "confirm": "Do you really want to deactivate the {{count}} records selected?",
         "confirm_one": "Do you really want to deactivate this record?"
+    },
+    "values_version": {
+        "title": "Values versions",
+        "select_version": "Select a version"
     }
 }

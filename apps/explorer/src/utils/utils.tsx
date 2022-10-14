@@ -1,10 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {nameValArrayToObj} from '@leav/utils';
+import {getFiltersFromRequest} from 'components/LibraryItemsList/FiltersPanel/getFiltersFromRequest';
 import {gql} from 'graphql-tag';
 import {i18n, TFunction} from 'i18next';
-import {pick} from 'lodash';
+import _, {pick} from 'lodash';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
 import {AttributeFormat, AttributeType, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
@@ -17,7 +20,9 @@ import {
     IAttribute,
     IDateRangeValue,
     INotification,
+    IQueryFilter,
     ISelectedAttribute,
+    IView,
     NotificationPriority,
     PreviewAttributes,
     PreviewSize
@@ -398,4 +403,37 @@ export const getInitials = (label: string, length: number = 2) => {
     const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
 
     return letters.toUpperCase();
+};
+
+/**
+ * Prepare view coming from the server to be used in the app
+ */
+export const prepareView = (
+    view: GET_VIEW_view,
+    attributes: IAttribute[],
+    libraryId: string,
+    userId: string
+): IView => {
+    const viewFilters: IQueryFilter[] = (view?.filters ?? []).map(filter => ({
+        ...filter,
+        treeId: filter.tree?.id
+    }));
+
+    const viewValuesVersions = (view?.valuesVersions ?? []).map(version => ({
+        ...version,
+        treeNode: {
+            ...version.treeNode,
+            title: version.treeNode.record.whoAmI.label
+        }
+    }));
+
+    return {
+        ...(_.omit(view, ['created_by', '__typename']) as GET_VIEW_view),
+        owner: view.created_by.id === userId,
+        filters: getFiltersFromRequest(viewFilters, libraryId, attributes),
+        sort: _.omit(view.sort, ['__typename']) as GET_VIEW_view_sort,
+        display: _.omit(view.display, ['__typename']) as GET_VIEW_view_display,
+        valuesVersions: nameValArrayToObj(viewValuesVersions, 'treeId', 'treeNode'),
+        settings: view.settings?.map(s => _.omit(s, '__typename'))
+    };
 };
