@@ -42,7 +42,8 @@ module.exports = {
     },
     debug: true,
     redis: {
-        host: process.env.REDIS_HOST || 'redis',
+        host: 'redis',
+        port: 6379,
         database: 15
     }
 };
