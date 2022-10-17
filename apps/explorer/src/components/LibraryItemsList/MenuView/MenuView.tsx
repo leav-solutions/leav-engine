@@ -18,7 +18,7 @@ import _ from 'lodash';
 import {useTranslation} from 'react-i18next';
 import {VscLayers} from 'react-icons/vsc';
 import {setDisplaySide} from 'redux/display';
-import {addNotification} from 'redux/notifications';
+import {addInfo} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
@@ -27,7 +27,7 @@ import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {IAddViewMutationVariablesView} from '../../../graphQL/mutations/views/saveViewMutation';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../utils';
-import {NotificationChannel, NotificationType, TypeSideItem} from '../../../_types/types';
+import {InfoChannel, InfoType, TypeSideItem} from '../../../_types/types';
 import IconViewType from '../../IconViewType/IconViewType';
 import FiltersDropdown from '../FiltersDropdown';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
@@ -112,10 +112,10 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                 });
             } catch (e) {
                 dispatch(
-                    addNotification({
-                        type: NotificationType.error,
+                    addInfo({
+                        type: InfoType.error,
                         content: `${t('error.error_occurred')}: ${e.message}`,
-                        channel: NotificationChannel.trigger
+                        channel: InfoChannel.trigger
                     })
                 );
                 console.error(e);
