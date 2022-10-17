@@ -348,11 +348,13 @@ const valueDomain = function ({
                                     ? options.version[treeName]
                                     : await treeRepo.getDefaultElement({id: treeName, ctx});
 
-                            const ancestors = await elementAncestors.getCachedElementAncestors({
-                                treeId: treeName,
-                                nodeId: treeElem,
-                                ctx
-                            });
+                            const ancestors = (
+                                await elementAncestors.getCachedElementAncestors({
+                                    treeId: treeName,
+                                    nodeId: treeElem,
+                                    ctx
+                                })
+                            ).reverse(); // We want the leaves first
 
                             return {
                                 name: treeName,

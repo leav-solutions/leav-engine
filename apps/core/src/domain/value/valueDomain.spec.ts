@@ -85,9 +85,9 @@ describe('ValueDomain', () => {
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
         getCachedElementAncestors: global.__mockPromise([
             {
-                id: '9',
+                id: '7',
                 record: {
-                    id: 9,
+                    id: 7,
                     library: 'my_lib'
                 }
             },
@@ -99,9 +99,9 @@ describe('ValueDomain', () => {
                 }
             },
             {
-                id: '7',
+                id: '9',
                 record: {
-                    id: 7,
+                    id: 9,
                     library: 'my_lib'
                 }
             }
@@ -1815,9 +1815,9 @@ describe('ValueDomain', () => {
                         case 'my_tree':
                             parents = [
                                 {
-                                    id: '9',
+                                    id: '7',
                                     record: {
-                                        id: 9,
+                                        id: 7,
                                         library: 'my_lib'
                                     }
                                 },
@@ -1829,9 +1829,9 @@ describe('ValueDomain', () => {
                                     }
                                 },
                                 {
-                                    id: '7',
+                                    id: '9',
                                     record: {
-                                        id: 7,
+                                        id: 9,
                                         library: 'my_lib'
                                     }
                                 }
@@ -1840,9 +1840,9 @@ describe('ValueDomain', () => {
                         case 'other_tree':
                             parents = [
                                 {
-                                    id: '3',
+                                    id: '1',
                                     record: {
-                                        id: 3,
+                                        id: '1',
                                         library: 'my_lib'
                                     }
                                 },
@@ -1854,9 +1854,9 @@ describe('ValueDomain', () => {
                                     }
                                 },
                                 {
-                                    id: '1',
+                                    id: '3',
                                     record: {
-                                        id: '1',
+                                        id: 3,
                                         library: 'my_lib'
                                     }
                                 }
@@ -1865,16 +1865,16 @@ describe('ValueDomain', () => {
                         case 'third_tree':
                             parents = [
                                 {
-                                    id: '99',
+                                    id: '88',
                                     record: {
-                                        id: '99',
+                                        id: '88',
                                         library: 'my_lib'
                                     }
                                 },
                                 {
-                                    id: '88',
+                                    id: '99',
                                     record: {
-                                        id: '88',
+                                        id: '99',
                                         library: 'my_lib'
                                     }
                                 }
