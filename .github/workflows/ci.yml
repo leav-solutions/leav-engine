@@ -101,6 +101,7 @@ jobs:
           IMPORT_DIR: ${{ github.workspace }}/imports
           DISK_CACHE_DIRECTORY: ${{ github.workspace }}/cache
           REDIS_HOST: localhost
+          REDIS_PORT: 6379
 
   e2e-indexation-manager:
     runs-on: ubuntu-latest
@@ -152,6 +153,7 @@ jobs:
           APP_ROOT_PATH: .
           ELASTICSEARCH_URL: "http://localhost:9200"
           REDIS_HOST: localhost
+          REDIS_PORT: 6379
 
   e2e-sync-scan:
     timeout-minutes: 20
