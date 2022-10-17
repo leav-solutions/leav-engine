@@ -483,6 +483,8 @@ services:
       - traefik.http.routers.redis-commander.rule=Host(`redis.leav.localhost`)
       - traefik.http.services.redis-commander.loadbalancer.server.port=8081
       - traefik.http.routers.rabbitmq.entrypoints=web
+    depends_on:
+      - redis
 
   elasticsearch:
     image: *elastisearch_image

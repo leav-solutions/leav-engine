@@ -43,7 +43,7 @@ module.exports = {
     debug: true,
     redis: {
         host: 'redis',
-        host: '6379',
+        port: '6379',
         database: 15
     }
 };
