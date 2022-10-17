@@ -42,7 +42,7 @@ module.exports = {
     },
     debug: true,
     redis: {
-        host: 'redis',
+        host: process.env.REDIS_HOST || 'redis',
         database: 15
     }
 };
