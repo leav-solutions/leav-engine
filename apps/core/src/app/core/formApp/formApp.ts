@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IFormDomain} from 'domain/form/formDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -29,6 +30,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.form'?: IFormDomain;
     'core.domain.library'?: ILibraryDomain;
+    'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
     'core.utils'?: IUtils;
 }
 
@@ -36,6 +38,7 @@ export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.form': formDomain = null,
     'core.domain.library': libraryDomain = null,
+    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null,
     'core.utils': utils = null
 }: IDeps = {}) {
     /** Functions to convert form from GraphQL format to IForm*/
@@ -229,7 +232,8 @@ export default function ({
                         recordForm(
                             recordId: String,
                             libraryId: String!,
-                            formId: String!
+                            formId: String!,
+                            version: [ValueVersionInput!],
                         ): RecordForm
                     }
 
@@ -258,10 +262,17 @@ export default function ({
                         },
                         async recordForm(
                             _,
-                            {recordId, libraryId, formId}: IGetRecordFormArgs,
+                            {recordId, libraryId, formId, version}: IGetRecordFormArgs,
                             ctx: IQueryInfos
                         ): Promise<IRecordForm> {
-                            return formDomain.getRecordForm({recordId, libraryId, formId, ctx});
+                            const formattedVersion = convertVersionFromGqlFormat(version);
+                            return formDomain.getRecordForm({
+                                recordId,
+                                libraryId,
+                                formId,
+                                version: formattedVersion,
+                                ctx
+                            });
                         }
                     },
                     Mutation: {

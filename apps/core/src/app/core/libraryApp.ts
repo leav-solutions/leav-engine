@@ -332,7 +332,7 @@ export default function ({
                     const formattedVersion =
                         Array.isArray(version) && version.length
                             ? version.reduce((allVers, vers) => {
-                                  allVers[vers.name] = vers.value;
+                                  allVers[vers.treeId] = vers.treeNodeId;
                                   return allVers;
                               }, {})
                             : null;

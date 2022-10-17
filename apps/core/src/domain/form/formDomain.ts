@@ -17,6 +17,7 @@ import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
+import {IValueVersion} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
@@ -54,6 +55,7 @@ export interface IFormDomain {
         recordId: string;
         libraryId: string;
         formId: string;
+        version?: IValueVersion;
         ctx: IQueryInfos;
     }): Promise<IRecordForm>;
     getFormProperties({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
@@ -188,7 +190,7 @@ export default function (deps: IDeps = {}): IFormDomain {
 
             return formRepo.getForms({params: initializedParams, ctx});
         },
-        async getRecordForm({recordId, libraryId, formId, ctx}): Promise<IRecordForm> {
+        async getRecordForm({recordId, libraryId, formId, version, ctx}): Promise<IRecordForm> {
             let formProps: IForm;
             try {
                 formProps = await this.getFormProperties({library: libraryId, id: formId, ctx});
@@ -231,13 +233,14 @@ export default function (deps: IDeps = {}): IFormDomain {
                         }
 
                         if (isElementVisible) {
-                            const {error: valueError, values} = await getElementValues(
-                                depElement,
+                            const {error: valueError, values} = await getElementValues({
+                                element: depElement,
                                 recordId,
                                 libraryId,
+                                version,
                                 deps,
                                 ctx
-                            );
+                            });
 
                             const depElementWithValues: IFormElementWithValuesAndChildren = {
                                 ...depElement,

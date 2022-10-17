@@ -81,14 +81,19 @@ describe('Versions', () => {
                         value: "TEST VAL 1",
                         version: [
                             {
-                                name: "${treeName}",
-                                value: "${nodeElement1}"
+                                treeId: "${treeName}",
+                                treeNodeId: "${nodeElement1}"
                             }
                         ]
                     }
                 ) {
                     id_value
-                    version
+                    version {
+                        treeId
+                        treeNode {
+                            id
+                        }
+                    }
 
                     ... on Value {
                         value
@@ -103,14 +108,19 @@ describe('Versions', () => {
                         value: "TEST VAL 2",
                         version: [
                             {
-                                name: "${treeName}",
-                                value: "${nodeElement2}"
+                                treeId: "${treeName}",
+                                treeNodeId: "${nodeElement2}"
                             }
                         ]
                     }
                 ) {
                     id_value
-                    version
+                    version {
+                        treeId
+                        treeNode {
+                            id
+                        }
+                    }
 
                     ... on Value {
                         value
@@ -122,19 +132,24 @@ describe('Versions', () => {
         expect(resSaveValue.status).toBe(200);
         expect(resSaveValue.data.errors).toBeUndefined();
         expect(resSaveValue.data.data.v1.version).toBeDefined();
-        expect(resSaveValue.data.data.v1.version[0].name).toBe(treeName);
-        expect(resSaveValue.data.data.v1.version[0].value).toBe(nodeElement1);
+        expect(resSaveValue.data.data.v1.version[0].treeId).toBe(treeName);
+        expect(resSaveValue.data.data.v1.version[0].treeNode.id).toBe(nodeElement1);
 
         const resGetValues1 = await makeGraphQlCall(`{
             r1: ${testLibNameFormatted}(
                 version: {
-                    name: "${treeName}",
-                    value: "${nodeElement1}"
+                    treeId: "${treeName}",
+                    treeNodeId: "${nodeElement1}"
                 }
             ) {
                 list {
                     property(attribute: "${attrAdvName}") {
-                        version
+                        version {
+                            treeId
+                            treeNode {
+                                id
+                            }
+                        }
 
                         ... on Value {
                             value
@@ -145,20 +160,24 @@ describe('Versions', () => {
         }`);
         expect(resGetValues1.status).toBe(200);
         expect(resGetValues1.data.errors).toBeUndefined();
-        expect(resGetValues1.data.data.r1.list[0].property[0].version).toBeDefined();
-        expect(resGetValues1.data.data.r1.list[0].property[0].version[treeName]).toBeDefined();
-        expect(resGetValues1.data.data.r1.list[0].property[0].version[treeName]).toBe(nodeElement1);
+        expect(resGetValues1.data.data.r1.list[0].property[0].version).toHaveLength(1);
+        expect(resGetValues1.data.data.r1.list[0].property[0].version[0].treeNode.id).toBe(nodeElement1);
 
         const resGetValues2 = await makeGraphQlCall(`{
             r2: ${testLibNameFormatted}(
                 version: {
-                    name: "${treeName}",
-                    value: "${nodeElement2}"
+                    treeId: "${treeName}",
+                    treeNodeId: "${nodeElement2}"
                 }
             ) {
                 list {
                     property(attribute: "${attrAdvName}") {
-                        version
+                        version {
+                            treeId
+                            treeNode {
+                                id
+                            }
+                        }
 
                         ... on Value {
                             value
@@ -170,19 +189,24 @@ describe('Versions', () => {
         expect(resGetValues2.status).toBe(200);
         expect(resGetValues2.data.errors).toBeUndefined();
         expect(resGetValues2.data.data.r2.list[0].property[0].version).toBeDefined();
-        expect(resGetValues2.data.data.r2.list[0].property[0].version[treeName]).toBeDefined();
-        expect(resGetValues2.data.data.r2.list[0].property[0].version[treeName]).toBe(nodeElement2);
+        expect(resGetValues2.data.data.r2.list[0].property[0].version).toHaveLength(1);
+        expect(resGetValues2.data.data.r2.list[0].property[0].version[0].treeNode.id).toBe(nodeElement2);
 
         const resGetValues3 = await makeGraphQlCall(`{
             r3: ${testLibNameFormatted}(
                 version: {
-                    name: "${treeName}",
-                    value: "${nodeElement3}"
+                    treeId: "${treeName}",
+                    treeNodeId: "${nodeElement3}"
                 }
             ) {
                 list {
                     property(attribute: "${attrAdvName}") {
-                        version
+                        version {
+                            treeId
+                            treeNode {
+                                id
+                            }
+                        }
 
                         ... on Value {
                             value
@@ -194,7 +218,7 @@ describe('Versions', () => {
         expect(resGetValues3.status).toBe(200);
         expect(resGetValues3.data.errors).toBeUndefined();
         expect(resGetValues3.data.data.r3.list[0].property[0].version).toBeDefined();
-        expect(resGetValues3.data.data.r3.list[0].property[0].version[treeName]).toBeDefined();
-        expect(resGetValues3.data.data.r3.list[0].property[0].version[treeName]).toBe(nodeElement2);
+        expect(resGetValues3.data.data.r3.list[0].property[0].version).toHaveLength(1);
+        expect(resGetValues3.data.data.r3.list[0].property[0].version[0].treeNode.id).toBe(nodeElement2);
     });
 });

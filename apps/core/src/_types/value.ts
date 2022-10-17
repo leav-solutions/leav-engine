@@ -10,6 +10,11 @@ export interface IValueVersion {
     [treeName: string]: string;
 }
 
+export type IValueVersionFromGql = Array<{
+    treeId: string;
+    treeNodeId: string;
+}>;
+
 export interface IDbValueVersion {
     [treeName: string]: string;
 }
