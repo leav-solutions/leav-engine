@@ -526,5 +526,6 @@
         "task-canceledBy": "Canceled by",
         "task-duration": "Duration",
         "task-confirmCancel": "Do you really want to cancel this task?"
-    }
+    },
+    "apply": "Apply"
 }

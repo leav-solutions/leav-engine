@@ -4,6 +4,7 @@
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
+import {IValuesVersion} from '_types/types';
 import {StandardValueTypes} from '../EditRecord/_types';
 
 export interface IRecordPropertyWithAttribute {
@@ -15,13 +16,15 @@ export interface IRecordPropertyWithAttribute {
 export interface IEditRecordReducerState {
     record: RecordIdentity_whoAmI;
     activeValue: IRecordPropertyWithAttribute;
-    sidebarCollapsed: boolean;
+    sidebarContent: 'summary' | 'valueDetails' | 'valuesVersions';
+    valuesVersion: IValuesVersion;
 }
 
 export enum EditRecordReducerActionsTypes {
     SET_RECORD = 'SET_RECORD',
-    TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR',
     SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE',
+    SET_SIDEBAR_CONTENT = 'SET_SIDEBAR_CONTENT',
+    SET_VALUES_VERSION = 'SET_VALUES_VERSION',
     SET_EDITING_VALUE = 'SET_CURRENT_VALUE_CONTENT'
 }
 
@@ -31,11 +34,16 @@ export type IEditRecordReducerActions =
           record: IEditRecordReducerState['record'];
       }
     | {
-          type: EditRecordReducerActionsTypes.TOGGLE_SIDEBAR;
-      }
-    | {
           type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE;
           value: IEditRecordReducerState['activeValue'];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT;
+          content: IEditRecordReducerState['sidebarContent'];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_VALUES_VERSION;
+          valuesVersion: IEditRecordReducerState['valuesVersion'];
       }
     | {
           type: EditRecordReducerActionsTypes.SET_EDITING_VALUE;
@@ -47,7 +55,8 @@ export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void
 export const initialState: IEditRecordReducerState = {
     record: null,
     activeValue: null,
-    sidebarCollapsed: true
+    sidebarContent: 'summary',
+    valuesVersion: null
 };
 
 const editRecordModalReducer = (
@@ -57,10 +66,16 @@ const editRecordModalReducer = (
     switch (action.type) {
         case EditRecordReducerActionsTypes.SET_RECORD:
             return {...state, record: action.record};
-        case EditRecordReducerActionsTypes.TOGGLE_SIDEBAR:
-            return {...state, sidebarCollapsed: !state.sidebarCollapsed};
         case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
-            return {...state, activeValue: action.value};
+            return {
+                ...state,
+                activeValue: action.value,
+                sidebarContent: action.value !== null ? 'valueDetails' : 'summary'
+            };
+        case EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT:
+            return {...state, sidebarContent: action.content};
+        case EditRecordReducerActionsTypes.SET_VALUES_VERSION:
+            return {...state, valuesVersion: action.valuesVersion};
         case EditRecordReducerActionsTypes.SET_EDITING_VALUE:
             return {
                 ...state,

@@ -9,6 +9,7 @@ import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
+import useSearchReducer from 'hooks/useSearchReducer';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
@@ -29,6 +30,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
     const [activeLibrary] = useActiveLibrary();
     const canDeleteRecord = activeLibrary.permissions.delete_record;
 
+    const {state: searchState} = useSearchReducer();
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
         display: state.display
@@ -39,7 +41,14 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
     const menuActions: FloatingMenuAction[] = [
         {
             title: t('global.details'),
-            button: <EditRecordBtn shape={'circle'} record={record} size={menuBtnSize} />
+            button: (
+                <EditRecordBtn
+                    shape={'circle'}
+                    record={record}
+                    size={menuBtnSize}
+                    valuesVersion={searchState.valuesVersions}
+                />
+            )
         }
     ];
 

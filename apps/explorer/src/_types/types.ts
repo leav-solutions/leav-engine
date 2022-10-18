@@ -320,7 +320,7 @@ export interface IView {
     description?: ISystemTranslation;
     color?: string;
     filters?: IFilter[];
-    valuesVersions?: IViewValuesVersion;
+    valuesVersions?: IValuesVersion;
     settings?: IGetViewListSettings[];
     sort?: IGetViewListSort;
 }
@@ -413,6 +413,6 @@ export interface ITreeNodeWithRecord extends ITreeNode {
     children: ITreeNodeWithRecord[];
 }
 
-export interface IViewValuesVersion {
+export interface IValuesVersion {
     [treeId: string]: ITreeNode;
 }

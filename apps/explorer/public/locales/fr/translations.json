@@ -502,7 +502,8 @@
     },
     "values_version": {
         "title": "Versions de valeurs",
-        "select_version": "Sélectionner une version"
+        "select_version": "Sélectionner une version",
+        "apply": "Appliquer"
     },
     "notifications": {
         "title": "Notifications",

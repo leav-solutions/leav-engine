@@ -16,11 +16,26 @@ describe('editRecordReducer', () => {
     };
 
     test('SET_ACTIVE_VALUE', async () => {
+        const newState = editRecordReducer(mockInitialState, {
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: mockRecordPropertyWithAttribute
+        });
+        expect(newState.activeValue).toEqual(mockRecordPropertyWithAttribute);
+        expect(newState.sidebarContent).toBe('valueDetails');
+
+        const newState2 = editRecordReducer(mockInitialState, {
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: null
+        });
+        expect(newState2.sidebarContent).toBe('summary');
+    });
+
+    test('SET_SIDEBAR_CONTENT', async () => {
         expect(
             editRecordModalReducer(mockInitialState, {
-                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                value: mockRecordPropertyWithAttribute
-            }).activeValue
-        ).toEqual(mockRecordPropertyWithAttribute);
+                type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
+                content: 'valueDetails'
+            }).sidebarContent
+        ).toBe('valueDetails');
     });
 });

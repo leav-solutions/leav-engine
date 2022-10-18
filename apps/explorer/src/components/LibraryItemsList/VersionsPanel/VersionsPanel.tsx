@@ -3,18 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button} from 'antd';
 import {IconClosePanel} from 'assets/icons/IconClosePanel';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import ValuesVersionConfigurator from 'components/shared/ValuesVersionConfigurator';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import useLibraryVersionTrees from 'hooks/useLibraryVersionTrees';
-import React from 'react';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {TypeSideItem} from '_types/types';
-import VersionTree from './VersionTree';
+import {IValuesVersion, TypeSideItem} from '_types/types';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -58,8 +56,7 @@ function VersionsPanel(): JSX.Element {
 
     const [activeLibrary] = useActiveLibrary();
     const dispatch = useAppDispatch();
-
-    const {loading, error, trees} = useLibraryVersionTrees(activeLibrary.id);
+    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const _handleHidePanel = () => {
         dispatch(
@@ -70,13 +67,12 @@ function VersionsPanel(): JSX.Element {
         );
     };
 
-    if (loading) {
-        return <Loading />;
-    }
-
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
-    }
+    const _handleVersionChange = (version: IValuesVersion) => {
+        searchDispatch({
+            type: SearchActionTypes.SET_VALUES_VERSIONS,
+            valuesVersions: version
+        });
+    };
 
     return (
         <Wrapper>
@@ -84,9 +80,11 @@ function VersionsPanel(): JSX.Element {
                 <span>{t('values_version.title')}</span>
                 <Button onClick={_handleHidePanel} icon={<IconClosePanel />}></Button>
             </Header>
-            {trees.map(tree => (
-                <VersionTree key={tree.id} tree={tree} />
-            ))}
+            <ValuesVersionConfigurator
+                libraryId={activeLibrary.id}
+                selectedVersion={searchState.valuesVersions}
+                onVersionChange={_handleVersionChange}
+            />
         </Wrapper>
     );
 }

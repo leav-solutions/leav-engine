@@ -61,7 +61,7 @@ function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps):
 
     return (
         <>
-            {!state.sidebarCollapsed && <CloseButton onClick={_handleClose} />}
+            <CloseButton onClick={_handleClose} />
             <AttributeTitle>
                 {t('record_edition.attribute.info_title')}:
                 <span className="attribute-label">{localizedTranslation(attribute.label, lang)}</span>

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SelectionModeContext} from 'context';
+import useSearchReducer from 'hooks/useSearchReducer';
 import {useContext, useState} from 'react';
 import {Row} from 'react-table';
 import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
@@ -43,6 +44,7 @@ interface IBodyRowProps {
 function BodyRow({row}: IBodyRowProps): JSX.Element {
     const props = row.getRowProps();
     const selectionMode = useContext(SelectionModeContext);
+    const {state: searchState} = useSearchReducer();
     const {selectionState} = useAppSelector(state => ({
         selectionState: state.selection,
         display: state.display
@@ -97,6 +99,7 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
                     library={record.library.id}
                     record={record as RecordIdentity_whoAmI}
                     onClose={_handleClose}
+                    valuesVersion={searchState.valuesVersions}
                 />
             )}
             {row.cells.map(cell => (
