@@ -14,7 +14,7 @@ import {AvailableLanguage, TreeBehavior} from './globalTypes';
 
 export interface GET_TREES_trees_list_libraries_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_TREES_trees_list_libraries_settings {
@@ -30,7 +30,7 @@ export interface GET_TREES_trees_list_libraries {
 
 export interface GET_TREES_trees_list {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     system: boolean;
     behavior: TreeBehavior;
     libraries: GET_TREES_trees_list_libraries[];

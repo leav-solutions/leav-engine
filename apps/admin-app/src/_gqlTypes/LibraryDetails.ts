@@ -14,14 +14,14 @@ import {LibraryBehavior, AttributeType, AttributeFormat, PermissionsRelation, Va
 
 export interface LibraryDetails_attributes_StandardAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface LibraryDetails_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -30,7 +30,7 @@ export interface LibraryDetails_attributes_StandardAttribute_permissions_conf_pe
 
 export interface LibraryDetails_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: LibraryDetails_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -62,7 +62,7 @@ export interface LibraryDetails_attributes_StandardAttribute_versions_conf {
 
 export interface LibraryDetails_attributes_StandardAttribute_libraries {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_attributes_StandardAttribute {
@@ -82,14 +82,14 @@ export interface LibraryDetails_attributes_StandardAttribute {
 
 export interface LibraryDetails_attributes_LinkAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface LibraryDetails_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -98,7 +98,7 @@ export interface LibraryDetails_attributes_LinkAttribute_permissions_conf_permis
 
 export interface LibraryDetails_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: LibraryDetails_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -130,7 +130,7 @@ export interface LibraryDetails_attributes_LinkAttribute_versions_conf {
 
 export interface LibraryDetails_attributes_LinkAttribute_libraries {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_attributes_LinkAttribute_linked_library {
@@ -156,14 +156,14 @@ export interface LibraryDetails_attributes_LinkAttribute {
 
 export interface LibraryDetails_attributes_TreeAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface LibraryDetails_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -172,7 +172,7 @@ export interface LibraryDetails_attributes_TreeAttribute_permissions_conf_permis
 
 export interface LibraryDetails_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: LibraryDetails_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -204,7 +204,7 @@ export interface LibraryDetails_attributes_TreeAttribute_versions_conf {
 
 export interface LibraryDetails_attributes_TreeAttribute_libraries {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_attributes_TreeAttribute_linked_tree {
@@ -234,12 +234,12 @@ export type LibraryDetails_attributes =
 
 export interface LibraryDetails_fullTextAttributes {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -249,7 +249,7 @@ export interface LibraryDetails_permissions_conf_permissionTreeAttributes_TreeAt
 export interface LibraryDetails_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     linked_tree: LibraryDetails_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export type LibraryDetails_permissions_conf_permissionTreeAttributes =
@@ -291,7 +291,7 @@ export interface LibraryDetails_permissions {
 
 export interface LibraryDetails_icon_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface LibraryDetails_icon_whoAmI_preview {
@@ -318,7 +318,7 @@ export interface LibraryDetails_icon {
 export interface LibraryDetails {
     id: string;
     system: boolean | null;
-    label: any | null;
+    label: SystemTranslation | null;
     behavior: LibraryBehavior;
     attributes: LibraryDetails_attributes[] | null;
     fullTextAttributes: LibraryDetails_fullTextAttributes[] | null;

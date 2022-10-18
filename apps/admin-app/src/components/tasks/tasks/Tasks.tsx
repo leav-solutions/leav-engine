@@ -41,9 +41,8 @@ const Tasks = (): JSX.Element => {
 
     useSubscription(subTaskUpdates, {
         onSubscriptionData: subData => {
-            console.debug({subData});
-            // we temporary add created_by field because of miss context for subscriptions on server side to resolve User object
-            const task = {...subData.subscriptionData.data.task, created_by: {id: 'toFix'}};
+            // FIXME: missing created_by field because of miss context for subscriptions on server side to resolve User object
+            const task = {...subData.subscriptionData.data.task};
             dispatch(addTask(task));
         }
     });
@@ -64,8 +63,8 @@ const Tasks = (): JSX.Element => {
             setCompletedTasks(
                 Object.values(tasks)
                     .filter(_isCompletedTask)
-                    .sort((a, b) => b.startedAt - a.startedAt)
-            ); // FIXME: add completedAt field in backend for failed/canceled tasks, then sort by completedAt)
+                    .sort((a, b) => b.completedAt - a.completedAt)
+            );
         }
     }, [tasks]);
 

@@ -21,14 +21,14 @@ import {
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -37,7 +37,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_permi
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -69,7 +69,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_versi
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute_libraries {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute {
@@ -89,14 +89,14 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_StandardAttribute {
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -105,7 +105,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissio
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -137,7 +137,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_versions_
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_libraries {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute_linked_library {
@@ -163,14 +163,14 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_LinkAttribute {
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_metadata_fields {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -179,7 +179,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_permissio
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     linked_tree: GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
 }
 
@@ -211,7 +211,7 @@ export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_versions_
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_libraries {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_attributes_TreeAttribute_linked_tree {
@@ -241,12 +241,12 @@ export type GET_LIB_BY_ID_libraries_list_attributes =
 
 export interface GET_LIB_BY_ID_libraries_list_fullTextAttributes {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
@@ -256,7 +256,7 @@ export interface GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAtt
 export interface GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute {
     id: string;
     linked_tree: GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export type GET_LIB_BY_ID_libraries_list_permissions_conf_permissionTreeAttributes =
@@ -298,7 +298,7 @@ export interface GET_LIB_BY_ID_libraries_list_permissions {
 
 export interface GET_LIB_BY_ID_libraries_list_icon_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIB_BY_ID_libraries_list_icon_whoAmI_preview {
@@ -325,7 +325,7 @@ export interface GET_LIB_BY_ID_libraries_list_icon {
 export interface GET_LIB_BY_ID_libraries_list {
     id: string;
     system: boolean | null;
-    label: any | null;
+    label: SystemTranslation | null;
     behavior: LibraryBehavior;
     attributes: GET_LIB_BY_ID_libraries_list_attributes[] | null;
     fullTextAttributes: GET_LIB_BY_ID_libraries_list_fullTextAttributes[] | null;

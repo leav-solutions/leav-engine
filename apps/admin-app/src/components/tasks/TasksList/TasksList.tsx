@@ -20,7 +20,7 @@ interface ITasksListProps {
 const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITasksListProps): JSX.Element => {
     const {t} = useTranslation();
 
-    const [maxNbBtnsInRown, setMaxNbBtnsInRown] = useState<number>(0);
+    const [maxNbBtnsInRow, setmaxNbBtnsInRow] = useState<number>(0);
     const [sort, setSort] = useState<{column: string; direction: 'ascending' | 'descending'}>({
         column: 'completedAt',
         direction: 'descending'
@@ -37,7 +37,7 @@ const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITa
 
     useEffect(() => {
         if (!!actionsBtn && tasks.length) {
-            setMaxNbBtnsInRown(
+            setmaxNbBtnsInRow(
                 tasks.map(task => actionsBtn(task).length).reduce((prev, curr) => (curr > prev ? curr : prev), 0)
             );
         }
@@ -62,7 +62,7 @@ const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITa
                             sorted={sort.column === 'id' ? sort.direction : null}
                             onClick={() => onSort('id')}
                         >
-                            {'ID'}
+                            {t('tasks.task-id')}
                         </Table.HeaderCell>
                         <Table.HeaderCell
                             width={3}
@@ -136,7 +136,7 @@ const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITa
                         >
                             {t('tasks.task-duration')}
                         </Table.HeaderCell>
-                        {[...Array(maxNbBtnsInRown)].map((_, i) => (
+                        {[...Array(maxNbBtnsInRow)].map((_, i) => (
                             <Table.HeaderCell width={1} key={`hc-btn${i}`} />
                         ))}
                     </Table.Row>
@@ -191,11 +191,11 @@ const TasksList = ({striped = false, actionsBtn, footerBtn, tasks, loading}: ITa
                                         <Table.Cell>{task.progress?.description}</Table.Cell>
                                         <Table.Cell>{_getTaskDuration(task.startedAt, task.completedAt)}</Table.Cell>
                                         {!!actions &&
-                                            [...Array(maxNbBtnsInRown)].map((_, i) => {
+                                            [...Array(maxNbBtnsInRow)].map((_, i) => {
                                                 const idx =
-                                                    actions.length === maxNbBtnsInRown
+                                                    actions.length === maxNbBtnsInRow
                                                         ? i
-                                                        : maxNbBtnsInRown - actions.length - i;
+                                                        : maxNbBtnsInRow - actions.length - i;
 
                                                 return (
                                                     <Table.Cell key={`actionBtn${idx}${task.id}`} textAlign="center">

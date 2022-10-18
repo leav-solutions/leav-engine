@@ -12,7 +12,7 @@
 
 export interface CREATE_RECORD_createRecord_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface CREATE_RECORD_createRecord_whoAmI_preview {

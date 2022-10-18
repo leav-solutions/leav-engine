@@ -37,7 +37,7 @@ export type GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
     values_list: GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list | null;
@@ -45,7 +45,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute {
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI_preview {
@@ -81,7 +81,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_linked
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
     values_list: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list | null;
@@ -91,7 +91,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute {
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_preview {
@@ -117,7 +117,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview {
@@ -162,7 +162,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_linked
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
     values_list: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list | null;

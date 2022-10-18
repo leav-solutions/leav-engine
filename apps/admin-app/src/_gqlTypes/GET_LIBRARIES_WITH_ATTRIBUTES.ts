@@ -20,12 +20,12 @@ export interface GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list_gqlNames {
 
 export interface GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list_attributes {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list_gqlNames;
     attributes: GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list_attributes[] | null;
 }

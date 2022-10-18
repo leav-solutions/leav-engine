@@ -37,6 +37,7 @@ import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import {v4 as uuidv4} from 'uuid';
 import {IUtils} from 'utils/utils';
+import {number} from 'joi';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 const defaultImportMode = ImportMode.UPSERT;
@@ -426,8 +427,6 @@ export default function ({
                 return newTaskId;
             }
 
-            await tasksManagerDomain.updateProgress(task.id, {percent: 10, description: 'init'}, ctx);
-
             try {
                 await _jsonSchemaValidation(filename);
             } catch (err) {
@@ -435,13 +434,57 @@ export default function ({
                 throw new ValidationError({}, message || err.message);
             }
 
+            // TODO: Estimate time to import data
+            // We call _getStoredFileData a first time to know number of elements and trees
+            const infoFile = {
+                elements: 0,
+                elementsMatches: 0,
+                elementsData: 0,
+                elementsLinks: 0,
+                // trees: 0,
+                treesMatches: 0,
+                total: 0
+            };
+
+            await _getStoredFileData(
+                filename,
+                async (element: IElement, index: number): Promise<void> => {
+                    // infoFile.elements += 1;
+                    infoFile.elementsMatches += element.matches.length + element.data.length;
+                    infoFile.elementsData += element.data.length;
+                    infoFile.elementsLinks += element.links.length;
+                },
+                async (tree: ITree) => {
+                    // infoFile.trees += 1;
+                    infoFile.treesMatches += 1;
+                }
+            );
+
+            infoFile.total = infoFile.elementsMatches + infoFile.elementsData + infoFile.elementsLinks;
+
             const cacheDataPath = `${filename}-links`;
             let lastCacheIndex: number;
+
+            let pos = 0;
+            let percent = 0;
 
             await _getStoredFileData(
                 filename,
                 // treat elements and cache links
                 async (element: IElement, index: number): Promise<void> => {
+                    // TODO:
+                    // for each element we check if it increases the progress
+                    pos += element.matches.length + element.data.length + element.links.length;
+                    const newPercent = (pos / infoFile.total) * 100;
+
+                    // si percent > progress actuel
+                    if (newPercent > percent + 1) {
+                        percent = newPercent;
+                        await tasksManagerDomain.updateProgress(task.id, {percent, description: 'init'}, ctx);
+                    }
+
+                    /************/
+
                     const importMode = element.mode ?? defaultImportMode;
                     await validateHelper.validateLibrary(element.library, ctx);
 

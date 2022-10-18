@@ -14,7 +14,7 @@ import {ApplicationsFiltersInput, SortApplications, ApplicationType} from './glo
 
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview {
@@ -40,9 +40,9 @@ export interface GET_APPLICATIONS_applications_list_icon {
 
 export interface GET_APPLICATIONS_applications_list {
     id: string;
-    label: any;
+    label: SystemTranslation;
     type: ApplicationType;
-    description: any | null;
+    description: SystemTranslation | null;
     endpoint: string;
     color: string | null;
     icon: GET_APPLICATIONS_applications_list_icon | null;

@@ -142,6 +142,12 @@ export enum SortOrder {
     desc = 'desc'
 }
 
+export enum TaskPriority {
+    LOW = 0,
+    MEDIUM = 1,
+    HIGH = 2
+}
+
 export enum TaskStatus {
     CANCELED = 'CANCELED',
     DONE = 'DONE',
@@ -187,16 +193,16 @@ export interface ApplicationIconInput {
 
 export interface ApplicationInput {
     id: string;
-    label?: any | null;
+    label?: SystemTranslation | null;
     type?: ApplicationType | null;
-    description?: any | null;
+    description?: SystemTranslation | null;
     libraries?: string[] | null;
     trees?: string[] | null;
     color?: string | null;
     icon?: ApplicationIconInput | null;
     module?: string | null;
     endpoint?: string | null;
-    settings?: any | null;
+    settings?: JSONObject | null;
 }
 
 export interface ApplicationsFiltersInput {
@@ -230,8 +236,8 @@ export interface AttributeInput {
 export interface EmbeddedAttributeInput {
     id: string;
     format?: AttributeFormat | null;
-    label?: any | null;
-    description?: any | null;
+    label?: SystemTranslation | null;
+    description?: SystemTranslation | null;
     validation_regex?: string | null;
     embedded_fields?: (EmbeddedAttributeInput | null)[] | null;
 }
@@ -252,7 +258,7 @@ export interface FormElementInput {
 
 export interface FormElementSettingsInput {
     key: string;
-    value: any;
+    value: Any;
 }
 
 export interface FormElementsByDepsInput {
@@ -263,7 +269,7 @@ export interface FormElementsByDepsInput {
 export interface FormInput {
     id: string;
     library: string;
-    label?: any | null;
+    label?: SystemTranslation | null;
     dependencyAttributes?: string[] | null;
     elements?: FormElementsByDepsInput[] | null;
 }
@@ -275,7 +281,7 @@ export interface LibraryIconInput {
 
 export interface LibraryInput {
     id: string;
-    label?: any | null;
+    label?: SystemTranslation | null;
     icon?: LibraryIconInput | null;
     attributes?: string[] | null;
     fullTextAttributes?: string[] | null;
@@ -360,7 +366,7 @@ export interface TreeInput {
     id: string;
     libraries?: TreeLibraryInput[] | null;
     behavior?: TreeBehavior | null;
-    label?: any | null;
+    label?: SystemTranslation | null;
     permissions_conf?: TreeNodePermissionsConfInput[] | null;
 }
 

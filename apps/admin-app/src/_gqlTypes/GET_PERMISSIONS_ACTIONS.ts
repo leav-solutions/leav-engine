@@ -14,7 +14,7 @@ import {PermissionTypes, PermissionsActions} from './globalTypes';
 
 export interface GET_PERMISSIONS_ACTIONS_permissionsActionsByType {
     name: PermissionsActions;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_PERMISSIONS_ACTIONS {

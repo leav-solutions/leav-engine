@@ -14,7 +14,7 @@ import {ApplicationType, ApplicationInstallStatus} from './globalTypes';
 
 export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview {
@@ -58,9 +58,9 @@ export interface GET_APPLICATION_BY_ID_applications_list_install {
 
 export interface GET_APPLICATION_BY_ID_applications_list {
     id: string;
-    label: any;
+    label: SystemTranslation;
     type: ApplicationType;
-    description: any | null;
+    description: SystemTranslation | null;
     endpoint: string;
     url: string;
     color: string | null;
@@ -70,7 +70,7 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     trees: GET_APPLICATION_BY_ID_applications_list_trees[];
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;
     install: GET_APPLICATION_BY_ID_applications_list_install | null;
-    settings: any | null;
+    settings: JSONObject | null;
 }
 
 export interface GET_APPLICATION_BY_ID_applications {

@@ -19,8 +19,8 @@ export interface SAVE_VALUE_saveValue_Value_attribute {
 export interface SAVE_VALUE_saveValue_Value {
     id_value: string | null;
     attribute: SAVE_VALUE_saveValue_Value_attribute | null;
-    value: any | null;
-    raw_value: any | null;
+    value: Any | null;
+    raw_value: Any | null;
 }
 
 export interface SAVE_VALUE_saveValue_LinkValue_attribute {
@@ -29,7 +29,7 @@ export interface SAVE_VALUE_saveValue_LinkValue_attribute {
 
 export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_VALUE_saveValue_LinkValue_linkValue_whoAmI_preview {
@@ -65,7 +65,7 @@ export interface SAVE_VALUE_saveValue_TreeValue_attribute {
 
 export interface SAVE_VALUE_saveValue_TreeValue_treeValue_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface SAVE_VALUE_saveValue_TreeValue_treeValue_record_whoAmI_preview {

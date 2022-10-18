@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TaskStatus} from './globalTypes';
+import {TaskStatus, TaskPriority} from './globalTypes';
 
 // ====================================================
 // GraphQL subscription operation: SUB_TASKS_UPDATE
@@ -29,7 +29,7 @@ export interface SUB_TASKS_UPDATE_task {
     created_at: number | null;
     startAt: number | null;
     status: TaskStatus | null;
-    priority: any | null;
+    priority: TaskPriority | null;
     progress: SUB_TASKS_UPDATE_task_progress | null;
     startedAt: number | null;
     completedAt: number | null;

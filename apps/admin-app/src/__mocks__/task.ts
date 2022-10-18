@@ -4,7 +4,6 @@
 
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {TaskStatus} from '_gqlTypes/globalTypes';
-import {mockModifier} from './user';
 
 export const mockTask: GET_TASKS_tasks_list = {
     id: 'taskId',
@@ -15,7 +14,7 @@ export const mockTask: GET_TASKS_tasks_list = {
     progress: {description: null, percent: 0},
     status: TaskStatus.PENDING,
     priority: 1,
-    created_by: null, //mockModifier,
+    created_by: null,
     startedAt: null,
     completedAt: null,
     link: null,

@@ -14,7 +14,7 @@ import {AttributeInput, AttributeFormat} from './globalTypes';
 
 export interface SAVE_ATTRIBUTE_EMBEDDED_FIELDS_saveAttribute {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     format: AttributeFormat | null;
 }
 

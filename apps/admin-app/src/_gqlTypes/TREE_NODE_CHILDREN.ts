@@ -14,7 +14,7 @@ import {Pagination} from './globalTypes';
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview {
@@ -40,7 +40,7 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record {
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list {
     id: string;
-    order: number;
+    order: number | null;
     childrenCount: number | null;
     record: TREE_NODE_CHILDREN_treeNodeChildren_list_record;
 }

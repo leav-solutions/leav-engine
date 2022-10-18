@@ -12,7 +12,7 @@
 
 export interface RecordIdentity_whoAmI_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface RecordIdentity_whoAmI_preview {
