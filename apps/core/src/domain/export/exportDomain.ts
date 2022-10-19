@@ -235,5 +235,3 @@ export default function ({
         }
     };
 }
-
-// TODO: path to url field for task

@@ -60,7 +60,7 @@ export interface ITask {
     created_at?: number;
     created_by?: string;
     modified_at?: number;
-    canceled_by?: string;
+    canceledBy?: string;
     func: ITaskFunc;
     startAt: number;
     status: TaskStatus;

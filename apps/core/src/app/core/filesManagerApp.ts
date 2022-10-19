@@ -25,7 +25,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.filesManager': filesManager,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.auth': authApp = null,
@@ -70,7 +70,7 @@ export default function({
                     req.ctx = initQueryContext(req);
 
                     try {
-                        const payload = await authApp.validateRequestToken(req);
+                        const payload = await authApp.validateRequestToken(req.headers.authorization, req.cookies);
                         req.ctx.userId = payload.userId;
 
                         next();

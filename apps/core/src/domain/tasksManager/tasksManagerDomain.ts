@@ -37,7 +37,7 @@ export interface IUpdateData {
     completedAt?: number;
     link?: {name: string; url: string};
     workerId?: number;
-    canceledBy?: number;
+    canceledBy?: string;
 }
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
@@ -370,7 +370,7 @@ export default function ({
         if (task.status === TaskStatus.PENDING || task.status === TaskStatus.RUNNING) {
             await _updateTask(
                 task.id,
-                {status: TaskStatus.CANCELED, canceledBy: Number(ctx.userId), completedAt: utils.getUnixTime()},
+                {status: TaskStatus.CANCELED, canceledBy: ctx.userId, completedAt: utils.getUnixTime()},
                 ctx
             );
 

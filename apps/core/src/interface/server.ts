@@ -90,7 +90,7 @@ export default function ({
 
     const _checkAuth = async (req, res, next) => {
         try {
-            await authApp.validateRequestToken(req);
+            await authApp.validateRequestToken(req.headers.authorization, req.cookies);
 
             next();
         } catch (err) {
@@ -184,7 +184,7 @@ export default function ({
                     },
                     context: async ({req, res}): Promise<IQueryInfos> => {
                         try {
-                            const payload = await authApp.validateRequestToken(req);
+                            const payload = await authApp.validateRequestToken(req.headers.authorization, req.cookies);
 
                             const ctx: IQueryInfos = {
                                 userId: payload.userId,
@@ -226,7 +226,25 @@ export default function ({
                     path: '/graphql'
                 });
 
-                graphqlWS.useServer({schema: graphqlApp.schema}, wsServer); // FIXME: à voir pour le cleanup
+                graphqlWS.useServer(
+                    {
+                        schema: graphqlApp.schema,
+                        context: async (ctx: any, message, args) => {
+                            try {
+                                const payload = await authApp.validateRequestToken(ctx.connectionParams.Authorization);
+
+                                const context: IQueryInfos = {
+                                    userId: payload.userId
+                                };
+
+                                return context;
+                            } catch (e) {
+                                throw new ApolloAuthenticationError('you must be logged in');
+                            }
+                        }
+                    },
+                    wsServer
+                );
 
                 await server.start();
                 server.applyMiddleware({app, path: '/graphql', cors: true});

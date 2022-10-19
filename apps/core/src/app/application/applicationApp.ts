@@ -293,7 +293,7 @@ export default function ({
                     }
 
                     try {
-                        const payload = await authApp.validateRequestToken(req);
+                        const payload = await authApp.validateRequestToken(req.headers.authorization, req.cookies);
                         req.ctx.userId = payload.userId;
 
                         next();

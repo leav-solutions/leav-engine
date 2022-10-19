@@ -44,6 +44,18 @@ export default function ({
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null
 }: IDeps): ITasksManagerApp {
+    const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
+        const record = await recordDomain.find({
+            params: {
+                library: USERS_LIBRARY,
+                filters: [{field: 'id', value: userId, condition: AttributeCondition.EQUAL}]
+            },
+            ctx
+        });
+
+        return record.list.length ? record.list[0] : null;
+    };
+
     return {
         init: tasksManagerDomain.init,
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -73,7 +85,7 @@ export default function ({
                         startedAt: Int,
                         completedAt: Int,
                         link: TaskLink,
-                        canceledBy: ID
+                        canceledBy: User
                     }
 
                     type Progress {
@@ -110,22 +122,19 @@ export default function ({
                     }
                 `,
                 resolvers: {
+                    TaskPriority,
                     Task: {
                         created_by: async (task: ITask, _, ctx): Promise<IRecord> => {
-                            const record = await recordDomain.find({
-                                params: {
-                                    library: USERS_LIBRARY,
-                                    filters: [
-                                        {field: 'id', value: task.created_by, condition: AttributeCondition.EQUAL}
-                                    ]
-                                },
-                                ctx
-                            });
+                            return _getUser(task.created_by, ctx);
+                        },
+                        canceledBy: async (task: ITask, _, ctx): Promise<IRecord> => {
+                            if (!task.canceledBy) {
+                                return null;
+                            }
 
-                            return record.list.length ? record.list[0] : null;
+                            return _getUser(task.canceledBy, ctx);
                         }
                     },
-                    TaskPriority,
                     Query: {
                         async tasks(
                             _,
