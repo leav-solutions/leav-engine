@@ -2,14 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as bcrypt from 'bcryptjs';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {Express, NextFunction, Request, Response} from 'express';
+import {IValueRepo} from 'infra/value/valueRepo';
 import jwt, {Algorithm} from 'jsonwebtoken';
 import ms from 'ms';
 import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
+import {IStandardValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {AttributeCondition, IRecord} from '../../_types/record';
@@ -22,7 +25,9 @@ export interface IAuthApp {
 
 interface IDeps {
     'core.domain.value'?: IValueDomain;
+    'core.infra.value'?: IValueRepo;
     'core.domain.record'?: IRecordDomain;
+    'core.domain.attribute'?: IAttributeDomain;
     config?: IConfig;
 }
 
@@ -88,14 +93,14 @@ export default function ({
 
                         // Check password
                         const user = users.list[0];
-                        const userPwd = await valueDomain.getValues({
+                        const userPwd: IStandardValue[] = await valueDomain.getValues({
                             library: 'users',
                             recordId: user.id,
                             attribute: 'password',
                             ctx
                         });
 
-                        const isValidPwd = await bcrypt.compare(password, userPwd[0].value);
+                        const isValidPwd = await bcrypt.compare(password, userPwd[0].raw_value);
                         if (!isValidPwd) {
                             return res.status(401).send('Invalid credentials');
                         }

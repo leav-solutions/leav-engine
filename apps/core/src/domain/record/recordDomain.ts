@@ -15,6 +15,7 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import moment from 'moment';
 import {join} from 'path';
 import {IUtils} from 'utils/utils';
+import {ActionsListEvents} from '../../_types/actionsList';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IPreview} from '_types/preview';
@@ -240,6 +241,13 @@ export default function({
                             : record[attribute.id]
                 }
             ];
+
+            // Apply actionsList
+            values = await Promise.all(
+                values.map(v =>
+                    valueDomain.runActionsList(ActionsListEvents.GET_VALUE, v, attribute, record, library, ctx)
+                )
+            );
         } else {
             values = await valueDomain.getValues({
                 library,

@@ -10,6 +10,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
+import {ActionsListEvents} from '../../_types/actionsList';
 import * as Config from '_types/config';
 import {IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
@@ -119,6 +120,15 @@ export interface IValueDomain {
         library: string;
         ctx: IQueryInfos;
     }): Promise<IValue>;
+
+    runActionsList(
+        listName: ActionsListEvents,
+        value: IValue,
+        attrProps: IAttribute,
+        record: IRecord,
+        library: string,
+        ctx: IQueryInfos
+    ): Promise<IValue>;
 }
 
 interface IDeps {
@@ -159,7 +169,7 @@ const valueDomain = function ({
     /**
      * Run actions list on a value
      *
-     * @param isLinkAttribute
+     * @param listName
      * @param value
      * @param attrProps
      * @param record
@@ -167,21 +177,27 @@ const valueDomain = function ({
      * @param ctx
      */
     const _runActionsList = async (
+        listName: ActionsListEvents = ActionsListEvents.GET_VALUE,
         value: IValue,
         attrProps: IAttribute,
         record: IRecord,
         library: string,
         ctx: IQueryInfos
     ) => {
-        return !!attrProps.actions_list && !!attrProps.actions_list.getValue
-            ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
+        const processedValue = await (!!attrProps.actions_list && !!attrProps.actions_list?.[listName]
+            ? actionsListDomain.runActionsList(attrProps.actions_list?.[listName], value, {
                   ...ctx,
                   attribute: attrProps,
                   recordId: record.id,
                   library,
                   value
               })
-            : value;
+            : value);
+
+        if (utils.isStandardAttribute(attrProps)) {
+            (processedValue as IStandardValue).raw_value = value.value;
+        }
+        return processedValue;
     };
 
     return {
@@ -257,7 +273,10 @@ const valueDomain = function ({
                 // Retrieve appropriate value among all values
                 values = options?.forceGetAllValues ? allValues : findValue(trees, allValues);
             }
-
+            // Runs actionsList
+            values = await Promise.all(
+                values.map(v => _runActionsList(ActionsListEvents.GET_VALUE, v, attr, {id: recordId}, library, ctx))
+            );
             return values;
         },
         async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
@@ -343,9 +362,19 @@ const valueDomain = function ({
             );
 
             // Apply actions list on value
-            const processedValue = await this.formatValue({
+            let processedValue = await _runActionsList(
+                ActionsListEvents.GET_VALUE,
+                savedVal,
+                attributeProps,
+                record,
+                library,
+                ctx
+            );
+
+            // Apply formating
+            processedValue = await this.formatValue({
                 attribute: attributeProps,
-                value: savedVal,
+                value: processedValue,
                 record,
                 library,
                 ctx
@@ -627,25 +656,20 @@ const valueDomain = function ({
             return res;
         },
         async formatValue({attribute, value, record, library, ctx}) {
-            let val = {...value}; // Don't mutate given value
+            let processedValue = {...value}; // Don't mutate given value
 
             const isLinkAttribute =
                 attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
 
             if (isLinkAttribute && attribute.linked_library) {
-                const linkValue = {...val.value, library: attribute.linked_library};
-                val = {...value, value: linkValue};
+                const linkValue = {...processedValue.value, library: attribute.linked_library};
+                processedValue = {...value, value: linkValue};
             }
-
-            const processedValue: IValue =
-                attribute.id !== 'id' && !!attribute.actions_list && !!attribute.actions_list.getValue
-                    ? await _runActionsList(val, attribute, record, library, ctx)
-                    : val;
 
             processedValue.attribute = attribute.id;
 
             if (utils.isStandardAttribute(attribute)) {
-                (processedValue as IStandardValue).raw_value = val.value;
+                (processedValue as IStandardValue).raw_value = processedValue.value;
             }
 
             // Format metadata values as well
@@ -682,7 +706,8 @@ const valueDomain = function ({
             }
 
             return processedValue;
-        }
+        },
+        runActionsList: _runActionsList
     };
 };
 
