@@ -10,11 +10,11 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
-import {ActionsListEvents} from '../../_types/actionsList';
 import * as Config from '_types/config';
 import {IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
 import {EventType} from '../../_types/event';
@@ -667,10 +667,6 @@ const valueDomain = function ({
             }
 
             processedValue.attribute = attribute.id;
-
-            if (utils.isStandardAttribute(attribute)) {
-                (processedValue as IStandardValue).raw_value = processedValue.value;
-            }
 
             // Format metadata values as well
             if ((attribute.metadata_fields ?? []).length) {

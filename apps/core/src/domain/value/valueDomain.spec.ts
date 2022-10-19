@@ -1023,25 +1023,28 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr',
                     value: 'test',
+                    raw_value: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
                     value: 'test',
+                    raw_value: 'test',
                     id_value: null
                 },
                 {
                     attribute: 'test_attr3',
                     value: 'test',
+                    raw_value: 'test',
                     id_value: null
                 }
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: global.__mockPromise({value: 'test', id_value: 12345}),
+                updateValue: global.__mockPromise({value: 'test', raw_value: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
-                    {value: 'test', id_value: 12345},
-                    {value: 'test', id_value: null}
+                    {value: 'test', raw_value: 'test', id_value: 12345},
+                    {value: 'test', raw_value: 'test', id_value: null}
                 ]),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
