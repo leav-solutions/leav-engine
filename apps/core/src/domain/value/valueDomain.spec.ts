@@ -1722,7 +1722,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const version: IValueVersion = {my_tree: '9'};
@@ -1894,7 +1895,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
-                'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain
+                'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const version: IValueVersion = {

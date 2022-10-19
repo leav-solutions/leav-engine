@@ -374,7 +374,7 @@ const valueDomain = function ({
             // Apply formating
             processedValue = await this.formatValue({
                 attribute: attributeProps,
-                value: savedVal,
+                value: processedValue,
                 record,
                 library,
                 ctx
