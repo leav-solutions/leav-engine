@@ -4,6 +4,7 @@
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
 import {IViewRepo} from 'infra/view/_types';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
@@ -14,12 +15,13 @@ interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.view'?: IViewRepo;
+    'core.infra.versionProfile'?: IVersionProfileRepo;
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils'?: IUtils;
 }
 
 export type GetCoreEntityByIdFunc = <T extends ICoreEntity>(
-    entityType: 'library' | 'attribute' | 'tree' | 'view',
+    entityType: 'library' | 'attribute' | 'tree' | 'view' | 'versionProfile',
     entityId: string,
     ctx: IQueryInfos
 ) => Promise<T>;
@@ -29,6 +31,7 @@ export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.view': viewRepo = null,
+    'core.infra.versionProfile': versionProfileRepo = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils': utils = null
 }: IDeps): GetCoreEntityByIdFunc {
@@ -53,6 +56,11 @@ export default function ({
                     break;
                 case 'view':
                     result = await viewRepo.getViews({filters: {id: entityId}, strictFilters: true}, ctx);
+                case 'versionProfile':
+                    result = await versionProfileRepo.getVersionProfiles({
+                        params: {filters: {id: entityId}, strictFilters: true},
+                        ctx
+                    });
                     break;
             }
 

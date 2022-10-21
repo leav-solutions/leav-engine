@@ -36,5 +36,6 @@ export const mockGetRecordsFromLibraryQueryVar: IGetRecordsFromLibraryQueryVaria
     filters: [],
     sortField: 'id',
     sortOrder: SortOrder.asc,
-    fullText: ''
+    fullText: '',
+    version: null
 };

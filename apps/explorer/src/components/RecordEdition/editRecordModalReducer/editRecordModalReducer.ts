@@ -4,7 +4,7 @@
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
-import {IValuesVersion} from '_types/types';
+import {IValueVersion} from '_types/types';
 import {StandardValueTypes} from '../EditRecord/_types';
 
 export interface IRecordPropertyWithAttribute {
@@ -15,9 +15,11 @@ export interface IRecordPropertyWithAttribute {
 
 export interface IEditRecordReducerState {
     record: RecordIdentity_whoAmI;
+    libraryId: string;
     activeValue: IRecordPropertyWithAttribute;
     sidebarContent: 'summary' | 'valueDetails' | 'valuesVersions';
-    valuesVersion: IValuesVersion;
+    valuesVersion: IValueVersion;
+    originValuesVersion: IValueVersion;
 }
 
 export enum EditRecordReducerActionsTypes {
@@ -54,9 +56,11 @@ export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void
 
 export const initialState: IEditRecordReducerState = {
     record: null,
+    libraryId: null,
     activeValue: null,
     sidebarContent: 'summary',
-    valuesVersion: null
+    valuesVersion: null,
+    originValuesVersion: null
 };
 
 const editRecordModalReducer = (

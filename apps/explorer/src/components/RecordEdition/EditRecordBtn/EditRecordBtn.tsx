@@ -4,12 +4,12 @@
 import {ArrowsAltOutlined} from '@ant-design/icons';
 import {Button, ButtonProps} from 'antd';
 import {SyntheticEvent, useState} from 'react';
-import {IRecordIdentityWhoAmI, IValuesVersion} from '_types/types';
+import {IRecordIdentityWhoAmI, IValueVersion} from '_types/types';
 import EditRecordModal from '../EditRecordModal';
 
 interface IEditRecordBtnProps extends ButtonProps {
     record: IRecordIdentityWhoAmI;
-    valuesVersion?: IValuesVersion;
+    valuesVersion?: IValueVersion;
 }
 
 function EditRecordBtn({record, valuesVersion, ...buttonProps}: IEditRecordBtnProps): JSX.Element {

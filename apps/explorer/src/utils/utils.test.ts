@@ -1,10 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IValueVersion} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
 import {mockSelectedAttributeB} from '../__mocks__/common/attribute';
-import {getInitials, getTreeRecordKey, isAttributeSelected, isLibraryInApp, isTreeInApp} from './utils';
+import {
+    getInitials,
+    getTreeRecordKey,
+    getValueVersionLabel,
+    isAttributeSelected,
+    isLibraryInApp,
+    isTreeInApp
+} from './utils';
 
 describe('utils', () => {
     describe('isAttributeSelected', () => {
@@ -60,6 +68,24 @@ describe('utils', () => {
             expect(getInitials('Dwight Schrute', 2)).toBe('DS');
             expect(getInitials('Dwight Schrute', 1)).toBe('D');
             expect(getInitials('Dwight', 2)).toBe('DW');
+        });
+    });
+
+    describe('getValueVersionLabel', () => {
+        test('Compute version label based on all version trees', async () => {
+            const version: IValueVersion = {
+                tree1: {
+                    id: '123456',
+                    label: 'Node title'
+                },
+                tree2: {
+                    id: '987654',
+                    label: 'Other Node'
+                }
+            };
+
+            expect(getValueVersionLabel(version)).toBe('Node title / Other Node');
+            expect(getValueVersionLabel(null)).toBe('');
         });
     });
 });

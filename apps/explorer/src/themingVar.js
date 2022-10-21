@@ -7,8 +7,8 @@ module.exports = {
     '@default-text-color': '#000',
     '@error-color': '#e02020',
     '@divider-color': 'rgba(0, 0, 0, 6%)',
-    '@item-active-bg': '#e5e5e5',
-    '@item-hover-bg': '#f5f5f5',
+    '@item-active-bg': '@leav-background-active',
+    '@item-hover-bg': '@leav-background-active',
     '@btn-primary-bg': 'transparent linear-gradient(180deg, #2CCEFF 0%, #0A8EE0 100%) 0% 0% no-repeat padding-box',
     '@card-background': '@default-bg',
     '@table-bg': '@default-bg',
@@ -38,5 +38,6 @@ module.exports = {
     '@leav-header-height': '3rem',
     '@leav-secondary-font-color': 'rgba(0, 0, 0, 0.5)',
     '@leav-navigation-column-width': '20rem',
-    '@leav-navigation-column-details-width': '30rem'
+    '@leav-navigation-column-details-width': '30rem',
+    '@leav-inherited-values-version-color': '#FFBA00'
 };

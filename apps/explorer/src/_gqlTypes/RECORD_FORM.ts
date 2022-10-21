@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FormElementTypes, AttributeType, AttributeFormat} from './globalTypes';
+import {ValueVersionInput, FormElementTypes, AttributeType, AttributeFormat} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: RECORD_FORM
@@ -105,6 +105,7 @@ export interface RECORD_FORM_recordForm_elements_values_Value_modified_by {
 }
 
 export interface RECORD_FORM_recordForm_elements_values_Value_metadata_value {
+    id_value: string | null;
     value: any | null;
     raw_value: any | null;
 }
@@ -114,6 +115,31 @@ export interface RECORD_FORM_recordForm_elements_values_Value_metadata {
     value: RECORD_FORM_recordForm_elements_values_Value_metadata_value | null;
 }
 
+export interface RECORD_FORM_recordForm_elements_values_Value_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_Value_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: RECORD_FORM_recordForm_elements_values_Value_version_treeNode_record_whoAmI_library;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_Value_version_treeNode_record {
+    id: string;
+    whoAmI: RECORD_FORM_recordForm_elements_values_Value_version_treeNode_record_whoAmI;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_Value_version_treeNode {
+    id: string;
+    record: RECORD_FORM_recordForm_elements_values_Value_version_treeNode_record;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_Value_version {
+    treeId: string;
+    treeNode: RECORD_FORM_recordForm_elements_values_Value_version_treeNode | null;
+}
+
 export interface RECORD_FORM_recordForm_elements_values_Value {
     id_value: string | null;
     created_at: number | null;
@@ -121,6 +147,7 @@ export interface RECORD_FORM_recordForm_elements_values_Value {
     created_by: RECORD_FORM_recordForm_elements_values_Value_created_by | null;
     modified_by: RECORD_FORM_recordForm_elements_values_Value_modified_by | null;
     metadata: (RECORD_FORM_recordForm_elements_values_Value_metadata | null)[] | null;
+    version: (RECORD_FORM_recordForm_elements_values_Value_version | null)[] | null;
     value: any | null;
     raw_value: any | null;
 }
@@ -214,6 +241,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by {
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_metadata_value {
+    id_value: string | null;
     value: any | null;
     raw_value: any | null;
 }
@@ -221,6 +249,31 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_metadata_value
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_metadata {
     name: string;
     value: RECORD_FORM_recordForm_elements_values_LinkValue_metadata_value | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode_record_whoAmI_library;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode_record {
+    id: string;
+    whoAmI: RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode_record_whoAmI;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode {
+    id: string;
+    record: RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode_record;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_LinkValue_version {
+    treeId: string;
+    treeNode: RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_library_gqlNames {
@@ -274,6 +327,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue {
     created_by: RECORD_FORM_recordForm_elements_values_LinkValue_created_by | null;
     modified_by: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by | null;
     metadata: (RECORD_FORM_recordForm_elements_values_LinkValue_metadata | null)[] | null;
+    version: (RECORD_FORM_recordForm_elements_values_LinkValue_version | null)[] | null;
     linkValue: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue | null;
 }
 
@@ -366,6 +420,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by {
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_metadata_value {
+    id_value: string | null;
     value: any | null;
     raw_value: any | null;
 }
@@ -373,6 +428,31 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_metadata_value
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_metadata {
     name: string;
     value: RECORD_FORM_recordForm_elements_values_TreeValue_metadata_value | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode_record_whoAmI_library;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode_record {
+    id: string;
+    whoAmI: RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode_record_whoAmI;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode {
+    id: string;
+    record: RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode_record;
+}
+
+export interface RECORD_FORM_recordForm_elements_values_TreeValue_version {
+    treeId: string;
+    treeNode: RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_library_gqlNames {
@@ -480,6 +560,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue {
     created_by: RECORD_FORM_recordForm_elements_values_TreeValue_created_by | null;
     modified_by: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by | null;
     metadata: (RECORD_FORM_recordForm_elements_values_TreeValue_metadata | null)[] | null;
+    version: (RECORD_FORM_recordForm_elements_values_TreeValue_version | null)[] | null;
     treeValue: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue | null;
 }
 
@@ -491,6 +572,21 @@ export type RECORD_FORM_recordForm_elements_values =
 export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_permissions {
     access_attribute: boolean;
     edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_versions_conf_profile_trees {
+    id: string;
+    label: any | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_versions_conf_profile {
+    id: string;
+    trees: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_versions_conf_profile_trees[];
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_versions_conf {
+    versionable: boolean;
+    profile: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_versions_conf_profile | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields_permissions {
@@ -581,6 +677,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute {
      * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
      */
     permissions: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_permissions;
+    versions_conf: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_versions_conf | null;
     metadata_fields: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields[] | null;
     values_list: RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list | null;
 }
@@ -588,6 +685,21 @@ export interface RECORD_FORM_recordForm_elements_attribute_StandardAttribute {
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_permissions {
     access_attribute: boolean;
     edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_versions_conf_profile_trees {
+    id: string;
+    label: any | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_versions_conf_profile {
+    id: string;
+    trees: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_versions_conf_profile_trees[];
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_versions_conf {
+    versionable: boolean;
+    profile: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_versions_conf_profile | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_permissions {
@@ -719,6 +831,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute {
      * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
      */
     permissions: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_permissions;
+    versions_conf: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_versions_conf | null;
     metadata_fields: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields[] | null;
     linked_library: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library | null;
     linkValuesList: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList | null;
@@ -727,6 +840,21 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute {
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_permissions {
     access_attribute: boolean;
     edit_value: boolean;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_versions_conf_profile_trees {
+    id: string;
+    label: any | null;
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_versions_conf_profile {
+    id: string;
+    trees: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_versions_conf_profile_trees[];
+}
+
+export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_versions_conf {
+    versionable: boolean;
+    profile: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_versions_conf_profile | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields_permissions {
@@ -901,6 +1029,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute {
      * If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
      */
     permissions: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_permissions;
+    versions_conf: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_versions_conf | null;
     metadata_fields: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_metadata_fields[] | null;
     linked_tree: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_linked_tree | null;
     treeValuesList: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList | null;
@@ -946,4 +1075,5 @@ export interface RECORD_FORMVariables {
     libraryId: string;
     formId: string;
     recordId?: string | null;
+    version?: ValueVersionInput[] | null;
 }

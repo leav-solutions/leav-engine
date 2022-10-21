@@ -4,7 +4,7 @@
 import getFieldsFromView from 'components/LibraryItemsList/helpers/getFieldsFromView';
 import {defaultSort, defaultView, viewSettingsField} from 'constants/constants';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
-import {IAttribute, IField, IFilter, IValuesVersion, IView, IViewDisplay} from '_types/types';
+import {IAttribute, IField, IFilter, IValueVersion, IView, IViewDisplay} from '_types/types';
 import {ISearchRecord, ISearchSort, ISearchState} from './_types';
 
 export enum SearchActionTypes {
@@ -50,7 +50,7 @@ export type SearchAction =
     | {type: SearchActionTypes.RESET_FILTERS}
     | {type: SearchActionTypes.DISABLE_FILTERS}
     | {type: SearchActionTypes.APPLY_FILTERS}
-    | {type: SearchActionTypes.SET_VALUES_VERSIONS; valuesVersions: IValuesVersion};
+    | {type: SearchActionTypes.SET_VALUES_VERSIONS; valuesVersions: IValueVersion};
 
 export const initialSearchState: ISearchState = {
     library: null,

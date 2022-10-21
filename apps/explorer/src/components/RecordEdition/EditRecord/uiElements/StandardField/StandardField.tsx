@@ -1,33 +1,31 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
+import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings} from '@leav/utils';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {useContext, useEffect, useReducer} from 'react';
+import {RecordFormElementsValueStandardValue} from 'hooks/useGetRecordForm/useGetRecordForm';
+import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
+import {useContext, useEffect, useMemo, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {
-    RECORD_FORM_recordForm_elements_values,
-    RECORD_FORM_recordForm_elements_values_Value
-} from '_gqlTypes/RECORD_FORM';
+import {RECORD_FORM_recordForm_elements_values} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
+import standardFieldReducer, {
+    computeInitialState,
+    IdValue,
+    newValueId,
+    StandardFieldReducerActionsTypes
+} from '../../reducers/standardFieldReducer/standardFieldReducer';
 import AddValueBtn from '../../shared/AddValueBtn';
 import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
-import {APICallStatus, IFormElementProps} from '../../_types';
-import standardFieldReducer, {
-    IdValue,
-    IStandardFieldReducerState,
-    IStandardFieldValue,
-    newValueId,
-    StandardFieldReducerActionsTypes,
-    virginValue
-} from './standardFieldReducer/standardFieldReducer';
+import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
+import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
 
 const Wrapper = styled.div<{metadataEdit: boolean}>`
@@ -42,7 +40,8 @@ export const emptyValue: RECORD_FORM_recordForm_elements_values = {
     modified_by: null,
     metadata: null,
     raw_value: null,
-    value: null
+    value: null,
+    version: null
 };
 
 function StandardField({
@@ -55,55 +54,41 @@ function StandardField({
     const {t} = useTranslation();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
+    const {state: editRecordState} = useEditRecordModalReducer();
     const {dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
 
-    const fieldValues = (element.values as RECORD_FORM_recordForm_elements_values_Value[]) ?? [];
+    const {fetchValues} = useRefreshFieldValues(
+        editRecordState.record?.library?.id,
+        element.attribute?.id,
+        editRecordState.record?.id
+    );
+
     const isMultipleValues = element.attribute.multiple_values;
     const {attribute} = element;
     const creationErrors = useContext(CreationErrorContext);
+    const isInCreationMode = record === null;
 
-    const initialValues =
-        Array.isArray(fieldValues) && fieldValues.length
-            ? fieldValues.reduce(
-                  (allValues, fieldValue, index): IKeyValue<IStandardFieldValue> => ({
-                      ...allValues,
-                      [fieldValue?.id_value ?? null]: {
-                          ...virginValue,
-                          idValue: fieldValue?.id_value ?? null,
-                          index,
-                          value: fieldValue ?? null,
-                          displayValue: fieldValue?.value ?? '',
-                          editingValue:
-                              attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? '',
-                          originRawValue:
-                              attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? ''
-                      }
-                  }),
-                  {}
-              )
-            : {
-                  [newValueId]: {
-                      ...virginValue,
-                      idValue: newValueId
-                  }
-              };
-
-    const initialState: IStandardFieldReducerState = {
-        attribute,
-        record,
-        formElement: element,
-        isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value,
-        values: initialValues,
-        metadataEdit
-    };
+    const initialState = useMemo(
+        () =>
+            computeInitialState({
+                element,
+                record,
+                isRecordReadOnly,
+                formVersion: editRecordState.valuesVersion,
+                metadataEdit
+            }),
+        []
+    );
 
     const [state, dispatch] = useReducer(standardFieldReducer, initialState);
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
             const idValue =
-                Object.values(state.values).filter(val => val.editingValue === creationErrors[attribute.id].input)?.[0]
-                    .idValue ?? null;
+                Object.values(state.values[state.activeScope].values).filter(
+                    val => val.editingValue === creationErrors[attribute.id].input
+                )?.[0].idValue ?? null;
+
             dispatch({
                 type: StandardFieldReducerActionsTypes.SET_ERROR,
                 idValue,
@@ -119,9 +104,11 @@ function StandardField({
             idValue
         });
 
-        const submitRes = await onValueSubmit([
-            {value: valueToSave, idValue: isSavingNewValue ? null : idValue, attribute}
-        ]);
+        const valueVersion = state.values[state.activeScope].version;
+        const submitRes = await onValueSubmit(
+            [{value: valueToSave, idValue: isSavingNewValue ? null : idValue, attribute}],
+            valueVersion
+        );
 
         if (submitRes.status === APICallStatus.SUCCESS) {
             const submitResValue = submitRes.values[0] as SAVE_VALUE_BATCH_saveValueBatch_values_Value;
@@ -132,6 +119,7 @@ function StandardField({
                       attribute
                   }
                 : submitResValue;
+
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
                 newValue: resultValue,
@@ -181,6 +169,16 @@ function StandardField({
                 idValue
             });
 
+            if (!isInCreationMode) {
+                const freshValues = await fetchValues(state.values[state.activeScope].version);
+
+                dispatch({
+                    type: StandardFieldReducerActionsTypes.REFRESH_VALUES,
+                    formVersion: editRecordState.valuesVersion,
+                    values: freshValues as RecordFormElementsValueStandardValue[]
+                });
+            }
+
             return;
         }
 
@@ -205,8 +203,19 @@ function StandardField({
         });
     };
 
+    const _handleScopeChange = (scope: FieldScope) => {
+        dispatch({
+            type: StandardFieldReducerActionsTypes.CHANGE_VERSION_SCOPE,
+            scope
+        });
+    };
+
     const _handleDeleteAllValues = async () => {
-        const deleteRes = await onDeleteMultipleValues(attribute.id, fieldValues);
+        const deleteRes = await onDeleteMultipleValues(
+            attribute.id,
+            Object.values(state.values[state.activeScope].values).map(v => v.value),
+            null
+        );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             dispatch({
@@ -214,12 +223,22 @@ function StandardField({
                 allDeleted: true
             });
 
+            if (!isInCreationMode) {
+                const freshValues = await fetchValues(state.values[state.activeScope].version);
+
+                dispatch({
+                    type: StandardFieldReducerActionsTypes.REFRESH_VALUES,
+                    formVersion: editRecordState.valuesVersion,
+                    values: freshValues as RecordFormElementsValueStandardValue[]
+                });
+            }
+
             return;
         }
 
         dispatch({
             type: StandardFieldReducerActionsTypes.SET_ERROR,
-            idValue: fieldValues[0]?.id_value,
+            idValue: state.values[state.activeScope].values[0]?.idValue,
             error: deleteRes.error
         });
     };
@@ -228,11 +247,19 @@ function StandardField({
         return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
     }
 
-    const valuesToDisplay = Object.values(state.values).sort((valueA, valueB) => valueA.index - valueB.index);
+    const valuesToDisplay = Object.values(state.values[state.activeScope].values).sort(
+        (valueA, valueB) => valueA.index - valueB.index
+    );
     const hasValue = valuesToDisplay[0].idValue !== newValueId && valuesToDisplay[0].idValue !== null;
     const canAddAnotherValue =
         !state.isReadOnly && isMultipleValues && hasValue && attribute.format !== AttributeFormat.boolean;
     const canDeleteAllValues = !state.isReadOnly && hasValue && valuesToDisplay.length > 1;
+    const isAttributeVersionable = attribute?.versions_conf?.versionable;
+
+    const versions = {
+        [FieldScope.CURRENT]: state.values[FieldScope.CURRENT]?.version ?? null,
+        [FieldScope.INHERITED]: state.values[FieldScope.INHERITED]?.version ?? null
+    };
 
     return (
         <Wrapper metadataEdit={metadataEdit}>
@@ -244,15 +271,29 @@ function StandardField({
                     dispatch={dispatch}
                     onSubmit={_handleSubmit}
                     onDelete={_handleDelete}
+                    onScopeChange={_handleScopeChange}
                 />
             ))}
-            {(canDeleteAllValues || canAddAnotherValue) && (
+            {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
                 <FieldFooter
                     bordered
-                    style={{flexDirection: canAddAnotherValue && !canDeleteAllValues ? 'row' : 'row-reverse'}}
+                    style={{
+                        flexDirection:
+                            canAddAnotherValue && !canDeleteAllValues && !isAttributeVersionable ? 'row' : 'row-reverse'
+                    }}
                 >
-                    {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
-                    {canAddAnotherValue && <AddValueBtn onClick={_handleAddValue} />}
+                    <div>
+                        {isAttributeVersionable && (
+                            <ValuesVersionBtn
+                                basic
+                                versions={versions}
+                                activeScope={state.activeScope}
+                                onScopeChange={_handleScopeChange}
+                            />
+                        )}
+                        {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
+                    </div>
+                    {canAddAnotherValue && <AddValueBtn activeScope={state.activeScope} onClick={_handleAddValue} />}
                 </FieldFooter>
             )}
         </Wrapper>

@@ -9,6 +9,10 @@ import {mockRecord} from '__mocks__/common/record';
 import {mockTreeRecord, mockTreeRecordChild} from '__mocks__/common/treeElements';
 import {mockRecordPropertyWithAttribute} from '__mocks__/common/value';
 import {initialState} from '../editRecordModalReducer/editRecordModalReducer';
+import {
+    EditRecordModalReducerContext,
+    IEditRecordModalReducerContext
+} from '../editRecordModalReducer/editRecordModalReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
 
 jest.mock('components/shared/RecordSummary', () => {
@@ -24,8 +28,11 @@ jest.mock('components/RecordEdition/EditRecord/uiElements/StandardField', () => 
 });
 
 describe('EditRecordSidebar', () => {
-    const mockReducer: IEditRecordReducerContext = {state: {...initialState, record: mockRecord}, dispatch: jest.fn()};
-    const mockReducerWithValue: IEditRecordReducerContext = {
+    const mockReducer: IEditRecordModalReducerContext = {
+        state: {...initialState, record: mockRecord},
+        dispatch: jest.fn()
+    };
+    const mockReducerWithValue: IEditRecordModalReducerContext = {
         ...mockReducer,
         state: {
             ...mockReducer.state,
@@ -35,7 +42,7 @@ describe('EditRecordSidebar', () => {
         }
     };
 
-    const mockReducerWithValueSimple: IEditRecordReducerContext = {
+    const mockReducerWithValueSimple: IEditRecordModalReducerContext = {
         ...mockReducerWithValue,
         state: {
             ...mockReducerWithValue.state,

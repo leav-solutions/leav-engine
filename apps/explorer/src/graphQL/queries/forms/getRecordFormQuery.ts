@@ -3,9 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
 import recordIdentityFragment from '../records/recordIdentityFragment';
+import {valuesVersionDetailsFragment} from '../values/valuesVersionFragment';
 
 export const getRecordFormQuery = gql`
     ${recordIdentityFragment}
+    ${valuesVersionDetailsFragment}
 
     fragment StandardValuesListFragment on StandardValuesListConf {
         ... on StandardStringValuesListConf {
@@ -24,8 +26,8 @@ export const getRecordFormQuery = gql`
         }
     }
 
-    query RECORD_FORM($libraryId: String!, $formId: String!, $recordId: String) {
-        recordForm(recordId: $recordId, libraryId: $libraryId, formId: $formId) {
+    query RECORD_FORM($libraryId: String!, $formId: String!, $recordId: String, $version: [ValueVersionInput!]) {
+        recordForm(recordId: $recordId, libraryId: $libraryId, formId: $formId, version: $version) {
             id
             recordId
             library {
@@ -50,9 +52,14 @@ export const getRecordFormQuery = gql`
                     metadata {
                         name
                         value {
+                            id_value
                             value
                             raw_value
                         }
+                    }
+
+                    version {
+                        ...ValuesVersionDetails
                     }
 
                     ... on Value {
@@ -93,6 +100,16 @@ export const getRecordFormQuery = gql`
                     permissions(record: {id: $recordId, library: $libraryId}) {
                         access_attribute
                         edit_value
+                    }
+                    versions_conf {
+                        versionable
+                        profile {
+                            id
+                            trees {
+                                id
+                                label
+                            }
+                        }
                     }
                     metadata_fields {
                         id

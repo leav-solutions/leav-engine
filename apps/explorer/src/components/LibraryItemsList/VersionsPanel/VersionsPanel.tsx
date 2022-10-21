@@ -12,7 +12,7 @@ import {setDisplaySide} from 'redux/display';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {IValuesVersion, TypeSideItem} from '_types/types';
+import {IValueVersion, TypeSideItem} from '_types/types';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -67,7 +67,7 @@ function VersionsPanel(): JSX.Element {
         );
     };
 
-    const _handleVersionChange = (version: IValuesVersion) => {
+    const _handleVersionChange = (version: IValueVersion) => {
         searchDispatch({
             type: SearchActionTypes.SET_VALUES_VERSIONS,
             valuesVersions: version

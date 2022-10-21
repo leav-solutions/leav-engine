@@ -3,9 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
-import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, RecordFilterCondition, ValueVersionInput} from '_gqlTypes/globalTypes';
 import {RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/RECORD_FORM';
-import {IRecordIdentityWhoAmI, ISystemTranslation} from '_types/types';
+import {IRecordIdentityWhoAmI, ISystemTranslation, IValueVersion} from '_types/types';
+import {noopQuery} from '../noopQuery';
+import {valuesVersionDetailsFragment} from '../values/valuesVersionFragment';
 import recordIdentityFragment from './recordIdentityFragment';
 
 export interface IRecordPropertyAttribute {
@@ -40,12 +42,13 @@ export interface IRecordPropertyModifier {
 }
 
 interface IRecordPropertyBase {
-    id_value?: string | null;
+    id_value: string | null;
     created_at?: number | null;
     created_by?: IRecordPropertyModifier | null;
     modified_at?: number | null;
     modified_by?: IRecordPropertyModifier | null;
     metadata?: Array<{name: string; value: IRecordPropertyStandard}>;
+    version?: IValueVersion;
 }
 
 export interface IRecordPropertyStandard extends IRecordPropertyBase {
@@ -73,6 +76,7 @@ export interface IGetRecordProperties {
 
 export interface IGetRecordPropertiesVariables {
     recordId: string;
+    version?: ValueVersionInput[];
 }
 
 export interface IRecordPropertiesField {
@@ -93,6 +97,9 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
         id_value
         created_at
         modified_at
+        version {
+            ...ValuesVersionDetails
+        }
         created_by {
             ...RecordIdentity
         }
@@ -131,11 +138,19 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
 `;
 
 export const getRecordPropertiesQuery = (libraryGqlType: string, fields: IRecordPropertiesField[]) => {
+    if (!libraryGqlType) {
+        return noopQuery;
+    }
+
     return gqlUnchecked`
         ${recordIdentityFragment}
+        ${valuesVersionDetailsFragment}
 
-        query RECORD_PROPERTIES_${libraryGqlType}($recordId: String) {
-            ${libraryGqlType}(filters: [{field: "id", condition: ${RecordFilterCondition.EQUAL}, value: $recordId}]) {
+        query RECORD_PROPERTIES_${libraryGqlType}($recordId: String, $version: [ValueVersionInput!]) {
+            ${libraryGqlType}(
+                filters: [{field: "id", condition: ${RecordFilterCondition.EQUAL}, value: $recordId}],
+                version: $version
+            ) {
                 list {
                     _id: id
                     ${fields.length ? fields.map(field => _getFieldQueryPart(field)).join('\n') : ''}

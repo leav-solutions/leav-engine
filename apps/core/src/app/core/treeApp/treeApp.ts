@@ -144,9 +144,10 @@ export default function ({
                         system: Boolean!,
                         libraries: [TreeLibrary!]!,
                         behavior: TreeBehavior!,
-                        label(lang: [AvailableLanguage!]): SystemTranslation
+                        label(lang: [AvailableLanguage!]): SystemTranslation,
                         permissions_conf: [TreeNodePermissionsConf!],
-                        permissions: TreePermissions!
+                        permissions: TreePermissions!,
+                        defaultElement: TreeNode
                     }
 
                     type TreeNodePermissionsConf {
@@ -466,6 +467,15 @@ export default function ({
 
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
+                        },
+                        defaultElement: async (
+                            treeData: ITree,
+                            _,
+                            ctx: IQueryInfos
+                        ): Promise<ITreeNode & {treeId?: string}> => {
+                            const element = await treeDomain.getDefaultElement({treeId: treeData.id, ctx});
+
+                            return element ? {...element, treeId: treeData.id} : null;
                         }
                     },
                     TreeNode: {

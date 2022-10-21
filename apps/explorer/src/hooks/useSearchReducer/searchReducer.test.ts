@@ -223,10 +223,8 @@ describe('searchReducer', () => {
     test('SET_VALUES_VERSIONS', async () => {
         const valuesVersions = {
             my_tree: {
-                title: 'My node',
-                id: '123456',
-                key: null,
-                children: []
+                label: 'My node',
+                id: '123456'
             }
         };
 
@@ -235,10 +233,8 @@ describe('searchReducer', () => {
                 ...initialSearchState,
                 valuesVersions: {
                     some_tree: {
-                        title: 'Some node',
-                        id: '987654',
-                        key: null,
-                        children: []
+                        label: 'Some node',
+                        id: '987654'
                     }
                 }
             },

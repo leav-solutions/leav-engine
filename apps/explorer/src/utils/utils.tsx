@@ -1,15 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {nameValArrayToObj} from '@leav/utils';
+import {objectToNameValueArray} from '@leav/utils';
 import {getFiltersFromRequest} from 'components/LibraryItemsList/FiltersPanel/getFiltersFromRequest';
 import {gql} from 'graphql-tag';
 import {i18n, TFunction} from 'i18next';
 import _, {pick} from 'lodash';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
-import {AttributeFormat, AttributeType, ViewSizes} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {RECORD_FORM_recordForm_elements_values_Value_version} from '_gqlTypes/RECORD_FORM';
 import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
@@ -19,11 +20,12 @@ import {
     ExtendFormat,
     IAttribute,
     IDateRangeValue,
-    IQueryFilter,
-    IView,
     IInfo,
-    ISelectedAttribute,
     InfoPriority,
+    IQueryFilter,
+    ISelectedAttribute,
+    IValueVersion,
+    IView,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -98,7 +100,7 @@ const hue2rgb = (p: number, q: number, t: number) => {
 
 export const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 80): string => {
     let hash = 0;
-    for (let i = 0; i < str.length; i++) {
+    for (let i = 0; i < (str ?? '').length; i++) {
         // eslint-disable-next-line no-bitwise
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
@@ -433,7 +435,42 @@ export const prepareView = (
         filters: getFiltersFromRequest(viewFilters, libraryId, attributes),
         sort: _.omit(view.sort, ['__typename']) as GET_VIEW_view_sort,
         display: _.omit(view.display, ['__typename']) as GET_VIEW_view_display,
-        valuesVersions: nameValArrayToObj(viewValuesVersions, 'treeId', 'treeNode'),
+        valuesVersions: viewValuesVersions.reduce((versions: IValueVersion, version): IValueVersion => {
+            versions[version.treeId] = {
+                id: version.treeNode.id,
+                label: version.treeNode.record.whoAmI.label
+            };
+
+            return versions;
+        }, {}),
         settings: view.settings?.map(s => _.omit(s, '__typename'))
     };
+};
+
+export const getValueVersionLabel = (version: IValueVersion) => {
+    return Object.values(version ?? {})
+        .map(v => v.label)
+        .join(' / ');
+};
+
+export const arrayValueVersionToObject = (
+    version: RECORD_FORM_recordForm_elements_values_Value_version[]
+): IValueVersion => {
+    return version?.reduce((acc: IValueVersion, value) => {
+        acc[value.treeId] = {
+            id: value.treeNode.id,
+            label: value.treeNode.record.whoAmI.label
+        };
+
+        return acc;
+    }, {});
+};
+
+export const objectValueVersionToArray = (version: IValueVersion): ValueVersionInput[] => {
+    return version
+        ? objectToNameValueArray(version).map(v => ({
+              treeId: v.name,
+              treeNodeId: v.value.id
+          }))
+        : null;
 };

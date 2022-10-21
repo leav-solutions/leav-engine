@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ICommonFieldsSettings} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
 import {
     EditRecordReducerActionsTypes,
@@ -14,17 +15,19 @@ import {
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI
 } from '_gqlTypes/RECORD_FORM';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
+import {act, ICustomRenderOptions, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockAttributeLink} from '__mocks__/common/attribute';
 import {mockFormElementLink, mockLinkValue} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
+import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
 import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
 import {
     APICallStatus,
     DeleteMultipleValuesFunc,
     DeleteValueFunc,
     FormElement,
+    IFormElementProps,
     ISubmitMultipleResult,
     SubmitValueFunc
 } from '../../_types';
@@ -108,12 +111,33 @@ describe('LinkField', () => {
         onDeleteMultipleValues: mockHandleDeleteMultipleValues
     };
 
+    const _renderLinkField = (
+        props: Partial<IFormElementProps<ICommonFieldsSettings>>,
+        renderOptions?: ICustomRenderOptions
+    ) => {
+        const allProps = {
+            ...baseProps,
+            ...(props as IFormElementProps<ICommonFieldsSettings>)
+        };
+
+        return render(
+            <RecordEditionContext.Provider
+                value={{
+                    record: mockRecordWhoAmI,
+                    readOnly: false,
+                    elements: null
+                }}
+            >
+                <LinkField {...allProps} />
+            </RecordEditionContext.Provider>,
+            renderOptions
+        );
+    };
+
     beforeEach(() => jest.clearAllMocks());
 
     test('Display list of values', async () => {
-        await act(async () => {
-            render(<LinkField element={mockFormElementLink} {...baseProps} />);
-        });
+        _renderLinkField({element: mockFormElementLink});
 
         expect(screen.getByRole('table')).toBeInTheDocument();
         expect(screen.getAllByRole('row')).toHaveLength(1);
@@ -124,6 +148,7 @@ describe('LinkField', () => {
             ...mockFormElementLink,
             settings: {
                 ...mockFormElementLink.settings,
+                label: 'My field',
                 columns: [
                     {
                         id: 'col1',
@@ -149,14 +174,7 @@ describe('LinkField', () => {
             }
         ];
 
-        await act(async () => {
-            render(
-                <LinkField
-                    element={{...mockFormElementLinkWithColumns, values: recordValuesWithColumns}}
-                    {...baseProps}
-                />
-            );
-        });
+        _renderLinkField({element: {...mockFormElementLinkWithColumns, values: recordValuesWithColumns}});
 
         expect(screen.getByRole('table')).toBeInTheDocument();
         expect(screen.getAllByRole('cell')).toHaveLength(3);
@@ -165,35 +183,22 @@ describe('LinkField', () => {
     });
 
     test('If no value, display a button to add a value', async () => {
-        await act(async () => {
-            render(<LinkField element={{...mockFormElementLink, values: []}} {...baseProps} />);
-        });
+        _renderLinkField({element: {...mockFormElementLink, values: []}});
 
         expect(screen.getAllByRole('table').length).toBeGreaterThanOrEqual(1);
         expect(screen.getByRole('button', {name: /add/, hidden: true})).toBeInTheDocument();
     });
 
     test('If no value and cannot add, display a message', async () => {
-        await act(async () => {
-            render(
-                <LinkField
-                    element={{
-                        ...mockFormElementLink,
-                        attribute: {...mockFormElementLink.attribute, readonly: true},
-                        values: []
-                    }}
-                    {...baseProps}
-                />
-            );
+        _renderLinkField({
+            element: {...mockFormElementLink, attribute: {...mockFormElementLink.attribute, readonly: true}, values: []}
         });
 
         expect(screen.getByText('record_edition.no_value')).toBeInTheDocument();
     });
 
     test('Can edit and delete linked record', async () => {
-        await act(async () => {
-            render(<LinkField element={mockFormElementLink} {...baseProps} />);
-        });
+        _renderLinkField({element: {...mockFormElementLink}});
 
         const row = screen.getByRole('row', {name: /record/});
         userEvent.hover(row, null);
@@ -203,9 +208,7 @@ describe('LinkField', () => {
     });
 
     test('Can delete all values', async () => {
-        await act(async () => {
-            render(<LinkField element={mockFormElementLink} {...baseProps} />);
-        });
+        _renderLinkField({element: {...mockFormElementLink}});
 
         const deleteAllValuesButton = screen.getByRole('button', {name: /delete-all-values/, hidden: true});
         expect(deleteAllValuesButton).toBeInTheDocument();
@@ -227,9 +230,7 @@ describe('LinkField', () => {
                 multiple_values: true
             }
         };
-        await act(async () => {
-            render(<LinkField element={mockFormElementLinkMultivalue} {...baseProps} />);
-        });
+        _renderLinkField({element: {...mockFormElementLinkMultivalue}});
 
         expect(screen.getByRole('button', {name: /add/, hidden: true})).toBeInTheDocument();
     });
@@ -243,17 +244,13 @@ describe('LinkField', () => {
             }
         };
 
-        await act(async () => {
-            render(<LinkField element={mockFormElementLinkNoMultivalue} {...baseProps} />);
-        });
+        _renderLinkField({element: {...mockFormElementLinkNoMultivalue}});
 
         expect(screen.queryByRole('button', {name: /add/, hidden: true})).not.toBeInTheDocument();
     });
 
     test('Can display value details', async () => {
-        await act(async () => {
-            render(<LinkField element={mockFormElementLink} {...baseProps} />);
-        });
+        _renderLinkField({element: {...mockFormElementLink}});
 
         const valueDetailsButtons = screen.getAllByRole('button', {name: /info/, hidden: true});
         expect(valueDetailsButtons).toHaveLength(2);
@@ -298,15 +295,11 @@ describe('LinkField', () => {
         };
 
         test('Can add record from values list on click on "add" button', async () => {
-            await act(async () => {
-                render(
-                    <LinkField
-                        element={mockFormElementLinkMultivalue}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                        onDeleteMultipleValues={jest.fn()}
-                    />
-                );
+            _renderLinkField({
+                element: {...mockFormElementLinkMultivalue},
+                onValueSubmit: mockHandleSubmit,
+                onValueDelete: mockHandleDelete,
+                onDeleteMultipleValues: jest.fn()
             });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
@@ -321,13 +314,16 @@ describe('LinkField', () => {
                 userEvent.click(valuesListElem);
             });
 
-            expect(mockHandleSubmit).toBeCalledWith([
-                {
-                    attribute: {...mockFormElementLinkMultivalue.attribute},
-                    idValue: null,
-                    value: {id: mockRecordWhoAmI.id, whoAmI: mockRecordWhoAmI}
-                }
-            ]);
+            expect(mockHandleSubmit).toBeCalledWith(
+                [
+                    {
+                        attribute: {...mockFormElementLinkMultivalue.attribute},
+                        idValue: null,
+                        value: {id: mockRecordWhoAmI.id, whoAmI: mockRecordWhoAmI}
+                    }
+                ],
+                null
+            );
             expect(screen.queryByTestId('values-add')).not.toBeInTheDocument();
         });
 
@@ -358,15 +354,11 @@ describe('LinkField', () => {
                     }
                 }
             };
-            await act(async () => {
-                render(
-                    <LinkField
-                        element={mockFormElementLinkValuesList}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                        onDeleteMultipleValues={jest.fn()}
-                    />
-                );
+            _renderLinkField({
+                element: {...mockFormElementLinkValuesList},
+                onValueSubmit: mockHandleSubmit,
+                onValueDelete: mockHandleDelete,
+                onDeleteMultipleValues: jest.fn()
             });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
@@ -409,15 +401,11 @@ describe('LinkField', () => {
                 saveValues: mockOnAddValue
             }));
 
-            await act(async () => {
-                render(
-                    <LinkField
-                        element={mockFormElementLinkMultivalue}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                        onDeleteMultipleValues={jest.fn()}
-                    />
-                );
+            _renderLinkField({
+                element: {...mockFormElementLinkMultivalue},
+                onValueSubmit: mockHandleSubmit,
+                onValueDelete: mockHandleDelete,
+                onDeleteMultipleValues: jest.fn()
             });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
@@ -435,15 +423,11 @@ describe('LinkField', () => {
         });
 
         test('Can hide values add block', async () => {
-            await act(async () => {
-                render(
-                    <LinkField
-                        element={mockFormElementLinkMultivalue}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                        onDeleteMultipleValues={jest.fn()}
-                    />
-                );
+            _renderLinkField({
+                element: {...mockFormElementLinkMultivalue},
+                onValueSubmit: mockHandleSubmit,
+                onValueDelete: mockHandleDelete,
+                onDeleteMultipleValues: jest.fn()
             });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
@@ -457,15 +441,11 @@ describe('LinkField', () => {
         });
 
         test('If multiple values, can select multiple elements and add them', async () => {
-            await act(async () => {
-                render(
-                    <LinkField
-                        element={mockFormElementLinkMultivalue}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                        onDeleteMultipleValues={jest.fn()}
-                    />
-                );
+            _renderLinkField({
+                element: {...mockFormElementLinkMultivalue},
+                onValueSubmit: mockHandleSubmit,
+                onValueDelete: mockHandleDelete,
+                onDeleteMultipleValues: jest.fn()
             });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
@@ -504,15 +484,11 @@ describe('LinkField', () => {
                 saveValues: mockOnAddValue
             }));
 
-            await act(async () => {
-                render(
-                    <LinkField
-                        element={mockFormElementLinkMultivalueNoFreeEntry}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                        onDeleteMultipleValues={jest.fn()}
-                    />
-                );
+            _renderLinkField({
+                element: {...mockFormElementLinkMultivalueNoFreeEntry},
+                onValueSubmit: mockHandleSubmit,
+                onValueDelete: mockHandleDelete,
+                onDeleteMultipleValues: jest.fn()
             });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
@@ -586,24 +562,22 @@ describe('LinkField', () => {
                 saveValues: mockOnAddValue
             }));
 
-            await act(async () => {
-                render(
-                    <LinkField
-                        element={mockFormElementLinkMultivalue}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                        onDeleteMultipleValues={jest.fn()}
-                    />,
-                    {
-                        apolloMocks: mocks,
-                        cacheSettings: {
-                            possibleTypes: {
-                                Record: ['TestLib']
-                            }
+            _renderLinkField(
+                {
+                    element: {...mockFormElementLinkMultivalue},
+                    onValueSubmit: mockHandleSubmit,
+                    onValueDelete: mockHandleDelete,
+                    onDeleteMultipleValues: jest.fn()
+                },
+                {
+                    apolloMocks: mocks,
+                    cacheSettings: {
+                        possibleTypes: {
+                            Record: ['TestLib']
                         }
                     }
-                );
-            });
+                }
+            );
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
             await act(async () => {
@@ -627,14 +601,12 @@ describe('LinkField', () => {
         });
 
         test('Can add an element via creation', async () => {
-            render(
-                <LinkField
-                    element={mockFormElementLinkMultivalue}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                    onDeleteMultipleValues={jest.fn()}
-                />
-            );
+            _renderLinkField({
+                element: {...mockFormElementLinkMultivalue},
+                onValueSubmit: mockHandleSubmit,
+                onValueDelete: mockHandleDelete,
+                onDeleteMultipleValues: jest.fn()
+            });
 
             const addValueBtn = screen.getByRole('button', {name: /add/, hidden: true});
             userEvent.click(addValueBtn);

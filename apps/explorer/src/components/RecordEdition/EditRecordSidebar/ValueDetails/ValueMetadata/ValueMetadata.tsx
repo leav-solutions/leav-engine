@@ -15,11 +15,11 @@ import {
 } from 'components/RecordEdition/EditRecord/_types';
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
+import {RecordFormElementsValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import {AttributeFormat, FormElementTypes} from '_gqlTypes/globalTypes';
 import {
     RECORD_FORM_recordForm_elements_attribute,
-    RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields,
-    RECORD_FORM_recordForm_elements_values
+    RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields
 } from '_gqlTypes/RECORD_FORM';
 
 type MetadataField = RECORD_FORM_recordForm_elements_attribute_StandardAttribute_metadata_fields;
@@ -70,10 +70,7 @@ function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps
                     uiElementType: _inputTypeByFormat[field.format],
                     valueError: null,
                     values:
-                        [
-                            value?.metadata?.find(({name}) => name === field.id)
-                                ?.value as RECORD_FORM_recordForm_elements_values
-                        ] ?? [],
+                        [value?.metadata?.find(({name}) => name === field.id)?.value as RecordFormElementsValue] ?? [],
                     settings: {
                         label: localizedTranslation(field.label, lang)
                     },

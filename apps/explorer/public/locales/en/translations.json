@@ -501,7 +501,11 @@
     },
     "values_version": {
         "title": "Values versions",
-        "select_version": "Select a version"
+        "version": "Version",
+        "select_version": "Select a version",
+        "inherited_value": "inherited value",
+        "inherited_from": "Inherited from",
+        "reset": "Reset"
     },
     "notifications": {
         "title": "Notifications",

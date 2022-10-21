@@ -7,7 +7,6 @@ import {Button, Space} from 'antd';
 import SelectTreeNodeModal from 'components/shared/SelectTreeNodeModal';
 import TreeIcon from 'components/shared/TreeIcon';
 import {useLang} from 'hooks/LangHook/LangHook';
-import useSearchReducer from 'hooks/useSearchReducer';
 import React, {SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -61,14 +60,13 @@ const ClearSelectionBtn = styled(CloseCircleFilled)`
 interface IVersionTreeProps {
     tree: GET_VERSIONABLE_ATTRIBUTES_BY_LIBRARY_attributes_list_versions_conf_profile_trees;
     selectedNode: ITreeNode | null;
+    readOnly: boolean;
     onNodeChange: (node: ITreeNode | null) => void;
 }
 
-function VersionTree({tree, selectedNode, onNodeChange}: IVersionTreeProps): JSX.Element {
+function VersionTree({tree, selectedNode, readOnly, onNodeChange}: IVersionTreeProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
-
-    const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
     const [isTreeNodeSelectorOpen, setIsTreeNodeSelectorOpen] = React.useState(false);
 
@@ -99,7 +97,7 @@ function VersionTree({tree, selectedNode, onNodeChange}: IVersionTreeProps): JSX
                     <TreeIcon />
                     {treeLabel}
                 </TreeLabel>
-                <SelectedNodeTitle onClick={_handleClickSelectedNode} $hasSelection={hasSelection}>
+                <SelectedNodeTitle disabled={readOnly} onClick={_handleClickSelectedNode} $hasSelection={hasSelection}>
                     {selectedNode?.title || t('values_version.select_version') + '...'}
                     {hasSelection && <ClearSelectionBtn onClick={_handleClearSelection} />}
                 </SelectedNodeTitle>

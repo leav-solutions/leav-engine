@@ -17,15 +17,12 @@ const FooterWrapper = styled.div<{style: React.CSSProperties; $bordered?: boolea
     align-items: center;
     flex-direction: row-reverse;
     padding: 0.25rem;
-    ${props =>
-        props.$bordered
-            ? `
-        border: 1px solid ${themingVar['@border-color-base']};
-        border-radius: ${themingVar['@border-radius-base']};
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    `
-            : ''}
+    background: ${themingVar['@background-color-light']};
+    border-radius: ${themingVar['@border-radius-base']};
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    ${props => (props.$bordered ? `border: 1px solid ${themingVar['@border-color-base']};` : '')}
 
     {...style}
 `;

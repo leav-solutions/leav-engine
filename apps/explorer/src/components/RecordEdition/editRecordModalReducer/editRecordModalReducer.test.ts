@@ -16,14 +16,14 @@ describe('editRecordReducer', () => {
     };
 
     test('SET_ACTIVE_VALUE', async () => {
-        const newState = editRecordReducer(mockInitialState, {
+        const newState = editRecordModalReducer(mockInitialState, {
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: mockRecordPropertyWithAttribute
         });
         expect(newState.activeValue).toEqual(mockRecordPropertyWithAttribute);
         expect(newState.sidebarContent).toBe('valueDetails');
 
-        const newState2 = editRecordReducer(mockInitialState, {
+        const newState2 = editRecordModalReducer(mockInitialState, {
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: null
         });

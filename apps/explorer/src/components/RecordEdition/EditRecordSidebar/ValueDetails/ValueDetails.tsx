@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ArrowRightOutlined} from '@ant-design/icons';
+import {CloseOutlined} from '@ant-design/icons';
 import {Collapse, Divider} from 'antd';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
@@ -40,7 +40,7 @@ const AttributeDescription = styled.div`
     padding: 0 1rem;
 `;
 
-const CloseButton = styled(ArrowRightOutlined)`
+const CloseButton = styled(CloseOutlined)`
     cursor: pointer;
     position: absolute;
     right: 1em;

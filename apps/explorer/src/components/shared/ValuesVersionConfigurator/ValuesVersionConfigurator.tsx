@@ -6,7 +6,7 @@ import Loading from 'components/shared/Loading';
 import useLibraryVersionTrees from 'hooks/useLibraryVersionTrees';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {ITreeNode, IValuesVersion} from '_types/types';
+import {ITreeNode, IValueVersion} from '_types/types';
 import VersionTree from './VersionTree';
 
 const Wrapper = styled.div`
@@ -20,13 +20,15 @@ const Wrapper = styled.div`
 
 interface IValuesVersionConfiguratorProps {
     libraryId: string;
-    selectedVersion: IValuesVersion;
-    onVersionChange: (version: IValuesVersion) => void;
+    selectedVersion: IValueVersion;
+    readOnly?: boolean;
+    onVersionChange: (version: IValueVersion) => void;
 }
 
 function ValuesVersionConfigurator({
     libraryId,
     selectedVersion,
+    readOnly = false,
     onVersionChange
 }: IValuesVersionConfiguratorProps): JSX.Element {
     const {loading, error, trees} = useLibraryVersionTrees(libraryId);
@@ -40,7 +42,7 @@ function ValuesVersionConfigurator({
     }
 
     const _handleNodeSelection = (treeId: string) => (selectedNode: ITreeNode) => {
-        onVersionChange({...selectedVersion, [treeId]: selectedNode});
+        onVersionChange({...selectedVersion, [treeId]: {id: selectedNode.id, label: String(selectedNode.title)}});
     };
 
     return (
@@ -49,8 +51,14 @@ function ValuesVersionConfigurator({
                 <VersionTree
                     key={tree.id}
                     tree={tree}
-                    selectedNode={selectedVersion?.[tree.id]}
+                    selectedNode={{
+                        id: selectedVersion?.[tree.id]?.id,
+                        title: selectedVersion?.[tree.id]?.label,
+                        key: selectedVersion?.[tree.id]?.id,
+                        children: []
+                    }}
                     onNodeChange={_handleNodeSelection(tree.id)}
+                    readOnly={readOnly}
                 />
             ))}
         </Wrapper>

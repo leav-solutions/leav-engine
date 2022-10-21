@@ -11,15 +11,16 @@ import {
 } from '@leav/utils';
 import {FormElement, IFormElementProps} from 'components/RecordEdition/EditRecord/_types';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {
-    RECORD_FORM_recordForm,
-    RECORD_FORM_recordForm_elements_values_LinkValue,
-    RECORD_FORM_recordForm_elements_values_TreeValue
-} from '_gqlTypes/RECORD_FORM';
+    IRecordForm,
+    RecordFormElementsValueLinkValue,
+    RecordFormElementsValueTreeValue
+} from 'hooks/useGetRecordForm/useGetRecordForm';
+import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {mockAttribute, mockAttributeLink, mockAttributeTree, mockFormAttribute} from './attribute';
 import {mockRecordWhoAmI} from './record';
 import {mockModifier} from './value';
+import {mockVersionProfile} from './versionProfile';
 
 const formElementBase = {
     type: FormElementTypes.layout,
@@ -35,7 +36,8 @@ const formElementBase = {
             modified_by: mockModifier,
             id_value: null,
             attribute: mockAttribute,
-            metadata: null
+            metadata: null,
+            version: null
         }
     ],
     settings: {}
@@ -55,7 +57,7 @@ export const mockFormElementInput: FormElement<{}> = {
     id: 'input_element',
     containerId: '__root',
     settings: {attribute: 'test_attribute'},
-    attribute: mockFormAttribute,
+    attribute: {...mockFormAttribute, versions_conf: {versionable: false, profile: null}},
     uiElement: () => <div>{FormFieldTypes.TEXT_INPUT}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.TEXT_INPUT
@@ -71,7 +73,18 @@ export const mockFormElementDate: FormElement<{}> = {
     uiElementType: FormFieldTypes.DATE
 };
 
-export const mockLinkValue: RECORD_FORM_recordForm_elements_values_LinkValue = {
+export const mockFormElementInputVersionable: FormElement<{}> = {
+    ...mockFormElementInput,
+    attribute: {
+        ...mockFormElementInput.attribute,
+        versions_conf: {
+            versionable: true,
+            profile: mockVersionProfile
+        }
+    }
+};
+
+export const mockLinkValue: RecordFormElementsValueLinkValue = {
     linkValue: {
         id: '123456',
         whoAmI: {
@@ -83,7 +96,8 @@ export const mockLinkValue: RECORD_FORM_recordForm_elements_values_LinkValue = {
     created_by: mockModifier,
     modified_by: mockModifier,
     id_value: null,
-    metadata: null
+    metadata: null,
+    version: null
 };
 
 export const mockFormElementLink: FormElement<{}> = {
@@ -109,6 +123,17 @@ export const mockFormElementLink: FormElement<{}> = {
         linkValuesList: {enable: false, allowFreeEntry: false, values: []}
     },
     values: [mockLinkValue]
+};
+
+export const mockFormElementLinkVersionable: FormElement<{}> = {
+    ...mockFormElementLink,
+    attribute: {
+        ...mockFormElementLink.attribute,
+        versions_conf: {
+            versionable: true,
+            profile: mockVersionProfile
+        }
+    }
 };
 
 const mockRecord = {
@@ -205,8 +230,8 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
         treeValuesList: {enable: false, allowFreeEntry: false, values: []}
     },
     values: [
-        {...(mockTreeValueA as RECORD_FORM_recordForm_elements_values_TreeValue), metadata: null},
-        {...(mockTreeValueB as RECORD_FORM_recordForm_elements_values_TreeValue), metadata: null}
+        {...((mockTreeValueA as unknown) as RecordFormElementsValueTreeValue)},
+        {...((mockTreeValueB as unknown) as RecordFormElementsValueTreeValue)}
     ]
 };
 
@@ -250,7 +275,7 @@ export const mockCommonFormElementProps: Partial<IFormElementProps<any>> = {
     onDeleteMultipleValues: jest.fn()
 };
 
-export const mockRecordForm: RECORD_FORM_recordForm = {
+export const mockRecordForm: IRecordForm = {
     id: 'edition_form',
     library: {
         id: 'test_lib'

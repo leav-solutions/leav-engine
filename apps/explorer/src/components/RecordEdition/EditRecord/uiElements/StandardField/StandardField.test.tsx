@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
     EditRecordReducerActionsTypes,
@@ -9,11 +8,14 @@ import {
 } from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import * as useRefreshFieldValues from 'hooks/useRefreshFieldValues/useRefreshFieldValues';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {act, render, screen} from '_tests/testUtils';
 import {mockFormAttribute} from '__mocks__/common/attribute';
 import {mockFormElementInput} from '__mocks__/common/form';
+import {mockRecord} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
 import {
     APICallStatus,
@@ -31,8 +33,12 @@ jest.mock('hooks/LangHook/LangHook');
 describe('StandardField', () => {
     const mockEditRecordModalDispatch = jest.fn();
     jest.spyOn(useEditRecordModalReducer, 'useEditRecordModalReducer').mockImplementation(() => ({
-        state: initialState,
+        state: {...initialState, record: {...mockRecord}},
         dispatch: mockEditRecordModalDispatch
+    }));
+
+    jest.spyOn(useRefreshFieldValues, 'default').mockImplementation(() => ({
+        fetchValues: jest.fn()
     }));
 
     const mockRecordValuesCommon = {
@@ -41,7 +47,8 @@ describe('StandardField', () => {
         created_by: mockModifier,
         modified_by: mockModifier,
         id_value: null,
-        metadata: null
+        metadata: null,
+        version: null
     };
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -441,9 +448,10 @@ describe('StandardField', () => {
                 userEvent.click(screen.getByText('My value'));
             });
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith([
-                {idValue: null, value: 'My value', attribute: mockFormElementWithValuesList.attribute}
-            ]);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(
+                [{idValue: null, value: 'My value', attribute: mockFormElementWithValuesList.attribute}],
+                null
+            );
         });
 
         test('On Enter, first matching value is selected', async () => {
@@ -457,13 +465,16 @@ describe('StandardField', () => {
                 userEvent.type(editingInputElem, '{enter}');
             });
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith([
-                {
-                    idValue: null,
-                    value: 'My value',
-                    attribute: mockFormElementWithValuesList.attribute
-                }
-            ]);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(
+                [
+                    {
+                        idValue: null,
+                        value: 'My value',
+                        attribute: mockFormElementWithValuesList.attribute
+                    }
+                ],
+                null
+            );
         });
 
         test('If no match, display a message', async () => {

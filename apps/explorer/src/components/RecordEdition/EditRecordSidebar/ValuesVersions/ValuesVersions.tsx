@@ -1,16 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ArrowRightOutlined, UndoOutlined} from '@ant-design/icons';
-import {Button, Space} from 'antd';
-import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
-import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {CloseOutlined} from '@ant-design/icons';
+import {Space} from 'antd';
+import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
+import BasicButton from 'components/shared/BasicButton';
 import ValuesVersionConfigurator from 'components/shared/ValuesVersionConfigurator';
-import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {GrUndo} from 'react-icons/gr';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {IValuesVersion} from '_types/types';
+import {IValueVersion} from '_types/types';
 
 const Wrapper = styled.div`
     display: grid;
@@ -35,7 +36,7 @@ const Footer = styled(Space)`
     padding: 0.3rem;
 `;
 
-const CloseButton = styled(ArrowRightOutlined)`
+const CloseButton = styled(CloseOutlined)`
     cursor: pointer;
     background: none;
     box-shadow: none;
@@ -44,11 +45,14 @@ const CloseButton = styled(ArrowRightOutlined)`
 
 function ValuesVersions(): JSX.Element {
     const {t} = useTranslation();
-    const {state, dispatch} = useEditRecordReducer();
-    const [selectedVersion, setSelectedVersion] = useState<IValuesVersion>(state.valuesVersion);
+    const {state, dispatch} = useEditRecordModalReducer();
+    const isInCreation = !state?.record;
 
-    const _handleVersionChange = (version: IValuesVersion) => {
-        setSelectedVersion(version);
+    const _handleVersionChange = (version: IValueVersion) => {
+        dispatch({
+            type: EditRecordReducerActionsTypes.SET_VALUES_VERSION,
+            valuesVersion: version
+        });
     };
 
     const _handleClosePanel = () => {
@@ -58,34 +62,36 @@ function ValuesVersions(): JSX.Element {
         });
     };
 
-    const _handleClickApply = () => {
+    const _handleClickReset = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_VALUES_VERSION,
-            valuesVersion: selectedVersion
+            valuesVersion: state.originValuesVersion
         });
-    };
-
-    const _handleClickReset = () => {
-        setSelectedVersion(state.valuesVersion);
     };
 
     return (
         <Wrapper>
             <Header>
                 <span>{t('values_version.title')}</span>
-                <CloseButton onClick={_handleClosePanel} />
+                <span>
+                    {!isInCreation && (
+                        <BasicButton
+                            title={t('values_version.reset')}
+                            shape="circle"
+                            centered
+                            icon={<GrUndo />}
+                            onClick={_handleClickReset}
+                        />
+                    )}
+                    <CloseButton onClick={_handleClosePanel} />
+                </span>
             </Header>
             <ValuesVersionConfigurator
-                libraryId={state.record.library.id}
-                selectedVersion={selectedVersion}
+                libraryId={state.libraryId}
+                selectedVersion={state.valuesVersion}
                 onVersionChange={_handleVersionChange}
+                readOnly={isInCreation}
             />
-            <Footer>
-                <Button icon={<UndoOutlined />} onClick={_handleClickReset} />
-                <Button type="primary" onClick={_handleClickApply}>
-                    {t('values_version.apply')}
-                </Button>
-            </Footer>
         </Wrapper>
     );
 }

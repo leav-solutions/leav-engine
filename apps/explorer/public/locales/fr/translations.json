@@ -502,8 +502,12 @@
     },
     "values_version": {
         "title": "Versions de valeurs",
+        "version": "Version",
         "select_version": "Sélectionner une version",
-        "apply": "Appliquer"
+        "apply": "Appliquer",
+        "inherited_value": "valeur héritée",
+        "inherited_from": "Hérité de",
+        "reset": "Réinitialiser"
     },
     "notifications": {
         "title": "Notifications",

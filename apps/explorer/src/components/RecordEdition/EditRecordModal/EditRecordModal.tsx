@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {Button, Tooltip} from 'antd';
+import {Button, Space, Tooltip} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
@@ -32,7 +32,7 @@ import {
     SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue,
     SAVE_VALUE_BATCH_saveValueBatch_values_Value
 } from '_gqlTypes/SAVE_VALUE_BATCH';
-import {InfoPriority, InfoType, IValuesVersion, PreviewSize} from '_types/types';
+import {InfoPriority, InfoType, IValueVersion, PreviewSize} from '_types/types';
 import EditRecord from '../EditRecord';
 import useDeleteValueMutation from '../EditRecord/hooks/useDeleteValueMutation';
 import useSaveValueBatchMutation from '../EditRecord/hooks/useSaveValueBatchMutation';
@@ -47,10 +47,14 @@ import {
     MetadataSubmitValueFunc,
     SubmitValueFunc
 } from '../EditRecord/_types';
-import {EditRecordReducerActionsTypes, initialState} from '../editRecordModalReducer/editRecordModalReducer';
+import editRecordModalReducer, {
+    EditRecordReducerActionsTypes,
+    initialState
+} from '../editRecordModalReducer/editRecordModalReducer';
 import {EditRecordModalReducerContext} from '../editRecordModalReducer/editRecordModalReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext from './creationErrorContext';
+import ValuesVersionSummary from './ValuesVersionSummary';
 
 interface IEditRecordModalProps {
     open: boolean;
@@ -58,7 +62,7 @@ interface IEditRecordModalProps {
     library: string;
     onClose: () => void;
     afterCreate?: (newRecord: RecordIdentity_whoAmI) => void;
-    valuesVersion?: IValuesVersion;
+    valuesVersion?: IValueVersion;
 }
 
 interface IPendingValues {
@@ -67,13 +71,12 @@ interface IPendingValues {
 
 const modalWidth = 1200;
 const sidebarWidth = 300;
-const contentHeight = 'calc(100vh - 16.5rem)';
 
 const Container = styled.div`
     height: calc(100vh - 12rem);
     display: grid;
     grid-template-columns: minmax(0, ${modalWidth - sidebarWidth}px) ${sidebarWidth}px;
-    grid-template-rows: 4rem auto;
+    grid-template-rows: 3.5rem auto;
     grid-template-areas:
         'title title'
         'content sidebar';
@@ -104,7 +107,6 @@ const HeaderIcons = styled.div`
 `;
 
 const Content = styled.div`
-    height: ${contentHeight};
     grid-area: content;
     padding: 1em;
     overflow-x: hidden;
@@ -113,7 +115,6 @@ const Content = styled.div`
 `;
 
 const Sidebar = styled.div`
-    height: ${contentHeight};
     overflow-x: hidden;
     overflow-y: scroll;
     position: relative;
@@ -121,6 +122,11 @@ const Sidebar = styled.div`
     background: ${themingVar['@leav-secondary-bg']};
     border-top-right-radius: 3px;
     z-index: 1;
+`;
+
+const ModalFooter = styled.div`
+    display: flex;
+    justify-content: space-between;
 `;
 
 const StyledModal = styled(Modal)`
@@ -145,7 +151,9 @@ function EditRecordModal({
     const [state, dispatch] = useReducer(editRecordModalReducer, {
         ...initialState,
         record,
-        valuesVersion
+        libraryId: library,
+        valuesVersion,
+        originValuesVersion: valuesVersion
     });
 
     const {loading: permissionsLoading, canEdit, isReadOnly} = useCanEditRecord(
@@ -166,7 +174,7 @@ function EditRecordModal({
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
     const hasPendingValues = !!Object.keys(pendingValues).length;
 
-    const _handleValueSubmit: SubmitValueFunc = async values => {
+    const _handleValueSubmit: SubmitValueFunc = async (values, version) => {
         if (!isCreationMode) {
             // In Edition mode, submit values immediately and send result back to children
             return saveValues(
@@ -188,7 +196,8 @@ function EditRecordModal({
                     }
 
                     return savableValue as IValueToSubmit;
-                })
+                }),
+                version
             );
         }
 
@@ -263,14 +272,17 @@ function EditRecordModal({
                 break;
         }
 
-        return _handleValueSubmit([
-            {
-                idValue: value.id_value,
-                attribute,
-                value: valueContent,
-                metadata
-            }
-        ]);
+        return _handleValueSubmit(
+            [
+                {
+                    idValue: value.id_value,
+                    attribute,
+                    value: valueContent,
+                    metadata
+                }
+            ],
+            null
+        );
     };
 
     /**
@@ -332,7 +344,7 @@ function EditRecordModal({
                 return [...allValues, ...attributeValues];
             }, []);
 
-            const saveRes = await saveValues(newRecord, valuesToSave);
+            const saveRes = await saveValues(newRecord, valuesToSave, state.valuesVersion);
 
             // All encountered errors are available for children, grouped by attribute ID
             if (saveRes.status === APICallStatus.ERROR || saveRes.status === APICallStatus.PARTIAL) {
@@ -368,14 +380,15 @@ function EditRecordModal({
         };
     };
 
-    const _handleDeleteAllValues: DeleteMultipleValuesFunc = async (attribute, values) => {
+    const _handleDeleteAllValues: DeleteMultipleValuesFunc = async (attribute, values, version) => {
         if (!isCreationMode) {
             const valuesToSave = values.map(value => ({
                 idValue: value.id_value,
                 attribute,
                 value: null
             }));
-            return saveValues(record, valuesToSave, true);
+
+            return saveValues(record, valuesToSave, version, true);
         }
 
         const newPendingValues = {...pendingValues};
@@ -391,7 +404,7 @@ function EditRecordModal({
     const _handleClickValuesVersions = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-            content: 'valuesVersions'
+            content: state.sidebarContent === 'valuesVersions' ? 'summary' : 'valuesVersions'
         });
     };
 
@@ -417,6 +430,21 @@ function EditRecordModal({
         );
     }
 
+    const footer = (
+        <ModalFooter>
+            {state.valuesVersion ? (
+                <ValuesVersionSummary
+                    libraryId={library}
+                    version={state.valuesVersion}
+                    onVersionClick={_handleClickValuesVersions}
+                />
+            ) : (
+                <div></div>
+            )}
+            <Space>{footerButtons}</Space>
+        </ModalFooter>
+    );
+
     return open ? (
         <div onClick={e => e.stopPropagation()} onDoubleClick={e => e.stopPropagation()}>
             <StyledModal
@@ -428,7 +456,7 @@ function EditRecordModal({
                 centered
                 style={{padding: 0, maxWidth: `${modalWidth}px`}}
                 bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
-                footer={footerButtons}
+                footer={footer}
             >
                 {permissionsLoading ? (
                     <Loading />

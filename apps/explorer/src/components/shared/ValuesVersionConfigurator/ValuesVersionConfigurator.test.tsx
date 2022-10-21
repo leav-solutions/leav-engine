@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {getVersionableAttributesByLibraryQuery} from 'graphQL/queries/attributes/getVersionableAttributesByLibrary';
-import {act, render, screen} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockAttributeVersionable} from '__mocks__/common/attribute';
 import ValuesVersionConfigurator from './ValuesVersionConfigurator';
 
@@ -16,7 +16,9 @@ jest.mock('components/shared/SelectTreeNodeModal', () => {
 });
 
 describe('VersionsPanel', () => {
-    test('Render test', async () => {
+    beforeEach(() => jest.clearAllMocks());
+
+    test('Display version trees', async () => {
         const mocks = [
             {
                 request: {
@@ -34,8 +36,18 @@ describe('VersionsPanel', () => {
             }
         ];
 
-        render(<ValuesVersionConfigurator libraryId="test_lib" selectedVersion={null} onVersionChange={jest.fn()} />, {
-            apolloMocks: mocks
+        await act(async () => {
+            render(
+                <ValuesVersionConfigurator
+                    readOnly={false}
+                    libraryId="test_lib"
+                    selectedVersion={null}
+                    onVersionChange={jest.fn()}
+                />,
+                {
+                    apolloMocks: mocks
+                }
+            );
         });
 
         expect(
@@ -47,5 +59,50 @@ describe('VersionsPanel', () => {
         });
 
         expect(await screen.findByText(/SelectTreeNodeModal/i)).toBeInTheDocument();
+    });
+
+    test('If readonly, do not open tree node selection', async () => {
+        const mocks = [
+            {
+                request: {
+                    query: getVersionableAttributesByLibraryQuery,
+                    variables: {libraryId: 'test_lib'}
+                },
+                result: {
+                    data: {
+                        attributes: {
+                            list: [mockAttributeVersionable],
+                            __typename: 'AttributesList'
+                        }
+                    }
+                }
+            }
+        ];
+
+        await act(async () => {
+            render(
+                <ValuesVersionConfigurator
+                    readOnly
+                    libraryId="test_lib"
+                    selectedVersion={null}
+                    onVersionChange={jest.fn()}
+                />,
+                {
+                    apolloMocks: mocks
+                }
+            );
+        });
+
+        await waitFor(async () =>
+            expect(
+                await screen.findByText(mockAttributeVersionable.versions_conf.profile.trees[0].label.fr)
+            ).toBeInTheDocument()
+        );
+
+        // expect(
+        //     await screen.findByText(mockAttributeVersionable.versions_conf.profile.trees[0].label.fr)
+        // ).toBeInTheDocument();
+
+        expect(screen.getByRole('button', {name: /select_version/i})).toBeDisabled();
     });
 });

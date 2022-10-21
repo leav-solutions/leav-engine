@@ -19,26 +19,36 @@ import {
 } from 'graphQL/queries/records/getRecordColumnsValues';
 import {IRecordPropertyLink, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
+import {RecordFormElementsValueLinkValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import {useContext, useEffect, useState} from 'react';
+import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
+import {Reducer, useContext, useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {localizedTranslation} from 'utils';
+import {arrayValueVersionToObject, localizedTranslation} from 'utils';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {
-    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
-    RECORD_FORM_recordForm_elements_values_LinkValue
-} from '_gqlTypes/RECORD_FORM';
+import {RECORD_FORM_recordForm_elements_attribute_LinkAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {IRecordIdentityWhoAmI, PreviewSize} from '_types/types';
+import getActiveFieldValues from '../../helpers/getActiveFieldValues';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
+import linkFieldReducer from '../../reducers/linkFieldReducer';
+import {
+    computeInitialState,
+    ILinkFieldState,
+    LinkFieldReducerActions,
+    LinkFieldReducerActionsType
+} from '../../reducers/linkFieldReducer/linkFieldReducer';
 import AddValueBtn from '../../shared/AddValueBtn';
 import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
+import InheritedFieldLabel from '../../shared/InheritedFieldLabel';
 import NoValue from '../../shared/NoValue';
 import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
-import {APICallStatus, IFormElementProps} from '../../_types';
+import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
+import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
+import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import FloatingMenuHandler from './FloatingMenuHandler';
 import ValuesAdd from './ValuesAdd';
 
@@ -94,9 +104,12 @@ const _isTreeValue = (value: RecordColumnValue): value is IRecordColumnValueTree
 export interface IRowData {
     key: string;
     whoAmI: IRecordIdentityWhoAmI;
-    value: IRecordPropertyLink;
+    value: RecordFormElementsValueLinkValue;
     [columnName: string]: unknown;
 }
+
+type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
+type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
 
 function LinkField({
     element,
@@ -108,32 +121,46 @@ function LinkField({
     const [{lang}] = useLang();
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const {state: editRecordModalState, dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
-    const recordValues = (element.values as RECORD_FORM_recordForm_elements_values_LinkValue[]) ?? [];
     const creationErrors = useContext(CreationErrorContext);
+    const isInCreationMode = record === null;
 
-    const attribute = element.attribute as RECORD_FORM_recordForm_elements_attribute_LinkAttribute;
-    const settings = element.settings as IFormLinkFieldSettings;
+    const [state, dispatch] = useReducer<Reducer<LinkFieldReducerState, LinkFieldReducerAction>>(
+        linkFieldReducer,
+        computeInitialState({
+            element,
+            formVersion: editRecordModalState.valuesVersion,
+            isRecordReadOnly,
+            record
+        })
+    );
+
+    const {fetchValues} = useRefreshFieldValues(record?.library?.id, state.attribute.id, record?.id);
+
+    const attribute = state.attribute as RECORD_FORM_recordForm_elements_attribute_LinkAttribute;
+    const settings = state.formElement.settings as IFormLinkFieldSettings;
     const linkedRecordsColumns = settings?.columns ?? [];
+    const activeValues = getActiveFieldValues(state);
+    const activeVersion = state.values[state.activeScope].version;
 
-    const [errorMessage, setErrorMessage] = useState<string | string[]>();
-    const [isValuesAddVisible, setIsValuesAddVisible] = useState<boolean>();
-    const [fieldValues, setFieldValues] = useState<RECORD_FORM_recordForm_elements_values_LinkValue[]>(recordValues);
     const {loading: recordColumnsLoading, data: recordColumnsData, refetch} = useGetRecordValuesQuery(
         attribute?.linked_library?.id,
         linkedRecordsColumns.map(c => c.id),
-        recordValues.map(r => r.linkValue.id)
+        activeValues.map(r => r.linkValue.id)
     );
 
     // Cancel value editing if value details panel is closed
     useEffect(() => {
-        if (editRecordModalState.activeValue === null && isValuesAddVisible) {
+        if (editRecordModalState.activeValue === null && state.isValuesAddVisible) {
             _handleCloseValuesAdd();
         }
     }, [editRecordModalState.activeValue]);
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
-            setErrorMessage(creationErrors[attribute.id].message);
+            dispatch({
+                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
+                errorMessage: creationErrors[attribute.id].message
+            });
         }
     }, [creationErrors, attribute.id]);
 
@@ -168,11 +195,17 @@ function LinkField({
             }
         });
 
-        setIsValuesAddVisible(true);
+        dispatch({
+            type: LinkFieldReducerActionsType.SET_IS_VALUES_ADD_VISIBLE,
+            isValuesAddVisible: true
+        });
     };
 
     const _handleCloseValuesAdd = () => {
-        setIsValuesAddVisible(false);
+        dispatch({
+            type: LinkFieldReducerActionsType.SET_IS_VALUES_ADD_VISIBLE,
+            isValuesAddVisible: false
+        });
 
         editRecordModalDispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
@@ -184,9 +217,21 @@ function LinkField({
         const deleteRes = await onValueDelete({value: value.linkValue.id, id_value: value.id_value}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            setFieldValues(
-                fieldValues.filter(val => val.id_value !== value.id_value || val.linkValue.id !== value.linkValue.id)
-            );
+            dispatch({
+                type: LinkFieldReducerActionsType.DELETE_VALUE,
+                idValue: value.id_value
+            });
+
+            if (!isInCreationMode) {
+                const freshValues = await fetchValues(state.values[state.activeScope].version);
+
+                dispatch({
+                    type: LinkFieldReducerActionsType.REFRESH_VALUES,
+                    formVersion: editRecordModalState.valuesVersion,
+                    values: freshValues as RecordFormElementsValueLinkValue[]
+                });
+            }
+
             return;
         }
     };
@@ -198,12 +243,25 @@ function LinkField({
             value
         }));
 
-        const res = await onValueSubmit(valuesToSave);
+        const res = await onValueSubmit(valuesToSave, activeVersion);
 
         if (res.status === APICallStatus.ERROR) {
-            setErrorMessage(res.error);
+            dispatch({
+                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
+                errorMessage: res.error
+            });
         } else if (res.values) {
-            setFieldValues([...fieldValues, ...(res.values as SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue[])]);
+            const formattedValues: RecordFormElementsValueLinkValue[] = (res.values as SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue[]).map(
+                v => ({
+                    ...v,
+                    version: arrayValueVersionToObject(v.version)
+                })
+            );
+
+            dispatch({
+                type: LinkFieldReducerActionsType.ADD_VALUES,
+                values: formattedValues
+            });
 
             if (record) {
                 // Fetch columns values for new records
@@ -219,22 +277,54 @@ function LinkField({
 
                 return `${linkedRecordLabel}: ${err.message}`;
             });
-            setErrorMessage(errorsMessage);
+            dispatch({
+                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
+                errorMessage: errorsMessage
+            });
         } else {
-            setIsValuesAddVisible(false);
+            dispatch({
+                type: LinkFieldReducerActionsType.SET_IS_VALUES_ADD_VISIBLE,
+                isValuesAddVisible: false
+            });
         }
     };
 
     const _handleDeleteAllValues = async () => {
-        const deleteRes = await onDeleteMultipleValues(attribute.id, fieldValues);
+        const deleteRes = await onDeleteMultipleValues(
+            attribute.id,
+            getActiveFieldValues(state),
+            state.values[state.activeScope].version
+        );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            setFieldValues([]);
+            dispatch({
+                type: LinkFieldReducerActionsType.DELETE_ALL_VALUES
+            });
+
+            if (!isInCreationMode) {
+                const freshValues = await fetchValues(state.values[state.activeScope].version);
+
+                dispatch({
+                    type: LinkFieldReducerActionsType.REFRESH_VALUES,
+                    formVersion: editRecordModalState.valuesVersion,
+                    values: freshValues as RecordFormElementsValueLinkValue[]
+                });
+            }
         }
 
         if (deleteRes?.errors?.length) {
-            setErrorMessage(deleteRes.errors.map(err => err.message));
+            dispatch({
+                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
+                errorMessage: deleteRes.errors.map(err => err.message)
+            });
         }
+    };
+
+    const _handleScopeChange = (scope: FieldScope) => {
+        dispatch({
+            type: LinkFieldReducerActionsType.CHANGE_ACTIVE_SCOPE,
+            scope
+        });
     };
 
     const isReadOnly = element.attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value;
@@ -275,6 +365,15 @@ function LinkField({
                     </span>
                 );
 
+            const cell = (
+                <>
+                    {!index && attribute.versions_conf?.versionable && (
+                        <ValuesVersionIndicator activeScope={state.activeScope} />
+                    )}
+                    {valueRender}
+                </>
+            );
+
             // Add floating menu (edit, delete...) on the last column to display it at the end of the row
             return index === colsToDisplay.length - 1 ? (
                 <FloatingMenuHandler
@@ -284,46 +383,70 @@ function LinkField({
                     attribute={attribute}
                     isReadOnly={isReadOnly}
                 >
-                    {valueRender}
+                    {cell}
                 </FloatingMenuHandler>
             ) : (
-                valueRender
+                cell
             );
         }
     }));
 
-    const data: IRowData[] = fieldValues.map(val => ({
+    const data: IRowData[] = activeValues.map(val => ({
         key: val.id_value + val.linkValue.id,
         value: val,
         whoAmI: val.linkValue.whoAmI,
         ..._getLinkedRecordColumnsValues(val.linkValue.id)
     }));
 
-    const canAddValue = !isReadOnly && (attribute.multiple_values || !fieldValues.length);
+    const canAddValue = !isReadOnly && (attribute.multiple_values || !activeValues.length);
 
+    const versions = {
+        [FieldScope.CURRENT]: state.values[FieldScope.CURRENT]?.version ?? null,
+        [FieldScope.INHERITED]: state.values[FieldScope.INHERITED]?.version ?? null
+    };
     const tableFooter = () => {
         return (
             <FieldFooter>
                 <div>
-                    {!isReadOnly && !!fieldValues.length && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
+                    {attribute?.versions_conf?.versionable && (
+                        <ValuesVersionBtn
+                            versions={versions}
+                            activeScope={state.activeScope}
+                            onScopeChange={_handleScopeChange}
+                            basic
+                        />
+                    )}
+                    {!isReadOnly && !!activeValues.length && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
                     <ValueDetailsBtn attribute={attribute} value={null} size="small" basic />
                 </div>
-                {!!fieldValues.length && canAddValue && (
-                    <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} linkField />
+                {!!activeValues.length && canAddValue && (
+                    <AddValueBtn
+                        activeScope={state.activeScope}
+                        onClick={_handleAddValue}
+                        disabled={state.isValuesAddVisible}
+                        linkField
+                    />
                 )}
             </FieldFooter>
         );
     };
 
     const _handleCloseError = () => {
-        setErrorMessage('');
+        dispatch({
+            type: LinkFieldReducerActionsType.CLEAR_ERROR_MESSAGE
+        });
     };
 
     return (
         <>
-            {isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
-            <TableWrapper isValuesAddVisible={isValuesAddVisible}>
-                <FieldLabel ellipsis={{rows: 1, tooltip: true}}>{element.settings.label}</FieldLabel>
+            {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
+            <TableWrapper isValuesAddVisible={state.isValuesAddVisible}>
+                <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
+                    {element.settings.label}
+                    {state.activeScope === FieldScope.INHERITED && (
+                        <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+                    )}
+                </FieldLabel>
                 <Table
                     columns={cols}
                     dataSource={data}
@@ -336,15 +459,15 @@ function LinkField({
                     footer={tableFooter}
                     scroll={{y: 280}}
                 />
-                {isValuesAddVisible && canAddValue && (
+                {state.isValuesAddVisible && canAddValue && (
                     <ValuesAdd onAdd={_handleAddValueSubmit} attribute={attribute} onClose={_handleCloseValuesAdd} />
                 )}
             </TableWrapper>
-            {errorMessage && (
+            {state.errorMessage && (
                 <Popover
                     placement="bottomLeft"
-                    visible={!!errorMessage}
-                    content={<ErrorMessage error={errorMessage} onClose={_handleCloseError} />}
+                    visible={!!state.errorMessage}
+                    content={<ErrorMessage error={state.errorMessage} onClose={_handleCloseError} />}
                 ></Popover>
             )}
         </>

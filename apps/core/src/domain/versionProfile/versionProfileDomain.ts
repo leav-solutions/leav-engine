@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {i18n} from 'i18next';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
@@ -11,6 +11,7 @@ import {IAttribute} from '_types/attribute';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreVersionProfileParams, IVersionProfile} from '_types/versionProfile';
 import PermissionError from '../../errors/PermissionError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -28,20 +29,22 @@ export interface IVersionProfileDomain {
 
 interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
+    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.versionProfile'?: IVersionProfileRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.attribute'?: IAttributeRepo;
+    'core.infra.cache.cacheService'?: ICachesService;
     'core.utils'?: IUtils;
-    translator?: i18n;
 }
 
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.infra.versionProfile': versionProfileRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.attribute': attributeRepo = null,
-    'core.utils': utils = null,
-    translator = null
+    'core.infra.cache.cacheService': cacheService = null,
+    'core.utils': utils = null
 }: IDeps): IVersionProfileDomain {
     return {
         async getVersionProfiles({params, ctx}) {
@@ -53,13 +56,9 @@ export default function ({
             return versionProfileRepo.getVersionProfiles({params: initializedParams, ctx});
         },
         async getVersionProfileProperties({id, ctx}) {
-            const searchParams: IGetCoreVersionProfileParams = {
-                filters: {id}
-            };
+            const profile = await getCoreEntityById<IVersionProfile>('versionProfile', id, ctx);
 
-            const profile = await versionProfileRepo.getVersionProfiles({params: searchParams, ctx});
-
-            if (!profile.list.length) {
+            if (!profile) {
                 throw utils.generateExplicitValidationError(
                     'id',
                     {msg: Errors.UNKNOWN_VERSION_PROFILE, vars: {profile: id}},
@@ -67,7 +66,7 @@ export default function ({
                 );
             }
 
-            return profile.list[0];
+            return profile;
         },
         async saveVersionProfile({versionProfile, ctx}) {
             const existingVersionProfile = await versionProfileRepo.getVersionProfiles({
@@ -122,9 +121,16 @@ export default function ({
                 );
             }
 
-            return isNewProfile
-                ? versionProfileRepo.createVersionProfile({profileData: profileToSave, ctx})
-                : versionProfileRepo.updateVersionProfile({profileData: profileToSave, ctx});
+            const savedProfile = isNewProfile
+                ? await versionProfileRepo.createVersionProfile({profileData: profileToSave, ctx})
+                : await versionProfileRepo.updateVersionProfile({profileData: profileToSave, ctx});
+
+            if (!isNewProfile) {
+                const cacheKey = utils.getCoreEntityCacheKey('versionProfile', savedProfile.id);
+                await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
+            }
+
+            return savedProfile;
         },
         async deleteVersionProfile({id, ctx}) {
             const existingVersionProfile = await versionProfileRepo.getVersionProfiles({

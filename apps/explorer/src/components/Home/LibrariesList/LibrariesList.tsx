@@ -11,7 +11,7 @@ import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {useAppDispatch} from 'redux/store';
