@@ -4,7 +4,6 @@
 import Paragraph from 'antd/lib/typography/Paragraph';
 import RecordPreview from 'components/shared/RecordPreview';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, getPreviewSize, localizedTranslation} from 'utils';
 import {RecordIdentity_whoAmI_preview} from '_gqlTypes/RecordIdentity';
@@ -32,30 +31,59 @@ interface IWrapperProps {
     simplistic?: boolean;
 }
 
-const Wrapper = styled.div<IWrapperProps>`
-    border-left: 5px solid ${props => props.recordColor || 'transparent'};
-    display: grid;
-    grid-template-areas: ${props => {
-        if (props.withPreview && props.withLibrary) {
+const _getGridTemplateAreas = (withPreview: boolean, withLibrary: boolean, tile: boolean): string => {
+    if (tile) {
+        if (withPreview) {
+            if (withLibrary) {
+                return `
+                    'preview'
+                    'label'
+                    'sub-label'
+                `;
+            }
             return `
-                'preview label'
-                'preview sub-label'
+                'preview'
+                'label'
             `;
-        } else if (props.withPreview && !props.withLibrary) {
-            return `
-                'preview label'
-            `;
-        } else if (!props.withPreview && props.withLibrary) {
+        }
+
+        if (withLibrary) {
             return `
                 'label'
                 'sub-label'
             `;
-        } else {
+        }
+
+        return "'label'";
+    } else {
+        if (withPreview) {
+            if (withLibrary) {
+                return `
+                    'preview label'
+                    'preview sub-label'
+                `;
+            }
+
             return `
-                'label'
+                'preview label'
             `;
         }
-    }};
+
+        if (withLibrary) {
+            return `
+                'label'
+                'sub-label'
+            `;
+        }
+
+        return "'label'";
+    }
+};
+
+const Wrapper = styled.div<IWrapperProps>`
+    border-left: 5px solid ${props => props.recordColor || 'transparent'};
+    display: grid;
+    grid-template-areas: ${props => _getGridTemplateAreas(props.withPreview, props.withLibrary, props.tile)};}};
 
     grid-template-columns:
         ${props => {

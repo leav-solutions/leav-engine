@@ -82,10 +82,11 @@ function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps
 
                 return (
                     <StandardField
-                        key={`${field.id}_${value.id_value}`}
+                        key={`${field.id}_${value?.id_value}`}
                         element={formElement}
                         onValueSubmit={_handleValueSubmit(field)}
                         onValueDelete={_handleValueDelete(field)}
+                        onDeleteMultipleValues={null}
                         metadataEdit
                     />
                 );

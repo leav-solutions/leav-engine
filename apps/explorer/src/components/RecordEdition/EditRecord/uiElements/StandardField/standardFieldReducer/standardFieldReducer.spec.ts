@@ -271,6 +271,18 @@ describe('standardFieldReducer', () => {
         expect(newState.values[newValueId].displayValue).toBe('');
     });
 
+    test('UPDATE_AFTER_DELETE if deleting all values', async () => {
+        const newState = standardFieldValueReducer(
+            {...initialState, values: {[idValue]: {...mockValue}, [idValue + '2']: {...mockValue}}},
+            {
+                type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
+                allDeleted: true
+            }
+        );
+
+        expect(Object.keys(newState.values)).toEqual([newValueId]);
+    });
+
     test('CANCEL_EDITING', async () => {
         const newState = standardFieldValueReducer(
             {

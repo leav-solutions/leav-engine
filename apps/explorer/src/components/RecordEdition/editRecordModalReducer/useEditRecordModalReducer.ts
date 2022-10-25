@@ -2,6 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useContext} from 'react';
-import {EditRecordReducerContext} from './editRecordReducerContext';
+import {EditRecordModalReducerContext} from './editRecordModalReducerContext';
 
-export const useEditRecordReducer = () => useContext(EditRecordReducerContext);
+export const useEditRecordModalReducer = () => useContext(EditRecordModalReducerContext);

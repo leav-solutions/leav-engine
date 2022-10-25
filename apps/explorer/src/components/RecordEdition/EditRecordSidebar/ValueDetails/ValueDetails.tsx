@@ -3,28 +3,22 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ArrowRightOutlined} from '@ant-design/icons';
 import {Collapse, Divider} from 'antd';
-import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
-import {useEditRecordReducer} from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import PropertiesList from 'components/shared/PropertiesList';
-import RecordCard from 'components/shared/RecordCard';
-import {
-    IRecordPropertyLink,
-    IRecordPropertyTree,
-    RecordProperty
-} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
+import {IRecordPropertyTree, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {checkTypeIsLink, isTypeStandard, localizedTranslation} from 'utils';
+import {isTypeStandard, localizedTranslation} from 'utils';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {
     RECORD_FORM_recordForm_elements_attribute,
     RECORD_FORM_recordForm_elements_attribute_TreeAttribute
 } from '_gqlTypes/RECORD_FORM';
-import {PreviewSize} from '_types/types';
 import {MetadataSubmitValueFunc} from '../../EditRecord/_types';
+import AttributeDetails from './AttributeDetails';
 import TreeValuePath from './TreeValuePath';
+import ValueInfo from './ValueInfo';
 import ValueMetadata from './ValueMetadata';
 
 interface IValueDetailsProps {
@@ -34,13 +28,16 @@ interface IValueDetailsProps {
 }
 
 const AttributeTitle = styled.div`
-    font-weight: bold;
-    padding: 1em;
+    padding: 1rem;
+
+    .attribute-label {
+        font-weight: bold;
+    }
 `;
 
 const AttributeDescription = styled.div`
     color: rgba(0, 0, 0, 0.5);
-    padding: 0 1em;
+    padding: 0 1rem;
 `;
 
 const CloseButton = styled(ArrowRightOutlined)`
@@ -55,85 +52,30 @@ const {Panel} = Collapse;
 function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
-    const {state, dispatch} = useEditRecordReducer();
+    const {state, dispatch} = useEditRecordModalReducer();
 
     const _handleClose = () => dispatch({type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE, value: null});
 
     const metadataFields = (attribute?.metadata_fields ?? []).filter(field => field.permissions.access_attribute);
-    const hasMetadata = metadataFields.length > 0;
-
-    const valueDetailsContent = value?.modified_at
-        ? [
-              {
-                  title: isTypeStandard(attribute.type)
-                      ? t('record_edition.created_at')
-                      : t('record_edition.link_created_at'),
-                  value: `${new Date(value.created_at * 1000).toLocaleString()} ${
-                      value?.created_by ? ` ${t('record_edition.by')} ${value.created_by.whoAmI.label}` : ''
-                  }`
-              },
-              {
-                  title: t('record_edition.modified_at'),
-                  value: `${new Date(value.modified_at * 1000).toLocaleString()} ${
-                      value?.modified_by ? ` ${t('record_edition.by')} ${value.modified_by.whoAmI.label}` : ''
-                  }`
-              }
-          ]
-        : [];
-
-    const attributeDetailsContent = [
-        {
-            title: t('record_edition.attribute.id'),
-            value: attribute.id
-        },
-        {
-            title: t('record_edition.attribute.type'),
-            value: t(`record_edition.attribute.type_${attribute.type}`)
-        },
-        {
-            title: t('record_edition.attribute.format'),
-            value: attribute.format ? t(`record_edition.attribute.format_${attribute.format}`) : null
-        }
-    ];
-
-    const valueDetailsSectionTitle = isTypeStandard(attribute.type)
-        ? t('record_edition.value_details_section')
-        : t('record_edition.link_value_details_section');
-
-    const valueWhoAmI = isTypeStandard(attribute.type)
-        ? null
-        : checkTypeIsLink(attribute.type)
-        ? (value as IRecordPropertyLink).linkValue.whoAmI
-        : (value as IRecordPropertyTree).treeValue.record.whoAmI;
+    const hasMetadata = metadataFields.length > 0 && value !== null;
 
     return (
         <>
             {!state.sidebarCollapsed && <CloseButton onClick={_handleClose} />}
-            <AttributeTitle>{localizedTranslation(attribute.label, lang)}</AttributeTitle>
+            <AttributeTitle>
+                {t('record_edition.attribute.info_title')}:
+                <span className="attribute-label">{localizedTranslation(attribute.label, lang)}</span>
+            </AttributeTitle>
             <AttributeDescription>{localizedTranslation(attribute.description, lang)}</AttributeDescription>
+            <AttributeDetails attribute={attribute} />
             <Divider style={{margin: '.5em 0'}} />
+            <ValueInfo />
             <Collapse
                 bordered={false}
                 defaultActiveKey={['value', 'metadata']}
                 style={{background: 'none'}}
                 destroyInactivePanel
             >
-                <Panel key="attribute" header={t('record_edition.attribute_details_section')}>
-                    <PropertiesList items={attributeDetailsContent} />
-                </Panel>
-                {valueDetailsContent.length && (
-                    <Panel key="value" header={valueDetailsSectionTitle}>
-                        {valueWhoAmI && (
-                            <RecordCard
-                                record={valueWhoAmI}
-                                size={PreviewSize.big}
-                                tile
-                                style={{marginBottom: '1rem'}}
-                            />
-                        )}
-                        <PropertiesList items={valueDetailsContent} />
-                    </Panel>
-                )}
                 {hasMetadata && (
                     <Panel
                         key="metadata"
@@ -146,7 +88,7 @@ function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps):
                         <ValueMetadata value={value} attribute={attribute} onMetadataSubmit={onMetadataSubmit} />
                     </Panel>
                 )}
-                {attribute.type === AttributeType.tree && (
+                {attribute.type === AttributeType.tree && value && (
                     <Panel key="path" header={t('record_edition.path_section')}>
                         <TreeValuePath
                             value={value as IRecordPropertyTree}

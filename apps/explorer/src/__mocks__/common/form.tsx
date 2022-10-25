@@ -9,7 +9,7 @@ import {
     IFormTabsSettings,
     TabsDirection
 } from '@leav/utils';
-import {FormElement} from 'components/RecordEdition/EditRecord/_types';
+import {FormElement, IFormElementProps} from 'components/RecordEdition/EditRecord/_types';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {
@@ -100,7 +100,10 @@ export const mockFormElementLink: FormElement<{}> = {
         linked_library: {
             id: 'test_lib',
             label: {fr: 'Lib'},
-            gqlNames: {query: 'test_lib', type: 'TestLib'}
+            gqlNames: {query: 'test_lib', type: 'TestLib'},
+            permissions: {
+                create_record: true
+            }
         },
         system: false,
         linkValuesList: {enable: false, allowFreeEntry: false, values: []}
@@ -241,11 +244,10 @@ export const mockFormElementTabs: FormElement<IFormTabsSettings> = {
     uiElementType: FormUIElementTypes.TABS
 };
 
-export const mockCommonFormElementProps = {
-    record: mockRecordWhoAmI,
-    recordValues: {},
+export const mockCommonFormElementProps: Partial<IFormElementProps<any>> = {
     onValueDelete: jest.fn(),
-    onValueSubmit: jest.fn()
+    onValueSubmit: jest.fn(),
+    onDeleteMultipleValues: jest.fn()
 };
 
 export const mockRecordForm: RECORD_FORM_recordForm = {

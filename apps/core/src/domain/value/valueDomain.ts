@@ -14,6 +14,7 @@ import * as Config from '_types/config';
 import {IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
 import {EventAction} from '../../_types/event';
@@ -30,6 +31,7 @@ import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
+import {IDeleteValueParams} from './_types';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -78,13 +80,7 @@ export interface IValueDomain {
      *
      * keepEmpty If false, empty values will be deleted (or not saved)
      */
-    saveValueBatch({
-        library,
-        recordId,
-        values,
-        ctx,
-        keepEmpty
-    }: {
+    saveValueBatch(params: {
         library: string;
         recordId: string;
         values: IValue[];
@@ -92,33 +88,24 @@ export interface IValueDomain {
         keepEmpty?: boolean;
     }): Promise<ISaveBatchValueResult>;
 
-    deleteValue({
-        library,
-        recordId,
-        attribute,
-        value,
-        ctx
-    }: {
-        library: string;
-        recordId: string;
-        attribute: string;
-        value?: IValue;
-        ctx: IQueryInfos;
-    }): Promise<IValue>;
+    deleteValue(params: IDeleteValueParams): Promise<IValue>;
 
-    formatValue({
-        attribute,
-        value,
-        record,
-        library,
-        ctx
-    }: {
+    formatValue(params: {
         attribute: IAttribute;
         value: IValue;
         record: IRecord;
         library: string;
         ctx: IQueryInfos;
     }): Promise<IValue>;
+
+    runActionsList(
+        listName: ActionsListEvents,
+        value: IValue,
+        attrProps: IAttribute,
+        record: IRecord,
+        library: string,
+        ctx: IQueryInfos
+    ): Promise<IValue>;
 }
 
 interface IDeps {
@@ -159,7 +146,7 @@ const valueDomain = function ({
     /**
      * Run actions list on a value
      *
-     * @param isLinkAttribute
+     * @param listName
      * @param value
      * @param attrProps
      * @param record
@@ -167,21 +154,143 @@ const valueDomain = function ({
      * @param ctx
      */
     const _runActionsList = async (
+        listName: ActionsListEvents = ActionsListEvents.GET_VALUE,
         value: IValue,
         attrProps: IAttribute,
         record: IRecord,
         library: string,
         ctx: IQueryInfos
     ) => {
-        return !!attrProps.actions_list && !!attrProps.actions_list.getValue
-            ? actionsListDomain.runActionsList(attrProps.actions_list.getValue, value, {
+        const processedValue = await (!!attrProps.actions_list && !!attrProps.actions_list?.[listName]
+            ? actionsListDomain.runActionsList(attrProps.actions_list?.[listName], value, {
                   ...ctx,
                   attribute: attrProps,
                   recordId: record.id,
                   library,
                   value
               })
-            : value;
+            : value);
+
+        if (utils.isStandardAttribute(attrProps)) {
+            (processedValue as IStandardValue).raw_value = value.value;
+        }
+        return processedValue;
+    };
+
+    const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
+        // Check permission
+        const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
+            action: RecordPermissionsActions.EDIT_RECORD,
+            userId: ctx.userId,
+            library,
+            recordId,
+            ctx
+        });
+
+        if (!canUpdateRecord) {
+            throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
+        }
+
+        const isAllowedToDelete = await recordAttributePermissionDomain.getRecordAttributePermission(
+            RecordAttributePermissionsActions.EDIT_VALUE,
+            ctx.userId,
+            attribute,
+            library,
+            recordId,
+            ctx
+        );
+
+        if (!isAllowedToDelete) {
+            throw new PermissionError(RecordAttributePermissionsActions.EDIT_VALUE);
+        }
+
+        const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+
+        if (attributeProps.readonly) {
+            throw new ValidationError<IValue>({attribute: Errors.READONLY_ATTRIBUTE});
+        }
+
+        let reverseLink: IAttribute;
+        if (!!attributeProps.reverse_link) {
+            reverseLink = await attributeDomain.getAttributeProperties({
+                id: attributeProps.reverse_link as string,
+                ctx
+            });
+        }
+
+        // if simple attribute type
+        let v: IValue;
+        if (attributeProps.type === AttributeTypes.SIMPLE || attributeProps.type === AttributeTypes.SIMPLE_LINK) {
+            v = (
+                await valueRepo.getValues({
+                    library,
+                    recordId,
+                    attribute: {...attributeProps, reverse_link: reverseLink},
+                    ctx
+                })
+            ).pop();
+        } else if (
+            attributeProps.type === AttributeTypes.ADVANCED_LINK &&
+            reverseLink?.type === AttributeTypes.SIMPLE_LINK
+        ) {
+            const values = await valueRepo.getValues({
+                library,
+                recordId,
+                attribute: {...attributeProps, reverse_link: reverseLink},
+                ctx
+            });
+
+            v = values.filter(val => val.value.id === value.value).pop();
+        } else if (!!value.id_value) {
+            v = await valueRepo.getValueById({
+                library,
+                recordId,
+                attribute: attributeProps,
+                valueId: value.id_value,
+                ctx
+            });
+        }
+
+        if (!v) {
+            throw new ValidationError({id: Errors.UNKNOWN_VALUE});
+        }
+
+        const actionsListRes =
+            !!attributeProps.actions_list && !!attributeProps.actions_list.deleteValue
+                ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, v, {
+                      attribute: attributeProps,
+                      recordId,
+                      library,
+                      v
+                  })
+                : v;
+
+        const res: IValue = await valueRepo.deleteValue({
+            library,
+            recordId,
+            attribute: {...attributeProps, reverse_link: reverseLink},
+            value: actionsListRes,
+            ctx
+        });
+
+        // Make sure attribute is returned here
+        res.attribute = attribute;
+
+        // delete value on elasticsearch
+        await eventsManager.sendDatabaseEvent(
+            {
+                action: EventAction.VALUE_DELETE,
+                data: {
+                    libraryId: library,
+                    recordId,
+                    attributeId: attribute,
+                    value: {old: actionsListRes}
+                }
+            },
+            ctx
+        );
+
+        return res;
     };
 
     return {
@@ -257,7 +366,10 @@ const valueDomain = function ({
                 // Retrieve appropriate value among all values
                 values = options?.forceGetAllValues ? allValues : findValue(trees, allValues);
             }
-
+            // Runs actionsList
+            values = await Promise.all(
+                values.map(v => _runActionsList(ActionsListEvents.GET_VALUE, v, attr, {id: recordId}, library, ctx))
+            );
             return values;
         },
         async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
@@ -343,9 +455,19 @@ const valueDomain = function ({
             );
 
             // Apply actions list on value
-            const processedValue = await this.formatValue({
+            let processedValue = await _runActionsList(
+                ActionsListEvents.GET_VALUE,
+                savedVal,
+                attributeProps,
+                record,
+                library,
+                ctx
+            );
+
+            // Apply formating
+            processedValue = await this.formatValue({
                 attribute: attributeProps,
-                value: savedVal,
+                value: processedValue,
                 record,
                 library,
                 ctx
@@ -363,6 +485,20 @@ const valueDomain = function ({
                 async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
                     const prevRes = await promPrevRes;
                     try {
+                        if (value.value === null && !keepEmpty) {
+                            const deletedVal = await _executeDeleteValue({
+                                library,
+                                value,
+                                recordId,
+                                attribute: value.attribute,
+                                ctx
+                            });
+
+                            prevRes.values.push(deletedVal);
+
+                            return prevRes;
+                        }
+
                         const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
 
                         let reverseLink: IAttribute;
@@ -512,141 +648,20 @@ const valueDomain = function ({
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
 
-            // Check permission
-            const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
-                action: RecordPermissionsActions.EDIT_RECORD,
-                userId: ctx.userId,
-                library,
-                recordId,
-                ctx
-            });
-
-            if (!canUpdateRecord) {
-                throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
-            }
-
-            const isAllowedToDelete = await recordAttributePermissionDomain.getRecordAttributePermission(
-                RecordAttributePermissionsActions.EDIT_VALUE,
-                ctx.userId,
-                attribute,
-                library,
-                recordId,
-                ctx
-            );
-
-            if (!isAllowedToDelete) {
-                throw new PermissionError(RecordAttributePermissionsActions.EDIT_VALUE);
-            }
-
-            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-
-            if (attributeProps.readonly) {
-                throw new ValidationError<IValue>({attribute: Errors.READONLY_ATTRIBUTE});
-            }
-
-            let reverseLink: IAttribute;
-            if (!!attributeProps.reverse_link) {
-                reverseLink = await attributeDomain.getAttributeProperties({
-                    id: attributeProps.reverse_link as string,
-                    ctx
-                });
-            }
-
-            // if simple attribute type
-            let v: IValue;
-            if (attributeProps.type === AttributeTypes.SIMPLE || attributeProps.type === AttributeTypes.SIMPLE_LINK) {
-                v = (
-                    await valueRepo.getValues({
-                        library,
-                        recordId,
-                        attribute: {...attributeProps, reverse_link: reverseLink},
-                        ctx
-                    })
-                ).pop();
-            } else if (
-                attributeProps.type === AttributeTypes.ADVANCED_LINK &&
-                reverseLink?.type === AttributeTypes.SIMPLE_LINK
-            ) {
-                const values = await valueRepo.getValues({
-                    library,
-                    recordId,
-                    attribute: {...attributeProps, reverse_link: reverseLink},
-                    ctx
-                });
-
-                v = values.filter(val => val.value.id === value.value).pop();
-            } else if (!!value.id_value) {
-                v = await valueRepo.getValueById({
-                    library,
-                    recordId,
-                    attribute: attributeProps,
-                    valueId: value.id_value,
-                    ctx
-                });
-            }
-
-            if (!v) {
-                throw new ValidationError({id: Errors.UNKNOWN_VALUE});
-            }
-
-            const actionsListRes =
-                !!attributeProps.actions_list && !!attributeProps.actions_list.deleteValue
-                    ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, v, {
-                          attribute: attributeProps,
-                          recordId,
-                          library,
-                          v
-                      })
-                    : v;
-
-            const res: IValue = await valueRepo.deleteValue({
-                library,
-                recordId,
-                attribute: {...attributeProps, reverse_link: reverseLink},
-                value: actionsListRes,
-                ctx
-            });
-
-            // Make sure attribute is returned here
-            res.attribute = attribute;
-
-            // delete value on elasticsearch
-            await eventsManager.sendDatabaseEvent(
-                {
-                    action: EventAction.VALUE_DELETE,
-                    data: {
-                        libraryId: library,
-                        recordId,
-                        attributeId: attribute,
-                        value: {old: actionsListRes}
-                    }
-                },
-                ctx
-            );
-
-            return res;
+            return _executeDeleteValue({library, recordId, attribute, value, ctx});
         },
         async formatValue({attribute, value, record, library, ctx}) {
-            let val = {...value}; // Don't mutate given value
+            let processedValue = {...value}; // Don't mutate given value
 
             const isLinkAttribute =
                 attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
 
             if (isLinkAttribute && attribute.linked_library) {
-                const linkValue = {...val.value, library: attribute.linked_library};
-                val = {...value, value: linkValue};
+                const linkValue = {...processedValue.value, library: attribute.linked_library};
+                processedValue = {...value, value: linkValue};
             }
-
-            const processedValue: IValue =
-                attribute.id !== 'id' && !!attribute.actions_list && !!attribute.actions_list.getValue
-                    ? await _runActionsList(val, attribute, record, library, ctx)
-                    : val;
 
             processedValue.attribute = attribute.id;
-
-            if (utils.isStandardAttribute(attribute)) {
-                (processedValue as IStandardValue).raw_value = val.value;
-            }
 
             // Format metadata values as well
             if ((attribute.metadata_fields ?? []).length) {
@@ -682,7 +697,8 @@ const valueDomain = function ({
             }
 
             return processedValue;
-        }
+        },
+        runActionsList: _runActionsList
     };
 };
 

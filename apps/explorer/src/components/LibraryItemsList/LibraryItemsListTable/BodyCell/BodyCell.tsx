@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {Cell as ReactTableTypeCell} from 'react-table';
 import styled from 'styled-components';
+import themingVar from 'themingVar';
 import {infosCol, selectionColumn} from '../../../../constants/constants';
 import {ITableRow} from '../../../../_types/types';
 import Cell from '../Cell';
@@ -13,6 +13,13 @@ import {INFOS_COLUMN_WIDTH} from '../Table';
 const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
     // Inherit background from row. If background is transparent, the sticky column won't behave properly
     background-color: inherit;
+    padding: 4px 0;
+
+    :not(:first-child) {
+        border-left: 1px solid
+            ${props =>
+                props.selected ? themingVar['@leav-background-active'] : themingVar['@leav-light-border-color']};
+    }
 
     max-width: ${p => (p.id === selectionColumn ? '35px' : 'auto')};
 
@@ -49,7 +56,7 @@ function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
     };
 
     if (!cell.value) {
-        return <CustomBodyCell selected={selected} {...props}></CustomBodyCell>;
+        return <CustomBodyCell selected={selected} {...props} />;
     }
 
     return (

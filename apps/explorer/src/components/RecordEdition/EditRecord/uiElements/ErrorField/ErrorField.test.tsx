@@ -20,7 +20,14 @@ describe('ErrorField', () => {
             uiElement: null,
             uiElementType: null
         };
-        render(<ErrorField element={formElement} onValueSubmit={jest.fn()} onValueDelete={jest.fn()} />);
+        render(
+            <ErrorField
+                element={formElement}
+                onValueSubmit={jest.fn()}
+                onValueDelete={jest.fn()}
+                onDeleteMultipleValues={jest.fn()}
+            />
+        );
 
         expect(screen.getByText('Some field')).toBeInTheDocument();
         expect(screen.getByText('Boom!')).toBeInTheDocument();

@@ -1025,25 +1025,28 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr',
                     value: 'test',
+                    raw_value: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
                     value: 'test',
+                    raw_value: 'test',
                     id_value: null
                 },
                 {
                     attribute: 'test_attr3',
                     value: 'test',
+                    raw_value: 'test',
                     id_value: null
                 }
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: global.__mockPromise({value: 'test', id_value: 12345}),
+                updateValue: global.__mockPromise({value: 'test', raw_value: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
-                    {value: 'test', id_value: 12345},
-                    {value: 'test', id_value: null}
+                    {value: 'test', raw_value: 'test', id_value: 12345},
+                    {value: 'test', raw_value: 'test', id_value: null}
                 ]),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
@@ -1613,7 +1616,7 @@ describe('ValueDomain', () => {
 
     describe('getValues', () => {
         test('Should return values', async function () {
-            const valueData = {value: 'test val', attribute: 'test_attr'};
+            const valueData = [{value: 'test val', attribute: 'test_attr'}];
 
             const mockValRepo = {
                 getValues: global.__mockPromise(valueData)
@@ -1623,12 +1626,17 @@ describe('ValueDomain', () => {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
             };
 
+            const mockUtils: Mockify<IUtils> = {
+                isStandardAttribute: global.__mockPromise(true)
+            };
+
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtils as IUtils
             });
 
             const resValue = await valDomain.getValues({
@@ -1644,11 +1652,13 @@ describe('ValueDomain', () => {
 
         test('Should return versioned values in simple mode', async function () {
             const version = {my_tree: '12345'};
-            const valueData = {
-                value: 'test val',
-                attribute: 'test_attr',
-                version
-            };
+            const valueData = [
+                {
+                    value: 'test val',
+                    attribute: 'test_attr',
+                    version
+                }
+            ];
 
             const mockValRepo = {
                 getValues: global.__mockPromise(valueData)
@@ -1657,13 +1667,17 @@ describe('ValueDomain', () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionableSimple)
             };
+            const mockUtils: Mockify<IUtils> = {
+                isStandardAttribute: global.__mockPromise(true)
+            };
 
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
-                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtils as IUtils
             });
 
             const resValue = await valDomain.getValues({
@@ -1702,6 +1716,10 @@ describe('ValueDomain', () => {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
             };
 
+            const mockUtils: Mockify<IUtils> = {
+                isStandardAttribute: global.__mockPromise(true)
+            };
+
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1709,7 +1727,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const version: IValueVersion = {my_tree: '9'};
@@ -1881,7 +1900,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
-                'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain
+                'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain,
+                'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
             const version: IValueVersion = {

@@ -5,10 +5,12 @@ import {ICommonFieldsSettings} from '@leav/utils';
 import {List, Popover} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
+import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import Dimmer from 'components/shared/Dimmer';
 import ErrorMessage from 'components/shared/ErrorMessage';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React, {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {
@@ -19,7 +21,10 @@ import {SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue} from '_gqlTypes/SAVE_V
 import {ITreeNodeWithRecord} from '_types/types';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
+import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
+import FieldFooter from '../../shared/FieldFooter';
 import NoValue from '../../shared/NoValue';
+import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import TreeFieldValue from './TreeFieldValue';
 import ValuesAdd from './ValuesAdd';
@@ -53,13 +58,17 @@ const FieldLabel = styled(Paragraph)`
     }
 `;
 
-const FooterWrapper = styled.div`
-    text-align: left;
-`;
-
-function TreeField({element, onValueSubmit, onValueDelete}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+function TreeField({
+    element,
+    onValueSubmit,
+    onValueDelete,
+    onDeleteMultipleValues
+}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const attribute = element.attribute as RECORD_FORM_recordForm_elements_attribute_TreeAttribute;
-    const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
+
+    const {state: editRecordModalState, dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
+    const {readOnly: isRecordReadOnly} = useRecordEditionContext();
+
     const recordValues = (element.values as RECORD_FORM_recordForm_elements_values_TreeValue[]) ?? [];
     const creationErrors = useContext(CreationErrorContext);
 
@@ -73,6 +82,13 @@ function TreeField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
         ...val,
         key: val.id_value
     }));
+
+    // Cancel value editing if value details panel is closed
+    useEffect(() => {
+        if (editRecordModalState.activeValue === null && isValuesAddVisible) {
+            _handleCloseValuesAdd();
+        }
+    }, [editRecordModalState.activeValue]);
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
@@ -96,6 +112,14 @@ function TreeField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
     const canAddValue = !isReadOnly && (attribute.multiple_values || !fieldValues.length);
 
     const _handleAddValue = () => {
+        editRecordModalDispatch({
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: {
+                attribute,
+                value: null
+            }
+        });
+
         setIsValuesAddVisible(true);
     };
 
@@ -128,14 +152,38 @@ function TreeField({element, onValueSubmit, onValueDelete}: IFormElementProps<IC
         }
     };
 
-    const ListFooter =
-        fieldValues.length && canAddValue ? (
-            <FooterWrapper>
-                <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} linkField />
-            </FooterWrapper>
-        ) : null;
+    const _handleDeleteAllValues = async () => {
+        const deleteRes = await onDeleteMultipleValues(attribute.id, fieldValues);
 
-    const _handleCloseValuesAdd = () => setIsValuesAddVisible(false);
+        if (deleteRes.status === APICallStatus.SUCCESS) {
+            setFieldValues([]);
+        }
+
+        if (deleteRes?.errors?.length) {
+            setErrorMessage(deleteRes.errors.map(err => err.message));
+        }
+    };
+
+    const ListFooter = (
+        <FieldFooter>
+            <div>
+                {!isReadOnly && !!fieldValues.length && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
+                <ValueDetailsBtn attribute={attribute} value={null} size="small" basic />
+            </div>
+            {!!fieldValues.length && canAddValue && (
+                <AddValueBtn onClick={_handleAddValue} disabled={isValuesAddVisible} linkField />
+            )}
+        </FieldFooter>
+    );
+
+    const _handleCloseValuesAdd = () => {
+        setIsValuesAddVisible(false);
+
+        editRecordModalDispatch({
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: null
+        });
+    };
 
     const _handleCloseError = () => {
         setErrorMessage('');

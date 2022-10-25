@@ -26,7 +26,7 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
     const {t} = useTranslation();
 
     return {
-        saveValues: async (record, values) => {
+        saveValues: async (record, values, deleteEmpty = false) => {
             try {
                 const saveRes = await executeSaveValueBatch({
                     variables: {
@@ -35,14 +35,15 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
                         values: values.map(valueToSave => ({
                             attribute: valueToSave.attribute,
                             id_value: valueToSave.idValue,
-                            value: String(valueToSave.value),
+                            value: valueToSave.value !== null ? String(valueToSave.value) : null,
                             metadata: valueToSave.metadata
                                 ? objectToNameValueArray(valueToSave.metadata).map(({name, value}) => ({
                                       name,
                                       value: String(value)
                                   }))
                                 : null
-                        }))
+                        })),
+                        deleteEmpty
                     }
                 });
                 const {values: savedValues, errors} = saveRes.data.saveValueBatch;

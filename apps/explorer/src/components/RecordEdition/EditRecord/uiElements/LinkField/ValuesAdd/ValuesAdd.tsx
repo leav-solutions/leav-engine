@@ -1,11 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {BulbOutlined, CloseOutlined, SearchOutlined} from '@ant-design/icons';
+import {BulbOutlined, CloseOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
+import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import SearchModal from 'components/SearchModal';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import List from 'components/shared/List';
@@ -17,13 +18,13 @@ import {
     IGetRecordsFromLibraryQueryVariables
 } from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {localizedTranslation} from 'utils';
 import {SortOrder} from '_gqlTypes/globalTypes';
-import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values
@@ -70,7 +71,7 @@ const FooterWrapper = styled(Space)`
     padding-top: 1em;
     width: 100%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 `;
 
 const SearchInput = styled(Input.Search)`
@@ -102,10 +103,12 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const [selectedValues, setSelectedValues] = useState<ValueFromList[]>([]);
     const [isSearchModalVisible, setIsSearchModalVisible] = useState<boolean>(false);
+    const [isCreateRecordModalVisible, setIsCreateRecordModalVisible] = useState<boolean>(false);
     const [valuesListCurrentPage, setValuesListCurrentPage] = useState<number>(1);
     const [searchCurrentPage, setSearchCurrentPage] = useState<number>(1);
     const pageSize = 10;
     const canSearch = !attribute.linkValuesList.enable || attribute.linkValuesList.allowFreeEntry;
+    const canCreateRecord = attribute.linked_library.permissions.create_record;
 
     const [runSearch, {loading, error, data: searchData}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
@@ -131,6 +134,14 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const _handleClickAdvancedSearch = () => {
         setIsSearchModalVisible(true);
+    };
+
+    const _handleOpenCreateRecordModal = () => {
+        setIsCreateRecordModalVisible(true);
+    };
+
+    const _handleCloseCreateRecordModal = () => {
+        setIsCreateRecordModalVisible(false);
     };
 
     const _handleSearchModalSubmit = async ({selected}: ISharedStateSelectionSearch) => {
@@ -193,6 +204,15 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         });
     };
 
+    const _handleAfterCreateRecord = (record: RecordIdentity_whoAmI) => {
+        onAdd([
+            {
+                id: record.id,
+                whoAmI: record
+            }
+        ]);
+    };
+
     const currentSearch = searchInputRef?.current?.input?.value;
 
     const searchResult =
@@ -229,11 +249,6 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                         ref={searchInputRef}
                         aria-label={t('record_edition.search_elements')}
                     />
-                    {canSearch && (
-                        <Button icon={<SearchOutlined />} onClick={_handleClickAdvancedSearch}>
-                            {t('record_edition.advanced_search')}
-                        </Button>
-                    )}
                     <CloseButton onClick={_handleClose} role="button" />
                 </SearchActions>
                 <ListsWrapper>
@@ -283,12 +298,26 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                 </ListsWrapper>
                 {attribute.multiple_values && (
                     <FooterWrapper>
-                        <Button size="small" onClick={_handleClose}>
-                            {t('global.cancel')}
-                        </Button>
-                        <PrimaryBtn size="small" onClick={_handleSubmit}>
-                            {t('global.submit')}
-                        </PrimaryBtn>
+                        <Space>
+                            {canSearch && (
+                                <Button size="small" icon={<SearchOutlined />} onClick={_handleClickAdvancedSearch}>
+                                    {t('record_edition.advanced_search')}
+                                </Button>
+                            )}
+                            {canCreateRecord && (
+                                <Button size="small" icon={<PlusOutlined />} onClick={_handleOpenCreateRecordModal}>
+                                    {t('record_edition.new_record')}
+                                </Button>
+                            )}
+                        </Space>
+                        <Space>
+                            <Button size="small" onClick={_handleClose}>
+                                {t('global.cancel')}
+                            </Button>
+                            <PrimaryBtn size="small" onClick={_handleSubmit}>
+                                {t('global.submit')}
+                            </PrimaryBtn>
+                        </Space>
                     </FooterWrapper>
                 )}
             </Wrapper>
@@ -298,6 +327,15 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                     visible={isSearchModalVisible}
                     setVisible={setIsSearchModalVisible}
                     submitAction={_handleSearchModalSubmit}
+                />
+            )}
+            {isCreateRecordModalVisible && (
+                <EditRecordModal
+                    open={isCreateRecordModalVisible}
+                    library={attribute.linked_library.id}
+                    record={null}
+                    onClose={_handleCloseCreateRecordModal}
+                    afterCreate={_handleAfterCreateRecord}
                 />
             )}
         </>

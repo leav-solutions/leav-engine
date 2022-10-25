@@ -6,27 +6,33 @@ import userEvent from '@testing-library/user-event';
 import {
     EditRecordReducerActionsTypes,
     initialState
-} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
-import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
+} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React from 'react';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {mockFormAttribute} from '__mocks__/common/attribute';
 import {mockFormElementInput} from '__mocks__/common/form';
 import {mockModifier} from '__mocks__/common/value';
-import {APICallStatus, DeleteValueFunc, FormElement, ISubmitMultipleResult, SubmitValueFunc} from '../../_types';
+import {
+    APICallStatus,
+    DeleteMultipleValuesFunc,
+    DeleteValueFunc,
+    FormElement,
+    ISubmitMultipleResult,
+    SubmitValueFunc
+} from '../../_types';
 import StandardField from './StandardField';
 
 jest.mock('../../hooks/useDeleteValueMutation');
 jest.mock('hooks/LangHook/LangHook');
 
 describe('StandardField', () => {
-    const mockEditRecordDispatch = jest.fn();
-    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+    const mockEditRecordModalDispatch = jest.fn();
+    jest.spyOn(useEditRecordModalReducer, 'useEditRecordModalReducer').mockImplementation(() => ({
         state: initialState,
-        dispatch: mockEditRecordDispatch
+        dispatch: mockEditRecordModalDispatch
     }));
 
     const mockRecordValuesCommon = {
@@ -71,17 +77,20 @@ describe('StandardField', () => {
     };
     const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
+    const mockHandleMultipleValues: DeleteMultipleValuesFunc = jest
+        .fn()
+        .mockReturnValue({status: APICallStatus.SUCCESS});
+
+    const baseProps = {
+        onValueSubmit: mockHandleSubmit,
+        onValueDelete: mockHandleDelete,
+        onDeleteMultipleValues: mockHandleMultipleValues
+    };
 
     beforeEach(() => jest.clearAllMocks());
 
     test('Render text field, type value and submit', async () => {
-        render(
-            <StandardField
-                element={mockFormElementInput}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
+        render(<StandardField element={mockFormElementInput} {...baseProps} />);
 
         const inputElem = screen.getByRole('textbox');
         expect(inputElem).toBeInTheDocument();
@@ -110,31 +119,19 @@ describe('StandardField', () => {
     });
 
     test('Display informations about value', async () => {
-        render(
-            <StandardField
-                element={mockFormElementInput}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
+        render(<StandardField element={mockFormElementInput} {...baseProps} />);
 
         const valueDisplayElem = screen.getByRole('textbox');
         await act(async () => {
             userEvent.click(valueDisplayElem);
         });
 
-        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
+        expect(mockEditRecordModalDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 
     test('Cancel input', async () => {
         await act(async () => {
-            render(
-                <StandardField
-                    element={mockFormElementInput}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<StandardField element={mockFormElementInput} {...baseProps} />);
         });
 
         let inputElem = screen.getByRole('textbox');
@@ -161,13 +158,7 @@ describe('StandardField', () => {
 
     test('Submit on enter', async () => {
         await act(async () => {
-            render(
-                <StandardField
-                    element={mockFormElementInput}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<StandardField element={mockFormElementInput} {...baseProps} />);
         });
 
         const valueDisplayElem = screen.getByRole('textbox');
@@ -186,8 +177,7 @@ describe('StandardField', () => {
         render(
             <StandardField
                 element={{...mockFormElementInput, attribute: {...mockFormAttribute, readonly: true}}}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
+                {...baseProps}
             />
         );
 
@@ -211,8 +201,7 @@ describe('StandardField', () => {
                     attribute: {...mockFormAttribute, format: AttributeFormat.date},
                     values: recordValuesDate
                 }}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
+                {...baseProps}
             />
         );
 
@@ -244,8 +233,7 @@ describe('StandardField', () => {
                     attribute: {...mockFormAttribute, format: AttributeFormat.boolean},
                     values: recordValuesBoolean
                 }}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
+                {...baseProps}
             />
         );
 
@@ -272,8 +260,7 @@ describe('StandardField', () => {
                     attribute: {...mockFormAttribute, format: AttributeFormat.encrypted},
                     values: recordValuesEncrypted
                 }}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
+                {...baseProps}
             />
         );
 
@@ -305,8 +292,7 @@ describe('StandardField', () => {
                     attribute: {...mockFormAttribute, format: AttributeFormat.numeric},
                     values: recordValuesNumeric
                 }}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
+                {...baseProps}
             />
         );
 
@@ -324,13 +310,7 @@ describe('StandardField', () => {
             error: 'ERROR_MESSAGE'
         });
 
-        render(
-            <StandardField
-                element={mockFormElementInput}
-                onValueSubmit={onSubmitFail}
-                onValueDelete={mockHandleDelete}
-            />
-        );
+        render(<StandardField element={mockFormElementInput} {...baseProps} onValueSubmit={onSubmitFail} />);
 
         userEvent.click(screen.getByRole('textbox'));
 
@@ -342,13 +322,7 @@ describe('StandardField', () => {
     });
 
     test('Delete value', async () => {
-        render(
-            <StandardField
-                element={mockFormElementInput}
-                onValueSubmit={mockHandleSubmit}
-                onValueDelete={mockHandleDelete}
-            />
-        );
+        render(<StandardField element={mockFormElementInput} {...baseProps} />);
 
         const inputWrapper = screen.getByTestId('input-wrapper');
         userEvent.hover(inputWrapper, null);
@@ -367,6 +341,43 @@ describe('StandardField', () => {
         });
 
         expect(mockHandleDelete).toHaveBeenCalled();
+    });
+
+    test('On multiple-values attribute, can delete all values', async () => {
+        render(
+            <StandardField
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, multiple_values: true},
+                    values: [
+                        {
+                            ...mockRecordValuesCommon,
+                            id_value: '1',
+                            value: 'value1',
+                            raw_value: 'value1'
+                        },
+                        {
+                            ...mockRecordValuesCommon,
+                            id_value: '2',
+                            value: 'value2',
+                            raw_value: 'value2'
+                        }
+                    ]
+                }}
+                {...baseProps}
+            />
+        );
+
+        const deleteAllButton = screen.getByRole('button', {name: 'delete-all-values'});
+        expect(deleteAllButton).toBeInTheDocument();
+
+        userEvent.click(deleteAllButton);
+
+        await act(async () => {
+            userEvent.click(screen.getByRole('button', {name: /confirm/}));
+        });
+
+        expect(baseProps.onDeleteMultipleValues).toBeCalled();
     });
 
     describe('Values list', () => {
@@ -395,13 +406,7 @@ describe('StandardField', () => {
         };
 
         test('Display values list', async () => {
-            render(
-                <StandardField
-                    element={{...mockFormElementWithValuesList, values: []}}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
             userEvent.click(screen.getByRole('textbox'));
 
@@ -412,13 +417,7 @@ describe('StandardField', () => {
         });
 
         test('Filters list when typing', async () => {
-            render(
-                <StandardField
-                    element={{...mockFormElementWithValuesList, values: []}}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
             const originInputElem = screen.getByRole('textbox');
             userEvent.click(originInputElem);
@@ -434,13 +433,7 @@ describe('StandardField', () => {
         });
 
         test('On click on a value, save it', async () => {
-            render(
-                <StandardField
-                    element={{...mockFormElementWithValuesList, values: []}}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
             const inputElem = screen.getByRole('textbox');
             userEvent.click(inputElem);
@@ -454,13 +447,7 @@ describe('StandardField', () => {
         });
 
         test('On Enter, first matching value is selected', async () => {
-            render(
-                <StandardField
-                    element={{...mockFormElementWithValuesList, values: []}}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
             const inputElem = screen.getByRole('textbox');
             userEvent.click(inputElem);
@@ -480,13 +467,7 @@ describe('StandardField', () => {
         });
 
         test('If no match, display a message', async () => {
-            render(
-                <StandardField
-                    element={{...mockFormElementWithValuesList, values: []}}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
             const originInputElem = screen.getByRole('textbox');
             await act(async () => {
@@ -501,13 +482,7 @@ describe('StandardField', () => {
         });
 
         test('If open values list, display submit button', async () => {
-            render(
-                <StandardField
-                    element={{...mockFormElementWithValuesListOpen, values: []}}
-                    onValueSubmit={mockHandleSubmit}
-                    onValueDelete={mockHandleDelete}
-                />
-            );
+            render(<StandardField element={{...mockFormElementWithValuesListOpen, values: []}} {...baseProps} />);
 
             userEvent.click(screen.getByRole('textbox'));
 
@@ -516,13 +491,7 @@ describe('StandardField', () => {
 
         test('If open values list, can copy a value from the list and edit it', async () => {
             await act(async () => {
-                render(
-                    <StandardField
-                        element={{...mockFormElementWithValuesListOpen, values: []}}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                    />
-                );
+                render(<StandardField element={{...mockFormElementWithValuesListOpen, values: []}} {...baseProps} />);
             });
 
             await act(async () => {
@@ -541,13 +510,7 @@ describe('StandardField', () => {
 
         test('If open values list, current value appears on the list', async () => {
             await act(async () => {
-                render(
-                    <StandardField
-                        element={{...mockFormElementWithValuesListOpen, values: []}}
-                        onValueSubmit={mockHandleSubmit}
-                        onValueDelete={mockHandleDelete}
-                    />
-                );
+                render(<StandardField element={{...mockFormElementWithValuesListOpen, values: []}} {...baseProps} />);
             });
 
             await act(async () => {

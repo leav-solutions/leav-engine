@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockRecord} from '__mocks__/common/record';
 import {mockRecordPropertyWithAttribute} from '__mocks__/common/value';
-import editRecordReducer, {
+import editRecordModalReducer, {
     EditRecordReducerActionsTypes,
     IEditRecordReducerState,
     initialState
-} from './editRecordReducer';
+} from './editRecordModalReducer';
 
 describe('editRecordReducer', () => {
     const mockInitialState: IEditRecordReducerState = {
@@ -17,7 +17,7 @@ describe('editRecordReducer', () => {
 
     test('SET_ACTIVE_VALUE', async () => {
         expect(
-            editRecordReducer(mockInitialState, {
+            editRecordModalReducer(mockInitialState, {
                 type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
                 value: mockRecordPropertyWithAttribute
             }).activeValue

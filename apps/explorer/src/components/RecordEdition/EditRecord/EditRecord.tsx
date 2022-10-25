@@ -14,17 +14,25 @@ import EditRecordSkeleton from './EditRecordSkeleton';
 import extractFormElements from './helpers/extractFormElements';
 import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
-import {DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
+import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
 
 interface IEditRecordProps {
     record: IRecordIdentityWhoAmI | null;
     library: string;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
+    onDeleteMultipleValues: DeleteMultipleValuesFunc;
     readonly: boolean;
 }
 
-function EditRecord({record, library, onValueSubmit, onValueDelete, readonly}: IEditRecordProps): JSX.Element {
+function EditRecord({
+    record,
+    library,
+    onValueSubmit,
+    onValueDelete,
+    onDeleteMultipleValues,
+    readonly
+}: IEditRecordProps): JSX.Element {
     const formId = record ? 'edition' : 'creation';
     const {t} = useTranslation();
 
@@ -66,7 +74,12 @@ function EditRecord({record, library, onValueSubmit, onValueDelete, readonly}: I
 
     return (
         <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
-            <rootElement.uiElement element={rootElement} onValueSubmit={onValueSubmit} onValueDelete={onValueDelete} />
+            <rootElement.uiElement
+                element={rootElement}
+                onValueSubmit={onValueSubmit}
+                onValueDelete={onValueDelete}
+                onDeleteMultipleValues={onDeleteMultipleValues}
+            />
         </RecordEditionContext.Provider>
     );
 }

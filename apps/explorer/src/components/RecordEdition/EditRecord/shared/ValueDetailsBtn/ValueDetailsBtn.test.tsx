@@ -5,20 +5,19 @@ import userEvent from '@testing-library/user-event';
 import {
     EditRecordReducerActionsTypes,
     initialState
-} from 'components/RecordEdition/editRecordReducer/editRecordReducer';
-import * as useEditRecordReducer from 'components/RecordEdition/editRecordReducer/useEditRecordReducer';
+} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {IRecordPropertyStandard} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React from 'react';
 import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {render, screen} from '_tests/testUtils';
 import {mockFormAttribute} from '__mocks__/common/attribute';
 import ValueDetailsBtn from './ValueDetailsBtn';
 
 describe('ValueDetailsBtn', () => {
-    const mockEditRecordDispatch = jest.fn();
-    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+    const mockEditRecordModalDispatch = jest.fn();
+    jest.spyOn(useEditRecordModalReducer, 'useEditRecordModalReducer').mockImplementation(() => ({
         state: initialState,
-        dispatch: mockEditRecordDispatch
+        dispatch: mockEditRecordModalDispatch
     }));
 
     const mockValue: IRecordPropertyStandard = {
@@ -49,6 +48,6 @@ describe('ValueDetailsBtn', () => {
         expect(valueDetailsBtn).toBeInTheDocument();
         userEvent.click(valueDetailsBtn);
 
-        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
+        expect(mockEditRecordModalDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 });

@@ -274,7 +274,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue {
     created_by: RECORD_FORM_recordForm_elements_values_LinkValue_created_by | null;
     modified_by: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by | null;
     metadata: (RECORD_FORM_recordForm_elements_values_LinkValue_metadata | null)[] | null;
-    linkValue: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue;
+    linkValue: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_library_gqlNames {
@@ -480,7 +480,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue {
     created_by: RECORD_FORM_recordForm_elements_values_TreeValue_created_by | null;
     modified_by: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by | null;
     metadata: (RECORD_FORM_recordForm_elements_values_TreeValue_metadata | null)[] | null;
-    treeValue: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue;
+    treeValue: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue | null;
 }
 
 export type RECORD_FORM_recordForm_elements_values =
@@ -644,10 +644,15 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_
     query: string;
 }
 
+export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library_permissions {
+    create_record: boolean;
+}
+
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library {
     id: string;
     label: any | null;
     gqlNames: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library_gqlNames;
+    permissions: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library_permissions | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_library_gqlNames {

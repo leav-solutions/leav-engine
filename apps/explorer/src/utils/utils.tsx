@@ -382,15 +382,15 @@ export const getPreviewSize = (size?: PreviewSize, simplistic: boolean = false) 
 
     switch (size) {
         case PreviewSize.medium:
-            return '4.5rem';
+            return '3.5rem';
         case PreviewSize.big:
-            return '7rem';
+            return '6rem';
         case PreviewSize.small:
-            return '3rem';
+            return '2.5rem';
         case PreviewSize.tiny:
             return '1.7rem';
         default:
-            return '3rem';
+            return '2rem';
     }
 };
 

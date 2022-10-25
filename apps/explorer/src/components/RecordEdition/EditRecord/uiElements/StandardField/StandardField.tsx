@@ -3,8 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings, IKeyValue} from '@leav/utils';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
+import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import React, {useContext, useEffect, useReducer} from 'react';
+import {useContext, useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
@@ -15,6 +17,8 @@ import {
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import AddValueBtn from '../../shared/AddValueBtn';
+import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
+import FieldFooter from '../../shared/FieldFooter';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import standardFieldReducer, {
     IdValue,
@@ -45,10 +49,13 @@ function StandardField({
     element,
     onValueSubmit,
     onValueDelete,
+    onDeleteMultipleValues,
     metadataEdit = false
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
+
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
+    const {dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
 
     const fieldValues = (element.values as RECORD_FORM_recordForm_elements_values_Value[]) ?? [];
     const isMultipleValues = element.attribute.multiple_values;
@@ -131,6 +138,13 @@ function StandardField({
                 idValue
             });
 
+            if (!state.metadataEdit) {
+                editRecordModalDispatch({
+                    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                    value: null
+                });
+            }
+
             return;
         }
 
@@ -178,8 +192,35 @@ function StandardField({
     };
 
     const _handleAddValue = () => {
+        editRecordModalDispatch({
+            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+            value: {
+                attribute,
+                value: null
+            }
+        });
+
         dispatch({
             type: StandardFieldReducerActionsTypes.ADD_VALUE
+        });
+    };
+
+    const _handleDeleteAllValues = async () => {
+        const deleteRes = await onDeleteMultipleValues(attribute.id, fieldValues);
+
+        if (deleteRes.status === APICallStatus.SUCCESS) {
+            dispatch({
+                type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
+                allDeleted: true
+            });
+
+            return;
+        }
+
+        dispatch({
+            type: StandardFieldReducerActionsTypes.SET_ERROR,
+            idValue: fieldValues[0]?.id_value,
+            error: deleteRes.error
         });
     };
 
@@ -189,7 +230,9 @@ function StandardField({
 
     const valuesToDisplay = Object.values(state.values).sort((valueA, valueB) => valueA.index - valueB.index);
     const hasValue = valuesToDisplay[0].idValue !== newValueId && valuesToDisplay[0].idValue !== null;
-    const canAddAnotherValue = isMultipleValues && hasValue && attribute.format !== AttributeFormat.boolean;
+    const canAddAnotherValue =
+        !state.isReadOnly && isMultipleValues && hasValue && attribute.format !== AttributeFormat.boolean;
+    const canDeleteAllValues = !state.isReadOnly && hasValue && valuesToDisplay.length > 1;
 
     return (
         <Wrapper metadataEdit={metadataEdit}>
@@ -203,12 +246,14 @@ function StandardField({
                     onDelete={_handleDelete}
                 />
             ))}
-            {canAddAnotherValue && (
-                <AddValueBtn
-                    onClick={_handleAddValue}
-                    style={{borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%'}}
+            {(canDeleteAllValues || canAddAnotherValue) && (
+                <FieldFooter
                     bordered
-                />
+                    style={{flexDirection: canAddAnotherValue && !canDeleteAllValues ? 'row' : 'row-reverse'}}
+                >
+                    {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
+                    {canAddAnotherValue && <AddValueBtn onClick={_handleAddValue} />}
+                </FieldFooter>
             )}
         </Wrapper>
     );

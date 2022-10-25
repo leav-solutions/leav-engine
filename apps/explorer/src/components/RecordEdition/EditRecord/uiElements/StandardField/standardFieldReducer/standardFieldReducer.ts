@@ -104,7 +104,8 @@ export type StandardFieldReducerAction =
       }
     | {
           type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE;
-          idValue: IdValue;
+          idValue?: IdValue;
+          allDeleted?: boolean;
       }
     | {
           type: StandardFieldReducerActionsTypes.CANCEL_EDITING;
@@ -118,6 +119,10 @@ const standardFieldReducer = (
     action: StandardFieldReducerAction
 ): IStandardFieldReducerState => {
     const _updateValueData = (newValueData: Partial<IStandardFieldValue>): IStandardFieldReducerState => {
+        if (!state.values[action.idValue]) {
+            return state;
+        }
+
         const res = {
             ...state,
             values: {
@@ -172,14 +177,14 @@ const standardFieldReducer = (
             return _updateValueData({
                 isEditing: true
             });
-        case StandardFieldReducerActionsTypes.SET_ERROR:
-            return state.values[action.idValue]
-                ? _updateValueData({
-                      error: action.error,
-                      isErrorDisplayed: true,
-                      state: StandardFieldValueState.DIRTY
-                  })
-                : state;
+        case StandardFieldReducerActionsTypes.SET_ERROR: {
+            const newState = _updateValueData({
+                error: action.error,
+                isErrorDisplayed: true,
+                state: StandardFieldValueState.DIRTY
+            });
+            return newState;
+        }
         case StandardFieldReducerActionsTypes.CLEAR_ERROR:
             return _updateValueData({
                 error: '',
@@ -233,6 +238,11 @@ const standardFieldReducer = (
         }
         case StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE: {
             const newState = {...state};
+
+            if (action.allDeleted) {
+                newState.values = _ensureOneValueIsPresent({});
+                return newState;
+            }
 
             delete newState.values[action.idValue];
 

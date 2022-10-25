@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusCircleOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Dropdown, Menu} from 'antd';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
@@ -10,9 +9,10 @@ import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMuta
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
-import React, {useState} from 'react';
+import {CSSProperties, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'redux/infos';
+import {GrSearchAdvanced} from 'react-icons/gr';
 import {useAppDispatch} from 'redux/store';
 import {localizedTranslation} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
@@ -101,7 +101,10 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
         }
     };
 
-    const buttonIcon = <PlusCircleOutlined />;
+    const buttonIcon = <GrSearchAdvanced size="1.2em" />;
+    const buttonStyle: CSSProperties = {
+        paddingTop: '5px'
+    };
 
     if (!availableLibraries.length) {
         return null;
@@ -121,13 +124,14 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                         ></Menu>
                     }
                 >
-                    <StandardBtn icon={buttonIcon} />
+                    <StandardBtn icon={buttonIcon} style={buttonStyle} />
                 </Dropdown>
             ) : (
                 <StandardBtn
                     icon={buttonIcon}
                     aria-label="add-by-search"
                     onClick={() => _showSearch(availableLibraries[0]?.library.id ?? null)}
+                    style={buttonStyle}
                 />
             )}
             {searchModalVisible && (

@@ -476,7 +476,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue {
     version: any | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_attribute | null;
     metadata: (SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata | null)[] | null;
-    linkValue: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue;
+    linkValue: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_whoAmI_library_gqlNames {
@@ -785,7 +785,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue {
     version: any | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_attribute | null;
     metadata: (SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata | null)[] | null;
-    treeValue: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue;
+    treeValue: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue | null;
 }
 
 export type SAVE_VALUE_BATCH_saveValueBatch_values =
@@ -818,4 +818,5 @@ export interface SAVE_VALUE_BATCHVariables {
     recordId: string;
     version?: ValueVersionInput[] | null;
     values: ValueBatchInput[];
+    deleteEmpty?: boolean | null;
 }
