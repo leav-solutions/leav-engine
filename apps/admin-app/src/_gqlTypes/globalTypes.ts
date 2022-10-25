@@ -142,12 +142,6 @@ export enum SortOrder {
     desc = 'desc'
 }
 
-export enum TaskPriority {
-    LOW = 0,
-    MEDIUM = 1,
-    HIGH = 2
-}
-
 export enum TaskStatus {
     CANCELED = 'CANCELED',
     DONE = 'DONE',
@@ -355,6 +349,7 @@ export interface TaskFiltersInput {
     id?: string | null;
     created_by?: string | null;
     status?: TaskStatus | null;
+    archive?: boolean | null;
 }
 
 export interface TreeElementInput {

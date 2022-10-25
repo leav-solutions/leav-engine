@@ -29,11 +29,7 @@ describe('ActiveTreeHook', () => {
         };
 
         await act(async () => {
-            render(
-                <MockedProviderWithFragments>
-                    <ComponentUsingInfo />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingInfo />);
         });
 
         expect(givenActiveTree).toEqual(undefined);
@@ -52,11 +48,7 @@ describe('ActiveTreeHook', () => {
         };
 
         await act(async () => {
-            render(
-                <MockedProviderWithFragments>
-                    <ComponentUsingInfo />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingInfo />);
         });
 
         expect(givenActiveTree).toEqual(mockActiveTree);

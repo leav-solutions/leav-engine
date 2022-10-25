@@ -13,12 +13,16 @@ import taskRepo from './taskRepo';
 const mockTask: ITask = {
     id: 'id',
     name: 'name',
+    created_at: null,
+    created_by: null,
+    modified_at: null,
     func: {
         moduleName: 'moduleName',
         subModuleName: 'subModuleName',
         name: 'func',
         args: []
     },
+    archive: false,
     startAt: 123,
     status: TaskStatus.PENDING,
     priority: TaskPriority.MEDIUM

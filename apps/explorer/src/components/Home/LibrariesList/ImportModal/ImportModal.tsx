@@ -33,6 +33,8 @@ import {ImportSteps} from './_types';
 import ImportScheduleModal from './ImportModalConfigStep/ImportScheduleModal';
 import useNotification from 'hooks/useNotification';
 import moment from 'moment';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setIsPanelOpen} from 'redux/notifications';
 
 const {Step} = Steps;
 
@@ -45,10 +47,13 @@ const Content = styled.div`
     margin-top: 2em;
 `;
 
+const NOTIFICATION_DURATION = 2.5; // seconds
+
 function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
     const {t} = useTranslation();
+    const dispatch = useAppDispatch();
 
-    const [state, dispatch] = useReducer(importReducer, {...initialState, defaultLibrary: library});
+    const [state, importDispatch] = useReducer(importReducer, {...initialState, defaultLibrary: library});
     const {sheets, file, currentStep, okBtn} = state;
 
     const [showImportScheduleModal, setShowImportScheduleModal] = useState<boolean>(false);
@@ -76,7 +81,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
     const [runImport, {error: importError}] = useMutation<IMPORT_EXCEL, IMPORT_EXCELVariables>(importExcel, {
         fetchPolicy: 'no-cache',
         onCompleted: () => {
-            dispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
+            importDispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
 
             notification.triggerNotification({
                 message: t('import.import_notification_title'),
@@ -85,7 +90,9 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                         scheduleDate.unix() * 1000
                     ).toLocaleString()}`
                 }),
-                icon: <UploadOutlined style={{color: '#108ee9'}} />
+                icon: <UploadOutlined style={{color: '#108ee9'}} />,
+                onClick: _onNotificationsClick,
+                duration: NOTIFICATION_DURATION
             });
         },
         onError: error => {
@@ -96,13 +103,13 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                 errorMessage = serverErrors.map(serverError => serverError.message).join('\n');
             }
 
-            dispatch({type: ImportReducerActionTypes.SET_IMPORT_ERROR, importError: errorMessage});
-            dispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
+            importDispatch({type: ImportReducerActionTypes.SET_IMPORT_ERROR, importError: errorMessage});
+            importDispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
         }
     });
 
     const _runImport = async () => {
-        dispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.PROCESSING});
+        importDispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.PROCESSING});
 
         try {
             await runImport({
@@ -124,16 +131,16 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                 }
             });
         } catch (err) {
-            dispatch({type: ImportReducerActionTypes.SET_IMPORT_ERROR, importError: (err as Error).message});
+            importDispatch({type: ImportReducerActionTypes.SET_IMPORT_ERROR, importError: (err as Error).message});
         } finally {
-            dispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
+            importDispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.DONE});
         }
     };
 
     const _onOk = async () => {
         switch (currentStep) {
             case ImportSteps.SELECT_FILE:
-                dispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.CONFIG});
+                importDispatch({type: ImportReducerActionTypes.SET_CURRENT_STEP, currentStep: ImportSteps.CONFIG});
                 break;
             case ImportSteps.CONFIG:
                 await _runImport();
@@ -177,6 +184,11 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
         return (data?.attributes?.list ?? []).filter(attribute => !attribute.system || attribute.id === 'id');
     };
 
+    const _onNotificationsClick = () => {
+        dispatch(setIsPanelOpen(true));
+        onClose();
+    };
+
     const _getStepContent = (): JSX.Element => {
         switch (currentStep) {
             case ImportSteps.SELECT_FILE:
@@ -186,7 +198,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
             case ImportSteps.PROCESSING:
                 return <ImportModalProcessingStep />;
             case ImportSteps.DONE:
-                return <ImportModalDoneStep />;
+                return <ImportModalDoneStep onOpenPanelClick={_onNotificationsClick} />;
         }
     };
 
@@ -239,7 +251,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                     onValidateScheduleImport={_onValidateScheduleImport}
                 />
             )}
-            <ImportReducerContext.Provider value={{state, dispatch}}>
+            <ImportReducerContext.Provider value={{state, dispatch: importDispatch}}>
                 <Modal
                     title={t('import.title')}
                     okText={validateButtonLabel}

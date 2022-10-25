@@ -19,7 +19,9 @@
         "details": "Details",
         "element_not_found": "Element not found",
         "refresh_page": "Refresh Page",
-        "document_title": "LEAV Engine - {{appLabel}}"
+        "document_title": "LEAV Engine - {{appLabel}}",
+        "yes": "Yes",
+        "no": "No"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
@@ -345,7 +347,9 @@
         "start": "Start export",
         "attributes_selection": "Attributes selection",
         "export_generation": "Export generation",
-        "export_done": "Export done",
+        "export_done": "Export started",
+        "export_done_description": "Progress available in notifications panel",
+        "export_done_open_notifications": "Open notifications panel",
         "download_file": "Download file"
     },
     "import": {
@@ -359,6 +363,8 @@
         "import_schedule": "Schedule import",
         "import_schedule_title": "Schedule time",
         "import_done": "File import completed",
+        "import_done_description": "Progress available in notifications panel",
+        "import_done_open_notifications": "Open notifications panel",
         "import_success": "Successfully imported",
         "import_failure": "Import failed",
         "import_notification_title": "New import as background task",
@@ -496,6 +502,7 @@
         "inProgress": "In progress",
         "pending": "Pending",
         "done": "Completed",
+        "deleteAll": "Delete all",
         "task-status": {
             "CANCELED": "Canceled",
             "DONE": "Done",
@@ -511,6 +518,7 @@
         "task-completedAt": "Completed at",
         "task-canceledAt": "Canceled at",
         "task-canceledBy": "Canceled by",
-        "task-duration": "Duration"
+        "task-duration": "Duration",
+        "task-confirmCancel": "Do you really want to cancel this task?"
     }
 }

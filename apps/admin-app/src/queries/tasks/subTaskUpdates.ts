@@ -2,14 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
+import {recordIdentityFragment} from '../records/recordIdentityFragment';
 
 export const subTaskUpdates = gql`
-    subscription SUB_TASKS_UPDATE {
-        task {
+    ${recordIdentityFragment}
+    subscription SUB_TASKS_UPDATE($filters: TaskFiltersInput) {
+        task(filters: $filters) {
             id
             name
             modified_at
             created_at
+            created_by {
+                ...RecordIdentity
+            }
             startAt
             status
             priority
@@ -23,7 +28,10 @@ export const subTaskUpdates = gql`
                 name
                 url
             }
-            canceledBy
+            canceledBy {
+                ...RecordIdentity
+            }
+            archive
         }
     }
 `;

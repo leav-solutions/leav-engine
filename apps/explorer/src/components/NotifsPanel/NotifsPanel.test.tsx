@@ -13,6 +13,7 @@ import {TaskStatus} from '_gqlTypes/globalTypes';
 export const mockTask: GET_TASKS_tasks_list = {
     id: 'taskId',
     name: 'taskName',
+    archive: false,
     modified_at: Date.now(),
     created_at: Date.now(),
     startAt: Date.now(),
@@ -51,11 +52,7 @@ describe('Notifs panel', () => {
         await act(async () => {
             render(
                 <Router>
-                    <NotifsPanel
-                        notifsPanelVisible={true}
-                        hideNotifsPanel={() => jest.fn()}
-                        setNbNotifs={() => jest.fn()}
-                    />
+                    <NotifsPanel setNbNotifs={() => jest.fn()} />
                 </Router>,
                 {
                     apolloMocks: mocks,

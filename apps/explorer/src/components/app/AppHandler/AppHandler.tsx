@@ -53,7 +53,8 @@ function AppHandler(): JSX.Element {
     const {error: tasksError} = useQuery(getTasks, {
         variables: {
             filters: {
-                created_by: userData?.me?.id
+                created_by: userData?.me?.id,
+                archive: false
             }
         },
         skip: !userData?.me?.id,
@@ -65,11 +66,11 @@ function AppHandler(): JSX.Element {
     });
 
     useSubscription(getTaskUpdates, {
-        variables: {createdBy: userData?.me?.id},
+        variables: {filters: {created_by: userData?.me?.id, archive: false}},
         skip: !userData?.me?.id,
         onSubscriptionData: subData => {
             // we temporary add created_by field because of miss context for subscriptions on server side to resolve User object
-            const task = {...subData.subscriptionData.data.task, created_by: {id: userData.me.id}};
+            const task = subData.subscriptionData.data.task;
             dispatch(addTask(task));
         }
     });

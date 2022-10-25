@@ -16,6 +16,7 @@ import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
+import {ACCESS_TOKEN_COOKIE_NAME} from '../_types/auth';
 import AuthenticationError from '../errors/AuthenticationError';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 import {WebSocketServer} from 'ws';
@@ -155,10 +156,62 @@ export default function ({
                         variableValues: args.request.variables
                     }) as Promise<any>;
 
+                // Create Web Socket Server
+                const wsServer = new WebSocketServer({
+                    server: httpServer,
+                    path: '/graphql'
+                });
+
+                // Hand in the schema we just created and have the
+                // WebSocketServer start listening.
+                const serverCleanup = graphqlWS.useServer(
+                    {
+                        schema: graphqlApp.schema,
+                        context: async (ctx: any) => {
+                            try {
+                                // recreate headers object from rawHeaders array
+                                const headers = ctx.extra.request.rawHeaders.reduce((prev, curr, i, arr) => {
+                                    return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
+                                }, {});
+
+                                if (headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME)) {
+                                    const arrCookie = headers.Cookie.split('=');
+                                    const tokenIdx = headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1;
+
+                                    const payload = await authApp.validateRequestToken(arrCookie[tokenIdx]);
+
+                                    const context: IQueryInfos = {
+                                        userId: payload.userId
+                                    };
+
+                                    return context;
+                                } else {
+                                    throw new ApolloAuthenticationError('you must be logged in');
+                                }
+                            } catch (e) {
+                                throw new ApolloAuthenticationError('you must be logged in');
+                            }
+                        }
+                    },
+                    wsServer
+                );
+
                 const server = new ApolloServer({
                     debug: config.debug,
                     introspection: true,
-                    plugins: [require('apollo-tracing').plugin(), ApolloServerPluginCacheControlDisabled()],
+                    plugins: [
+                        require('apollo-tracing').plugin(),
+                        ApolloServerPluginCacheControlDisabled(),
+                        {
+                            async serverWillStart() {
+                                return {
+                                    async drainServer() {
+                                        await serverCleanup.dispose();
+                                    }
+                                };
+                            }
+                        }
+                    ],
                     formatResponse: (resp, ctx) => {
                         const formattedResp = {...resp};
 
@@ -219,32 +272,6 @@ export default function ({
                         stop: Promise.resolve
                     }
                 });
-
-                // Create Web Socket Server
-                const wsServer = new WebSocketServer({
-                    server: httpServer,
-                    path: '/graphql'
-                });
-
-                graphqlWS.useServer(
-                    {
-                        schema: graphqlApp.schema,
-                        context: async (ctx: any, message, args) => {
-                            try {
-                                const payload = await authApp.validateRequestToken(ctx.connectionParams.Authorization);
-
-                                const context: IQueryInfos = {
-                                    userId: payload.userId
-                                };
-
-                                return context;
-                            } catch (e) {
-                                throw new ApolloAuthenticationError('you must be logged in');
-                            }
-                        }
-                    },
-                    wsServer
-                );
 
                 await server.start();
                 server.applyMiddleware({app, path: '/graphql', cors: true});

@@ -4,8 +4,8 @@
 import gql from 'graphql-tag';
 
 export const deleteTaskMutation = gql`
-    mutation DELETE_TASK($taskId: ID!) {
-        deleteTask(taskId: $taskId) {
+    mutation DELETE_TASK($taskId: ID!, $archive: Boolean!) {
+        deleteTask(taskId: $taskId, archive: $archive) {
             id
         }
     }

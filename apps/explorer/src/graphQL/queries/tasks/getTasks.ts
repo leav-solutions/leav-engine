@@ -30,7 +30,10 @@ export const getTasks = gql`
                     name
                     url
                 }
-                canceledBy
+                canceledBy {
+                    ...RecordIdentity
+                }
+                archive
             }
         }
     }

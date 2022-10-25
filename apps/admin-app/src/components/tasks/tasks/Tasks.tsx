@@ -15,10 +15,25 @@ import {addTask, deleteTask} from 'redux/tasks/tasks';
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import DeleteTask from '../DeleteTask';
 import CancelTask from '../CancelTask';
+import DeleteAllTasks from '../DeleteAllTasks';
 import {DELETE_TASK, DELETE_TASKVariables} from '_gqlTypes/DELETE_TASK';
 import {deleteTaskMutation} from 'queries/tasks/deleteTask';
 import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
 import {cancelTaskMutation} from 'queries/tasks/cancelTask';
+
+export type Column =
+    | 'id'
+    | 'name'
+    | 'created_by'
+    | 'created_at'
+    | 'startAt'
+    | 'startedAt'
+    | 'canceledBy'
+    | 'completedAt'
+    | 'progress'
+    | 'step'
+    | 'duration'
+    | 'archive';
 
 const Tasks = (): JSX.Element => {
     const {t} = useTranslation();
@@ -41,7 +56,6 @@ const Tasks = (): JSX.Element => {
 
     useSubscription(subTaskUpdates, {
         onSubscriptionData: subData => {
-            // FIXME: missing created_by field because of miss context for subscriptions on server side to resolve User object
             const task = {...subData.subscriptionData.data.task};
             dispatch(addTask(task));
         }
@@ -76,12 +90,16 @@ const Tasks = (): JSX.Element => {
 
     const [cancelTask] = useMutation<CANCEL_TASK, CANCEL_TASKVariables>(cancelTaskMutation);
 
-    const _onDeleteAll = () => {
-        completedTasks.map(task => delTask({variables: {taskId: task.id}}));
+    const _onDeleteAll = (archivesOnly: boolean = false) => {
+        for (const task of completedTasks) {
+            if (!archivesOnly || (archivesOnly && task.archive)) {
+                delTask({variables: {taskId: task.id, archive: false}});
+            }
+        }
     };
 
     const onDelete = (taskId: string) => {
-        delTask({variables: {taskId}});
+        delTask({variables: {taskId, archive: false}});
     };
 
     const onCancel = (taskId: string) => {
@@ -90,10 +108,21 @@ const Tasks = (): JSX.Element => {
 
     const panes = [
         {
-            menuItem: 'In progress',
+            menuItem: t('tasks.in_progress'),
             render: () => (
                 <Tab.Pane>
                     <TasksList
+                        enabledColumns={[
+                            'id',
+                            'name',
+                            'created_by',
+                            'created_at',
+                            'startAt',
+                            'startedAt',
+                            'progress',
+                            'step',
+                            'duration'
+                        ]}
                         striped
                         actionsBtn={task => [<CancelTask onCancel={onCancel} task={task} />]}
                         loading={loading || !inProgressTasks}
@@ -103,10 +132,24 @@ const Tasks = (): JSX.Element => {
             )
         },
         {
-            menuItem: 'Completed',
+            menuItem: t('tasks.completed'),
             render: () => (
                 <Tab.Pane>
                     <TasksList
+                        enabledColumns={[
+                            'id',
+                            'name',
+                            'created_by',
+                            'created_at',
+                            'startAt',
+                            'startedAt',
+                            'canceledBy',
+                            'completedAt',
+                            'progress',
+                            'step',
+                            'duration',
+                            'archive'
+                        ]}
                         actionsBtn={task => [
                             ...(!!task.link
                                 ? [
@@ -124,9 +167,18 @@ const Tasks = (): JSX.Element => {
                         loading={loading || !completedTasks}
                         tasks={completedTasks}
                         footerBtn={[
-                            <Button secondary onClick={_onDeleteAll} floated="right" size="small">
-                                {t('tasks.delete_all')}
-                            </Button>
+                            <DeleteAllTasks
+                                confirmMessage={t('tasks.confirm_delete_all')}
+                                label={t('tasks.delete_all')}
+                                key="btn-delAll"
+                                onDeleteAll={_onDeleteAll}
+                            />,
+                            <DeleteAllTasks
+                                confirmMessage={t('tasks.confirm_delete_all_archives')}
+                                label={t('tasks.delete_archives')}
+                                key="btn-delAll"
+                                onDeleteAll={() => _onDeleteAll(true)}
+                            />
                         ]}
                     />
                 </Tab.Pane>

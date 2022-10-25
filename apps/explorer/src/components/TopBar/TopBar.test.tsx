@@ -19,13 +19,7 @@ describe('TopBar', () => {
         await act(async () => {
             render(
                 <MockedProviderWithFragments>
-                    <TopBar
-                        notifsPanelVisible={false}
-                        userPanelVisible={false}
-                        toggleUserPanelVisible={jest.fn()}
-                        toggleNotifsPanelVisible={jest.fn()}
-                        nbNotifs={0}
-                    />
+                    <TopBar userPanelVisible={false} toggleUserPanelVisible={jest.fn()} nbNotifs={0} />
                 </MockedProviderWithFragments>
             );
         });

@@ -80,6 +80,10 @@ export interface ITasksState {
     tasks: {[taskId: string]: GET_TASKS_tasks_list};
 }
 
+export interface INotificationsState {
+    isPanelOpen: boolean;
+}
+
 export interface IInfosState {
     base?: IBaseInfo;
     stack: IInfo[];

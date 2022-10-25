@@ -20,4 +20,5 @@ export interface DELETE_TASK {
 
 export interface DELETE_TASKVariables {
     taskId: string;
+    archive: boolean;
 }

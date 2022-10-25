@@ -57,15 +57,16 @@ export interface ITaskFuncParams {
 export interface ITask {
     id: string;
     name: string;
-    created_at?: number;
-    created_by?: string;
-    modified_at?: number;
-    canceledBy?: string;
+    created_at: number;
+    created_by: string;
+    modified_at: number;
     func: ITaskFunc;
     startAt: number;
     status: TaskStatus;
     priority: TaskPriority;
-    progress?: {percent: number; description?: string};
+    archive: boolean;
+    canceledBy?: string;
+    progress?: {percent?: number; description?: string};
     startedAt?: number;
     completedAt?: number;
     link?: {name: string; url: string};

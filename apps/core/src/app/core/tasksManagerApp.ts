@@ -34,6 +34,7 @@ export interface IGetTasksArgs {
     filters?: ICoreEntityFilterOptions & {
         created_by: string;
         status: TaskStatus;
+        archive: boolean;
     };
     pagination?: IPaginationParams;
     sort?: ISortParams;
@@ -75,12 +76,13 @@ export default function ({
                     type Task {
                         id: ID!,
                         name: String!,
-                        modified_at: Int,
-                        created_at: Int,
-                        created_by: User,
-                        startAt: Int,
-                        status: TaskStatus,
-                        priority: TaskPriority,
+                        modified_at: Int!,
+                        created_at: Int!,
+                        created_by: User!,
+                        startAt: Int!,
+                        status: TaskStatus!,
+                        priority: TaskPriority!,
+                        archive: Boolean!,
                         progress: Progress,
                         startedAt: Int,
                         completedAt: Int,
@@ -89,7 +91,7 @@ export default function ({
                     }
 
                     type Progress {
-                        percent: Int!
+                        percent: Int
                         description: String
                     }
 
@@ -101,7 +103,8 @@ export default function ({
                     input TaskFiltersInput {
                         id: ID,
                         created_by: ID,
-                        status: TaskStatus
+                        status: TaskStatus,
+                        archive: Boolean
                     }
 
                     extend type Query {
@@ -114,11 +117,11 @@ export default function ({
 
                     extend type Mutation {
                         cancelTask(taskId: ID!): Boolean!
-                        deleteTask(taskId: ID!): Task!
+                        deleteTask(taskId: ID!, archive: Boolean!): Task!
                     }
 
                     type Subscription {
-                        task(createdBy: ID): Task!
+                        task(filters: TaskFiltersInput): Task!
                     }
                 `,
                 resolvers: {
@@ -148,10 +151,14 @@ export default function ({
                         }
                     },
                     Mutation: {
-                        async deleteTask(_, {taskId}, ctx: IQueryInfos): Promise<ITask> {
-                            return tasksManagerDomain.deleteTask(taskId, ctx);
+                        async deleteTask(
+                            _,
+                            {taskId, archive}: {taskId: string; archive: boolean},
+                            ctx: IQueryInfos
+                        ): Promise<ITask> {
+                            return tasksManagerDomain.deleteTask(taskId, archive, ctx);
                         },
-                        async cancelTask(_, {taskId}, ctx: IQueryInfos): Promise<boolean> {
+                        async cancelTask(_, {taskId}: {taskId: string}, ctx: IQueryInfos): Promise<boolean> {
                             await tasksManagerDomain.cancelTask({id: taskId}, ctx);
                             return true;
                         }
@@ -161,9 +168,25 @@ export default function ({
                             subscribe: withFilter(
                                 () => eventsManager.suscribe([TRIGGER_NAME_TASK]),
                                 (payload, variables) => {
-                                    return typeof variables.createdBy !== 'undefined'
-                                        ? payload.task.created_by === variables.createdBy
-                                        : true;
+                                    let toReturn = true;
+
+                                    if (typeof variables.filters?.created_by !== 'undefined') {
+                                        toReturn = payload.task.created_by === variables.filters.created_by;
+                                    }
+
+                                    if (toReturn && typeof variables.filters?.id !== 'undefined') {
+                                        toReturn = payload.task.id === variables.filters.id;
+                                    }
+
+                                    if (toReturn && typeof variables.filters?.status !== 'undefined') {
+                                        toReturn = payload.task.status === variables.filters.status;
+                                    }
+
+                                    if (toReturn && typeof variables.filters?.archive !== 'undefined') {
+                                        toReturn = payload.task.archive === variables.filters.archive;
+                                    }
+
+                                    return toReturn;
                                 }
                             )
                         }

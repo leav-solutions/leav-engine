@@ -16,7 +16,7 @@ export const TASKS_COLLECTION = 'core_tasks';
 
 export interface ITaskRepo {
     getTasks({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
-    createTask(task: ITask, ctx: IQueryInfos): Promise<ITask>;
+    createTask(task: Omit<ITask, 'created_at' | 'created_by' | 'modified_at'>, ctx: IQueryInfos): Promise<ITask>;
     updateTask(task: Partial<ITask> & {id: string}, ctx: IQueryInfos): Promise<ITask>;
     getTasksToExecute(ctx: IQueryInfos): Promise<IList<ITask>>;
     deleteTask(taskId, ctx): Promise<ITask>;
@@ -91,7 +91,10 @@ export default function ({
 
             return res;
         },
-        async createTask(task: ITask, ctx: IQueryInfos): Promise<ITask> {
+        async createTask(
+            task: Omit<ITask, 'created_at' | 'created_by' | 'modified_at'>,
+            ctx: IQueryInfos
+        ): Promise<ITask> {
             const collec = dbService.db.collection(TASKS_COLLECTION);
             const docToInsert = dbUtils.convertToDoc(task);
 

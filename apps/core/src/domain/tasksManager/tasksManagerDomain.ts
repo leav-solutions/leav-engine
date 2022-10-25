@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi, {number, string} from 'joi';
+import Joi from 'joi';
 import * as Config from '_types/config';
 import {IAmqpService} from '@leav/message-broker';
 import {IQueryInfos} from '_types/queryInfos';
-import {v4 as uuidv4} from 'uuid';
 import {
     Payload,
     ITaskOrder,
@@ -25,19 +24,19 @@ import {ITaskRepo} from '../../infra/task/taskRepo';
 import {AwilixContainer} from 'awilix';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IUtils} from 'utils/utils';
-
 import cluster from 'cluster';
 import {cpus} from 'os';
 import process from 'process';
 
 export interface IUpdateData {
     status?: TaskStatus;
-    progress?: {percent: number; description?: string};
+    progress?: {percent?: number; description?: string};
     startedAt?: number;
     completedAt?: number;
     link?: {name: string; url: string};
     workerId?: number;
     canceledBy?: string;
+    archive?: boolean;
 }
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
@@ -45,6 +44,7 @@ interface IGetTasksParams extends IGetCoreEntitiesParams {
         status?: TaskStatus;
         startAt?: number;
         created_by?: string;
+        archive?: boolean;
     };
 }
 
@@ -52,10 +52,10 @@ export interface ITasksManagerDomain {
     init(): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
     setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void>;
-    updateProgress(taskId: string, progress: {percent: number; description?: string}, ctx: IQueryInfos): Promise<void>;
+    updateProgress(taskId: string, progress: {percent?: number; description?: string}, ctx: IQueryInfos): Promise<void>;
     createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<void>;
     cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void>;
-    deleteTask(taskId: string, ctx: IQueryInfos): Promise<ITask>;
+    deleteTask(taskId: string, archive: boolean, ctx: IQueryInfos): Promise<ITask>;
 }
 
 interface IDeps {
@@ -152,6 +152,7 @@ export default function ({
         );
 
         let status = task.status;
+        let errorMessage = null;
 
         try {
             const func = _getDepsManagerFunc({
@@ -166,12 +167,15 @@ export default function ({
         } catch (e) {
             logger.error('Error executing task', e);
             status = TaskStatus.FAILED;
+            errorMessage = e.message;
         }
 
         return _updateTask(
             task.id,
             {
-                ...(status === TaskStatus.DONE ? {progress: {percent: 100}} : {}),
+                ...(status === TaskStatus.DONE
+                    ? {progress: {percent: 100}}
+                    : {...(errorMessage ? {progress: {description: errorMessage}} : {})}),
                 completedAt: utils.getUnixTime(),
                 status
             },
@@ -289,6 +293,7 @@ export default function ({
                 startAt,
                 status: TaskStatus.PENDING,
                 priority,
+                archive: false,
                 ...(!!callback && {callback})
             },
             ctx
@@ -383,7 +388,7 @@ export default function ({
         }
     };
 
-    const _deleteTask = async (taskId: string, ctx: IQueryInfos): Promise<ITask> => {
+    const _deleteTask = async (taskId: string, archive: boolean, ctx: IQueryInfos): Promise<ITask> => {
         const res = await _getTasks({params: {filters: {id: taskId}}, ctx});
 
         const task = res.list[0];
@@ -394,7 +399,7 @@ export default function ({
             throw new Error(`Cannot delete: task ${taskId} is still running.`);
         }
 
-        return taskRepo.deleteTask(taskId, ctx);
+        return archive ? _updateTask(taskId, {archive}, ctx) : taskRepo.deleteTask(taskId, ctx);
     };
 
     const _sendOrder = async (type: OrderType, payload: Payload, ctx: IQueryInfos): Promise<void> => {
@@ -430,12 +435,12 @@ export default function ({
         async cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void> {
             await _sendOrder(OrderType.CANCEL, task, ctx);
         },
-        async deleteTask(taskId: string, ctx: IQueryInfos): Promise<ITask> {
-            return _deleteTask(taskId, ctx);
+        async deleteTask(taskId: string, archive: boolean, ctx: IQueryInfos): Promise<ITask> {
+            return _deleteTask(taskId, archive, ctx);
         },
         async updateProgress(
             taskId: string,
-            progress: {percent: number; description?: string},
+            progress: {percent?: number; description?: string},
             ctx: IQueryInfos
         ): Promise<void> {
             await _updateTask(taskId, {progress}, ctx);

@@ -43,6 +43,8 @@ jest.mock('./Routes', () => {
     };
 });
 
+jest.mock('redux/notifications', () => jest.fn());
+
 describe('Router', () => {
     test('Should add a router and layout elements', async () => {
         await act(async () => {

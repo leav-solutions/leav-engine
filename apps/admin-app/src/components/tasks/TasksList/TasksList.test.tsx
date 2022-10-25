@@ -31,7 +31,22 @@ describe('TasksList', () => {
             render(
                 <MockedProvider>
                     <MockedUserContextProvider>
-                        <TasksList tasks={tasks} />
+                        <TasksList
+                            enabledColumns={[
+                                'id',
+                                'name',
+                                'created_by',
+                                'created_at',
+                                'startAt',
+                                'startedAt',
+                                'canceledBy',
+                                'completedAt',
+                                'progress',
+                                'step',
+                                'duration'
+                            ]}
+                            tasks={tasks}
+                        />
                     </MockedUserContextProvider>
                 </MockedProvider>
             );
@@ -49,6 +64,19 @@ describe('TasksList', () => {
                 <MockedProvider>
                     <MockedUserContextProvider>
                         <TasksList
+                            enabledColumns={[
+                                'id',
+                                'name',
+                                'created_by',
+                                'created_at',
+                                'startAt',
+                                'startedAt',
+                                'canceledBy',
+                                'completedAt',
+                                'progress',
+                                'step',
+                                'duration'
+                            ]}
                             tasks={tasks}
                             actionsBtn={() => [mockBtn('mockActnBtn')]}
                             footerBtn={[mockBtn('mockFooterBtn')]}

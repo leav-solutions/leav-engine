@@ -33,6 +33,7 @@ import {
 } from '../../../../../_types/types';
 import ErrorDisplay from '../../../../shared/ErrorDisplay';
 import useNotification from 'hooks/useNotification';
+import {setIsPanelOpen} from 'redux/notifications';
 
 const {Step} = Steps;
 
@@ -55,15 +56,17 @@ const CenteredWrapper = styled.div`
     text-align: center;
 `;
 
+const NOTIFICATION_DURATION = 2.5; // seconds
+
 function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
     const {t} = useTranslation();
+    const dispatch = useAppDispatch();
 
     const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
 
     const notification = useNotification();
 
     const {state: searchState} = useSearchReducer();
-    const dispatch = useAppDispatch();
 
     const [activeLibrary] = useActiveLibrary();
 
@@ -78,7 +81,9 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
 
             notification.triggerNotification({
                 message: t('export.export_notification_title'),
-                icon: <DownloadOutlined style={{color: '#108ee9'}} />
+                icon: <DownloadOutlined style={{color: '#108ee9'}} />,
+                onClick: _onNotificationsClick,
+                duration: NOTIFICATION_DURATION
             });
 
             setFilepath(data?.export);
@@ -166,6 +171,11 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
     };
     const validateButtonLabel = t(currentStep === ExportSteps.DONE ? 'global.close' : 'export.start');
 
+    const _onNotificationsClick = () => {
+        dispatch(setIsPanelOpen(true));
+        onClose();
+    };
+
     return (
         <Modal
             title={t('export.title')}
@@ -210,19 +220,12 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
                             <Result
                                 status="success"
                                 title={t('export.export_done')}
-                                //
-                                // TODO: Bouton pour ouvrir le panneau des notifications ?
-                                //
-                                // extra={[
-                                //     <Button
-                                //         key="download-file"
-                                //         type="primary"
-                                //         icon={<DownloadOutlined />}
-                                //         href={getFileUrl(filepath)}
-                                //     >
-                                //         {t('export.download_file')}
-                                //     </Button>
-                                // ]}
+                                subTitle={t('export.export_done_description')}
+                                extra={[
+                                    <Button type="primary" onClick={_onNotificationsClick}>
+                                        {t('export.export_done_open_notifications')}
+                                    </Button>
+                                ]}
                             />
                         ) : (
                             <ErrorDisplay message={exportError.message} />

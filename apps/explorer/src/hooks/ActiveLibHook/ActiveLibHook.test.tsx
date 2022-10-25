@@ -35,11 +35,7 @@ describe('ActiveLibHook', () => {
         };
 
         await act(async () => {
-            render(
-                <MockedProviderWithFragments>
-                    <ComponentUsingInfo />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingInfo />);
         });
 
         expect(givenActiveLibrary).toEqual(initialActiveLibrary);
@@ -58,11 +54,7 @@ describe('ActiveLibHook', () => {
         };
 
         await act(async () => {
-            render(
-                <MockedProviderWithFragments>
-                    <ComponentUsingInfo />
-                </MockedProviderWithFragments>
-            );
+            render(<ComponentUsingInfo />);
         });
 
         expect(givenActiveLibrary).toEqual(mockActiveLibrary);

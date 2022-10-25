@@ -10,12 +10,12 @@ import {default as themingVar, default as themingVars} from '../../themingVar';
 import HeaderInfo from '../HeaderInfo';
 import UserMenu from './UserMenu';
 import {BellOutlined} from '@ant-design/icons';
+import {useAppDispatch} from 'redux/store';
+import {setIsPanelOpen} from 'redux/notifications';
 
 interface ITopBarProps {
     userPanelVisible: boolean;
-    notifsPanelVisible: boolean;
     toggleUserPanelVisible: () => void;
-    toggleNotifsPanelVisible: () => void;
     nbNotifs: number;
 }
 
@@ -74,13 +74,9 @@ const InfoButton = styled(Button)`
     }
 `;
 
-function TopBar({
-    userPanelVisible,
-    notifsPanelVisible,
-    toggleUserPanelVisible,
-    toggleNotifsPanelVisible,
-    nbNotifs
-}: ITopBarProps): JSX.Element {
+function TopBar({userPanelVisible, toggleUserPanelVisible, nbNotifs}: ITopBarProps): JSX.Element {
+    const dispatch = useAppDispatch();
+
     const userPanelKey = 'trigger-user-panel';
     const notifsPanelKey = 'trigger-notifs-panel';
 
@@ -88,8 +84,8 @@ function TopBar({
         toggleUserPanelVisible();
     };
 
-    const handleNotifsPanelClick = () => {
-        toggleNotifsPanelVisible();
+    const _handleNotifsPanelClick = () => {
+        dispatch(setIsPanelOpen(true));
     };
 
     return (
@@ -108,7 +104,7 @@ function TopBar({
                     size="large"
                     icon={<BellOutlined style={{fontSize: '1.5em'}} />}
                     aria-label="infos"
-                    onClick={handleNotifsPanelClick}
+                    onClick={_handleNotifsPanelClick}
                 />
             </Badge>
             <MenuItemUser

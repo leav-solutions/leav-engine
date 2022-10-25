@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Applications from 'components/applications/Applications';
-import Tasks from 'components/tasks/tasks';
+import Tasks from 'components/tasks/Tasks';
 import EditApplication from 'components/applications/EditApplication';
 import Attributes from 'components/attributes/Attributes';
 import EditAttribute from 'components/attributes/EditAttribute';
