@@ -75,7 +75,7 @@ export default function ({
 
                     type Task {
                         id: ID!,
-                        name: String!,
+                        label: SystemTranslation!,
                         modified_at: Int!,
                         created_at: Int!,
                         created_by: User!,

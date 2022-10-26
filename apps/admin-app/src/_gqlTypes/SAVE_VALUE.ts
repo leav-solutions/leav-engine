@@ -56,7 +56,7 @@ export interface SAVE_VALUE_saveValue_LinkValue_linkValue {
 export interface SAVE_VALUE_saveValue_LinkValue {
     id_value: string | null;
     attribute: SAVE_VALUE_saveValue_LinkValue_attribute | null;
-    linkValue: SAVE_VALUE_saveValue_LinkValue_linkValue;
+    linkValue: SAVE_VALUE_saveValue_LinkValue_linkValue | null;
 }
 
 export interface SAVE_VALUE_saveValue_TreeValue_attribute {
@@ -96,7 +96,7 @@ export interface SAVE_VALUE_saveValue_TreeValue_treeValue {
 export interface SAVE_VALUE_saveValue_TreeValue {
     id_value: string | null;
     attribute: SAVE_VALUE_saveValue_TreeValue_attribute | null;
-    treeValue: SAVE_VALUE_saveValue_TreeValue_treeValue;
+    treeValue: SAVE_VALUE_saveValue_TreeValue_treeValue | null;
 }
 
 export type SAVE_VALUE_saveValue =

@@ -12,7 +12,7 @@ import taskRepo from './taskRepo';
 
 const mockTask: ITask = {
     id: 'id',
-    name: 'name',
+    label: {fr: 'name', en: 'name'},
     created_at: null,
     created_by: null,
     modified_at: null,

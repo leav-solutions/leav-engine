@@ -369,7 +369,7 @@
         "delete_archives": "Supprimer les archives",
         "delete_all": "Tout supprimer",
         "task-id": "ID",
-        "task-name": "Nom",
+        "task-label": "Libellé",
         "task-progress": "Progression",
         "task-step": "Etape",
         "task-infos": "Informations",

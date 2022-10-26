@@ -34,7 +34,7 @@ describe('TasksList', () => {
                         <TasksList
                             enabledColumns={[
                                 'id',
-                                'name',
+                                'label',
                                 'created_by',
                                 'created_at',
                                 'startAt',
@@ -66,7 +66,7 @@ describe('TasksList', () => {
                         <TasksList
                             enabledColumns={[
                                 'id',
-                                'name',
+                                'label',
                                 'created_by',
                                 'created_at',
                                 'startAt',

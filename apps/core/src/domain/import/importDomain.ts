@@ -37,7 +37,6 @@ import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import {v4 as uuidv4} from 'uuid';
 import {IUtils} from 'utils/utils';
-import {number} from 'joi';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 const defaultImportMode = ImportMode.UPSERT;
@@ -410,7 +409,11 @@ export default function ({
                 await tasksManagerDomain.createTask(
                     {
                         id: newTaskId,
-                        name: `Import file ${filename}`, // FIXME: translate
+                        label: config.lang.available.reduce((labels, lang) => {
+                            labels[lang] = `${translator.t('tasks.import_label', {lng: lang, filename})}`;
+
+                            return labels;
+                        }, {}),
                         func: {
                             moduleName: 'domain',
                             subModuleName: 'import',

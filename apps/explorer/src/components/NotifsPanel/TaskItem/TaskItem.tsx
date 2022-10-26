@@ -10,6 +10,8 @@ import {getFileUrl} from '../../../utils';
 import styled from 'styled-components';
 import {INotif} from '../NotifsPanel';
 import {useTranslation} from 'react-i18next';
+import {localizedTranslation} from 'utils';
+import {useLang} from 'hooks/LangHook/LangHook';
 
 const WrapperProgress = styled.div<{isCanceled: boolean}>`
     & .ant-progress-text {
@@ -39,6 +41,7 @@ interface ITaskItemProps {
 
 function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskItemProps): JSX.Element {
     const {t} = useTranslation();
+    const [{lang}] = useLang();
     const {ellipsis, data: task} = notif;
 
     return (
@@ -106,7 +109,9 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                     )
                 }
                 title={
-                    <Typography.Text {...(ellipsis && {ellipsis: {tooltip: task.name}})}>{task.name}</Typography.Text>
+                    <Typography.Text {...(ellipsis && {ellipsis: {tooltip: localizedTranslation(task.label, lang)}})}>
+                        {localizedTranslation(task.label, lang)}
+                    </Typography.Text>
                 }
                 description={
                     isCompletedTask(task) || !task.progress?.description

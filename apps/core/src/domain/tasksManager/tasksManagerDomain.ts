@@ -225,7 +225,7 @@ export default function ({
                         is: OrderType.CREATE,
                         then: Joi.object().keys({
                             id: Joi.string().required(),
-                            name: Joi.string().required(),
+                            label: Joi.object().required(),
                             func: Joi.object()
                                 .keys({
                                     moduleName: Joi.string().required(),
@@ -282,13 +282,13 @@ export default function ({
     };
 
     const _createTask = async (
-        {id, name, func, startAt, priority, callback}: ITaskCreatePayload,
+        {id, label, func, startAt, priority, callback}: ITaskCreatePayload,
         ctx: IQueryInfos
     ): Promise<ITask> => {
         const task = await taskRepo.createTask(
             {
                 id,
-                name,
+                label,
                 func,
                 startAt,
                 status: TaskStatus.PENDING,

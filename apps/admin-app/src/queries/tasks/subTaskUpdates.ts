@@ -9,7 +9,7 @@ export const subTaskUpdates = gql`
     subscription SUB_TASKS_UPDATE($filters: TaskFiltersInput) {
         task(filters: $filters) {
             id
-            name
+            label
             modified_at
             created_at
             created_by {

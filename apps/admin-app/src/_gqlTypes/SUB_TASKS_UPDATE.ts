@@ -76,7 +76,7 @@ export interface SUB_TASKS_UPDATE_task_canceledBy {
 
 export interface SUB_TASKS_UPDATE_task {
     id: string;
-    name: string;
+    label: SystemTranslation;
     modified_at: number;
     created_at: number;
     created_by: SUB_TASKS_UPDATE_task_created_by;

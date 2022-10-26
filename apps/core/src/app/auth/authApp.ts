@@ -166,7 +166,7 @@ export default function ({
                 }
             );
         },
-        async validateRequestToken(authorization: string, cookies?: []): Promise<jwt.JwtPayload> {
+        async validateRequestToken(authorization: string, cookies?: {}): Promise<jwt.JwtPayload> {
             let token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
 
             // In development, we allow token to be passed in the header instead of the cookie

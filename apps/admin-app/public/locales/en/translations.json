@@ -363,7 +363,7 @@
         "delete_archives": "Delete archives",
         "delete_all": "Delete all",
         "task-id": "ID",
-        "task-name": "Name",
+        "task-label": "Label",
         "task-step": "Step",
         "task-progress": "Progress",
         "task-status": "Status",

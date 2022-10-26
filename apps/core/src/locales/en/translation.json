@@ -156,5 +156,9 @@
     "files": {
         "directories": "Directories",
         "default_users_group_label": "Files admins"
+    },
+    "tasks": {
+        "import_label": "Import file {{filename}}",
+        "export_label": "Export data from {{library}}"
     }
 }

@@ -18,8 +18,9 @@ import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import validateLibAttributes from '../library/helpers/validateLibAttributes';
-import {ITaskCallback, OrderType, TaskPriority, ITaskFuncParams} from '../../_types/tasksManager';
+import {TaskPriority, ITaskFuncParams} from '../../_types/tasksManager';
 import {v4 as uuidv4} from 'uuid';
+import {i18n} from 'i18next';
 
 export const DIR_PATH = '/exports';
 
@@ -41,6 +42,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tasksManager'?: ITasksManagerDomain;
+    translator?: i18n;
     config?: Config.IConfig;
 }
 
@@ -50,7 +52,8 @@ export default function ({
     'core.domain.helpers.validate': validateHelper = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.library': libraryDomain = null,
-    'core.domain.tasksManager': tasksManager = null
+    'core.domain.tasksManager': tasksManager = null,
+    translator = null
 }: IDeps = {}): IExportDomain {
     const _getFormattedValues = async (
         attribute: IAttribute,
@@ -152,7 +155,11 @@ export default function ({
                 await tasksManager.createTask(
                     {
                         id: newTaskId,
-                        name: `Export data from ${library} library`, // FIXME: translation
+                        label: config.lang.available.reduce((labels, lang) => {
+                            labels[lang] = `${translator.t('tasks.export_label', {lng: lang, library})}`;
+
+                            return labels;
+                        }, {}),
                         func: {
                             moduleName: 'domain',
                             subModuleName: 'export',

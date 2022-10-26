@@ -158,5 +158,9 @@
     "files": {
         "directories": "Dossiers",
         "default_users_group_label": "Administrateurs fichiers"
+    },
+    "tasks": {
+        "import_label": "Import du fichier {{filename}}",
+        "export_label": "Export des données depuis {{library}}"
     }
 }

@@ -112,7 +112,7 @@ export interface GET_TASKS_tasks_list_canceledBy {
 
 export interface GET_TASKS_tasks_list {
     id: string;
-    name: string;
+    label: any;
     modified_at: number;
     created_at: number;
     created_by: GET_TASKS_tasks_list_created_by;

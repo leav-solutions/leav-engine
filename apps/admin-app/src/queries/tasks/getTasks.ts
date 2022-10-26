@@ -11,7 +11,7 @@ export const getTasks = gql`
             totalCount
             list {
                 id
-                name
+                label
                 modified_at
                 created_at
                 created_by {

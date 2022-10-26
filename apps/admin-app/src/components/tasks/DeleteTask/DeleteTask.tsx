@@ -8,6 +8,8 @@ import useUserData from '../../../hooks/useUserData';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import DeleteButton from '../../shared/DeleteButton';
 import ConfirmedButton from '../../shared/ConfirmedButton';
+import useLang from 'hooks/useLang';
+import {localizedTranslation} from '@leav/utils';
 
 interface IDeleteTaskProps {
     task: GET_TASKS_tasks_list;
@@ -17,11 +19,12 @@ interface IDeleteTaskProps {
 const DeleteTask = ({task, onDelete}: IDeleteTaskProps): JSX.Element | null => {
     const {t} = useTranslation();
     const userData = useUserData();
+    const lang = useLang().lang;
 
     return userData.permissions[PermissionsActions.admin_delete_task] ? (
         <ConfirmedButton
             action={() => onDelete(task.id)}
-            confirmMessage={t('tasks.confirm_delete', {taskName: task.name})}
+            confirmMessage={t('tasks.confirm_delete', {taskName: localizedTranslation(task.label, lang)})}
         >
             <DeleteButton disabled={false} />
         </ConfirmedButton>

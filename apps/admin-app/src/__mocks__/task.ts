@@ -8,7 +8,7 @@ import {mockModifier} from './user';
 
 export const mockTask: GET_TASKS_tasks_list = {
     id: 'taskId',
-    name: 'taskName',
+    label: {fr: 'taskName', en: 'taskName'},
     modified_at: Date.now(),
     created_at: Date.now(),
     created_by: {

@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ISystemTranslation} from './systemTranslation';
 
 export enum OrderType {
     CREATE = 'CREATE',
@@ -20,7 +21,7 @@ export enum TaskPriority {
     HIGH = 2
 }
 
-export type ITaskCreatePayload = Pick<ITask, 'id' | 'name' | 'func' | 'startAt' | 'priority' | 'callback'>;
+export type ITaskCreatePayload = Pick<ITask, 'id' | 'label' | 'func' | 'startAt' | 'priority' | 'callback'>;
 export type ITaskCancelPayload = Pick<ITask, 'id'>;
 
 export type Payload = ITaskCreatePayload | ITaskCancelPayload;
@@ -56,7 +57,7 @@ export interface ITaskFuncParams {
 
 export interface ITask {
     id: string;
-    name: string;
+    label: ISystemTranslation;
     created_at: number;
     created_by: string;
     modified_at: number;

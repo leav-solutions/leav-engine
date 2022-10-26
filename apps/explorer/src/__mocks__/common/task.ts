@@ -8,7 +8,7 @@ import {TaskStatus} from '_gqlTypes/globalTypes';
 export const mockTask: GET_TASKS_tasks_list = {
     id: 'taskId',
     archive: false,
-    name: 'taskName',
+    label: {fr: 'taskName', en: 'taskName'},
     modified_at: Date.now(),
     created_at: Date.now(),
     startAt: Date.now(),

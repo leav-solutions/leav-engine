@@ -9,6 +9,8 @@ import {TaskStatus} from '_gqlTypes/globalTypes';
 import Loading from '../../shared/Loading';
 import moment from 'moment';
 import {Column} from '../Tasks/Tasks';
+import useLang from 'hooks/useLang';
+import {localizedTranslation} from '@leav/utils';
 
 interface ITasksListProps {
     striped?: boolean;
@@ -39,6 +41,7 @@ const TasksList = ({
     loading
 }: ITasksListProps): JSX.Element => {
     const {t} = useTranslation();
+    const lang = useLang().lang;
 
     const [maxNbBtnsInRow, setmaxNbBtnsInRow] = useState<number>(0);
     const [sort, setSort] = useState<{column: string; direction: 'ascending' | 'descending'}>({
@@ -108,7 +111,9 @@ const TasksList = ({
                                         data-testid="TableRow"
                                     >
                                         {enabledColumns.includes('id') && <Table.Cell>{task.id}</Table.Cell>}
-                                        {enabledColumns.includes('name') && <Table.Cell>{task.name}</Table.Cell>}
+                                        {enabledColumns.includes('label') && (
+                                            <Table.Cell>{localizedTranslation(task.label, lang)}</Table.Cell>
+                                        )}
                                         {enabledColumns.includes('created_by') && (
                                             <Table.Cell>{task.created_by.whoAmI.label}</Table.Cell>
                                         )}
@@ -119,7 +124,9 @@ const TasksList = ({
                                             <Table.Cell>{new Date(task.startAt * 1000).toLocaleString()}</Table.Cell>
                                         )}
                                         {enabledColumns.includes('startedAt') && (
-                                            <Table.Cell>{new Date(task.startedAt * 1000).toLocaleString()}</Table.Cell>
+                                            <Table.Cell>
+                                                {task.startedAt ? new Date(task.startedAt * 1000).toLocaleString() : ''}
+                                            </Table.Cell>
                                         )}
                                         {enabledColumns.includes('canceledBy') && (
                                             <Table.Cell>{task.canceledBy?.whoAmI.label}</Table.Cell>

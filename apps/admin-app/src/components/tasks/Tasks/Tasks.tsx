@@ -23,7 +23,7 @@ import {cancelTaskMutation} from 'queries/tasks/cancelTask';
 
 export type Column =
     | 'id'
-    | 'name'
+    | 'label'
     | 'created_by'
     | 'created_at'
     | 'startAt'
@@ -114,7 +114,7 @@ const Tasks = (): JSX.Element => {
                     <TasksList
                         enabledColumns={[
                             'id',
-                            'name',
+                            'label',
                             'created_by',
                             'created_at',
                             'startAt',
@@ -138,7 +138,7 @@ const Tasks = (): JSX.Element => {
                     <TasksList
                         enabledColumns={[
                             'id',
-                            'name',
+                            'label',
                             'created_by',
                             'created_at',
                             'startAt',
