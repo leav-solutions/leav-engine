@@ -25,7 +25,7 @@ import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {EventType} from '../../_types/event';
+import {EventAction} from '../../_types/event';
 import {FilesAttributes} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
@@ -197,7 +197,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -624,9 +624,9 @@ export default function({
 
             const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
-            await eventsManager.send(
+            await eventsManager.sendDatabaseEvent(
                 {
-                    type: EventType.RECORD_SAVE,
+                    action: EventAction.RECORD_SAVE,
                     data: {
                         id: newRecord.id,
                         libraryId: newRecord.library,
@@ -643,7 +643,7 @@ export default function({
             const canUpdate = await recordPermissionDomain.getRecordPermission({
                 action: RecordPermissionsActions.EDIT_RECORD,
                 userId: ctx.userId,
-                library: recordData.library,
+                library,
                 recordId: recordData.id,
                 ctx
             });
@@ -723,9 +723,9 @@ export default function({
             // Everything is clean, we can actually delete the record
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            await eventsManager.send(
+            await eventsManager.sendDatabaseEvent(
                 {
-                    type: EventType.RECORD_DELETE,
+                    action: EventAction.RECORD_DELETE,
                     data: {
                         id: deletedRecord.id,
                         libraryId: deletedRecord.library,

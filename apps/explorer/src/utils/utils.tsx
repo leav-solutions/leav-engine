@@ -19,11 +19,11 @@ import {
     ExtendFormat,
     IAttribute,
     IDateRangeValue,
-    INotification,
     IQueryFilter,
-    ISelectedAttribute,
     IView,
-    NotificationPriority,
+    IInfo,
+    ISelectedAttribute,
+    InfoPriority,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -223,35 +223,35 @@ export const getUniqueId = () => {
     return '_' + Math.random().toString(36).substr(2, 9);
 };
 
-export const sortNotificationByPriority = (a: INotification, b: INotification) => {
+export const sortInfoByPriority = (a: IInfo, b: IInfo) => {
     switch (a.priority) {
-        case NotificationPriority.low:
+        case InfoPriority.low:
             switch (b.priority) {
-                case NotificationPriority.low:
+                case InfoPriority.low:
                     return 0;
-                case NotificationPriority.medium:
+                case InfoPriority.medium:
                     return 1;
-                case NotificationPriority.high:
+                case InfoPriority.high:
                 default:
                     return 1;
             }
-        case NotificationPriority.medium:
+        case InfoPriority.medium:
             switch (b.priority) {
-                case NotificationPriority.low:
+                case InfoPriority.low:
                     return -1;
-                case NotificationPriority.medium:
+                case InfoPriority.medium:
                     return 0;
-                case NotificationPriority.high:
+                case InfoPriority.high:
                 default:
                     return 1;
             }
-        case NotificationPriority.high:
+        case InfoPriority.high:
             switch (b.priority) {
-                case NotificationPriority.low:
+                case InfoPriority.low:
                     return -1;
-                case NotificationPriority.medium:
+                case InfoPriority.medium:
                     return -1;
-                case NotificationPriority.high:
+                case InfoPriority.high:
                 default:
                     return 0;
             }

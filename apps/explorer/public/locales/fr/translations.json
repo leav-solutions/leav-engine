@@ -19,7 +19,9 @@
         "details": "Détails",
         "element_not_found": "Élément introuvable",
         "refresh_page": "Rafraîchir la page",
-        "document_title": "LEAV Engine - {{appLabel}}"
+        "document_title": "LEAV Engine - {{appLabel}}",
+        "yes": "Oui",
+        "no": "Non"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
@@ -294,7 +296,7 @@
             "detach-selected": "Détacher la sélection",
             "add-selected": "Ajouter la sélection"
         },
-        "notifications": {
+        "infos": {
             "success-add": "{{nb}} élément(s) ajouté(s)",
             "error-add": "Une erreur est survenue lors de l'ajout des éléments {{elements}}: {{errorMessage}}",
             "warning-add-no-selection": "Aucun élément sélectionné à ajouter",
@@ -305,7 +307,7 @@
         },
         "access_denied": "Vous ne pouvez pas accéder à cet élément"
     },
-    "notification": {
+    "info": {
         "base-message": "Bienvenue dans {{appLabel}}",
         "active-lib": "{{appLabel}} - Vous êtes sur la bibliothèque {{lib}}",
         "active-tree": "{{appLabel}} - Vous êtes sur l'arbre {{tree}}"
@@ -344,20 +346,30 @@
         "start": "Lancer l'export",
         "attributes_selection": "Sélection des attributs",
         "export_generation": "Génération de l'export",
-        "export_done": "Export terminé",
-        "download_file": "Télécharger le fichier"
+        "export_done": "Export démarré",
+        "export_done_description": "La progression est disponible dans le panneau des notifications",
+        "export_done_open_notifications": "Afficher les notifications",
+        "download_file": "Télécharger le fichier",
+        "export_notification_title": "Nouvel export en tâche de fond",
+        "export_notification_description": "Planifié le"
     },
     "import": {
         "title": "Importer des données",
         "file_selection": "Sélection du fichier",
         "file_selection_instruction": "Cliquez ou déposez votre fichier",
         "start": "Lancer l'import",
-        "in_progress": "Import en cours",
+        "in_progress": "Upload en cours",
         "data_overview": "Aperçu des données",
         "file_configuration": "Configuration",
-        "import_done": "Import terminé",
+        "import_schedule": "Planifier l'import",
+        "import_schedule_title": "Date de planification",
+        "import_done": "Upload du fichier terminé",
+        "import_done_description": "La progression est disponible dans le panneau des notifications",
+        "import_done_open_notifications": "Afficher les notifications",
         "import_success": "Import terminé avec succès",
-        "import_failure": "Erreur lors de l'import des données",
+        "import_failure": "Erreur lors de l'import du fichier",
+        "import_notification_title": "Nouvel import en tâche de fond",
+        "import_notification_description": "Planifié le",
         "empty_file": "Le fichier ne contient pas de données",
         "mapping": "Sélection des attributs",
         "attribute_selection": "Sélectionner un attribut",
@@ -491,5 +503,29 @@
     "values_version": {
         "title": "Versions de valeurs",
         "select_version": "Sélectionner une version"
+    },
+    "notifications": {
+        "title": "Notifications",
+        "inProgress": "En cours",
+        "pending": "En attente",
+        "done": "Terminé",
+        "deleteAll": "Tout supprimer",
+        "task-status": {
+            "CANCELED": "Annulée",
+            "DONE": "Terminée",
+            "FAILED": "Erreur",
+            "PENDING": "En attente",
+            "RUNNING": "En cours"
+        },
+        "task-infos": "Informations",
+        "task-cancel": "Annuler",
+        "task-createdAt": "Créée le",
+        "task-startAt": "Démarre le",
+        "task-startedAt": "A démarré le",
+        "task-completedAt": "Terminée le",
+        "task-canceledAt": "Annulée le",
+        "task-canceledBy": "Annulée par",
+        "task-duration": "Durée",
+        "task-confirmCancel": "Êtes-vous sûr de vouloir annuler cette tâche ?"
     }
 }

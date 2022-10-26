@@ -17,7 +17,7 @@ import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
-import {EventType} from '../../_types/event';
+import {EventAction} from '../../_types/event';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IFindValueTree, IStandardValue, IValue, IValuesOptions} from '../../_types/value';
@@ -126,7 +126,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
 }
 
-const valueDomain = function({
+const valueDomain = function ({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -277,9 +277,9 @@ const valueDomain = function({
         res.attribute = attribute;
 
         // delete value on elasticsearch
-        await eventsManager.send(
+        await eventsManager.sendDatabaseEvent(
             {
-                type: EventType.VALUE_DELETE,
+                action: EventAction.VALUE_DELETE,
                 data: {
                     libraryId: library,
                     recordId,
@@ -599,9 +599,9 @@ const valueDomain = function({
                         prevRes.values.push(processedValue);
 
                         // TODO: get old value ?
-                        await eventsManager.send(
+                        await eventsManager.sendDatabaseEvent(
                             {
-                                type: EventType.VALUE_SAVE,
+                                action: EventAction.VALUE_SAVE,
                                 data: {
                                     libraryId: library,
                                     recordId,

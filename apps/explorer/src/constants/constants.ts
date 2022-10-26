@@ -7,7 +7,7 @@ import {IView} from '../_types/types';
 export const selectionColumn = 'selection-column';
 export const infosCol = 'infos';
 
-export const defaultNotificationsTime = 5000;
+export const defaultInfosTime = 5000;
 
 export const panelSize = '22.5rem';
 

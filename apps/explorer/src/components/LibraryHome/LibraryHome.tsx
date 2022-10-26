@@ -11,10 +11,10 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
 import React, {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setNotificationBase} from 'redux/notifications';
+import {setInfoBase} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {localizedTranslation} from 'utils';
-import {IBaseNotification, NotificationType, WorkspacePanels} from '_types/types';
+import {IBaseInfo, InfoType, WorkspacePanels} from '_types/types';
 
 export interface ILibraryHomeProps {
     library?: string;
@@ -33,7 +33,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const hasAccess = data?.libraries?.list[0]?.permissions.access_library;
 
     useEffect(() => {
-        // Update infos about current lib (active library, notification message)
+        // Update infos about current lib (active library, info message)
         if (
             loading ||
             error ||
@@ -67,15 +67,15 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
         }
 
         // Base Notification
-        const baseNotification: IBaseNotification = {
-            content: t('notification.active-lib', {
+        const baseInfo: IBaseInfo = {
+            content: t('info.active-lib', {
                 lib: currentLibLabel,
                 appLabel: localizedTranslation(currentApp.label, lang)
             }),
-            type: NotificationType.basic
+            type: InfoType.basic
         };
 
-        dispatch(setNotificationBase(baseNotification));
+        dispatch(setInfoBase(baseInfo));
     }, [activeLibrary, data, dispatch, error, lang, library, loading, t, updateActiveLibrary, activePanel, hasAccess]);
 
     if (loading) {

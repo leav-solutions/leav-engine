@@ -9,6 +9,7 @@ export {default as filesManager} from './filesManagerApp';
 export {default as form} from './formApp/formApp';
 export {default as import} from './importApp';
 export {default as indexationManager} from './indexationManagerApp';
+export {default as tasksManager} from './tasksManagerApp';
 export {default as library} from './libraryApp';
 export {default as permission} from './permissionApp/permissionApp';
 export {default as plugins} from './pluginsApp';

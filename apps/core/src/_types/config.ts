@@ -17,6 +17,7 @@ export interface IConfig {
     redis: IRedis;
     filesManager: IFilesManager;
     indexationManager: IIndexationManager;
+    tasksManager: ITasksManager;
     eventsManager: IEventsManager;
     debug?: boolean;
     env?: string;
@@ -105,13 +106,28 @@ export interface IFilesManager {
 
 export interface IEventsManager {
     routingKeys: {
-        events: string;
+        data_events: string;
+        pubsub_events: string;
+    };
+    queues: {
+        pubsub_events: string;
     };
 }
 
 export interface IIndexationManager {
     queues: {
         events: string;
+    };
+}
+
+export interface ITasksManager {
+    nbWorkers: number;
+    checkingInterval: number; // in milliseconds
+    queues: {
+        orders: string;
+    };
+    routingKeys: {
+        orders: string;
     };
 }
 

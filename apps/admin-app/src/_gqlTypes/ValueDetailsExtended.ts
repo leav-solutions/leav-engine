@@ -70,7 +70,7 @@ export interface ValueDetailsExtended_LinkValue {
     modified_at: number | null;
     version: ValueVersion | null;
     metadata: (ValueDetailsExtended_LinkValue_metadata | null)[] | null;
-    linkValue: ValueDetailsExtended_LinkValue_linkValue;
+    linkValue: ValueDetailsExtended_LinkValue_linkValue | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_metadata_value {
@@ -150,7 +150,7 @@ export interface ValueDetailsExtended_TreeValue {
     modified_at: number | null;
     version: ValueVersion | null;
     metadata: (ValueDetailsExtended_TreeValue_metadata | null)[] | null;
-    treeValue: ValueDetailsExtended_TreeValue_treeValue;
+    treeValue: ValueDetailsExtended_TreeValue_treeValue | null;
 }
 
 export type ValueDetailsExtended =

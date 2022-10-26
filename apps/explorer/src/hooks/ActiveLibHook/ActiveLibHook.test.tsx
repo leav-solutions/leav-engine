@@ -7,6 +7,7 @@ import {render} from '_tests/testUtils';
 import {mockLibraryPermissions} from '__mocks__/common/library';
 import {IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import {initialActiveLibrary, useActiveLibrary} from './ActiveLibHook';
+import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 
 describe('ActiveLibHook', () => {
     const mockActiveLibrary: IActiveLibrary = {
@@ -24,8 +25,9 @@ describe('ActiveLibHook', () => {
     };
 
     test('should get empty library if no activeLibrary set', async () => {
-        let givenActiveLibrary;
-        const ComponentUsingNotification = () => {
+        let givenActiveLibrary: any;
+
+        const ComponentUsingInfo = () => {
             const [activeLibrary] = useActiveLibrary();
 
             givenActiveLibrary = activeLibrary;
@@ -33,7 +35,7 @@ describe('ActiveLibHook', () => {
         };
 
         await act(async () => {
-            render(<ComponentUsingNotification />);
+            render(<ComponentUsingInfo />);
         });
 
         expect(givenActiveLibrary).toEqual(initialActiveLibrary);
@@ -42,7 +44,7 @@ describe('ActiveLibHook', () => {
     test('should get activeLibrary', async () => {
         let givenActiveLibrary;
 
-        const ComponentUsingNotification = () => {
+        const ComponentUsingInfo = () => {
             const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
 
             updateActiveLibrary(mockActiveLibrary);
@@ -52,7 +54,7 @@ describe('ActiveLibHook', () => {
         };
 
         await act(async () => {
-            render(<ComponentUsingNotification />);
+            render(<ComponentUsingInfo />);
         });
 
         expect(givenActiveLibrary).toEqual(mockActiveLibrary);

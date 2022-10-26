@@ -7,7 +7,8 @@ import {
     ApolloProvider,
     defaultDataIdFromObject,
     InMemoryCache,
-    ServerError
+    ServerError,
+    split
 } from '@apollo/client';
 import {onError} from '@apollo/link-error';
 import {createUploadLink} from 'apollo-upload-client';
@@ -16,9 +17,12 @@ import Loading from 'components/shared/Loading';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addNotification} from 'redux/notifications';
+import {addInfo} from 'redux/infos';
 import {useAppDispatch} from 'redux/store';
-import {INotification, NotificationChannel, NotificationType} from '_types/types';
+import {IInfo, InfoChannel, InfoType} from '_types/types';
+import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
+import {createClient} from 'graphql-ws';
+import {getMainDefinition} from '@apollo/client/utilities';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -64,28 +68,28 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                     interpolation: {escapeValue: false}
                 });
 
-                let notification: INotification;
+                let info: IInfo;
 
                 switch (extensions.code) {
                     case 'INTERNAL_ERROR':
-                        notification = {
+                        info = {
                             content: errorContent,
-                            type: NotificationType.error,
-                            channel: NotificationChannel.trigger
+                            type: InfoType.error,
+                            channel: InfoChannel.trigger
                         };
                         break;
                     case 'VALIDATION_ERROR':
                     case 'PERMISSION_ERROR':
                     default:
-                        notification = {
+                        info = {
                             content: errorContent,
-                            type: NotificationType.error,
-                            channel: NotificationChannel.serverError
+                            type: InfoType.error,
+                            channel: InfoChannel.serverError
                         };
                         break;
                 }
 
-                dispatch(addNotification(notification));
+                dispatch(addInfo(info));
 
                 const errorMessage = `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`;
                 return errorMessage;
@@ -95,30 +99,41 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
         if (networkError) {
             const errorContent = t('error.network_error_occurred');
 
-            const notification: INotification = {
+            const info: IInfo = {
                 content: errorContent,
-                type: NotificationType.error,
-                channel: NotificationChannel.trigger
+                type: InfoType.error,
+                channel: InfoChannel.trigger
             };
 
-            dispatch(addNotification(notification));
+            dispatch(addInfo(info));
         }
 
         if (!graphQLErrors && !networkError) {
             const errorContent = t('error.error_occurred');
 
-            const notification: INotification = {
+            const info: IInfo = {
                 content: errorContent,
-                type: NotificationType.error,
-                channel: NotificationChannel.trigger
+                type: InfoType.error,
+                channel: InfoChannel.trigger
             };
 
-            dispatch(addNotification(notification));
+            dispatch(addInfo(info));
         }
     });
 
+    const wsLink = new GraphQLWsLink(
+        createClient({
+            url: process.env.REACT_APP_WS_URL
+        })
+    );
+
+    const splitLink = split(({query}) => {
+        const definition = getMainDefinition(query);
+        return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+    }, wsLink);
+
     const gqlClient = new ApolloClient({
-        link: ApolloLink.from([_handleApolloError, createUploadLink({uri: process.env.REACT_APP_API_URL})]),
+        link: ApolloLink.from([_handleApolloError, splitLink, createUploadLink({uri: process.env.REACT_APP_API_URL})]),
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up
             // with the ID attribute (eg. in the getRecordPropertiesQuery).

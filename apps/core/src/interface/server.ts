@@ -16,8 +16,12 @@ import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
+import {ACCESS_TOKEN_COOKIE_NAME} from '../_types/auth';
 import AuthenticationError from '../errors/AuthenticationError';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
+import {WebSocketServer} from 'ws';
+import * as graphqlWS from 'graphql-ws/lib/use/ws';
+import {createServer} from 'http';
 
 export interface IServer {
     init(): Promise<void>;
@@ -87,7 +91,7 @@ export default function ({
 
     const _checkAuth = async (req, res, next) => {
         try {
-            await authApp.validateRequestToken(req);
+            await authApp.validateRequestToken(req.headers.authorization, req.cookies);
 
             next();
         } catch (err) {
@@ -98,6 +102,7 @@ export default function ({
     return {
         async init(): Promise<void> {
             const app = express();
+            const httpServer = createServer(app);
 
             try {
                 // Express settings
@@ -151,10 +156,62 @@ export default function ({
                         variableValues: args.request.variables
                     }) as Promise<any>;
 
+                // Create Web Socket Server
+                const wsServer = new WebSocketServer({
+                    server: httpServer,
+                    path: '/graphql'
+                });
+
+                // Hand in the schema we just created and have the
+                // WebSocketServer start listening.
+                const serverCleanup = graphqlWS.useServer(
+                    {
+                        schema: graphqlApp.schema,
+                        context: async (ctx: any) => {
+                            try {
+                                // recreate headers object from rawHeaders array
+                                const headers = ctx.extra.request.rawHeaders.reduce((prev, curr, i, arr) => {
+                                    return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
+                                }, {});
+
+                                if (headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME)) {
+                                    const arrCookie = headers.Cookie.split('=');
+                                    const tokenIdx = headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1;
+
+                                    const payload = await authApp.validateRequestToken(arrCookie[tokenIdx]);
+
+                                    const context: IQueryInfos = {
+                                        userId: payload.userId
+                                    };
+
+                                    return context;
+                                } else {
+                                    throw new ApolloAuthenticationError('you must be logged in');
+                                }
+                            } catch (e) {
+                                throw new ApolloAuthenticationError('you must be logged in');
+                            }
+                        }
+                    },
+                    wsServer
+                );
+
                 const server = new ApolloServer({
                     debug: config.debug,
                     introspection: true,
-                    plugins: [require('apollo-tracing').plugin(), ApolloServerPluginCacheControlDisabled()],
+                    plugins: [
+                        require('apollo-tracing').plugin(),
+                        ApolloServerPluginCacheControlDisabled(),
+                        {
+                            async serverWillStart() {
+                                return {
+                                    async drainServer() {
+                                        await serverCleanup.dispose();
+                                    }
+                                };
+                            }
+                        }
+                    ],
                     formatResponse: (resp, ctx) => {
                         const formattedResp = {...resp};
 
@@ -180,7 +237,7 @@ export default function ({
                     },
                     context: async ({req, res}): Promise<IQueryInfos> => {
                         try {
-                            const payload = await authApp.validateRequestToken(req);
+                            const payload = await authApp.validateRequestToken(req.headers.authorization, req.cookies);
 
                             const ctx: IQueryInfos = {
                                 userId: payload.userId,
@@ -217,11 +274,11 @@ export default function ({
                 });
 
                 await server.start();
-
                 server.applyMiddleware({app, path: '/graphql', cors: true});
+
                 applicationApp.registerRoute(app);
 
-                await new Promise<void>(resolve => app.listen(config.server.port, resolve));
+                await new Promise<void>(resolve => httpServer.listen(config.server.port, resolve));
                 logger.info(`🚀 Server ready at http://localhost:${config.server.port}${server.graphqlPath}`);
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');

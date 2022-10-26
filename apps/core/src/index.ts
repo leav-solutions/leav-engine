@@ -4,6 +4,7 @@
 import fs from 'fs';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
+import {ITasksManagerInterface} from 'interface/tasksManager';
 import * as Config from '_types/config';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
@@ -45,8 +46,10 @@ import {IApplicationService} from 'infra/application/applicationService';
     const server = coreContainer.cradle['core.interface.server'];
     const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
     const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
+    const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
+    const eventsManager = coreContainer.cradle['core.domain.eventsManager'];
 
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 
@@ -75,6 +78,7 @@ import {IApplicationService} from 'infra/application/applicationService';
 
         if (typeof opt !== 'undefined' && opt.indexOf('server') !== -1) {
             await server.init();
+            await eventsManager.init();
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);
@@ -90,6 +94,8 @@ import {IApplicationService} from 'infra/application/applicationService';
             await filesManager.init();
         } else if (typeof opt !== 'undefined' && opt.indexOf('indexationManager') !== -1) {
             await indexationManager.init();
+        } else if (typeof opt !== 'undefined' && opt.indexOf('tasksManager') !== -1) {
+            await tasksManager.init();
         } else {
             await cli.run();
         }

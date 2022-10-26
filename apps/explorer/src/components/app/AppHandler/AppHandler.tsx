@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
+import {useQuery, useSubscription} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -19,9 +19,14 @@ import {getSysTranslationQueryLanguage} from '../../../utils';
 import {ME} from '../../../_gqlTypes/ME';
 import {AvailableLanguage} from '../../../_types/types';
 import Router from '../../Router';
+import {getTasks} from 'graphQL/queries/tasks/getTasks';
+import {addTask} from 'redux/tasks';
+import {useAppDispatch} from 'redux/store';
+import {getTaskUpdates} from 'graphQL/subscribes/tasks/getTaskUpdates';
 
 function AppHandler(): JSX.Element {
     const {t, i18n} = useTranslation();
+    const dispatch = useAppDispatch();
 
     // Add lang infos to the cache
     const lang = getSysTranslationQueryLanguage(i18n);
@@ -44,6 +49,31 @@ function AppHandler(): JSX.Element {
     >(getApplicationByIdQuery, {variables: {id: appId ?? ''}});
 
     const currentApp = applicationData?.applications?.list?.[0];
+
+    const {error: tasksError} = useQuery(getTasks, {
+        variables: {
+            filters: {
+                created_by: userData?.me?.id,
+                archive: false
+            }
+        },
+        skip: !userData?.me?.id,
+        onCompleted: data => {
+            for (const task of data.tasks.list) {
+                dispatch(addTask(task));
+            }
+        }
+    });
+
+    useSubscription(getTaskUpdates, {
+        variables: {filters: {created_by: userData?.me?.id, archive: false}},
+        skip: !userData?.me?.id,
+        onSubscriptionData: subData => {
+            // we temporary add created_by field because of miss context for subscriptions on server side to resolve User object
+            const task = subData.subscriptionData.data.task;
+            dispatch(addTask(task));
+        }
+    });
 
     useEffect(() => {
         if (!langInfo.lang.length) {
@@ -75,8 +105,9 @@ function AppHandler(): JSX.Element {
         return <Loading />;
     }
 
-    if (meError || applicationError) {
-        return <ErrorDisplay message={meError?.message || applicationError?.message} />;
+    if (meError || tasksError || applicationError) {
+        const error = meError || tasksError || applicationError;
+        return <ErrorDisplay message={error?.message} />;
     }
 
     if (!currentApp) {

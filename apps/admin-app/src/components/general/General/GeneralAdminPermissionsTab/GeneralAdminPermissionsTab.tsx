@@ -39,7 +39,12 @@ function GeneralAdminPermissionsTab(): JSX.Element {
             PermissionsActions.admin_edit_version_profile
         ],
         permissions: [PermissionsActions.admin_access_permissions, PermissionsActions.admin_edit_permission],
-        preferences: [PermissionsActions.admin_manage_global_preferences]
+        preferences: [PermissionsActions.admin_manage_global_preferences],
+        tasks: [
+            PermissionsActions.admin_access_tasks,
+            PermissionsActions.admin_cancel_task,
+            PermissionsActions.admin_delete_task
+        ]
     };
 
     return <DefinePermByUserGroupView type={PermissionTypes.admin} actions={groupedPermissionsActions} />;

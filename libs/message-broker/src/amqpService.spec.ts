@@ -17,7 +17,8 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     consume: jest.fn(),
     publish: jest.fn(),
     waitForConfirms: jest.fn(),
-    prefetch: jest.fn()
+    prefetch: jest.fn(),
+    close: jest.fn()
 };
 
 const mockAmqpConnection: Mockify<amqp.Connection> = {

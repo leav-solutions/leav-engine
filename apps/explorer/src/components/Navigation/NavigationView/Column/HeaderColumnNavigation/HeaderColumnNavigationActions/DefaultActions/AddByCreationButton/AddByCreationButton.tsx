@@ -17,7 +17,7 @@ import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_EL
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {INotification, NotificationChannel, NotificationType} from '_types/types';
+import {IInfo, InfoChannel, InfoType} from '_types/types';
 import {IMessages, OnMessagesFunc} from '../../_types';
 
 interface IAddByCreationButtonProps {
@@ -44,7 +44,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
     const _handleCloseCreateRecordModal = () => setIsCreateRecordModalVisible(false);
 
     const _handleAfterCreateRecord = async (newRecord: RecordIdentity_whoAmI) => {
-        let notification: INotification;
+        let notification: IInfo;
         let messages: IMessages = {
             countValid: 0,
             errors: {}
@@ -64,8 +64,8 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
             messages = {...messages, countValid: 1};
 
             notification = {
-                channel: NotificationChannel.trigger,
-                type: NotificationType.success,
+                channel: InfoChannel.trigger,
+                type: InfoType.success,
                 content: t('navigation.notifications.success-add', {nb: 1})
             };
         } catch (err) {
@@ -82,8 +82,8 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                 }
             } else {
                 notification = {
-                    channel: NotificationChannel.trigger,
-                    type: NotificationType.error,
+                    channel: InfoChannel.trigger,
+                    type: InfoType.error,
                     content: `${t('error.error_occurred')}: ${err.message}`
                 };
             }

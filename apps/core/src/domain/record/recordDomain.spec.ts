@@ -30,7 +30,9 @@ import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
 
-const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
+const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
+    routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
+};
 
 const mockConfig: Mockify<Config.IConfig> = {
     eventsManager: eventsManagerMockConfig as Config.IEventsManager,
@@ -50,7 +52,7 @@ describe('RecordDomain', () => {
     };
 
     describe('createRecord', () => {
-        test('Should create a new record', async function() {
+        test('Should create a new record', async function () {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -64,7 +66,7 @@ describe('RecordDomain', () => {
             };
 
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
 
             const recDomain = recordDomain({
@@ -88,7 +90,7 @@ describe('RecordDomain', () => {
     });
 
     describe('updateRecord', () => {
-        test('Should update a record', async function() {
+        test('Should update a record', async function () {
             const updatedRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -119,7 +121,7 @@ describe('RecordDomain', () => {
     describe('deleteRecord', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
-        test('Should delete an record and return deleted record', async function() {
+        test('Should delete an record and return deleted record', async function () {
             const recRepo: Mockify<IRecordRepo> = {
                 deleteRecord: global.__mockPromise(recordData)
             };
@@ -132,7 +134,7 @@ describe('RecordDomain', () => {
                 // getLibraryFullTextAttributes: global.__mockPromise([])
             };
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                send: global.__mockPromise()
+                sendDatabaseEvent: global.__mockPromise()
             };
 
             const mockValidateHelper: Mockify<IValidateHelper> = {
@@ -200,7 +202,7 @@ describe('RecordDomain', () => {
             getLibraryPermission: global.__mockPromise(true)
         };
 
-        test('Should find records', async function() {
+        test('Should find records', async function () {
             const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
             const recDomain = recordDomain({
@@ -693,7 +695,7 @@ describe('RecordDomain', () => {
             });
         });
 
-        test('Should search records', async function() {
+        test('Should search records', async function () {
             const mockSearchRes = {
                 totalCount: 1,
                 list: [

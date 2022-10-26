@@ -18,7 +18,7 @@ import {
 import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
 import {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addNotification} from 'redux/notifications';
+import {addInfo} from 'redux/infos';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_whoAmI} from '_gqlTypes/CREATE_RECORD';
@@ -31,7 +31,7 @@ import {
     SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue,
     SAVE_VALUE_BATCH_saveValueBatch_values_Value
 } from '_gqlTypes/SAVE_VALUE_BATCH';
-import {NotificationPriority, NotificationType, PreviewSize} from '_types/types';
+import {InfoPriority, InfoType, PreviewSize} from '_types/types';
 import EditRecord from '../EditRecord';
 import useDeleteValueMutation from '../EditRecord/hooks/useDeleteValueMutation';
 import useSaveValueBatchMutation from '../EditRecord/hooks/useSaveValueBatchMutation';
@@ -265,10 +265,10 @@ function EditRecordModal({open, record, library, onClose, afterCreate: afterSave
                     record: newRecord
                 });
             } catch (err) {
-                addNotification({
-                    type: NotificationType.error,
+                addInfo({
+                    type: InfoType.error,
                     content: (err as Error).message,
-                    priority: NotificationPriority.high
+                    priority: InfoPriority.high
                 });
                 return;
             }

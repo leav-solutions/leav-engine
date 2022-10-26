@@ -62,7 +62,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue {
     created_at: number | null;
     version: ValueVersion | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_attribute | null;
-    linkValue: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue;
+    linkValue: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_attribute {
@@ -136,7 +136,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue {
     created_at: number | null;
     version: ValueVersion | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_attribute | null;
-    treeValue: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue;
+    treeValue: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue | null;
 }
 
 export type SAVE_VALUE_BATCH_saveValueBatch_values =

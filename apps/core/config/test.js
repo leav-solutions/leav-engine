@@ -21,7 +21,7 @@ module.exports = {
     },
     eventsManager: {
         routingKeys: {
-            events: 'test.database.event'
+            data_events: 'test.data.event'
         }
     },
     indexationManager: {
@@ -29,12 +29,16 @@ module.exports = {
             events: 'test_indexation_event'
         }
     },
+    tasksManager: {
+        queues: {
+            orders: 'test_tasks_orders'
+        },
+        routingKeys: {
+            orders: 'test.tasks.orders'
+        }
+    },
     logs: {
         transport: 'console'
     },
-    debug: true,
-    redis: {
-        host: process.env.REDIS_HOST || 'redis',
-        database: 15
-    }
+    debug: true
 };

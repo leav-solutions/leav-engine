@@ -19,7 +19,7 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
-    validateRequestToken(req: Request): Promise<jwt.JwtPayload>;
+    validateRequestToken(authorization: string, cookies?: []): Promise<jwt.JwtPayload>;
     registerRoute(app: Express): void;
 }
 
@@ -166,13 +166,13 @@ export default function ({
                 }
             );
         },
-        async validateRequestToken(req: Request): Promise<jwt.JwtPayload> {
-            let token = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
+        async validateRequestToken(authorization: string, cookies?: {}): Promise<jwt.JwtPayload> {
+            let token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
 
             // In development, we allow token to be passed in the header instead of the cookie
             // (for easier testing and tooling)
             if (!token && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
-                token = req.headers.authorization;
+                token = authorization;
             }
 
             if (!token) {

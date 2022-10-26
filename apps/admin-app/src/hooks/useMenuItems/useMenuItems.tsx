@@ -57,6 +57,12 @@ function useMenuItems(): IMenuItem[] {
             protected: true
         },
         {
+            id: 'tasks',
+            label: t('tasks.title'),
+            icon: 'tasks',
+            protected: true
+        },
+        {
             id: 'general',
             label: t('general.title'),
             icon: 'cogs',

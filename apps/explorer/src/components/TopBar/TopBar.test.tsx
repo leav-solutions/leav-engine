@@ -2,23 +2,28 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {act, render, screen} from '_tests/testUtils';
+import {render, screen, waitFor, act} from '_tests/testUtils';
+import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import TopBar from './TopBar';
 
 jest.mock(
-    '../HeaderNotification',
+    '../HeaderInfo',
     () =>
-        function HeaderNotification() {
-            return <div>HeaderNotification</div>;
+        function HeaderInfo() {
+            return <div>HeaderInfo</div>;
         }
 );
 
 describe('TopBar', () => {
-    test('should display HeaderNotification', async () => {
+    test('should display HeaderInfo', async () => {
         await act(async () => {
-            render(<TopBar userPanelVisible={false} toggleUserPanelVisible={jest.fn()} />);
+            render(
+                <MockedProviderWithFragments>
+                    <TopBar userPanelVisible={false} toggleUserPanelVisible={jest.fn()} nbNotifs={0} />
+                </MockedProviderWithFragments>
+            );
         });
 
-        expect(screen.getByText('HeaderNotification')).toBeInTheDocument();
+        expect(screen.getByText('HeaderInfo')).toBeInTheDocument();
     });
 });

@@ -72,6 +72,7 @@ x-env-amqp: &env-amqp
 x-env-react: &env-react
   REACT_APP_CORE_URL: http://core.leav.localhost
   REACT_APP_API_URL: http://core.leav.localhost/graphql
+  REACT_APP_WS_URL: ws://core.leav.localhost/graphql
   REACT_APP_DEFAULT_LANG: fr
   REACT_APP_AVAILABLE_LANG: fr,en
   REACT_APP_LOGIN_ENDPOINT: /app/login
@@ -185,6 +186,29 @@ services:
         sh,
         -c,
         "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn workspace core run start:indexation",
+      ]
+
+  tasks-manager:
+    image: *node_image
+    stdin_open: true
+    environment:
+      <<: *env-core
+      <<: *env-amqp
+    volumes:
+      - *mount_point-repo
+      - *mount_point-scripts
+      - *mount_point-imports
+      - *mount_point-exports
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-core-modules
+    ports:
+      - "9232:9232"
+    working_dir: *dir-core
+    command: [
+        sh,
+        -c,
+        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn workspace core run start:tasks",
       ]
 
   admin-app:
@@ -459,6 +483,8 @@ services:
       - traefik.http.routers.redis-commander.rule=Host(`redis.leav.localhost`)
       - traefik.http.services.redis-commander.loadbalancer.server.port=8081
       - traefik.http.routers.rabbitmq.entrypoints=web
+    depends_on:
+      - redis
 
   elasticsearch:
     image: *elastisearch_image
@@ -484,7 +510,6 @@ services:
       - traefik.http.services.kibana.loadbalancer.server.port=5601
     depends_on:
       - elasticsearch
-    restart: always
 
 volumes:
   arango_data:

@@ -1,16 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {Badge, Button, Tooltip} from 'antd';
 import ApplicationSwitcher from 'components/ApplicationSwitcher';
-import React from 'react';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import {default as themingVar, default as themingVars} from '../../themingVar';
-import HeaderNotification from '../HeaderNotification';
+import HeaderInfo from '../HeaderInfo';
 import UserMenu from './UserMenu';
+import {BellOutlined} from '@ant-design/icons';
+import {useAppDispatch} from 'redux/store';
+import {setIsPanelOpen} from 'redux/notifications';
 
 interface ITopBarProps {
     userPanelVisible: boolean;
     toggleUserPanelVisible: () => void;
+    nbNotifs: number;
 }
 
 const Wrapper = styled.div`
@@ -44,7 +50,7 @@ const MenuItemUser = styled(MenuItem)`
     justify-self: end;
 `;
 
-const WrapperHeaderNotification = styled.div`
+const WrapperHeaderInfo = styled.div`
     width: 100%;
     display: flex;
     justify-content: start;
@@ -55,21 +61,59 @@ interface IMenuItemProps {
     isActive?: boolean;
 }
 
-function TopBar({userPanelVisible, toggleUserPanelVisible}: ITopBarProps): JSX.Element {
+const InfoButton = styled(Button)`
+    && {
+        &,
+        :hover,
+        :active,
+        :focus {
+            border: none;
+            color: #fff;
+        }
+        font-size: 1.5em;
+    }
+`;
+
+function TopBar({userPanelVisible, toggleUserPanelVisible, nbNotifs}: ITopBarProps): JSX.Element {
+    const dispatch = useAppDispatch();
+
     const userPanelKey = 'trigger-user-panel';
+    const notifsPanelKey = 'trigger-notifs-panel';
 
     const handleUserPanelClick = () => {
         toggleUserPanelVisible();
     };
 
+    const _handleNotifsPanelClick = () => {
+        dispatch(setIsPanelOpen(true));
+    };
+
     return (
         <Wrapper>
-            <WrapperHeaderNotification key="lib-name">
-                <HeaderNotification />
-            </WrapperHeaderNotification>
-            <ApplicationSwitcher />
-            <MenuItemUser key={userPanelKey} onClick={handleUserPanelClick} isActive={userPanelVisible}>
-                <UserMenu />
+            <WrapperHeaderInfo data-testid="WrapperHeaderInfo" key="lib-name">
+                <HeaderInfo data-testid="HeaderInfo" />
+            </WrapperHeaderInfo>
+            <ApplicationSwitcher data-testid="ApplicationSwitcher" />
+            <Badge size="small" count={nbNotifs} offset={[-10, 15]}>
+                <InfoButton
+                    data-testid="InfoButton"
+                    key={notifsPanelKey}
+                    name="infos"
+                    ghost
+                    shape="circle"
+                    size="large"
+                    icon={<BellOutlined style={{fontSize: '1.5em'}} />}
+                    aria-label="infos"
+                    onClick={_handleNotifsPanelClick}
+                />
+            </Badge>
+            <MenuItemUser
+                data-testid="MenuItemUser"
+                key={userPanelKey}
+                onClick={handleUserPanelClick}
+                isActive={userPanelVisible}
+            >
+                <UserMenu data-testid="UserMenu" />
             </MenuItemUser>
         </Wrapper>
     );

@@ -115,6 +115,9 @@
         "admin_create_library": "Create library",
         "admin_edit_library": "Edit library",
         "admin_delete_library": "Delete library",
+        "admin_access_tasks": "Access tasks",
+        "admin_delete_task": "Delete task",
+        "admin_cancel_task": "Cancel task",
         "admin_access_attributes": "Access attributes",
         "admin_create_attribute": "Create attribute",
         "admin_edit_attribute": "Edit attribute",
@@ -153,5 +156,9 @@
     "files": {
         "directories": "Directories",
         "default_users_group_label": "Files admins"
+    },
+    "tasks": {
+        "import_label": "Import file {{filename}}",
+        "export_label": "Export data from {{library}}"
     }
 }

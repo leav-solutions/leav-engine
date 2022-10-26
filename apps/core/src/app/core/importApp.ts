@@ -8,6 +8,7 @@ import {nanoid} from 'nanoid';
 import * as Config from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
+import {TaskCallbackType} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {IFileUpload, ImportMode, ImportType} from '../../_types/import';
@@ -23,6 +24,7 @@ interface IDeps {
 
 interface IImportParams {
     file: Promise<IFileUpload>;
+    startAt?: number;
 }
 
 interface IImportExcelParams {
@@ -36,6 +38,7 @@ interface IImportExcelParams {
         linkAttribute?: string;
         keyToIndex?: number;
     } | null>;
+    startAt?: number;
 }
 
 export default function ({'core.domain.import': importDomain = null, config = null}: IDeps = {}): ICoreImportApp {
@@ -110,14 +113,14 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                     }
 
                     extend type Mutation {
-                        import(file: Upload!): Boolean!
-                        importExcel(file: Upload!, sheets: [SheetInput]): Boolean!
+                        import(file: Upload!, startAt: Int): ID!
+                        importExcel(file: Upload!, sheets: [SheetInput], startAt: Int): ID!
                     }
                 `,
                 resolvers: {
                     Upload: GraphQLUpload,
                     Mutation: {
-                        async import(_, {file}: IImportParams, ctx: IQueryInfos): Promise<boolean> {
+                        async import(_, {file, startAt}: IImportParams, ctx: IQueryInfos): Promise<string> {
                             const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['json'];
@@ -126,20 +129,29 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             // Store JSON file in local filesystem.
                             const storedFileName = await _storeUploadFile(fileData);
 
-                            try {
-                                await importDomain.import(storedFileName, ctx);
-                            } finally {
+                            // try {
+                            return importDomain.import(storedFileName, ctx, {
                                 // Delete remaining import file.
-                                await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);
-                            }
+                                ...(!!startAt && {startAt}),
+                                callback: {
+                                    moduleName: 'utils',
+                                    name: 'deleteFile',
+                                    args: [`${config.import.directory}/${storedFileName}`],
+                                    type: [
+                                        TaskCallbackType.ON_SUCCESS,
+                                        TaskCallbackType.ON_FAILURE,
+                                        TaskCallbackType.ON_CANCEL
+                                    ]
+                                }
+                            });
 
                             // FIXME: If import fail should we backup db?
-                            // TODO: Waiting to link an id to this import to retrieve
-                            // the progression and display it on explorer.
-
-                            return true;
                         },
-                        async importExcel(_, {file, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean> {
+                        async importExcel(
+                            _,
+                            {file, sheets, startAt}: IImportExcelParams,
+                            ctx: IQueryInfos
+                        ): Promise<string> {
                             const fileData: IFileUpload = await file;
 
                             const allowedExtensions = ['xlsx'];
@@ -148,14 +160,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             // Store XLSX file in local filesystem.
                             const storedFileName = await _storeUploadFile(fileData);
 
-                            try {
-                                await importDomain.importExcel({filename: storedFileName, sheets}, ctx);
-                            } finally {
-                                // Delete remaining import file.
-                                await fs.promises.unlink(`${config.import.directory}/${storedFileName}`);
-                            }
-
-                            return true;
+                            return importDomain.importExcel({filename: storedFileName, sheets, startAt}, ctx);
                         }
                     }
                 }

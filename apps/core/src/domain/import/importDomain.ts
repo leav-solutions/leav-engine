@@ -4,6 +4,7 @@
 import {extractArgsFromString} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
@@ -13,10 +14,12 @@ import {validate} from 'jsonschema';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
+import {TaskPriority, TaskCallbackType, ITaskFuncParams} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
+import {i18n} from 'i18next';
 import {
     Action,
     IData,
@@ -32,6 +35,8 @@ import {AttributeCondition, Operator} from '../../_types/record';
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
+import {v4 as uuidv4} from 'uuid';
+import {IUtils} from 'utils/utils';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 const defaultImportMode = ImportMode.UPSERT;
@@ -48,11 +53,12 @@ export interface IImportExcelParams {
         linkAttribute?: string;
         treeLinkLibrary?: string;
     } | null>;
+    startAt?: number;
 }
 
 export interface IImportDomain {
-    import(filename: string, ctx: IQueryInfos): Promise<boolean>;
-    importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean>;
+    import(filename: string, ctx: IQueryInfos, task?: ITaskFuncParams): Promise<string>;
+    importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string>;
 }
 
 interface IDeps {
@@ -62,7 +68,10 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.infra.cache.cacheService'?: ICachesService;
+    'core.domain.tasksManager'?: ITasksManagerDomain;
     config?: Config.IConfig;
+    translator?: i18n;
+    'core.utils'?: IUtils;
 }
 
 export default function ({
@@ -72,7 +81,10 @@ export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.infra.cache.cacheService': cacheService = null,
-    config = null
+    'core.domain.tasksManager': tasksManagerDomain = null,
+    'core.utils': utils = null,
+    config = null,
+    translator = null
 }: IDeps = {}): IImportDomain {
     const _addValue = async (
         library: string,
@@ -390,7 +402,34 @@ export default function ({
     };
 
     return {
-        async import(filename: string, ctx: IQueryInfos): Promise<boolean> {
+        async import(filename: string, ctx: IQueryInfos, task?: ITaskFuncParams): Promise<string> {
+            if (typeof task?.id === 'undefined') {
+                const newTaskId = uuidv4();
+
+                await tasksManagerDomain.createTask(
+                    {
+                        id: newTaskId,
+                        label: config.lang.available.reduce((labels, lang) => {
+                            labels[lang] = `${translator.t('tasks.import_label', {lng: lang, filename})}`;
+
+                            return labels;
+                        }, {}),
+                        func: {
+                            moduleName: 'domain',
+                            subModuleName: 'import',
+                            name: 'import',
+                            args: [filename, ctx]
+                        },
+                        priority: TaskPriority.MEDIUM,
+                        startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                        ...(!!task?.callback && {callback: task.callback})
+                    },
+                    ctx
+                );
+
+                return newTaskId;
+            }
+
             try {
                 await _jsonSchemaValidation(filename);
             } catch (err) {
@@ -468,6 +507,8 @@ export default function ({
                 }
             );
 
+            await tasksManagerDomain.updateProgress(task.id, {percent: 50, description: 'middle'}, ctx);
+
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
                 try {
@@ -483,12 +524,14 @@ export default function ({
                 }
             }
 
+            await tasksManagerDomain.updateProgress(task.id, {percent: 80, description: 'almost end'}, ctx);
+
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
 
-            return true;
+            return task.id;
         },
-        async importExcel({filename, sheets}: IImportExcelParams, ctx: IQueryInfos): Promise<boolean> {
+        async importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string> {
             const buffer = await _getFileDataBuffer(filename);
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer);
@@ -693,7 +736,19 @@ export default function ({
             // End of file.
             writeLine('], "trees": []}');
 
-            return this.import(JSONFilename, ctx);
+            // Delete xlsx file
+            await utils.deleteFile(`${config.import.directory}/${filename}`);
+
+            return this.import(JSONFilename, ctx, {
+                ...(!!startAt && {startAt}),
+                // Delete remaining import file.
+                callback: {
+                    moduleName: 'utils',
+                    name: 'deleteFile',
+                    args: [`${config.import.directory}/${JSONFilename}`],
+                    type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
+                }
+            });
         }
     };
 }

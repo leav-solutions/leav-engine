@@ -84,7 +84,9 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
     };
 
     const close = async () => {
+        await publisher.channel.close();
         await publisher.connection.close();
+        await consumer.channel.close();
         await consumer.connection.close();
     };
 

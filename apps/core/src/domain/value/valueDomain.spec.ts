@@ -35,7 +35,9 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain from './valueDomain';
 
 describe('ValueDomain', () => {
-    const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {routingKeys: {events: 'test.database.event'}};
+    const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
+        routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
+    };
 
     const mockConfig: Mockify<Config.IConfig> = {
         eventsManager: eventsManagerMockConfig as Config.IEventsManager
@@ -59,7 +61,7 @@ describe('ValueDomain', () => {
     };
 
     const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
-        send: jest.fn()
+        sendDatabaseEvent: global.__mockPromise()
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {

@@ -10,7 +10,7 @@ import {getRequestFromFilters} from 'components/LibraryItemsList/FiltersPanel/ge
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addNotification} from 'redux/notifications';
+import {addInfo} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
@@ -24,14 +24,16 @@ import {
     RecordFilterOperator
 } from '../../../../../_gqlTypes/globalTypes';
 import {
-    INotification,
+    IInfo,
     ISelectedAttribute,
-    NotificationChannel,
-    NotificationPriority,
-    NotificationType,
+    InfoChannel,
+    InfoPriority,
+    InfoType,
     SharedStateSelectionType
 } from '../../../../../_types/types';
 import ErrorDisplay from '../../../../shared/ErrorDisplay';
+import useNotification from 'hooks/useNotification';
+import {setIsPanelOpen} from 'redux/notifications';
 
 const {Step} = Steps;
 
@@ -54,13 +56,17 @@ const CenteredWrapper = styled.div`
     text-align: center;
 `;
 
+const NOTIFICATION_DURATION = 2.5; // seconds
+
 function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
     const {t} = useTranslation();
+    const dispatch = useAppDispatch();
 
     const {selectionState} = useAppSelector(state => ({selectionState: state.selection}));
 
+    const notification = useNotification();
+
     const {state: searchState} = useSearchReducer();
-    const dispatch = useAppDispatch();
 
     const [activeLibrary] = useActiveLibrary();
 
@@ -72,17 +78,25 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
         fetchPolicy: 'no-cache',
         onCompleted: data => {
             setCurrentStep(ExportSteps.DONE);
+
+            notification.triggerNotification({
+                message: t('export.export_notification_title'),
+                icon: <DownloadOutlined style={{color: '#108ee9'}} />,
+                onClick: _onNotificationsClick,
+                duration: NOTIFICATION_DURATION
+            });
+
             setFilepath(data?.export);
         },
         onError: error => {
-            const notification: INotification = {
-                type: NotificationType.error,
-                priority: NotificationPriority.high,
-                channel: NotificationChannel.serverError,
+            const info: IInfo = {
+                type: InfoType.error,
+                priority: InfoPriority.high,
+                channel: InfoChannel.serverError,
                 content: `${t('error.error_occurred')}: ${error.message}`
             };
 
-            dispatch(addNotification(notification));
+            dispatch(addInfo(info));
 
             setCurrentStep(ExportSteps.DONE);
         }
@@ -157,6 +171,11 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
     };
     const validateButtonLabel = t(currentStep === ExportSteps.DONE ? 'global.close' : 'export.start');
 
+    const _onNotificationsClick = () => {
+        dispatch(setIsPanelOpen(true));
+        onClose();
+    };
+
     return (
         <Modal
             title={t('export.title')}
@@ -171,6 +190,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
             confirmLoading={currentStep === ExportSteps.PROCESSING}
             bodyStyle={{height: 'calc(100vh - 10rem)'}}
             okButtonProps={{className: 'submit-btn'}}
+            cancelButtonProps={{disabled: currentStep === ExportSteps.DONE}}
             destroyOnClose
         >
             <Steps current={currentStep} style={{marginBottom: '2em'}}>
@@ -200,14 +220,10 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
                             <Result
                                 status="success"
                                 title={t('export.export_done')}
+                                subTitle={t('export.export_done_description')}
                                 extra={[
-                                    <Button
-                                        key="download-file"
-                                        type="primary"
-                                        icon={<DownloadOutlined />}
-                                        href={getFileUrl(filepath)}
-                                    >
-                                        {t('export.download_file')}
+                                    <Button type="primary" onClick={_onNotificationsClick}>
+                                        {t('export.export_done_open_notifications')}
                                     </Button>
                                 ]}
                             />

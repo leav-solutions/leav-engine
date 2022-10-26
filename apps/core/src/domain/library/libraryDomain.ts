@@ -20,7 +20,7 @@ import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
 import {Errors} from '../../_types/errors';
-import {EventType} from '../../_types/event';
+import {EventAction} from '../../_types/event';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
@@ -262,9 +262,9 @@ export default function ({
             }
 
             // sending indexation event
-            await eventsManager.send(
+            await eventsManager.sendDatabaseEvent(
                 {
-                    type: EventType.LIBRARY_SAVE,
+                    action: EventAction.LIBRARY_SAVE,
                     data: {
                         new: {
                             ...savedLib,
@@ -317,9 +317,9 @@ export default function ({
             const deletedLibrary = await libraryRepo.deleteLibrary({id, ctx});
 
             // sending indexation event
-            await eventsManager.send(
+            await eventsManager.sendDatabaseEvent(
                 {
-                    type: EventType.LIBRARY_DELETE,
+                    action: EventAction.LIBRARY_DELETE,
                     data: {old: {...deletedLibrary, attributes: undefined, fullTextAttributes: undefined}}
                 },
                 ctx

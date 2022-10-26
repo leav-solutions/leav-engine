@@ -3,16 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {
     TREE_NODE_CHILDREN_treeNodeChildren_list,
     TREE_NODE_CHILDREN_treeNodeChildren_list_permissions
 } from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     IAttribute,
-    IBaseNotification,
+    IBaseInfo,
     IField,
     IItem,
-    INotification,
+    IInfo,
     IQueryFilter,
     ISharedStateSelectionSearch,
     SharedStateSelection,
@@ -75,7 +76,15 @@ export interface INavigationState {
     path: INavigationElement[];
 }
 
+export interface ITasksState {
+    tasks: {[taskId: string]: GET_TASKS_tasks_list};
+}
+
 export interface INotificationsState {
-    base?: IBaseNotification;
-    stack: INotification[];
+    isPanelOpen: boolean;
+}
+
+export interface IInfosState {
+    base?: IBaseInfo;
+    stack: IInfo[];
 }

@@ -11,15 +11,15 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {CSSProperties, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {addInfo} from 'redux/infos';
 import {GrSearchAdvanced} from 'react-icons/gr';
-import {addNotification} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import {localizedTranslation} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {ISharedStateSelectionSearch, NotificationChannel, NotificationType} from '_types/types';
+import {ISharedStateSelectionSearch, InfoChannel, InfoType} from '_types/types';
 import {IMessages} from '../../_types';
 
 interface IAddBySearchButtonProps {
@@ -85,9 +85,9 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                         }
                     } else {
                         dispatch(
-                            addNotification({
-                                channel: NotificationChannel.trigger,
-                                type: NotificationType.error,
+                            addInfo({
+                                channel: InfoChannel.trigger,
+                                type: InfoType.error,
                                 content: `${t('error.error_occurred')}: ${e.message}`
                             })
                         );

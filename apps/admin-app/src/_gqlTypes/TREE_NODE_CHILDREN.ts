@@ -40,7 +40,7 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record {
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list {
     id: string;
-    order: number;
+    order: number | null;
     childrenCount: number | null;
     record: TREE_NODE_CHILDREN_treeNodeChildren_list_record;
 }

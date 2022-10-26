@@ -72,7 +72,7 @@ export interface ValueDetails_LinkValue {
     modified_at: number | null;
     version: ValueVersion | null;
     metadata: (ValueDetails_LinkValue_metadata | null)[] | null;
-    linkValue: ValueDetails_LinkValue_linkValue;
+    linkValue: ValueDetails_LinkValue_linkValue | null;
 }
 
 export interface ValueDetails_TreeValue_metadata_value {
@@ -152,7 +152,7 @@ export interface ValueDetails_TreeValue {
     modified_at: number | null;
     version: ValueVersion | null;
     metadata: (ValueDetails_TreeValue_metadata | null)[] | null;
-    treeValue: ValueDetails_TreeValue_treeValue;
+    treeValue: ValueDetails_TreeValue_treeValue | null;
 }
 
 export type ValueDetails = ValueDetails_Value | ValueDetails_LinkValue | ValueDetails_TreeValue;

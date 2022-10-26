@@ -100,9 +100,11 @@ export enum PermissionsActions {
     admin_access_attributes = 'admin_access_attributes',
     admin_access_libraries = 'admin_access_libraries',
     admin_access_permissions = 'admin_access_permissions',
+    admin_access_tasks = 'admin_access_tasks',
     admin_access_trees = 'admin_access_trees',
     admin_access_version_profiles = 'admin_access_version_profiles',
     admin_application = 'admin_application',
+    admin_cancel_task = 'admin_cancel_task',
     admin_create_application = 'admin_create_application',
     admin_create_attribute = 'admin_create_attribute',
     admin_create_library = 'admin_create_library',
@@ -111,6 +113,7 @@ export enum PermissionsActions {
     admin_delete_application = 'admin_delete_application',
     admin_delete_attribute = 'admin_delete_attribute',
     admin_delete_library = 'admin_delete_library',
+    admin_delete_task = 'admin_delete_task',
     admin_delete_tree = 'admin_delete_tree',
     admin_delete_version_profile = 'admin_delete_version_profile',
     admin_edit_application = 'admin_edit_application',
@@ -137,6 +140,14 @@ export enum PermissionsRelation {
 export enum SortOrder {
     asc = 'asc',
     desc = 'desc'
+}
+
+export enum TaskStatus {
+    CANCELED = 'CANCELED',
+    DONE = 'DONE',
+    FAILED = 'FAILED',
+    PENDING = 'PENDING',
+    RUNNING = 'RUNNING'
 }
 
 export enum TreeBehavior {
@@ -332,6 +343,13 @@ export interface SortApplications {
 export interface SortVersionProfilesInput {
     field: VersionProfilesSortableFields;
     order?: SortOrder | null;
+}
+
+export interface TaskFiltersInput {
+    id?: string | null;
+    created_by?: string | null;
+    status?: TaskStatus | null;
+    archive?: boolean | null;
 }
 
 export interface TreeElementInput {

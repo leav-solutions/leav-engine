@@ -13,10 +13,11 @@ import {SheetInput} from './globalTypes';
 // ====================================================
 
 export interface IMPORT_EXCEL {
-    importExcel: boolean;
+    importExcel: string;
 }
 
 export interface IMPORT_EXCELVariables {
     file: any;
     sheets?: (SheetInput | null)[] | null;
+    startAt?: number | null;
 }

@@ -273,33 +273,33 @@ export interface INavigationPath {
     label?: string | null;
 }
 
-export enum NotificationType {
+export enum InfoType {
     basic = 'basic',
     success = 'success',
     warning = 'warning',
     error = 'error'
 }
 
-export enum NotificationPriority {
+export enum InfoPriority {
     low = 'low',
     medium = 'medium',
     high = 'high'
 }
 
-export enum NotificationChannel {
+export enum InfoChannel {
     trigger = 'trigger',
     serverError = 'passive'
 }
 
-export interface IBaseNotification {
+export interface IBaseInfo {
     content: string;
-    type: NotificationType;
+    type: InfoType;
 }
 
-export interface INotification extends IBaseNotification {
+export interface IInfo extends IBaseInfo {
     time?: number;
-    priority?: NotificationPriority;
-    channel?: NotificationChannel;
+    priority?: InfoPriority;
+    channel?: InfoChannel;
 }
 
 export type ILang = string[];

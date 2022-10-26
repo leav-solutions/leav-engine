@@ -29,11 +29,21 @@ jest.mock(
         }
 );
 
+jest.mock(
+    '../NotifsPanel',
+    () =>
+        function NotifsPanel() {
+            return <div>NotifsPanel</div>;
+        }
+);
+
 jest.mock('./Routes', () => {
     return function Routes() {
         return <div>Routes</div>;
     };
 });
+
+jest.mock('redux/notifications', () => jest.fn());
 
 describe('Router', () => {
     test('Should add a router and layout elements', async () => {
@@ -45,5 +55,6 @@ describe('Router', () => {
         expect(screen.getByText('Sidebar')).toBeInTheDocument();
         expect(screen.getByText('TopBar')).toBeInTheDocument();
         expect(screen.getByText('UserPanel')).toBeInTheDocument();
+        expect(screen.getByText('NotifsPanel')).toBeInTheDocument();
     });
 });

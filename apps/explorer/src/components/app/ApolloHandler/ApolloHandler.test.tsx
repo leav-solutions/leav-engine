@@ -58,7 +58,7 @@ describe('ApolloHandler', () => {
                 content: 'error.network_error_occurred',
                 type: 'error'
             },
-            type: 'notifications/addNotification'
+            type: 'infos/addInfo'
         });
     });
 });

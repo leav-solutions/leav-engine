@@ -13,7 +13,7 @@ import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
-import {EventType, IEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
+import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, Operator} from '../../_types/record';
 
 export interface IIndexationManagerDomain {
@@ -179,7 +179,7 @@ export default function ({
     };
 
     const _onMessage = async (msg: string): Promise<void> => {
-        const event: IEvent = JSON.parse(msg);
+        const event: IDbEvent = JSON.parse(msg);
         const ctx: IQueryInfos = {
             userId: '1',
             queryId: uuidv4()
@@ -193,8 +193,8 @@ export default function ({
 
         let data: any;
 
-        switch (event.payload.type) {
-            case EventType.RECORD_SAVE: {
+        switch (event.payload.action) {
+            case EventAction.RECORD_SAVE: {
                 data = (event.payload as IRecordPayload).data;
 
                 const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
@@ -223,12 +223,12 @@ export default function ({
                 await elasticsearchService.index(data.libraryId, data.id, data.new);
                 break;
             }
-            case EventType.RECORD_DELETE: {
+            case EventAction.RECORD_DELETE: {
                 data = (event.payload as IRecordPayload).data;
                 await elasticsearchService.deleteDocument(data.libraryId, data.id);
                 break;
             }
-            case EventType.LIBRARY_SAVE: {
+            case EventAction.LIBRARY_SAVE: {
                 data = (event.payload as ILibraryPayload).data;
 
                 const exists = await elasticsearchService.indiceExists(data.new.id);
@@ -251,13 +251,13 @@ export default function ({
 
                 break;
             }
-            case EventType.LIBRARY_DELETE: {
+            case EventAction.LIBRARY_DELETE: {
                 data = (event.payload as ILibraryPayload).data;
 
                 await elasticsearchService.indiceDelete(data.old.id);
                 break;
             }
-            case EventType.VALUE_SAVE: {
+            case EventAction.VALUE_SAVE: {
                 data = (event.payload as IValuePayload).data;
 
                 const attrToIndex = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
@@ -302,7 +302,7 @@ export default function ({
 
                 break;
             }
-            case EventType.VALUE_DELETE: {
+            case EventAction.VALUE_DELETE: {
                 data = (event.payload as IValuePayload).data;
 
                 const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
@@ -337,14 +337,14 @@ export default function ({
         }
     };
 
-    const _validateMsg = (msg: IEvent) => {
+    const _validateMsg = (msg: IDbEvent) => {
         const msgBodySchema = Joi.object().keys({
             time: Joi.number().required(),
             userId: Joi.string().required(),
             payload: Joi.object()
                 .keys({
-                    type: Joi.string()
-                        .valid(...Object.values(EventType))
+                    action: Joi.string()
+                        .valid(...Object.values(EventAction))
                         .required(),
                     data: Joi.object().required()
                 })
@@ -365,12 +365,12 @@ export default function ({
             await amqpService.consumer.channel.bindQueue(
                 config.indexationManager.queues.events,
                 config.amqp.exchange,
-                config.eventsManager.routingKeys.events
+                config.eventsManager.routingKeys.data_events
             );
 
             return amqpService.consume(
                 config.indexationManager.queues.events,
-                config.eventsManager.routingKeys.events,
+                config.eventsManager.routingKeys.data_events,
                 _onMessage
             );
         },

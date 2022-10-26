@@ -51,9 +51,8 @@ describe('Indexation Manager', () => {
             type: 'direct'
         },
         eventsManager: {
-            routingKeys: {
-                events: 'test_routing_key'
-            }
+            routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'},
+            queues: {pubsub_events: 'test_pubsub_events'}
         }
     };
 

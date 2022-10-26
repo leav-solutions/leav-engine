@@ -20,12 +20,12 @@ import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'redux/navigation';
-import {addNotification} from 'redux/notifications';
+import {addInfo} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {INotification, NotificationChannel, NotificationType} from '_types/types';
+import {IInfo, InfoChannel, InfoType} from '_types/types';
 import {OnMessagesFunc} from '../_types';
 import AddByCreationButton from './AddByCreationButton';
 import AddBySearchButton from './AddBySearchButton';
@@ -64,7 +64,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
     const _handleClickDetach = async () => {
         const label = parent.record.whoAmI.label;
 
-        let notification: INotification;
+        let info: IInfo;
         try {
             await removeFromTree({
                 variables: {
@@ -73,23 +73,23 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
                 }
             });
 
-            notification = {
-                channel: NotificationChannel.trigger,
-                type: NotificationType.success,
-                content: t('navigation.notifications.success-detach', {nb: 1})
+            info = {
+                channel: InfoChannel.trigger,
+                type: InfoType.success,
+                content: t('navigation.infos.success-detach', {nb: 1})
             };
         } catch (e) {
-            notification = {
-                channel: NotificationChannel.trigger,
-                type: NotificationType.error,
-                content: t('navigation.notifications.error-detach', {
+            info = {
+                channel: InfoChannel.trigger,
+                type: InfoType.error,
+                content: t('navigation.infos.error-detach', {
                     elementName: label ?? parent.record.id,
                     errorMessage: (e as Error).message
                 })
             };
         }
 
-        dispatch(addNotification(notification));
+        dispatch(addInfo(info));
         refreshTreeContent();
     };
 

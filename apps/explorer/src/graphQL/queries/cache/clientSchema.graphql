@@ -38,43 +38,43 @@ type ActiveTreeLibraries {
     id: String
 }
 
-enum NotificationType {
+enum InfoType {
     basic
     success
     warning
     error
 }
 
-enum NotificationPriority {
+enum InfoPriority {
     low
     medium
     high
 }
 
-enum NotificationChannel {
+enum InfoChannel {
     trigger
     passive
 }
 
-type Notification {
+type Info {
     content: String!,
-    type: NotificationType!,
+    type: InfoType!,
     time: Int!,
-    priority: NotificationPriority,
-    channel: NotificationChannel
+    priority: InfoPriority,
+    channel: InfoChannel
 }
 
-type BaseNotification {
+type BaseInfo {
     content: String!,
-    type: NotificationType
+    type: InfoType
 }
 
 
 extend type Query {
     activeLib: ActiveLibrary,
     activeTree: ActiveTree,
-    baseNotification: BaseNotification,
-    notificationsStack: [Notification!]
+    baseInfo: BaseInfo,
+    infosStack: [Info!]
     lang: String!,
     availableLangs: [String!]!,
     defaultLang: String!
