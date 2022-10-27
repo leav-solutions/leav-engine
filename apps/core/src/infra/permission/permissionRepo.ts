@@ -28,7 +28,8 @@ export interface IPermissionRepo {
 type DbPermission = IDbDocument & IPermission;
 
 export const PERM_COLLECTION_NAME = 'core_permissions';
-const USERS_GROUP_LIB_NAME = 'users_groups';
+export const USERS_GROUP_LIB_NAME = 'users_groups';
+export const USERS_GROUP_TREE_NAME = 'users_groups';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

@@ -40,7 +40,8 @@ const mockConfig: Mockify<Config.IConfig> = {
         rootKeys: {
             files1: 'files'
         },
-        userId: '0'
+        userId: '0',
+        userGroupsIds: '1'
     }
 };
 
