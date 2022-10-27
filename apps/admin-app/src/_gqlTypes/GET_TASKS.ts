@@ -40,7 +40,7 @@ export interface GET_TASKS_tasks_list_created_by {
 
 export interface GET_TASKS_tasks_list_progress {
     percent: number | null;
-    description: string | null;
+    description: SystemTranslation | null;
 }
 
 export interface GET_TASKS_tasks_list_link {

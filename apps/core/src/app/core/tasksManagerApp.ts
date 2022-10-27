@@ -92,7 +92,7 @@ export default function ({
 
                     type Progress {
                         percent: Int
-                        description: String
+                        description: SystemTranslation
                     }
 
                     type TasksList {

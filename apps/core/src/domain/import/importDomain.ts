@@ -37,6 +37,7 @@ import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import {v4 as uuidv4} from 'uuid';
 import {IUtils} from 'utils/utils';
+import {ISystemTranslation} from '_types/systemTranslation';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 const defaultImportMode = ImportMode.UPSERT;
@@ -402,6 +403,7 @@ export default function ({
     };
 
     return {
+        // TODO: generic udpate progress function ? Set good steps for import and export with good descriptions
         async import(filename: string, ctx: IQueryInfos, task?: ITaskFuncParams): Promise<string> {
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
@@ -437,14 +439,55 @@ export default function ({
                 throw new ValidationError({}, message || err.message);
             }
 
+            // We call iterate on file a first time to estimate time of import
+            const progress = {
+                elementsNb: 0,
+                treesNb: 0,
+                position: 0,
+                percent: 0
+            };
+
+            await _getStoredFileData(
+                filename,
+                async (element: IElement, index: number): Promise<void> => {
+                    progress.elementsNb += element.matches.length + element.data.length + element.links.length;
+                },
+                async (tree: ITree) => {
+                    progress.treesNb += 1;
+                }
+            );
+
+            const _updateProgress = async (step: string, increasePos: number) => {
+                progress.position += increasePos;
+                const newPercent = (progress.position / (progress.elementsNb + progress.treesNb)) * 100;
+
+                if (newPercent > progress.percent + 1) {
+                    progress.percent = Math.round(newPercent);
+                    await tasksManagerDomain.updateProgress(
+                        task.id,
+                        {
+                            percent: progress.percent,
+                            description: config.lang.available.reduce((labels, lang) => {
+                                labels[lang] = `${translator.t(`tasks.import_description.${step}`, {lng: lang})}`;
+
+                                return labels;
+                            }, {})
+                        },
+                        ctx
+                    );
+                }
+            };
+
             const cacheDataPath = `${filename}-links`;
             let lastCacheIndex: number;
-
             await _getStoredFileData(
                 filename,
                 // treat elements and cache links
                 async (element: IElement, index: number): Promise<void> => {
-                    const importMode = element.mode ?? defaultImportMode;
+                    // for each element we check if it increases the progress, and update it if necessary
+                    await _updateProgress('step1', element.matches.length + element.data.length + element.links.length);
+
+                    const importMode = element.mode ?? defaultImportMode; // FIXME: useless?
                     await validateHelper.validateLibrary(element.library, ctx);
 
                     if (element.mode === ImportMode.UPDATE && !element.matches.length) {
@@ -488,6 +531,9 @@ export default function ({
                 // treat trees
                 async (tree: ITree) => {
                     await validateHelper.validateLibrary(tree.library, ctx);
+
+                    await _updateProgress('step2', 1);
+
                     const recordIds = await _getMatchRecords(tree.library, tree.matches, ctx);
                     let parent: {id: string; library: string};
 
@@ -507,8 +553,6 @@ export default function ({
                 }
             );
 
-            await tasksManagerDomain.updateProgress(task.id, {percent: 50, description: 'middle'}, ctx);
-
             // treat links cached before
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
                 try {
@@ -523,8 +567,6 @@ export default function ({
                     continue;
                 }
             }
-
-            await tasksManagerDomain.updateProgress(task.id, {percent: 80, description: 'almost end'}, ctx);
 
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);

@@ -115,8 +115,8 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                 }
                 description={
                     isCompletedTask(task) || !task.progress?.description
-                        ? t(`notifications.task-status.${TaskStatus[task.status]}`) // FIXME: add error from progress description
-                        : task.progress?.description
+                        ? t(`notifications.task-status.${TaskStatus[task.status]}`)
+                        : localizedTranslation(task.progress?.description, lang)
                 }
             />
             {!ellipsis && (

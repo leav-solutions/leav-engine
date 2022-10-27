@@ -161,6 +161,13 @@
     },
     "tasks": {
         "import_label": "Import du fichier {{filename}}",
-        "export_label": "Export des données depuis {{library}}"
+        "import_description": {
+            "step1": "Etape 1",
+            "step2": "Etape 2"
+        },
+        "export_label": "Export des données depuis {{library}}",
+        "export_description": {
+            "step1": "Etape 1"
+        }
     }
 }

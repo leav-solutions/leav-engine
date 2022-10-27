@@ -115,7 +115,7 @@ export default function ({
         const instanceFolderPath = _getInstancesFolder(rootPath);
         try {
             await fs.stat(instanceFolderPath);
-        } catch (err: any) {
+        } catch (err) {
             if (err.code === 'ENOENT') {
                 await _createInstanceFolder(instanceFolderPath);
             } else {
@@ -127,6 +127,7 @@ export default function ({
         // Define env variables
         const leavEnv = {
             LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
+            LEAV_WS_URL: `${config.server.wsUrl}/${config.server.apiEndpoint}`,
             LEAV_AUTH_URL: `${config.server.publicUrl}/auth/authenticate`,
             LEAV_DEFAULT_LANG: config.lang.default,
             LEAV_AVAILABLE_LANG: config.lang.available.join(','),

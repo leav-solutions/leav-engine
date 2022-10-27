@@ -157,7 +157,6 @@ export default function ({
                         id: newTaskId,
                         label: config.lang.available.reduce((labels, lang) => {
                             labels[lang] = `${translator.t('tasks.export_label', {lng: lang, library})}`;
-
                             return labels;
                         }, {}),
                         func: {
@@ -175,6 +174,32 @@ export default function ({
                 return newTaskId;
             }
 
+            const progress = {
+                recordsNb: 0,
+                position: 0,
+                percent: 0
+            };
+
+            const _updateProgress = async (step: string, increasePos: number) => {
+                progress.position += increasePos;
+                const newPercent = (progress.position / progress.recordsNb) * 100;
+
+                if (newPercent > progress.percent + 1) {
+                    progress.percent = Math.round(newPercent);
+                    await tasksManager.updateProgress(
+                        task.id,
+                        {
+                            percent: progress.percent,
+                            description: config.lang.available.reduce((labels, lang) => {
+                                labels[lang] = `${translator.t(`tasks.export_description.${step}`, {lng: lang})}`;
+                                return labels;
+                            }, {})
+                        },
+                        ctx
+                    );
+                }
+            };
+
             // separate different depths
             const attrsSplited = attributes.map(a => a.split('.'));
             const firstAttributes = attrsSplited.map(a => a[0]);
@@ -187,6 +212,8 @@ export default function ({
             }
 
             const records = await recordDomain.find({params: {library, filters}, ctx});
+
+            progress.recordsNb = records.list.length;
 
             // Create Excel document
             const workbook = new ExcelJS.Workbook();
@@ -227,6 +254,8 @@ export default function ({
 
                 // Add subset object record on excel row document
                 data.addRow(subset);
+
+                await _updateProgress('step1', 1);
             }
 
             const filename = `${library}_${new Date().toLocaleDateString().split('/').join('')}_${Date.now()}.xlsx`;

@@ -121,6 +121,8 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
         }
     });
 
+    console.debug({REACT_APP_WS_URL: process.env.REACT_APP_WS_URL});
+
     const wsLink = new GraphQLWsLink(
         createClient({
             url: process.env.REACT_APP_WS_URL

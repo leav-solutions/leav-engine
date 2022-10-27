@@ -370,8 +370,10 @@
         "delete_all": "Tout supprimer",
         "task-id": "ID",
         "task-label": "Libellé",
-        "task-progress": "Progression",
-        "task-step": "Etape",
+        "task-progress": {
+            "percent": "Progression",
+            "description": "Etape"
+        },
         "task-infos": "Informations",
         "task-status": "Status",
         "task-cancel": "Annuler",

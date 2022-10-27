@@ -30,8 +30,8 @@ export type Column =
     | 'startedAt'
     | 'canceledBy'
     | 'completedAt'
-    | 'progress'
-    | 'step'
+    | 'progress.percent'
+    | 'progress.description'
     | 'duration'
     | 'archive';
 
@@ -119,8 +119,8 @@ const Tasks = (): JSX.Element => {
                             'created_at',
                             'startAt',
                             'startedAt',
-                            'progress',
-                            'step',
+                            'progress.percent',
+                            'progress.description',
                             'duration'
                         ]}
                         striped
@@ -145,8 +145,8 @@ const Tasks = (): JSX.Element => {
                             'startedAt',
                             'canceledBy',
                             'completedAt',
-                            'progress',
-                            'step',
+                            'progress.percent',
+                            'progress.description',
                             'duration',
                             'archive'
                         ]}

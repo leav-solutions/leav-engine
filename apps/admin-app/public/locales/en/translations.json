@@ -365,7 +365,10 @@
         "task-id": "ID",
         "task-label": "Label",
         "task-step": "Step",
-        "task-progress": "Progress",
+        "task-progress": {
+            "percent": "Progress",
+            "description": "Step"
+        },
         "task-status": "Status",
         "task-cancel": "Cancel",
         "task-created_at": "Created at",

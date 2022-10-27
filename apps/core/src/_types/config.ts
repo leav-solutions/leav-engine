@@ -35,6 +35,7 @@ export interface IServer {
     host: string;
     port: number;
     publicUrl: string;
+    wsUrl: string;
     apiEndpoint: string;
     uploadLimit: number | string;
 }

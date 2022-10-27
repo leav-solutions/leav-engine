@@ -67,7 +67,7 @@ export interface ITask {
     priority: TaskPriority;
     archive: boolean;
     canceledBy?: string;
-    progress?: {percent?: number; description?: string};
+    progress?: {percent?: number; description?: ISystemTranslation};
     startedAt?: number;
     completedAt?: number;
     link?: {name: string; url: string};
