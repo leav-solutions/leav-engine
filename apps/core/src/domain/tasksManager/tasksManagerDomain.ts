@@ -462,6 +462,10 @@ export default function ({
             progress: {percent?: number; description?: ISystemTranslation},
             ctx: IQueryInfos
         ): Promise<void> {
+            if (typeof progress.percent !== 'undefined' && progress.percent === 100) {
+                progress.percent = 99;
+            }
+
             await _updateTask(taskId, {progress}, ctx);
         },
         async setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void> {

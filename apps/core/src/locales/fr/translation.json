@@ -162,12 +162,14 @@
     "tasks": {
         "import_label": "Import du fichier {{filename}}",
         "import_description": {
-            "step1": "Etape 1",
-            "step2": "Etape 2"
+            "elements_process": "Import des éléments",
+            "tree_elements_process": "Placement des éléments arbre",
+            "links_process": "Etablissement des liaisons"
         },
         "export_label": "Export des données depuis {{library}}",
         "export_description": {
-            "step1": "Etape 1"
+            "elements_retrieval": "Récupération des fichiers",
+            "excel_writing": "Ecriture du fichier exel"
         }
     }
 }

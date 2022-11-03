@@ -21,6 +21,7 @@ import validateLibAttributes from '../library/helpers/validateLibAttributes';
 import {TaskPriority, ITaskFuncParams} from '../../_types/tasksManager';
 import {v4 as uuidv4} from 'uuid';
 import {i18n} from 'i18next';
+import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 
 export const DIR_PATH = '/exports';
 
@@ -42,6 +43,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tasksManager'?: ITasksManagerDomain;
+    'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
     translator?: i18n;
     config?: Config.IConfig;
 }
@@ -53,6 +55,7 @@ export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.tasksManager': tasksManager = null,
+    'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
     translator = null
 }: IDeps = {}): IExportDomain {
     const _getFormattedValues = async (
@@ -180,24 +183,15 @@ export default function ({
                 percent: 0
             };
 
-            const _updateProgress = async (step: string, increasePos: number) => {
-                progress.position += increasePos;
-                const newPercent = (progress.position / progress.recordsNb) * 100;
-
-                if (newPercent > progress.percent + 1) {
-                    progress.percent = Math.round(newPercent);
-                    await tasksManager.updateProgress(
-                        task.id,
-                        {
-                            percent: progress.percent,
-                            description: config.lang.available.reduce((labels, lang) => {
-                                labels[lang] = `${translator.t(`tasks.export_description.${step}`, {lng: lang})}`;
-                                return labels;
-                            }, {})
-                        },
-                        ctx
-                    );
-                }
+            const _updateTaskProgress = async (increasePosition: number, translationKey?: string) => {
+                progress.position += increasePosition;
+                progress.percent = await updateTaskProgress(task.id, progress.percent, ctx, {
+                    position: {
+                        index: progress.position,
+                        total: progress.recordsNb
+                    },
+                    ...(translationKey && {translationKey})
+                });
             };
 
             // separate different depths
@@ -210,6 +204,8 @@ export default function ({
             if (Object.keys(err).length) {
                 throw new ValidationError(err);
             }
+
+            await _updateTaskProgress(0, 'tasks.export_description.elements_retrieval');
 
             const records = await recordDomain.find({params: {library, filters}, ctx});
 
@@ -255,7 +251,7 @@ export default function ({
                 // Add subset object record on excel row document
                 data.addRow(subset);
 
-                await _updateProgress('step1', 1);
+                await _updateTaskProgress(1, 'tasks.export_description.excel_writing');
             }
 
             const filename = `${library}_${new Date().toLocaleDateString().split('/').join('')}_${Date.now()}.xlsx`;

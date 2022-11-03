@@ -160,12 +160,14 @@
     "tasks": {
         "import_label": "Import file {{filename}}",
         "import_description": {
-            "step1": "step1",
-            "step2": "step2"
+            "elements_process": "Import of elements",
+            "tree_elements_process": "Positionning tree elements",
+            "links_process": "Setting up links"
         },
         "export_label": "Export data from {{library}}",
         "export_description": {
-            "step1": "step1"
+            "elements_retrieval": "Elements retrieval",
+            "file_writing": "Excel file writing"
         }
     }
 }

@@ -16,6 +16,7 @@ import {Action, ImportMode} from '../../_types/import';
 import importDomain from './importDomain';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {i18n} from 'i18next';
+import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 
 const importMockConfig: Mockify<Config.IImport> = {
     directory: path.resolve(__dirname, './imports'),
@@ -168,6 +169,8 @@ describe('importDomain', () => {
             updateProgress: global.__mockPromise()
         };
 
+        const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -176,6 +179,7 @@ describe('importDomain', () => {
             'core.domain.value': mockValueDomain as IValueDomain,
             'core.infra.cache.cacheService': mockCachesService as ICachesService,
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
+            'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
             translator: mockTranslator as i18n
         });
 
@@ -276,6 +280,8 @@ describe('importDomain', () => {
             updateProgress: global.__mockPromise()
         };
 
+        const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -284,6 +290,7 @@ describe('importDomain', () => {
             'core.domain.value': mockValueDomain as IValueDomain,
             'core.infra.cache.cacheService': mockCachesService as ICachesService,
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
+            'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
             translator: mockTranslator as i18n
         });
 
@@ -350,6 +357,8 @@ describe('importDomain', () => {
             updateProgress: global.__mockPromise()
         };
 
+        const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -357,6 +366,7 @@ describe('importDomain', () => {
             'core.domain.tree': mockTreeDomain as ITreeDomain,
             'core.infra.cache.cacheService': mockCachesService as ICachesService,
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
+            'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
             translator: mockTranslator as i18n
         });
 
@@ -431,6 +441,8 @@ describe('importDomain', () => {
             updateProgress: global.__mockPromise()
         };
 
+        const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -439,6 +451,7 @@ describe('importDomain', () => {
             'core.domain.value': mockValueDomain as IValueDomain,
             'core.infra.cache.cacheService': mockCachesService as ICachesService,
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
+            'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
             translator: mockTranslator as i18n
         });
 
@@ -510,6 +523,8 @@ describe('importDomain', () => {
             updateProgress: global.__mockPromise()
         };
 
+        const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -518,6 +533,7 @@ describe('importDomain', () => {
             'core.domain.value': mockValueDomain as IValueDomain,
             'core.infra.cache.cacheService': mockCachesService as ICachesService,
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
+            'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
             translator: mockTranslator as i18n
         });
 
@@ -589,6 +605,8 @@ describe('importDomain', () => {
             updateProgress: global.__mockPromise()
         };
 
+        const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
+
         const imprtDomain = importDomain({
             config: mockConfig as Config.IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -597,6 +615,7 @@ describe('importDomain', () => {
             'core.domain.value': mockValueDomain as IValueDomain,
             'core.infra.cache.cacheService': mockCachesService as ICachesService,
             'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
+            'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
             translator: mockTranslator as i18n
         });
 
