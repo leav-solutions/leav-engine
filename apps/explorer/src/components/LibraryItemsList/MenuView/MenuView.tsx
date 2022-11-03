@@ -91,12 +91,14 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                             : undefined,
                         display: searchState.display,
                         filters: getRequestFromFilters(searchState.filters),
-                        valuesVersions: objectToNameValueArray(searchState.valuesVersions)
-                            .map(version => ({
-                                treeId: version?.name ?? null,
-                                treeNode: version?.value?.id ?? null
-                            }))
-                            .filter(v => v.treeId !== null && v.treeNode !== null),
+                        valuesVersions: searchState.valuesVersions
+                            ? objectToNameValueArray(searchState.valuesVersions)
+                                  .map(version => ({
+                                      treeId: version?.name ?? null,
+                                      treeNode: version?.value?.id ?? null
+                                  }))
+                                  .filter(v => v.treeId !== null && v.treeNode !== null)
+                            : null,
                         settings: [
                             {
                                 name: viewSettingsField,
