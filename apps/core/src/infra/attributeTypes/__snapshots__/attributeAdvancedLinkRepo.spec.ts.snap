@@ -8,20 +8,20 @@ exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link
 `;
 
 exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link value 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
-  "value0": Object {
+  "value0": {
     "_from": "test_lib/12345",
     "_to": "test_linked_lib/987654",
     "attribute": "test_adv_link_attr",
     "created_at": 400999999,
     "created_by": "0",
-    "metadata": Object {
+    "metadata": {
       "my_attribute": "metadata value",
     },
     "modified_at": 400999999,
     "modified_by": "0",
-    "version": Object {
+    "version": {
       "my_tree": "1",
     },
   },
@@ -63,43 +63,59 @@ exports[`AttributeAdvancedLinkRepo deleteValue Should delete a value 1`] = `
 `;
 
 exports[`AttributeAdvancedLinkRepo deleteValue Should delete a value 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
-  "value0": Object {
+  "value0": {
     "_key": "445566",
   },
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo filterQueryPart Should return advanced link filter 1`] = `
-Object {
+exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on 1`] = `
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": "core_edge_values_links",
     "value1": "label",
-    "value2": null,
   },
-  "query": "FILTER FIRST( 
-                    FOR rv, re IN 1 OUTBOUND r._id
-                        @@value0
-                        FILTER re.attribute == @value1
-                     @value2 RETURN rv ) != null",
+  "query": "FLATTEN( 
+                        FOR rv, re IN 1 OUTBOUND r._id
+                            @@value0
+                            FILTER re.attribute == @value1
+                         LET rlinkVal = (<VALUE QUERY PART>) RETURN rlinkVal )",
 }
 `;
 
-exports[`AttributeAdvancedLinkRepo filterQueryPart Should return value for reverse advanced link attribute 1`] = `
-Object {
+exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter 1`] = `
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": "core_edge_values_links",
-    "value1": "linked",
-    "value2": null,
+    "value1": "linked_from",
   },
-  "query": "FILTER FIRST( 
-                    FOR rv, re IN 1 INBOUND r._id
-                        @@value0
-                        FILTER re.attribute == @value1
-                     @value2 RETURN rv ) != null",
+  "query": "
+                    COUNT(
+                        FOR rv IN @@value0
+                            FILTER rv._from == r._id
+                                AND rv.attribute == @value1
+                            RETURN true
+                    )
+                ",
+}
+`;
+
+exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for reverse link 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "@value0": "core_edge_values_links",
+    "value1": "adv_link_attribute",
+  },
+  "query": "FLATTEN( 
+                        FOR rv, re IN 1 INBOUND r._id
+                            @@value0
+                            FILTER re.attribute == @value1
+                         LET rlinkVal = (<VALUE QUERY PART>) RETURN rlinkVal )",
 }
 `;
 
@@ -114,7 +130,7 @@ exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced
 `;
 
 exports[`AttributeAdvancedLinkRepo getValueByID Should return value for advanced link attribute 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
   "value0": "test_lib/987654",
   "value2": "112233",
@@ -133,7 +149,7 @@ exports[`AttributeAdvancedLinkRepo getValueByID Should return value for reverse 
 `;
 
 exports[`AttributeAdvancedLinkRepo getValueByID Should return value for reverse advanced link attribute 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
   "value0": "test_lib/987654",
   "value2": "112233",
@@ -166,7 +182,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return only first value if n
 `;
 
 exports[`AttributeAdvancedLinkRepo getValues Should return only first value if not multiple attribute 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
   "value2": "test_adv_link_attr",
@@ -198,7 +214,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced l
 `;
 
 exports[`AttributeAdvancedLinkRepo getValues Should return values for advanced link attribute 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
   "value2": "test_adv_link_attr",
@@ -218,7 +234,7 @@ exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse ad
 `;
 
 exports[`AttributeAdvancedLinkRepo getValues Should return values for reverse advanced link attribute 2`] = `
-Object {
+{
   "@value1": "core_edge_values_links",
   "value0": "test_lib/123456",
   "value2": "test",
@@ -226,9 +242,9 @@ Object {
 `;
 
 exports[`AttributeAdvancedLinkRepo sortQueryPart Should return advanced link sort 1`] = `
-Object {
+{
   "_source": [Function],
-  "bindVars": Object {
+  "bindVars": {
     "@value0": "core_edge_values_links",
     "value1": "label",
     "value2": "linked",
@@ -251,22 +267,22 @@ exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link val
 `;
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link value 2`] = `
-Object {
+{
   "@value2": "core_edge_values_links",
-  "value0": Object {
+  "value0": {
     "_key": "987654",
   },
-  "value1": Object {
+  "value1": {
     "_from": "test_lib/12345",
     "_to": "test_linked_lib/987654",
     "attribute": "test_adv_link_attr",
     "created_by": undefined,
-    "metadata": Object {
+    "metadata": {
       "my_attribute": "metadata value",
     },
     "modified_at": 400999999,
     "modified_by": "0",
-    "version": Object {
+    "version": {
       "my_tree": "1",
     },
   },
@@ -282,22 +298,22 @@ exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced 
 `;
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced link value 2`] = `
-Object {
+{
   "@value2": "core_edge_values_links",
-  "value0": Object {
+  "value0": {
     "_key": "987654",
   },
-  "value1": Object {
+  "value1": {
     "_from": "test_linked_lib/987654",
     "_to": "test_lib/12345",
     "attribute": "test",
     "created_by": undefined,
-    "metadata": Object {
+    "metadata": {
       "my_attribute": "metadata value",
     },
     "modified_at": 400999999,
     "modified_by": "0",
-    "version": Object {
+    "version": {
       "my_tree": "1",
     },
   },

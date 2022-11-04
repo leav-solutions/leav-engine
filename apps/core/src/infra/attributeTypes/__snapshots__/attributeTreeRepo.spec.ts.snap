@@ -43,23 +43,40 @@ exports[`AttributeTreeRepo deleteValue Should delete a value 2`] = `
 }
 `;
 
-exports[`AttributeTreeRepo filterQueryPart Should return tree filter 1`] = `
+exports[`AttributeTreeRepo filterValueQueryPart Should return query to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
     "@value0": "core_edge_values_links",
     "value1": "label",
-    "value2": null,
   },
-  "query": "FILTER FIRST( 
+  "query": "FLATTEN( 
                 FOR rv, re IN 1 OUTBOUND r._id
                     @@value0
                     FILTER re.attribute == @value1
                     LET rRecord = DOCUMENT(
                         rv.libraryId,
                         rv.recordId
+                        )
+                         LET rlinkVal = () RETURN rlinkVal )",
+}
+`;
+
+exports[`AttributeTreeRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "@value0": "core_edge_values_links",
+    "value1": "tree_attr",
+  },
+  "query": "
+                COUNT(
+                    FOR rv IN @@value0
+                    FILTER rv._from == r._id
+                    AND rv.attribute == @value1
+                    RETURN true
                     )
-                 @value2 RETURN rRecord ) != null",
+                    ",
 }
 `;
 

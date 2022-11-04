@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
 import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
-import {getEdgesCollectionName, getFullNodeId, getRootId} from '../../infra/tree/helpers/utils';
-import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_types';
 import {
     CursorDirection,
     ICursorPaginationParams,
@@ -23,11 +22,13 @@ import {
     Operator,
     TreeCondition
 } from '../../_types/record';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
+import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
-import {MAX_TREE_DEPTH} from '../tree/treeRepo';
+import {IFilterTypesHelper} from './helpers/filterTypes';
+import {GetSearchVariableName} from './helpers/getSearchVariableName';
+import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
 
 export interface IFindRequestResult {
     initialVars: GeneratedAqlQuery[]; // Some "global" variables needed later on the query (eg. "classified in" subquery)
@@ -79,13 +80,21 @@ interface IDeps {
     'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
+    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
+    'core.infra.record.helpers.getSearchVariablesQueryPart'?: GetSearchVariablesQueryPart;
+    'core.infra.record.helpers.getSearchVariableName'?: GetSearchVariableName;
+    'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
 export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.attributeTypes': attributeTypesRepo = null
+    'core.infra.attributeTypes': attributeTypesRepo = null,
+    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
+    'core.infra.record.helpers.getSearchVariablesQueryPart': getSearchVariablesQueryPart = null,
+    'core.infra.record.helpers.getSearchVariableName': getSearchVariableName = null,
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
 }: IDeps = {}): IRecordRepo {
     const _generateCursor = (from: number, direction: CursorDirection): string =>
         Buffer.from(`${direction}:${from}`).toString('base64');
@@ -105,94 +114,6 @@ export default function({
         };
     };
 
-    const _toReversePolishNotation = (filters: IRecordFilterOption[]): IRecordFilterOption[] => {
-        const stack = [];
-        const output = [];
-
-        for (const f of filters) {
-            if (typeof f.value !== 'undefined') {
-                output.push(f);
-            } else if (f.operator !== Operator.CLOSE_BRACKET) {
-                stack.push(f);
-            } else {
-                let e: IRecordFilterOption = stack.pop();
-                while (e && e.operator !== Operator.OPEN_BRACKET) {
-                    output.push(e);
-                    e = stack.pop();
-                }
-            }
-        }
-
-        return output.concat(stack.reverse());
-    };
-
-    const _findRequest = async (
-        libraryId: string,
-        index: string,
-        filter?: IRecordFilterOption
-    ): Promise<IFindRequestResult> => {
-        const queryParts = [];
-        const coll = dbService.db.collection(libraryId);
-
-        // Will contain query to init some "global" variables needed later on the query
-        const initialVars: GeneratedAqlQuery[] = [];
-
-        queryParts.push(aql`(FOR ${aql.literal(BASE_QUERY_IDENTIFIER)} IN ${coll}`);
-
-        if (typeof filter !== 'undefined') {
-            let filterQueryPart: AqlQuery;
-
-            if (_isClassifiedFilter(filter)) {
-                const collec = dbService.db.edgeCollection(getEdgesCollectionName(filter.treeId));
-
-                const startingNode = filter.value
-                    ? getFullNodeId(String(filter.value), filter.treeId)
-                    : getRootId(filter.treeId);
-
-                // Run through the tree to retrieve records present in this tree.
-                // For a "CLASSIFIED IN" filter, we must exclude the record linked to starting node.
-                const classifiedSubqueryName = aql.literal('classifiedSubquery_' + index);
-                initialVars.push(aql`
-                    LET ${classifiedSubqueryName} = (
-                        FOR v, e IN 1..${MAX_TREE_DEPTH} OUTBOUND ${startingNode}
-                            ${collec}
-                            LET record = DOCUMENT(
-                                v.${aql.literal(NODE_LIBRARY_ID_FIELD)},
-                                v.${aql.literal(NODE_RECORD_ID_FIELD)}
-                            )
-                            RETURN record._id
-                    )
-                `);
-
-                filterQueryPart =
-                    filter.condition === TreeCondition.CLASSIFIED_IN
-                        ? aql`FILTER r._id IN (${classifiedSubqueryName})`
-                        : aql`FILTER r._id NOT IN (${classifiedSubqueryName})`;
-            } else {
-                const filterAttribute = filter.attributes[0];
-
-                filterQueryPart = attributeTypesRepo.getTypeRepo(filterAttribute).filterQueryPart(
-                    filter.attributes.map(attr => ({...attr, _repo: attributeTypesRepo.getTypeRepo(attr)})),
-                    filter
-                );
-            }
-
-            queryParts.push(filterQueryPart);
-        }
-
-        queryParts.push(aql`RETURN r)`);
-
-        return {initialVars, queryPart: aql.join(queryParts)};
-    };
-
-    const _isAttributeFilter = (filter: IRecordFilterOption | GeneratedAqlQuery) => {
-        return (filter as IRecordFilterOption).condition in AttributeCondition;
-    };
-
-    const _isClassifiedFilter = (filter: IRecordFilterOption | GeneratedAqlQuery) => {
-        return (filter as IRecordFilterOption).condition in TreeCondition;
-    };
-
     return {
         async search(library: string, query: string, from?: number, size?: number): Promise<IList<IRecord>> {
             const result = await elasticsearchService.multiMatch(library, {query}, from, size);
@@ -210,60 +131,101 @@ export default function({
             ctx
         }): Promise<IListWithCursor<IRecord>> {
             const withCursorPagination = !!pagination && !!(pagination as ICursorPaginationParams).cursor;
-            // Force disbaling count on cursor pagination as it's pointless
+            // Force disabling count on cursor  pagination as it's pointless
             const withTotalCount = withCount && !withCursorPagination;
             const coll = dbService.db.collection(libraryId);
 
-            let initialVars: GeneratedAqlQuery[] = [];
-            let queryParts = [!filters || !filters.length ? aql`FOR r IN ${coll}` : aql`FOR r IN`];
+            const queryParts = [aql`FOR r IN ${coll}`];
             let isFilteringOnActive = false;
 
+            const aqlPartByOperator: Record<Operator, GeneratedAqlQuery> = {
+                [Operator.AND]: aql`AND`,
+                [Operator.OR]: aql`OR`,
+                [Operator.OPEN_BRACKET]: aql`(`,
+                [Operator.CLOSE_BRACKET]: aql`)`
+            };
+
             if (typeof filters !== 'undefined' && filters.length) {
-                const rpn: IRecordFilterOption[] = _toReversePolishNotation(filters);
-                const stack: Array<IRecordFilterOption | GeneratedAqlQuery> = [];
+                // Get all variables definitions
+                const variablesDeclarations = getSearchVariablesQueryPart(filters);
 
-                for (const [i, filter] of rpn.entries()) {
-                    if (_isAttributeFilter(filter) || _isClassifiedFilter(filter)) {
-                        isFilteringOnActive =
-                            isFilteringOnActive || (_isAttributeFilter(filter) && filter.attributes[0].id === 'active');
-                        stack.push(filter);
-                    } else {
-                        let [f0, f1] = [stack.pop(), stack.pop()].reverse();
+                const filterStatements: GeneratedAqlQuery[] = [aql`FILTER (`];
+                for (const filter of filters) {
+                    if (filter.operator) {
+                        filterStatements.push(aqlPartByOperator[filter.operator]);
+                    } else if (filterTypesHelper.isAttributeFilter(filter)) {
+                        isFilteringOnActive = isFilteringOnActive || filter.attributes[0].id === 'active';
+                        const variableName = getSearchVariableName(filter);
+                        const lastFilterAttribute = filter.attributes.slice(-1)[0];
 
-                        if (_isAttributeFilter(f0) || _isClassifiedFilter(f0)) {
-                            const f0FindRequest = await _findRequest(libraryId, `${i}_0`, f0 as IRecordFilterOption);
-                            f0 = f0FindRequest.queryPart;
+                        const variableNameAql = aql.literal(variableName);
+                        let statement: GeneratedAqlQuery;
 
-                            initialVars = [...initialVars, ...(f0FindRequest?.initialVars ?? [])];
+                        if (filterTypesHelper.isCountFilter(filter)) {
+                            // For count filters, variable only contains the number of values
+                            let conditionApplied: AttributeCondition;
+                            let valueToCheck = filter.value;
+                            switch (filter.condition) {
+                                case AttributeCondition.VALUES_COUNT_EQUAL:
+                                    conditionApplied = AttributeCondition.EQUAL;
+                                    break;
+                                case AttributeCondition.VALUES_COUNT_GREATER_THAN:
+                                    conditionApplied = AttributeCondition.GREATER_THAN;
+                                    break;
+                                case AttributeCondition.VALUES_COUNT_LOWER_THAN:
+                                    conditionApplied = AttributeCondition.LESS_THAN;
+                                    break;
+                                case AttributeCondition.IS_EMPTY:
+                                    conditionApplied = AttributeCondition.EQUAL;
+                                    valueToCheck = 0;
+                                    break;
+                                case AttributeCondition.IS_NOT_EMPTY:
+                                    conditionApplied = AttributeCondition.GREATER_THAN;
+                                    valueToCheck = 0;
+                            }
+                            const countConditionPart = getConditionPart(
+                                variableName,
+                                conditionApplied,
+                                valueToCheck,
+                                lastFilterAttribute
+                            );
+                            statement = aql`${countConditionPart}`;
+                        } else {
+                            // If multiple values or versionable attribute, apply filter on each value of the array
+                            // Otherwise, apply filter on the first value of the array
+                            const arrayConditionPart = getConditionPart(
+                                'CURRENT',
+                                filter.condition as AttributeCondition,
+                                filter.value,
+                                lastFilterAttribute
+                            );
+
+                            const standardConditionPart = getConditionPart(
+                                variableName,
+                                filter.condition as AttributeCondition,
+                                filter.value,
+                                lastFilterAttribute
+                            );
+
+                            statement = aql`IS_ARRAY(${variableNameAql}) ? LENGTH(${aql.literal(
+                                variableNameAql
+                            )}[* FILTER ${arrayConditionPart}]) : ${standardConditionPart}`;
                         }
 
-                        if (_isAttributeFilter(f1) || _isClassifiedFilter(f1)) {
-                            const f1FindRequest = await _findRequest(libraryId, `${i}_1`, f1 as IRecordFilterOption);
-                            f1 = f1FindRequest.queryPart;
-
-                            initialVars = [...initialVars, ...(f1FindRequest?.initialVars ?? [])];
-                        }
-
-                        const res =
-                            filter.operator === Operator.AND
-                                ? aql`INTERSECTION(${f0}, ${f1})`
-                                : aql`APPEND(${f0}, ${f1}, true)`;
-
-                        stack.push(res);
+                        filterStatements.push(aql.join([aql`(`, statement, aql`)`]));
+                    } else if (filterTypesHelper.isClassifyingFilter(filter)) {
+                        const variableName = getSearchVariableName(filter);
+                        const classifyingCondition = filter.condition === TreeCondition.CLASSIFIED_IN ? 'IN' : 'NOT IN';
+                        filterStatements.push(
+                            aql`r._id ${aql.literal(classifyingCondition)} ${aql.literal(variableName)}`
+                        );
                     }
                 }
 
-                if (
-                    _isAttributeFilter(stack[0] as IRecordFilterOption) ||
-                    _isClassifiedFilter(stack[0] as IRecordFilterOption)
-                ) {
-                    const stackFindRequest = await _findRequest(libraryId, 'stack0', stack[0] as IRecordFilterOption);
-                    stack[0] = stackFindRequest.queryPart;
-                    initialVars = [...initialVars, ...(stackFindRequest?.initialVars ?? [])];
-                }
+                filterStatements.push(aql`)`);
 
-                // Initial vars must be at the very beginning of the query, before the FOR loop
-                queryParts = [...initialVars, ...queryParts, ...(stack as GeneratedAqlQuery[])];
+                queryParts.push(aql.join(variablesDeclarations, '\n'));
+                queryParts.push(aql.join(filterStatements, '\n'));
             }
 
             const sortQueryPart = sort

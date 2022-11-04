@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getClassifyingFiltersVariableQueryPart Return variable query part for classifying filters 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "@value2": "core_edge_tree_my_tree",
+    "value0": 1000,
+    "value1": "core_nodes_my_tree/123456",
+  },
+  "query": "
+            FOR v, e IN 1..@value0 OUTBOUND @value1
+                @@value2
+                LET record = DOCUMENT(
+                    v.libraryId,
+                    v.recordId
+                )
+                RETURN record._id
+        ",
+}
+`;

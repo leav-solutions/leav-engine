@@ -1,15 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AttributeSimpleLinkRepo filterQueryPart Should return simple link filter 1`] = `
+exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
     "@value0": undefined,
     "value1": "label",
-    "value2": null,
   },
-  "query": "FILTER FIRST( FOR l IN @@value0
-                FILTER TO_STRING(r.@value1) == l._key @value2 RETURN l ) != null",
+  "query": "FLATTEN( FOR l IN @@value0
+                    FILTER TO_STRING(r.@value1) == l._key 
+                    LET rlinkVal = ()
+                    RETURN rlinkVal
+                 )",
+}
+`;
+
+exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "value0": "linked_from",
+  },
+  "query": "COUNT(r.@value0) ? 1 : 0",
+}
+`;
+
+exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for reverse link 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "@value0": undefined,
+    "value1": "linked_from",
+  },
+  "query": "FLATTEN( FOR l IN @@value0
+                    FILTER TO_STRING(r.@value1) == l._key 
+                    LET rlinkVal = (<VALUE QUERY PART>)
+                    RETURN rlinkVal
+                 )",
 }
 `;
 

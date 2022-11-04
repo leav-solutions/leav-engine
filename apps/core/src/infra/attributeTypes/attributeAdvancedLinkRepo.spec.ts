@@ -4,11 +4,13 @@
 import {aql, Database} from 'arangojs';
 import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
+import {mockAttrAdvLink} from '../../__tests__/mocks/attribute';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 
@@ -72,7 +74,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new advanced link value', async function () {
+        test('Should create a new advanced link value', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -126,7 +128,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test.only('Should create a new reverse advanced link value', async function () {
+        test('Should create a new reverse advanced link value', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([
@@ -165,7 +167,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
-        test('Should create a reverse adv link to a simple link value', async function () {
+        test('Should create a reverse adv link to a simple link value', async function() {
             const attrSimpleLinkRepo: Mockify<IAttributeTypeRepo> = {
                 createValue: global.__mockPromise([])
             };
@@ -197,7 +199,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     });
 
     describe('updateValue', () => {
-        test('Should update a advanced link value', async function () {
+        test('Should update a advanced link value', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -246,10 +248,10 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should update a reverse advanced link value', async function () {
+        test('Should update a reverse advanced link value', async function() {
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([])
+                execute: global.__mockPromise([savedEdgeData])
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
@@ -280,7 +282,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
-        test('Should update a reverse adv link to a simple link value', async function () {
+        test('Should update a reverse adv link to a simple link value', async function() {
             const attrSimpleLinkRepo: Mockify<IAttributeTypeRepo> = {
                 updateValue: global.__mockPromise([])
             };
@@ -312,7 +314,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function () {
+        test('Should delete a value', async function() {
             const deletedEdgeData = {
                 _id: 'core_edge_values_links/222435651',
                 _rev: '_WSywvyC--_',
@@ -359,7 +361,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should delete a reverse adv link to simple link value', async function () {
+        test('Should delete a reverse adv link to simple link value', async function() {
             const attrSimpleLinkRepo: Mockify<IAttributeTypeRepo> = {
                 deleteValue: global.__mockPromise([])
             };
@@ -392,7 +394,7 @@ describe('AttributeAdvancedLinkRepo', () => {
     });
 
     describe('getValueByID', () => {
-        test('Should return value for advanced link attribute', async function () {
+        test('Should return value for advanced link attribute', async function() {
             const traversalRes = [
                 {
                     linkedRecord: {
@@ -468,7 +470,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should return value for reverse advanced link attribute', async function () {
+        test('Should return value for reverse advanced link attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([])
@@ -501,7 +503,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
-        test("Should return null if value doesn't exists", async function () {
+        test("Should return null if value doesn't exists", async function() {
             const traversalRes = [];
 
             const mockDbServ = {
@@ -571,7 +573,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             }
         ];
 
-        test('Should return values for advanced link attribute', async function () {
+        test('Should return values for advanced link attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -644,7 +646,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should return values for reverse advanced link attribute', async function () {
+        test('Should return values for reverse advanced link attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([])
@@ -676,7 +678,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
         });
 
-        test('Should return values for reverse advanced link attribute to simple link', async function () {
+        test('Should return values for reverse advanced link attribute to simple link', async function() {
             const attrSimpleLinkRepo: Mockify<IAttributeTypeRepo> = {
                 getReverseValues: global.__mockPromise([])
             };
@@ -702,7 +704,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should return values filtered by version', async function () {
+        test('Should return values filtered by version', async function() {
             const traversalResWithVers = [
                 {
                     linkedRecord: {
@@ -766,7 +768,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
 
-        test('Should return only first value if not multiple attribute', async function () {
+        test('Should return only first value if not multiple attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([traversalRes[0]])
@@ -821,7 +823,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             });
         });
 
-        test('Should return all values if forced', async function () {
+        test('Should return all values if forced', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -866,64 +868,97 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
         });
     });
-    describe('filterQueryPart', () => {
-        test('Should return advanced link filter', () => {
+
+    describe('filterValueQueryPart', () => {
+        const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
+            isCountFilter: jest.fn().mockReturnValue(false)
+        };
+
+        test('Should return query to retrieve value to filter on', async () => {
             const mockDbServ = {
                 db: new Database()
             };
-            const attrRepo = attributeAdvancedLinkRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`== ${'MyLabel'}`
-            });
+
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterQueryPart: jest.fn().mockReturnValue(null)
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
             };
 
-            const filter = attrRepo.filterQueryPart(
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const valueQuery = attrRepo.filterValueQueryPart(
                 [
-                    {id: 'label', type: AttributeTypes.ADVANCED_LINK, _repo: mockRepo as IAttributeTypeRepo},
+                    {id: 'label', type: AttributeTypes.SIMPLE_LINK, _repo: mockRepo as IAttributeTypeRepo},
                     {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
                 ],
                 {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
             );
 
-            expect(filter.query).toMatch(/^FILTER/);
-            expect(filter.query).toMatch(/IN 1 OUTBOUND/);
-            expect(filter).toMatchSnapshot();
+            expect(valueQuery).toMatchSnapshot();
         });
 
-        test('Should return value for reverse advanced link attribute', async function () {
+        test('Should return query to retrieve value to filter on for reverse link', async () => {
             const mockDbServ = {
                 db: new Database()
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterQueryPart: jest.fn().mockReturnValue(null)
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
             };
 
             const attrRepo = attributeAdvancedLinkRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`== ${'MyLabel'}`
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
             });
 
-            const filter = attrRepo.filterQueryPart(
+            const valueQuery = attrRepo.filterValueQueryPart(
                 [
                     {
-                        id: 'label',
+                        id: 'linked_from',
                         type: AttributeTypes.ADVANCED_LINK,
-                        reverse_link: {
-                            id: 'linked',
-                            type: AttributeTypes.ADVANCED_LINK
-                        },
+                        reverse_link: {...mockAttrAdvLink},
                         _repo: mockRepo as IAttributeTypeRepo
-                    }
+                    },
+                    {id: 'label', type: AttributeTypes.ADVANCED, _repo: mockRepo as IAttributeTypeRepo}
                 ],
                 {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
             );
 
-            expect(filter.query).toMatch(/^FILTER/);
-            expect(filter.query).toMatch(/IN 1 INBOUND/);
-            expect(filter).toMatchSnapshot();
+            expect(valueQuery).toMatchSnapshot();
+        });
+
+        test('Should return query to retrieve value to filter on for "count" filter', async () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+
+            const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
+                isCountFilter: jest.fn().mockReturnValue(true)
+            };
+
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelperCount as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const valueQuery = attrRepo.filterValueQueryPart(
+                [
+                    {
+                        id: 'linked_from',
+                        type: AttributeTypes.ADVANCED_LINK,
+                        _repo: mockRepo as IAttributeTypeRepo
+                    }
+                ],
+                {condition: AttributeCondition.IS_EMPTY}
+            );
+
+            expect(valueQuery).toMatchSnapshot();
         });
     });
 

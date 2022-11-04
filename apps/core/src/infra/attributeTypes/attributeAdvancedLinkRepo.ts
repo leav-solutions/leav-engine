@@ -2,19 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
 import {ILinkValue, IValueEdge} from '_types/value';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecord, IRecordFilterOption} from '../../_types/record';
+import {IRecord} from '../../_types/record';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {
-    BASE_QUERY_IDENTIFIER,
-    IAttributeTypeRepo,
-    IAttributeWithRepo,
-    IAttributeWithRevLink
-} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
@@ -22,14 +18,16 @@ interface IDeps {
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeTypeRepo;
     'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
+    'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
+    'core.infra.record.helpers.filterTypes': filterTypes = null,
     'core.utils': utils = null
 }: IDeps = {}): IAttributeTypeRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
@@ -308,17 +306,14 @@ export default function ({
 
             return query;
         },
-        filterQueryPart(
-            attributes: IAttributeWithRepo[],
-            filter: IRecordFilterOption,
-            parentIdentifier = BASE_QUERY_IDENTIFIER
-        ): AqlQuery {
+        filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
+            const isCountFilter = filterTypes.isCountFilter(filter);
 
             const linkIdentifier = parentIdentifier + 'v';
             const vIdentifier = aql.literal(linkIdentifier);
@@ -331,77 +326,55 @@ export default function ({
 
             let retrieveValue: GeneratedAqlQuery;
 
+            if (isCountFilter) {
+                // In "count" filters, we don't need to retrieve the actual value, we just need to know how many links we have
+                // Thus, using a "join" query on the edge collection is more efficient than using a traversal
+                return aql`
+                    COUNT(
+                        FOR ${vIdentifier} IN ${collec}
+                            FILTER ${vIdentifier}._from == ${aql.literal(parentIdentifier)}._id
+                                AND ${vIdentifier}.attribute == ${eAttribute}
+                            RETURN true
+                    )
+                `;
+            }
+
             if (attributes[0].reverse_link?.type === AttributeTypes.SIMPLE_LINK) {
                 const c = dbService.db.collection(attributes[0].linked_library);
                 retrieveValue = aql`
-                    FOR ${vIdentifier} IN ${c}
-                        FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${aql.literal(
+                        FOR ${vIdentifier} IN ${c}
+                            FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${aql.literal(
                     parentIdentifier
                 )}._key`;
             } else {
                 retrieveValue = aql`
-                    FOR ${vIdentifier}, ${eIdentifier} IN 1 ${direction} ${aql.literal(parentIdentifier)}._id
-                        ${collec}
-                        FILTER ${eIdentifier}.attribute == ${eAttribute}
-                    `;
+                        FOR ${vIdentifier}, ${eIdentifier} IN 1 ${direction} ${aql.literal(parentIdentifier)}._id
+                            ${collec}
+                            FILTER ${eIdentifier}.attribute == ${eAttribute}
+                        `;
             }
 
-            const returnValue = aql`RETURN ${vIdentifier}`;
+            const linkValueIdentifier = aql.literal(`${parentIdentifier}linkVal`);
+            const returnValue = aql`RETURN ${linkValueIdentifier}`;
 
-            let query: AqlQuery;
-            const linkValIdentifier = aql.literal(`${parentIdentifier}linkVal`);
-            if (
-                [
-                    AttributeCondition.VALUES_COUNT_EQUAL,
-                    AttributeCondition.VALUES_COUNT_GREATER_THAN,
-                    AttributeCondition.VALUES_COUNT_LOWER_THAN
-                ].includes(filter.condition as AttributeCondition)
-            ) {
-                let conditionApplied;
-                switch (filter.condition) {
-                    case AttributeCondition.VALUES_COUNT_EQUAL:
-                        conditionApplied = AttributeCondition.EQUAL;
-                        break;
-                    case AttributeCondition.VALUES_COUNT_GREATER_THAN:
-                        conditionApplied = AttributeCondition.GREATER_THAN;
-                        break;
-                    case AttributeCondition.VALUES_COUNT_LOWER_THAN:
-                        conditionApplied = AttributeCondition.LESS_THAN;
-                        break;
-                }
+            const linkValueQuery = attributes[1]
+                ? aql`LET ${aql.literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
+                      [...attributes].splice(1),
+                      filter,
+                      linkIdentifier
+                  )})`
+                : null;
+            const linkedValue = aql.join([
+                aql.literal('FLATTEN('),
+                retrieveValue,
+                linkValueQuery,
+                returnValue,
+                aql.literal(')')
+            ]);
 
-                query = aql.join([
-                    aql`LET ${linkValIdentifier} = `,
-                    aql`COUNT(`,
-                    retrieveValue,
-                    returnValue,
-                    aql`)`,
-                    aql`FILTER ${getConditionPart(linkValIdentifier, conditionApplied, filter.value, attributes[0])}`
-                ]);
-            } else if (
-                filter.condition === AttributeCondition.IS_EMPTY ||
-                filter.condition === AttributeCondition.IS_NOT_EMPTY
-            ) {
-                query = aql.join([
-                    aql`LET ${linkValIdentifier} = `,
-                    aql`FIRST(`,
-                    retrieveValue,
-                    returnValue,
-                    aql`)`,
-                    aql`FILTER ${getConditionPart(linkValIdentifier, filter.condition, filter.value, attributes[0])}`
-                ]);
-            } else {
-                const filterValue = attributes[1]
-                    ? attributes[1]._repo.filterQueryPart([...attributes].splice(1), filter, linkIdentifier) // FIXME: i instead linkIdentifier
-                    : null;
-                const linkedValue = aql.join([aql`FIRST(`, retrieveValue, filterValue, returnValue, aql`)`]);
-                query =
-                    linked.format !== AttributeFormats.EXTENDED
-                        ? aql`FILTER ${linkedValue} != null`
-                        : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} != null`;
-            }
-
-            return query;
+            return linked.format !== AttributeFormats.EXTENDED
+                ? linkedValue
+                : _getExtendedFilterPart(attributes, linkedValue);
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;

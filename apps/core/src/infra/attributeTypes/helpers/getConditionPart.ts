@@ -41,7 +41,7 @@ export default function (): GetConditionPart {
                 return aql`${valueField} LIKE ${`%${value}`}`;
             case AttributeCondition.CONTAINS: {
                 return attribute.format === AttributeFormats.DATE_RANGE
-                    ? aql`${Number(value)} >= ${valueField}.from AND ${Number(value)} <= ${valueField}.to`
+                    ? aql`(${Number(value)} >= ${valueField}.from AND ${Number(value)} <= ${valueField}.to)`
                     : aql`${valueField} LIKE ${`%${value}%`}`;
             }
             case AttributeCondition.NOT_CONTAINS:
@@ -49,7 +49,7 @@ export default function (): GetConditionPart {
             case AttributeCondition.GREATER_THAN:
                 return aql`${valueField} > ${Number(value)}`;
             case AttributeCondition.LESS_THAN:
-                return aql`${valueField} != null AND ${valueField} < ${Number(value)}`;
+                return aql`(${valueField} != null AND ${valueField} < ${Number(value)})`;
             case AttributeCondition.IS_EMPTY:
                 return aql`${valueField} == null`;
             case AttributeCondition.IS_NOT_EMPTY:
@@ -78,23 +78,23 @@ export default function (): GetConditionPart {
             case AttributeCondition.NEXT_MONTH: {
                 const now = moment().unix();
                 const nextMonth = moment().add(31, 'days').unix();
-                return aql`${valueField} >= ${now} AND ${valueField} <=${nextMonth}`;
+                return aql`(${valueField} >= ${now} AND ${valueField} <=${nextMonth})`;
             }
             case AttributeCondition.LAST_MONTH: {
                 const now = moment().unix();
                 const lastMonth = moment().subtract(31, 'days').unix();
-                return aql`${valueField} >= ${lastMonth} AND ${valueField} <=${now}`;
+                return aql`(${valueField} >= ${lastMonth} AND ${valueField} <=${now})`;
             }
             case AttributeCondition.START_ON:
                 return aql`DATE_COMPARE(${valueField}.from * 1000, ${Number(value) * 1000}, "years", "days") == true`;
             case AttributeCondition.START_BEFORE:
-                return aql`${valueField}.from != null AND ${valueField}.from < ${Number(value)}`;
+                return aql`(${valueField}.from != null AND ${valueField}.from < ${Number(value)})`;
             case AttributeCondition.START_AFTER:
                 return aql`${valueField}.from > ${Number(value)}`;
             case AttributeCondition.END_ON:
                 return aql`DATE_COMPARE(${valueField}.to * 1000, ${Number(value) * 1000}, "years", "days") == true`;
             case AttributeCondition.END_BEFORE:
-                return aql`${valueField}.to != null AND ${valueField}.to < ${Number(value)}`;
+                return aql`(${valueField}.to != null AND ${valueField}.to < ${Number(value)})`;
             case AttributeCondition.END_AFTER:
                 return aql`${valueField}.to > ${Number(value)}`;
             default:

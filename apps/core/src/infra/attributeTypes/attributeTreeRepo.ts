@@ -2,29 +2,32 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
 import {getEdgesCollectionName, getFullNodeId} from '../../infra/tree/helpers/utils';
 import {NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from '../../infra/tree/_types';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecord, IRecordFilterOption} from '../../_types/record';
+import {IRecord} from '../../_types/record';
 import {ITreeValue, IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
+    'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
+    'core.infra.record.helpers.filterTypes': filterTypes = null,
     'core.utils': utils = null
 }: IDeps = {}): IAttributeTypeRepo {
     const _buildTreeValue = (
@@ -270,12 +273,25 @@ export default function ({
 
             return query;
         },
-        filterQueryPart(
-            attributes: IAttributeWithRepo[],
-            filter: IRecordFilterOption,
-            parentIdentifier = BASE_QUERY_IDENTIFIER
-        ): AqlQuery {
+        filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
             const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+
+            const isCountFilter = filterTypes.isCountFilter(filter);
+            const linkIdentifier = parentIdentifier + 'v';
+            const vIdentifier = aql.literal(linkIdentifier);
+
+            if (isCountFilter) {
+                // In "count" filters, we don't need to retrieve the actual value, we just need to know how many links we have
+                // Thus, using a "join" query on the edge collection is more efficient than using a traversal
+                return aql`
+                COUNT(
+                    FOR ${vIdentifier} IN ${valuesLinksCollec}
+                    FILTER ${vIdentifier}._from == ${aql.literal(parentIdentifier)}._id
+                    AND ${vIdentifier}.attribute == ${attributes[0].id}
+                    RETURN true
+                    )
+                    `;
+            }
 
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -283,12 +299,11 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
-            const linkIdentifier = parentIdentifier + 'v';
-            const recordIdentifier = aql.literal(parentIdentifier + 'Record');
-            const vIdentifier = aql.literal(linkIdentifier);
+            const linkValueIdentifier = aql.literal(`${parentIdentifier}linkVal`);
+            const recordIdentifierStr = parentIdentifier + 'Record';
+            const recordIdentifier = aql.literal(recordIdentifierStr);
             const eIdentifier = aql.literal(parentIdentifier + 'e');
-
-            const firstValuePrefix = aql`FIRST(`;
+            const returnValue = aql`RETURN ${linkValueIdentifier}`;
             const retrieveValue = aql`
                 FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
                     ${valuesLinksCollec}
@@ -296,76 +311,27 @@ export default function ({
                     LET ${recordIdentifier} = DOCUMENT(
                         ${vIdentifier}.${aql.literal(NODE_LIBRARY_ID_FIELD)},
                         ${vIdentifier}.${aql.literal(NODE_RECORD_ID_FIELD)}
-                    )
-                `;
+                        )
+                        `;
 
-            const returnValue = aql`RETURN ${recordIdentifier}`;
-            const firstValueSuffix = aql`)`;
+            const linkValueQuery = attributes[1]
+                ? aql`LET ${aql.literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
+                      [...attributes].splice(1),
+                      filter,
+                      recordIdentifierStr
+                  )})`
+                : null;
+            const linkedValue = aql.join([
+                aql.literal('FLATTEN('),
+                retrieveValue,
+                linkValueQuery,
+                returnValue,
+                aql.literal(')')
+            ]);
 
-            let query: AqlQuery;
-            const linkValIdentifier = aql.literal(`${parentIdentifier}linkVal`);
-            if (
-                [
-                    AttributeCondition.VALUES_COUNT_EQUAL,
-                    AttributeCondition.VALUES_COUNT_GREATER_THAN,
-                    AttributeCondition.VALUES_COUNT_LOWER_THAN
-                ].includes(filter.condition as AttributeCondition)
-            ) {
-                let conditionApplied;
-                switch (filter.condition) {
-                    case AttributeCondition.VALUES_COUNT_EQUAL:
-                        conditionApplied = AttributeCondition.EQUAL;
-                        break;
-                    case AttributeCondition.VALUES_COUNT_GREATER_THAN:
-                        conditionApplied = AttributeCondition.GREATER_THAN;
-                        break;
-                    case AttributeCondition.VALUES_COUNT_LOWER_THAN:
-                        conditionApplied = AttributeCondition.LESS_THAN;
-                        break;
-                }
-
-                query = aql.join([
-                    aql`LET ${linkValIdentifier} = `,
-                    aql`COUNT(`,
-                    retrieveValue,
-                    returnValue,
-                    aql`)`,
-                    aql`FILTER ${getConditionPart(linkValIdentifier, conditionApplied, filter.value, attributes[0])}`
-                ]);
-            } else if (
-                filter.condition === AttributeCondition.IS_EMPTY ||
-                filter.condition === AttributeCondition.IS_NOT_EMPTY
-            ) {
-                query = aql.join([
-                    aql`LET ${linkValIdentifier} = `,
-                    firstValuePrefix,
-                    retrieveValue,
-                    returnValue,
-                    firstValueSuffix,
-                    aql`FILTER ${getConditionPart(linkValIdentifier, filter.condition, filter.value, attributes[0])}`
-                ]);
-            } else {
-                const filterValue = attributes[1]._repo.filterQueryPart(
-                    [...attributes].splice(1),
-                    filter,
-                    parentIdentifier + 'Record'
-                );
-
-                const linkedValue = aql.join([
-                    firstValuePrefix,
-                    retrieveValue,
-                    filterValue,
-                    returnValue,
-                    firstValueSuffix
-                ]);
-
-                query =
-                    linked.format !== AttributeFormats.EXTENDED
-                        ? aql`FILTER ${linkedValue} != null`
-                        : aql`FILTER ${_getExtendedFilterPart(attributes, linkedValue)} != null`;
-            }
-
-            return query;
+            return linked.format !== AttributeFormats.EXTENDED
+                ? linkedValue
+                : _getExtendedFilterPart(attributes, linkedValue);
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;

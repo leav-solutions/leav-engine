@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AttributeIndexRepo clearAllValues Should delete field of given attribute 1`] = `undefined`;
+exports[`AttributeSimpleRepo clearAllValues Should delete field of given attribute 1`] = `undefined`;
 
-exports[`AttributeIndexRepo clearAllValues Should delete field of given attribute 2`] = `undefined`;
+exports[`AttributeSimpleRepo clearAllValues Should delete field of given attribute 2`] = `undefined`;
 
-exports[`AttributeIndexRepo createValue Should create a new index value 1`] = `
+exports[`AttributeSimpleRepo createValue Should create a new index value 1`] = `
 "
                 UPDATE @value0
                 WITH @value1
@@ -13,7 +13,7 @@ exports[`AttributeIndexRepo createValue Should create a new index value 1`] = `
                 RETURN NEW"
 `;
 
-exports[`AttributeIndexRepo createValue Should create a new index value 2`] = `
+exports[`AttributeSimpleRepo createValue Should create a new index value 2`] = `
 {
   "@value2": "test_lib",
   "value0": {
@@ -25,7 +25,7 @@ exports[`AttributeIndexRepo createValue Should create a new index value 2`] = `
 }
 `;
 
-exports[`AttributeIndexRepo deleteValue Should delete a value 1`] = `
+exports[`AttributeSimpleRepo deleteValue Should delete a value 1`] = `
 "
                 UPDATE @value0
                 WITH @value1
@@ -34,7 +34,7 @@ exports[`AttributeIndexRepo deleteValue Should delete a value 1`] = `
                 RETURN NEW"
 `;
 
-exports[`AttributeIndexRepo deleteValue Should delete a value 2`] = `
+exports[`AttributeSimpleRepo deleteValue Should delete a value 2`] = `
 {
   "@value2": "test_lib",
   "value0": {
@@ -46,20 +46,28 @@ exports[`AttributeIndexRepo deleteValue Should delete a value 2`] = `
 }
 `;
 
-exports[`AttributeIndexRepo filterQueryPart Should return simple filter 1`] = `
+exports[`AttributeSimpleRepo filterValueQueryPart Should query to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
-    "value0": "_key",
-    "value1": "123456",
+    "value0": "simple_attribute",
   },
-  "query": "
-                        LET rVal = r.@value0
-                        FILTER rVal == @value1",
+  "query": "r.@value0",
 }
 `;
 
-exports[`AttributeIndexRepo getValues Should return values for index attribute 1`] = `
+exports[`AttributeSimpleRepo filterValueQueryPart Should query to retrieve value to filter on, on extended format 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "value0": "subfield",
+    "value1": "simple_attribute",
+  },
+  "query": "TRANSLATE(@value0, TRANSLATE(@value1, r))",
+}
+`;
+
+exports[`AttributeSimpleRepo getValues Should return values for index attribute 1`] = `
 "
                 FOR r IN @@value0
                     FILTER r._key == @value1
@@ -67,7 +75,7 @@ exports[`AttributeIndexRepo getValues Should return values for index attribute 1
             "
 `;
 
-exports[`AttributeIndexRepo getValues Should return values for index attribute 2`] = `
+exports[`AttributeSimpleRepo getValues Should return values for index attribute 2`] = `
 {
   "@value0": "test_lib",
   "value1": "123456",
@@ -75,7 +83,7 @@ exports[`AttributeIndexRepo getValues Should return values for index attribute 2
 }
 `;
 
-exports[`AttributeIndexRepo sortQueryPart Should return simple sort 1`] = `
+exports[`AttributeSimpleRepo sortQueryPart Should return simple sort 1`] = `
 {
   "_source": [Function],
   "bindVars": {

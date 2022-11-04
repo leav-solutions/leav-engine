@@ -2,24 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
 import {IStandardValue, IValue} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRepo} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
+    'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null
+    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
 }: IDeps = {}): IAttributeTypeRepo {
     async function _saveValue(
         library: string,
@@ -90,54 +92,6 @@ export default function ({
                 }
             ];
         },
-        filterQueryPart(
-            attributes: IAttributeWithRepo[],
-            filter: IRecordFilterOption,
-            parentIdentifier = BASE_QUERY_IDENTIFIER
-        ): AqlQuery {
-            attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
-
-            const valueIdentifier = aql.literal(parentIdentifier + 'Val');
-            let filterTarget: AqlQuery;
-            let conditionApplied = filter.condition;
-            if (
-                [
-                    AttributeCondition.VALUES_COUNT_EQUAL,
-                    AttributeCondition.VALUES_COUNT_GREATER_THAN,
-                    AttributeCondition.VALUES_COUNT_LOWER_THAN
-                ].includes(filter.condition as AttributeCondition)
-            ) {
-                filterTarget = aql`COUNT(${aql.literal(parentIdentifier)}.${attributes[0].id}) ? 1 : 0`;
-
-                switch (filter.condition) {
-                    case AttributeCondition.VALUES_COUNT_EQUAL:
-                        conditionApplied = AttributeCondition.EQUAL;
-                        break;
-                    case AttributeCondition.VALUES_COUNT_GREATER_THAN:
-                        conditionApplied = AttributeCondition.GREATER_THAN;
-                        break;
-                    case AttributeCondition.VALUES_COUNT_LOWER_THAN:
-                        conditionApplied = AttributeCondition.LESS_THAN;
-                        break;
-                }
-            } else {
-                filterTarget =
-                    attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
-                        ? _getExtendedFilterPart(attributes)
-                        : aql`${aql.literal(parentIdentifier)}.${attributes[0].id}`;
-            }
-
-            const query: AqlQuery = aql`
-                        LET ${valueIdentifier} = ${filterTarget}
-                        FILTER ${getConditionPart(
-                            valueIdentifier,
-                            conditionApplied as AttributeCondition,
-                            filter.value,
-                            attributes[0]
-                        )}`;
-
-            return query;
-        },
         sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 
@@ -147,6 +101,17 @@ export default function ({
                     : aql`SORT r.${attributes[0].id} ${order}`;
 
             return query;
+        },
+        filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
+            let recordValue: GeneratedAqlQuery;
+            if (attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1) {
+                recordValue = _getExtendedFilterPart(attributes);
+            } else {
+                const attributeId = attributes[0].id === 'id' ? '_key' : attributes[0].id;
+                recordValue = aql`${aql.literal(parentIdentifier)}.${attributeId}`;
+            }
+
+            return filterTypesHelper.isCountFilter(filter) ? aql`COUNT(${recordValue}) ? 1 : 0` : recordValue;
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);

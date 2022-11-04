@@ -4,7 +4,7 @@
 import {AqlLiteral, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
+import {AttributeCondition, IRecordFilterOption} from '../../_types/record';
 import {IValue, IValuesOptions} from '../../_types/value';
 
 // To avoid some cyclic dependencies issues, we have to pass repo along attribute props
@@ -135,9 +135,14 @@ export interface IAttributeTypeRepo {
     }): Promise<IValue>;
 
     /**
-     * Return AQL query part to filter on this attribute. If will be concatenate with other filters and full query
+     * Return AQL query part to retrieve value for this attribute.
+     * If will be concatenate with other filters and full query
      */
-    filterQueryPart(attributes: IAttributeWithRepo[], filter: IRecordFilterOption, parentIdentifier?: string): AqlQuery;
+    filterValueQueryPart(
+        attributes: IAttributeWithRepo[],
+        filter: IRecordFilterOption,
+        parentIdentifier?: string
+    ): GeneratedAqlQuery;
 
     /**
      * Return AQL query part to sort on this attribute
@@ -172,7 +177,7 @@ interface IDeps {
     'core.infra.attributeTypes.attributeTree'?: IAttributeTypeRepo;
 }
 
-export default function ({
+export default function({
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
     'core.infra.attributeTypes.attributeAdvanced': attributeAdvancedRepo = null,
