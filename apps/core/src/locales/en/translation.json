@@ -161,7 +161,7 @@
         "import_label": "Import file {{filename}}",
         "import_description": {
             "elements_process": "Import of elements",
-            "tree_elements_process": "Positionning tree elements",
+            "tree_elements_process": "Positioning tree elements",
             "links_process": "Setting up links"
         },
         "export_label": "Export data from {{library}}",

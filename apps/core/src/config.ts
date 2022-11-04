@@ -80,7 +80,8 @@ export const validateConfig = (conf: IConfig) => {
             rootKeys: Joi.object().keys({
                 files1: Joi.string().required()
             }),
-            userId: Joi.number().required()
+            userId: Joi.string().required(),
+            userGroupsIds: Joi.string().required()
         }),
         indexationManager: Joi.object().keys({
             queues: Joi.object().keys({

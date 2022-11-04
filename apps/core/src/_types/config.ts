@@ -103,6 +103,7 @@ export interface IFilesManager {
         files1: string;
     };
     userId: string;
+    userGroupsIds: string;
 }
 
 export interface IEventsManager {

@@ -16,6 +16,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITreeNode} from '_types/tree';
 import ValidationError from '../../errors/ValidationError';
+import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
@@ -68,7 +69,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -87,6 +88,23 @@ export default function({
             userId: config.filesManager.userId,
             queryId: uuidv4()
         };
+
+        const groupsNodes = (
+            await Promise.all(
+                config.filesManager.userGroupsIds.split(',').map(groupId =>
+                    treeDomain.getNodesByRecord({
+                        treeId: USERS_GROUP_TREE_NAME,
+                        record: {
+                            id: groupId,
+                            library: USERS_GROUP_LIB_NAME
+                        },
+                        ctx
+                    })
+                )
+            )
+        )[0];
+
+        ctx.groupsId = groupsNodes;
 
         try {
             msgBody = JSON.parse(msg);

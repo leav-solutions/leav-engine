@@ -526,14 +526,14 @@ export default function ({
 
             // Check permissions on destination
             const canEditDestinationChildren = parentTo
-                ? treeNodePermissionDomain.getTreeNodePermission({
+                ? await treeNodePermissionDomain.getTreeNodePermission({
                       treeId,
                       action: TreeNodePermissionsActions.EDIT_CHILDREN,
                       nodeId: parentTo,
                       userId: ctx.userId,
                       ctx
                   })
-                : treePermissionDomain.getTreePermission({
+                : await treePermissionDomain.getTreePermission({
                       treeId,
                       action: TreePermissionsActions.EDIT_CHILDREN,
                       userId: ctx.userId,
