@@ -161,6 +161,15 @@
     },
     "tasks": {
         "import_label": "Import du fichier {{filename}}",
-        "export_label": "Export des données depuis {{library}}"
+        "import_description": {
+            "elements_process": "Import des éléments",
+            "tree_elements_process": "Placement des éléments dans les arbres",
+            "links_process": "Etablissement des liaisons"
+        },
+        "export_label": "Export des données depuis {{library}}",
+        "export_description": {
+            "elements_retrieval": "Récupération des fichiers",
+            "excel_writing": "Ecriture du fichier excel"
+        }
     }
 }

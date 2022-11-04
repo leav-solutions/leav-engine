@@ -41,8 +41,8 @@ describe('TasksList', () => {
                                 'startedAt',
                                 'canceledBy',
                                 'completedAt',
-                                'progress',
-                                'step',
+                                'progress.percent',
+                                'progress.description',
                                 'duration'
                             ]}
                             tasks={tasks}
@@ -73,8 +73,8 @@ describe('TasksList', () => {
                                 'startedAt',
                                 'canceledBy',
                                 'completedAt',
-                                'progress',
-                                'step',
+                                'progress.percent',
+                                'progress.description',
                                 'duration'
                             ]}
                             tasks={tasks}

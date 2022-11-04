@@ -68,7 +68,6 @@ const TasksList = ({
                     <Table.Row>
                         {enabledColumns.map(c => (
                             <Table.HeaderCell
-                                width={2}
                                 key={`hc-${c}`}
                                 sorted={sort.column === c ? sort.direction : null}
                                 onClick={() => onSort(c)}
@@ -136,7 +135,7 @@ const TasksList = ({
                                                 {new Date(task.completedAt * 1000).toLocaleString()}
                                             </Table.Cell>
                                         )}
-                                        {enabledColumns.includes('progress') && (
+                                        {enabledColumns.includes('progress.percent') && (
                                             <Table.Cell textAlign="center">
                                                 <Progress
                                                     percent={task.progress?.percent || 0}
@@ -149,8 +148,12 @@ const TasksList = ({
                                                 </Progress>
                                             </Table.Cell>
                                         )}
-                                        {enabledColumns.includes('step') && (
-                                            <Table.Cell>{task.progress?.description}</Table.Cell>
+                                        {enabledColumns.includes('progress.description') && (
+                                            <Table.Cell>
+                                                {task.progress?.description
+                                                    ? localizedTranslation(task.progress?.description, lang)
+                                                    : ''}
+                                            </Table.Cell>
                                         )}
                                         {enabledColumns.includes('duration') && (
                                             <Table.Cell>
@@ -183,7 +186,7 @@ const TasksList = ({
                 {!!footerBtn && (
                     <Table.Footer>
                         <Table.Row>
-                            <Table.HeaderCell colSpan={enabledColumns.length + 1}>
+                            <Table.HeaderCell colSpan={enabledColumns.length + maxNbBtnsInRow}>
                                 {footerBtn.map(b => b)}
                             </Table.HeaderCell>
                         </Table.Row>

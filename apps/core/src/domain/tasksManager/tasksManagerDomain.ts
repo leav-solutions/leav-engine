@@ -27,10 +27,11 @@ import {IUtils} from 'utils/utils';
 import cluster from 'cluster';
 import {cpus} from 'os';
 import process from 'process';
+import {ISystemTranslation} from '_types/systemTranslation';
 
 export interface IUpdateData {
     status?: TaskStatus;
-    progress?: {percent?: number; description?: string};
+    progress?: {percent?: number; description?: ISystemTranslation};
     startedAt?: number;
     completedAt?: number;
     link?: {name: string; url: string};
@@ -52,7 +53,11 @@ export interface ITasksManagerDomain {
     init(): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
     setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void>;
-    updateProgress(taskId: string, progress: {percent?: number; description?: string}, ctx: IQueryInfos): Promise<void>;
+    updateProgress(
+        taskId: string,
+        progress: {percent?: number; description?: ISystemTranslation},
+        ctx: IQueryInfos
+    ): Promise<void>;
     createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<void>;
     cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void>;
     deleteTask(taskId: string, archive: boolean, ctx: IQueryInfos): Promise<ITask>;
@@ -170,12 +175,26 @@ export default function ({
             errorMessage = e.message;
         }
 
+        const progress =
+            status === TaskStatus.DONE
+                ? {progress: {percent: 100}}
+                : {
+                      ...(errorMessage
+                          ? {
+                                progress: {
+                                    description: config.lang.available.reduce((labels, lang) => {
+                                        labels[lang] = errorMessage;
+                                        return labels;
+                                    }, {})
+                                }
+                            }
+                          : {})
+                  };
+
         return _updateTask(
             task.id,
             {
-                ...(status === TaskStatus.DONE
-                    ? {progress: {percent: 100}}
-                    : {...(errorMessage ? {progress: {description: errorMessage}} : {})}),
+                ...progress,
                 completedAt: utils.getUnixTime(),
                 status
             },
@@ -440,9 +459,13 @@ export default function ({
         },
         async updateProgress(
             taskId: string,
-            progress: {percent?: number; description?: string},
+            progress: {percent?: number; description?: ISystemTranslation},
             ctx: IQueryInfos
         ): Promise<void> {
+            if (typeof progress.percent !== 'undefined' && progress.percent === 100) {
+                progress.percent = 99;
+            }
+
             await _updateTask(taskId, {progress}, ctx);
         },
         async setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void> {

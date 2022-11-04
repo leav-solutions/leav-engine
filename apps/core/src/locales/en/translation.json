@@ -159,6 +159,15 @@
     },
     "tasks": {
         "import_label": "Import file {{filename}}",
-        "export_label": "Export data from {{library}}"
+        "import_description": {
+            "elements_process": "Import of elements",
+            "tree_elements_process": "Positioning tree elements",
+            "links_process": "Setting up links"
+        },
+        "export_label": "Export data from {{library}}",
+        "export_description": {
+            "elements_retrieval": "Elements retrieval",
+            "file_writing": "Excel file writing"
+        }
     }
 }

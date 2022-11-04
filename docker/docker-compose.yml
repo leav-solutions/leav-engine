@@ -57,6 +57,7 @@ x-env-core: &env-core
   SERVER_HOST: "0.0.0.0"
   SERVER_PORT: 4001
   SERVER_PUBLIC_URL: http://core.leav.localhost
+  SERVER_WS_URL: ws://core.leav.localhost
   SERVER_UPLOAD_LIMIT: "15000mb"
   REDIS_HOST: redis
   REDIS_PORT: 6379
@@ -496,20 +497,20 @@ services:
     ports:
       - 9200:9200
 
-  kibana:
-    image: *kibana_image
-    logging:
-      driver: none
-    ports:
-      - 5611:5601
-    volumes:
-      - kibana_data:/usr/share/kibana/data
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.kibana.rule=Host(`kibana.leav.localhost`)
-      - traefik.http.services.kibana.loadbalancer.server.port=5601
-    depends_on:
-      - elasticsearch
+  # kibana:
+  #   image: *kibana_image
+  #   logging:
+  #     driver: none
+  #   ports:
+  #     - 5611:5601
+  #   volumes:
+  #     - kibana_data:/usr/share/kibana/data
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.kibana.rule=Host(`kibana.leav.localhost`)
+  #     - traefik.http.services.kibana.loadbalancer.server.port=5601
+  #   depends_on:
+  #     - elasticsearch
 
 volumes:
   arango_data:

@@ -40,7 +40,7 @@ export interface SUB_TASKS_UPDATE_task_created_by {
 
 export interface SUB_TASKS_UPDATE_task_progress {
     percent: number | null;
-    description: string | null;
+    description: SystemTranslation | null;
 }
 
 export interface SUB_TASKS_UPDATE_task_link {
