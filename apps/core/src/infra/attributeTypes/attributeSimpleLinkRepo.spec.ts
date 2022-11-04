@@ -3,9 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
+import {mockAttrSimpleLink} from '../../__tests__/mocks/attribute';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 
@@ -16,13 +18,12 @@ describe('AttributeSimpleLinkRepo', () => {
         linked_library: 'test_linked_lib'
     };
 
-    const mockAttrSimpleRepo: IAttributeTypeRepo = {
+    const mockAttrSimpleRepo: Mockify<IAttributeTypeRepo> = {
         createValue: null,
         updateValue: null,
         deleteValue: null,
         getValueById: null,
         getValues: null,
-        filterQueryPart: null,
         sortQueryPart: null,
         clearAllValues: null
     };
@@ -32,7 +33,7 @@ describe('AttributeSimpleLinkRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a simple link value', async function () {
+        test('Should create a simple link value', async function() {
             const updatedValueData = {
                 value: '123456'
             };
@@ -43,7 +44,9 @@ describe('AttributeSimpleLinkRepo', () => {
                 updateValue: global.__mockPromise(updatedValueData)
             };
 
-            const attrRepo = attributeSimpleLinkRepo({'core.infra.attributeTypes.attributeSimple': attrSimpleRepo});
+            const attrRepo = attributeSimpleLinkRepo({
+                'core.infra.attributeTypes.attributeSimple': attrSimpleRepo as IAttributeTypeRepo
+            });
 
             const createdVal = await attrRepo.createValue({
                 library: 'test_lib',
@@ -87,7 +90,9 @@ describe('AttributeSimpleLinkRepo', () => {
                 deleteValue: global.__mockPromise(deletedValueData)
             };
 
-            const attrRepo = attributeSimpleLinkRepo({'core.infra.attributeTypes.attributeSimple': attrSimpleRepo});
+            const attrRepo = attributeSimpleLinkRepo({
+                'core.infra.attributeTypes.attributeSimple': attrSimpleRepo as IAttributeTypeRepo
+            });
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
@@ -121,7 +126,7 @@ describe('AttributeSimpleLinkRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values for simple link attribute', async function () {
+        test('Should return values for simple link attribute', async function() {
             const queryRes = [
                 {
                     _key: '987654',
@@ -186,7 +191,7 @@ describe('AttributeSimpleLinkRepo', () => {
     });
 
     describe('getReverseValues', () => {
-        test('Should return values for advanced reverse link attribute into simple link', async function () {
+        test('Should return values for advanced reverse link attribute into simple link', async function() {
             const queryRes = [
                 {
                     _key: '987654',
@@ -250,21 +255,26 @@ describe('AttributeSimpleLinkRepo', () => {
         });
     });
 
-    describe('filterQueryPart', () => {
-        test('Should return simple link filter', () => {
+    describe('filterValueQueryPart', () => {
+        const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
+            isCountFilter: jest.fn().mockReturnValue(false)
+        };
+
+        test('Should return query to retrieve value to filter on', () => {
             const mockDbServ = {
                 db: new Database()
             };
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterQueryPart: jest.fn().mockReturnValue(null)
+                filterValueQueryPart: jest.fn().mockReturnValue(aql``)
             };
 
             const attrRepo = attributeSimpleLinkRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`== ${'MyLabel'}`
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
             });
-            const filter = attrRepo.filterQueryPart(
+
+            const valueQuery = attrRepo.filterValueQueryPart(
                 [
                     {id: 'label', type: AttributeTypes.SIMPLE_LINK, _repo: mockRepo as IAttributeTypeRepo},
                     {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
@@ -272,10 +282,72 @@ describe('AttributeSimpleLinkRepo', () => {
                 {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
             );
 
-            expect(filter.query).toMatch(/^FILTER/);
-            expect(filter).toMatchSnapshot();
+            expect(valueQuery).toMatchSnapshot();
+        });
+
+        test('Should return query to retrieve value to filter on for reverse link', async () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
+            };
+
+            const attrRepo = attributeSimpleLinkRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const valueQuery = attrRepo.filterValueQueryPart(
+                [
+                    {
+                        id: 'linked_from',
+                        type: AttributeTypes.SIMPLE_LINK,
+                        reverse_link: {...mockAttrSimpleLink},
+                        _repo: mockRepo as IAttributeTypeRepo
+                    },
+                    {id: 'label', type: AttributeTypes.ADVANCED, _repo: mockRepo as IAttributeTypeRepo}
+                ],
+                {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
+            );
+
+            expect(valueQuery).toMatchSnapshot();
+        });
+
+        test('Should return query to retrieve value to filter on for "count" filter', async () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+
+            const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
+                isCountFilter: jest.fn().mockReturnValue(true)
+            };
+
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
+            };
+
+            const attrRepo = attributeSimpleLinkRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelperCount as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const valueQuery = attrRepo.filterValueQueryPart(
+                [
+                    {
+                        id: 'linked_from',
+                        type: AttributeTypes.SIMPLE_LINK,
+                        _repo: mockRepo as IAttributeTypeRepo
+                    }
+                ],
+                {condition: AttributeCondition.VALUES_COUNT_EQUAL, value: '42'}
+            );
+
+            expect(valueQuery).toMatchSnapshot();
         });
     });
+
     describe('sortQueryPart', () => {
         test('Should return simple link sort', () => {
             const mockDbServ = {

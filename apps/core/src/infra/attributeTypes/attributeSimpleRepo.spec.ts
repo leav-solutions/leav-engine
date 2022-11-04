@@ -1,13 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, Database} from 'arangojs';
+import {Database} from 'arangojs';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
-import {AttributeTypes} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
+import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import attributeSimpleRepo from './attributeSimpleRepo';
 
-describe('AttributeIndexRepo', () => {
+describe('AttributeSimpleRepo', () => {
     const mockAttribute = {
         id: 'test_attr',
         type: AttributeTypes.SIMPLE
@@ -18,7 +20,7 @@ describe('AttributeIndexRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new index value', async function () {
+        test('Should create a new index value', async function() {
             const updatedRecordData = {
                 _id: 'test_lib/222435651',
                 _rev: '_WSywvyC--_',
@@ -54,7 +56,7 @@ describe('AttributeIndexRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values for index attribute', async function () {
+        test('Should return values for index attribute', async function() {
             const queryRes = ['test val', 'other val that should not be returned'];
 
             const mockDbServ = {
@@ -118,22 +120,6 @@ describe('AttributeIndexRepo', () => {
         });
     });
 
-    describe('filterQueryPart', () => {
-        test('Should return simple filter', () => {
-            const attrRepo = attributeSimpleRepo({
-                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`rVal == ${'123456'}`
-            });
-            const filter = attrRepo.filterQueryPart(
-                [{id: 'id', type: AttributeTypes.SIMPLE, _repo: null}],
-                {condition: AttributeCondition.EQUAL, value: '123456'},
-                'r'
-            );
-
-            expect(filter.query).toMatch(/FILTER/);
-            expect(filter).toMatchSnapshot();
-        });
-    });
-
     describe('sortQueryPart', () => {
         test('Should return simple sort', () => {
             const attrRepo = attributeSimpleRepo();
@@ -144,6 +130,45 @@ describe('AttributeIndexRepo', () => {
 
             expect(filter.query).toMatch(/^SORT/);
             expect(filter).toMatchSnapshot();
+        });
+    });
+
+    describe('filterValueQueryPart', () => {
+        const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
+            isCountFilter: jest.fn().mockReturnValue(false)
+        };
+
+        test('Should query to retrieve value to filter on', () => {
+            const attrRepo = attributeSimpleRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+            });
+            const valueQuery = attrRepo.filterValueQueryPart([{...mockAttrSimple, _repo: null, reverse_link: null}], {
+                condition: AttributeCondition.EQUAL,
+                attributes: [{...mockAttrSimple, reverse_link: null}],
+                value: '123456'
+            });
+
+            expect(valueQuery.query).toMatch(/^r\./);
+            expect(valueQuery).toMatchSnapshot();
+        });
+
+        test('Should query to retrieve value to filter on, on extended format', () => {
+            const attrRepo = attributeSimpleRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+            });
+            const valueQuery = attrRepo.filterValueQueryPart(
+                [
+                    {...mockAttrSimple, format: AttributeFormats.EXTENDED, _repo: null, reverse_link: null},
+                    {...mockAttrSimple, id: 'subfield', _repo: null, reverse_link: null}
+                ],
+                {
+                    condition: AttributeCondition.EQUAL,
+                    attributes: [{...mockAttrSimple, reverse_link: null}],
+                    value: '123456'
+                }
+            );
+
+            expect(valueQuery).toMatchSnapshot();
         });
     });
 

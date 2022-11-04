@@ -1,12 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Database} from 'arangojs';
+import {aql, Database} from 'arangojs';
 import {cloneDeep} from 'lodash';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition, IRecordFilterOption, Operator} from '../../_types/record';
 import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbUtils} from '../db/dbUtils';
+import {IFilterTypesHelper} from './helpers/filterTypes';
 import recordRepo from './recordRepo';
 
 describe('RecordRepo', () => {
@@ -15,7 +16,7 @@ describe('RecordRepo', () => {
         requestId: '123465'
     };
     describe('createRecord', () => {
-        test('Should create a new record', async function() {
+        test('Should create a new record', async function () {
             const recordData = {created_at: 1519303348, modified_at: 1519303348};
             const createdRecordData = {
                 _id: 'users/222435651',
@@ -63,7 +64,7 @@ describe('RecordRepo', () => {
     });
 
     describe('updateRecord', () => {
-        test('Should update a record', async function() {
+        test('Should update a record', async function () {
             const recordData = {id: '222435651', modified_at: 1519303348};
             const updatedRecordData = {
                 _id: 'users/222435651',
@@ -112,7 +113,7 @@ describe('RecordRepo', () => {
     });
 
     describe('deleteRecord', () => {
-        test('Should delete a record and return deleted record', async function() {
+        test('Should delete a record and return deleted record', async function () {
             const recordData = {id: '222435651', created_at: 1519303348, modified_at: 1519303348};
             const deletedRecordData = {
                 _id: 'users/222435651',
@@ -172,7 +173,7 @@ describe('RecordRepo', () => {
     });
 
     describe('find', () => {
-        test('Should find records', async function() {
+        test('Should find records', async function () {
             const mockQueryRes = {
                 totalCount: 2,
                 results: [
@@ -218,10 +219,7 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest
-                    .fn()
-                    .mockReturnValueOnce(mockCleanupRes[0])
-                    .mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
             };
 
             const recRepo = recordRepo({
@@ -247,7 +245,7 @@ describe('RecordRepo', () => {
             });
         });
 
-        test('Should paginate with offset', async function() {
+        test('Should paginate with offset', async function () {
             const mockQueryRes = {
                 totalCount: 5,
                 results: [
@@ -293,10 +291,7 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest
-                    .fn()
-                    .mockReturnValueOnce(mockCleanupRes[0])
-                    .mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
             };
 
             const recRepo = recordRepo({
@@ -319,7 +314,7 @@ describe('RecordRepo', () => {
             expect(records.list.length).toBe(2);
         });
 
-        test('Should paginate with cursor', async function() {
+        test('Should paginate with cursor', async function () {
             const mockQueryRes = [
                 {
                     _key: '222536283',
@@ -362,10 +357,7 @@ describe('RecordRepo', () => {
             ];
 
             const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: jest
-                    .fn()
-                    .mockReturnValueOnce(mockCleanupRes[0])
-                    .mockReturnValueOnce(mockCleanupRes[1])
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
             };
 
             const recRepo = recordRepo({
@@ -472,7 +464,7 @@ describe('RecordRepo', () => {
             }
         ];
 
-        test('Should filter records - simple', async function() {
+        test('Should filter records - simple', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise({
@@ -499,33 +491,29 @@ describe('RecordRepo', () => {
                 })
             };
 
-            const mockAttrSimpleRepo: Mockify<IAttributeTypeRepo> = {
-                filterQueryPart: jest
-                    .fn()
-                    .mockReturnValueOnce({
-                        query: 'FILTER r.@filterField0 == @filterValue0',
-                        bindVars: {
-                            filterField0: 'test_attr',
-                            filterValue0: 'test'
-                        }
-                    })
-                    .mockReturnValueOnce({
-                        query: 'FILTER r.@filterField1 == @filterValue1',
-                        bindVars: {
-                            filterField1: 'test_attr2',
-                            filterValue1: 'test2'
-                        }
-                    })
-            };
+            const mockAttrSimpleRepo: Mockify<IAttributeTypeRepo> = {};
 
             const mockAttrRepo: Mockify<IAttributeTypesRepo> = {
                 getTypeRepo: jest.fn().mockReturnValue(mockAttrSimpleRepo as IAttributeTypesRepo)
             };
 
+            const mockGetSearchVariablesQueryPart = jest.fn().mockReturnValue(aql`<Variables>`);
+            const mockGetSearchVariableName = jest.fn().mockReturnValue(aql`variableName`);
+            const mockGetConditionPart = jest.fn().mockReturnValue(aql`<Condition>`);
+
+            const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
+                isCountFilter: jest.fn().mockReturnValue(false),
+                isAttributeFilter: jest.fn().mockReturnValue(true)
+            };
+
             const recRepo = recordRepo({
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-                'core.infra.attributeTypes': mockAttrRepo as IAttributeTypesRepo
+                'core.infra.attributeTypes': mockAttrRepo as IAttributeTypesRepo,
+                'core.infra.record.helpers.getSearchVariablesQueryPart': mockGetSearchVariablesQueryPart,
+                'core.infra.record.helpers.getSearchVariableName': mockGetSearchVariableName,
+                'core.infra.attributeTypes.helpers.getConditionPart': mockGetConditionPart,
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
             });
 
             const filters = cloneDeep(mockFilters);
@@ -541,7 +529,6 @@ describe('RecordRepo', () => {
             });
 
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
-            expect(mockAttrSimpleRepo.filterQueryPart).toBeCalled();
             expect(records).toEqual({
                 cursor: null,
                 totalCount: 1,
@@ -558,7 +545,7 @@ describe('RecordRepo', () => {
     });
 
     describe('search', () => {
-        test('should search records', async function() {
+        test('should search records', async function () {
             const mockQueryRes = {
                 took: 322,
                 timed_out: false,
@@ -601,7 +588,7 @@ describe('RecordRepo', () => {
             });
         });
 
-        test('should search record with from/size params', async function() {
+        test('should search record with from/size params', async function () {
             const mockQueryRes = {
                 took: 322,
                 timed_out: false,

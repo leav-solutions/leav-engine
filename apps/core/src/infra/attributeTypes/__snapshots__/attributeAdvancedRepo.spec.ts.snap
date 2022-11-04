@@ -67,22 +67,19 @@ exports[`AttributeStandardRepo createValue Should save version on value 2`] = `
 }
 `;
 
-exports[`AttributeStandardRepo filterQueryPart Should return advanced filter 1`] = `
+exports[`AttributeStandardRepo filterValueQueryPart Should return queyr to retrieve value to filter on 1`] = `
 {
   "_source": [Function],
   "bindVars": {
     "@value0": "core_edge_values_links",
     "value1": "label",
-    "value2": "MyLabel",
   },
   "query": "
-                LET rVal = FIRST( 
                 FOR rv, re IN 1 OUTBOUND r._id
-                @@value0
-                FILTER re.attribute == @value1
-                RETURN rv.value
-             )
-                FILTER rVal == @value2",
+                    @@value0
+                    FILTER re.attribute == @value1
+                    RETURN rv.value
+            ",
 }
 `;
 

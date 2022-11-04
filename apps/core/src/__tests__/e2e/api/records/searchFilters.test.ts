@@ -23,6 +23,10 @@ describe('searchFilters', () => {
     let recordId2;
     let recordId3;
 
+    let recordIdForOperators1;
+    let recordIdForOperators2;
+    let recordIdForOperators3;
+
     let recordDateId1;
     let recordDateId2;
     let recordDateId3;
@@ -41,6 +45,9 @@ describe('searchFilters', () => {
 
     const libraryId = 'search_filters_library_id';
     const libraryGqlQuery = 'searchFiltersLibraryId';
+
+    const libraryForOperatorsId = 'search_filters_library_for_operators_id';
+    const libraryForOperatorsGqlQuery = 'searchFiltersLibraryForOperatorsId';
 
     const linkedLibraryId = 'search_filters_linked_library_id';
 
@@ -188,11 +195,21 @@ describe('searchFilters', () => {
             attributesToCreate.map(a => a.id)
         );
 
+        await gqlSaveLibrary(
+            libraryForOperatorsId,
+            'Test lib',
+            attributesToCreate.map(a => a.id)
+        );
+
         await gqlSaveLibrary(libraryDateId, 'Test lib', [dateAttributeId]);
 
         recordId1 = await gqlCreateRecord(libraryId);
         recordId2 = await gqlCreateRecord(libraryId);
         recordId3 = await gqlCreateRecord(libraryId);
+
+        recordIdForOperators1 = await gqlCreateRecord(libraryForOperatorsId);
+        recordIdForOperators2 = await gqlCreateRecord(libraryForOperatorsId);
+        recordIdForOperators3 = await gqlCreateRecord(libraryForOperatorsId);
 
         linkedRecordId1 = await gqlCreateRecord(linkedLibraryId);
         linkedRecordId2 = await gqlCreateRecord(linkedLibraryId);
@@ -1528,6 +1545,114 @@ describe('searchFilters', () => {
                     expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
                 });
             });
+        });
+    });
+
+    describe('Filters operators (AND, OR)', () => {
+        beforeAll(async () => {
+            await gqlSaveValue(textAttributeId, libraryForOperatorsId, recordIdForOperators1, 'my_value');
+            await gqlSaveValue(textAttributeId, libraryForOperatorsId, recordIdForOperators2, 'other_value');
+            await gqlSaveValue(textAttributeId, libraryForOperatorsId, recordIdForOperators3, 'last_value');
+        });
+
+        test('Multiple filters with AND', async () => {
+            const res = await makeGraphQlCall(`{
+                ${libraryForOperatorsGqlQuery}(
+                    filters: [
+                        {
+                            field: "${textAttributeId}",
+                            condition: ${AttributeCondition.CONTAINS},
+                            value: "my"
+                        },
+                        {
+                            operator: AND,
+                        },
+                        {
+                            field: "${textAttributeId}",
+                            condition: ${AttributeCondition.CONTAINS},
+                            value: "value"
+                        }
+                    ]) {
+                        list {id}
+                    }
+                }`);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list.length).toBe(1);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators1);
+        });
+
+        test('Multiple filters with OR', async () => {
+            const res = await makeGraphQlCall(`{
+                ${libraryForOperatorsGqlQuery}(
+                    filters: [
+                        {
+                            field: "${textAttributeId}",
+                            condition: ${AttributeCondition.CONTAINS},
+                            value: "my"
+                        },
+                        {
+                            operator: OR,
+                        },
+                        {
+                            field: "${textAttributeId}",
+                            condition: ${AttributeCondition.CONTAINS},
+                            value: "other"
+                        }
+                    ]) {
+                        list {id}
+                    }
+                }`);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list.length).toBe(2);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators1);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[1].id).toBe(recordIdForOperators2);
+        });
+
+        test('Multiple filters with AND and OR', async () => {
+            const res = await makeGraphQlCall(`{
+                ${libraryForOperatorsGqlQuery}(
+                    filters: [
+                        {
+                            field: "${textAttributeId}",
+                            condition: ${AttributeCondition.CONTAINS},
+                            value: "my"
+                        },
+                        {
+                            operator: OR,
+                        },
+                        {
+                            operator: OPEN_BRACKET,
+                        },
+                        {
+                            field: "${textAttributeId}",
+                            condition: ${AttributeCondition.CONTAINS},
+                            value: "other"
+                        },
+                        {
+                            operator: AND,
+                        },
+                        {
+                            field: "${textAttributeId}",
+                            condition: ${AttributeCondition.CONTAINS},
+                            value: "value"
+                        },
+                        {
+                            operator: CLOSE_BRACKET,
+                        },
+                    ]) {
+                        list {id}
+                    }
+                }`);
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list.length).toBe(2);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators1);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[1].id).toBe(recordIdForOperators2);
         });
     });
 });

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
@@ -59,7 +60,7 @@ describe('AttributeTreeRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new advanced tree value', async function () {
+        test('Should create a new advanced tree value', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -109,7 +110,7 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('updateValue', () => {
-        test('Should update a advanced link value', async function () {
+        test('Should update a advanced link value', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([savedEdgeData])
@@ -152,7 +153,7 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function () {
+        test('Should delete a value', async function() {
             const deletedEdgeData = {
                 _id: 'core_edge_values_links/222435651',
                 _rev: '_WSywvyC--_',
@@ -208,7 +209,7 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('getValueByID', () => {
-        test('Should return value', async function () {
+        test('Should return value', async function() {
             const traversalRes = [
                 {
                     linkedNode: {
@@ -284,7 +285,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test("Should return null if value doesn't exists", async function () {
+        test("Should return null if value doesn't exists", async function() {
             const traversalRes = [];
 
             const mockDbServ = {
@@ -360,7 +361,7 @@ describe('AttributeTreeRepo', () => {
             }
         ];
 
-        test('Should return linked tree element', async function () {
+        test('Should return linked tree element', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -435,7 +436,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test('Should return linked tree element filtered by version', async function () {
+        test('Should return linked tree element filtered by version', async function() {
             const traversalResWithVers = [
                 {
                     id: '987654',
@@ -500,7 +501,7 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
 
-        test('Should return only first linked tree element if not multiple values', async function () {
+        test('Should return only first linked tree element if not multiple values', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([traversalRes[0]])
@@ -552,7 +553,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test('Should return all values if forced', async function () {
+        test('Should return all values if forced', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -589,20 +590,25 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
         });
     });
-    describe('filterQueryPart', () => {
-        test('Should return tree filter', () => {
+
+    describe('filterValueQueryPart', () => {
+        const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
+            isCountFilter: jest.fn().mockReturnValue(false)
+        };
+
+        test('Should return query to retrieve value to filter on', () => {
             const mockDbServ = {
                 db: new Database()
             };
             const mockRepo: Mockify<IAttributeTypeRepo> = {
-                filterQueryPart: jest.fn().mockReturnValue(null)
+                filterValueQueryPart: jest.fn().mockReturnValue(aql``)
             };
 
             const attrRepo = attributeTreeRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`== ${'MyLabel'}`
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
             });
-            const filter = attrRepo.filterQueryPart(
+            const filter = attrRepo.filterValueQueryPart(
                 [
                     {id: 'label', type: AttributeTypes.TREE, _repo: mockRepo as IAttributeTypeRepo},
                     {id: 'linked', type: AttributeTypes.SIMPLE, _repo: mockRepo as IAttributeTypeRepo}
@@ -610,10 +616,42 @@ describe('AttributeTreeRepo', () => {
                 {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
             );
 
-            expect(filter.query).toMatch(/^FILTER/);
             expect(filter).toMatchSnapshot();
         });
+
+        test('Should return query to retrieve value to filter on for "count" filter', async () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+
+            const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
+                isCountFilter: jest.fn().mockReturnValue(true)
+            };
+
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
+            };
+
+            const attrRepo = attributeTreeRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelperCount as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const valueQuery = attrRepo.filterValueQueryPart(
+                [
+                    {
+                        id: 'tree_attr',
+                        type: AttributeTypes.TREE,
+                        _repo: mockRepo as IAttributeTypeRepo
+                    }
+                ],
+                {condition: AttributeCondition.IS_EMPTY}
+            );
+
+            expect(valueQuery).toMatchSnapshot();
+        });
     });
+
     describe('sortQueryPart', () => {
         test('Should return tree filter', () => {
             const mockDbServ = {

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
@@ -21,7 +22,7 @@ describe('AttributeStandardRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new advanced value', async function () {
+        test('Should create a new advanced value', async function() {
             const createdValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -89,7 +90,7 @@ describe('AttributeStandardRepo', () => {
             expect(createdVal).toMatchObject(newValueData);
         });
 
-        test('Should save version on value', async function () {
+        test('Should save version on value', async function() {
             const createdValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -161,7 +162,7 @@ describe('AttributeStandardRepo', () => {
     });
 
     describe('updateValue', () => {
-        test('Should update an advanced value', async function () {
+        test('Should update an advanced value', async function() {
             const savedValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -227,7 +228,7 @@ describe('AttributeStandardRepo', () => {
             expect(savedVal).toMatchObject(valueData);
         });
 
-        test('Should update value version', async function () {
+        test('Should update value version', async function() {
             const savedValueData = {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
@@ -294,7 +295,7 @@ describe('AttributeStandardRepo', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function () {
+        test('Should delete a value', async function() {
             const deletedValueData = {
                 _id: 'core_values/123456789',
                 _rev: '_WSywvyC--_',
@@ -368,7 +369,7 @@ describe('AttributeStandardRepo', () => {
     });
 
     describe('getValueByID', () => {
-        test('Should return value', async function () {
+        test('Should return value', async function() {
             const lookupValueRes = [
                 {
                     _key: 987654,
@@ -426,7 +427,7 @@ describe('AttributeStandardRepo', () => {
             });
         });
 
-        test("Should return null if value doesn't exists", async function () {
+        test("Should return null if value doesn't exists", async function() {
             const mockDbCollec = {
                 lookupByKeys: global.__mockPromise([])
             };
@@ -494,7 +495,7 @@ describe('AttributeStandardRepo', () => {
             }
         ];
 
-        test('Should return values for advanced attribute', async function () {
+        test('Should return values for advanced attribute', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -529,7 +530,7 @@ describe('AttributeStandardRepo', () => {
             });
         });
 
-        test('Should return only first value if not multiple values', async function () {
+        test('Should return only first value if not multiple values', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([traversalRes[0]])
@@ -564,7 +565,7 @@ describe('AttributeStandardRepo', () => {
             });
         });
 
-        test('Should return values filtered by version', async function () {
+        test('Should return values filtered by version', async function() {
             const traversalResWithVers = [
                 {
                     value: {
@@ -610,7 +611,7 @@ describe('AttributeStandardRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
 
-        test('Should return all values if forced', async function () {
+        test('Should return all values if forced', async function() {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -638,26 +639,6 @@ describe('AttributeStandardRepo', () => {
         });
     });
 
-    describe('filterQueryPart', () => {
-        test('Should return advanced filter', () => {
-            const mockDbServ = {
-                db: new Database()
-            };
-            const attrRepo = attributeAdvancedRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`rVal == ${'MyLabel'}`
-            });
-            const filter = attrRepo.filterQueryPart(
-                [{id: 'label', type: AttributeTypes.ADVANCED, _repo: null}],
-                {condition: AttributeCondition.EQUAL, value: 'MyLabel'},
-                'r'
-            );
-
-            expect(filter.query).toMatch(/FILTER/);
-            expect(filter).toMatchSnapshot();
-        });
-    });
-
     describe('sortQueryPart', () => {
         test('Should return advanced filter', () => {
             const mockDbServ = {
@@ -670,6 +651,32 @@ describe('AttributeStandardRepo', () => {
             });
 
             expect(filter.query).toMatch(/^SORT/);
+            expect(filter).toMatchSnapshot();
+        });
+    });
+
+    describe('filterValueQueryPart', () => {
+        test('Should return queyr to retrieve value to filter on', () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+
+            const mockFilterTypesHelper: Mockify<IFilterTypesHelper> = {
+                isCountFilter: jest.fn().mockReturnValue(false)
+            };
+
+            const attrRepo = attributeAdvancedRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`rVal == ${'MyLabel'}`,
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
+            });
+            const filter = attrRepo.filterValueQueryPart(
+                [{id: 'label', type: AttributeTypes.ADVANCED, reverse_link: null, _repo: null}],
+                {condition: AttributeCondition.EQUAL, value: 'MyLabel'},
+                'r'
+            );
+
+            expect(filter.query).toMatch(/OUTBOUND/);
             expect(filter).toMatchSnapshot();
         });
     });

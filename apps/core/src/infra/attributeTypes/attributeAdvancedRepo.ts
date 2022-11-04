@@ -4,9 +4,10 @@
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IDbDocument, IDbEdge} from 'infra/db/_types';
+import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {AttributeCondition, IRecordFilterOption, IRecordSort} from '../../_types/record';
+import {IRecordSort} from '../../_types/record';
 import {IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
@@ -16,12 +17,14 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
+    'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
 export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null
+    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
 }: IDeps = {}): IAttributeTypeRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], advancedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
@@ -256,64 +259,26 @@ export default function({
 
             return query;
         },
-        filterQueryPart(
-            attributes: IAttribute[],
-            filter: IRecordFilterOption,
-            parentIdentifier = BASE_QUERY_IDENTIFIER
-        ): AqlQuery {
-            const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
-
-            const valueIdentifier = aql.literal(parentIdentifier + 'Val');
+        filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
             const vIdentifier = aql.literal(parentIdentifier + 'v');
             const eIdentifier = aql.literal(parentIdentifier + 'e');
-
-            let conditionApplied = filter.condition;
-            let filterTarget: GeneratedAqlQuery;
+            const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const retrieveValues = aql`
                 FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
-                ${collec}
-                FILTER ${eIdentifier}.attribute == ${attributes[0].id}
-                RETURN ${vIdentifier}.value
+                    ${collec}
+                    FILTER ${eIdentifier}.attribute == ${attributes[0].id}
+                    RETURN ${vIdentifier}.value
             `;
 
-            switch (filter.condition) {
-                case AttributeCondition.VALUES_COUNT_EQUAL: {
-                    conditionApplied = AttributeCondition.EQUAL;
-                    filterTarget = aql.join([aql`COUNT(`, retrieveValues, aql`)`]);
-                    break;
-                }
-                case AttributeCondition.VALUES_COUNT_GREATER_THAN: {
-                    conditionApplied = AttributeCondition.GREATER_THAN;
-                    filterTarget = aql.join([aql`COUNT(`, retrieveValues, aql`)`]);
-                    break;
-                }
-                case AttributeCondition.VALUES_COUNT_LOWER_THAN: {
-                    conditionApplied = AttributeCondition.LESS_THAN;
-                    filterTarget = aql.join([aql`COUNT(`, retrieveValues, aql`)`]);
-                    break;
-                }
-                default: {
-                    const advancedValue = aql.join([aql`FIRST(`, retrieveValues, aql`)`]);
-
-                    filterTarget =
-                        attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
-                            ? _getExtendedFilterPart(attributes, advancedValue)
-                            : advancedValue;
-                    break;
-                }
+            let advancedValue: GeneratedAqlQuery;
+            if (attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1) {
+                advancedValue = _getExtendedFilterPart(attributes, retrieveValues);
+            } else {
+                advancedValue = retrieveValues;
             }
 
-            const query = aql`
-                LET ${valueIdentifier} = ${filterTarget}
-                FILTER ${getConditionPart(
-                    valueIdentifier,
-                    conditionApplied as AttributeCondition,
-                    filter.value,
-                    attributes[0]
-                )}`;
-
-            return query;
+            return filterTypesHelper.isCountFilter(filter) ? aql`COUNT(${advancedValue})` : advancedValue;
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
             return true;
