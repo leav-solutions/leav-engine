@@ -48,6 +48,7 @@
         "SYSTEM_TREE_DELETION": "Impossible de supprimer un arbre système",
         "TOO_MUCH_LIBRARIES_ON_FILES_TREE": "Impossible de lier plus d'une bibliothèque à un arbre de fichiers",
         "UNBINDED_ATTRIBUTES": "Ces attributs doivent être liés à la bibliothèque: {{attributes}}",
+        "UNKNOWN_API_KEY": "Clé API inconnue: {{apiKey}}",
         "UNKNOWN_APPLICATION": "Application inconnue: {{application}}",
         "UNKNOWN_ATTRIBUTE": "Attribut inconnu: {{attribute}}",
         "UNKNOWN_ATTRIBUTES": "Attributs inconnus: {{attributes}}",

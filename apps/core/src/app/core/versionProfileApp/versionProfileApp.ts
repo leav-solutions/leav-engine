@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IGraphqlApp} from 'app/graphql/graphqlApp';
-import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
@@ -15,17 +13,13 @@ export interface ICoreVersionProfileApp {
 }
 
 interface IDeps {
-    'core.app.graphql'?: IGraphqlApp;
     'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.domain.tree'?: ITreeDomain;
-    'core.domain.permission'?: IPermissionDomain;
 }
 
 export default function({
-    'core.app.graphql': graphqlApp,
     'core.domain.versionProfile': versionProfileDomain = null,
-    'core.domain.tree': treeDomain = null,
-    'core.domain.permission': permissionDomain = null
+    'core.domain.tree': treeDomain = null
 }: IDeps): ICoreVersionProfileApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {

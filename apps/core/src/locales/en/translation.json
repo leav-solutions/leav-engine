@@ -48,6 +48,7 @@
         "SYSTEM_TREE_DELETION": "Cannot delete system tree",
         "TOO_MUCH_LIBRARIES_ON_FILES_TREE": "Cannot bind more than one library on a files tree",
         "UNBINDED_ATTRIBUTES": "Attributes must be binded to library: {{attributes}}",
+        "UNKNOWN_API_KEY": "Unknown API key: {{apiKey}}",
         "UNKNOWN_APPLICATION": "Unknown application: {{application}}",
         "UNKNOWN_ATTRIBUTE": "Unknown attribute: {{attribute}}",
         "UNKNOWN_ATTRIBUTES": "Unknown attributes: {{attributes}}",
