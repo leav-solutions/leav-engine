@@ -62,6 +62,10 @@ x-env-core: &env-core
   REDIS_HOST: redis
   REDIS_PORT: 6379
   FILES_ROOT_PATHS: files1:/files
+  MAILER_HOST: ssl0.ovh.net
+  MAILER_PORT: 587
+  MAILER_AUTH_USER: <email>
+  MAILER_AUTH_PWD: <password>
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
