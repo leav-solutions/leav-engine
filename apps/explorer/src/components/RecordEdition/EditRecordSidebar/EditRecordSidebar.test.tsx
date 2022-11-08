@@ -8,7 +8,11 @@ import {mockFormAttribute, mockFormAttributeTree} from '__mocks__/common/attribu
 import {mockRecord} from '__mocks__/common/record';
 import {mockTreeRecord, mockTreeRecordChild} from '__mocks__/common/treeElements';
 import {mockRecordPropertyWithAttribute} from '__mocks__/common/value';
-import {EditRecordModalReducerContext} from '../editRecordModalReducer/editRecordModalReducerContext';
+import {initialState} from '../editRecordModalReducer/editRecordModalReducer';
+import {
+    EditRecordModalReducerContext,
+    IEditRecordModalReducerContext
+} from '../editRecordModalReducer/editRecordModalReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
 
 jest.mock('components/shared/RecordSummary', () => {
@@ -24,26 +28,30 @@ jest.mock('components/RecordEdition/EditRecord/uiElements/StandardField', () => 
 });
 
 describe('EditRecordSidebar', () => {
-    const mockReducer = {state: {record: mockRecord, activeValue: null, sidebarCollapsed: false}, dispatch: jest.fn()};
-    const mockReducerWithValue = {
+    const mockReducer: IEditRecordModalReducerContext = {
+        state: {...initialState, record: mockRecord},
+        dispatch: jest.fn()
+    };
+    const mockReducerWithValue: IEditRecordModalReducerContext = {
+        ...mockReducer,
         state: {
             ...mockReducer.state,
             record: mockRecord,
-            activeValue: mockRecordPropertyWithAttribute
-        },
-        dispatch: jest.fn()
+            activeValue: mockRecordPropertyWithAttribute,
+            sidebarContent: 'valueDetails'
+        }
     };
 
-    const mockReducerWithValueSimple = {
+    const mockReducerWithValueSimple: IEditRecordModalReducerContext = {
+        ...mockReducerWithValue,
         state: {
-            ...mockReducer.state,
+            ...mockReducerWithValue.state,
             record: mockRecord,
             activeValue: {
                 ...mockRecordPropertyWithAttribute,
                 value: {...mockRecordPropertyWithAttribute.value, modified_at: null, modified_by: null}
             }
-        },
-        dispatch: jest.fn()
+        }
     };
 
     const mockHandleMetadataSubmit = jest.fn();
@@ -101,8 +109,9 @@ describe('EditRecordSidebar', () => {
 
         test('Display ancestors of tree value', async () => {
             const mockReducerWithTreeValue = {
+                ...mockReducerWithValue,
                 state: {
-                    ...mockReducer.state,
+                    ...mockReducerWithValue.state,
                     activeValue: {
                         attribute: mockFormAttributeTree,
                         value: {
@@ -114,8 +123,7 @@ describe('EditRecordSidebar', () => {
                             }
                         }
                     }
-                },
-                dispatch: jest.fn()
+                }
             };
             await act(async () => {
                 render(
@@ -136,6 +144,7 @@ describe('EditRecordSidebar', () => {
 
         test('Display metadata of the value', async () => {
             const mockReducerWithValueAndMetadata = {
+                ...mockReducerWithValue,
                 state: {
                     ...mockReducerWithValue.state,
                     activeValue: {
@@ -145,10 +154,9 @@ describe('EditRecordSidebar', () => {
                             metadata_fields: [{...mockFormAttribute, values_list: null}]
                         }
                     }
-                },
-                dispatch: jest.fn()
+                }
             };
-            const {value, attribute} = mockReducerWithValue.state.activeValue;
+
             await act(async () => {
                 render(
                     <EditRecordModalReducerContext.Provider value={mockReducerWithValueAndMetadata}>

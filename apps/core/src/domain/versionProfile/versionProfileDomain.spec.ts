@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {i18n} from 'i18next';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {ICacheService, ICachesService} from 'infra/cache/cacheService';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
 import {IUtils} from 'utils/utils';
@@ -12,7 +12,6 @@ import ValidationError from '../../errors/ValidationError';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdvVersionable} from '../../__tests__/mocks/attribute';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import versionProfileDomain from './versionProfileDomain';
@@ -35,9 +34,23 @@ describe('versionProfileDomain', () => {
         })
     };
 
+    const mockCacheService: Mockify<ICacheService> = {
+        getData: global.__mockPromise([null]),
+        storeData: global.__mockPromise(),
+        deleteData: global.__mockPromise()
+    };
+
+    const mockCachesService: Mockify<ICachesService> = {
+        getCache: jest.fn().mockReturnValue(mockCacheService)
+    };
+
+    const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockVersionProfile);
+    const mockGetEntityByIdHelperNoProfile = jest.fn().mockReturnValue(null);
+
     const mockUtils: Mockify<IUtils> = {
         isIdValid: jest.fn().mockReturnValue(true),
-        generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({}, ''))
+        generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({}, '')),
+        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:versionProfile:42')
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -76,12 +89,13 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.infra.versionProfile': mockRepo as IVersionProfileRepo
             });
 
             const profile = await domain.getVersionProfileProperties({id: mockVersionProfile.id, ctx: mockCtx});
 
-            expect(mockRepo.getVersionProfiles.mock.calls.length).toBe(1);
+            expect(mockGetEntityByIdHelper).toBeCalled();
 
             expect(profile).toEqual(mockVersionProfile);
         });
@@ -92,9 +106,9 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoProfile,
                 'core.infra.versionProfile': mockRepo as IVersionProfileRepo,
-                'core.utils': mockUtils as IUtils,
-                translator: mockTranslator as i18n
+                'core.utils': mockUtils as IUtils
             });
 
             await expect(async () =>
@@ -145,6 +159,7 @@ describe('versionProfileDomain', () => {
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -203,8 +218,7 @@ describe('versionProfileDomain', () => {
             const domain = versionProfileDomain({
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
-                'core.utils': mockUtilsInvalidId as IUtils,
-                translator: mockTranslator as i18n
+                'core.utils': mockUtilsInvalidId as IUtils
             });
 
             await expect(async () =>
@@ -294,8 +308,7 @@ describe('versionProfileDomain', () => {
             const domain = versionProfileDomain({
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
-                'core.utils': mockUtils as IUtils,
-                translator: mockTranslator as i18n
+                'core.utils': mockUtils as IUtils
             });
 
             await expect(async () =>
@@ -317,8 +330,7 @@ describe('versionProfileDomain', () => {
             const domain = versionProfileDomain({
                 'core.domain.permission.admin': mockAdminPermDomainForbidden as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
-                'core.utils': mockUtils as IUtils,
-                translator: mockTranslator as i18n
+                'core.utils': mockUtils as IUtils
             });
 
             await expect(async () =>

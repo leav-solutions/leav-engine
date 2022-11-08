@@ -4,7 +4,12 @@
 import React, {Dispatch} from 'react';
 import {IEditRecordReducerActions, IEditRecordReducerState, initialState} from './editRecordModalReducer';
 
-export const EditRecordModalReducerContext = React.createContext<{
+export interface IEditRecordModalReducerContext {
     state: IEditRecordReducerState;
     dispatch: Dispatch<IEditRecordReducerActions>;
-}>({state: initialState, dispatch: () => initialState});
+}
+
+export const EditRecordModalReducerContext = React.createContext<IEditRecordModalReducerContext>({
+    state: initialState,
+    dispatch: () => initialState
+});

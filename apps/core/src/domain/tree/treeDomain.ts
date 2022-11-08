@@ -38,6 +38,7 @@ import getPermissionCachePatternKey from '../permission/helpers/getPermissionCac
 import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
 import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
+import {IGetDefaultElementHelper} from './helpers/getDefaultElement';
 import {HandleRemovedLibrariesFunc} from './helpers/handleRemovedLibraries';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 
@@ -135,6 +136,7 @@ export interface ITreeDomain {
     getLibraryTreeId(library: string, ctx: IQueryInfos): string;
     getRecordByNodeId(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord>;
     getNodesByRecord(params: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<string[]>;
+    getDefaultElement(params: {treeId: string; ctx: IQueryInfos}): Promise<ITreeNode>;
 }
 
 interface IDeps {
@@ -147,6 +149,7 @@ interface IDeps {
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
     'core.domain.tree.helpers.handleRemovedLibraries'?: HandleRemovedLibrariesFunc;
+    'core.domain.tree.helpers.getDefaultElement'?: IGetDefaultElementHelper;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.versionProfile'?: IVersionProfileRepo;
@@ -164,6 +167,7 @@ export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper = null,
     'core.domain.tree.helpers.handleRemovedLibraries': handleRemovedLibraries = null,
+    'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.versionProfile': versionProfileRepo = null,
@@ -302,6 +306,12 @@ export default function ({
         await _clearAttributes(attribs.map(a => a.id));
     };
 
+    const _clearAllTreeCaches = async (treeId: string, ctx: IQueryInfos): Promise<void> => {
+        await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
+        await elementAncestorsHelper.clearElementAncestorsCache({treeId, ctx});
+        await getDefaultElementHelper.clearCache({treeId, ctx});
+    };
+
     return {
         async saveTree(treeData: Partial<ITree>, ctx: IQueryInfos): Promise<ITree> {
             // Check is existing tree
@@ -398,7 +408,7 @@ export default function ({
             const deletedTree = treeRepo.deleteTree({id, ctx});
 
             const cacheKey = utils.getCoreEntityCacheKey('tree', id);
-            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
 
             return deletedTree;
         },
@@ -470,6 +480,8 @@ export default function ({
             if (Object.keys(errors).length) {
                 throw new ValidationError(errors, Object.values(errors).join(', '));
             }
+
+            await getDefaultElementHelper.clearCache({treeId, ctx});
 
             return treeRepo.addElement({
                 treeId,
@@ -564,8 +576,7 @@ export default function ({
                 throw new ValidationError(errors, Object.values(errors).join(', '));
             }
 
-            await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
-            await elementAncestorsHelper.clearElementAncestorsCache({treeId, ctx});
+            await _clearAllTreeCaches(treeId, ctx);
 
             return treeRepo.moveElement({treeId, nodeId, parentTo, order, ctx});
         },
@@ -596,8 +607,7 @@ export default function ({
                 throw new PermissionError(TreeNodePermissionsActions.DETACH);
             }
 
-            await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
-            await elementAncestorsHelper.clearElementAncestorsCache({treeId, ctx});
+            await _clearAllTreeCaches(treeId, ctx);
 
             return treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
         },
@@ -676,6 +686,9 @@ export default function ({
         },
         async getNodesByRecord({treeId, record, ctx}): Promise<string[]> {
             return treeRepo.getNodesByRecord({treeId, record, ctx});
+        },
+        async getDefaultElement({treeId, ctx}) {
+            return getDefaultElementHelper.getDefaultElement({treeId, ctx});
         }
     };
 }

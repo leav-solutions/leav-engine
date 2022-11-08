@@ -21,7 +21,6 @@ import {
 import {IChildrenResultNode, NODE_LIBRARY_ID_FIELD, NODE_RECORD_ID_FIELD} from './_types';
 
 export interface ITreeRepo {
-    getDefaultElement(params: {id: string; ctx: IQueryInfos}): Promise<string>;
     createTree(params: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
     updateTree(params: {treeData: ITree; ctx: IQueryInfos}): Promise<ITree>;
     getTrees(params: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>>;
@@ -159,17 +158,11 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
 }
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): ITreeRepo {
     return {
-        async getDefaultElement({id, ctx}): Promise<string> {
-            // TODO Change this behavior
-            // for now, get first element in tree
-            const content = await this.getTreeContent({treeId: id, ctx});
-            return content[0].id;
-        },
         async createTree({treeData, ctx}): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);
 

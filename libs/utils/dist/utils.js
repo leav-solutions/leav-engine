@@ -159,7 +159,7 @@ const extractArgsFromString = (mapping) => {
 };
 exports.extractArgsFromString = extractArgsFromString;
 const objectToNameValueArray = (obj) => {
-    return Object.keys(obj).map(key => ({ name: key, value: obj[key] }));
+    return Object.keys(obj !== null && obj !== void 0 ? obj : {}).map(key => ({ name: key, value: obj[key] }));
 };
 exports.objectToNameValueArray = objectToNameValueArray;
 const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => {

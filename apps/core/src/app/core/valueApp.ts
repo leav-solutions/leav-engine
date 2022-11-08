@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IKeyValue, objectToNameValueArray} from '@leav/utils';
+import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {GraphQLScalarType} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
@@ -22,13 +22,15 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.record'?: IRecordDomain;
     'core.app.graphql'?: IGraphqlApp;
+    'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
     'core.utils'?: IUtils;
 }
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.app.graphql': graphqlApp = null,
+    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null,
     'core.utils': utils = null
 }: IDeps = {}): ICoreValueApp {
     const _convertVersionToGqlFormat = (version: IValueVersion) => {
@@ -36,19 +38,11 @@ export default function ({
         const formattedVersion = [];
         for (const versName of versionsNames) {
             formattedVersion.push({
-                name: versName,
-                value: version[versName]
+                treeId: versName,
+                treeNode: {id: version[versName], treeId: versName}
             });
         }
         return formattedVersion;
-    };
-    const _convertVersionFromGqlFormat = (version: any): IValueVersion => {
-        return Array.isArray(version) && version.length
-            ? version.reduce((formattedVers, valVers) => {
-                  formattedVers[valVers.name] = valVers.value;
-                  return formattedVers;
-              }, {})
-            : null;
     };
 
     const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
@@ -75,6 +69,14 @@ export default function ({
         },
         metadata: (value: IValue, _, ctx: IQueryInfos): Array<{name: string; value: IStandardValue}> => {
             return value.metadata ? objectToNameValueArray(value.metadata as IKeyValue<IStandardValue>) : [];
+        },
+        version: (value: IValue, _, ctx: IQueryInfos): Array<{treeId: string; treeNode: {id: string}}> => {
+            return value?.version
+                ? objectToNameValueArray(value.version).map(v => ({
+                      treeId: v.name,
+                      treeNode: {id: v.value, treeId: v.name}
+                  }))
+                : [];
         }
     };
 
@@ -82,11 +84,14 @@ export default function ({
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
-                    scalar ValueVersion
+                    type ValueVersion {
+                        treeId: String!,
+                        treeNode: TreeNode
+                    }
 
                     input ValueVersionInput {
-                        name: String!,
-                        value: String!
+                        treeId: String!,
+                        treeNodeId: String!
                     }
 
                     type ValueMetadata {
@@ -100,7 +105,7 @@ export default function ({
                         created_at: Int,
                         modified_by: User,
                         created_by: User,
-                        version: ValueVersion,
+                        version: [ValueVersion],
                         attribute: Attribute,
                         metadata: [ValueMetadata]
                     }
@@ -113,7 +118,7 @@ export default function ({
                         created_at: Int,
                         modified_by: User,
                         created_by: User,
-                        version: ValueVersion,
+                        version: [ValueVersion],
                         attribute: Attribute,
                         metadata: [ValueMetadata]
                     }
@@ -142,7 +147,7 @@ export default function ({
                         created_at: Int,
                         modified_by: User,
                         created_by: User,
-                        version: ValueVersion,
+                        version: [ValueVersion],
                         attribute: Attribute,
                         metadata: [ValueMetadata]
                     }
@@ -154,7 +159,7 @@ export default function ({
                         modified_by: User,
                         created_by: User,
                         value: TreeNode,
-                        version: ValueVersion,
+                        version: [ValueVersion],
                         attribute: Attribute,
                         metadata: [ValueMetadata]
                     }
@@ -200,7 +205,7 @@ export default function ({
                         async saveValue(_, {library, recordId, attribute, value}, ctx): Promise<IValue> {
                             const valToSave = {
                                 ...value,
-                                version: _convertVersionFromGqlFormat(value.version),
+                                version: convertVersionFromGqlFormat(value.version),
                                 metadata: utils.nameValArrayToObj(value.metadata)
                             };
                             const savedVal = await valueDomain.saveValue({
@@ -210,14 +215,12 @@ export default function ({
                                 value: valToSave,
                                 ctx
                             });
-                            const formattedVersion: any = savedVal.version
-                                ? _convertVersionToGqlFormat(savedVal.version)
-                                : null;
-                            return {...savedVal, version: formattedVersion};
+
+                            return {...savedVal};
                         },
                         async saveValueBatch(parent, {library, recordId, version, values, deleteEmpty}, ctx) {
                             // Convert version
-                            const versionToUse = _convertVersionFromGqlFormat(version);
+                            const versionToUse = convertVersionFromGqlFormat(version);
                             const convertedValues = values.map(val => ({
                                 ...val,
                                 version: versionToUse,
@@ -255,14 +258,6 @@ export default function ({
                             });
                         }
                     },
-                    ValueVersion: new GraphQLScalarType({
-                        name: 'ValueVersion',
-                        description: `Value version, object looking like:
-                            {versionTreeName: "nodeId"}`,
-                        serialize: val => val,
-                        parseValue: val => val,
-                        parseLiteral: ast => ast
-                    }),
                     GenericValue: {
                         __resolveType: async (fieldValue, _, ctx) => {
                             const attribute = Array.isArray(fieldValue)

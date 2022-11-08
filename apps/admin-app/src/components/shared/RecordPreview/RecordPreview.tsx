@@ -63,7 +63,7 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
         );
     }
 
-    const initials = label
+    const initials = (label ?? '')
         .split(' ')
         .slice(0, 2)
         .map(word => word[0])

@@ -141,7 +141,7 @@ export const extractArgsFromString = (mapping: string): {[arg: string]: string} 
 };
 
 export const objectToNameValueArray = <T>(obj: IKeyValue<T>): Array<{name: string; value: T}> => {
-    return Object.keys(obj).map(key => ({name: key, value: obj[key]}));
+    return Object.keys(obj ?? {}).map(key => ({name: key, value: obj[key]}));
 };
 
 export const nameValArrayToObj = (

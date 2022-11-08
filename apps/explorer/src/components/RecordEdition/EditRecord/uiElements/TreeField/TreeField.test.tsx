@@ -1,25 +1,28 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ICommonFieldsSettings} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
 import {
     EditRecordReducerActionsTypes,
     initialState
 } from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
-import {
-    RECORD_FORM_recordForm_elements_attribute_TreeAttribute,
-    RECORD_FORM_recordForm_elements_values_TreeValue
-} from '_gqlTypes/RECORD_FORM';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
+import {RecordFormElementsValueTreeValue} from 'hooks/useGetRecordForm/useGetRecordForm';
+import * as useRefreshFieldValues from 'hooks/useRefreshFieldValues/useRefreshFieldValues';
+import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
+import {act, ICustomRenderOptions, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockAttributeTree} from '__mocks__/common/attribute';
 import {mockFormElementTree, mockTreeValueA} from '__mocks__/common/form';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
 import TreeField from '.';
+import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {
     APICallStatus,
     DeleteMultipleValuesFunc,
     DeleteValueFunc,
+    IFormElementProps,
     ISubmitMultipleResult,
     SubmitValueFunc
 } from '../../_types';
@@ -45,11 +48,15 @@ describe('TreeField', () => {
         dispatch: mockEditRecordModalDispatch
     }));
 
+    jest.spyOn(useRefreshFieldValues, 'default').mockImplementation(() => ({
+        fetchValues: jest.fn().mockResolvedValue([])
+    }));
+
     const mockSubmitRes: ISubmitMultipleResult = {
         status: APICallStatus.SUCCESS,
         values: [
             {
-                ...(mockTreeValueA as RECORD_FORM_recordForm_elements_values_TreeValue),
+                ...(mockTreeValueA as RecordFormElementsValueTreeValue),
                 id_value: '987654',
                 version: null,
                 attribute: {...mockAttributeTree, system: false},
@@ -72,25 +79,47 @@ describe('TreeField', () => {
         onDeleteMultipleValues: mockHandleDeleteMultipleValues
     };
 
+    const _renderTreeField = (
+        props: Partial<IFormElementProps<ICommonFieldsSettings>>,
+        renderOptions?: ICustomRenderOptions
+    ) => {
+        const allProps = {
+            ...baseProps,
+            ...(props as IFormElementProps<ICommonFieldsSettings>)
+        };
+
+        return act(async () => {
+            render(
+                <RecordEditionContext.Provider
+                    value={{
+                        record: mockRecordWhoAmI,
+                        readOnly: false,
+                        elements: null
+                    }}
+                >
+                    <TreeField {...allProps} />
+                </RecordEditionContext.Provider>,
+                renderOptions
+            );
+        });
+    };
+
     beforeEach(() => jest.clearAllMocks());
 
     test('If no values, display "add values" button', async () => {
-        render(<TreeField element={{...mockFormElementTree, values: []}} {...baseProps} />);
+        await _renderTreeField({
+            element: {...mockFormElementTree, values: []}
+        });
 
         expect(screen.getByRole('button', {name: /add/})).toBeInTheDocument();
     });
 
     test('If multiple values, can add a new value', async () => {
-        await act(async () => {
-            render(
-                <TreeField
-                    element={{
-                        ...mockFormElementTree,
-                        attribute: {...mockFormElementTree.attribute, multiple_values: true}
-                    }}
-                    {...baseProps}
-                />
-            );
+        await _renderTreeField({
+            element: {
+                ...mockFormElementTree,
+                attribute: {...mockFormElementTree.attribute, multiple_values: true}
+            }
         });
 
         const addValueBtn = screen.getByRole('button', {name: /add/});
@@ -104,48 +133,38 @@ describe('TreeField', () => {
     });
 
     test('If readonly attribute, cannot add a new value', async () => {
-        await act(async () => {
-            render(
-                <TreeField
-                    element={{
-                        ...mockFormElementTree,
-                        attribute: {...mockFormElementTree.attribute, multiple_values: true, readonly: true}
-                    }}
-                    {...baseProps}
-                />
-            );
+        await _renderTreeField({
+            element: {
+                ...mockFormElementTree,
+                attribute: {...mockFormElementTree.attribute, multiple_values: true, readonly: true}
+            }
         });
 
         expect(screen.queryByRole('button', {name: /add/})).not.toBeInTheDocument();
     });
 
     test('If not multiple values, cannot add a new value', async () => {
-        await act(async () => {
-            render(
-                <TreeField
-                    element={{
-                        ...mockFormElementTree,
-                        attribute: {...mockFormElementTree.attribute, multiple_values: false}
-                    }}
-                    {...baseProps}
-                />
-            );
+        await _renderTreeField({
+            element: {
+                ...mockFormElementTree,
+                attribute: {...mockFormElementTree.attribute, multiple_values: false}
+            }
         });
 
         expect(screen.queryByRole('button', {name: /add/})).not.toBeInTheDocument();
     });
 
     test('Can delete existing value', async () => {
-        await act(async () => {
-            render(<TreeField element={mockFormElementTree} {...baseProps} />);
+        await _renderTreeField({
+            element: mockFormElementTree
         });
 
         expect(screen.getAllByRole('button', {name: /delete-value/, hidden: true})).toHaveLength(2);
     });
 
     test('Can delete all values', async () => {
-        await act(async () => {
-            render(<TreeField element={mockFormElementTree} {...baseProps} />);
+        await _renderTreeField({
+            element: mockFormElementTree
         });
 
         const deleteAllButton = screen.getByRole('button', {name: /delete-all-values/, hidden: true});
@@ -161,16 +180,16 @@ describe('TreeField', () => {
     });
 
     test('Can edit linked node', async () => {
-        await act(async () => {
-            render(<TreeField element={mockFormElementTree} {...baseProps} />);
+        await _renderTreeField({
+            element: mockFormElementTree
         });
 
         expect(screen.getAllByRole('button', {name: 'edit-record', hidden: true})).toHaveLength(2);
     });
 
     test('Can display value details', async () => {
-        await act(async () => {
-            render(<TreeField element={mockFormElementTree} {...baseProps} />);
+        await _renderTreeField({
+            element: mockFormElementTree
         });
 
         const valueDetailsButtons = screen.getAllByRole('button', {name: /info/, hidden: true});
@@ -206,17 +225,8 @@ describe('TreeField', () => {
             },
             multiple_values: true
         };
-
-        await act(async () => {
-            render(
-                <TreeField
-                    element={{
-                        ...mockFormElementTree,
-                        attribute: {...mockAttribute}
-                    }}
-                    {...baseProps}
-                />
-            );
+        await _renderTreeField({
+            element: {...mockFormElementTree, attribute: mockAttribute}
         });
 
         const addValueBtn = screen.getByRole('button', {name: /add/});

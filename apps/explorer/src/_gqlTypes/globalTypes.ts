@@ -240,8 +240,8 @@ export interface ValueMetadataInput {
 }
 
 export interface ValueVersionInput {
-    name: string;
-    value: string;
+    treeId: string;
+    treeNodeId: string;
 }
 
 export interface ViewDisplayInput {

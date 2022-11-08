@@ -5,7 +5,8 @@ import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
 import {Button, Space} from 'antd';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {SelectionModeContext} from 'context';
-import React, {useContext, useState} from 'react';
+import useSearchReducer from 'hooks/useSearchReducer';
+import {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
@@ -27,6 +28,7 @@ const Wrapper = styled(Space)`
 
 function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
     const {t} = useTranslation();
+    const {state: searchState} = useSearchReducer();
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
     const canCreateRecord = library.permissions.create_record;
 
@@ -69,6 +71,7 @@ function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
                     library={library.id}
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
+                    valuesVersion={searchState.valuesVersions}
                 />
             )}
         </Wrapper>

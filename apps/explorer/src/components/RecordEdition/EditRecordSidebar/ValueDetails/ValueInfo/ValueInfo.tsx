@@ -8,7 +8,7 @@ import {IRecordPropertyLink, IRecordPropertyTree} from 'graphQL/queries/records/
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
-import {checkTypeIsLink, isTypeStandard} from 'utils';
+import {checkTypeIsLink, getValueVersionLabel, isTypeStandard} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {PreviewSize} from '_types/types';
 
@@ -52,6 +52,13 @@ function ValueInfo(): JSX.Element {
               }
           ]
         : [];
+
+    if (value?.version) {
+        valueDetailsContent.push({
+            title: t('values_version.version'),
+            value: getValueVersionLabel(value.version)
+        });
+    }
 
     const canCountValueLength =
         isTypeStandard(attribute.type) && attribute.format === AttributeFormat.text && !!state.activeValue.value;

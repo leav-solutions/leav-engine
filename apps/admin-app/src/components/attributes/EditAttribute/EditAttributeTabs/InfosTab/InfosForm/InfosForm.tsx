@@ -96,8 +96,8 @@ function InfosForm({
                   reverse_link: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute).reverse_link ?? null,
                   linked_tree: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute).linked_tree?.id ?? null,
                   versions_conf: {
-                      ...attribute.versions_conf,
-                      profile: attribute.versions_conf.profile?.id ?? null
+                      ...attribute?.versions_conf,
+                      profile: attribute?.versions_conf?.profile?.id ?? null
                   }
               }
             : defaultAttributeData;

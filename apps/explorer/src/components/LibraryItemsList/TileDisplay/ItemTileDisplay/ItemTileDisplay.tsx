@@ -305,7 +305,11 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                                         <Button shape="circle" icon={<CheckOutlined />} onClick={_handleSelect} />
                                     </Tooltip>
                                     <Tooltip title={t('global.edit')} key="edit">
-                                        <EditRecordBtn shape={'circle'} record={item.whoAmI} />
+                                        <EditRecordBtn
+                                            shape={'circle'}
+                                            record={item.whoAmI}
+                                            valuesVersion={searchState.valuesVersions}
+                                        />
                                     </Tooltip>
                                     {canDeleteRecord ? (
                                         <Tooltip title={t('global.delete')} key="delete">

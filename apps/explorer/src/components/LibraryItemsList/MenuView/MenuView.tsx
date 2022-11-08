@@ -1,14 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    AppstoreFilled,
-    FilterOutlined,
-    MenuOutlined,
-    PlusOutlined,
-    RollbackOutlined,
-    SaveFilled
-} from '@ant-design/icons';
+import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
 import {objectToNameValueArray} from '@leav/utils';
 import {Badge, Button, Dropdown, Menu, Space, Tooltip} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
@@ -16,6 +9,7 @@ import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
 import {useTranslation} from 'react-i18next';
+import {GrUndo} from 'react-icons/gr';
 import {VscLayers} from 'react-icons/vsc';
 import {setDisplaySide} from 'redux/display';
 import {addInfo} from 'redux/infos';
@@ -224,7 +218,12 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                         </ViewLabel>
                     </ViewButton>
                 </Tooltip>
-                <Button disabled={searchState.view.sync} icon={<RollbackOutlined />} onClick={_resetView} />
+                <Button
+                    disabled={searchState.view.sync}
+                    icon={<GrUndo />}
+                    onClick={_resetView}
+                    style={{paddingTop: '6px'}}
+                />
                 <Button
                     icon={<SaveFilled />}
                     onClick={_saveView}

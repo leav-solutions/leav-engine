@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -85,9 +86,9 @@ describe('ValueDomain', () => {
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
         getCachedElementAncestors: global.__mockPromise([
             {
-                id: '9',
+                id: '7',
                 record: {
-                    id: 9,
+                    id: 7,
                     library: 'my_lib'
                 }
             },
@@ -99,13 +100,17 @@ describe('ValueDomain', () => {
                 }
             },
             {
-                id: '7',
+                id: '9',
                 record: {
-                    id: 7,
+                    id: 9,
                     library: 'my_lib'
                 }
             }
         ])
+    };
+
+    const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
+        getDefaultElement: global.__mockPromise({id: '12345'})
     };
 
     const mockUpdateRecordLastModif = jest.fn();
@@ -428,15 +433,16 @@ describe('ValueDomain', () => {
             const valDomain = valueDomain({
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValRepo as IValueRepo,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.infra.value': mockValRepo as IValueRepo,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });
 
@@ -1084,7 +1090,8 @@ describe('ValueDomain', () => {
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1815,9 +1822,9 @@ describe('ValueDomain', () => {
                         case 'my_tree':
                             parents = [
                                 {
-                                    id: '9',
+                                    id: '7',
                                     record: {
-                                        id: 9,
+                                        id: 7,
                                         library: 'my_lib'
                                     }
                                 },
@@ -1829,9 +1836,9 @@ describe('ValueDomain', () => {
                                     }
                                 },
                                 {
-                                    id: '7',
+                                    id: '9',
                                     record: {
-                                        id: 7,
+                                        id: 9,
                                         library: 'my_lib'
                                     }
                                 }
@@ -1840,9 +1847,9 @@ describe('ValueDomain', () => {
                         case 'other_tree':
                             parents = [
                                 {
-                                    id: '3',
+                                    id: '1',
                                     record: {
-                                        id: 3,
+                                        id: '1',
                                         library: 'my_lib'
                                     }
                                 },
@@ -1854,9 +1861,9 @@ describe('ValueDomain', () => {
                                     }
                                 },
                                 {
-                                    id: '1',
+                                    id: '3',
                                     record: {
-                                        id: '1',
+                                        id: 3,
                                         library: 'my_lib'
                                     }
                                 }
@@ -1865,16 +1872,16 @@ describe('ValueDomain', () => {
                         case 'third_tree':
                             parents = [
                                 {
-                                    id: '99',
+                                    id: '88',
                                     record: {
-                                        id: '99',
+                                        id: '88',
                                         library: 'my_lib'
                                     }
                                 },
                                 {
-                                    id: '88',
+                                    id: '99',
                                     record: {
-                                        id: '88',
+                                        id: '99',
                                         library: 'my_lib'
                                     }
                                 }

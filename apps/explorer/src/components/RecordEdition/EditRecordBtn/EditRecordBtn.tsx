@@ -3,15 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ArrowsAltOutlined} from '@ant-design/icons';
 import {Button, ButtonProps} from 'antd';
-import React, {SyntheticEvent, useState} from 'react';
-import {IRecordIdentityWhoAmI} from '_types/types';
+import {SyntheticEvent, useState} from 'react';
+import {IRecordIdentityWhoAmI, IValueVersion} from '_types/types';
 import EditRecordModal from '../EditRecordModal';
 
 interface IEditRecordBtnProps extends ButtonProps {
     record: IRecordIdentityWhoAmI;
+    valuesVersion?: IValueVersion;
 }
 
-function EditRecordBtn({record, ...buttonProps}: IEditRecordBtnProps): JSX.Element {
+function EditRecordBtn({record, valuesVersion, ...buttonProps}: IEditRecordBtnProps): JSX.Element {
     const [isModalOpen, setIsModalOpen] = useState<boolean>();
 
     const _handleClick = (e: SyntheticEvent) => {
@@ -40,6 +41,7 @@ function EditRecordBtn({record, ...buttonProps}: IEditRecordBtnProps): JSX.Eleme
                     record={record}
                     library={record.library.id}
                     onClose={_handleClose}
+                    valuesVersion={valuesVersion}
                 />
             )}
         </>

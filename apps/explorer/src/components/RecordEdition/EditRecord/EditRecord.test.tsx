@@ -7,6 +7,12 @@ import {mockRecordForm} from '__mocks__/common/form';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import EditRecord from './EditRecord';
 
+jest.mock('./uiElements/StandardField', () => {
+    return function StandardField() {
+        return <div>StandardField</div>;
+    };
+});
+
 describe('EditRecord', () => {
     test('Render form after loading', async () => {
         const mocks = [
@@ -16,7 +22,8 @@ describe('EditRecord', () => {
                     variables: {
                         libraryId: mockRecordWhoAmI.library.id,
                         formId: 'edition',
-                        recordId: '123456'
+                        recordId: '123456',
+                        version: null
                     }
                 },
                 result: {
@@ -55,5 +62,6 @@ describe('EditRecord', () => {
         await waitFor(() => screen.getByTestId('container-child-element'));
 
         expect(screen.getByTestId('container-child-element')).toBeInTheDocument();
+        expect(screen.getByText('StandardField')).toBeInTheDocument();
     });
 });

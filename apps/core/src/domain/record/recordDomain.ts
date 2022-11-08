@@ -15,7 +15,6 @@ import {IValueRepo} from 'infra/value/valueRepo';
 import moment from 'moment';
 import {join} from 'path';
 import {IUtils} from 'utils/utils';
-import {ActionsListEvents} from '../../_types/actionsList';
 import * as Config from '_types/config';
 import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IPreview} from '_types/preview';
@@ -23,6 +22,7 @@ import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
+import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {EventAction} from '../../_types/event';
@@ -424,7 +424,7 @@ export default function ({
         conf: IRecordIdentityConf;
         lib: ILibrary;
         record: IRecord;
-        ctx: any;
+        ctx: IQueryInfos;
     }) => {
         const previewBaseUrl = getPreviewUrl();
 
@@ -444,7 +444,7 @@ export default function ({
                 library: lib.id,
                 record,
                 attributeId: previewAttribute,
-                options: {forceArray: true},
+                options: {forceArray: true, version: ctx.version},
                 ctx
             });
 
@@ -530,6 +530,9 @@ export default function ({
         }
 
         const conf = lib.recordIdentityConf || {};
+        const valuesOptions: IValuesOptions = {
+            version: ctx.version ?? null
+        };
 
         let label: string = null;
         if (conf.label) {
@@ -537,6 +540,7 @@ export default function ({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.label,
+                options: valuesOptions,
                 ctx
             });
 
@@ -549,6 +553,7 @@ export default function ({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.color,
+                options: valuesOptions,
                 ctx
             });
 
@@ -566,6 +571,7 @@ export default function ({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.treeColorPreview,
+                options: valuesOptions,
                 ctx
             });
             if (treeValues.length) {
@@ -603,13 +609,15 @@ export default function ({
             preview = await _getLibraryIconPreview(lib, ctx);
         }
 
-        return {
+        const identity = {
             id: record.id,
             library: lib,
             label,
             color,
             preview
         };
+
+        return identity;
     };
 
     const ret = {

@@ -6,8 +6,12 @@ import {AnyPrimitive} from '@leav/utils';
 import {Button, Form, Input, InputRef, Popover, Space} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
+import InheritedFieldLabel from 'components/RecordEdition/EditRecord/shared/InheritedFieldLabel';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
+import ValuesVersionBtn from 'components/RecordEdition/EditRecord/shared/ValuesVersionBtn';
+import ValuesVersionIndicator from 'components/RecordEdition/EditRecord/shared/ValuesVersionIndicator';
 import {
+    FieldScope,
     InputRefPossibleTypes,
     IStandardInputProps,
     StandardValueTypes
@@ -19,7 +23,7 @@ import FloatingMenu, {FloatingMenuAction} from 'components/shared/FloatingMenu/F
 import moment from 'moment';
 import {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
+import styled, {CSSObject} from 'styled-components';
 import themingVar from 'themingVar';
 import {stringifyDateRangeValue} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
@@ -37,7 +41,7 @@ import {
     StandardFieldDispatchFunc,
     StandardFieldReducerActionsTypes,
     StandardFieldValueState
-} from '../standardFieldReducer/standardFieldReducer';
+} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import CheckboxInput from './Inputs/CheckboxInput';
 import DateInput from './Inputs/DateInput';
 import DateRangeInput from './Inputs/DateRangeInput';
@@ -46,17 +50,6 @@ import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
-
-interface IStandardFieldValueProps {
-    value: IStandardFieldValue;
-    state: IStandardFieldReducerState;
-    dispatch: StandardFieldDispatchFunc;
-    onSubmit: (idValue: IdValue, value: AnyPrimitive) => void;
-    onDelete: (idValue: IdValue) => void;
-}
-
-type IStringValuesListConf = RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf;
-type IDateRangeValuesListConf = RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
 
 const ErrorMessage = styled.div`
     color: ${themingVar['@error-color']};
@@ -76,6 +69,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         transition: none;
         border-radius: 0;
         line-height: 2.5em;
+        padding-left: 17px;
     }
 
     ${FormWrapper}:not(:last-child) & input:not(:hover) {
@@ -107,7 +101,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
 
     &:not(.format-boolean) label {
         position: absolute;
-        left: 5px;
+        left: 11px;
         top: calc(50% - 0.9em);
         font-size: 1.1em;
         background: transparent;
@@ -194,10 +188,24 @@ const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInp
     [AttributeFormat.extended]: TextInput
 };
 
+type IStringValuesListConf = RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf;
+
+type IDateRangeValuesListConf = RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
+
+interface IStandardFieldValueProps {
+    value: IStandardFieldValue;
+    state: IStandardFieldReducerState;
+    dispatch: StandardFieldDispatchFunc;
+    onSubmit: (idValue: IdValue, value: AnyPrimitive) => void;
+    onDelete: (idValue: IdValue) => void;
+    onScopeChange: (scope: FieldScope) => void;
+}
+
 function StandardFieldValue({
     value: fieldValue,
     onSubmit,
     onDelete,
+    onScopeChange,
     state,
     dispatch
 }: IStandardFieldValueProps): JSX.Element {
@@ -453,7 +461,7 @@ function StandardFieldValue({
 
     const wrapperClasses = `
         ${attribute.format ? `format-${attribute.format}` : ''}
-        ${fieldValue.value ? 'has-value' : ''}
+        ${fieldValue?.value?.value ? 'has-value' : ''}
         ${fieldValue.isEditing ? 'editing' : ''}
     `;
 
@@ -470,12 +478,42 @@ function StandardFieldValue({
         });
     }
 
+    const hasMultipleValuesDisplay =
+        attribute.multiple_values && !!Object.keys(state.values[state.activeScope].values).length;
+
+    if (attribute?.versions_conf?.versionable) {
+        const versions = {
+            [FieldScope.CURRENT]: state.values[FieldScope.CURRENT]?.version ?? null,
+            [FieldScope.INHERITED]: state.values[FieldScope.INHERITED]?.version ?? null
+        };
+
+        if (!hasMultipleValuesDisplay) {
+            valueActions.push({
+                title: t('values_version.title'),
+                button: (
+                    <ValuesVersionBtn
+                        versions={versions}
+                        activeScope={state.activeScope}
+                        onScopeChange={onScopeChange}
+                    />
+                )
+            });
+        }
+    }
+
     if (canDeleteValue && !fieldValue.isEditing && fieldValue.displayValue) {
         valueActions.push({
             title: t('global.delete'),
             button: <DeleteValueBtn onDelete={_handleDelete} shape="circle" />
         });
     }
+
+    const valuesVersionIndicatorStyle: CSSObject = {
+        top: '1px',
+        left: '1px',
+        bottom: hasMultipleValuesDisplay ? '0' : '1px',
+        borderRadius: hasMultipleValuesDisplay ? 'none' : themingVar['@border-radius-base']
+    };
 
     return (
         <>
@@ -489,9 +527,16 @@ function StandardFieldValue({
                                 className={wrapperClasses}
                                 data-testid="input-wrapper"
                             >
+                                <ValuesVersionIndicator
+                                    activeScope={state.activeScope}
+                                    style={valuesVersionIndicatorStyle}
+                                />
                                 {!fieldValue.index && (
                                     <label className="attribute-label" onClick={_handleFocus}>
                                         {state.formElement.settings.label}
+                                        {state.activeScope === FieldScope.INHERITED && (
+                                            <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+                                        )}
                                     </label>
                                 )}
                                 {_getInput()}

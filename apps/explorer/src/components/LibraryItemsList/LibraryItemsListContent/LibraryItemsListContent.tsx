@@ -16,9 +16,10 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
-import React, {useEffect, useReducer} from 'react';
+import {useEffect, useReducer} from 'react';
 import {useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
+import {objectValueVersionToArray} from 'utils';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {IField, IView, SharedStateSelectionType} from '_types/types';
@@ -144,7 +145,8 @@ function LibraryItemsListContent({
             filters: getRequestFromFilters(searchState.filters),
             sortField: searchState.sort.field || defaultSort.field,
             sortOrder: searchState.sort.order || defaultSort.order,
-            fullText: searchState.fullText
+            fullText: searchState.fullText,
+            version: objectValueVersionToArray(searchState.valuesVersions)
         },
         onCompleted: _applyResults
     });
@@ -158,7 +160,8 @@ function LibraryItemsListContent({
                 filters: queryFilters,
                 sortField: searchState.sort.field,
                 sortOrder: searchState.sort.order,
-                fullText: searchState.fullText
+                fullText: searchState.fullText,
+                version: objectValueVersionToArray(searchState.valuesVersions)
             };
 
             // Records have already been fetched, we use fetchMore to make sure

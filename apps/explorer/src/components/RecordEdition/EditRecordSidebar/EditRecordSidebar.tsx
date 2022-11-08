@@ -5,6 +5,7 @@ import RecordSummary from 'components/shared/RecordSummary';
 import {MetadataSubmitValueFunc} from '../EditRecord/_types';
 import {useEditRecordModalReducer} from '../editRecordModalReducer/useEditRecordModalReducer';
 import ValueDetails from './ValueDetails';
+import ValuesVersions from './ValuesVersions';
 
 interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
@@ -13,15 +14,20 @@ interface IEditRecordSidebarProps {
 function EditRecordSidebar({onMetadataSubmit}: IEditRecordSidebarProps): JSX.Element {
     const {state} = useEditRecordModalReducer();
 
-    return state.activeValue ? (
-        <ValueDetails
-            value={state.activeValue.value}
-            attribute={state.activeValue.attribute}
-            onMetadataSubmit={onMetadataSubmit}
-        />
-    ) : (
-        <RecordSummary record={state.record} />
-    );
+    switch (state.sidebarContent) {
+        case 'valueDetails':
+            return (
+                <ValueDetails
+                    value={state.activeValue.value}
+                    attribute={state.activeValue.attribute}
+                    onMetadataSubmit={onMetadataSubmit}
+                />
+            );
+        case 'valuesVersions':
+            return <ValuesVersions />;
+        default:
+            return <RecordSummary record={state.record} />;
+    }
 }
 
 export default EditRecordSidebar;

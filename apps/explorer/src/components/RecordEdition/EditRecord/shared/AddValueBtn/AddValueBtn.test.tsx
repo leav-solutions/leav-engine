@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {FieldScope} from '../../_types';
 import AddValueBtn from './AddValueBtn';
 
 describe('AddValueBtn', () => {
@@ -12,7 +12,7 @@ describe('AddValueBtn', () => {
         const mockOnClick = jest.fn();
 
         await act(async () => {
-            render(<AddValueBtn onClick={mockOnClick} />);
+            render(<AddValueBtn activeScope={FieldScope.CURRENT} onClick={mockOnClick} />);
         });
 
         const btn = screen.getByRole('button', {name: /add_value/});

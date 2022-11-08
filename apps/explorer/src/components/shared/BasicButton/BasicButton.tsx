@@ -5,7 +5,7 @@ import {Button, ButtonProps} from 'antd';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
 
-const StyledBtn = styled(Button)<{$bordered?: boolean}>`
+const StyledBtn = styled(Button)<{$bordered?: boolean; $centered?: boolean}>`
     && {
         color: ${themingVar['@leav-secondary-font-color']};
         &,
@@ -13,7 +13,7 @@ const StyledBtn = styled(Button)<{$bordered?: boolean}>`
         &[disabled] {
             background: transparent;
         }
-        text-align: left;
+        text-align: ${p => (p.$centered ? 'center' : 'left')};
 
         ${props => (!props.$bordered ? '&, &:hover {border: 0;}' : '')}
     }
@@ -21,11 +21,12 @@ const StyledBtn = styled(Button)<{$bordered?: boolean}>`
 
 interface IBasicButtonProps extends ButtonProps {
     bordered?: boolean;
+    centered?: boolean;
 }
 
-function BasicButton({children, bordered, ...props}: IBasicButtonProps): JSX.Element {
+function BasicButton({children, bordered, centered, ...props}: IBasicButtonProps): JSX.Element {
     return (
-        <StyledBtn {...props} $bordered={bordered}>
+        <StyledBtn {...props} $bordered={bordered} $centered={centered}>
             {children}
         </StyledBtn>
     );

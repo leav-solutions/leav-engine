@@ -196,38 +196,6 @@ exports[`TreeRepo deleteTree Should delete tree 2`] = `
 }
 `;
 
-exports[`TreeRepo getDefaultElement Should return the first element of a tree 1`] = `
-"
-                    FOR v, e, p IN 1..@value0 OUTBOUND @value1
-                    @@value2
-                    LET record = DOCUMENT(v.@value3, v.@value4)
-                    LET path = (
-                        FOR pv IN p.vertices
-                        FILTER pv._id != v._id
-                        RETURN pv._key
-                    )
-                    LET nodeOrder = TO_NUMBER(p.edges[-1].order)
-                 
-                SORT LENGTH(path), nodeOrder ASC
-                RETURN {
-                    id: v._key,
-                    record: MERGE(record, {path}),
-                    order: nodeOrder,
-                    
-                }
-            "
-`;
-
-exports[`TreeRepo getDefaultElement Should return the first element of a tree 2`] = `
-{
-  "@value2": "core_edge_tree_test_tree",
-  "value0": 1000,
-  "value1": "core_trees/test_tree",
-  "value3": "libraryId",
-  "value4": "recordId",
-}
-`;
-
 exports[`TreeRepo getElementAncestors Should return element ancestors 1`] = `
 "
                 FOR v,e,p IN 0..@value0 INBOUND @value1

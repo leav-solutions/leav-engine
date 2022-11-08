@@ -3,9 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 import recordIdentityFragment from 'graphQL/queries/records/recordIdentityFragment';
+import {valuesVersionDetailsFragment} from 'graphQL/queries/values/valuesVersionFragment';
 
 export const saveValueBatchMutation = gql`
     ${recordIdentityFragment}
+    ${valuesVersionDetailsFragment}
     mutation SAVE_VALUE_BATCH(
         $library: ID!
         $recordId: ID!
@@ -30,7 +32,9 @@ export const saveValueBatchMutation = gql`
                 created_by {
                     ...RecordIdentity
                 }
-                version
+                version {
+                    ...ValuesVersionDetails
+                }
                 attribute {
                     id
                     format
@@ -49,7 +53,9 @@ export const saveValueBatchMutation = gql`
                         created_by {
                             ...RecordIdentity
                         }
-                        version
+                        version {
+                            ...ValuesVersionDetails
+                        }
                         value
                         raw_value
                     }

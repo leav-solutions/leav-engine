@@ -21,6 +21,7 @@ import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
+import {IGetDefaultElementHelper} from './helpers/getDefaultElement';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import treeDomain from './treeDomain';
 
@@ -63,6 +64,10 @@ describe('treeDomain', () => {
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
         getCachedElementAncestors: global.__mockPromise([]),
         clearElementAncestorsCache: jest.fn()
+    };
+
+    const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
+        clearCache: jest.fn()
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -413,7 +418,8 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
             });
 
             await domain.addElement({
@@ -648,7 +654,8 @@ describe('treeDomain', () => {
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.infra.library': mockLibDomain as ILibraryRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
             });
 
             await domain.moveElement({
@@ -858,7 +865,8 @@ describe('treeDomain', () => {
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.infra.library': mockLibDomain as ILibraryRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithPermissions as GetCoreEntityByIdFunc,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
             });
 
             await domain.deleteElement({

@@ -296,30 +296,28 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                         </StartTypingMessage>
                     )}
                 </ListsWrapper>
-                {attribute.multiple_values && (
-                    <FooterWrapper>
-                        <Space>
-                            {canSearch && (
-                                <Button size="small" icon={<SearchOutlined />} onClick={_handleClickAdvancedSearch}>
-                                    {t('record_edition.advanced_search')}
-                                </Button>
-                            )}
-                            {canCreateRecord && (
-                                <Button size="small" icon={<PlusOutlined />} onClick={_handleOpenCreateRecordModal}>
-                                    {t('record_edition.new_record')}
-                                </Button>
-                            )}
-                        </Space>
-                        <Space>
-                            <Button size="small" onClick={_handleClose}>
-                                {t('global.cancel')}
+                <FooterWrapper>
+                    <Space>
+                        {canSearch && (
+                            <Button size="small" icon={<SearchOutlined />} onClick={_handleClickAdvancedSearch}>
+                                {t('record_edition.advanced_search')}
                             </Button>
-                            <PrimaryBtn size="small" onClick={_handleSubmit}>
-                                {t('global.submit')}
-                            </PrimaryBtn>
-                        </Space>
-                    </FooterWrapper>
-                )}
+                        )}
+                        {canCreateRecord && (
+                            <Button size="small" icon={<PlusOutlined />} onClick={_handleOpenCreateRecordModal}>
+                                {t('record_edition.new_record')}
+                            </Button>
+                        )}
+                    </Space>
+                    <Space>
+                        <Button size="small" onClick={_handleClose}>
+                            {t('global.cancel')}
+                        </Button>
+                        <PrimaryBtn size="small" onClick={_handleSubmit}>
+                            {t('global.submit')}
+                        </PrimaryBtn>
+                    </Space>
+                </FooterWrapper>
             </Wrapper>
             {isSearchModalVisible && (
                 <SearchModal

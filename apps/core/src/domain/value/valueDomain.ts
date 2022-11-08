@@ -4,6 +4,8 @@
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
+import {IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -118,12 +120,14 @@ interface IDeps {
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
+    'core.domain.tree.helpers.getDefaultElement'?: IGetDefaultElementHelper;
     'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.infra.record'?: IRecordRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
     'core.utils'?: IUtils;
     'core.utils.logger'?: winston.Winston;
+    'core.domain.tree'?: ITreeDomain;
 }
 
 const valueDomain = function ({
@@ -136,6 +140,7 @@ const valueDomain = function ({
     'core.domain.helpers.validate': validate = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.domain.tree.helpers.elementAncestors': elementAncestors = null,
+    'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper = null,
     'core.domain.versionProfile': versionProfileDomain = null,
     'core.infra.record': recordRepo = null,
     'core.infra.tree': treeRepo = null,
@@ -346,13 +351,15 @@ const valueDomain = function ({
                             const treeElem =
                                 options?.version && options.version[treeName]
                                     ? options.version[treeName]
-                                    : await treeRepo.getDefaultElement({id: treeName, ctx});
+                                    : (await getDefaultElementHelper.getDefaultElement({treeId: treeName, ctx})).id;
 
-                            const ancestors = await elementAncestors.getCachedElementAncestors({
-                                treeId: treeName,
-                                nodeId: treeElem,
-                                ctx
-                            });
+                            const ancestors = (
+                                await elementAncestors.getCachedElementAncestors({
+                                    treeId: treeName,
+                                    nodeId: treeElem,
+                                    ctx
+                                })
+                            ).reverse(); // We want the leaves first
 
                             return {
                                 name: treeName,
@@ -448,8 +455,11 @@ const valueDomain = function ({
                 {
                     valueRepo,
                     recordRepo,
+                    treeRepo,
+                    getDefaultElementHelper,
                     actionsListDomain,
-                    attributeDomain
+                    attributeDomain,
+                    versionProfileDomain
                 },
                 ctx
             );
@@ -581,16 +591,26 @@ const valueDomain = function ({
                                       {
                                           valueRepo,
                                           recordRepo,
+                                          treeRepo,
+                                          getDefaultElementHelper,
                                           actionsListDomain,
-                                          attributeDomain
+                                          attributeDomain,
+                                          versionProfileDomain
                                       },
                                       ctx
                                   );
 
-                        // Apply actions list on value
-                        const processedValue = await this.formatValue({
+                        let processedValue = await _runActionsList(
+                            ActionsListEvents.GET_VALUE,
+                            savedVal,
+                            attributeProps,
+                            {id: recordId},
+                            library,
+                            ctx
+                        );
+                        processedValue = await this.formatValue({
                             attribute: attributeProps,
-                            value: savedVal,
+                            value: processedValue,
                             record,
                             library,
                             ctx

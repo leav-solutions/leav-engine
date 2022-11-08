@@ -26,7 +26,7 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
     const {t} = useTranslation();
 
     return {
-        saveValues: async (record, values, deleteEmpty = false) => {
+        saveValues: async (record, values, version, deleteEmpty = false) => {
             try {
                 const saveRes = await executeSaveValueBatch({
                     variables: {
@@ -43,6 +43,9 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
                                   }))
                                 : null
                         })),
+                        version: version
+                            ? objectToNameValueArray(version).map(v => ({treeId: v.name, treeNodeId: v.value.id}))
+                            : null,
                         deleteEmpty
                     }
                 });

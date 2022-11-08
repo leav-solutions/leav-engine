@@ -4,7 +4,7 @@
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {IAttribute, IField, ILang, IViewValuesVersion} from '_types/types';
+import {IAttribute, IField, ILang, IValueVersion} from '_types/types';
 import {IFilter, IView, IViewDisplay} from '../../_types/types';
 
 export type IRecordPreview = {
@@ -54,7 +54,7 @@ export interface ISearchState {
     userViewsOrder: string[];
     sharedViewsOrder: string[];
     lang: ILang;
-    valuesVersions: IViewValuesVersion;
+    valuesVersions: IValueVersion;
 }
 
 export interface IViewState {

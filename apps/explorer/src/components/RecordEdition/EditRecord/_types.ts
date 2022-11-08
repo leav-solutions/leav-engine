@@ -10,24 +10,18 @@ import {
     Override
 } from '@leav/utils';
 import {Checkbox, DatePicker, InputRef} from 'antd';
-import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {IRecordPropertyAttribute, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {RecordFormElement} from 'hooks/useGetRecordForm/useGetRecordForm';
 import {MutableRefObject} from 'react';
 import {ValueInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {
-    RECORD_FORM_recordForm_elements,
-    RECORD_FORM_recordForm_elements_attribute,
-    RECORD_FORM_recordForm_elements_values
-} from '_gqlTypes/RECORD_FORM';
+import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 import {
     SAVE_VALUE_BATCH_saveValueBatch_errors,
     SAVE_VALUE_BATCH_saveValueBatch_values
 } from '_gqlTypes/SAVE_VALUE_BATCH';
-import {IDateRangeValue, IRecordIdentityWhoAmI, ITreeNodeWithRecord} from '_types/types';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from './uiElements/StandardField/standardFieldReducer/standardFieldReducer';
+import {IDateRangeValue, IRecordIdentityWhoAmI, ITreeNodeWithRecord, IValueVersion} from '_types/types';
+import {IStandardFieldReducerState, IStandardFieldValue} from './reducers/standardFieldReducer/standardFieldReducer';
 
 export interface IValueToSubmit {
     attribute: string;
@@ -45,6 +39,7 @@ export enum APICallStatus {
 export type FieldSubmitMultipleFunc = (
     record: RecordIdentity_whoAmI,
     values: IValueToSubmit[],
+    version?: IValueVersion,
     deleteEmpty?: boolean
 ) => Promise<ISubmitMultipleResult>;
 export interface ISubmitMultipleResult {
@@ -83,11 +78,12 @@ export interface ISubmittedValueTree extends ISubmittedValueBase {
 
 export type SubmittedValue = ISubmittedValueStandard | ISubmittedValueLink | ISubmittedValueTree;
 
-export type SubmitValueFunc = (values: SubmittedValue[]) => Promise<ISubmitMultipleResult>;
+export type SubmitValueFunc = (values: SubmittedValue[], version: IValueVersion) => Promise<ISubmitMultipleResult>;
 export type DeleteValueFunc = (value: ValueInput | null, attribute: string) => Promise<IDeleteValueResult>;
 export type DeleteMultipleValuesFunc = (
     attribute: string,
-    values: RECORD_FORM_recordForm_elements_values[]
+    values: RecordProperty[],
+    version: IValueVersion
 ) => Promise<ISubmitMultipleResult>;
 
 export type MetadataSubmitValueFunc = (
@@ -111,7 +107,7 @@ export interface IFormElementProps<SettingsType> {
 }
 
 export type FormElement<SettingsType> = Override<
-    RECORD_FORM_recordForm_elements,
+    RecordFormElement,
     {
         settings: SettingsType;
         uiElementType: FormUIElementTypes | FormFieldTypes;
@@ -138,3 +134,22 @@ export interface IStandardInputProps {
 export type InputRefPossibleTypes = InputRef | typeof DatePicker | typeof Checkbox;
 
 export type StandardValueTypes = AnyPrimitive | IDateRangeValue;
+
+export enum FieldScope {
+    INHERITED = 'INHERITED', // inherited values
+    CURRENT = 'CURRENT' // values of "current" version, eg. the version selected in the form
+}
+
+export interface ICommonFieldsReducerState<ValuesType> {
+    record: IRecordIdentityWhoAmI;
+    formElement: FormElement<ICommonFieldsSettings>;
+    attribute: IRecordPropertyAttribute;
+    isReadOnly: boolean;
+    activeScope: FieldScope;
+    values: {
+        [scope in FieldScope]: {
+            version: IValueVersion;
+            values: ValuesType;
+        } | null;
+    };
+}
