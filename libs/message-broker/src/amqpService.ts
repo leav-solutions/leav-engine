@@ -22,6 +22,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
     let retries = 0;
 
     const init = async () => {
+        console.debug({connOpt: config.connOpt});
         const publisherConnection = await amqp.connect(config.connOpt);
         const publisherChannel = await publisherConnection.createConfirmChannel();
         await publisherChannel.assertExchange(config.exchange, config.type);

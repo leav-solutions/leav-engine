@@ -35,6 +35,17 @@ module.exports = {
             secure: process.env.AUTH_COOKIE_SECURE || false
         }
     },
+    mailer: {
+        host: process.env.MAILER_HOST || 'localhost',
+        port: process.env.MAILER_PORT || 587,
+        secure: process.env.MAILER_SECURE || false, // if true the connection will use TLS when connecting to server.
+        // If false (the default) then TLS is used if server supports the STARTTLS extension.
+        // In most cases set this value to true if you are connecting to port 465. For port 587 or 25 keep it false
+        auth: {
+            user: process.env.MAILER_AUTH_USER,
+            password: process.env.MAILER_AUTH_PWD
+        }
+    },
     lang: {
         available: process.env.LANG_AVAILABLE || ['fr', 'en'],
         default: process.env.LANG_DEFAULT || 'fr'

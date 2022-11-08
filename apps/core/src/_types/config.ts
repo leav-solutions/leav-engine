@@ -10,6 +10,7 @@ export interface IConfig {
     diskCache: IDiskCache;
     elasticsearch: IElasticsearch;
     auth: IAuth;
+    mailer: IMailer;
     lang: ILang;
     logs: ILogs;
     permissions: IPermissions;
@@ -57,6 +58,16 @@ export interface IAuth {
     cookie: {
         sameSite: 'none' | 'lax' | 'strict';
         secure: boolean;
+    };
+}
+
+export interface IMailer {
+    host: string;
+    port: number;
+    secure: boolean;
+    auth: {
+        user: string;
+        password: string;
     };
 }
 
