@@ -9,7 +9,7 @@ import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -70,7 +70,8 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
         const baseInfo: IBaseInfo = {
             content: t('info.active-lib', {
                 lib: currentLibLabel,
-                appLabel: localizedTranslation(currentApp.label, lang)
+                appLabel: localizedTranslation(currentApp.label, lang),
+                interpolation: {escapeValue: false}
             }),
             type: InfoType.basic
         };

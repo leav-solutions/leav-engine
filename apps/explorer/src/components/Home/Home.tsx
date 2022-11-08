@@ -5,7 +5,7 @@ import {localizedTranslation} from '@leav/utils';
 import {Col, Row} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'redux/infos';
 import {useAppDispatch} from 'redux/store';
@@ -21,7 +21,10 @@ function Home(): JSX.Element {
 
     useEffect(() => {
         const baseInfo: IBaseInfo = {
-            content: t('info.base-message', {appLabel: localizedTranslation(currentApp.label, lang)}),
+            content: t('info.base-message', {
+                appLabel: localizedTranslation(currentApp.label, lang),
+                interpolation: {escapeValue: false}
+            }),
             type: InfoType.basic
         };
         dispatch(setInfoBase(baseInfo));
