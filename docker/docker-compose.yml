@@ -59,13 +59,14 @@ x-env-core: &env-core
   SERVER_PUBLIC_URL: http://core.leav.localhost
   SERVER_WS_URL: ws://core.leav.localhost
   SERVER_UPLOAD_LIMIT: "15000mb"
+  SERVER_SUPPORT_EMAIL: support@leav-solutions.com
   REDIS_HOST: redis
   REDIS_PORT: 6379
   FILES_ROOT_PATHS: files1:/files
   MAILER_HOST: ssl0.ovh.net
   MAILER_PORT: 587
-  MAILER_AUTH_USER: <email>
-  MAILER_AUTH_PWD: <password>
+  MAILER_AUTH_USER: test@leav-solutions.com
+  MAILER_AUTH_PWD: B2nwhDJjeVq52YZ
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'

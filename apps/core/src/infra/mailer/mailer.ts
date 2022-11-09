@@ -9,8 +9,6 @@ interface IDeps {
 }
 
 export async function initMailer({config}: IDeps): Promise<nodemailer.Transporter> {
-    console.debug('config.mailer:', config.mailer);
-
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
         host: config.mailer.host,

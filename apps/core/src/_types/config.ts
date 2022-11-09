@@ -39,6 +39,7 @@ export interface IServer {
     wsUrl: string;
     apiEndpoint: string;
     uploadLimit: number | string;
+    supportEmail: string;
 }
 
 export interface IDb {
@@ -59,6 +60,7 @@ export interface IAuth {
         sameSite: 'none' | 'lax' | 'strict';
         secure: boolean;
     };
+    resetPasswordExpiration: string;
 }
 
 export interface IMailer {

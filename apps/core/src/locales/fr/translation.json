@@ -176,5 +176,8 @@
             "elements_retrieval": "Récupération des fichiers",
             "excel_writing": "Ecriture du fichier excel"
         }
+    },
+    "mailer": {
+        "reset_password_subject": "Réinitialiser votre mot de passe"
     }
 }
