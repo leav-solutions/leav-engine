@@ -13,7 +13,8 @@ module.exports = {
          * then the value specifies the number of bytes; if it is a string,
          * the value is passed to the bytes library for parsing (https://www.npmjs.com/package/bytes).
          */
-        uploadLimit: process.env.SERVER_UPLOAD_LIMIT || '100mb'
+        uploadLimit: process.env.SERVER_UPLOAD_LIMIT || '100mb',
+        supportEmail: process.env.SERVER_SUPPORT_EMAIL
     },
     db: {
         url: process.env.ARANGO_URL,
@@ -33,7 +34,8 @@ module.exports = {
         cookie: {
             sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
             secure: process.env.AUTH_COOKIE_SECURE || false
-        }
+        },
+        resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '10m'
     },
     mailer: {
         host: process.env.MAILER_HOST || 'localhost',
