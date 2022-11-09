@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IUserDataDomain} from 'domain/userData/userDataDomain';
+import {IUserDomain} from 'domain/user/userDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUserData} from '_types/userData';
@@ -11,10 +11,10 @@ export interface ICoreImportApp {
 }
 
 interface IDeps {
-    'core.domain.userData'?: IUserDataDomain;
+    'core.domain.user'?: IUserDomain;
 }
 
-export default function ({'core.domain.userData': userDataDomain = null}: IDeps = {}): ICoreImportApp {
+export default function ({'core.domain.user': userDomain = null}: IDeps = {}): ICoreImportApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -39,7 +39,7 @@ export default function ({'core.domain.userData': userDataDomain = null}: IDeps 
                             {keys, global}: {keys: string[]; global: boolean},
                             ctx: IQueryInfos
                         ): Promise<IUserData> {
-                            return userDataDomain.getUserData(keys, global, ctx);
+                            return userDomain.getUserData(keys, global, ctx);
                         }
                     },
                     Mutation: {
@@ -48,7 +48,7 @@ export default function ({'core.domain.userData': userDataDomain = null}: IDeps 
                             {key, value, global}: {key: string; value: any; global: boolean},
                             ctx: IQueryInfos
                         ): Promise<IUserData> {
-                            return userDataDomain.saveUserData(key, value, global, ctx);
+                            return userDomain.saveUserData(key, value, global, ctx);
                         }
                     }
                 }
