@@ -169,5 +169,8 @@
             "elements_retrieval": "Elements retrieval",
             "file_writing": "Excel file writing"
         }
+    },
+    "mailer": {
+        "reset_password_subject": "Reset your password"
     }
 }

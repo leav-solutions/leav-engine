@@ -7,7 +7,7 @@ import {IConfig} from '_types/config';
 
 export interface IMailerService {
     mailer?: nodemailer.Transporter;
-    sendMail?: ({to, subject, text, html, attachments}: ISendMailParams) => Promise<void>;
+    sendEmail?: ({to, subject, text, html, attachments}: ISendMailParams) => Promise<void>;
 }
 
 interface IDeps {
@@ -26,9 +26,7 @@ interface ISendMailParams {
 export default function ({config = null, 'core.infra.mailer': mailer = null}: IDeps = {}): IMailerService {
     return {
         mailer,
-        async sendMail({to, subject, text, html, attachments}: ISendMailParams): Promise<void> {
-            console.debug({to, subject, text, html, attachments});
-
+        async sendEmail({to, subject, text, html, attachments}: ISendMailParams): Promise<void> {
             await mailer.sendMail({
                 from: config.mailer.auth.user,
                 to,
