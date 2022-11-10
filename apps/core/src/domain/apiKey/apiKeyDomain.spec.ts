@@ -106,10 +106,10 @@ describe('apiKeyDomain', () => {
                 expect(mockRepo.createApiKey).toBeCalled();
                 const createCallKeyData = mockRepo.createApiKey.mock.calls[0][0].keyData;
                 expect(createCallKeyData.key).toBeDefined();
-                expect(createCallKeyData.created_at).toBeDefined();
-                expect(createCallKeyData.created_by).toBe(mockCtx.userId);
-                expect(createCallKeyData.modified_at).toBeDefined();
-                expect(createCallKeyData.modified_by).toBe(mockCtx.userId);
+                expect(createCallKeyData.createdAt).toBeDefined();
+                expect(createCallKeyData.createdBy).toBe(mockCtx.userId);
+                expect(createCallKeyData.modifiedAt).toBeDefined();
+                expect(createCallKeyData.modifiedBy).toBe(mockCtx.userId);
 
                 expect(mockRepo.updateApiKey).not.toBeCalled();
                 expect(savedKey.key).toBeDefined();
@@ -140,8 +140,8 @@ describe('apiKeyDomain', () => {
                 const updateCallKeyData = mockRepo.updateApiKey.mock.calls[0][0].keyData;
                 expect(updateCallKeyData.key).toBeUndefined(); // User can't change the key
 
-                expect(updateCallKeyData.modified_at).toBeDefined();
-                expect(updateCallKeyData.modified_by).toBe(mockCtx.userId);
+                expect(updateCallKeyData.modifiedAt).toBeDefined();
+                expect(updateCallKeyData.modifiedBy).toBe(mockCtx.userId);
 
                 expect(mockRepo.createApiKey).not.toBeCalled();
                 expect(savedKey).toEqual({...mockApiKey, key: null});

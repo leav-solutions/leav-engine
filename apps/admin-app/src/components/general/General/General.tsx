@@ -8,6 +8,7 @@ import {useHistory, useLocation} from 'react-router';
 import {Header, Icon, Tab, TabProps} from 'semantic-ui-react';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
 import GeneralAdminPermissionsTab from './GeneralAdminPermissionsTab';
+import GeneralApiKeysTab from './GeneralApiKeysTab';
 import GeneralInfosTab from './GeneralInfosTab';
 
 function General(): JSX.Element {
@@ -36,6 +37,20 @@ function General(): JSX.Element {
                 return (
                     <Tab.Pane key="permissions" className="grow flex-col height100">
                         <GeneralAdminPermissionsTab />
+                    </Tab.Pane>
+                );
+            }
+        });
+    }
+
+    if (userData.permissions[PermissionsActions.admin_access_api_keys]) {
+        panes.push({
+            key: 'api_keys',
+            menuItem: t('general.api_keys'),
+            render: () => {
+                return (
+                    <Tab.Pane key="api_keys" className="grow flex-col">
+                        <GeneralApiKeysTab />
                     </Tab.Pane>
                 );
             }

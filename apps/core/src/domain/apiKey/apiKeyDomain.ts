@@ -106,14 +106,15 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
             if (isNewKey) {
                 keyString = uuidv4();
                 dataToSave.key = await _encryptApiKey(keyString);
-                dataToSave.created_at = now;
-                dataToSave.created_by = modifier;
+                dataToSave.createdAt = now;
+                dataToSave.createdBy = modifier;
+                delete dataToSave.id; // To make "id" is not present at all
             } else {
                 delete dataToSave.key; // Don't update the key
             }
 
-            dataToSave.modified_at = now;
-            dataToSave.modified_by = modifier;
+            dataToSave.modifiedAt = now;
+            dataToSave.modifiedBy = modifier;
 
             let savedKey: IApiKey;
             if (isNewKey) {

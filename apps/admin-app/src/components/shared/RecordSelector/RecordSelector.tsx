@@ -3,20 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import SelectRecordModal from 'components/records/SelectRecordModal';
 import RecordCard from 'components/shared/RecordCard';
-import useLang from 'hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Confirm, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_LIBRARIES_libraries_list} from '_gqlTypes/GET_LIBRARIES';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 
-interface IFileSelectorViewProps {
+interface IRecordSelectorProps {
     onChange: (selectedFile: RecordIdentity_whoAmI) => void;
     value: RecordIdentity_whoAmI;
     label: string;
     disabled?: boolean;
-    libraries: GET_LIBRARIES_libraries_list[];
+    libraries: string[];
+    required?: boolean;
 }
 
 const Wrapper = styled.div`
@@ -36,8 +35,14 @@ const Wrapper = styled.div`
     }
 `;
 
-function FileSelectorView({onChange, label, value, disabled, libraries}: IFileSelectorViewProps): JSX.Element {
-    const {lang} = useLang();
+function RecordSelector({
+    onChange,
+    label,
+    value,
+    disabled,
+    libraries,
+    required = false
+}: IRecordSelectorProps): JSX.Element {
     const {t} = useTranslation();
     const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -77,9 +82,11 @@ function FileSelectorView({onChange, label, value, disabled, libraries}: IFileSe
                                 >
                                     <Icon name="exchange" />
                                 </Button>
-                                <Button type="button" icon onClick={_openDeleteConfirm} aria-label="delete">
-                                    <Icon name="close" />
-                                </Button>
+                                {!required && (
+                                    <Button type="button" icon onClick={_openDeleteConfirm} aria-label="delete">
+                                        <Icon name="close" />
+                                    </Button>
+                                )}
                             </Button.Group>
                         )}
                     </>
@@ -87,13 +94,13 @@ function FileSelectorView({onChange, label, value, disabled, libraries}: IFileSe
                 {!value && (
                     <Button type="button" icon labelPosition="left" onClick={_openModal}>
                         <Icon name="search" />
-                        {t('file_selector.select')}
+                        {t('record_selector.select')}
                     </Button>
                 )}
             </Wrapper>
             {isModalOpen && (
                 <SelectRecordModal
-                    library={libraries.map(l => l.id)}
+                    library={libraries}
                     open={isModalOpen}
                     onClose={_handleCloseModal}
                     onSelect={_handleSelect}
@@ -104,7 +111,7 @@ function FileSelectorView({onChange, label, value, disabled, libraries}: IFileSe
                     open={showDeleteConfirm}
                     onCancel={_closeDeleteConfirm}
                     onConfirm={_handleDelete}
-                    content={t('file_selector.delete_confirm')}
+                    content={t('record_selector.delete_confirm')}
                     confirmButton={t('admin.submit')}
                     cancelButton={t('admin.cancel')}
                 />
@@ -113,4 +120,4 @@ function FileSelectorView({onChange, label, value, disabled, libraries}: IFileSe
     );
 }
 
-export default FileSelectorView;
+export default RecordSelector;

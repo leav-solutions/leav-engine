@@ -44,6 +44,12 @@ function GeneralAdminPermissionsTab(): JSX.Element {
             PermissionsActions.admin_access_tasks,
             PermissionsActions.admin_cancel_task,
             PermissionsActions.admin_delete_task
+        ],
+        api_keys: [
+            PermissionsActions.admin_access_api_keys,
+            PermissionsActions.admin_edit_api_key,
+            PermissionsActions.admin_create_api_key,
+            PermissionsActions.admin_delete_api_key
         ]
     };
 
