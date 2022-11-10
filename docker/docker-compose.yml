@@ -67,6 +67,9 @@ x-env-core: &env-core
   MAILER_PORT: 587
   MAILER_AUTH_USER: test@leav-solutions.com
   MAILER_AUTH_PWD: B2nwhDJjeVq52YZ
+  SERVER_ADMIN_LOGIN: admin
+  SERVER_ADMIN_PASSWORD: admin
+  SERVER_ADMIN_EMAIL: test@leav-solutions.com
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
