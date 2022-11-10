@@ -8,8 +8,11 @@ import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {IAttributeForRepo, IAttributeRepo} from '../../attribute/attributeRepo';
 import {ILibraryRepo} from '../../library/libraryRepo';
 import {collectionTypes, IDbService} from '../dbService';
+import {IConfig} from '../../../_types/config';
+import * as bcrypt from 'bcryptjs';
 
 interface IDeps {
+    config?: IConfig;
     'core.infra.db.dbService'?: IDbService;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.attribute'?: IAttributeRepo;
@@ -17,6 +20,7 @@ interface IDeps {
 }
 
 export default function ({
+    config = null,
     'core.infra.db.dbService': dbService = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.attribute': attributeRepo = null,
@@ -82,6 +86,13 @@ export default function ({
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.ENCRYPTED,
                     label: {fr: 'Mot de passe', en: 'Password'}
+                },
+                {
+                    ...commonAttributeData,
+                    id: 'email',
+                    type: AttributeTypes.SIMPLE,
+                    format: AttributeFormats.TEXT,
+                    label: {fr: 'Email', en: 'Email'}
                 }
             ];
 
@@ -129,6 +140,9 @@ export default function ({
                     ctx
                 });
 
+                const salt = await bcrypt.genSalt(10);
+                const adminPwd = await bcrypt.hash(config.server.admin.password, salt);
+
                 await dbService.execute({
                     query: `INSERT {
                             _key: '1',
@@ -136,8 +150,9 @@ export default function ({
                             modified_at: ${moment().unix()},
                             created_by: '1',
                             modified_by: '1',
-                            login: 'admin',
-                            password: '$2b$10$5Xfl5NHANL9kingYuicNR.naIL23PnTqqZBJKmhhhzVlYjQFXTcya'
+                            login: '${config.server.admin.login}',
+                            password: '${adminPwd}',
+                            email: '${config.server.admin.email}'
                         } IN users`,
                     ctx
                 });
@@ -154,7 +169,16 @@ export default function ({
             // Save default attributes to users library
             await libraryRepo.saveLibraryAttributes({
                 libId: 'users',
-                attributes: ['id', 'created_by', 'created_at', 'modified_by', 'modified_at', 'login', 'password'],
+                attributes: [
+                    'id',
+                    'created_by',
+                    'created_at',
+                    'modified_by',
+                    'modified_at',
+                    'login',
+                    'password',
+                    'email'
+                ],
                 ctx
             });
         }

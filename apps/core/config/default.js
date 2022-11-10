@@ -14,7 +14,12 @@ module.exports = {
          * the value is passed to the bytes library for parsing (https://www.npmjs.com/package/bytes).
          */
         uploadLimit: process.env.SERVER_UPLOAD_LIMIT || '100mb',
-        supportEmail: process.env.SERVER_SUPPORT_EMAIL
+        supportEmail: process.env.SERVER_SUPPORT_EMAIL,
+        admin: {
+            login: process.env.SERVER_ADMIN_LOGIN,
+            password: process.env.SERVER_ADMIN_PASSWORD,
+            email: process.env.SERVER_ADMIN_EMAIL
+        }
     },
     db: {
         url: process.env.ARANGO_URL,

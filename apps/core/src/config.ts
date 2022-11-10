@@ -16,7 +16,12 @@ export const validateConfig = (conf: IConfig) => {
             wsUrl: Joi.string().required(),
             apiEndpoint: Joi.string().required(),
             uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
-            supportEmail: Joi.string().required()
+            supportEmail: Joi.string().required(),
+            admin: {
+                login: Joi.string().required(),
+                password: Joi.string().required(),
+                email: Joi.string().email().required()
+            }
         }),
         db: Joi.object().keys({
             url: Joi.string().required(),

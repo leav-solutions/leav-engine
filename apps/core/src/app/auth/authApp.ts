@@ -81,7 +81,7 @@ export default function({
 
                         // Get user id
                         const ctx: IQueryInfos = {
-                            userId: '0',
+                            userId: config.defaultUserId,
                             queryId: 'authenticate'
                         };
 
@@ -184,16 +184,17 @@ export default function({
                             return res.status(401).send('Missing mail');
                         }
 
+                        // TODO: add lang to context
                         // Get user id
                         const ctx: IQueryInfos = {
-                            userId: '0',
+                            userId: config.defaultUserId,
                             queryId: 'password-forgotten'
                         };
 
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: mail}] // FIXME: use mail attribute
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: mail}]
                             },
                             ctx
                         });
@@ -208,7 +209,7 @@ export default function({
                         const token = jwt.sign(
                             {
                                 userId: user.id,
-                                mail: user.login // FIXME: use mail attr
+                                mail: user.email
                             },
                             config.auth.key,
                             {
@@ -217,13 +218,7 @@ export default function({
                             }
                         );
 
-                        await userDomain.sendResetPasswordEmail(
-                            'j.bel@aristid.com', // FIXME: use the user mail
-                            token,
-                            user.login,
-                            ua.browser,
-                            ua.os
-                        );
+                        await userDomain.sendResetPasswordEmail(user.email, token, user.login, ua.browser, ua.os);
 
                         return res.sendStatus(200);
                     } catch (err) {

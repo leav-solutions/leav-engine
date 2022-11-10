@@ -50,21 +50,23 @@ export default function ({
                     continue;
                 }
 
-                await libraryRepo.createLibrary({
-                    libData: {
-                        id: directoriesLibraryId,
-                        behavior: LibraryBehavior.DIRECTORIES,
-                        label: config.lang.available.reduce((acc, lang) => {
-                            acc[lang] = translator.t('files.directories', {lng: lang});
-                            return acc;
-                        }, {}),
-                        system: false,
-                        recordIdentityConf: {
-                            label: FilesAttributes.FILE_NAME
-                        }
-                    },
-                    ctx
-                });
+                if (!(await dbService.collectionExists(directoriesLibraryId))) {
+                    await libraryRepo.createLibrary({
+                        libData: {
+                            id: directoriesLibraryId,
+                            behavior: LibraryBehavior.DIRECTORIES,
+                            label: config.lang.available.reduce((acc, lang) => {
+                                acc[lang] = translator.t('files.directories', {lng: lang});
+                                return acc;
+                            }, {}),
+                            system: false,
+                            recordIdentityConf: {
+                                label: FilesAttributes.FILE_NAME
+                            }
+                        },
+                        ctx
+                    });
+                }
 
                 await libraryRepo.saveLibraryAttributes({
                     libId: directoriesLibraryId,
