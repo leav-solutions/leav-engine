@@ -38,7 +38,8 @@
         "title": "General",
         "infos": "Informations",
         "admin_permissions": "Admin permissions",
-        "version": "LEAV Engine v{{version}}"
+        "version": "LEAV Engine v{{version}}",
+        "api_keys": "API keys"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occured",
@@ -221,7 +222,8 @@
             "preferences": "Preferences",
             "applications": "Applications",
             "application": "Application",
-            "version_profiles": "Version profiles"
+            "version_profiles": "Version profiles",
+            "api_keys": "API keys"
         }
     },
     "login": {
@@ -381,9 +383,9 @@
         "task-duration": "Duration",
         "task-archive": "Archive"
     },
-    "file_selector": {
-        "select": "Select a file",
-        "delete_confirm": "Do you really want to delete this file?",
+    "record_selector": {
+        "select": "Select a record",
+        "delete_confirm": "Do you really want to delete this record?",
         "select_library": "Select library"
     },
     "permissions_settings": {
@@ -404,5 +406,30 @@
         "link_attributes": "Link attributes",
         "unlink_attribute_confirm": "Do you really to remove this profile from attribute {{attributeLabel}}?",
         "confirm_delete": "Do you really want to delete profile {{profileLabel}}?"
+    },
+    "api_keys": {
+        "expires_at": "Expiration",
+        "user": "User",
+        "never_expired": "Never",
+        "expiration_warning": "This key has expired",
+        "confirm_delete": "Do you really want to delete the key {{keyLabel}}?",
+        "expiresAt": "Expiration date",
+        "expiration_reminder": "This key will expire on {{date}}",
+        "expiration_reminder_never": "This key will never expire",
+        "expiration_reminder_expired": "This key has expired",
+        "edit_expiration": "Edit expiration date",
+        "one_week": "In one week",
+        "one_month": "In one month",
+        "six_months": "In six months",
+        "one_year": "In one year",
+        "custom": "Custom date",
+        "select_expiration_date": "Select expiration date",
+        "creation_details": "Created on {{date}} by {{user}}",
+        "modification_details": "modified on {{date}} by {{user}}",
+        "new": "New API key",
+        "key_display": "Key successfully created: {{key}}",
+        "key_display_warning": "Warning, this key will not be displayed again. If you lose it, you will have to create a new one.",
+        "copy_key": "Copy key",
+        "copy_success": "Key copied"
     }
 }

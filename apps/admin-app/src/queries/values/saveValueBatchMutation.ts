@@ -17,7 +17,22 @@ export const saveValueBatchQuery = gql`
                 id_value
                 modified_at
                 created_at
-                version
+                version {
+                    treeId
+                    treeNode {
+                        id
+                        record {
+                            id
+                            whoAmI {
+                                id
+                                label
+                                library {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
                 attribute {
                     id
                 }

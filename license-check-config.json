@@ -42,6 +42,7 @@
         "**/admin-app/src/semantic-ui/**/*",
         "**/admin-app/craco.config.js",
         "**/craco.config.js",
-        "**/theme.config"
+        "**/theme.config",
+        "**/*.svg"
     ]
 }

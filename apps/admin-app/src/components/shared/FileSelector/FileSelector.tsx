@@ -10,7 +10,7 @@ import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import ErrorDisplay from '../ErrorDisplay';
 import Loading from '../Loading';
-import FileSelectorView from './FileSelectorView';
+import RecordSelector from '../RecordSelector';
 
 interface IFileSelectorProps {
     onChange: (selectedFile: RecordIdentity_whoAmI) => void;
@@ -43,12 +43,12 @@ function FileSelector({label, value, onChange, disabled}: IFileSelectorProps): J
     }
 
     return (
-        <FileSelectorView
+        <RecordSelector
             label={label}
             value={value}
             onChange={onChange}
             disabled={disabled}
-            libraries={filesLibraries}
+            libraries={filesLibraries.map(l => l.id)}
         />
     );
 }

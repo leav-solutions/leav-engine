@@ -19,6 +19,12 @@ jest.mock('./GeneralAdminPermissionsTab', () => {
     };
 });
 
+jest.mock('./GeneralApiKeysTab', () => {
+    return function GeneralApiKeysTab() {
+        return <div>GeneralApiKeysTab</div>;
+    };
+});
+
 describe('General', () => {
     test('Render test', async () => {
         await act(async () => {
@@ -32,11 +38,18 @@ describe('General', () => {
         expect(screen.getByText('GeneralInfosTab')).toBeInTheDocument();
 
         const adminTabLink = screen.getByText(/admin_permissions/);
+        const apiKeysTabLink = screen.getByText(/api_keys/);
 
         await act(async () => {
             userEvent.click(adminTabLink);
         });
 
         expect(screen.getByText('GeneralAdminPermissionsTab')).toBeInTheDocument();
+
+        await act(async () => {
+            userEvent.click(apiKeysTabLink);
+        });
+
+        expect(screen.getByText('GeneralApiKeysTab')).toBeInTheDocument();
     });
 });
