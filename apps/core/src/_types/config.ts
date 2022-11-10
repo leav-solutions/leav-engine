@@ -40,6 +40,11 @@ export interface IServer {
     apiEndpoint: string;
     uploadLimit: number | string;
     supportEmail: string;
+    admin: {
+        login: string;
+        password: string;
+        email: string;
+    };
 }
 
 export interface IDb {
