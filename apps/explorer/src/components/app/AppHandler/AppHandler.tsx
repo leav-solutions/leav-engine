@@ -1,15 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {localizedTranslation} from '@leav/utils';
 import {useQuery, useSubscription} from '@apollo/client';
+import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import ApplicationContext from 'context/ApplicationContext';
 import {getApplicationByIdQuery} from 'graphQL/queries/applications/getApplicationByIdQuery';
-import React, {useEffect} from 'react';
+import {getTasks} from 'graphQL/queries/tasks/getTasks';
+import {getTaskUpdates} from 'graphQL/subscribes/tasks/getTaskUpdates';
+import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useAppDispatch} from 'redux/store';
+import {addTask} from 'redux/tasks';
 import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
@@ -19,10 +23,6 @@ import {getSysTranslationQueryLanguage} from '../../../utils';
 import {ME} from '../../../_gqlTypes/ME';
 import {AvailableLanguage} from '../../../_types/types';
 import Router from '../../Router';
-import {getTasks} from 'graphQL/queries/tasks/getTasks';
-import {addTask} from 'redux/tasks';
-import {useAppDispatch} from 'redux/store';
-import {getTaskUpdates} from 'graphQL/subscribes/tasks/getTaskUpdates';
 
 function AppHandler(): JSX.Element {
     const {t, i18n} = useTranslation();
@@ -98,7 +98,10 @@ function AppHandler(): JSX.Element {
     }, [updateUser, user, meLoading, userData]);
 
     useEffect(() => {
-        document.title = t('global.document_title', {appLabel: localizedTranslation(currentApp?.label, langInfo.lang)});
+        document.title = t('global.document_title', {
+            appLabel: localizedTranslation(currentApp?.label, langInfo.lang),
+            interpolation: {escapeValue: false}
+        });
     }, [currentApp, langInfo.lang, t]);
 
     if (meLoading || applicationLoading) {
