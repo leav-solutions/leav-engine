@@ -11,17 +11,17 @@ import cookieParser from 'cookie-parser';
 import express, {NextFunction, Request, Response} from 'express';
 import {execute, GraphQLFormattedError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
+import * as graphqlWS from 'graphql-ws/lib/use/ws';
+import {createServer} from 'http';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
+import {WebSocketServer} from 'ws';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {ACCESS_TOKEN_COOKIE_NAME} from '../_types/auth';
 import AuthenticationError from '../errors/AuthenticationError';
+import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
-import {WebSocketServer} from 'ws';
-import * as graphqlWS from 'graphql-ws/lib/use/ws';
-import {createServer} from 'http';
 
 export interface IServer {
     init(): Promise<void>;
@@ -91,7 +91,7 @@ export default function ({
 
     const _checkAuth = async (req, res, next) => {
         try {
-            await authApp.validateRequestToken(req.headers.authorization, req.cookies);
+            await authApp.validateRequestToken({apiKey: String(req.query[API_KEY_PARAM_NAME]), cookies: req.cookies});
 
             next();
         } catch (err) {
@@ -178,10 +178,14 @@ export default function ({
                                     const arrCookie = headers.Cookie.split('=');
                                     const tokenIdx = headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1;
 
-                                    const payload = await authApp.validateRequestToken(arrCookie[tokenIdx]);
+                                    const payload = await authApp.validateRequestToken({
+                                        apiKey: null,
+                                        cookies: {[ACCESS_TOKEN_COOKIE_NAME]: arrCookie[tokenIdx]}
+                                    });
 
                                     const context: IQueryInfos = {
-                                        userId: payload.userId
+                                        userId: payload.userId,
+                                        groupsId: payload.groupsId
                                     };
 
                                     return context;
@@ -237,7 +241,10 @@ export default function ({
                     },
                     context: async ({req, res}): Promise<IQueryInfos> => {
                         try {
-                            const payload = await authApp.validateRequestToken(req.headers.authorization, req.cookies);
+                            const payload = await authApp.validateRequestToken({
+                                apiKey: String(req.query[API_KEY_PARAM_NAME]),
+                                cookies: req.cookies
+                            });
 
                             const ctx: IQueryInfos = {
                                 userId: payload.userId,
@@ -248,7 +255,7 @@ export default function ({
 
                             return ctx;
                         } catch (e) {
-                            throw new ApolloAuthenticationError('you must be logged in');
+                            throw new ApolloAuthenticationError(e.message ?? 'You must be logged in');
                         }
                     },
                     // We're using a gateway here instead of a simple schema definition because we need to be able

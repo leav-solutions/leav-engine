@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {makeGraphQlCall} from '../e2eUtils';
+import axios from 'axios';
+import {getGraphQLUrl, makeGraphQlCall} from '../e2eUtils';
 
 describe('ApiKeys', () => {
-    let keyId: string;
-
     test('CRUD', async () => {
-        // Create profile
+        // Create key
         const resSaveApiKey = await makeGraphQlCall(`mutation {
             saveApiKey(apiKey: {
                 label: "test key",
@@ -32,7 +31,7 @@ describe('ApiKeys', () => {
         expect(resSaveApiKey.data.data.saveApiKey.key).toBeTruthy();
         expect(resSaveApiKey.data.data.saveApiKey.expiresAt).toBeTruthy();
         expect(resSaveApiKey.data.data.saveApiKey.user.id).toBeTruthy();
-        keyId = resSaveApiKey.data.data.saveApiKey.id;
+        const keyId = resSaveApiKey.data.data.saveApiKey.id;
 
         // Get view
         const resGetApiKeys = await makeGraphQlCall(`{
@@ -87,5 +86,73 @@ describe('ApiKeys', () => {
         expect(resDeleteKey.status).toBe(200);
         expect(resDeleteKey.data.errors).toBeUndefined();
         expect(resDeleteKey.data.data.deleteApiKey.id).toBe(keyId);
+    });
+
+    test('Authenticate with API key', async () => {
+        // Create key
+        const resSaveApiKey = await makeGraphQlCall(`mutation {
+            saveApiKey(apiKey: {
+                label: "test key",
+                expiresAt: null,
+                userId: "1"
+            }) {
+                id
+                key
+            }
+        }`);
+
+        const apiKey = resSaveApiKey.data.data.saveApiKey.key;
+
+        // Make a query using the key
+        const url = await getGraphQLUrl();
+        const urlWithKey = `${url}?key=${apiKey}`;
+
+        const query = `{
+            me {
+                id
+            }
+        }`;
+
+        const data = {query};
+
+        let res;
+        try {
+            res = await axios.post(urlWithKey, data);
+        } catch (e) {
+            console.error(e);
+            console.trace();
+        }
+
+        expect(res.data.data.me.id).toBe('1');
+    });
+
+    test('It should fail, if using an expired key', async () => {
+        // Create key
+        const resSaveApiKey = await makeGraphQlCall(`mutation {
+            saveApiKey(apiKey: {
+                label: "test key expired",
+                expiresAt: 1234567890,
+                userId: "1"
+            }) {
+                id
+                key
+            }
+        }`);
+
+        const apiKey = resSaveApiKey.data.data.saveApiKey.key;
+
+        // Make a query using the key
+        const url = await getGraphQLUrl();
+        const urlWithKey = `${url}?key=${apiKey}`;
+
+        const query = `{
+            me {
+                id
+            }
+        }`;
+
+        const data = {query};
+
+        expect(() => axios.post(urlWithKey, data)).rejects.toThrow();
     });
 });

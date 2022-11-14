@@ -37,6 +37,7 @@ import {
     IApplicationInstall,
     IApplicationModule
 } from '../../_types/application';
+import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 
@@ -293,8 +294,12 @@ export default function ({
                     }
 
                     try {
-                        const payload = await authApp.validateRequestToken(req.headers.authorization, req.cookies);
+                        const payload = await authApp.validateRequestToken({
+                            apiKey: String(req.query[API_KEY_PARAM_NAME]),
+                            cookies: req.cookies
+                        });
                         req.ctx.userId = payload.userId;
+                        req.ctx.groupsId = payload.groupsId;
 
                         next();
                     } catch {
