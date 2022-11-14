@@ -67,20 +67,11 @@ export const filesystem = ({filesystem: fsys, allowFilesList, ignoreFilesList}: 
     });
 
 export const database = async ({graphql}: IConfig): Promise<IDbScanResult> => {
-    const httpLink: ApolloLink = createHttpLink({uri: graphql.uri, fetch: fetch as any});
-
-    const authLink: ApolloLink = new ApolloLink((operation, forward) => {
-        operation.setContext({
-            headers: {
-                authorization: graphql.token
-            }
-        });
-
-        return forward(operation);
-    });
+    const url = `${graphql.uri}?key=${graphql.apiKey}`;
+    const httpLink: ApolloLink = createHttpLink({uri: url, fetch: fetch as any});
 
     const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
-        link: authLink.concat(httpLink),
+        link: httpLink,
         cache: new InMemoryCache()
     });
 
