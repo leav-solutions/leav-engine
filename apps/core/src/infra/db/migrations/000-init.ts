@@ -37,6 +37,7 @@ export default function ({
                 system: true,
                 multiple_values: false
             };
+
             const attributesToCreate: IAttributeForRepo[] = [
                 {
                     ...commonAttributeData,
@@ -86,13 +87,6 @@ export default function ({
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.ENCRYPTED,
                     label: {fr: 'Mot de passe', en: 'Password'}
-                },
-                {
-                    ...commonAttributeData,
-                    id: 'email',
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.TEXT,
-                    label: {fr: 'Email', en: 'Email'}
                 }
             ];
 
@@ -152,7 +146,6 @@ export default function ({
                             modified_by: '1',
                             login: '${config.server.admin.login}',
                             password: '${adminPwd}',
-                            email: '${config.server.admin.email}'
                         } IN users`,
                     ctx
                 });
@@ -169,16 +162,7 @@ export default function ({
             // Save default attributes to users library
             await libraryRepo.saveLibraryAttributes({
                 libId: 'users',
-                attributes: [
-                    'id',
-                    'created_by',
-                    'created_at',
-                    'modified_by',
-                    'modified_at',
-                    'login',
-                    'password',
-                    'email'
-                ],
+                attributes: ['id', 'created_by', 'created_at', 'modified_by', 'modified_at', 'login', 'password'],
                 ctx
             });
         }
