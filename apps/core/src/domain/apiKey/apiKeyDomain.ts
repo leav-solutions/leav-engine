@@ -124,7 +124,7 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
                 dataToSave.key = await _hashApiKey(keyString);
                 dataToSave.createdAt = now;
                 dataToSave.createdBy = modifier;
-                delete dataToSave.id; // To make "id" is not present at all
+                delete dataToSave.id; // To make sure "id" is not present at all
             } else {
                 delete dataToSave.key; // Don't update the key
             }
