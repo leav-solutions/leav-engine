@@ -6,8 +6,8 @@ module.exports = {
         host: '0.0.0.0',
         port: 7357,
         admin: {
-            login: 'login',
-            password: 'password',
+            login: 'admin',
+            password: 'admin',
             email: 'email@domain.com'
         }
     },
