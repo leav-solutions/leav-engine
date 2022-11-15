@@ -4,7 +4,12 @@
 module.exports = {
     server: {
         host: '0.0.0.0',
-        port: 7357
+        port: 7357,
+        admin: {
+            login: 'login',
+            password: 'password',
+            email: 'email@domain.com'
+        }
     },
     db: {
         name: 'leav_test'
