@@ -49,6 +49,10 @@ export const attributeDetailsFragment = gql`
             label
         }
 
+        ... on StandardAttribute {
+            unique
+        }
+
         ... on LinkAttribute {
             linked_library {
                 id
@@ -67,6 +71,7 @@ export const attributeValuesListDetailsFragment = gql`
     ${recordIdentityFragment}
     fragment AttributeValuesListDetails on Attribute {
         ... on StandardAttribute {
+            unique
             values_list {
                 ... on StandardStringValuesListConf {
                     enable

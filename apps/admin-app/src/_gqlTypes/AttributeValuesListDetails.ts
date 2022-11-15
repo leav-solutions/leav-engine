@@ -34,6 +34,7 @@ export type AttributeValuesListDetails_StandardAttribute_values_list =
     | AttributeValuesListDetails_StandardAttribute_values_list_StandardDateRangeValuesListConf;
 
 export interface AttributeValuesListDetails_StandardAttribute {
+    unique: boolean | null;
     values_list: AttributeValuesListDetails_StandardAttribute_values_list | null;
 }
 

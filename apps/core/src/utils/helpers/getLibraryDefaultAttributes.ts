@@ -6,7 +6,7 @@ import {LibraryBehavior, USERS_LIBRARY} from '../../_types/library';
 
 export default (behavior: LibraryBehavior, libraryId: string): string[] => {
     const libraryCommonAttributes = {
-        [USERS_LIBRARY]: ['user_groups', 'password', 'login']
+        [USERS_LIBRARY]: ['user_groups', 'password', 'login', 'email']
     };
 
     const commonAttributes = [

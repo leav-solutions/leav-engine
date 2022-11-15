@@ -92,6 +92,7 @@
         "format": "Format",
         "isSystem": "Système",
         "readonly": "Lecture seule",
+        "unique": "Unique",
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer l'attribut {{attrLabel}}?",
         "available_actions": "Actions disponibles",
         "action_list": "Liste d'actions",

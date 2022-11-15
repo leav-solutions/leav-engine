@@ -30,11 +30,16 @@ const _validateSettings = (
     if (!deps.utils.isIdValid(attrData.id)) {
         errors.id = Errors.INVALID_ID_FORMAT;
     }
+
     if (
         (attrData.type === AttributeTypes.SIMPLE || attrData.type === AttributeTypes.SIMPLE_LINK) &&
         attrData.multiple_values
     ) {
         errors.multiple_values = Errors.MULTIPLE_VALUES_NOT_ALLOWED;
+    }
+
+    if (attrData.type !== AttributeTypes.SIMPLE && typeof attrData.unique !== 'undefined') {
+        errors.unique = Errors.UNIQUE_VALUE_NOT_ALLOWED;
     }
 
     return errors;

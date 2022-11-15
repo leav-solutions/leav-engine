@@ -42,6 +42,7 @@ export default function ({
                 label: {fr: 'Email', en: 'Email'},
                 multiple_values: false,
                 readonly: false,
+                unique: true,
                 versions_conf: {versionable: false},
                 actions_list: {
                     [ActionsListEvents.SAVE_VALUE]: [
