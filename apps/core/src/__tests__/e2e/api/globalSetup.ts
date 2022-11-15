@@ -10,6 +10,7 @@ import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {initRedis} from '../../../infra/cache/redis';
+import {initMailer} from '../../../infra/mailer';
 import {initPlugins} from '../../../pluginsLoader';
 import {IConfig} from '../../../_types/config';
 
@@ -39,12 +40,15 @@ export const init = async (conf: IConfig): Promise<any> => {
     // Init AMQP
     const amqp = await amqpService({config: conf.amqp});
     const redisClient = await initRedis({config: conf});
+    const mailer = await initMailer({config: conf});
 
     const {coreContainer, pluginsContainer} = await initDI({
         translator,
         'core.infra.amqpService': amqp,
-        'core.infra.redis': redisClient
+        'core.infra.redis': redisClient,
+        'core.infra.mailer': mailer
     });
+
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
     // Clear all caches (redis cache for example might persist between runs)

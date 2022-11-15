@@ -74,16 +74,14 @@ export default function ({
                 ctx
             });
 
-            // It already exists, move on
-            if (attributeFromDb.list.length) {
-                return;
+            // It already not exists, create it
+            if (!attributeFromDb.list.length) {
+                // Let's create it
+                await attributeRepo.createAttribute({
+                    attrData: emailAttr,
+                    ctx: {}
+                });
             }
-
-            // Let's create it
-            await attributeRepo.createAttribute({
-                attrData: emailAttr,
-                ctx: {}
-            });
 
             // Save default attributes to users library
             await libraryRepo.saveLibraryAttributes({
@@ -107,6 +105,17 @@ export default function ({
                     UPDATE doc WITH {
                         email: "${config.server.admin.email}"
                     } IN users
+                `,
+                ctx
+            });
+
+            // Add unique attribute to login
+            await dbService.execute({
+                query: `
+                    LET doc = DOCUMENT("core_attributes/login")
+                    UPDATE doc WITH {
+                        unique: true
+                    } IN core_attributes
                 `,
                 ctx
             });
