@@ -12,6 +12,31 @@ import {ValueVersionInput, ValueBatchInput} from './globalTypes';
 // GraphQL mutation operation: SAVE_VALUE_BATCH
 // ====================================================
 
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_record_whoAmI_library;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_record {
+    id: string;
+    whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_record_whoAmI;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode {
+    id: string;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_record;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_version {
+    treeId: string;
+    treeNode: SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode | null;
+}
+
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute {
     id: string;
 }
@@ -20,10 +45,35 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value {
     id_value: string | null;
     modified_at: number | null;
     created_at: number | null;
-    version: ValueVersion | null;
+    version: (SAVE_VALUE_BATCH_saveValueBatch_values_Value_version | null)[] | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute | null;
     value: Any | null;
     raw_value: Any | null;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode_record_whoAmI_library;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode_record {
+    id: string;
+    whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode_record_whoAmI;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode {
+    id: string;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode_record;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version {
+    treeId: string;
+    treeNode: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_attribute {
@@ -60,9 +110,34 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue {
     id_value: string | null;
     modified_at: number | null;
     created_at: number | null;
-    version: ValueVersion | null;
+    version: (SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version | null)[] | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_attribute | null;
     linkValue: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue | null;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode_record_whoAmI_library;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode_record {
+    id: string;
+    whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode_record_whoAmI;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode {
+    id: string;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode_record;
+}
+
+export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version {
+    treeId: string;
+    treeNode: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_attribute {
@@ -134,7 +209,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue {
     id_value: string | null;
     modified_at: number | null;
     created_at: number | null;
-    version: ValueVersion | null;
+    version: (SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version | null)[] | null;
     attribute: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_attribute | null;
     treeValue: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue | null;
 }

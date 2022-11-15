@@ -37,7 +37,8 @@
         "title": "Général",
         "infos": "Informations",
         "admin_permissions": "Permissions administration",
-        "version": "LEAV Engine v{{version}}"
+        "version": "LEAV Engine v{{version}}",
+        "api_keys": "Clés d'API"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
@@ -226,7 +227,8 @@
             "preferences": "Préférences",
             "applications": "Applications",
             "application": "Application",
-            "version_profiles": "Profils de version"
+            "version_profiles": "Profils de version",
+            "api_keys": "Clés API"
         }
     },
     "login": {
@@ -387,9 +389,9 @@
         "task-duration": "Durée",
         "task-archive": "Archive"
     },
-    "file_selector": {
-        "select": "Sélectionner un fichier",
-        "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce fichier?",
+    "record_selector": {
+        "select": "Sélectionner un élément",
+        "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet élément?",
         "select_library": "Sélectionner une bibliothèque"
     },
     "permissions_settings": {
@@ -410,5 +412,30 @@
         "link_attributes": "Lier des attributs",
         "unlink_attribute_confirm": "Êtes-vous sûr de vouloir supprimer ce profil de l'attribut {{attributeLabel}}?",
         "confirm_delete": "Êtes-vous sûr de vouloir supprimer le profil {{profileLabel}}?"
+    },
+    "api_keys": {
+        "expires_at": "Expiration",
+        "user": "Utilisateur",
+        "never": "Jamais",
+        "expiration_warning": "Cette clé a expiré",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer la clé {{keyLabel}}?",
+        "expiresAt": "Date d'expiration",
+        "expiration_reminder": "La clé expirera le {{date}}",
+        "expiration_reminder_expired": "La clé a expiré le {{date}}",
+        "expiration_reminder_never": "La clé n'expirera jamais",
+        "edit_expiration": "Modifier la date d'expiration",
+        "one_week": "Dans une semaine",
+        "one_month": "Dans un mois",
+        "six_months": "Dans six mois",
+        "one_year": "Dans un an",
+        "custom": "Date personnalisée",
+        "select_expiration_date": "Sélectionner une date d'expiration",
+        "creation_details": "Créée le {{date}} par {{user}}",
+        "modification_details": "modifiée le {{date}} par {{user}}",
+        "new": "Nouvelle clé d'API",
+        "key_display": "Clé créée avec succès: {{key}}",
+        "key_display_warning": "Attention, cette clé ne sera affichée qu'une seule fois. Si vous la perdez, vous devrez en créer une nouvelle.",
+        "copy_key": "Copier la clé",
+        "copy_success": "Clé copiée"
     }
 }

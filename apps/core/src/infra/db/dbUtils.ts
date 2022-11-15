@@ -59,7 +59,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils.logger': logger = null,
@@ -109,6 +109,7 @@ export default function ({
             if (filterKey === 'label') {
                 // Search for label in any language
                 const valParts = config.lang.available.map(l => aql`LIKE(el.label.${l}, ${filterVal}, true)`);
+                valParts.push(aql`LIKE(el.label, ${filterVal}, true)`); // In case label is not translated
                 queryParts.push(aql.join(valParts, ' OR '));
             } else {
                 // Filter with a "like" on ID or exact value in other fields

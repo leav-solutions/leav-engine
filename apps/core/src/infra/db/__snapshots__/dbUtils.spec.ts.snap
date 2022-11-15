@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`dbUtils findCoreEntity Filter with a LIKE on ID 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true) RETURN el"`;
+exports[`dbUtils findCoreEntity Filter with a LIKE on ID 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true) OR LIKE(el.label, @value6, true) RETURN el"`;
 
 exports[`dbUtils findCoreEntity Filter with a LIKE on ID 2`] = `
 {
@@ -23,7 +23,7 @@ exports[`dbUtils findCoreEntity Find core entity without filters 2`] = `
 }
 `;
 
-exports[`dbUtils findCoreEntity Should filter label on any language 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true) RETURN el"`;
+exports[`dbUtils findCoreEntity Should filter label on any language 1`] = `"FOR el IN @@value0 FILTER LIKE(el.@value1, @value2, true) FILTER el.@value3 == @value4 FILTER LIKE(el.label.@value5, @value6, true) OR LIKE(el.label.@value7, @value6, true) OR LIKE(el.label, @value6, true) RETURN el"`;
 
 exports[`dbUtils findCoreEntity Should filter label on any language 2`] = `
 {

@@ -11,13 +11,13 @@ describe('ApiKeys', () => {
         const resSaveApiKey = await makeGraphQlCall(`mutation {
             saveApiKey(apiKey: {
                 label: "test key",
-                expires_at: 1234567890,
-                user_id: "1"
+                expiresAt: 1234567890,
+                userId: "1"
             }) {
               id
               label
               key
-              expires_at
+              expiresAt
               user {
                 id
               }
@@ -30,7 +30,7 @@ describe('ApiKeys', () => {
         expect(resSaveApiKey.data.data.saveApiKey.id).toBeTruthy();
         expect(resSaveApiKey.data.data.saveApiKey.label).toBeTruthy();
         expect(resSaveApiKey.data.data.saveApiKey.key).toBeTruthy();
-        expect(resSaveApiKey.data.data.saveApiKey.expires_at).toBeTruthy();
+        expect(resSaveApiKey.data.data.saveApiKey.expiresAt).toBeTruthy();
         expect(resSaveApiKey.data.data.saveApiKey.user.id).toBeTruthy();
         keyId = resSaveApiKey.data.data.saveApiKey.id;
 
@@ -61,7 +61,7 @@ describe('ApiKeys', () => {
             saveApiKey(apiKey: {
               id: "${keyId}",
               label: "test key modified",
-              user_id: "2"
+              userId: "2"
             }) {
               id
               label
