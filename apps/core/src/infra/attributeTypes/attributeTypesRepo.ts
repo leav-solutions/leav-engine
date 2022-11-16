@@ -80,6 +80,23 @@ export interface IAttributeTypeRepo {
     }): Promise<IValue>;
 
     /**
+     * Check if a value is unique
+     */
+    isValueUnique?({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }: {
+        library: string;
+        recordId: string;
+        attribute: IAttribute;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<boolean>;
+
+    /**
      * Get all values for given record and attribute
      *
      * @return Array<{}>    Return an empty array if no value found

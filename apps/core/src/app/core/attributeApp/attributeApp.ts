@@ -50,7 +50,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function(deps: IDeps = {}): ICoreAttributeApp {
+export default function (deps: IDeps = {}): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.record': recordDomain = null,
@@ -187,6 +187,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         ${attributesInterfaceSchema}
                         embedded_fields: [EmbeddedAttribute],
                         values_list: StandardValuesListConf,
+                        unique: Boolean
                     }
 
                     type LinkAttribute implements Attribute{
@@ -218,7 +219,8 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         versions_conf: ValuesVersionsConfInput,
                         metadata_fields: [String!],
                         values_list: ValuesListConfInput,
-                        reverse_link: String
+                        reverse_link: String,
+                        unique: Boolean
                     }
 
                     type EmbeddedAttribute {

@@ -16,7 +16,6 @@ import {initPlugins} from './pluginsLoader';
 import {amqpService} from '@leav/message-broker';
 import {IApplicationService} from 'infra/application/applicationService';
 import {initMailer} from './infra/mailer';
-import {IMailerService} from 'infra/mailer/mailerService';
 
 (async function () {
     let conf: Config.IConfig;

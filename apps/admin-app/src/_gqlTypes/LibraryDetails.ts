@@ -78,6 +78,7 @@ export interface LibraryDetails_attributes_StandardAttribute {
     permissions_conf: LibraryDetails_attributes_StandardAttribute_permissions_conf | null;
     versions_conf: LibraryDetails_attributes_StandardAttribute_versions_conf | null;
     libraries: LibraryDetails_attributes_StandardAttribute_libraries[] | null;
+    unique: boolean | null;
 }
 
 export interface LibraryDetails_attributes_LinkAttribute_metadata_fields {
