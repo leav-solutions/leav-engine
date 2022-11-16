@@ -8,6 +8,7 @@ import i18nextInit from '../../../i18nextInit';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {initRedis} from '../../../infra/cache/redis';
 import {initDb} from '../../../infra/db/db';
+import {initMailer} from '../../../infra/mailer';
 
 export async function setup() {
     try {
@@ -21,11 +22,13 @@ export async function setup() {
         // Init AMQP
         const amqp = await amqpService({config: conf.amqp});
         const redisClient = await initRedis({config: conf});
+        const mailer = await initMailer({config: conf});
 
         const {coreContainer} = await initDI({
             translator,
             'core.infra.amqpService': amqp,
-            'core.infra.redis': redisClient
+            'core.infra.redis': redisClient,
+            'core.infra.mailer': mailer
         });
 
         // Clear all caches (redis cache for example might persist between runs)

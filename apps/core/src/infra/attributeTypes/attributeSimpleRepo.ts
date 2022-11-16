@@ -75,6 +75,17 @@ export default function({
         async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
             return _saveValue(library, recordId, attribute, {...value, value: null}, ctx);
         },
+        async isValueUnique({library, recordId, attribute, value, ctx}): Promise<boolean> {
+            const query = aql`
+                FOR r IN ${dbService.db.collection(library)} 
+                    FILTER r._key != ${recordId} && r.${attribute.id} == ${value.value}
+                    RETURN r._key
+            `;
+
+            const res = await dbService.execute({query, ctx});
+
+            return !res.length;
+        },
         async getValues({library, recordId, attribute, ctx}): Promise<IStandardValue[]> {
             const query = aql`
                 FOR r IN ${dbService.db.collection(library)}

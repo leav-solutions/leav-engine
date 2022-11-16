@@ -40,6 +40,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute {
     label: SystemTranslation | null;
     type: AttributeType;
     format: AttributeFormat | null;
+    unique: boolean | null;
     values_list: GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute_values_list | null;
 }
 
