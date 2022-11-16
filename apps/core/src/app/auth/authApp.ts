@@ -34,7 +34,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.user': userDomain = null,
@@ -176,10 +176,10 @@ export default function({
                 '/auth/password-forgotten',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
-                        const {mail} = req.body as any;
+                        const {email} = req.body as any;
                         const ua = useragent.parse(req.headers['user-agent']);
 
-                        if (typeof mail === 'undefined') {
+                        if (typeof email === 'undefined') {
                             return res.status(401).send('Missing mail');
                         }
 
@@ -193,7 +193,7 @@ export default function({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: mail}]
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
                             },
                             ctx
                         });
@@ -208,7 +208,7 @@ export default function({
                         const token = jwt.sign(
                             {
                                 userId: user.id,
-                                mail: user.email
+                                email: user.email
                             },
                             config.auth.key,
                             {
@@ -218,6 +218,55 @@ export default function({
                         );
 
                         await userDomain.sendResetPasswordEmail(user.email, token, user.login, ua.browser, ua.os);
+
+                        return res.sendStatus(200);
+                    } catch (err) {
+                        next(err);
+                    }
+                }
+            );
+
+            app.post(
+                '/auth/change-password',
+                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+                    try {
+                        const {token, newPassword} = req.body as any;
+
+                        if (typeof token === 'undefined' || typeof newPassword === 'undefined') {
+                            return res.status(401).send('Missing data required');
+                        }
+
+                        const payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
+
+                        if (typeof payload.userId === 'undefined' || typeof payload.email === 'undefined') {
+                            throw new AuthenticationError('Invalid token');
+                        }
+
+                        const ctx: IQueryInfos = {
+                            userId: config.defaultUserId,
+                            queryId: 'changePassword'
+                        };
+
+                        const users = await recordDomain.find({
+                            params: {
+                                library: 'users',
+                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
+                            },
+                            ctx
+                        });
+
+                        if (!users.list.length) {
+                            throw new AuthenticationError('User not found');
+                        }
+
+                        // save new password
+                        await valueDomain.saveValue({
+                            library: 'users',
+                            recordId: payload.userId,
+                            attribute: 'password',
+                            value: {value: newPassword},
+                            ctx
+                        });
 
                         return res.sendStatus(200);
                     } catch (err) {
@@ -247,7 +296,7 @@ export default function({
             }
 
             const ctx: IQueryInfos = {
-                userId: '0',
+                userId: config.defaultUserId,
                 queryId: 'validateToken'
             };
 
