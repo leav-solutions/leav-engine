@@ -13,6 +13,8 @@ import {GET_ATTRIBUTES_attributes_list} from '_gqlTypes/GET_ATTRIBUTES';
 import {
     GET_ATTRIBUTE_BY_ID_attributes_list,
     GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
+    GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute,
+    GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_libraries,
     GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {Override} from '_types/Override';
@@ -52,6 +54,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     linked_tree: null,
     linked_library: null,
     reverse_link: null,
+    unique: false,
     permissions_conf: null,
     multiple_values: false,
     metadata_fields: null,
@@ -96,9 +99,10 @@ function InfosForm({
                   reverse_link: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute).reverse_link ?? null,
                   linked_tree: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute).linked_tree?.id ?? null,
                   versions_conf: {
-                      ...attribute?.versions_conf,
-                      profile: attribute?.versions_conf?.profile?.id ?? null
-                  }
+                      ...attribute.versions_conf,
+                      profile: attribute.versions_conf.profile?.id ?? null
+                  },
+                  unique: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).unique ?? null
               }
             : defaultAttributeData;
 
@@ -347,6 +351,21 @@ function InfosForm({
                         toggle
                     />
                 </FormFieldWrapper>
+                {values.type === AttributeType.simple && (
+                    <FormFieldWrapper error={_getErrorByField('unique')}>
+                        <Form.Checkbox
+                            label={t('attributes.unique')}
+                            width="4"
+                            disabled={values.system || readonly}
+                            name="unique"
+                            aria-label="unique"
+                            onChange={_handleChangeWithSubmit}
+                            onBlur={_handleBlur}
+                            checked={values.unique}
+                            toggle
+                        />
+                    </FormFieldWrapper>
+                )}
                 {isLinkAttribute && !!values.linked_library && (
                     <FormFieldWrapper error={_getErrorByField('reverse_link')}>
                         <AttributeSelector

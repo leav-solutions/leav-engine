@@ -12,6 +12,99 @@ import {AttributeInput, AttributeType, AttributeFormat, PermissionsRelation, Val
 // GraphQL mutation operation: SAVE_ATTRIBUTE
 // ====================================================
 
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields {
+    id: string;
+    label: SystemTranslation | null;
+    type: AttributeType;
+    format: AttributeFormat | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
+    id: string;
+    label: SystemTranslation | null;
+    linked_tree: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
+}
+
+export type SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes =
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf {
+    permissionTreeAttributes: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes[];
+    relation: PermissionsRelation;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile_trees {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile {
+    id: string;
+    label: SystemTranslation;
+    trees: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile_trees[];
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf {
+    versionable: boolean;
+    mode: ValueVersionMode | null;
+    profile: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    values: string[] | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues {
+    from: string | null;
+    to: string | null;
+}
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf {
+    enable: boolean;
+    allowFreeEntry: boolean | null;
+    dateRangeValues:
+        | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
+        | null;
+}
+
+export type SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list =
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
+
+export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
+    id: string;
+    type: AttributeType;
+    format: AttributeFormat | null;
+    system: boolean;
+    readonly: boolean;
+    label: SystemTranslation | null;
+    description: SystemTranslation | null;
+    multiple_values: boolean;
+    metadata_fields: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields[] | null;
+    permissions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf | null;
+    versions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf | null;
+    libraries: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries[] | null;
+    unique: boolean | null;
+    values_list: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list | null;
+}
+
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_metadata_fields {
     id: string;
     label: SystemTranslation | null;
@@ -260,102 +353,10 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute {
     values_list: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list | null;
 }
 
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields {
-    id: string;
-    label: SystemTranslation | null;
-    type: AttributeType;
-    format: AttributeFormat | null;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute {
-    id: string;
-    label: SystemTranslation | null;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree {
-    id: string;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute {
-    id: string;
-    label: SystemTranslation | null;
-    linked_tree: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute_linked_tree | null;
-}
-
-export type SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes =
-    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_StandardAttribute
-    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes_TreeAttribute;
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf {
-    permissionTreeAttributes: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf_permissionTreeAttributes[];
-    relation: PermissionsRelation;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile_trees {
-    id: string;
-    label: SystemTranslation | null;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile {
-    id: string;
-    label: SystemTranslation;
-    trees: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile_trees[];
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf {
-    versionable: boolean;
-    mode: ValueVersionMode | null;
-    profile: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf_profile | null;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries {
-    id: string;
-    label: SystemTranslation | null;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf {
-    enable: boolean;
-    allowFreeEntry: boolean | null;
-    values: string[] | null;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues {
-    from: string | null;
-    to: string | null;
-}
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf {
-    enable: boolean;
-    allowFreeEntry: boolean | null;
-    dateRangeValues:
-        | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
-        | null;
-}
-
-export type SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list =
-    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf
-    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf;
-
-export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute {
-    id: string;
-    type: AttributeType;
-    format: AttributeFormat | null;
-    system: boolean;
-    readonly: boolean;
-    label: SystemTranslation | null;
-    description: SystemTranslation | null;
-    multiple_values: boolean;
-    metadata_fields: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_metadata_fields[] | null;
-    permissions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_permissions_conf | null;
-    versions_conf: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_versions_conf | null;
-    libraries: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries[] | null;
-    values_list: SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list | null;
-}
-
 export type SAVE_ATTRIBUTE_saveAttribute =
+    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute
     | SAVE_ATTRIBUTE_saveAttribute_LinkAttribute
-    | SAVE_ATTRIBUTE_saveAttribute_TreeAttribute
-    | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute;
+    | SAVE_ATTRIBUTE_saveAttribute_TreeAttribute;
 
 export interface SAVE_ATTRIBUTE {
     saveAttribute: SAVE_ATTRIBUTE_saveAttribute;

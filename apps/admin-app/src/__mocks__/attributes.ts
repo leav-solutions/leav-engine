@@ -42,7 +42,8 @@ export const mockAttrSimpleWithValuesList = {
         enable: true,
         allowFreeEntry: false,
         values: ['value 1', 'value 2']
-    }
+    },
+    unique: null
 };
 
 export const mockAttrAdv = {...base, id: 'advanced_attribute', type: AttributeType.advanced};
@@ -60,7 +61,8 @@ export const mockAttrSimpleLinkWithValuesList = {
         enable: true,
         allowFreeEntry: false,
         values: ['132456', '987654']
-    }
+    },
+    unique: null
 };
 
 export const mockAttrAdvLink: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute = {

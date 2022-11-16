@@ -19,6 +19,7 @@ export interface GET_ATTRIBUTES_attributes_list_StandardAttribute {
     format: AttributeFormat | null;
     system: boolean;
     multiple_values: boolean;
+    unique: boolean | null;
 }
 
 export interface GET_ATTRIBUTES_attributes_list_LinkAttribute_linked_library {

@@ -34,6 +34,7 @@
         "MISSING_REQUIRED_ACTION": "Actions requises manquantes: {{actions}}",
         "MISSING_TARGET": "Cible manquante",
         "MULTIPLE_VALUES_NOT_ALLOWED": "Valeurs multiples non autorisées sur ce type d'attribut",
+        "UNIQUE_VALUE_NOT_ALLOWED": "Valeur unique non autorisée pour ce type d'attribut",
         "NO_IMPORT_MATCHES" : "Clé d'import manquante",
         "NON_FILES_LIBRARY": "Impossible de lier une bibliothèque non-fichiers",
         "PAGINATION_OFFSET_AND_CURSOR": "Impossible d'utiliser un offset et un curseur en même temps",
@@ -67,7 +68,8 @@
         "UNKNOWN_VALUE": "Valeur inconnue",
         "UNKNOWN_VERSION_PROFILE": "Profil de version inconnu {{profile}}",
         "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}",
-        "UNKNOWN_VIEW": "Vue inconnue"
+        "UNKNOWN_VIEW": "Vue inconnue",
+        "VALUE_NOT_UNIQUE": "Cette valeur a déjà été enregistrée"
     },
     "actions": {
         "names" : {

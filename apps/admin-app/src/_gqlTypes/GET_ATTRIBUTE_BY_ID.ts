@@ -78,6 +78,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute {
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf | null;
     libraries: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_libraries[] | null;
+    unique: boolean | null;
 }
 
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_metadata_fields {

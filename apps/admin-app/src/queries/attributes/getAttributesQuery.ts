@@ -34,6 +34,9 @@ export const getAttributesQuery = gql`
                 format
                 system
                 multiple_values
+                ... on StandardAttribute {
+                    unique
+                }
                 ... on LinkAttribute {
                     linked_library {
                         id

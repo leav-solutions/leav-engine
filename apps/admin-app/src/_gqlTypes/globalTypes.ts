@@ -225,6 +225,7 @@ export interface AttributeInput {
     metadata_fields?: string[] | null;
     values_list?: ValuesListConfInput | null;
     reverse_link?: string | null;
+    unique?: boolean | null;
 }
 
 export interface EmbeddedAttributeInput {
