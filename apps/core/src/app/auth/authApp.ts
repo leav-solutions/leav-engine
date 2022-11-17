@@ -173,21 +173,21 @@ export default function ({
             );
 
             app.post(
-                '/auth/password-forgotten',
+                '/auth/forgot-password',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
                         const {email} = req.body as any;
                         const ua = useragent.parse(req.headers['user-agent']);
 
                         if (typeof email === 'undefined') {
-                            return res.status(401).send('Missing mail');
+                            return res.status(400).send('Missing email parameter');
                         }
 
                         // TODO: add lang to context
                         // Get user id
                         const ctx: IQueryInfos = {
                             userId: config.defaultUserId,
-                            queryId: 'password-forgotten'
+                            queryId: 'forgot-password'
                         };
 
                         const users = await recordDomain.find({
@@ -227,16 +227,23 @@ export default function ({
             );
 
             app.post(
-                '/auth/change-password',
+                '/auth/reset-password',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
                         const {token, newPassword} = req.body as any;
 
                         if (typeof token === 'undefined' || typeof newPassword === 'undefined') {
-                            return res.status(401).send('Missing data required');
+                            return res.status(400).send('Missing required parameters');
                         }
 
-                        const payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
+                        let payload: jwt.JwtPayload;
+
+                        // to catch expired token error properly
+                        try {
+                            payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
+                        } catch (e) {
+                            throw new AuthenticationError('Invalid token');
+                        }
 
                         if (typeof payload.userId === 'undefined' || typeof payload.email === 'undefined') {
                             throw new AuthenticationError('Invalid token');
@@ -244,7 +251,7 @@ export default function ({
 
                         const ctx: IQueryInfos = {
                             userId: config.defaultUserId,
-                            queryId: 'changePassword'
+                            queryId: 'resetPassword'
                         };
 
                         const users = await recordDomain.find({

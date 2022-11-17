@@ -70,7 +70,7 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
         <>
             <Background />
             <Wrapper>
-                <LoginBlock title={<h2>{t('login.header')}</h2>} style={{width: '30rem'}}>
+                <LoginBlock title={<h2>LEAV Engine</h2>}>
                     <Form onFinish={_processLogin}>
                         <Form.Item>
                             <Input
@@ -95,30 +95,35 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
                                 onChange={extractValueFromEventAndThen(setPassword)}
                             />
                         </Form.Item>
-                        <Form.Item>
-                            {loading ? (
+                        {loading && (
+                            <Form.Item>
                                 <Alert
-                                    message={t('loading.header')}
-                                    description={t('loading.text')}
+                                    message={t('login.loading.header')}
+                                    description={t('login.loading.text')}
                                     icon={<Spin />}
                                     type="warning"
                                     showIcon
                                 />
-                            ) : (
+                            </Form.Item>
+                        )}
+                        {!loading && (
+                            <Form.Item>
                                 <Button
                                     size="large"
                                     type="primary"
                                     loading={loading}
                                     disabled={loading}
                                     htmlType="submit"
-                                    icon={<SendOutlined />}
                                     block
                                 >
                                     {t('login.submit')}
                                 </Button>
-                            )}
-                        </Form.Item>
+                            </Form.Item>
+                        )}
                     </Form>
+                    <a style={{float: 'right'}} href={(process.env.REACT_APP_ENDPOINT ?? '/') + '/forgot-password'}>
+                        {t('login.forgot_password')}
+                    </a>
                     {loginError && (
                         <Alert
                             message={loginError}

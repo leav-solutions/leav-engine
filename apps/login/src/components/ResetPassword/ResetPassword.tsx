@@ -3,34 +3,34 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useSearchParams} from 'react-router-dom';
-import LoginForm from './LoginForm';
+import {useParams} from 'react-router-dom';
+import ResetPasswordForm from './ResetPasswordForm';
 
-const Login = (): JSX.Element => {
-    const [searchParams] = useSearchParams();
+const ResetPassword = (): JSX.Element => {
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
-    const [loginError, setLoginError] = useState('');
-    const authUrl = process.env.REACT_APP_AUTH_URL || '';
+    const [resetPasswordError, setResetPasswordError] = useState('');
+    const resetPasswordUrl = process.env.REACT_APP_RESET_PASSWORD || '';
 
-    const redirectTo = searchParams.get('dest') ?? '/';
+    const {token} = useParams();
+    const redirectTo = '/';
 
-    const _processLogin = async (login: string, password: string) => {
+    const _processResetPassword = async (newPassword: string) => {
         try {
             setIsLoading(true);
-            setLoginError('');
+            setResetPasswordError('');
 
-            const response = await fetch(authUrl, {
+            const response = await fetch(resetPasswordUrl, {
                 method: 'POST',
                 headers: new Headers([['Content-Type', 'application/json']]),
                 body: JSON.stringify({
-                    login,
-                    password
+                    token,
+                    newPassword
                 })
             });
 
-            if (response.status === 401) {
-                throw new Error(t('login.error.bad_credentials'));
+            if (response.status === 400) {
+                throw new Error('error.missing_parameters');
             }
 
             if (!response.ok) {
@@ -45,12 +45,18 @@ const Login = (): JSX.Element => {
                 msg = t('error.no_server_response');
             }
 
-            setLoginError(msg);
+            setResetPasswordError(msg);
         } finally {
             setIsLoading(false);
         }
     };
 
-    return <LoginForm onSubmit={_processLogin} loading={isLoading} loginError={loginError} />;
+    return (
+        <ResetPasswordForm
+            onSubmit={_processResetPassword}
+            loading={isLoading}
+            resetPasswordError={resetPasswordError}
+        />
+    );
 };
-export default Login;
+export default ResetPassword;
