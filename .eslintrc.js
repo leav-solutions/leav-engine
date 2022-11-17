@@ -30,7 +30,7 @@ module.exports = {
             {assertionStyle: 'as', objectLiteralTypeAssertions: 'allow-as-parameter'}
         ],
         '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
-        '@typescript-eslint/explicit-member-accessibility': ['error', {accessibility: 'explicit'}],
+        '@typescript-eslint/explicit-member-accessibility': ['warn', {accessibility: 'explicit'}],
         '@typescript-eslint/indent': 'off',
         '@typescript-eslint/naming-convention': [
             'error',

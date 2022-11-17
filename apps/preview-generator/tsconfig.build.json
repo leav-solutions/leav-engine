@@ -10,8 +10,6 @@
         "declaration": false,
         "sourceMap": false,
         "composite": false,
-        "resolveJsonModule": true,
-        "typeRoots": ["./src/_types"]
     },
     "references": [
         {
@@ -22,18 +20,15 @@
         },
         {
             "path": "../../libs/utils"
-        },
-        {
-            "path": "../../libs/message-broker"
         }
     ],
-    "include": ["src/**/*", "src/**/*.json"],
+    "include": ["src/**/*"],
     "exclude": [
         "node_modules",
         "**/*.spec.ts",
         "**/__tests__",
-        "applications",
-        "scripts",
-        "dist"
+        "dist",
+        "src/bench",
+        "src/types"
     ]
 }

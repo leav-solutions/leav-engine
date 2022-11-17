@@ -11,7 +11,7 @@ module.exports = {
         port: process.env.REDIS_PORT
     },
     amqp: {
-        protocol: 'amqp',
+        protocol: process.env.AMQP_PROTOCOL || 'amqp',
         hostname: process.env.AMQP_HOST,
         port: process.env.AMQP_PORT || '5672',
         username: process.env.AMQP_USERNAME,

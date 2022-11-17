@@ -8,8 +8,10 @@ const appRoot = require('app-root-path');
 const {execSync} = require('child_process');
 const glob = require('glob');
 
-const buildFolder = path.resolve(appRoot + '/build');
-const pluginsFolder = path.resolve(appRoot + '/src/plugins');
+const root = path.resolve(__dirname + '/..');
+const buildFolder = path.resolve(root + '/dist');
+const srcPluginsFolder = path.resolve(root + '/src/plugins');
+const buildPluginsFolder = path.resolve(buildFolder + '/plugins');
 
 // Empty build folder
 if (fs.existsSync(buildFolder)) {
@@ -18,14 +20,19 @@ if (fs.existsSync(buildFolder)) {
 
 // Run transpilation
 try {
-    execSync('tsc -p tsconfig.build.json').toString();
+    execSync('tsc -b tsconfig.build.json').toString();
 } catch (e) {
     console.error(e.stderr.toString(), e.stdout.toString());
     process.exit(1);
 }
 
+// Create plugins folder if does not exists
+if (!fs.existsSync(buildPluginsFolder)) {
+    fs.mkdirSync(buildPluginsFolder);
+}
+
 // Copy plugins package.json files to build folder
-const pkgFiles = glob.sync('*/package.json', {cwd: pluginsFolder});
+const pkgFiles = glob.sync('*/package.json', {cwd: srcPluginsFolder});
 for (const pkgFile of pkgFiles) {
-    fs.copyFileSync(pluginsFolder + '/' + pkgFile, buildFolder + '/plugins/' + pkgFile);
+    fs.copyFileSync(srcPluginsFolder + '/' + pkgFile, buildPluginsFolder + '/' + pkgFile);
 }

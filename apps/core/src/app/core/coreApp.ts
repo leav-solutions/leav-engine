@@ -93,7 +93,7 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        version: (parent, args, ctx: IQueryInfos): string => coreDomain.getVersion(ctx)
+                        version: (parent, args, ctx: IQueryInfos) => coreDomain.getVersion(ctx)
                     } as any,
                     Mutation: {} as any,
                     JSON: GraphQLJSON,

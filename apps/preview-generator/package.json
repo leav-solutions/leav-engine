@@ -2,10 +2,11 @@
     "name": "preview-generator",
     "version": "1.0.0",
     "description": "",
-    "main": "build/index.js",
+    "main": "dist/index.js",
     "scripts": {
+        "start": "node .",
         "start:watch": "ts-node-dev --respawn src/",
-        "build": "tsc",
+        "build": "tsc -b tsconfig.build.json",
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test": "jest -c jest-unit-config.json",
         "test:integration": "jest -c jest-integration-config.json",
@@ -33,6 +34,7 @@
     "dependencies": {
         "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
+        "@leav/utils": "workspace:*",
         "amqplib": "0.10.3",
         "uuid": "3.3.3"
     }
