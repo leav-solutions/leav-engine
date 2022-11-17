@@ -1,4 +1,4 @@
-import {IAmqp, onMessageFunc} from './_types/amqp';
+import { IAmqp, onMessageFunc } from './_types/amqp';
 import * as amqp from 'amqplib';
 export interface IAmqpService {
     publisher: {
@@ -16,5 +16,5 @@ export interface IAmqpService {
 interface IDeps {
     config: IAmqp;
 }
-export default function ({config}: IDeps): Promise<IAmqpService>;
+export default function ({ config }: IDeps): Promise<IAmqpService>;
 export {};

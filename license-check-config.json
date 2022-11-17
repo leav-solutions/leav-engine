@@ -43,6 +43,7 @@
         "**/admin-app/craco.config.js",
         "**/craco.config.js",
         "**/theme.config",
-        "**/*.svg"
+        "**/*.svg",
+        "**/*tsconfig*"
     ]
 }

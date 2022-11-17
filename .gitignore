@@ -21,9 +21,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Production
-build
-
 # Misc
 .DS_Store
 logs
@@ -74,6 +71,11 @@ magick-*
 /files
 /imports
 /cache
+docker/previews
+docker/files
+docker/imports
 
 apps/core/applications/instances
 apps/core/config/local.js
+
+apps/*/dist

@@ -44,8 +44,11 @@ export REACT_APP_AUTH_URL=$LEAV_AUTH_URL
 export PUBLIC_URL=/$LEAV_APP_ENDPOINT
 
 echo 'Building application...'
+export TSC_COMPILE_ON_ERROR=true
+export ESLINT_NO_DEV_ERRORS=true
 export HOME=$(getent passwd `whoami`  | cut -d: -f6) # To avoid issue when trying to read /root folder as non-root user
 export SKIP_PREFLIGHT_CHECK=true
+yarn install
 yarn workspace login build
 checkExitCode
 

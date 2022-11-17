@@ -4,14 +4,15 @@
 import {mockCtx} from '../../__tests__/mocks/shared';
 import coreDomain from './coreDomain';
 
-jest.mock('../../../package.json', () => ({
-    version: '42'
-}));
-
 describe('CoreDomain', () => {
     test('getVersion', async () => {
+        const originVersion = process.env.npm_package_version; // To restore it later
+        process.env.npm_package_version = '42';
+
         const domain = coreDomain();
 
         expect(domain.getVersion(mockCtx)).toBe('42');
+
+        process.env.npm_package_version = originVersion;
     });
 });
