@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import bcrypt from 'bcryptjs';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
 import {IUtils} from 'utils/utils';
@@ -296,6 +297,21 @@ describe('apiKeyDomain', () => {
             expect(mockAdminPermissionDomainForbidden.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_API_KEY
             );
+        });
+    });
+
+    describe('getApiKeyByKey', () => {
+        test('Return API key for given key', async () => {
+            const bcryptSpy = jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+
+            const domain = apiKeyDomain({});
+            domain.getApiKeyProperties = global.__mockPromise({...mockApiKey});
+
+            const apiKey = await domain.validateApiKey({apiKey: mockApiKey.key, ctx: mockCtx});
+
+            expect(apiKey).toEqual(mockApiKey);
+
+            bcryptSpy.mockRestore();
         });
     });
 });

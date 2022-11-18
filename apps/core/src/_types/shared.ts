@@ -31,5 +31,6 @@ declare global {
         id?: string;
         label?: string;
         system?: boolean;
+        key?: string;
     }
 }

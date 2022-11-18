@@ -6,7 +6,7 @@ module.exports = {
     ignoreFilesList: process.env.IGNORE_FILES_LIST || '',
     graphql: {
         uri: process.env.GRAPHQL_URI,
-        token: process.env.GRAPHQL_TOKEN,
+        apiKey: process.env.GRAPHQL_API_KEY,
         treeId: process.env.GRAPHQL_TREE_ID || 'files_tree'
     },
     filesystem: {
