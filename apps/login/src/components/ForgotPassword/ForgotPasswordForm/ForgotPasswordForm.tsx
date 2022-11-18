@@ -87,7 +87,7 @@ const ForgotPasswordForm = ({
                     <Form onFinish={_processForgotPassword}>
                         <Form.Item
                             hasFeedback
-                            name="newPassword"
+                            name="email"
                             rules={[
                                 {type: 'email', message: t('forgotPassword.email_not_valid')},
                                 {required: true, message: t('forgotPassword.email_required')}
