@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import bcrypt from 'bcryptjs';
 import {IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
 import {IUtils} from 'utils/utils';
 import {IApiKey} from '_types/apiKey';
@@ -203,6 +204,21 @@ describe('apiKeyDomain', () => {
             await expect(async () => domain.deleteApiKey({id: mockApiKey.id, ctx: mockCtx})).rejects.toThrow(
                 ValidationError
             );
+        });
+    });
+
+    describe('getApiKeyByKey', () => {
+        test('Return API key for given key', async () => {
+            const bcryptSpy = jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+
+            const domain = apiKeyDomain({});
+            domain.getApiKeyProperties = global.__mockPromise({...mockApiKey});
+
+            const apiKey = await domain.validateApiKey({apiKey: mockApiKey.key, ctx: mockCtx});
+
+            expect(apiKey).toEqual(mockApiKey);
+
+            bcryptSpy.mockRestore();
         });
     });
 });

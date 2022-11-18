@@ -10,14 +10,16 @@ import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import {IApiKey, IGetCoreApiKeysParams} from '_types/apiKey';
 import {IQueryInfos} from '_types/queryInfos';
+import AuthenticationError from '../../errors/AuthenticationError';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 
 export interface IApiKeyDomain {
     getApiKeys(params: {params?: IGetCoreApiKeysParams; ctx: IQueryInfos}): Promise<IList<IApiKey>>;
-    getApiKeyProperties(params: {id: string; ctx: IQueryInfos}): Promise<IApiKey>;
+    getApiKeyProperties(params: {id: string; hideKey?: boolean; ctx: IQueryInfos}): Promise<IApiKey>;
     saveApiKey(params: {apiKey: IApiKey; ctx: IQueryInfos}): Promise<IApiKey>;
     deleteApiKey(params: {id: string; ctx: IQueryInfos}): Promise<IApiKey>;
+    validateApiKey(params: {apiKey: string; ctx: IQueryInfos}): Promise<IApiKey>;
 }
 
 interface IDeps {
@@ -28,10 +30,24 @@ interface IDeps {
 }
 
 export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': utils = null}: IDeps): IApiKeyDomain {
-    const _encryptApiKey = async (key: string): Promise<string> => {
+    const _hashApiKey = async (key: string): Promise<string> => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(key, salt);
         return hash;
+    };
+
+    const _encodeExposedKey = (apiKey: IApiKey, rawKey: string): string => {
+        // The key exposed to the user is the concatenation of the key and the id, encoded in base64
+        // We'll need the ID later on to check the validity of the key
+        const exposedKey = `${apiKey.id}|${rawKey}`;
+        return Buffer.from(exposedKey).toString('base64url');
+    };
+
+    const _decodeExposedKey = (key: string): {id: string; key: string} => {
+        // The string received is an encoded concatenation of the key and the id. Decode it and split it
+        const string = Buffer.from(key, 'base64url').toString();
+        const [id, rawKey] = string.split('|');
+        return {id, key: rawKey};
     };
 
     const _hideSecrets = (apiKey: IApiKey): IApiKey => {
@@ -56,7 +72,7 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
                 list: keys.list.map(_hideSecrets)
             };
         },
-        async getApiKeyProperties({id, ctx}) {
+        async getApiKeyProperties({id, hideKey = true, ctx}) {
             const searchParams: IGetCoreApiKeysParams = {
                 filters: {id}
             };
@@ -71,7 +87,7 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
                 );
             }
 
-            return _hideSecrets(keys.list[0]);
+            return hideKey ? _hideSecrets(keys.list[0]) : keys.list[0];
         },
         async saveApiKey({apiKey, ctx}) {
             const isNewKey = !apiKey.id;
@@ -105,10 +121,10 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
             let keyString: string;
             if (isNewKey) {
                 keyString = uuidv4();
-                dataToSave.key = await _encryptApiKey(keyString);
+                dataToSave.key = await _hashApiKey(keyString);
                 dataToSave.createdAt = now;
                 dataToSave.createdBy = modifier;
-                delete dataToSave.id; // To make "id" is not present at all
+                delete dataToSave.id; // To make sure "id" is not present at all
             } else {
                 delete dataToSave.key; // Don't update the key
             }
@@ -119,7 +135,9 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
             let savedKey: IApiKey;
             if (isNewKey) {
                 savedKey = await apiKeyRepo.createApiKey({keyData: dataToSave, ctx});
-                savedKey.key = keyString; // On creation, return the raw key to the user, not the encrypted one
+
+                // On creation, return a concatenation of ID and raw key to the user, not the hash stored in DB
+                savedKey.key = _encodeExposedKey(savedKey, keyString);
             } else {
                 savedKey = await apiKeyRepo.updateApiKey({keyData: dataToSave, ctx});
                 savedKey = _hideSecrets(savedKey);
@@ -133,6 +151,21 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
             const deletedKey = await apiKeyRepo.deleteApiKey({id: keyProps.id, ctx});
 
             return _hideSecrets(deletedKey);
+        },
+        async validateApiKey({apiKey, ctx}) {
+            // Get key hash
+            const {id, key: rawKey} = _decodeExposedKey(apiKey);
+
+            // Retrieve key from DB
+            const keyData = await this.getApiKeyProperties({id, hideKey: false, ctx});
+
+            const isKeyValid = await bcrypt.compare(rawKey, keyData.key);
+
+            if (!isKeyValid) {
+                throw new AuthenticationError('Invalid API key');
+            }
+
+            return keyData;
         }
     };
 }

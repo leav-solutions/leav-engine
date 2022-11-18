@@ -93,7 +93,7 @@ x-env-sync-scan: &env-sync-scan
   IGNORE_FILES_LIST: *ignore-list
   FILESYSTEM_ABSOLUTE_PATH: /files
   GRAPHQL_URI: http://core:4001/graphql
-  GRAPHQL_TOKEN: ${GRAPHQL_TOKEN}
+  GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}
   APP_ROOT_PATH: *dir-sync_scan
 
 x-env-admin-app: &env-admin-app
@@ -251,7 +251,7 @@ services:
 
   # At creation, we just install deps and exit.
   # Run "docker-compose run --rm sync-scan yarn start" to make the scan
-  # You need to have a GRAPHQL_TOKEN defined as environment variables (eg. in a .env file)
+  # You need to have a GRAPHQL_TOKEN dAPI_KEY as environment variables (eg. in a .env file)
   sync-scan:
     image: *node_image
     labels:

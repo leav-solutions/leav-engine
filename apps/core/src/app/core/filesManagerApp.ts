@@ -10,6 +10,7 @@ import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {API_KEY_PARAM_NAME} from '../../_types/auth';
 
 export interface IFilesManagerApp {
     init(): Promise<void>;
@@ -70,8 +71,12 @@ export default function ({
                     req.ctx = initQueryContext(req);
 
                     try {
-                        const payload = await authApp.validateRequestToken(req.headers.authorization, req.cookies);
+                        const payload = await authApp.validateRequestToken({
+                            apiKey: String(req.query[API_KEY_PARAM_NAME]),
+                            cookies: req.cookies
+                        });
                         req.ctx.userId = payload.userId;
+                        req.ctx.groupsId = payload.groupsId;
 
                         next();
                     } catch {

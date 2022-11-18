@@ -14,7 +14,7 @@ const checkConfig = (conf: IConfig) => {
         graphql: Joi.object()
             .keys({
                 uri: Joi.string().required(),
-                token: Joi.string().required(),
+                apiKey: Joi.string().required(),
                 treeId: Joi.string().required()
             })
             .required(),
