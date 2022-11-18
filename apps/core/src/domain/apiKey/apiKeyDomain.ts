@@ -11,8 +11,10 @@ import {v4 as uuidv4} from 'uuid';
 import {IApiKey, IGetCoreApiKeysParams} from '_types/apiKey';
 import {IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../../errors/AuthenticationError';
+import PermissionError from '../../errors/PermissionError';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
+import {AdminPermissionsActions} from '../../_types/permissions';
 
 export interface IApiKeyDomain {
     getApiKeys(params: {params?: IGetCoreApiKeysParams; ctx: IQueryInfos}): Promise<IList<IApiKey>>;
@@ -29,7 +31,11 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': utils = null}: IDeps): IApiKeyDomain {
+export default function ({
+    'core.domain.permission.admin': adminPermissionDomain = null,
+    'core.infra.apiKey': apiKeyRepo = null,
+    'core.utils': utils = null
+}: IDeps): IApiKeyDomain {
     const _hashApiKey = async (key: string): Promise<string> => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(key, salt);
@@ -92,6 +98,12 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
         async saveApiKey({apiKey, ctx}) {
             const isNewKey = !apiKey.id;
 
+            const action = isNewKey ? AdminPermissionsActions.CREATE_API_KEY : AdminPermissionsActions.EDIT_API_KEY;
+            const canSaveApiKey = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+            if (!canSaveApiKey) {
+                throw new PermissionError(action);
+            }
+
             let existingKeyProps;
             if (!isNewKey) {
                 existingKeyProps = await this.getApiKeyProperties({id: apiKey.id, ctx});
@@ -147,6 +159,13 @@ export default function ({'core.infra.apiKey': apiKeyRepo = null, 'core.utils': 
         },
         async deleteApiKey({id, ctx}) {
             const keyProps = await this.getApiKeyProperties({id, ctx});
+
+            const action = AdminPermissionsActions.DELETE_API_KEY;
+            const canDeleteApiKey = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
+
+            if (!canDeleteApiKey) {
+                throw new PermissionError(action);
+            }
 
             const deletedKey = await apiKeyRepo.deleteApiKey({id: keyProps.id, ctx});
 
