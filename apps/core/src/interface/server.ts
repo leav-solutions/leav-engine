@@ -143,6 +143,7 @@ export default function ({
                         return res.status(401).send('Unauthorized');
                     }
 
+                    logger.error(err);
                     res.status(500).json({error: 'INTERNAL_SERVER_ERROR'}); // FIXME: format error msg?
                 });
 

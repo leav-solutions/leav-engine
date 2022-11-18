@@ -12,6 +12,7 @@ import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions
 import handlebars from 'handlebars';
 import * as Config from '_types/config';
 import {i18n} from 'i18next';
+import {IUtils} from 'utils/utils';
 
 export interface IUserDomain {
     saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
@@ -25,6 +26,7 @@ interface IDeps {
     'core.infra.userData'?: IUserDataRepo;
     'core.domain.permission'?: IPermissionDomain;
     'core.infra.mailer.mailerService'?: IMailerService;
+    'core.utils'?: IUtils;
     translator?: i18n;
 }
 
@@ -32,6 +34,7 @@ export default function ({
     config = null,
     'core.infra.userData': userDataRepo = null,
     'core.domain.permission': permissionDomain = null,
+    'core.utils': utils = null,
     'core.infra.mailer.mailerService': mailerService = null,
     translator = null
 }: IDeps = {}): IUserDomain {
@@ -46,9 +49,11 @@ export default function ({
             const html = await readFile(__dirname + `/resetPassword_${config.lang.default}.html`, {encoding: 'utf-8'});
             const template = handlebars.compile(html);
 
+            const loginAppEndpoint = utils.getFullApplicationEndpoint('login');
+
             const htmlWithData = template({
                 login,
-                resetPasswordUrl: `${config.server.publicUrl}/reset-password?token=${token}`, // FIXME: right url to render static html page
+                resetPasswordUrl: `${config.server.publicUrl}/${loginAppEndpoint}/reset-password/${token}`,
                 supportEmail: config.server.supportEmail,
                 browser,
                 os

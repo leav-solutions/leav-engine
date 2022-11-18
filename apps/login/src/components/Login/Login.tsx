@@ -30,20 +30,22 @@ const Login = (): JSX.Element => {
             });
 
             if (response.status === 401) {
-                throw new Error('error.bad_credentials');
+                throw new Error(t('login.error.bad_credentials'));
             }
 
             if (!response.ok) {
-                throw new Error('error.no_server_response');
+                throw new Error(t('error.no_server_response'));
             }
 
             window.location.replace(redirectTo);
         } catch (err) {
             let msg = err.message;
+
             if (err.message.indexOf('NetworkError') > -1) {
-                msg = 'error.no_server_response';
+                msg = t('error.no_server_response');
             }
-            setLoginError(t(msg));
+
+            setLoginError(msg);
         } finally {
             setIsLoading(false);
         }
