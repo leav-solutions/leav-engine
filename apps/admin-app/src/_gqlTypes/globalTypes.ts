@@ -17,6 +17,15 @@ export enum ActionIOTypes {
     string = 'string'
 }
 
+export enum ApiKeysSortableFields {
+    createdAt = 'createdAt',
+    createdBy = 'createdBy',
+    expiresAt = 'expiresAt',
+    label = 'label',
+    modifiedAt = 'modifiedAt',
+    modifiedBy = 'modifiedBy'
+}
+
 export enum ApplicationInstallStatus {
     ERROR = 'ERROR',
     NONE = 'NONE',
@@ -96,6 +105,7 @@ export enum PermissionsActions {
     access_library = 'access_library',
     access_record = 'access_record',
     access_tree = 'access_tree',
+    admin_access_api_keys = 'admin_access_api_keys',
     admin_access_applications = 'admin_access_applications',
     admin_access_attributes = 'admin_access_attributes',
     admin_access_libraries = 'admin_access_libraries',
@@ -105,17 +115,20 @@ export enum PermissionsActions {
     admin_access_version_profiles = 'admin_access_version_profiles',
     admin_application = 'admin_application',
     admin_cancel_task = 'admin_cancel_task',
+    admin_create_api_key = 'admin_create_api_key',
     admin_create_application = 'admin_create_application',
     admin_create_attribute = 'admin_create_attribute',
     admin_create_library = 'admin_create_library',
     admin_create_tree = 'admin_create_tree',
     admin_create_version_profile = 'admin_create_version_profile',
+    admin_delete_api_key = 'admin_delete_api_key',
     admin_delete_application = 'admin_delete_application',
     admin_delete_attribute = 'admin_delete_attribute',
     admin_delete_library = 'admin_delete_library',
     admin_delete_task = 'admin_delete_task',
     admin_delete_tree = 'admin_delete_tree',
     admin_delete_version_profile = 'admin_delete_version_profile',
+    admin_edit_api_key = 'admin_edit_api_key',
     admin_edit_application = 'admin_edit_application',
     admin_edit_attribute = 'admin_edit_attribute',
     admin_edit_library = 'admin_edit_library',
@@ -178,6 +191,20 @@ export interface ActionsListConfigurationInput {
     saveValue?: ActionConfigurationInput[] | null;
     getValue?: ActionConfigurationInput[] | null;
     deleteValue?: ActionConfigurationInput[] | null;
+}
+
+export interface ApiKeyInput {
+    id?: string | null;
+    label: string;
+    expiresAt?: number | null;
+    userId: string;
+}
+
+export interface ApiKeysFiltersInput {
+    label?: string | null;
+    user_id?: string | null;
+    createdBy?: number | null;
+    modifiedBy?: number | null;
 }
 
 export interface ApplicationIconInput {
@@ -335,6 +362,11 @@ export interface RecordIdentityConfInput {
     treeColorPreview?: string | null;
 }
 
+export interface SortApiKeysInput {
+    field: ApiKeysSortableFields;
+    order?: SortOrder | null;
+}
+
 export interface SortApplications {
     field: ApplicationSortableFields;
     order?: SortOrder | null;
@@ -406,8 +438,8 @@ export interface ValueMetadataInput {
 }
 
 export interface ValueVersionInput {
-    name: string;
-    value: string;
+    treeId: string;
+    treeNodeId: string;
 }
 
 export interface ValuesListConfInput {

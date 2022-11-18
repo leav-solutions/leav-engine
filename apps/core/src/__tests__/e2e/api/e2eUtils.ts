@@ -7,6 +7,7 @@ import jwt, {Algorithm} from 'jsonwebtoken';
 import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '_types/attribute';
 import {ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
+import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 
 async function _getAuthToken() {
     const conf = await getConfig();
@@ -28,7 +29,7 @@ async function _getAuthToken() {
     return token;
 }
 
-async function _getGraphQLUrl() {
+export async function getGraphQLUrl() {
     const conf = await getConfig();
 
     return `http://${conf.server.host}:${conf.server.port}/graphql`;
@@ -36,12 +37,12 @@ async function _getGraphQLUrl() {
 
 export async function makeGraphQlCall(query: string | FormData, throwOnErrors = false): Promise<any> {
     try {
-        const url = await _getGraphQLUrl();
+        const url = await getGraphQLUrl();
         const token = await _getAuthToken();
 
         const data = typeof query === 'string' ? {query} : query;
         const headers = {
-            Authorization: token,
+            Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`,
             ...(typeof query !== 'string' && (data as FormData).getHeaders())
         };
 

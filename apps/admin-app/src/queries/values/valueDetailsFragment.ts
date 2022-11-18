@@ -8,7 +8,22 @@ export const valueDetailsFragment = gql`
         id_value
         created_at
         modified_at
-        version
+        version {
+            treeId
+            treeNode {
+                id
+                record {
+                    id
+                    whoAmI {
+                        id
+                        label
+                        library {
+                            id
+                        }
+                    }
+                }
+            }
+        }
         metadata {
             name
             value {
@@ -48,7 +63,22 @@ export const valueDetailsExtendedFragment = gql`
         id_value
         created_at
         modified_at
-        version
+        version {
+            treeId
+            treeNode {
+                id
+                record {
+                    id
+                    whoAmI {
+                        id
+                        label
+                        library {
+                            id
+                        }
+                    }
+                }
+            }
+        }
         metadata {
             name
             value {

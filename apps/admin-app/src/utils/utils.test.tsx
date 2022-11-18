@@ -220,8 +220,8 @@ describe('utils', () => {
             });
 
             expect(res).toStrictEqual([
-                {name: 'regions', value: '13586077'},
-                {name: 'lang', value: '12345'}
+                {treeId: 'regions', treeNodeId: '13586077'},
+                {treeId: 'lang', treeNodeId: '12345'}
             ]);
         });
     });

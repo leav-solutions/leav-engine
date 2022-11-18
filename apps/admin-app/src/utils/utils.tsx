@@ -177,14 +177,16 @@ export function getFieldError<T>(
     return inputFieldError || serverFieldError;
 }
 
-export function versionObjToGraphql(version: {[treeName: string]: string}): Array<{name: string; value: string}> {
+export function versionObjToGraphql(version: {
+    [treeName: string]: string;
+}): Array<{treeId: string; treeNodeId: string}> {
     if (!version) {
         return null;
     }
 
-    const gqlVersions: Array<{name: string; value: string}> = [];
+    const gqlVersions: Array<{treeId: string; treeNodeId: string}> = [];
     for (const versionName of Object.keys(version)) {
-        gqlVersions.push({name: versionName, value: version[versionName]});
+        gqlVersions.push({treeId: versionName, treeNodeId: version[versionName]});
     }
 
     return gqlVersions;

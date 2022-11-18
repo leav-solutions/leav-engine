@@ -12,7 +12,7 @@ export interface IVersionProfile {
 }
 
 /**
- * Accepted fields to filter attributes list
+ * Accepted fields to filter version profiles list
  */
 export interface IVersionProfileFilterOptions extends ICoreEntityFilterOptions {
     trees?: string;

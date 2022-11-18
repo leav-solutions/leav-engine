@@ -13,7 +13,7 @@ export interface IConfig {
 
 export interface IConfigGraphql {
     uri: string;
-    token: string;
+    apiKey: string;
     treeId: string;
 }
 

@@ -24,12 +24,13 @@ export interface IKeyValue<T> {
 declare global {
     interface ICoreEntity {
         id?: string;
-        label?: ISystemTranslation;
+        label?: ISystemTranslation | string;
     }
 
     interface ICoreEntityFilterOptions {
         id?: string;
         label?: string;
         system?: boolean;
+        key?: string;
     }
 }

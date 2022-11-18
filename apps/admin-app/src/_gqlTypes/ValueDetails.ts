@@ -10,6 +10,31 @@
 // GraphQL fragment: ValueDetails
 // ====================================================
 
+export interface ValueDetails_Value_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface ValueDetails_Value_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: ValueDetails_Value_version_treeNode_record_whoAmI_library;
+}
+
+export interface ValueDetails_Value_version_treeNode_record {
+    id: string;
+    whoAmI: ValueDetails_Value_version_treeNode_record_whoAmI;
+}
+
+export interface ValueDetails_Value_version_treeNode {
+    id: string;
+    record: ValueDetails_Value_version_treeNode_record;
+}
+
+export interface ValueDetails_Value_version {
+    treeId: string;
+    treeNode: ValueDetails_Value_version_treeNode | null;
+}
+
 export interface ValueDetails_Value_metadata_value {
     value: Any | null;
     raw_value: Any | null;
@@ -24,10 +49,35 @@ export interface ValueDetails_Value {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: ValueVersion | null;
+    version: (ValueDetails_Value_version | null)[] | null;
     metadata: (ValueDetails_Value_metadata | null)[] | null;
     value: Any | null;
     raw_value: Any | null;
+}
+
+export interface ValueDetails_LinkValue_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface ValueDetails_LinkValue_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: ValueDetails_LinkValue_version_treeNode_record_whoAmI_library;
+}
+
+export interface ValueDetails_LinkValue_version_treeNode_record {
+    id: string;
+    whoAmI: ValueDetails_LinkValue_version_treeNode_record_whoAmI;
+}
+
+export interface ValueDetails_LinkValue_version_treeNode {
+    id: string;
+    record: ValueDetails_LinkValue_version_treeNode_record;
+}
+
+export interface ValueDetails_LinkValue_version {
+    treeId: string;
+    treeNode: ValueDetails_LinkValue_version_treeNode | null;
 }
 
 export interface ValueDetails_LinkValue_metadata_value {
@@ -70,9 +120,34 @@ export interface ValueDetails_LinkValue {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: ValueVersion | null;
+    version: (ValueDetails_LinkValue_version | null)[] | null;
     metadata: (ValueDetails_LinkValue_metadata | null)[] | null;
     linkValue: ValueDetails_LinkValue_linkValue | null;
+}
+
+export interface ValueDetails_TreeValue_version_treeNode_record_whoAmI_library {
+    id: string;
+}
+
+export interface ValueDetails_TreeValue_version_treeNode_record_whoAmI {
+    id: string;
+    label: string | null;
+    library: ValueDetails_TreeValue_version_treeNode_record_whoAmI_library;
+}
+
+export interface ValueDetails_TreeValue_version_treeNode_record {
+    id: string;
+    whoAmI: ValueDetails_TreeValue_version_treeNode_record_whoAmI;
+}
+
+export interface ValueDetails_TreeValue_version_treeNode {
+    id: string;
+    record: ValueDetails_TreeValue_version_treeNode_record;
+}
+
+export interface ValueDetails_TreeValue_version {
+    treeId: string;
+    treeNode: ValueDetails_TreeValue_version_treeNode | null;
 }
 
 export interface ValueDetails_TreeValue_metadata_value {
@@ -150,7 +225,7 @@ export interface ValueDetails_TreeValue {
     id_value: string | null;
     created_at: number | null;
     modified_at: number | null;
-    version: ValueVersion | null;
+    version: (ValueDetails_TreeValue_version | null)[] | null;
     metadata: (ValueDetails_TreeValue_metadata | null)[] | null;
     treeValue: ValueDetails_TreeValue_treeValue | null;
 }

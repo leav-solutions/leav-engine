@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`apiKeyRepo Delete ApiKey Should delete a version key 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`apiKeyRepo Delete ApiKey Should delete a version key 2`] = `
+{
+  "@value1": "core_api_keys",
+  "value0": {
+    "_key": "test_key",
+  },
+}
+`;
+
+exports[`apiKeyRepo createApiKey Should create a new version key 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`apiKeyRepo createApiKey Should create a new version key 2`] = `
+{
+  "@value1": "core_api_keys",
+  "value0": {
+    "_key": "test_key",
+    "label": {
+      "fr": "Test",
+    },
+    "trees": [
+      "treeA",
+      "treeB",
+    ],
+  },
+}
+`;
+
+exports[`apiKeyRepo updateApiKey Should update an existing version key 1`] = `"UPDATE @value0 IN @@value1 RETURN NEW"`;
+
+exports[`apiKeyRepo updateApiKey Should update an existing version key 2`] = `
+{
+  "@value1": "core_api_keys",
+  "value0": {
+    "_key": "test_key",
+    "label": {
+      "fr": "Test",
+    },
+    "trees": [
+      "treeA",
+      "treeB",
+    ],
+  },
+}
+`;
