@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FrownOutlined, LockOutlined, SendOutlined, CheckOutlined, ExclamationOutlined} from '@ant-design/icons';
+import {FrownOutlined, LockOutlined, SendOutlined, CheckOutlined, CloseOutlined} from '@ant-design/icons';
 import {Alert, Button, Card, Form, Input, Spin} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -112,6 +112,26 @@ const ForgotPasswordForm = ({
                                 />
                             </Form.Item>
                         )}
+                        {forgotPasswordError && (
+                            <Form.Item>
+                                <Alert
+                                    message={forgotPasswordError}
+                                    type="error"
+                                    showIcon
+                                    icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
+                                />
+                            </Form.Item>
+                        )}
+                        {forgotPasswordSuccess && (
+                            <Form.Item>
+                                <Alert
+                                    message={forgotPasswordSuccess}
+                                    type="success"
+                                    showIcon
+                                    icon={<CheckOutlined style={{fontSize: '1.5em'}} />}
+                                />
+                            </Form.Item>
+                        )}
                         {!loading && (
                             <Form.Item>
                                 <Button
@@ -128,22 +148,6 @@ const ForgotPasswordForm = ({
                             </Form.Item>
                         )}
                     </Form>
-                    {forgotPasswordError && (
-                        <Alert
-                            message={forgotPasswordError}
-                            type="error"
-                            showIcon
-                            icon={<ExclamationOutlined style={{fontSize: '1.5em'}} />}
-                        />
-                    )}
-                    {forgotPasswordSuccess && (
-                        <Alert
-                            message={forgotPasswordSuccess}
-                            type="success"
-                            showIcon
-                            icon={<CheckOutlined style={{fontSize: '1.5em'}} />}
-                        />
-                    )}
                 </ForgotPasswordBlock>
             </Wrapper>
         </>

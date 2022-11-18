@@ -266,14 +266,18 @@ export default function ({
                             throw new AuthenticationError('User not found');
                         }
 
-                        // save new password
-                        await valueDomain.saveValue({
-                            library: 'users',
-                            recordId: payload.userId,
-                            attribute: 'password',
-                            value: {value: newPassword},
-                            ctx
-                        });
+                        try {
+                            // save new password
+                            await valueDomain.saveValue({
+                                library: 'users',
+                                recordId: payload.userId,
+                                attribute: 'password',
+                                value: {value: newPassword},
+                                ctx
+                            });
+                        } catch (e) {
+                            return res.status(422).send('Invalid password');
+                        }
 
                         return res.sendStatus(200);
                     } catch (err) {

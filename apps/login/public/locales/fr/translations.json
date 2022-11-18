@@ -24,6 +24,8 @@
         "submit": "Valider le nouveau mot de passe",
         "wrong_confirm_password": "Les mots de passe ne sont pas identiques",
         "error": {
+            "invalid_password": "Le mot de passe ne respecte pas les règles de sécurité",
+            "invalid_token": "Votre lien de réinitialisation a expiré"
         },
         "loading": {
             "header": "Juste un instant",
@@ -46,6 +48,7 @@
         }
     },
     "error": {
-        "no_server_response": "Le serveur ne répond pas"
+        "no_server_response": "Le serveur ne répond pas",
+        "missing_parameters": "Paramètres manquants"
     }
 }

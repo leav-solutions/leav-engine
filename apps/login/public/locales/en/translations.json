@@ -24,6 +24,8 @@
         "submit": "Submit new password",
         "wrong_confirm_password": "Passwords do not match",
         "error": {
+            "invalid_password": "The password does not meet the password policy requirements",
+            "invalid_token": "Your password reset link has expired"
         },
         "loading": {
             "header": "Just a second",

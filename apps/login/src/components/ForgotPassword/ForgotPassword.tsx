@@ -27,7 +27,7 @@ const ForgotPassword = (): JSX.Element => {
             });
 
             if (response.status === 400) {
-                throw new Error('error.missing_parameters');
+                throw new Error(t('error.missing_parameters'));
             }
 
             if (response.status === 401) {

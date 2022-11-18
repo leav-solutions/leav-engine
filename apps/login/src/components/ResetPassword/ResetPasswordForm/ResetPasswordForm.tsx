@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FrownOutlined, LockOutlined, SendOutlined, UserOutlined} from '@ant-design/icons';
+import {CloseOutlined} from '@ant-design/icons';
 import {Alert, Button, Card, Form, Input, Spin} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -126,6 +126,16 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                                 />
                             </Form.Item>
                         )}
+                        {resetPasswordError && (
+                            <Form.Item>
+                                <Alert
+                                    message={resetPasswordError}
+                                    type="error"
+                                    showIcon
+                                    icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
+                                />
+                            </Form.Item>
+                        )}
                         {!loading && (
                             <Form.Item>
                                 <Button
@@ -141,14 +151,6 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                             </Form.Item>
                         )}
                     </Form>
-                    {resetPasswordError && (
-                        <Alert
-                            message={resetPasswordError}
-                            type="error"
-                            showIcon
-                            icon={<FrownOutlined style={{fontSize: '2em'}} />}
-                        />
-                    )}
                 </ResetPasswordBlock>
             </Wrapper>
         </>

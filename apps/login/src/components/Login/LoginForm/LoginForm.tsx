@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FrownOutlined, LockOutlined, SendOutlined, UserOutlined} from '@ant-design/icons';
-import {Alert, Button, Card, Form, Input, Spin} from 'antd';
+import {CloseOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
+import {Alert, Button, Card, Form, Input, Spin, Space} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -106,6 +106,16 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
                                 />
                             </Form.Item>
                         )}
+                        {loginError && (
+                            <Form.Item>
+                                <Alert
+                                    message={loginError}
+                                    type="error"
+                                    showIcon
+                                    icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
+                                />
+                            </Form.Item>
+                        )}
                         {!loading && (
                             <Form.Item>
                                 <Button
@@ -121,20 +131,15 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
                             </Form.Item>
                         )}
                     </Form>
-                    <a style={{float: 'right'}} href={(process.env.REACT_APP_ENDPOINT ?? '/') + '/forgot-password'}>
-                        {t('login.forgot_password')}
-                    </a>
-                    {loginError && (
-                        <Alert
-                            message={loginError}
-                            type="error"
-                            showIcon
-                            icon={<FrownOutlined style={{fontSize: '2em'}} />}
-                        />
-                    )}
+                    <Form.Item>
+                        <a style={{float: 'right'}} href={(process.env.REACT_APP_ENDPOINT ?? '/') + '/forgot-password'}>
+                            {t('login.forgot_password')}
+                        </a>
+                    </Form.Item>
                 </LoginBlock>
             </Wrapper>
         </>
     );
 };
+
 export default LoginForm;

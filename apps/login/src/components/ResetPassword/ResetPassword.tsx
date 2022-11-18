@@ -30,7 +30,15 @@ const ResetPassword = (): JSX.Element => {
             });
 
             if (response.status === 400) {
-                throw new Error('error.missing_parameters');
+                throw new Error(t('error.missing_parameters'));
+            }
+
+            if (response.status === 401) {
+                throw new Error(t('resetPassword.error.invalid_token'));
+            }
+
+            if (response.status === 422) {
+                throw new Error(t('resetPassword.error.invalid_password'));
             }
 
             if (!response.ok) {
