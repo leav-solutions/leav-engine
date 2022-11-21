@@ -9,7 +9,7 @@ import {EventDataNode} from 'antd/lib/tree';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from 'utils';
 import {
@@ -26,6 +26,7 @@ interface ISelectTreeNodeProps {
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     onCheck?: (selection: ITreeNodeWithRecord[]) => void;
     multiple?: boolean;
+    canSelectRoot?: boolean;
 }
 
 const _constructTreeContent = (data: TREE_NODE_CHILDREN_treeNodeChildren_list[]): ITreeNodeWithRecord[] => {
@@ -72,7 +73,8 @@ function SelectTreeNode({
     onSelect,
     onCheck,
     selectedNode: initSelectedNode,
-    multiple = false
+    multiple = false,
+    canSelectRoot = false
 }: ISelectTreeNodeProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
@@ -183,6 +185,9 @@ function SelectTreeNode({
 
     const _handleSelect = (_, e: {selected: boolean; node: any}) => {
         const node = treeMap[e.node.key];
+        if (!canSelectRoot && node.id === tree.id) {
+            return;
+        }
 
         if (node) {
             onSelect(node, e.selected);
