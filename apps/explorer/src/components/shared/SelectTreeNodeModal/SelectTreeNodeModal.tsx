@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
 import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ISystemTranslation, ITreeNode, ITreeNodeWithRecord} from '../../../_types/types';
 import SelectTreeNode from '../SelectTreeNode';
@@ -14,6 +14,7 @@ interface ISelectTreeNodeModalProps {
     visible: boolean;
     onSubmit: (treeNode: ITreeNode) => void;
     onClose: () => void;
+    canSelectRoot?: boolean;
 }
 
 export default function SelectTreeNodeModal({
@@ -21,7 +22,8 @@ export default function SelectTreeNodeModal({
     selectedNodeKey,
     onSubmit,
     visible,
-    onClose
+    onClose,
+    canSelectRoot = false
 }: ISelectTreeNodeModalProps): JSX.Element {
     const {t} = useTranslation();
     const [selectedNode, setSelectedNode] = useState<ITreeNode>({
@@ -62,7 +64,12 @@ export default function SelectTreeNodeModal({
             ]}
             destroyOnClose
         >
-            <SelectTreeNode tree={tree} onSelect={onSelect} selectedNode={selectedNode.key} />
+            <SelectTreeNode
+                tree={tree}
+                onSelect={onSelect}
+                selectedNode={selectedNode?.key}
+                canSelectRoot={canSelectRoot}
+            />
         </Modal>
     );
 }

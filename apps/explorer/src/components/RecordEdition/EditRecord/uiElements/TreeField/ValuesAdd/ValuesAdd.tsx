@@ -7,7 +7,7 @@ import List from 'components/shared/List';
 import RecordCard from 'components/shared/RecordCard';
 import SelectTreeNode from 'components/shared/SelectTreeNode';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -66,7 +66,7 @@ type ValueFromList = RECORD_FORM_recordForm_elements_values_TreeValue_treeValue;
 function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
-    const valuesList = attribute.treeValuesList.enable ? attribute.treeValuesList.values : [];
+    const valuesList = attribute?.treeValuesList?.enable ? attribute?.treeValuesList?.values ?? [] : [];
     const wrapperRef = useRef<HTMLDivElement>();
 
     const [selectedValuesFromTree, setSelectedValuesFromTree] = useState<ITreeNodeWithRecord[]>([]);

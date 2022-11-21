@@ -10,7 +10,7 @@ import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import moment from 'moment';
-import React, {useCallback, useState} from 'react';
+import {useCallback, useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -481,6 +481,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                     onSubmit={node => updateFilterValue(_getValueFromNode(node))}
                     onClose={() => setShowSelectTreeNodeModal(false)}
                     visible={showSelectTreeNodeModal}
+                    canSelectRoot
                 />
             )}
             <Wrapper data-testid="filter" active={filter.active}>
