@@ -15,16 +15,14 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
         .filter(f => f.active)
         .reduce((acc, filter) => {
             let queryFilter: IQueryFilter[] = [];
-
-            if (filter.condition === ThroughConditionFilter.THROUGH) {
-                filter.condition = AttributeConditionFilter.EQUAL;
-            }
+            const conditionToApply =
+                filter.condition === ThroughConditionFilter.THROUGH ? AttributeConditionFilter.EQUAL : filter.condition;
 
             if (filter.value === null) {
                 queryFilter = [
                     {
-                        field: filter.condition in AttributeConditionFilter ? filter.key : null,
-                        condition: RecordFilterCondition[filter.condition],
+                        field: conditionToApply in AttributeConditionFilter ? filter.key : null,
+                        condition: RecordFilterCondition[conditionToApply],
                         treeId: (filter as IFilterTree).tree?.id
                     }
                 ];
@@ -35,9 +33,9 @@ export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
 
                 for (const v of values) {
                     queryFilter.push({
-                        field: filter.condition in AttributeConditionFilter ? filter.key : null,
+                        field: conditionToApply in AttributeConditionFilter ? filter.key : null,
                         value: v,
-                        condition: RecordFilterCondition[filter.condition]
+                        condition: RecordFilterCondition[conditionToApply]
                     });
 
                     queryFilter.push({operator: RecordFilterOperator.OR});
