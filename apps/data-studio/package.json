@@ -1,6 +1,6 @@
 {
-    "name": "explorer",
-    "description": "Generic application to explore your data",
+    "name": "data-studio",
+    "description": "Generic application to manage your data",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
@@ -49,7 +49,7 @@
         "test": "SKIP_PREFLIGHT_CHECK=true craco test",
         "eject": "react-scripts eject",
         "graphql-generate": "graphql-codegen --config ./codegen.ts",
-        "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes='**/*.test.*'  ./src/_gqlTypes && cd ../../ && yarn prettier --write apps/explorer/src/_gqlTypes ",
+        "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes='**/*.test.*'  ./src/_gqlTypes && cd ../../ && yarn prettier --write apps/data-studio/src/_gqlTypes ",
         "create_comp": "scripts/createComponent.js",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p .",

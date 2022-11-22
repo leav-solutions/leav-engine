@@ -28,7 +28,7 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
 export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ID_applications_list> = {
     ...mockApplication,
     __typename: 'Application',
-    module: 'explorer',
+    module: 'data-studio',
     libraries: [
         {
             ...mockLibrary,
@@ -71,7 +71,7 @@ export const mockApplicationsModules: GET_APPLICATION_MODULES_applicationsModule
         version: '0.1.0'
     },
     {
-        id: 'explorer',
+        id: 'data-studio',
         description: 'Generic application to explore your data',
         version: '0.1.0'
     }

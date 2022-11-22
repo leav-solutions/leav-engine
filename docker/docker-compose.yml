@@ -11,7 +11,7 @@ x-arango-image: &arango_image "arangodb:3.10"
 
 x-dir-core: &dir-core /app/apps/core
 x-dir-admin: &dir-admin /app/apps/admin-app
-x-dir-explorer: &dir-explorer /app/apps/explorer
+x-dir-data_studio: &dir-data_studio /app/apps/data-studio
 x-dir-login: &dir-login /app/apps/login
 x-dir-portal: &dir-portal /app/apps/portal
 x-dir-automate_scan: &dir-automate_scan /app/apps/automate-scan
@@ -22,7 +22,7 @@ x-volume-yarn-cache: &volume-yarn-cache yarn_cache:/app/.yarn/cache
 x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_modules
 x-volume-core-modules: &volume-core-modules node_modules_core:/app/apps/core/node_modules
 x-volume-admin-modules: &volume-admin-modules node_modules_admin-app:/app/apps/admin-app/node_modules
-x-volume-explorer-modules: &volume-explorer-modules node_modules_explorer:/app/apps/explorer/node_modules
+x-volume-data_studio-modules: &volume-data_studio-modules node_modules_data-studio:/app/apps/data-studio/node_modules
 x-volume-login-modules: &volume-login-modules node_modules_login:/app/apps/login/node_modules
 x-volume-portal-modules: &volume-portal-modules node_modules_portal:/app/apps/portal/node_modules
 x-volume-preview_generator-modules: &volume-preview_generator-modules node_modules_preview-generator:/app/apps/preview-generator/node_modules
@@ -102,8 +102,8 @@ x-env-sync-scan: &env-sync-scan
 x-env-admin-app: &env-admin-app
   APP_ROOT_PATH: *dir-admin
 
-x-env-explorer: &env-explorer
-  APP_ROOT_PATH: *dir-explorer
+x-env-data-studio: &env-data-studio
+  APP_ROOT_PATH: *dir-data_studio
 
 x-env-login: &env-login
   APP_ROOT_PATH: *dir-login
@@ -147,7 +147,7 @@ services:
       - *volume-shared-modules
       - *volume-core-modules
       - *volume-admin-modules
-      - *volume-explorer-modules
+      - *volume-data_studio-modules
       - *volume-login-modules
       - *volume-portal-modules
       - *volume-preview_generator-modules
@@ -241,30 +241,30 @@ services:
         "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start"
       ]
 
-  explorer:
+  data-studio:
     image: *node_image
     user: node
     stdin_open: true
     labels:
       - traefik.enable=true
-      - traefik.http.routers.explorer.rule=(Host(`core.leav.localhost`) && Path(`/app/explorer`, `/app/explorer/{route:.*}`)) || Host(`explorer.leav.localhost`)
-      - traefik.http.services.explorer.loadbalancer.server.port=3000
-      - traefik.http.routers.explorer.entrypoints=web
+      - traefik.http.routers.data-studio.rule=(Host(`core.leav.localhost`) && Path(`/app/data-studio`, `/app/data-studio/{route:.*}`)) || Host(`data-studio.leav.localhost`)
+      - traefik.http.services.data-studio.loadbalancer.server.port=3000
+      - traefik.http.routers.data-studio.entrypoints=web
     environment:
       <<: *env-react
-      <<: *env-explorer
-      REACT_APP_ENDPOINT: /app/explorer
-      REACT_APP_APPLICATION_ID: explorer
-      PUBLIC_URL: http://core.leav.localhost/app/explorer
-      WDS_SOCKET_HOST: explorer.leav.localhost
+      <<: *env-data-studio
+      REACT_APP_ENDPOINT: /app/data-studio
+      REACT_APP_APPLICATION_ID: data-studio
+      PUBLIC_URL: http://core.leav.localhost/app/data-studio
+      WDS_SOCKET_HOST: data-studio.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
       - *volume-yarn-cache
       - *volume-shared-modules
-      - *volume-explorer-modules
-    working_dir: *dir-explorer
+      - *volume-data_studio-modules
+    working_dir: *dir-data_studio
     command: [
         sh,
         -c,
@@ -345,7 +345,7 @@ services:
       - *mount_point-scripts
       - *volume-yarn-cache
       - *volume-shared-modules
-      - *volume-explorer-modules
+      - *volume-automate_scan-modules
       - *volume-config_manager-modules
     working_dir: *dir-automate_scan
     command: [
@@ -529,7 +529,7 @@ volumes:
     driver: local
   node_modules_admin-app:
     driver: local
-  node_modules_explorer:
+  node_modules_data-studio:
     driver: local
   node_modules_login:
     driver: local

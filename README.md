@@ -1,5 +1,5 @@
 # LEAV Engine
-This is the monorepo for LEAV Engine. It contains all projects related to LEAV Engine, including the core, the automate and the front for admin and explorer.
+This is the monorepo for LEAV Engine. It contains all projects related to LEAV Engine, including the core, the automate and the front for admin and data-studio.
 All apps are located in the `src/apps` folder. All shared code must live in the `src/libs` folder.
 
 We're using [Yarn Workspaces](https://yarnpkg.com/features/workspaces) to manage dependencies and scripts running accross all projects.
@@ -70,7 +70,7 @@ A few URLs are handled by the proxy (Traefik) to manage and access your app:
 -   http://arango.leav.localhost: Arango DB admin
 -   http://core.leav.localhost/graphql: GraphQL playground
 -   http://rabbitmq.leav.localhost: RabbitMQ admin
--   http://explorer.leav.localhost/: Explorer app
+-   http://data-studio.leav.localhost/: Data Studio app
 
 You might need to add it to your `/etc/hosts` file to access it:
 
@@ -79,7 +79,7 @@ You might need to add it to your `/etc/hosts` file to access it:
 127.0.0.1 core.leav.localhost
 127.0.0.1 arango.leav.localhost
 127.0.0.1 rabbitmq.leav.localhost
-127.0.0.1 explorer.leav.localhost
+127.0.0.1 data-studio.leav.localhost
 ```
 
 ---

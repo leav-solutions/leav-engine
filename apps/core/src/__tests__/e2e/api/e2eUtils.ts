@@ -91,7 +91,7 @@ export async function gqlSaveApplication(id: string, label: string, endpoint: st
                 id: "${id}",
                 label: {fr: "${label}"},
                 endpoint: "${endpoint}",
-                module: "explorer"
+                module: "data-studio"
             }) { id }
         }`,
         true

@@ -12,7 +12,7 @@ import {AttributeType, SortOrder} from '_gqlTypes/globalTypes';
 import {infosCol} from '../../../../constants/constants';
 import themingVar from '../../../../themingVar';
 import {getSortFieldByAttributeType} from '../../../../utils';
-import ChooseTableColumns from '../../LibraryItemsListTable/ChooseTableColumns';
+import ChooseTableColumns from '../ChooseTableColumns';
 
 interface IWrapperProps {
     isHover: boolean;

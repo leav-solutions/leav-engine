@@ -21,7 +21,7 @@ describe('applicationRepo', () => {
         description: 'Super application',
         libraries: ['products', 'categories'],
         color: 'orange',
-        module: 'explorer'
+        module: 'data-studio'
     };
     const applicationData = {
         ...mockApplication,
@@ -33,7 +33,7 @@ describe('applicationRepo', () => {
         libraries: ['products', 'categories'],
         trees: ['files', 'categories'],
         color: 'orange',
-        module: 'explorer'
+        module: 'data-studio'
     };
 
     describe('getApplications', () => {
@@ -151,13 +151,13 @@ describe('applicationRepo', () => {
 
         test('Return modules found on directory', async () => {
             const pathSpy = jest.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
-            const fsSpy = jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['explorer', 'admin'] as any[]);
+            const fsSpy = jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['data-studio', 'admin'] as any[]);
 
             jest.mock(
-                `/some/path/${APPS_MODULES_FOLDER}/explorer/package.json`,
+                `/some/path/${APPS_MODULES_FOLDER}/data-studio/package.json`,
                 () => ({
-                    name: 'explorer',
-                    description: 'explorer description',
+                    name: 'data-studio',
+                    description: 'data studio description',
                     version: '42'
                 }),
                 {virtual: true}
@@ -178,7 +178,7 @@ describe('applicationRepo', () => {
             const modules = await repo.getAvailableModules({ctx: mockCtx});
 
             expect(modules).toEqual([
-                {id: 'explorer', description: 'explorer description', version: '42'},
+                {id: 'data-studio', description: 'data studio description', version: '42'},
                 {id: 'admin', description: 'admin description', version: '42'}
             ]);
 
