@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {IApplicationService} from 'infra/application/applicationService';
-import {IApplication} from '_types/application';
 import {IDbService} from '../dbService';
 import {IDbUtils} from '../dbUtils';
 
@@ -13,7 +12,7 @@ interface IDeps {
     'core.infra.application.service'?: IApplicationService;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.application.service': applicationService = null
@@ -37,13 +36,16 @@ export default function ({
                     trees: []
                 },
                 {
-                    _key: 'explorer',
+                    _key: 'data-studio',
                     system: false,
                     type: 'internal',
-                    module: 'explorer',
-                    label: {fr: 'Explorateur', en: 'Explorer'},
-                    description: {fr: 'Explorateur générique', en: 'Generic explorer'},
-                    endpoint: 'explorer',
+                    module: 'data-studio',
+                    label: {fr: 'Data Studio', en: 'Data Studio'},
+                    description: {
+                        fr: 'Application générique pour gérer et explorer vos données',
+                        en: 'Generic app to manage and explore your data'
+                    },
+                    endpoint: 'data-studio',
                     libraries: [],
                     trees: []
                 },

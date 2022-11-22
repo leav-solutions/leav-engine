@@ -60,9 +60,8 @@ x-env-sync-scan: &env-sync-scan
   FILESYSTEM_ABSOLUTE_PATH: /files
   GRAPHQL_URI: http://core:4001/graphql
   GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}
-  APP_ROOT_PATH: *dir-sync_scan
+  APP_ROOT_PATH: /app/apps/sync-scan
 
-# TODO: add link to the doc about the configuration
 x-env-preview-generator: &env-preview-generator
   NODE_ENV: production
   INPUT_ROOT_PATH: /files

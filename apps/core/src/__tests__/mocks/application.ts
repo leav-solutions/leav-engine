@@ -16,7 +16,7 @@ export const mockApplication: IApplication = {
     icon: {
         id: '123456'
     },
-    module: 'explorer'
+    module: 'data-studio'
 };
 
 export const mockApplicationExternal: IApplication = {

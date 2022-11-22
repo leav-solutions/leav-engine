@@ -1,6 +1,6 @@
 {
-  "short_name": "leav_engine_explorer",
-  "name": "LEAV Engine Explorer",
+  "short_name": "leav_engine_data_studio",
+  "name": "LEAV Engine Data Studio",
   "icons": [
     {
       "src": "favicon-leav.svg",

@@ -11,7 +11,7 @@ describe('Applications', () => {
                     id: "test_app",
                     label: {fr: "Test app"},
                     endpoint: "my-app",
-                    module: "explorer"
+                    module: "data-studio"
                 }) {
                     id
                     label
@@ -27,7 +27,7 @@ describe('Applications', () => {
         expect(res.data.errors).toBeUndefined();
 
         expect(res.data.data.saveApplication.id).toBe('test_app');
-        expect(res.data.data.saveApplication.module).toBe('explorer');
+        expect(res.data.data.saveApplication.module).toBe('data-studio');
         expect(res.data.data.saveApplication.permissions.access_application).toBeDefined();
 
         // Check if new app is in applications list
@@ -35,7 +35,7 @@ describe('Applications', () => {
             applications {
                 list {
                     id
-                    install {status}
+                    install {status lastCallResult}
                     permissions {access_application}
                 }
             }
