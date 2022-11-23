@@ -1,4 +1,5 @@
 {
+    "document_title": "LEAV Engine - {{appLabel}}",
     "header_title": "LEAV Engine",
     "search_placeholder": "Rechercher...",
     "userdata_error": "Impossible de récupérer les données de l'utilisateur",

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {localizedTranslation} from '@leav/utils';
 import {Layout} from 'antd';
 import Applications from 'components/Applications';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
@@ -10,10 +11,12 @@ import UserMenu from 'components/UserMenu';
 import LangContext from 'context/LangContext';
 import UserContext from 'context/UserContext';
 import useRedirectionError from 'hooks/useRedirectionError';
+import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {getMe} from 'queries/me/me';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {ME} from '_gqlTypes/ME';
 
 const Header = styled(Layout.Header)`
@@ -43,6 +46,7 @@ const Content = styled(Layout.Content)`
 function App(): JSX.Element {
     const {t, i18n} = useTranslation();
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
+    const appId = process.env.REACT_APP_APPLICATION_ID;
 
     // Init lang
     const availableLangs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
@@ -50,6 +54,20 @@ function App(): JSX.Element {
     const userLang = i18n.language.split('-')[0];
     const fallbackLang = i18n.options.fallbackLng ? i18n.options.fallbackLng[0] : '';
     const [lang, setLang] = useState<string[]>([userLang, fallbackLang]);
+
+    const {data: applicationData, loading: applicationLoading, error: applicationError} = useQuery<
+        GET_APPLICATION_BY_ID,
+        GET_APPLICATION_BY_IDVariables
+    >(getApplicationByIdQuery, {variables: {id: appId ?? ''}});
+
+    const currentApp = applicationData?.applications?.list?.[0];
+
+    useEffect(() => {
+        document.title = t('document_title', {
+            appLabel: localizedTranslation(currentApp?.label, lang),
+            interpolation: {escapeValue: false}
+        });
+    }, [currentApp, lang, t]);
 
     const handleRedirectionError = useRedirectionError();
 
@@ -64,12 +82,12 @@ function App(): JSX.Element {
         setLang([i18n.language, fallbackLang]);
     };
 
-    if (meLoading) {
+    if (meLoading || applicationLoading) {
         return <Loading />;
     }
 
-    if (meError || !userData?.me) {
-        return <ErrorDisplay message={meError.message || t('userdata_error')} />;
+    if (meError || applicationError || !userData?.me) {
+        return <ErrorDisplay message={meError?.message || applicationError?.message || t('userdata_error')} />;
     }
 
     return (

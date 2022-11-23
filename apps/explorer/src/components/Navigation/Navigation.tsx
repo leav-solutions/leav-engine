@@ -6,7 +6,7 @@ import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {useApplicationContext} from 'context/ApplicationContext';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -54,7 +54,8 @@ function Navigation({tree}: INavigationProps): JSX.Element {
             const baseInfo: IBaseInfo = {
                 content: t('info.active-tree', {
                     tree: treeName,
-                    appLabel: localizedTranslation(currentApp.label, lang)
+                    appLabel: localizedTranslation(currentApp.label, lang),
+                    interpolation: {escapeValue: false}
                 }),
                 type: InfoType.basic
             };

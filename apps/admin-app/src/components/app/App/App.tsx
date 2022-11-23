@@ -50,7 +50,10 @@ const App = (): JSX.Element => {
     const currentApp = applicationData?.applications?.list?.[0];
 
     useEffect(() => {
-        document.title = t('admin.document_title', {appLabel: localizedTranslation(currentApp?.label, lang)});
+        document.title = t('admin.document_title', {
+            appLabel: localizedTranslation(currentApp?.label, lang),
+            interpolation: {escapeValue: false}
+        });
     }, [currentApp, lang, t]);
 
     // Load yup messages translations

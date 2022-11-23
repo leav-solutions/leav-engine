@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {getMe} from 'queries/me/me';
 import React from 'react';
 import {mockUser} from '_tests/mocks/user';
@@ -31,8 +32,33 @@ describe('App', () => {
                         me: mockUser
                     }
                 }
+            },
+            {
+                request: {
+                    query: getApplicationByIdQuery,
+                    variables: {
+                        id: 'portal'
+                    }
+                },
+                result: {
+                    data: {
+                        applications: {
+                            __typename: 'ApplicationsList',
+                            list: [
+                                {
+                                    id: 'portal',
+                                    label: {fr: 'Portal'},
+                                    description: {fr: 'Portal'},
+                                    endpoint: '/portal'
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         ];
+
+        process.env.REACT_APP_APPLICATION_ID = 'portal';
         render(<App />, {apolloMocks: mocks});
 
         expect(await screen.findByText('UserMenu')).toBeInTheDocument();
