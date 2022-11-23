@@ -21,7 +21,6 @@ import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
-import {IGetDefaultElementHelper} from './helpers/getDefaultElement';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 import treeDomain from './treeDomain';
 
@@ -64,10 +63,6 @@ describe('treeDomain', () => {
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
         getCachedElementAncestors: global.__mockPromise([]),
         clearElementAncestorsCache: jest.fn()
-    };
-
-    const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
-        clearCache: jest.fn()
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -216,7 +211,7 @@ describe('treeDomain', () => {
     });
 
     describe('deleteTree', () => {
-        test('Should delete a tree and return deleted tree', async function () {
+        test('Should delete a tree and return deleted tree', async function() {
             const mockAttributesDomain: Mockify<IAttributeDomain> = {
                 getAttributes: global.__mockPromise({
                     totalCount: 2,
@@ -283,7 +278,7 @@ describe('treeDomain', () => {
             expect(mockVersionProfileRepo.updateVersionProfile).toBeCalled();
         });
 
-        test('Should throw if unknown tree', async function () {
+        test('Should throw if unknown tree', async function() {
             const treeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise({list: [], totalCount: 0}),
                 deleteTree: global.__mockPromise(mockTree)
@@ -299,7 +294,7 @@ describe('treeDomain', () => {
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if system tree', async function () {
+        test('Should throw if system tree', async function() {
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {
@@ -318,7 +313,7 @@ describe('treeDomain', () => {
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if action forbidden', async function () {
+        test('Should throw if action forbidden', async function() {
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {
@@ -418,8 +413,7 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
-                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper
             });
 
             await domain.addElement({
@@ -654,8 +648,7 @@ describe('treeDomain', () => {
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.infra.library': mockLibDomain as ILibraryRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             await domain.moveElement({
@@ -865,8 +858,7 @@ describe('treeDomain', () => {
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.infra.library': mockLibDomain as ILibraryRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithPermissions as GetCoreEntityByIdFunc,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
             });
 
             await domain.deleteElement({

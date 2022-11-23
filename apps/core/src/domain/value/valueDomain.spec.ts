@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -109,10 +108,6 @@ describe('ValueDomain', () => {
         ])
     };
 
-    const mockGetDefaultElementHelper: Mockify<IGetDefaultElementHelper> = {
-        getDefaultElement: global.__mockPromise({id: '12345'})
-    };
-
     const mockUpdateRecordLastModif = jest.fn();
 
     const mockVersionProfileDomain: Mockify<IVersionProfileDomain> = {
@@ -134,7 +129,7 @@ describe('ValueDomain', () => {
             getTrees: global.__mockPromise({list: [mockTree], totalCount: 0})
         };
 
-        test('Should save an indexed value', async function () {
+        test('Should save an indexed value', async function() {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
@@ -174,7 +169,7 @@ describe('ValueDomain', () => {
             expect(savedValue).toMatchObject(savedValueData);
         });
 
-        test('Should save a new standard value', async function () {
+        test('Should save a new standard value', async function() {
             const savedValueData = {
                 id_value: '1337',
                 value: 'test val',
@@ -226,7 +221,7 @@ describe('ValueDomain', () => {
             expect(savedValue.created_at).toBeTruthy();
         });
 
-        test('Should update a standard value', async function () {
+        test('Should update a standard value', async function() {
             const savedValueData = {
                 id_value: '1337',
                 value: 'test val',
@@ -284,7 +279,7 @@ describe('ValueDomain', () => {
             expect(savedValue.created_at).toBeTruthy();
         });
 
-        test('Should throw if unknown attribute', async function () {
+        test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
@@ -311,7 +306,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1}),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
@@ -337,7 +332,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should throw if unknown value', async function () {
+        test('Should throw if unknown value', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
@@ -366,7 +361,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should update record modif date and user', async function () {
+        test('Should update record modif date and user', async function() {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
@@ -1090,8 +1085,7 @@ describe('ValueDomain', () => {
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
-                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif
             });
 
             const res = await valDomain.saveValueBatch({
@@ -1378,7 +1372,7 @@ describe('ValueDomain', () => {
             expect(mockValRepo.deleteValue).toBeCalledTimes(0);
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
@@ -1410,7 +1404,7 @@ describe('ValueDomain', () => {
             await expect(saveVal).rejects.toHaveProperty('fields.library');
         });
 
-        test('Should throw if unknown record', async function () {
+        test('Should throw if unknown record', async function() {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
@@ -1444,7 +1438,7 @@ describe('ValueDomain', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function () {
+        test('Should delete a value', async function() {
             const deletedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
@@ -1482,7 +1476,7 @@ describe('ValueDomain', () => {
             expect(deletedValue).toMatchObject(deletedValueData);
         });
 
-        test('Should throw if unknown attribute', async function () {
+        test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
@@ -1505,7 +1499,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple}),
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
@@ -1551,7 +1545,7 @@ describe('ValueDomain', () => {
             await expect(deleteVal).rejects.toHaveProperty('fields.library');
         });
 
-        test('Should throw if unknown record', async function () {
+        test('Should throw if unknown record', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttrSimple}),
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1})
@@ -1596,7 +1590,7 @@ describe('ValueDomain', () => {
             await expect(deleteVal).rejects.toHaveProperty('fields.recordId');
         });
 
-        test('Should throw if unknown value', async function () {
+        test('Should throw if unknown value', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
@@ -1622,7 +1616,7 @@ describe('ValueDomain', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values', async function () {
+        test('Should return values', async function() {
             const valueData = [{value: 'test val', attribute: 'test_attr'}];
 
             const mockValRepo = {
@@ -1657,7 +1651,7 @@ describe('ValueDomain', () => {
             expect(resValue).toMatchObject(valueData);
         });
 
-        test('Should return versioned values in simple mode', async function () {
+        test('Should return versioned values in simple mode', async function() {
             const version = {my_tree: '12345'};
             const valueData = [
                 {
@@ -1701,7 +1695,7 @@ describe('ValueDomain', () => {
             expect(resValue).toMatchObject(valueData);
         });
 
-        test('Should return versioned values in smart mode', async function () {
+        test('Should return versioned values in smart mode', async function() {
             const valueData = [
                 {
                     value: 'val1',
@@ -1758,7 +1752,7 @@ describe('ValueDomain', () => {
             expect(resValue[0].version).toMatchObject({my_tree: '8'});
         });
 
-        test('Should return versioned values with multiple trees', async function () {
+        test('Should return versioned values with multiple trees', async function() {
             const valueData = [
                 {
                     value: 'val1',
@@ -1938,7 +1932,7 @@ describe('ValueDomain', () => {
             });
         });
 
-        test('Should return empty array if no values matching version', async function () {
+        test('Should return empty array if no values matching version', async function() {
             const valueData = [
                 {
                     value: 'val1',
@@ -1987,7 +1981,7 @@ describe('ValueDomain', () => {
             expect(resValue.length).toBe(0);
         });
 
-        test('Should throw if unknown attribute', async function () {
+        test('Should throw if unknown attribute', async function() {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementationOnce(id => {
                     throw new ValidationError({id: Errors.UNKNOWN_ATTRIBUTE});
@@ -2008,7 +2002,7 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateLibrary: jest.fn().mockImplementation(() => {
                     throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
@@ -2031,7 +2025,7 @@ describe('ValueDomain', () => {
             await expect(getVal).rejects.toHaveProperty('fields.library');
         });
 
-        test('Should throw if unknown record', async function () {
+        test('Should throw if unknown record', async function() {
             const mockValidHelper: Mockify<IValidateHelper> = {
                 validateRecord: jest.fn().mockImplementation(() => {
                     throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});

@@ -448,19 +448,23 @@ export const prepareView = (
 };
 
 export const getValueVersionLabel = (version: IValueVersion) => {
-    return Object.values(version ?? {})
-        .map(v => v.label)
-        .join(' / ');
+    const labels = Object.values(version ?? {})
+        .map(v => v?.label ?? null)
+        .filter(v => !!v); // Remove null values
+
+    return labels.length ? labels.join(' / ') : null;
 };
 
 export const arrayValueVersionToObject = (
     version: RECORD_FORM_recordForm_elements_values_Value_version[]
 ): IValueVersion => {
     return version?.reduce((acc: IValueVersion, value) => {
-        acc[value.treeId] = {
-            id: value.treeNode.id,
-            label: value.treeNode.record.whoAmI.label
-        };
+        acc[value.treeId] = value.treeNode
+            ? {
+                  id: value.treeNode.id,
+                  label: value.treeNode.record.whoAmI.label
+              }
+            : null;
 
         return acc;
     }, {});
@@ -470,7 +474,7 @@ export const objectValueVersionToArray = (version: IValueVersion): ValueVersionI
     return version
         ? objectToNameValueArray(version).map(v => ({
               treeId: v.name,
-              treeNodeId: v.value.id
+              treeNodeId: v?.value?.id ?? null
           }))
         : null;
 };

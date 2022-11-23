@@ -21,7 +21,8 @@ const _getValuesForVersion = (version: IValueVersion, values: IValue[]): IValue[
  *
  * Example:
  *      Tree A:                             Tree B:
- *          ├── A                                ├── 1
+ *        root                                 root
+ *          └── A                                └── 1
  *              └── B                                └── 2
  *                  └── C                                └── 3
  *      Value stored on version B|2
@@ -29,6 +30,7 @@ const _getValuesForVersion = (version: IValueVersion, values: IValue[]): IValue[
  *      C|3
  *      B|3
  *      A|3
+ *   root|3
  *      C|2
  *      B|2   <--- Value found => we return this value
  *
@@ -36,9 +38,19 @@ const _getValuesForVersion = (version: IValueVersion, values: IValue[]): IValue[
  * @param values
  *
  */
-const findValue = (trees: IFindValueTree[], values: IValue[]): IValue[] => {
+const findValue = (trees: IFindValueTree[], values: IValue[], firstRun = true): IValue[] => {
+    let lookupTrees = [...trees];
+    if (firstRun) {
+        // On each tree, add a fake node with ID = null to simulate the tree root.
+        // A version set to null is equivalent to a version set to the tree root
+        lookupTrees = lookupTrees.map(t => ({
+            ...t,
+            elements: [...t.elements, {id: null}]
+        }));
+    }
+
     // Extract version from all trees at their current state
-    const version = trees.reduce((vers, t) => {
+    const version = lookupTrees.reduce((vers, t) => {
         if (typeof t.elements[t.currentIndex].id !== 'undefined') {
             vers[t.name] = t.elements[t.currentIndex].id;
         }
@@ -58,21 +70,28 @@ const findValue = (trees: IFindValueTree[], values: IValue[]): IValue[] => {
     // If we reach a tree root, we start over from the bottom.
     // If we reach all trees roots, it means we're done and didn't find anything
     let indexMoved = false;
-    for (const [i, tree] of trees.entries()) {
+    for (const [i, tree] of lookupTrees.entries()) {
         // Element has parent, go up
         if (tree.currentIndex < tree.elements.length - 1) {
-            trees[i].currentIndex++;
+            lookupTrees[i].currentIndex++;
             indexMoved = true;
             break; // Don't look on the other trees, only one movement at a time
         } else {
             // No more parents, go back down
-            trees[i].currentIndex = 0;
+            lookupTrees[i].currentIndex = 0;
         }
     }
 
     // We changed an index somewhere so we need to keep looking with this new position
     if (indexMoved) {
-        return findValue(trees, values);
+        return findValue(lookupTrees, values, false);
+    }
+
+    // Last try, try to find a value with version set to null (not having all trees set to null)
+    const nullValues = values.filter(v => !v.version);
+
+    if (nullValues.length) {
+        return nullValues;
     }
 
     // Nothing found :(

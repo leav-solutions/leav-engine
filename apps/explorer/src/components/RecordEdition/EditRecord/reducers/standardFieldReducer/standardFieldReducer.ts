@@ -215,7 +215,10 @@ const _computeScopeAndValues = (params: {
         : null;
 
     const hasInheritedValues = attribute?.versions_conf?.versionable
-        ? !isCurrentVersion(currentVersion, values?.[0]?.version ?? currentVersion)
+        ? !isCurrentVersion(
+              currentVersion,
+              typeof values?.[0]?.version === 'undefined' ? currentVersion : values?.[0]?.version
+          )
         : false; // We assume that all values have the same version
     const inheritedVersion = hasInheritedValues ? values?.[0]?.version : null;
 

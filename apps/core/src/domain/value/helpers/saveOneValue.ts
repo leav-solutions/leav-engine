@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
@@ -18,7 +17,6 @@ interface ISaveOneValueDeps {
     valueRepo: IValueRepo;
     recordRepo: IRecordRepo;
     treeRepo: ITreeRepo;
-    getDefaultElementHelper: IGetDefaultElementHelper;
     actionsListDomain: IActionsListDomain;
     attributeDomain: IAttributeDomain;
     versionProfileDomain: IVersionProfileDomain;
@@ -38,25 +36,15 @@ const _handleValueVersion = async (
     // Run through each profile's tree: if value's version has a value for this tree, we keep it, otherwise we affect
     // default version for this tree.
     // The goal is to make sure the version is always relevant in regard to the profile
-    const valueVersion = versionProfile.trees.reduce(
-        async (versionProm: Promise<IValueVersion>, treeId): Promise<IValueVersion> => {
-            const version = await versionProm;
+    const valueVersion = await versionProfile.trees.reduce(async (versionProm: Promise<IValueVersion>, treeId): Promise<
+        IValueVersion
+    > => {
+        const version = await versionProm;
 
-            if (value.version?.[treeId]) {
-                version[treeId] = value.version[treeId];
-            } else {
-                const treeDefaultElement = await deps.getDefaultElementHelper.getDefaultElement({
-                    treeId,
-                    ctx
-                });
+        version[treeId] = value.version?.[treeId] ?? null;
 
-                version[treeId] = treeDefaultElement.id;
-            }
-
-            return version;
-        },
-        Promise.resolve({})
-    );
+        return version;
+    }, Promise.resolve({}));
 
     return valueVersion;
 };

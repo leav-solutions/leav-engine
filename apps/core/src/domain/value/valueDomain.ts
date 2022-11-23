@@ -4,7 +4,6 @@
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
-import {IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
@@ -120,7 +119,6 @@ interface IDeps {
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
-    'core.domain.tree.helpers.getDefaultElement'?: IGetDefaultElementHelper;
     'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.infra.record'?: IRecordRepo;
     'core.infra.tree'?: ITreeRepo;
@@ -130,7 +128,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function ({
+const valueDomain = function({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -140,7 +138,6 @@ const valueDomain = function ({
     'core.domain.helpers.validate': validate = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.domain.tree.helpers.elementAncestors': elementAncestors = null,
-    'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper = null,
     'core.domain.versionProfile': versionProfileDomain = null,
     'core.infra.record': recordRepo = null,
     'core.infra.tree': treeRepo = null,
@@ -311,11 +308,7 @@ const valueDomain = function ({
             }
 
             let values: IValue[];
-            if (
-                !attr.versions_conf ||
-                !attr.versions_conf.versionable ||
-                attr.versions_conf.mode === ValueVersionMode.SIMPLE
-            ) {
+            if (!attr?.versions_conf?.versionable || attr.versions_conf.mode === ValueVersionMode.SIMPLE) {
                 const getValOptions = {
                     ...options,
                     version: attr?.versions_conf?.versionable ? options.version : null
@@ -348,24 +341,27 @@ const valueDomain = function ({
                 const trees: IFindValueTree[] = await Promise.all(
                     versionProfile.trees.map(
                         async (treeName: string): Promise<IFindValueTree> => {
-                            const treeElem =
-                                options?.version && options.version[treeName]
-                                    ? options.version[treeName]
-                                    : (await getDefaultElementHelper.getDefaultElement({treeId: treeName, ctx})).id;
+                            const treeData = {
+                                name: treeName,
+                                currentIndex: 0,
+                                elements: []
+                            };
+
+                            if (!options?.version?.[treeName]) {
+                                return treeData;
+                            }
 
                             const ancestors = (
                                 await elementAncestors.getCachedElementAncestors({
                                     treeId: treeName,
-                                    nodeId: treeElem,
+                                    nodeId: options.version[treeName],
                                     ctx
                                 })
                             ).reverse(); // We want the leaves first
 
-                            return {
-                                name: treeName,
-                                currentIndex: 0,
-                                elements: ancestors
-                            };
+                            treeData.elements = ancestors;
+
+                            return treeData;
                         }
                     )
                 );
@@ -373,6 +369,7 @@ const valueDomain = function ({
                 // Retrieve appropriate value among all values
                 values = options?.forceGetAllValues ? allValues : findValue(trees, allValues);
             }
+
             // Runs actionsList
             values = await Promise.all(
                 values.map(v => _runActionsList(ActionsListEvents.GET_VALUE, v, attr, {id: recordId}, library, ctx))
@@ -456,7 +453,6 @@ const valueDomain = function ({
                     valueRepo,
                     recordRepo,
                     treeRepo,
-                    getDefaultElementHelper,
                     actionsListDomain,
                     attributeDomain,
                     versionProfileDomain
@@ -592,7 +588,6 @@ const valueDomain = function ({
                                           valueRepo,
                                           recordRepo,
                                           treeRepo,
-                                          getDefaultElementHelper,
                                           actionsListDomain,
                                           attributeDomain,
                                           versionProfileDomain

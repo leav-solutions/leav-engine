@@ -56,7 +56,7 @@ function ValueInfo(): JSX.Element {
     if (value?.version) {
         valueDetailsContent.push({
             title: t('values_version.version'),
-            value: getValueVersionLabel(value.version)
+            value: getValueVersionLabel(value.version) ?? t('values_version.root_value')
         });
     }
 

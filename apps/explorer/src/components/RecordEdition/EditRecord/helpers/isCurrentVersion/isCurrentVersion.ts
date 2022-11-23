@@ -17,8 +17,14 @@ export default (referenceVersion: IValueVersion, valueVersion: IValueVersion) =>
         return false;
     }
 
+    const hasReferenceVersion = !!Object.keys(referenceVersion).length;
+    const hasValueVersion = !!Object.keys(valueVersion).length;
+    if (hasReferenceVersion && !hasValueVersion) {
+        return false;
+    }
+
     for (const versionTreeId of Object.keys(valueVersion)) {
-        if (referenceVersion?.[versionTreeId]?.id !== valueVersion[versionTreeId].id) {
+        if (referenceVersion?.[versionTreeId]?.id !== valueVersion[versionTreeId]?.id) {
             return false;
         }
     }

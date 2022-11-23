@@ -74,7 +74,7 @@ export default function({
             return value?.version
                 ? objectToNameValueArray(value.version).map(v => ({
                       treeId: v.name,
-                      treeNode: {id: v.value, treeId: v.name}
+                      treeNode: v.value ? {id: v.value, treeId: v.name} : null
                   }))
                 : [];
         }
@@ -91,7 +91,7 @@ export default function({
 
                     input ValueVersionInput {
                         treeId: String!,
-                        treeNodeId: String!
+                        treeNodeId: String
                     }
 
                     type ValueMetadata {

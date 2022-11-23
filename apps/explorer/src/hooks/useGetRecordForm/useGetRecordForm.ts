@@ -77,7 +77,7 @@ const useGetRecordForm = ({
             version: version
                 ? objectToNameValueArray(version).map(({name, value}) => ({
                       treeId: name,
-                      treeNodeId: value.id
+                      treeNodeId: value?.id ?? null
                   }))
                 : null
         },

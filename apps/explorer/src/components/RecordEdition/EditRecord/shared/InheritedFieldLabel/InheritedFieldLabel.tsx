@@ -21,7 +21,7 @@ interface IInheritedFieldLabelProps {
 
 function InheritedFieldLabel({version}: IInheritedFieldLabelProps): JSX.Element {
     const {t} = useTranslation();
-    const versionLabel = getValueVersionLabel(version);
+    const versionLabel = getValueVersionLabel(version) ?? t('values_version.root_value');
 
     return (
         <Wrapper>

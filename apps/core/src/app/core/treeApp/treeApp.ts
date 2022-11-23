@@ -39,7 +39,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function ({
+export default function({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -467,15 +467,6 @@ export default function ({
 
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
-                        },
-                        defaultElement: async (
-                            treeData: ITree,
-                            _,
-                            ctx: IQueryInfos
-                        ): Promise<ITreeNode & {treeId?: string}> => {
-                            const element = await treeDomain.getDefaultElement({treeId: treeData.id, ctx});
-
-                            return element ? {...element, treeId: treeData.id} : null;
                         }
                     },
                     TreeNode: {

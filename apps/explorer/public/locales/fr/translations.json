@@ -507,7 +507,8 @@
         "apply": "Appliquer",
         "inherited_value": "valeur héritée",
         "inherited_from": "Hérité de",
-        "reset": "Réinitialiser"
+        "reset": "Réinitialiser",
+        "root_value": "Valeur globale"
     },
     "notifications": {
         "title": "Notifications",

@@ -408,11 +408,15 @@ function StandardFieldValue({
 
                 values = valuesList
                     .filter(val => {
+                        const safeValueForRegEx = String(fieldValue.editingValue).replace(
+                            /[/\-\\^$*+?.()|[\]{}]/g, // Escape regex special characters
+                            '\\$&'
+                        );
                         return (
                             fieldValue.state === StandardFieldValueState.PRISTINE ||
                             !fieldValue.editingValue ||
                             attribute.format === AttributeFormat.date ||
-                            val.match(new RegExp(String(fieldValue.editingValue), 'i'))
+                            val.match(new RegExp(safeValueForRegEx, 'i'))
                         );
                     })
                     .map(v => ({value: v, rawValue: v}));

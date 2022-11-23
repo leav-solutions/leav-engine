@@ -42,7 +42,10 @@ function ValuesVersionConfigurator({
     }
 
     const _handleNodeSelection = (treeId: string) => (selectedNode: ITreeNode) => {
-        onVersionChange({...selectedVersion, [treeId]: {id: selectedNode.id, label: String(selectedNode.title)}});
+        onVersionChange({
+            ...selectedVersion,
+            [treeId]: selectedNode ? {id: selectedNode.id, label: String(selectedNode.title)} : null
+        });
     };
 
     return (

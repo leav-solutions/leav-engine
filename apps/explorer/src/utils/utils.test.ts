@@ -85,7 +85,28 @@ describe('utils', () => {
             };
 
             expect(getValueVersionLabel(version)).toBe('Node title / Other Node');
-            expect(getValueVersionLabel(null)).toBe('');
+        });
+
+        test('If some version are "null", dont display it in label', async () => {
+            const version: IValueVersion = {
+                tree1: null,
+                tree2: {
+                    id: '987654',
+                    label: 'Other Node'
+                }
+            };
+
+            expect(getValueVersionLabel(version)).toBe('Other Node');
+        });
+
+        test('If all version are null, or the version itself is null, return null', async () => {
+            const version: IValueVersion = {
+                tree1: null,
+                tree2: null
+            };
+
+            expect(getValueVersionLabel(version)).toBe(null);
+            expect(getValueVersionLabel(null)).toBe(null);
         });
     });
 });

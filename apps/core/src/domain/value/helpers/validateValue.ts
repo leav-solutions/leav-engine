@@ -120,6 +120,11 @@ const _validateVersion = async (
             return errors;
         }
 
+        if (value.version[treeName] === null) {
+            // Having "null" as a version is valid, don't check it
+            return errors;
+        }
+
         const isPresent = await deps.treeRepo.isNodePresent({
             treeId: treeName,
             nodeId: value.version[treeName],

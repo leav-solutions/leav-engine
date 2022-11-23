@@ -505,7 +505,8 @@
         "select_version": "Select a version",
         "inherited_value": "inherited value",
         "inherited_from": "Inherited from",
-        "reset": "Reset"
+        "reset": "Reset",
+        "root_value": "Global value"
     },
     "notifications": {
         "title": "Notifications",

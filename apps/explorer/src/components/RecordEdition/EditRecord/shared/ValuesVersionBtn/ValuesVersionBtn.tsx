@@ -36,7 +36,7 @@ function ValuesVersionBtn({
         onScopeChange(item.key as FieldScope);
     };
 
-    const currentVersionLabel = getValueVersionLabel(versions[FieldScope.CURRENT]);
+    const currentVersionLabel = getValueVersionLabel(versions[FieldScope.CURRENT]) ?? t('values_version.root_value');
     const iconProps = {
         size: '1.8em',
         style: {
@@ -59,7 +59,8 @@ function ValuesVersionBtn({
 
     if (hasInheritedVersion) {
         const inheritedVersionLabel =
-            getValueVersionLabel(versions[FieldScope.INHERITED]) + ` (${t('values_version.inherited_value')})`;
+            getValueVersionLabel(versions[FieldScope.INHERITED]) ??
+            t('values_version.root_value') + ` (${t('values_version.inherited_value')})`;
 
         const inheritedIconProps = {
             size: '1.8em',

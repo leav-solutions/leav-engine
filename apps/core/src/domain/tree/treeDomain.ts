@@ -38,7 +38,6 @@ import getPermissionCachePatternKey from '../permission/helpers/getPermissionCac
 import {PERMISSIONS_CACHE_HEADER} from '../permission/_types';
 import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
-import {IGetDefaultElementHelper} from './helpers/getDefaultElement';
 import {HandleRemovedLibrariesFunc} from './helpers/handleRemovedLibraries';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
 
@@ -136,7 +135,6 @@ export interface ITreeDomain {
     getLibraryTreeId(library: string, ctx: IQueryInfos): string;
     getRecordByNodeId(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<IRecord>;
     getNodesByRecord(params: {treeId: string; record: ITreeElement; ctx: IQueryInfos}): Promise<string[]>;
-    getDefaultElement(params: {treeId: string; ctx: IQueryInfos}): Promise<ITreeNode>;
 }
 
 interface IDeps {
@@ -149,7 +147,6 @@ interface IDeps {
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
     'core.domain.tree.helpers.handleRemovedLibraries'?: HandleRemovedLibrariesFunc;
-    'core.domain.tree.helpers.getDefaultElement'?: IGetDefaultElementHelper;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.versionProfile'?: IVersionProfileRepo;
@@ -157,7 +154,7 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -167,7 +164,6 @@ export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper = null,
     'core.domain.tree.helpers.handleRemovedLibraries': handleRemovedLibraries = null,
-    'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.versionProfile': versionProfileRepo = null,
@@ -309,7 +305,6 @@ export default function ({
     const _clearAllTreeCaches = async (treeId: string, ctx: IQueryInfos): Promise<void> => {
         await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
         await elementAncestorsHelper.clearElementAncestorsCache({treeId, ctx});
-        await getDefaultElementHelper.clearCache({treeId, ctx});
     };
 
     return {
@@ -480,8 +475,6 @@ export default function ({
             if (Object.keys(errors).length) {
                 throw new ValidationError(errors, Object.values(errors).join(', '));
             }
-
-            await getDefaultElementHelper.clearCache({treeId, ctx});
 
             return treeRepo.addElement({
                 treeId,
@@ -686,9 +679,6 @@ export default function ({
         },
         async getNodesByRecord({treeId, record, ctx}): Promise<string[]> {
             return treeRepo.getNodesByRecord({treeId, record, ctx});
-        },
-        async getDefaultElement({treeId, ctx}) {
-            return getDefaultElementHelper.getDefaultElement({treeId, ctx});
         }
     };
 }
