@@ -177,14 +177,13 @@ export default function ({
                 '/auth/forgot-password',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
-                        const {email} = req.body as any;
+                        const {email, lang} = req.body as any;
                         const ua = useragent.parse(req.headers['user-agent']);
 
-                        if (typeof email === 'undefined') {
-                            return res.status(400).send('Missing email parameter');
+                        if (typeof email === 'undefined' || typeof lang === 'undefined') {
+                            return res.status(400).send('Missing parameters');
                         }
 
-                        // TODO: add lang to context
                         // Get user id
                         const ctx: IQueryInfos = {
                             userId: config.defaultUserId,
@@ -218,7 +217,7 @@ export default function ({
                             }
                         );
 
-                        await userDomain.sendResetPasswordEmail(user.email, token, user.login, ua.browser, ua.os);
+                        await userDomain.sendResetPasswordEmail(user.email, token, user.login, ua.browser, ua.os, lang);
 
                         return res.sendStatus(200);
                     } catch (err) {

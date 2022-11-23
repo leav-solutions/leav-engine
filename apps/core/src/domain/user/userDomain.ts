@@ -17,7 +17,14 @@ import {IUtils} from 'utils/utils';
 export interface IUserDomain {
     saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
-    sendResetPasswordEmail(mail: string, token: string, login: string, browser: string, os: string): Promise<void>;
+    sendResetPasswordEmail(
+        email: string,
+        token: string,
+        login: string,
+        browser: string,
+        os: string,
+        lang: 'fr' | 'en'
+    ): Promise<void>;
 }
 
 interface IDeps {
@@ -34,8 +41,8 @@ export default function ({
     config = null,
     'core.infra.userData': userDataRepo = null,
     'core.domain.permission': permissionDomain = null,
-    'core.utils': utils = null,
     'core.infra.mailer.mailerService': mailerService = null,
+    'core.utils': utils = null,
     translator = null
 }: IDeps = {}): IUserDomain {
     return {
@@ -44,9 +51,10 @@ export default function ({
             token: string,
             login: string,
             browser: string,
-            os: string
+            os: string,
+            lang: 'fr' | 'en' // FIXME: temporary
         ): Promise<void> {
-            const html = await readFile(__dirname + `/resetPassword_${config.lang.default}.html`, {encoding: 'utf-8'});
+            const html = await readFile(__dirname + `/resetPassword_${lang}.html`, {encoding: 'utf-8'});
             const template = handlebars.compile(html);
 
             const loginAppEndpoint = utils.getFullApplicationEndpoint('login');
@@ -61,7 +69,7 @@ export default function ({
 
             await mailerService.sendEmail({
                 to: email,
-                subject: translator.t('mailer.reset_password_subject', {lng: config.lang.default}),
+                subject: translator.t('mailer.reset_password_subject', {lng: lang}),
                 html: htmlWithData
             });
         },

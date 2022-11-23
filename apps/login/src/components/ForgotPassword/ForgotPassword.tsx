@@ -4,6 +4,7 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import ForgotPasswordForm from './ForgotPasswordForm';
+import i18n from 'i18next';
 
 const ForgotPassword = (): JSX.Element => {
     const {t} = useTranslation();
@@ -22,7 +23,8 @@ const ForgotPassword = (): JSX.Element => {
                 method: 'POST',
                 headers: new Headers([['Content-Type', 'application/json']]),
                 body: JSON.stringify({
-                    email
+                    email,
+                    lang: i18n.language
                 })
             });
 
