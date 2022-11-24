@@ -8,7 +8,6 @@
         "add": "Add",
         "remove": "Remove",
         "loading": "Loading...",
-        "any_record": "Any {libLabel}",
         "forbidden_route": "Access denied",
         "validation_errors": {
             "required": "Field required",
@@ -36,13 +35,13 @@
     },
     "general": {
         "title": "General",
-        "infos": "Informations",
+        "infos": "Information",
         "admin_permissions": "Admin permissions",
         "version": "LEAV Engine v{{version}}",
         "api_keys": "API keys"
     },
     "errors": {
-        "INTERNAL_ERROR": "An internal error occured",
+        "INTERNAL_ERROR": "An internal error occurred",
         "PERMISSION_ERROR": "You are not allowed to perform this operation",
         "VALIDATION_ERROR": "Invalid request",
         "network_error": "Server is not reachable",
@@ -74,6 +73,8 @@
         "behavior": "Behavior",
         "behavior_files": "Files",
         "behavior_standard": "Standard",
+        "behavior_directories": "Directories",
+        "default_view": "Default view",
         "fulltext_attributes": "Fulltext search attributes",
         "purge": {
             "title": "Purge",
@@ -105,7 +106,7 @@
         "display_params": "Display Params",
         "hide_params": "Hide Params",
         "connection_problem": "There's a connection problem",
-        "informations": "Informations",
+        "informations": "Information",
         "permissions": "Permissions",
         "permissions_settings_title": "Settings",
         "permissions_relation": "Relation",
@@ -154,7 +155,8 @@
         "date_range_from": "From",
         "date_range_to": "To",
         "linked_libraries": "Linked libraries",
-        "select_attributes": "Select attributes"
+        "select_attributes": "Select attributes",
+        "version_profile": "Version profile"
     },
     "trees": {
         "title": "Trees",
@@ -162,11 +164,11 @@
         "label": "Label",
         "ID": "ID",
         "isSystem": "System",
-        "informations": "Informations",
+        "informations": "Information",
         "structure": "Structure",
         "explorer": "Explorer",
         "permissions": "Permissions",
-        "libraries": "Binded libraries",
+        "libraries": "Bound libraries",
         "delete": "Delete",
         "confirm_delete": "Do you really want to delete tree {{treeLabel}}?",
         "confirm_delete_element": "Do you really want to detach this element?",
@@ -176,7 +178,7 @@
         "behavior_files": "Files",
         "behavior_standard": "Standard",
         "allow_children": "Allowed children",
-        "default_view": "Default view",
+        "all_libraries_authorized": "All libraries are allowed by default",
         "allow_multiple_positions": "Allow multiple positions",
         "allowed_at_root": "Allowed at root",
         "add_library": "Add library",
@@ -188,19 +190,14 @@
     },
     "permissions": {
         "title": "App Permissions",
-        "access_record": "Access",
-        "create_record": "Create",
-        "edit_record": "Edit",
-        "delete_record": "Delete",
         "permission_col_name": "Permission",
         "authorization": "Authorization",
         "deny": "Deny",
-        "herit": "Herit",
+        "herit": "Inherit",
         "grant": "grant",
         "library_tab_name": "Library",
         "attribute_tab_name": "Attribute",
         "tree_tab_name": "Tree",
-        "any_record": "Any records",
         "default": "Default",
         "any_entity": "Any {{entityName}}",
         "type": {
@@ -228,7 +225,7 @@
         }
     },
     "login": {
-        "header": "Authentification",
+        "header": "Authentication",
         "email": "Email address",
         "password": "Password",
         "submit": "Submit",
@@ -302,7 +299,7 @@
                 "VERTICAL": "Vertical",
                 "HORIZONTAL": "Horizontal"
             },
-            "displayRecordIdentity": "Display informations column"
+            "displayRecordIdentity": "Display information column"
         },
         "rte": {
             "bold": "Bold",
@@ -358,6 +355,7 @@
             "RUNNING": "Running"
         },
         "completed": "Completed",
+        "archives": "Archives",
         "in_progress": "In progress",
         "confirm_cancel": "Do you really want to cancel task {{taskName}}?",
         "confirm_delete": "Do you really want to delete task {{taskName}}?",
@@ -367,11 +365,11 @@
         "delete_all": "Delete all",
         "task-id": "ID",
         "task-label": "Label",
-        "task-step": "Step",
         "task-progress": {
             "percent": "Progress",
             "description": "Step"
         },
+        "task-infos": "Information",
         "task-status": "Status",
         "task-cancel": "Cancel",
         "task-created_at": "Created at",
@@ -411,7 +409,7 @@
     "api_keys": {
         "expires_at": "Expiration",
         "user": "User",
-        "never_expired": "Never",
+        "never": "Never",
         "expiration_warning": "This key has expired",
         "confirm_delete": "Do you really want to delete the key {{keyLabel}}?",
         "expiresAt": "Expiration date",

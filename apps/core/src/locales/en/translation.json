@@ -115,6 +115,7 @@
         "create_record": "Create",
         "edit_record": "Edit",
         "delete_record": "Delete",
+        "any_record": "Any record",
         "admin_access_libraries": "Access libraries",
         "admin_create_library": "Create library",
         "admin_edit_library": "Edit library",
@@ -175,7 +176,7 @@
         "export_label": "Export data from {{library}}",
         "export_description": {
             "elements_retrieval": "Elements retrieval",
-            "file_writing": "Excel file writing"
+            "excel_writing": "Excel file writing"
         }
     },
     "mailer": {

@@ -24,12 +24,12 @@
         "no": "No"
     },
     "errors": {
-        "INTERNAL_ERROR": "An internal error occured",
+        "INTERNAL_ERROR": "An internal error occurred",
         "PERMISSION_ERROR": "You are not allowed to perform this operation",
         "VALIDATION_ERROR": "Invalid request"
     },
     "login": {
-        "header": "Authentification",
+        "header": "Authentication",
         "email": "Email address",
         "password": "Password",
         "submit": "Submit",
@@ -114,7 +114,7 @@
             "selected": "Selected",
             "id": "Id",
             "actions": "Actions",
-            "infos": "Informations",
+            "infos": "Information",
             "label": "Label",
             "ad_label": "Ad Label",
             "ean": "EAN",
@@ -130,7 +130,7 @@
                 "hide-column": "Hide column"
             },
             "actions-tooltips": {
-                "informations": "Informations",
+                "informations": "Information",
                 "expand": "Expand",
                 "remove": "Remove",
                 "more": "More",
@@ -155,7 +155,6 @@
         "select-all": "all"
     },
     "items-menu-dropdown": {
-        "nb-elements": "{{nb1}} to {{nb2}} / {{nbItems}} results",
         "select-all": "Select All ({{nb}})",
         "select-visible": "Select Visible ({{nb}})",
         "items-display": "Number of items per page"
@@ -286,25 +285,25 @@
                 "no-label": "No label"
             }
         },
-        "action": {
+        "actions": {
             "order": "Order",
             "details": "Details",
             "edit": "Edit",
             "classified_in": "Search in",
-            "create": "Créer",
-            "detach": "Détacher",
-            "move-selected": "Déplacer la sélection",
-            "detach-selected": "Détacher la sélection",
-            "add-selected": "Ajouter la sélection"
+            "create": "Create",
+            "detach": "Detach",
+            "move-selected": "Move selection",
+            "detach-selected": "Detach selection",
+            "add-selected": "Add selection"
         },
         "infos": {
-            "success-add": "{{nb}} elements had been add",
-            "error-add": "An error occurs while add elements {{elements}}: {{errorMessage}}",
-            "warning-add-no-selection": "Aucun élément sélectionner a ajouté",
-            "success-move": "{{nb}} elements had been move",
+            "success-add": "{{nb}} elements have been added",
+            "error-add": "An error occurs while adding elements {{elements}}: {{errorMessage}}",
+            "warning-add-no-selection": "No selection to add",
+            "success-move": "{{nb}} elements have been move",
             "error-move": "An error occurs while moving elements {{elements}}: {{errorMessage}}",
-            "success-detach": "{{nb}} elements had been detach",
-            "error-detach": "An error occurs while detach elements {{elements}}: {{errorMessage}}"
+            "success-detach": "{{nb}} elements have been detached",
+            "error-detach": "An error occurs while detaching elements {{elements}}: {{errorMessage}}"
         },
         "access_denied": "You cannot access this element"
     },
@@ -314,7 +313,7 @@
         "active-tree": "You are currently on the tree {{tree}}"
     },
     "view": {
-        "Views": "Views",
+        "views": "Views",
         "search": "Search view",
         "my-views": "My views",
         "shared-views": "Shared",
@@ -335,7 +334,7 @@
         },
         "edit-view": {
             "title": "Edit view",
-            "name": "Name",
+            "label": "Name",
             "description": "Description",
             "type": "Type",
             "shared": "Shared",
@@ -350,7 +349,9 @@
         "export_done": "Export started",
         "export_done_description": "Progress available in notifications panel",
         "export_done_open_notifications": "Open notifications panel",
-        "download_file": "Download file"
+        "download_file": "Download file",
+        "export_notification_title": "New export running in background",
+        "export_notification_description": "Scheduled for"
     },
     "import": {
         "title": "Data import",
@@ -430,7 +431,7 @@
         "add_value": "Add value",
         "add_value_link": "Add link",
         "delete_value_confirm": "Do you really want to delete this value?",
-        "whoAmI": "Informations",
+        "whoAmI": "Information",
         "no_value": "No value",
         "value_details": "Value details",
         "link_details": "Link details",
@@ -473,12 +474,12 @@
         "date_range_value": "From {{from}} to {{to}}"
     },
     "record_summary": {
-        "id": "Identifiant",
-        "label": "Libellé",
-        "library": "Bibliothèque",
-        "created_at": "Created at",
+        "id": "Identifier",
+        "label": "Label",
+        "library": "Library",
+        "created_at": "Created on",
         "created_at_value": "{{date}} by {{user}}",
-        "modified_at": "Modified at",
+        "modified_at": "Modified on",
         "modified_at_value": "{{date}} by {{user}}"
     },
     "floating_menu": {
@@ -503,6 +504,7 @@
         "title": "Values versions",
         "version": "Version",
         "select_version": "Select a version",
+        "apply": "Apply",
         "inherited_value": "inherited value",
         "inherited_from": "Inherited from",
         "reset": "Reset"
@@ -520,7 +522,7 @@
             "PENDING": "Pending",
             "RUNNING": "Running"
         },
-        "task-infos": "Informations",
+        "task-infos": "Information",
         "task-cancel": "Cancel",
         "task-createdAt": "Created at",
         "task-startAt": "Start at",
@@ -530,6 +532,5 @@
         "task-canceledBy": "Canceled by",
         "task-duration": "Duration",
         "task-confirmCancel": "Do you really want to cancel this task?"
-    },
-    "apply": "Apply"
+    }
 }
