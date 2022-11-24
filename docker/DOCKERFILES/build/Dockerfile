@@ -55,7 +55,7 @@ CMD yarn run start
 FROM runner as runner-core
 
 # Copy source code of all front apps as it will be needed later on to build the apps
-COPY --from=builder /app/apps/explorer ./apps/explorer
+COPY --from=builder /app/apps/data-studio ./apps/data-studio
 COPY --from=builder /app/apps/admin-app ./apps/admin-app
 COPY --from=builder /app/apps/login ./apps/login
 COPY --from=builder /app/apps/portal ./apps/portal
