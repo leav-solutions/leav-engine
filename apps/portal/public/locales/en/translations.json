@@ -10,7 +10,7 @@
     "consulted_apps": "Last consulted apps",
     "error": {
         "network_error_occurred": "Network error occurred",
-        "error_occured": "Error occurred",
+        "error_occurred": "Error occurred",
         "unknown_app": "Endpoint \"{{app}}\" doesn't exist",
         "forbidden": "You are not allowed to access the app \"{{app}}\""
     }

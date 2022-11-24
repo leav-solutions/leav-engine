@@ -73,7 +73,8 @@
         "behavior": "Comportement",
         "behavior_files": "Fichiers",
         "behavior_standard": "Standard",
-        "default_view": "Vue par défault",
+        "behavior_directories": "Dossiers",
+        "default_view": "Vue par défaut",
         "fulltext_attributes": "Attributs de recherche fulltext",
         "purge": {
             "title": "Purge",
@@ -188,10 +189,6 @@
     },
     "permissions": {
         "title": "Permissions application",
-        "access_record": "Accéder",
-        "create_record": "Créer",
-        "edit_record": "Éditer",
-        "delete_record": "Supprimer",
         "permission_col_name": "Permission",
         "authorization": "Autorisation",
         "deny": "Interdire",
@@ -201,12 +198,7 @@
         "attribute_tab_name": "Attribut",
         "tree_tab_name": "Arbre",
         "default": "Par défaut",
-        "any_record": "Tous les éléments",
         "any_entity": "Tou(te)s {{entityName}}",
-        "access_attribute": "Voir l'attribut",
-        "create_value": "Créer une valeur",
-        "edit_value": "Éditer une valeur",
-        "delete_value": "Supprimer une valeur",
         "type": {
             "app": "Composants",
             "attribute": "Attribut",

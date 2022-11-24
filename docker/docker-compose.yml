@@ -51,7 +51,7 @@ x-ignore-files-list: &ignore-list ""
 x-env-core: &env-core
   NODE_ENV: development
   ARANGO_URL: http://root:@arangodb:8529
-  DB_NAME: leav_imdb_big
+  DB_NAME: leav_core
   AUTH_KEY: 999999
   APP_ROOT_PATH: *dir-core
   SERVER_HOST: "0.0.0.0"
