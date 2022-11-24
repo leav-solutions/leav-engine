@@ -51,7 +51,7 @@ x-ignore-files-list: &ignore-list ""
 x-env-core: &env-core
   NODE_ENV: development
   ARANGO_URL: http://root:@arangodb:8529
-  DB_NAME: leav_imdb_big
+  DB_NAME: leav_core
   AUTH_KEY: 999999
   APP_ROOT_PATH: *dir-core
   SERVER_HOST: "0.0.0.0"
@@ -59,17 +59,16 @@ x-env-core: &env-core
   SERVER_PUBLIC_URL: http://core.leav.localhost
   SERVER_WS_URL: ws://core.leav.localhost
   SERVER_UPLOAD_LIMIT: "15000mb"
-  SERVER_SUPPORT_EMAIL: support@leav-solutions.com
+  SERVER_SUPPORT_EMAIL: support@example.com
   REDIS_HOST: redis
   REDIS_PORT: 6379
   FILES_ROOT_PATHS: files1:/files
-  MAILER_HOST: ssl0.ovh.net
-  MAILER_PORT: 587
-  MAILER_AUTH_USER: test@leav-solutions.com
-  MAILER_AUTH_PWD: B2nwhDJjeVq52YZ
+  MAILER_HOST: <your-mailer-host>
+  MAILER_AUTH_USER: <email>
+  MAILER_AUTH_PWD: <password>
   SERVER_ADMIN_LOGIN: admin
   SERVER_ADMIN_PASSWORD: admin
-  SERVER_ADMIN_EMAIL: test@leav-solutions.com
+  SERVER_ADMIN_EMAIL: admin@example.com
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
