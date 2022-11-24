@@ -130,12 +130,15 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
                                 </Button>
                             </Form.Item>
                         )}
+                        <Form.Item>
+                            <a
+                                style={{float: 'right'}}
+                                href={(process.env.REACT_APP_ENDPOINT ?? '/') + '/forgot-password'}
+                            >
+                                {t('login.forgot_password')}
+                            </a>
+                        </Form.Item>
                     </Form>
-                    <Form.Item>
-                        <a style={{float: 'right'}} href={(process.env.REACT_APP_ENDPOINT ?? '/') + '/forgot-password'}>
-                            {t('login.forgot_password')}
-                        </a>
-                    </Form.Item>
                 </LoginBlock>
             </Wrapper>
         </>

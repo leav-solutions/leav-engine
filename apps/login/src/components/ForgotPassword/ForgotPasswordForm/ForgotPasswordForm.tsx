@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FrownOutlined, LockOutlined, SendOutlined, CheckOutlined, CloseOutlined} from '@ant-design/icons';
-import {Alert, Button, Card, Form, Input, Spin} from 'antd';
+import {SendOutlined, CheckOutlined, CloseOutlined} from '@ant-design/icons';
+import {Alert, Button, Card, Form, Input, Spin, Space} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -133,19 +133,18 @@ const ForgotPasswordForm = ({
                             </Form.Item>
                         )}
                         {!loading && (
-                            <Form.Item>
-                                <Button
-                                    size="large"
-                                    type="primary"
-                                    loading={loading}
-                                    disabled={loading}
-                                    htmlType="submit"
-                                    icon={<SendOutlined />}
-                                    block
-                                >
-                                    {t('forgotPassword.submit')}
-                                </Button>
-                            </Form.Item>
+                            <Space wrap style={{float: 'right'}} direction="horizontal">
+                                <Form.Item>
+                                    <Button href={process.env.REACT_APP_ENDPOINT ?? '/'} type="default" block>
+                                        {t('forgotPassword.cancel')}
+                                    </Button>
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit" icon={<SendOutlined />} block>
+                                        {t('forgotPassword.submit')}
+                                    </Button>
+                                </Form.Item>
+                            </Space>
                         )}
                     </Form>
                 </ForgotPasswordBlock>

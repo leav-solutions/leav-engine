@@ -39,6 +39,7 @@
         "email_not_valid": "Email non valide",
         "success": "Un lien de réinitialisation vous a été envoyé",
         "submit": "Réinitialiser le mot de passe",
+        "cancel": "Annuler",
         "error": {
             "user_not_found": "Utilisateur non trouvé"
         },

@@ -39,6 +39,7 @@
         "email_not_valid": "Email is not valid",
         "success": "A password reset link was sent",
         "submit": "Reset password",
+        "cancel": "Cancel",
         "error": {
             "user_not_found": "User not found"
         },

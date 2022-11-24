@@ -28,7 +28,7 @@ export default function ({config = null, 'core.infra.mailer': mailer = null}: ID
         mailer,
         async sendEmail({to, subject, text, html, attachments}: ISendMailParams): Promise<void> {
             await mailer.sendMail({
-                from: config.mailer.auth.user,
+                from: `LEAV Engine <${config.mailer.auth.user}>`,
                 to,
                 subject,
                 text,
