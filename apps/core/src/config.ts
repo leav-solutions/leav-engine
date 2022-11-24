@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
-import Joi from 'joi';
+import Joi, {string} from 'joi';
 import {IConfig} from '_types/config';
 import {env as appEnv} from './env';
 
@@ -15,7 +15,17 @@ export const validateConfig = (conf: IConfig) => {
             publicUrl: Joi.string().required(),
             wsUrl: Joi.string().required(),
             apiEndpoint: Joi.string().required(),
-            uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required()
+            uploadLimit: Joi.alternatives()
+                .try(Joi.string(), Joi.number())
+                .required(),
+            supportEmail: Joi.string().required(),
+            admin: {
+                login: Joi.string().required(),
+                password: Joi.string().required(),
+                email: Joi.string()
+                    .email()
+                    .required()
+            }
         }),
         db: Joi.object().keys({
             url: Joi.string().required(),
@@ -35,10 +45,22 @@ export const validateConfig = (conf: IConfig) => {
             cookie: {
                 sameSite: Joi.string().valid('none', 'lax', 'strict'),
                 secure: Joi.boolean()
+            },
+            resetPasswordExpiration: Joi.string().required()
+        }),
+        mailer: Joi.object().keys({
+            host: Joi.string(),
+            port: Joi.number(),
+            secure: Joi.boolean(),
+            auth: {
+                user: Joi.string().required(),
+                password: Joi.string().required()
             }
         }),
         lang: Joi.object().keys({
-            available: Joi.array().items(Joi.string()).required(),
+            available: Joi.array()
+                .items(Joi.string())
+                .required(),
             default: Joi.string().required()
         }),
         logs: Joi.object().keys({
@@ -118,7 +140,9 @@ export const validateConfig = (conf: IConfig) => {
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required()
         }),
-        plugins: Joi.object().keys().unknown(),
+        plugins: Joi.object()
+            .keys()
+            .unknown(),
         preview: Joi.object().keys({
             directory: Joi.string().required()
         }),

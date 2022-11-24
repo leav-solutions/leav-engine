@@ -23,7 +23,8 @@ describe('StandardValuesList', () => {
             enable: true,
             allowFreeEntry: false,
             values: ['valueA', 'valueB']
-        }
+        },
+        unique: null
     };
 
     test('Render existing list', async () => {

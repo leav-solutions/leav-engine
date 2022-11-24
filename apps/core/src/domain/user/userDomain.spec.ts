@@ -4,10 +4,15 @@
 import {IUserDataRepo} from 'infra/userData/userDataRepo';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IQueryInfos} from '_types/queryInfos';
-import userDataDomain from './userDataDomain';
+import userDataDomain from './userDomain';
 import PermissionError from '../../errors/PermissionError';
+import {IMailerService} from 'infra/mailer/mailerService';
+import {IUtils} from 'utils/utils';
+import {IConfig} from '_types/config';
+import {mockTranslator} from '../../__tests__/mocks/translator';
+import {i18n} from 'i18next';
 
-describe('UserDataDomain', () => {
+describe('UserDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'userDataDomainTest'
@@ -132,6 +137,36 @@ describe('UserDataDomain', () => {
             });
 
             await expect(udd.getUserData(['key'], true, ctx)).rejects.toThrow(PermissionError);
+        });
+    });
+
+    describe('Reset password email', () => {
+        test('should send a reset password email', async function () {
+            const mockUtils: Mockify<IUtils> = {
+                getFullApplicationEndpoint: jest.fn().mockReturnValue('endpoint')
+            };
+
+            const mockMailerService: Mockify<IMailerService> = {
+                sendEmail: global.__mockPromise(true)
+            };
+
+            const mockConfig = {
+                server: {
+                    publicUrl: 'http://localhost:4001',
+                    supportEmail: 'email@domain.com'
+                }
+            };
+
+            const udd = userDataDomain({
+                config: mockConfig as IConfig,
+                'core.infra.mailer.mailerService': mockMailerService as IMailerService,
+                'core.utils': mockUtils as IUtils,
+                translator: mockTranslator as i18n
+            });
+
+            await udd.sendResetPasswordEmail('email@domain.com', 'token', 'login', 'firefox', 'Os X', 'fr');
+
+            expect(mockMailerService.sendEmail.mock.calls.length).toBe(1);
         });
     });
 });

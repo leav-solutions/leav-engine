@@ -13,7 +13,13 @@ module.exports = {
          * then the value specifies the number of bytes; if it is a string,
          * the value is passed to the bytes library for parsing (https://www.npmjs.com/package/bytes).
          */
-        uploadLimit: process.env.SERVER_UPLOAD_LIMIT || '100mb'
+        uploadLimit: process.env.SERVER_UPLOAD_LIMIT || '100mb',
+        supportEmail: process.env.SERVER_SUPPORT_EMAIL,
+        admin: {
+            login: process.env.SERVER_ADMIN_LOGIN,
+            password: process.env.SERVER_ADMIN_PASSWORD,
+            email: process.env.SERVER_ADMIN_EMAIL
+        }
     },
     db: {
         url: process.env.ARANGO_URL,
@@ -33,6 +39,18 @@ module.exports = {
         cookie: {
             sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
             secure: process.env.AUTH_COOKIE_SECURE || false
+        },
+        resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m'
+    },
+    mailer: {
+        host: process.env.MAILER_HOST || 'localhost',
+        port: process.env.MAILER_PORT || 587,
+        secure: process.env.MAILER_SECURE || false, // if true the connection will use TLS when connecting to server.
+        // If false (the default) then TLS is used if server supports the STARTTLS extension.
+        // In most cases set this value to true if you are connecting to port 465. For port 587 or 25 keep it false
+        auth: {
+            user: process.env.MAILER_AUTH_USER,
+            password: process.env.MAILER_AUTH_PWD
         }
     },
     lang: {

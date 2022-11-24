@@ -15,6 +15,7 @@ import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';
 import {amqpService} from '@leav/message-broker';
 import {IApplicationService} from 'infra/application/applicationService';
+import {initMailer} from './infra/mailer';
 
 (async function () {
     let conf: Config.IConfig;
@@ -36,11 +37,13 @@ import {IApplicationService} from 'infra/application/applicationService';
     // Init AMQP
     const amqp = await amqpService({config: conf.amqp});
     const redisClient = await initRedis({config: conf});
+    const mailer = await initMailer({config: conf});
 
     const {coreContainer, pluginsContainer} = await initDI({
         translator,
         'core.infra.amqpService': amqp,
-        'core.infra.redis': redisClient
+        'core.infra.redis': redisClient,
+        'core.infra.mailer': mailer
     });
 
     const server = coreContainer.cradle['core.interface.server'];

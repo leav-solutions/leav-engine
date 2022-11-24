@@ -159,6 +159,21 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
     const {attributeProps, value, library, recordId, deps, ctx} = params;
     const valueExists = doesValueExist(value, attributeProps);
 
+    // Check if this value has already been registered for this attribute in this library
+    if (typeof attributeProps.unique !== 'undefined' && attributeProps.unique) {
+        const isValueUnique = await deps.valueRepo.isValueUnique({
+            library,
+            recordId,
+            attribute: attributeProps,
+            value,
+            ctx
+        });
+
+        if (!isValueUnique) {
+            errors[attributeProps.id] = Errors.VALUE_NOT_UNIQUE;
+        }
+    }
+
     // Check if value ID actually exists
     if (valueExists) {
         const existingVal = await deps.valueRepo.getValueById({

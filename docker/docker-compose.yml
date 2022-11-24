@@ -59,9 +59,17 @@ x-env-core: &env-core
   SERVER_PUBLIC_URL: http://core.leav.localhost
   SERVER_WS_URL: ws://core.leav.localhost
   SERVER_UPLOAD_LIMIT: "15000mb"
+  SERVER_SUPPORT_EMAIL: support@leav-solutions.com
   REDIS_HOST: redis
   REDIS_PORT: 6379
   FILES_ROOT_PATHS: files1:/files
+  MAILER_HOST: ssl0.ovh.net
+  MAILER_PORT: 587
+  MAILER_AUTH_USER: test@leav-solutions.com
+  MAILER_AUTH_PWD: B2nwhDJjeVq52YZ
+  SERVER_ADMIN_LOGIN: admin
+  SERVER_ADMIN_PASSWORD: admin
+  SERVER_ADMIN_EMAIL: test@leav-solutions.com
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
@@ -108,6 +116,8 @@ x-env-data-studio: &env-data-studio
 x-env-login: &env-login
   APP_ROOT_PATH: *dir-login
   REACT_APP_AUTH_URL: /auth/authenticate
+  REACT_APP_RESET_PASSWORD: /auth/reset-password
+  REACT_APP_FORGOT_PASSWORD: /auth/forgot-password
 
 x-env-portal: &env-portal
   APP_ROOT_PATH: *dir-portal
@@ -283,6 +293,8 @@ services:
     environment:
       <<: *env-react
       <<: *env-login
+      REACT_APP_ENDPOINT: /app/login
+      REACT_APP_APPLICATION_ID: login
       PUBLIC_URL: http://core.leav.localhost/app/login
       REACT_APP_APPLICATION_ID: login
       WDS_SOCKET_HOST: login.leav.localhost

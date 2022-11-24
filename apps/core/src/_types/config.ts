@@ -10,6 +10,7 @@ export interface IConfig {
     diskCache: IDiskCache;
     elasticsearch: IElasticsearch;
     auth: IAuth;
+    mailer: IMailer;
     lang: ILang;
     logs: ILogs;
     permissions: IPermissions;
@@ -38,6 +39,12 @@ export interface IServer {
     wsUrl: string;
     apiEndpoint: string;
     uploadLimit: number | string;
+    supportEmail: string;
+    admin: {
+        login: string;
+        password: string;
+        email: string;
+    };
 }
 
 export interface IDb {
@@ -57,6 +64,17 @@ export interface IAuth {
     cookie: {
         sameSite: 'none' | 'lax' | 'strict';
         secure: boolean;
+    };
+    resetPasswordExpiration: string;
+}
+
+export interface IMailer {
+    host: string;
+    port: number;
+    secure: boolean;
+    auth: {
+        user: string;
+        password: string;
     };
 }
 

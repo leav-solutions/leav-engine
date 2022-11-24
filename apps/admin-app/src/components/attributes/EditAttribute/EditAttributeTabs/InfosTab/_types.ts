@@ -19,5 +19,6 @@ export type AttributeInfosFormValues = Override<
         linked_tree?: string;
         reverse_link?: string;
         versions_conf: AttributeInfosFormValuesVersionsConf;
+        unique: boolean;
     }
 >;

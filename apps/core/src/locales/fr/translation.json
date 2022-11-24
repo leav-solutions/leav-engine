@@ -12,6 +12,7 @@
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",
         "INVALID_DATE_RANGE": "La date de début doit être inférieur à la date de fin",
+        "INVALID_EMAIL": "Email non valide",
         "INVALID_ENDPOINT_FORMAT": "Format de chemin non valide",
         "INVALID_FILE_FORMAT": "Format de fichier non valide: {{received}}. Format attendu: {{expected}}",
         "INVALID_FILTER_CONDITION_VALUE" : "La condition d'un filtre n'est pas compatible avec sa valeur associée",
@@ -33,6 +34,7 @@
         "MISSING_REQUIRED_ACTION": "Actions requises manquantes: {{actions}}",
         "MISSING_TARGET": "Cible manquante",
         "MULTIPLE_VALUES_NOT_ALLOWED": "Valeurs multiples non autorisées sur ce type d'attribut",
+        "UNIQUE_VALUE_NOT_ALLOWED": "Valeur unique non autorisée pour ce type d'attribut",
         "NO_IMPORT_MATCHES" : "Clé d'import manquante",
         "NON_FILES_LIBRARY": "Impossible de lier une bibliothèque non-fichiers",
         "PAGINATION_OFFSET_AND_CURSOR": "Impossible d'utiliser un offset et un curseur en même temps",
@@ -67,7 +69,8 @@
         "UNKNOWN_VALUE": "Valeur inconnue",
         "UNKNOWN_VERSION_PROFILE": "Profil de version inconnu {{profile}}",
         "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}",
-        "UNKNOWN_VIEW": "Vue inconnue"
+        "UNKNOWN_VIEW": "Vue inconnue",
+        "VALUE_NOT_UNIQUE": "Cette valeur a déjà été enregistrée"
     },
     "actions": {
         "names" : {
@@ -83,6 +86,7 @@
             "dateRangeToNumber": "Convertir les dates d'une période",
             "toString": "Convertir en String",
             "validateFormat": "Valider le Format",
+            "validateEmail": "Valider l'email",
             "validateRegex": "Valider la RegEx",
             "excelCalculation": "Calcul Excel",
             "heritageCalculation": "Héritage"
@@ -100,6 +104,7 @@
             "toString": "Convertir une valeur en chaîne de caractères",
             "dateRangeToNumber": "Convertir les dates d'une période en Nombre",
             "validateFormat": "Vérifier si la valeur correspond au format de l'attribut",
+            "validateEmail": "Vérifier si la valeur est un email valide",
             "validateRegex": "Vérifier si la valeur est une chaîne de caractères qui correspond à une expression régulière donnée susdit",
             "excelCalculation": "Exécute une formule Excel. Vous pouvez insérer des valeurs d'attributs, ex : {getValue(libelle)} sera remplacé par la valeur de l'attribut ayant l'id libelle. La valeur en entrée de l'action est disponible via {input()}. Ne commencez pas la formule par \"=\". Fonctions utilisables : input(), first(), last(), sum(), avg(), concat(separateur), dedup(), getValue(id_attribut). Ex : {getValue(produits_lies).getValue(prix).sum()}",
             "heritageCalculation": "Exécute un héritage. Fonctions utilisables : first(), last(), dedup(), getValue(id_attribut). Ex : getValue(produits_lies).getValue(image).dedup()"
@@ -176,5 +181,8 @@
             "elements_retrieval": "Récupération des fichiers",
             "excel_writing": "Ecriture du fichier excel"
         }
+    },
+    "mailer": {
+        "reset_password_subject": "Réinitialiser votre mot de passe"
     }
 }

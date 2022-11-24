@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CONSULTED_APPS_KEY} from '@leav/utils';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {IUserDataDomain} from 'domain/userData/userDataDomain';
+import {IUserDomain} from 'domain/user/userDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
 import {IApplicationService} from 'infra/application/applicationService';
 import {IUtils} from 'utils/utils';
@@ -47,16 +47,16 @@ export interface IApplicationDomain {
 
 interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.userData'?: IUserDataDomain;
+    'core.domain.user'?: IUserDomain;
     'core.infra.application'?: IApplicationRepo;
     'core.infra.application.service'?: IApplicationService;
     'core.utils'?: IUtils;
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.domain.userData': userDataDomain = null,
+    'core.domain.user': userDomain = null,
     'core.infra.application': applicationRepo = null,
     'core.infra.application.service': applicationService = null,
     'core.utils': utils = null,
@@ -186,7 +186,7 @@ export default function({
         },
         async updateConsultationHistory({applicationId, ctx}): Promise<void> {
             // Retrieve user data
-            const consultedApps = await userDataDomain.getUserData([CONSULTED_APPS_KEY], false, ctx);
+            const consultedApps = await userDomain.getUserData([CONSULTED_APPS_KEY], false, ctx);
 
             // Compute new history:
             // - Add last consulted app to the beginning of the list
@@ -198,7 +198,7 @@ export default function({
             );
 
             // Save new history
-            await userDataDomain.saveUserData(CONSULTED_APPS_KEY, newHistory, false, ctx);
+            await userDomain.saveUserData(CONSULTED_APPS_KEY, newHistory, false, ctx);
         },
         async getAvailableModules({ctx}): Promise<IApplicationModule[]> {
             return applicationRepo.getAvailableModules({ctx});

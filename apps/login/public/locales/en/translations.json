@@ -3,17 +3,53 @@
         "header": "Sign in",
         "login": "ID",
         "password": "Password",
-        "submit": "Submit",
+        "submit": "Log in",
+        "forgot_password": "Forgot your password?",
         "apologize_header": "We're sorry,",
-        "apologize": "we were not able to authenticate you :"
+        "apologize": "we were not able to authenticate you :",
+        "error": {
+            "bad_credentials": "Incorrect ID or password"
+        },
+        "loading": {
+            "header": "Just a second",
+            "text": "we are authenticating you..."
+        }
+    },
+    "resetPassword": {
+        "header": "Reset password",
+        "new_password": "New password",
+        "new_password_required": "New password is required",
+        "confirm_password_required": "Confirm password is required",
+        "confirm_password": "Confirm password",
+        "submit": "Submit new password",
+        "wrong_confirm_password": "Passwords do not match",
+        "error": {
+            "invalid_password": "The password does not meet the password policy requirements",
+            "invalid_token": "Your password reset link has expired"
+        },
+        "loading": {
+            "header": "Just a second",
+            "text": "we are changing your password..."
+        }
+    },
+    "forgotPassword": {
+        "header": "Forgot password ?",
+        "email": "Email",
+        "email_required": "Email required",
+        "email_not_valid": "Email is not valid",
+        "success": "A password reset link was sent",
+        "submit": "Reset password",
+        "cancel": "Cancel",
+        "error": {
+            "user_not_found": "User not found"
+        },
+        "loading": {
+            "header": "Just a second",
+            "text": "we are sending you an email..."
+        }
     },
     "error": {
-        "bad_credentials": "Incorrect ID or password",
         "no_server_response": "Server is not responding",
-        "session_expired": "Your session has expired"
-    },
-    "loading": {
-        "header": "Just a second,",
-        "text": "we are authenticating you..."
+        "missing_parameters": "Missing parameters"
     }
 }

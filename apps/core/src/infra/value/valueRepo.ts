@@ -60,6 +60,20 @@ export interface IValueRepo {
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
+    isValueUnique({
+        library,
+        recordId,
+        attribute,
+        value,
+        ctx
+    }: {
+        library: string;
+        recordId: string;
+        attribute: IAttribute;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<boolean>;
+
     /**
      * Get all values for given record and attribute
      *
@@ -110,7 +124,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
 }
 
-export default function({
+export default function ({
     'core.infra.attributeTypes': attributeTypesRepo = null,
     'core.infra.db.dbService': dbService = null
 }: IDeps = {}): IValueRepo {
@@ -126,6 +140,10 @@ export default function({
         deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
             return typeRepo.deleteValue({library, recordId, attribute, value, ctx});
+        },
+        isValueUnique({library, recordId, attribute, value, ctx}): Promise<boolean> {
+            const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
+            return typeRepo.isValueUnique({library, recordId, attribute, value, ctx});
         },
         getValues({library, recordId, attribute, forceGetAllValues, options, ctx}): Promise<IValue[]> {
             const typeRepo = attributeTypesRepo.getTypeRepo(attribute);

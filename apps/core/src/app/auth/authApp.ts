@@ -4,6 +4,7 @@
 import * as bcrypt from 'bcryptjs';
 import {IApiKeyDomain} from 'domain/apiKey/apiKeyDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {IUserDomain} from 'domain/user/userDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {Express, NextFunction, Request, Response} from 'express';
 import jwt, {Algorithm} from 'jsonwebtoken';
@@ -17,6 +18,7 @@ import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo'
 import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
+import useragent from 'express-useragent';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -28,13 +30,15 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.apiKey'?: IApiKeyDomain;
+    'core.domain.user'?: IUserDomain;
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
+    'core.domain.user': userDomain = null,
     config = null
 }: IDeps = {}): IAuthApp {
     return {
@@ -74,9 +78,10 @@ export default function({
                         if (typeof login === 'undefined' || typeof password === 'undefined') {
                             return res.status(401).send('Missing credentials');
                         }
+
                         // Get user id
                         const ctx: IQueryInfos = {
-                            userId: '0',
+                            userId: config.defaultUserId,
                             queryId: 'authenticate'
                         };
 
@@ -163,13 +168,127 @@ export default function({
                         secure: config.auth.cookie.secure,
                         domain: req.headers.host
                     });
+
                     return res.status(200).end();
+                }
+            );
+
+            app.post(
+                '/auth/forgot-password',
+                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+                    try {
+                        const {email, lang} = req.body as any;
+                        const ua = useragent.parse(req.headers['user-agent']);
+
+                        if (typeof email === 'undefined' || typeof lang === 'undefined') {
+                            return res.status(400).send('Missing parameters');
+                        }
+
+                        // Get user id
+                        const ctx: IQueryInfos = {
+                            userId: config.defaultUserId,
+                            queryId: 'forgot-password'
+                        };
+
+                        const users = await recordDomain.find({
+                            params: {
+                                library: 'users',
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
+                            },
+                            ctx
+                        });
+
+                        if (!users.list.length) {
+                            return res.status(401).send('Email not found');
+                        }
+
+                        const user = users.list[0];
+
+                        // Generate token
+                        const token = jwt.sign(
+                            {
+                                userId: user.id,
+                                email: user.email
+                            },
+                            config.auth.key,
+                            {
+                                algorithm: config.auth.algorithm as Algorithm,
+                                expiresIn: String(config.auth.resetPasswordExpiration)
+                            }
+                        );
+
+                        await userDomain.sendResetPasswordEmail(user.email, token, user.login, ua.browser, ua.os, lang);
+
+                        return res.sendStatus(200);
+                    } catch (err) {
+                        next(err);
+                    }
+                }
+            );
+
+            app.post(
+                '/auth/reset-password',
+                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+                    try {
+                        const {token, newPassword} = req.body as any;
+
+                        if (typeof token === 'undefined' || typeof newPassword === 'undefined') {
+                            return res.status(400).send('Missing required parameters');
+                        }
+
+                        let payload: jwt.JwtPayload;
+
+                        // to catch expired token error properly
+                        try {
+                            payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
+                        } catch (e) {
+                            throw new AuthenticationError('Invalid token');
+                        }
+
+                        if (typeof payload.userId === 'undefined' || typeof payload.email === 'undefined') {
+                            throw new AuthenticationError('Invalid token');
+                        }
+
+                        const ctx: IQueryInfos = {
+                            userId: config.defaultUserId,
+                            queryId: 'resetPassword'
+                        };
+
+                        const users = await recordDomain.find({
+                            params: {
+                                library: 'users',
+                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
+                            },
+                            ctx
+                        });
+
+                        if (!users.list.length) {
+                            throw new AuthenticationError('User not found');
+                        }
+
+                        try {
+                            // save new password
+                            await valueDomain.saveValue({
+                                library: 'users',
+                                recordId: payload.userId,
+                                attribute: 'password',
+                                value: {value: newPassword},
+                                ctx
+                            });
+                        } catch (e) {
+                            return res.status(422).send('Invalid password');
+                        }
+
+                        return res.sendStatus(200);
+                    } catch (err) {
+                        next(err);
+                    }
                 }
             );
         },
         async validateRequestToken({apiKey, cookies}) {
             const ctx: IQueryInfos = {
-                userId: '0',
+                userId: config.defaultUserId,
                 queryId: 'validateToken'
             };
 

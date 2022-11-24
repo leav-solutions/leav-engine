@@ -23,6 +23,7 @@ describe('Values', () => {
     let recordId: string;
     let recordIdBatch: string;
     let recordIdLinked: string;
+    let recordUniqueId: string;
     let advValueId: string;
     let treeElemId: string;
     let nodeTreeElem: string;
@@ -35,6 +36,7 @@ describe('Values', () => {
                         id: "${attrSimpleName}",
                         type: simple,
                         format: text,
+                        unique: true,
                         label: {fr: "Test attr simple"},
                         actions_list: {
                             saveValue: [
@@ -202,12 +204,14 @@ describe('Values', () => {
             c2: createRecord(library: "${testLibName}") { id },
             c3: createRecord(library: "${testLibName}") { id },
             c4: createRecord(library: "${treeLibName}") { id },
+            c5: createRecord(library: "${testLibName}") { id },
         }`);
 
         recordId = resRecord.data.data.c1.id;
         recordIdBatch = resRecord.data.data.c2.id;
         recordIdLinked = resRecord.data.data.c3.id;
         treeElemId = resRecord.data.data.c4.id;
+        recordUniqueId = resRecord.data.data.c5.id;
 
         // Add element to tree
         nodeTreeElem = await gqlAddElemToTree(treeName, {id: treeElemId, library: treeLibName});
@@ -266,6 +270,27 @@ describe('Values', () => {
         expect(res.data.data.saveValue.id_value).toBeNull();
         expect(res.data.data.saveValue.attribute?.permissions.edit_value).toBeDefined();
         expect(res.data.data.saveValue.value).toBe('TEST VAL');
+    });
+
+    test('Save same value on unique attribute', async () => {
+        const res = await makeGraphQlCall(`mutation {
+            saveValue(
+                library: "${testLibName}",
+                recordId: "${recordUniqueId}",
+                attribute: "${attrSimpleName}",
+                value: {value: "TEST VAL"}) {
+                    id_value
+
+                    ... on Value {
+                        value
+                    }
+                }
+          }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeDefined();
+        expect(res.data.errors[0].extensions.fields[attrSimpleName]).toBeDefined();
     });
 
     test("Don't save invalid value", async () => {

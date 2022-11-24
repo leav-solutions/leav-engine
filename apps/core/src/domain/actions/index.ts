@@ -16,3 +16,4 @@ export {default as validateFormatAction} from './validateFormatAction';
 export {default as validateRegexAction} from './validateRegexAction';
 export {default as excelAction} from './excelCalculationAction';
 export {default as heritageAction} from './heritageCalculationAction';
+export {default as validateEmailAction} from './validateEmailAction';
