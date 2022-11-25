@@ -37,7 +37,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
@@ -50,9 +50,9 @@ export default function ({
         const newError = {...err};
 
         const isGraphlValidationError = err.extensions && err.extensions.code === 'GRAPHQL_VALIDATION_FAILED';
-        const errorType = err?.extensions.exception.type ?? ErrorTypes.INTERNAL_ERROR;
-        const errorFields = err?.extensions.exception.fields ?? {};
-        const errorAction = err?.extensions.exception.action ?? null;
+        const errorType = err?.extensions.exception?.type ?? ErrorTypes.INTERNAL_ERROR;
+        const errorFields = err?.extensions.exception?.fields ?? {};
+        const errorAction = err?.extensions.exception?.action ?? null;
 
         // Translate errors details
         for (const [field, errorDetails] of Object.entries(errorFields)) {
@@ -80,10 +80,11 @@ export default function ({
 
         // Error is logged with original message
         newError.message = `[${errId}] ${err.message}`;
-        logger.error(`${newError.message}\n${err.extensions.exception.stacktrace.join('\n')}`);
+        logger.error(`${newError.message}\n${(err.extensions.exception?.stacktrace ?? []).join('\n')}`);
 
         if (!config.debug) {
             newError.message = `[${errId}] Internal Error`;
+            delete newError.extensions?.exception;
         }
 
         return newError;
@@ -201,22 +202,29 @@ export default function ({
                     wsServer
                 );
 
-                const server = new ApolloServer({
-                    debug: config.debug,
-                    introspection: true,
-                    plugins: [
-                        require('apollo-tracing').plugin(),
-                        ApolloServerPluginCacheControlDisabled(),
-                        {
-                            async serverWillStart() {
-                                return {
-                                    async drainServer() {
-                                        await serverCleanup.dispose();
-                                    }
-                                };
-                            }
+                const plugins = [
+                    ApolloServerPluginCacheControlDisabled(),
+                    {
+                        async serverWillStart() {
+                            return {
+                                async drainServer() {
+                                    await serverCleanup.dispose();
+                                }
+                            };
                         }
-                    ],
+                    }
+                ];
+
+                if (config.debug) {
+                    plugins.push(require('apollo-tracing').plugin());
+                }
+
+                const server = new ApolloServer({
+                    // Always run in debug mode to have stacktrace in errors.
+                    // Hiding error details in production is handled in _handleError
+                    debug: true,
+                    introspection: config.server.allowIntrospection,
+                    plugins,
                     formatResponse: (resp, ctx) => {
                         const formattedResp = {...resp};
 

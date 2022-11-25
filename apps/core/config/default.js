@@ -8,6 +8,7 @@ module.exports = {
         publicUrl: process.env.SERVER_PUBLIC_URL || 'http://localhost:4001',
         wsUrl: process.env.SERVER_WS_URL || 'ws://localhost:4001',
         apiEndpoint: process.env.API_ENDPOINT || 'graphql',
+        allowIntrospection: process.env.SERVER_ALLOW_INTROSPECTION ?? true,
         /**
          * Controls the maximum request body size. If this is a number,
          * then the value specifies the number of bytes; if it is a string,
