@@ -5,7 +5,6 @@ import {Space} from 'antd';
 import {IRecordColumnValueLink, IRecordColumnValueStandard} from 'graphQL/queries/records/getRecordColumnsValues';
 import {useLang} from 'hooks/LangHook/LangHook';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -70,7 +69,7 @@ function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
                 title: t('record_summary.created_at'),
                 value: t('record_summary.created_at_value', {
                     date: (recordData?.created_at?.[0] as IRecordColumnValueStandard).value,
-                    user: (recordData?.created_by?.[0] as IRecordColumnValueLink).linkValue.whoAmI.label,
+                    user: (recordData?.created_by?.[0] as IRecordColumnValueLink)?.linkValue?.whoAmI?.label,
                     interpolation: {escapeValue: false}
                 })
             });
@@ -81,7 +80,7 @@ function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
                 title: t('record_summary.modified_at'),
                 value: t('record_summary.modified_at_value', {
                     date: (recordData?.modified_at?.[0] as IRecordColumnValueStandard).value,
-                    user: (recordData?.modified_by?.[0] as IRecordColumnValueLink).linkValue.whoAmI.label,
+                    user: (recordData?.modified_by?.[0] as IRecordColumnValueLink)?.linkValue?.whoAmI?.label,
                     interpolation: {escapeValue: false}
                 })
             });

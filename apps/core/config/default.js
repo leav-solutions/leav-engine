@@ -20,6 +20,9 @@ module.exports = {
             login: process.env.SERVER_ADMIN_LOGIN,
             password: process.env.SERVER_ADMIN_PASSWORD,
             email: process.env.SERVER_ADMIN_EMAIL
+        },
+        systemUser: {
+            email: process.env.SERVER_SYSTEM_USER_EMAIL || 'system@leav-engine.com'
         }
     },
     db: {

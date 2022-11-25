@@ -44,7 +44,7 @@ interface IDeps {
     'core.app.core'?: ICoreApp;
 }
 
-export default function ({
+export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -289,6 +289,7 @@ export default function ({
                         property(attribute: ID!): [GenericValue!],
                         ${await Promise.all(
                             lib.attributes.map(
+                                //TODO: ignore attribute if null
                                 async attr => `${attr.id}: ${await coreAttributeApp.getGraphQLFormat(attr)}`
                             )
                         )},
