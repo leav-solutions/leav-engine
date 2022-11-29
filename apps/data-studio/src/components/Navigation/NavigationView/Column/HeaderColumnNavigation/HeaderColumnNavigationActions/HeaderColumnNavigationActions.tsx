@@ -4,7 +4,6 @@
 import {Button} from 'antd';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useTreeLibraryAllowedAsChild} from 'hooks/useTreeLibraryAllowedAsChild';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';

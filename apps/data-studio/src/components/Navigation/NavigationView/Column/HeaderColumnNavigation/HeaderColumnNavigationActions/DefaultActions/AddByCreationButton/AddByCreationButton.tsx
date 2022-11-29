@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Dropdown, Menu} from 'antd';
+import {Dropdown, Menu, Tooltip} from 'antd';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
@@ -113,14 +113,18 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                         ></Menu>
                     }
                 >
-                    <StandardBtn icon={buttonIcon} />
+                    <Tooltip title={t('navigation.header.add_by_creation')} placement="top">
+                        <StandardBtn icon={buttonIcon} />
+                    </Tooltip>
                 </Dropdown>
             ) : (
-                <StandardBtn
-                    icon={buttonIcon}
-                    aria-label="add-by-creation"
-                    onClick={_handleOpenCreateRecordModal(availableLibraries[0]?.library.id ?? null)}
-                />
+                <Tooltip title={t('navigation.header.add_by_creation')} placement="top">
+                    <StandardBtn
+                        icon={buttonIcon}
+                        aria-label="add-by-creation"
+                        onClick={_handleOpenCreateRecordModal(availableLibraries[0]?.library.id ?? null)}
+                    />
+                </Tooltip>
             )}
             {isCreateRecordModalVisible && (
                 <EditRecordModal

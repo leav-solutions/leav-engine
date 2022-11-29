@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {Dropdown, Menu} from 'antd';
+import {Dropdown, Menu, Tooltip} from 'antd';
 import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import SearchModal from 'components/SearchModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
@@ -11,15 +11,15 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {CSSProperties, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addInfo} from 'redux/infos';
 import {GrSearchAdvanced} from 'react-icons/gr';
+import {addInfo} from 'redux/infos';
 import {useAppDispatch} from 'redux/store';
 import {localizedTranslation} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {ISharedStateSelectionSearch, InfoChannel, InfoType} from '_types/types';
+import {InfoChannel, InfoType, ISharedStateSelectionSearch} from '_types/types';
 import {IMessages} from '../../_types';
 
 interface IAddBySearchButtonProps {
@@ -124,15 +124,19 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                         ></Menu>
                     }
                 >
-                    <StandardBtn icon={buttonIcon} style={buttonStyle} />
+                    <Tooltip title={t('navigation.header.add_by_search')} placement="top">
+                        <StandardBtn icon={buttonIcon} style={buttonStyle} />
+                    </Tooltip>
                 </Dropdown>
             ) : (
-                <StandardBtn
-                    icon={buttonIcon}
-                    aria-label="add-by-search"
-                    onClick={() => _showSearch(availableLibraries[0]?.library.id ?? null)}
-                    style={buttonStyle}
-                />
+                <Tooltip title={t('navigation.header.add_by_search')} placement="top">
+                    <StandardBtn
+                        icon={buttonIcon}
+                        aria-label="add-by-search"
+                        onClick={() => _showSearch(availableLibraries[0]?.library.id ?? null)}
+                        style={buttonStyle}
+                    />
+                </Tooltip>
             )}
             {searchModalVisible && (
                 <SearchModal

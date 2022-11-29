@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {setNavigationActiveTree} from 'redux/navigation';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
@@ -35,7 +35,7 @@ function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
             <Column treeElement={null} depth={0} isActive={currentColumnActive} key="__root__" />
             {navigation.path.map((pathPart, index) => (
                 <Column
-                    key={`${pathPart.record.id}_${pathPart.showDetails ?? false}`}
+                    key={`${pathPart.record.id}`}
                     treeElement={pathPart}
                     depth={index + 1}
                     isActive={index === navigation.path.length - 1}

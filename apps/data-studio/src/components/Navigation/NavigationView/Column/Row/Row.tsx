@@ -5,7 +5,6 @@ import {LockFilled, RightOutlined} from '@ant-design/icons';
 import {Badge, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'redux/navigation';
 import {setSelection} from 'redux/selection';
@@ -164,11 +163,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
         label: recordLabel ?? ''
     };
 
-    const isInPath = navigation.path.some(
-        pathPart =>
-            pathPart.record.id === treeElement.record.id &&
-            pathPart.record.whoAmI.library.id === treeElement.record.whoAmI.library.id
-    );
+    const isInPath = navigation.path.some(pathPart => pathPart.id === treeElement.id);
 
     const isChecked = selectionState.selection.selected.some(element => element.nodeId === treeElement.id);
 
@@ -203,7 +198,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                             count={treeElement.childrenCount}
                             overflowCount={1000}
                             style={{
-                                background: themingVar['@item-active-bg'],
+                                background: themingVar['@leav-secondary-bg'],
                                 color: themingVar['@default-text-color']
                             }}
                         />
