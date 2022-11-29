@@ -1,4 +1,4 @@
-# Configuration manager
+# LEAV Engine - Configuration manager
 
 Module to load project configuration, allowing config overrides based on environment.
 Given a directory containing all config files, it will load appropriate config for current environment.

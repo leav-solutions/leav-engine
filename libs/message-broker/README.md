@@ -1,1 +1,1 @@
-# shared-message-broker
+# LEAV Engine - Shared message broker

@@ -34,6 +34,12 @@ x-env-core: &env-core
   REDIS_PORT: 6379
   LOG_TRANSPORT: "console"
   FILES_ROOT_PATHS: files1:/files
+  MAILER_HOST: <your-mailer-host> # Specify these variables to enable email sending
+  MAILER_AUTH_USER: <email>
+  MAILER_AUTH_PWD: <password>
+  SERVER_ADMIN_LOGIN: admin
+  SERVER_ADMIN_PASSWORD: admin
+  SERVER_ADMIN_EMAIL: admin@example.com
 
 # TODO: add link to the doc about the configuration
 x-env-amqp: &env-amqp
