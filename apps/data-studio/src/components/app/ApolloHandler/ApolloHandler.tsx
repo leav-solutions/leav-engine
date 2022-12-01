@@ -10,19 +10,19 @@ import {
     ServerError,
     split
 } from '@apollo/client';
+import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
+import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
 import {createUploadLink} from 'apollo-upload-client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
+import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
-import React, {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'redux/infos';
 import {useAppDispatch} from 'redux/store';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
-import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
-import {createClient} from 'graphql-ws';
-import {getMainDefinition} from '@apollo/client/utilities';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -160,7 +160,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                     fields: {
                         preview: {
                             merge(existing, incoming) {
-                                return {...existing, ...incoming};
+                                return !incoming && !existing ? null : {...existing, ...incoming};
                             }
                         }
                     }

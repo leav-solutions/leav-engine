@@ -1,17 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Badge, Button, Tooltip} from 'antd';
+import {BellOutlined} from '@ant-design/icons';
+import {Badge, Button} from 'antd';
 import ApplicationSwitcher from 'components/ApplicationSwitcher';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import React, {useState} from 'react';
+import {setIsPanelOpen} from 'redux/notifications';
+import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {default as themingVar, default as themingVars} from '../../themingVar';
 import HeaderInfo from '../HeaderInfo';
 import UserMenu from './UserMenu';
-import {BellOutlined} from '@ant-design/icons';
-import {useAppDispatch} from 'redux/store';
-import {setIsPanelOpen} from 'redux/notifications';
 
 interface ITopBarProps {
     userPanelVisible: boolean;
@@ -48,6 +46,8 @@ const MenuItem = styled.div<IMenuItemProps>`
 
 const MenuItemUser = styled(MenuItem)`
     justify-self: end;
+    height: 100%;
+    cursor: pointer;
 `;
 
 const WrapperHeaderInfo = styled.div`

@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {InMemoryCache} from '@apollo/client';
-import React from 'react';
-import {render, screen} from '_tests/testUtils';
-import {getUser} from '../../../graphQL/queries/cache/user/userQuery';
+import {act, render, screen} from '_tests/testUtils';
+import {mockRecord} from '__mocks__/common/record';
 import UserMenu from './UserMenu';
 
 const userId = 'testUserId';
@@ -14,7 +12,7 @@ jest.mock('../../../hooks/UserHook/UserHook', () => {
         useUser: () => [
             {
                 id: userId,
-                userName
+                userWhoAmI: {...mockRecord}
             },
             jest.fn()
         ]
@@ -23,17 +21,10 @@ jest.mock('../../../hooks/UserHook/UserHook', () => {
 
 describe('UserMenu', () => {
     test('should show username', async () => {
-        let comp: any;
-
-        const mockCache = new InMemoryCache();
-
-        mockCache.writeQuery({
-            query: getUser,
-            data: {userId, userName, userPermissions: {}}
+        await act(async () => {
+            render(<UserMenu />);
         });
 
-        render(<UserMenu />);
-
-        expect(screen.getByText(userName)).toBeInTheDocument();
+        expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
     });
 });

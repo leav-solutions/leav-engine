@@ -1,16 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {act, render} from '_tests/testUtils';
+import {mockRecord} from '__mocks__/common/record';
 import {IGetUser} from '../../graphQL/queries/cache/user/userQuery';
 import {useUser} from './UserHook';
 
 describe('UserHook', () => {
     const mockUser: IGetUser = {
         userId: 'test',
-        userName: 'test',
-        userPermissions: []
+        userPermissions: [],
+        userWhoAmI: {
+            ...mockRecord
+        }
     };
 
     test('should get anything if no user set', async () => {
@@ -30,7 +32,7 @@ describe('UserHook', () => {
         expect(givenUser).toEqual(undefined);
     });
 
-    test('should get lang', async () => {
+    test('should get user', async () => {
         let givenUser;
 
         const ComponentUsingHook = () => {
