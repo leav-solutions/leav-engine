@@ -212,7 +212,7 @@ const valueDomain = function ({
         const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
         if (attributeProps.readonly) {
-            throw new ValidationError<IValue>({attribute: Errors.READONLY_ATTRIBUTE});
+            throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
         }
 
         let reverseLink: IAttribute;
@@ -246,7 +246,7 @@ const valueDomain = function ({
             });
 
             v = values.filter(val => val.value.id === value.value).pop();
-        } else if (!!value.id_value) {
+        } else if (!!value?.id_value) {
             v = await valueRepo.getValueById({
                 library,
                 recordId,
@@ -406,7 +406,7 @@ const valueDomain = function ({
 
             if (!canSave) {
                 if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
-                    throw new ValidationError<IValue>({attribute: Errors.READONLY_ATTRIBUTE});
+                    throw new ValidationError<IValue>({attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute}}});
                 }
 
                 throw new PermissionError(
@@ -539,7 +539,9 @@ const valueDomain = function ({
 
                         if (!canSave) {
                             if (Object.values(Errors).find(err => err === (forbiddenSaveReason as Errors))) {
-                                throw new ValidationError<IValue>({attribute: Errors.READONLY_ATTRIBUTE});
+                                throw new ValidationError<IValue>({
+                                    attribute: {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}}
+                                });
                             }
 
                             throw new PermissionError(

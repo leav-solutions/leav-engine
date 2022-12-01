@@ -116,6 +116,7 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
                         onClose={_closeAddExistingAttrModal}
                         onSubmit={onExistingAttrAdded}
                         selection={library.attributes.map(a => a.id)}
+                        filter={{system: false}}
                     />
                 )}
 

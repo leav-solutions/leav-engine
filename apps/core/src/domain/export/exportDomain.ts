@@ -2,26 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
+import {i18n} from 'i18next';
 import {pick} from 'lodash';
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import path from 'path';
+import {IUtils} from 'utils/utils';
+import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
-import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IRecord} from '../../_types/record';
+import {ITaskFuncParams, TaskPriority} from '../../_types/tasksManager';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
-import validateLibAttributes from '../library/helpers/validateLibAttributes';
-import {TaskPriority, ITaskFuncParams} from '../../_types/tasksManager';
-import {v4 as uuidv4} from 'uuid';
-import {i18n} from 'i18next';
-import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 
 export const DIR_PATH = '/exports';
 
@@ -44,6 +44,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tasksManager'?: ITasksManagerDomain;
     'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
+    'core.utils'?: IUtils;
     translator?: i18n;
     config?: Config.IConfig;
 }
@@ -56,6 +57,7 @@ export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.tasksManager': tasksManager = null,
     'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
+    'core.utils': utils = null,
     translator = null
 }: IDeps = {}): IExportDomain {
     const _getFormattedValues = async (
@@ -200,9 +202,18 @@ export default function ({
 
             // Validations
             await validateHelper.validateLibrary(library, ctx);
-            const err = await validateLibAttributes(firstAttributes, {attributeDomain}, ctx);
-            if (Object.keys(err).length) {
-                throw new ValidationError(err);
+            const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
+            const libraryAttributesIds = libraryAttributes.map(a => a.id);
+            const invalidAttributes = firstAttributes.filter(a => !libraryAttributesIds.includes(a));
+            if (invalidAttributes.length) {
+                throw utils.generateExplicitValidationError(
+                    'attributes',
+                    {
+                        msg: Errors.INVALID_ATTRIBUTES,
+                        vars: {attributes: invalidAttributes.join(', ')}
+                    },
+                    ctx.lang
+                );
             }
 
             await _updateTaskProgress(0, 'tasks.export_description.elements_retrieval');
