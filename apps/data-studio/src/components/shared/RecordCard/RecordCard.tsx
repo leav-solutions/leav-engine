@@ -95,7 +95,6 @@ const Wrapper = styled.div<IWrapperProps>`
             const previewColSize = `calc(${previewSize} + 1.5rem)`;
             return `${previewColSize} calc(100% - ${previewColSize})`;
         }}
-        ${props => props.style};
 `;
 Wrapper.displayName = 'Wrapper';
 
@@ -104,11 +103,11 @@ const PreviewWrapper = styled.div<{tile: boolean}>`
     margin: ${props => (props.tile ? '0.3rem 0' : '0 0.8em')};
 `;
 
-const RecordLabel = styled.div<{simplistic: boolean}>`
+const RecordLabel = styled.div<{simplistic: boolean; withLibrary: boolean}>`
     grid-area: label;
     font-weight: bold;
     overflow: hidden;
-    align-self: ${props => (props.simplistic ? 'center' : 'end')};
+    align-self: ${props => (props.simplistic || !props.withLibrary ? 'center' : 'end')};
     line-height: 1.3em;
 `;
 
@@ -171,8 +170,8 @@ const RecordCard = ({
                     />
                 </PreviewWrapper>
             )}
-            <RecordLabel className="label" simplistic={simplistic}>
-                <Paragraph ellipsis={{rows: 1, tooltip: label}} style={{marginBottom: 0}}>
+            <RecordLabel className="label" simplistic={simplistic} withLibrary={withLibrary}>
+                <Paragraph ellipsis={{rows: 1, tooltip: label}} style={{marginBottom: 0, color: style?.color ?? null}}>
                     {label}
                 </Paragraph>
             </RecordLabel>

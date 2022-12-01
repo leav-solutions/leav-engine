@@ -91,8 +91,8 @@ function AppHandler(): JSX.Element {
         if (!user && userData && !meLoading) {
             updateUser({
                 userId: userData.me.id,
-                userName: userData.me.whoAmI?.label || userData.me.login,
-                userPermissions: {}
+                userPermissions: {},
+                userWhoAmI: userData?.me?.whoAmI
             }); // FIXME: permissions ??
         }
     }, [updateUser, user, meLoading, userData]);
