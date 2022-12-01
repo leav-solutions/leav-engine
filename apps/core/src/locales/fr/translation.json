@@ -1,5 +1,6 @@
 {
     "errors": {
+        "CANNOT_ADD_SYSTEM_ATTRIBUTES": "Impossible d'ajouter des attributs système: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Impossible de sauvegarder des métadonnées sur un attribut simple",
         "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Cet élément est déjà présent parmis ses ancêtres",
         "ELEMENT_ALREADY_PRESENT": "Cet élément est déjà présent",
@@ -39,7 +40,7 @@
         "NON_FILES_LIBRARY": "Impossible de lier une bibliothèque non-fichiers",
         "PAGINATION_OFFSET_AND_CURSOR": "Impossible d'utiliser un offset et un curseur en même temps",
         "PROTECTED_ENDPOINT": "Ce chemin n'est pas autorisé: {{endpoint}}",
-        "READONLY_ATTRIBUTE": "L'attribut est en lecture seule",
+        "READONLY_ATTRIBUTE": "L'attribut {{attribute}} est en lecture seule",
         "REQUIRED_ATTRIBUTE_FORMAT": "Format d'attribut non spécifié",
         "REQUIRED_ATTRIBUTE_LABEL": "Libellé pour la langue par défaut ({{lang}}) non spécifié",
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Librairie liée non spécifiée",

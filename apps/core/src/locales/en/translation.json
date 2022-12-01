@@ -1,5 +1,6 @@
 {
     "errors": {
+        "CANNOT_ADD_SYSTEM_ATTRIBUTES": "Cannot add system attributes: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Cannot save metadata on simple attribute",
         "ELEMENT_ALREADY_PRESENT_IN_ANCESTORS": "Element already present in ancestors",
         "ELEMENT_ALREADY_PRESENT": "Element already present",
@@ -39,7 +40,7 @@
         "NON_FILES_LIBRARY": "Cannot bind a non-files library",
         "PAGINATION_OFFSET_AND_CURSOR": "Cannot use offset and cursor at the same time",
         "PROTECTED_ENDPOINT": "This endpoint is not allowed: {{endpoint}}",
-        "READONLY_ATTRIBUTE": "Attribute is readonly",
+        "READONLY_ATTRIBUTE": "Attribute {{attribute}} is readonly",
         "REQUIRED_ATTRIBUTE_FORMAT": "Attribute's format must be specified",
         "REQUIRED_ATTRIBUTE_LABEL": "Attribute's label for default language ({{lang}}) must be specified",
         "REQUIRED_ATTRIBUTE_LINKED_LIBRARY": "Attribute's linked library must be specified",

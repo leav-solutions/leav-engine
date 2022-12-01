@@ -190,7 +190,7 @@ export default function ({
             delete dataToSave.fullTextAttributes;
 
             validationErrors.push(
-                await validateLibAttributes(libAttributes, {attributeDomain}, ctx),
+                await validateLibAttributes(dataToSave, libAttributes, {attributeDomain}, ctx),
                 validateLibFullTextAttributes(
                     union(defaultAttributes, attributesToSave.length ? attributesToSave : currentLibraryAttributes),
                     libFullTextAttributes

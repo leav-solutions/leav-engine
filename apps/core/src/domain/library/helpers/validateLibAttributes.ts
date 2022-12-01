@@ -4,10 +4,12 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {difference} from 'lodash';
 import {ILibrary} from '_types/library';
-import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
+import getDefaultAttributes from '../../../utils/helpers/getLibraryDefaultAttributes';
+import {ErrorFieldDetail, Errors} from '../../../_types/errors';
 
 export default async (
+    libraryData: ILibrary,
     attributes: string[],
     deps: {attributeDomain: IAttributeDomain},
     ctx: IQueryInfos
@@ -19,13 +21,27 @@ export default async (
     }
 
     const availableAttributes = await deps.attributeDomain.getAttributes({ctx});
-    const unknownAttrs = difference(
-        attributes,
-        availableAttributes.list.map(attr => attr.id)
-    );
+    const defaultAttributes = getDefaultAttributes(libraryData.behavior, libraryData.id);
+    const attributesById = availableAttributes.list.reduce((acc, a) => {
+        acc[a.id] = a;
+        return acc;
+    }, {});
+
+    const unknownAttrs = difference(attributes, Object.keys(attributesById));
 
     if (unknownAttrs.length) {
         errors.attributes = {msg: Errors.UNKNOWN_ATTRIBUTES, vars: {attributes: unknownAttrs.join(', ')}};
+    }
+
+    // Check if an attribute is system and not part of default library attributes
+    const forbiddenSystemAttributes = attributes.filter(
+        a => attributesById[a]?.system && !defaultAttributes.includes(a)
+    );
+    if (forbiddenSystemAttributes.length) {
+        errors.attributes = {
+            msg: Errors.CANNOT_ADD_SYSTEM_ATTRIBUTES,
+            vars: {attributes: forbiddenSystemAttributes.join(', ')}
+        };
     }
 
     return errors;
