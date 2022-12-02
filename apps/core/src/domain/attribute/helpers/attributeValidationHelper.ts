@@ -38,7 +38,7 @@ const _validateSettings = (
         errors.multiple_values = Errors.MULTIPLE_VALUES_NOT_ALLOWED;
     }
 
-    if (attrData.type !== AttributeTypes.SIMPLE && typeof attrData.unique !== 'undefined') {
+    if (attrData.type !== AttributeTypes.SIMPLE && attrData.unique) {
         errors.unique = Errors.UNIQUE_VALUE_NOT_ALLOWED;
     }
 

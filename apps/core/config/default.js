@@ -128,12 +128,14 @@ module.exports = {
     debug: process.env.DEBUG || false,
     defaultUserId: '2', // Used for DB migration and any other action that is not bound to a real user
     export: {
-        directory: process.env.EXPORT_DIR || '/exports'
+        directory: process.env.EXPORT_DIR || '/exports',
+        endpoint: process.env.EXPORT_ENDPOINT || 'exports'
     },
     import: {
         directory: process.env.IMPORT_DIR || '/imports',
+        endpoint: process.env.IMPORT_ENDPOINT || 'imports',
         sizeLimit: process.env.IMPORT_SIZE_LIMIT || 10, // megabytes
-        groupData: process.env.IMPORT_GROUP_DATA || 50 // number of elements processed at the same time
+        groupData: process.env.IMPORT_GROUP_DATA || 50 // number of elements processed at the same time,
     },
     preview: {
         directory: process.env.PREVIEWS_DIRECTORY || '/results'

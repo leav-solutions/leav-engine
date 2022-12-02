@@ -26,9 +26,12 @@ export default function ({'core.domain.export': exportDomain = null}: IDeps = {}
                     Upload: GraphQLUpload,
                     Query: {
                         async export(parent, {library, attributes, filters, startAt}, ctx): Promise<string> {
-                            return exportDomain.export({library, attributes, filters}, ctx, {
-                                ...(!!startAt && {startAt})
-                            });
+                            return exportDomain.export(
+                                {library, attributes, filters, ctx},
+                                {
+                                    ...(!!startAt && {startAt})
+                                }
+                            );
                         }
                     }
                 }

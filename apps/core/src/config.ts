@@ -139,10 +139,12 @@ export const validateConfig = (conf: IConfig) => {
         env: Joi.string(),
         defaultUserId: Joi.string().required(),
         export: Joi.object().keys({
-            directory: Joi.string().required()
+            directory: Joi.string().required(),
+            endpoint: Joi.string().required()
         }),
         import: Joi.object().keys({
             directory: Joi.string().required(),
+            endpoint: Joi.string().required(),
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required()
         }),

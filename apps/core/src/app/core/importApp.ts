@@ -66,7 +66,7 @@ export default function ({'core.domain.import': importDomain = null, config = nu
     const _storeUploadFile = async (fileData: IFileUpload): Promise<string> => {
         const {createReadStream, filename} = fileData;
         const readStream = createReadStream();
-        const storedFileName = `${nanoid()}-${filename}`;
+        const storedFileName = `${nanoid()}_${filename}`;
         const storedFilePath = `${config.import.directory}/${storedFileName}`;
 
         await new Promise((resolve, reject) => {
@@ -129,23 +129,25 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             // Store JSON file in local filesystem.
                             const storedFileName = await _storeUploadFile(fileData);
 
-                            // try {
-                            return importDomain.import(storedFileName, ctx, {
-                                // Delete remaining import file.
-                                ...(!!startAt && {startAt}),
-                                callback: {
-                                    moduleName: 'utils',
-                                    name: 'deleteFile',
-                                    args: [`${config.import.directory}/${storedFileName}`],
-                                    type: [
-                                        TaskCallbackType.ON_SUCCESS,
-                                        TaskCallbackType.ON_FAILURE,
-                                        TaskCallbackType.ON_CANCEL
-                                    ]
+                            return importDomain.import(
+                                {filename: storedFileName, ctx},
+                                {
+                                    // Delete remaining import file.
+                                    ...(!!startAt && {startAt}),
+                                    callback: {
+                                        moduleName: 'utils',
+                                        name: 'deleteFile',
+                                        args: [`${config.import.directory}/${storedFileName}`],
+                                        type: [
+                                            TaskCallbackType.ON_SUCCESS,
+                                            TaskCallbackType.ON_FAILURE,
+                                            TaskCallbackType.ON_CANCEL
+                                        ]
+                                    }
                                 }
-                            });
+                            );
 
-                            // FIXME: If import fail should we backup db?
+                            // FIXME: If import fail should we backup database?
                         },
                         async importExcel(
                             _,

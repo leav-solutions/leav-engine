@@ -23,16 +23,17 @@ import {ITaskFuncParams, TaskPriority} from '../../_types/tasksManager';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 
-export const DIR_PATH = '/exports';
+export const EXPORTS_URL = '/exports';
 
 export interface IExportParams {
     library: string;
     attributes: string[];
     filters?: IRecordFilterLight[];
+    ctx: IQueryInfos;
 }
 
 export interface IExportDomain {
-    export(params: IExportParams, ctx: IQueryInfos, task?: ITaskFuncParams): Promise<string>;
+    export(params: IExportParams, task?: ITaskFuncParams): Promise<string>;
 }
 
 interface IDeps {
@@ -149,11 +150,9 @@ export default function ({
     };
 
     return {
-        async export(
-            {library, attributes, filters}: IExportParams,
-            ctx: IQueryInfos,
-            task?: ITaskFuncParams
-        ): Promise<string> {
+        async export(params: IExportParams, task?: ITaskFuncParams): Promise<string> {
+            const {library, attributes, filters, ctx} = params;
+
             if (typeof task?.id === 'undefined') {
                 const newTaskId = uuidv4();
 
@@ -168,7 +167,7 @@ export default function ({
                             moduleName: 'domain',
                             subModuleName: 'export',
                             name: 'export',
-                            args: [{library, attributes, filters}, ctx]
+                            args: params
                         },
                         startAt: !!task.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                         priority: TaskPriority.MEDIUM
@@ -271,7 +270,7 @@ export default function ({
 
             // This is a public URL users will use to retrieve files.
             // It must match the route defined in the server.
-            const url = `${DIR_PATH}/${filename}`;
+            const url = `/${config.export.endpoint}/${filename}`;
             await tasksManager.setLink(task.id, {name: 'export file', url}, ctx);
 
             return task.id;

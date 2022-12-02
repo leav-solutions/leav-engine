@@ -116,7 +116,6 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                 variables: {
                     file,
                     sheets: sheets
-                        .filter(sheet => sheet.type !== ImportType.IGNORE)
                         .map(sheet => ({
                             type: sheet.type,
                             mode: sheet.mode,

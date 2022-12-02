@@ -7,6 +7,7 @@
         "ELEMENT_NOT_IN_TREE": "Élément {{element}} non présent dans l’arbre {{tree}}",
         "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Un élement identique avec le même chemin est déjà présent",
         "ERROR": "Erreur",
+        "UNKNOWN": "Inconnu",
         "FILE_NOT_FOUND": "Fichier inconnu",
         "FORBIDDEN_ID": "L'Id spécifiée est interdit",
         "FORMAT_ERROR": "Format invalide: {{details}}",
@@ -30,6 +31,7 @@
         "LIBRARY_FORBIDDEN_AS_CHILD": "Librairie non autorisée pour les parents sélectionnés",
         "METADATA_PERMISSION_ERROR": "Action interdite sur les champs {{fields}}",
         "MISSING_FIELDS": "Champs manquants : {{fields}}",
+        "MISSING_ELEMENTS": "Eléments manquants",
         "MISSING_LIBRARY_ID": "ID bibliothèque manquant",
         "MISSING_RECORD_ID": "ID de l’élément manquant",
         "MISSING_REQUIRED_ACTION": "Actions requises manquantes: {{actions}}",
@@ -182,6 +184,12 @@
             "elements_retrieval": "Récupération des fichiers",
             "excel_writing": "Ecriture du fichier excel"
         }
+    },
+    "import": {
+        "add_value_error": "Impossible d'ajouter la valeur {{value}} à l'attribut {{attributeId}}",
+        "excel_pos": "Feuille {{sheet}}, Ligne {{line}}",
+        "element_pos": "Elément {{index}}",
+        "tree_pos": "Arbre {{index}}"
     },
     "mailer": {
         "reset_password_subject": "Réinitialiser votre mot de passe"

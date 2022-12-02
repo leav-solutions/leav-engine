@@ -37,7 +37,7 @@ export interface ITaskFunc {
     moduleName: string;
     subModuleName?: string;
     name: string;
-    args: any[];
+    args: {[key: string]: any};
 }
 
 export enum TaskCallbackType {

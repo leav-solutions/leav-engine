@@ -157,10 +157,12 @@ export interface ITasksManager {
 
 export interface IExport {
     directory: string;
+    endpoint: string;
 }
 
 export interface IImport {
     directory: string;
+    endpoint: string;
     sizeLimit: number;
     groupData: number;
 }
