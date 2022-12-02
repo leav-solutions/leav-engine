@@ -15,11 +15,7 @@ const Wrapper = styled.div`
     text-overflow: hidden;
     font-weight: 600;
     line-height: 1em;
-
-    background: #0d1e26 0% 0% no-repeat padding-box;
-    border: 1px solid #70707031;
-    border-radius: 3px;
-
+    color: #000;
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;

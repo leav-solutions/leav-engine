@@ -17,7 +17,6 @@ import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
 import {useAppSelector} from 'redux/store';
@@ -37,8 +36,9 @@ interface IGroupedElements<EntityType> {
 
 const HomeButton = styled.div`
     height: ${themingVar['@leav-header-height']};
-    background: #0f2027;
-    color: #fff;
+    background: ${themingVar['@leav-secondary-bg']};
+    box-shadow: 0 1px 2px #ccc;
+    color: #000;
     text-align: center;
     line-height: 3rem;
     font-size: 1.5rem;

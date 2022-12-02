@@ -22,9 +22,9 @@ const Wrapper = styled.div`
     flex-direction: row;
     align-items: center;
     height: ${themingVar['@leav-header-height']};
-
     color: white;
-    background: transparent linear-gradient(85deg, #0f2027 0%, #203a43 52%, #2c5364 100%) 0% 0% no-repeat padding-box;
+    background: ${themingVar['@leav-secondary-bg']};
+    box-shadow: 0 1px 2px #ccc;
 `;
 
 const MenuItem = styled.div<IMenuItemProps>`
@@ -102,7 +102,7 @@ function TopBar({userPanelVisible, toggleUserPanelVisible, nbNotifs}: ITopBarPro
                     ghost
                     shape="circle"
                     size="large"
-                    icon={<BellOutlined style={{fontSize: '1.5em'}} />}
+                    icon={<BellOutlined style={{fontSize: '1.5em', color: '#000'}} />}
                     aria-label="infos"
                     onClick={_handleNotifsPanelClick}
                 />
