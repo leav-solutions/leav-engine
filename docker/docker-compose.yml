@@ -329,6 +329,7 @@ services:
       <<: *env-portal
       PUBLIC_URL: http://core.leav.localhost/app/portal
       REACT_APP_APPLICATION_ID: portal
+      REACT_APP_ENDPOINT: /app/portal
       WDS_SOCKET_HOST: portal.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:
