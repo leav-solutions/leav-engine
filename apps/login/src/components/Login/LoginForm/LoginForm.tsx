@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
-import {Alert, Button, Card, Form, Input, Spin, Space} from 'antd';
+import {Alert, Button, Card, Form, Input, Spin} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {NavLink} from 'react-router-dom';
 import styled from 'styled-components';
 
 const extractValueFromEventAndThen = (next: any) => (event: any) => {
@@ -67,81 +68,84 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
     };
 
     return (
-        <>
-            <Background />
-            <Wrapper>
-                <LoginBlock title={<h2>LEAV Engine</h2>}>
-                    <Form onFinish={_processLogin}>
+        <Wrapper>
+            <LoginBlock
+                title={
+                    <img
+                        src={`${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
+                        alt="LEAV Engine"
+                        height="100px"
+                    />
+                }
+                headStyle={{textAlign: 'center'}}
+            >
+                <Form onFinish={_processLogin}>
+                    <Form.Item>
+                        <Input
+                            prefix={<UserOutlined />}
+                            type="text"
+                            name="login"
+                            aria-label={t('login.login')}
+                            placeholder={t('login.login')}
+                            autoFocus
+                            value={login}
+                            onChange={extractValueFromEventAndThen(setLogin)}
+                        />
+                    </Form.Item>
+                    <Form.Item>
+                        <Input
+                            prefix={<LockOutlined />}
+                            type="password"
+                            name="password"
+                            aria-label={t('login.password')}
+                            placeholder={t('login.password')}
+                            value={password}
+                            onChange={extractValueFromEventAndThen(setPassword)}
+                        />
+                    </Form.Item>
+                    {loading && (
                         <Form.Item>
-                            <Input
-                                prefix={<UserOutlined />}
-                                type="text"
-                                name="login"
-                                aria-label={t('login.login')}
-                                placeholder={t('login.login')}
-                                autoFocus
-                                value={login}
-                                onChange={extractValueFromEventAndThen(setLogin)}
+                            <Alert
+                                message={t('login.loading.header')}
+                                description={t('login.loading.text')}
+                                icon={<Spin />}
+                                type="warning"
+                                showIcon
                             />
                         </Form.Item>
+                    )}
+                    {loginError && (
                         <Form.Item>
-                            <Input
-                                prefix={<LockOutlined />}
-                                type="password"
-                                name="password"
-                                aria-label={t('login.password')}
-                                placeholder={t('login.password')}
-                                value={password}
-                                onChange={extractValueFromEventAndThen(setPassword)}
+                            <Alert
+                                message={loginError}
+                                type="error"
+                                showIcon
+                                icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
                             />
                         </Form.Item>
-                        {loading && (
-                            <Form.Item>
-                                <Alert
-                                    message={t('login.loading.header')}
-                                    description={t('login.loading.text')}
-                                    icon={<Spin />}
-                                    type="warning"
-                                    showIcon
-                                />
-                            </Form.Item>
-                        )}
-                        {loginError && (
-                            <Form.Item>
-                                <Alert
-                                    message={loginError}
-                                    type="error"
-                                    showIcon
-                                    icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
-                                />
-                            </Form.Item>
-                        )}
-                        {!loading && (
-                            <Form.Item>
-                                <Button
-                                    size="large"
-                                    type="primary"
-                                    loading={loading}
-                                    disabled={loading}
-                                    htmlType="submit"
-                                    block
-                                >
-                                    {t('login.submit')}
-                                </Button>
-                            </Form.Item>
-                        )}
+                    )}
+                    {!loading && (
                         <Form.Item>
-                            <a
-                                style={{float: 'right'}}
-                                href={(process.env.REACT_APP_ENDPOINT ?? '/') + '/forgot-password'}
+                            <Button
+                                size="large"
+                                type="primary"
+                                loading={loading}
+                                disabled={loading}
+                                htmlType="submit"
+                                block
                             >
-                                {t('login.forgot_password')}
-                            </a>
+                                {t('login.submit')}
+                            </Button>
                         </Form.Item>
-                    </Form>
-                </LoginBlock>
-            </Wrapper>
-        </>
+                    )}
+                    <Form.Item>
+                        <NavLink style={{float: 'right'}} to={'/forgot-password'}>
+                            {t('login.forgot_password')}
+                        </NavLink>
+                    </Form.Item>
+                </Form>
+            </LoginBlock>
+        </Wrapper>
     );
 };
 
