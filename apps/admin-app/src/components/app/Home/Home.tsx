@@ -5,6 +5,7 @@ import useLocalStorage from 'hooks/useLocalStorage';
 import React from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
 import styled from 'styled-components';
+import {greyBackground} from 'themingVar';
 import AppMenu from '../AppMenu';
 import Header from '../Header';
 import Routes from '../Routes';
@@ -15,6 +16,7 @@ const LeftCol = styled.div`
     height: calc(100vh - ${headerHeight});
     position: relative;
     border-right: 1px solid #ddd;
+    background: ${greyBackground};
 `;
 
 const Content = styled.div`
@@ -28,9 +30,9 @@ const HeaderWrapper = styled.div`
     grid-area: header;
 `;
 
-const HomeWrapper = styled.div<{menuWidth: number}>`
+const HomeWrapper = styled.div<{menuWidth: string}>`
     display: grid;
-    grid-template-columns: ${({menuWidth}) => menuWidth}px 1fr;
+    grid-template-columns: ${({menuWidth}) => menuWidth} 1fr;
     grid-template-rows: ${headerHeight} 1fr;
     grid-template-areas:
         'header header'
@@ -40,7 +42,7 @@ const HomeWrapper = styled.div<{menuWidth: number}>`
 
 function Home(): JSX.Element {
     const [isMenuCollapsed, setMenuCollapsed] = useLocalStorage('menu_collapsed', false);
-    const menuWidth = isMenuCollapsed ? 71 : 250;
+    const menuWidth = isMenuCollapsed ? '4.3rem' : '18rem';
 
     const _handleToggleMenu = () => {
         setMenuCollapsed(!isMenuCollapsed);

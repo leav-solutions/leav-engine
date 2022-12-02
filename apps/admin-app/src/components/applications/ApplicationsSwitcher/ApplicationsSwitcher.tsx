@@ -6,11 +6,12 @@ import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import RecordPreview from 'components/shared/RecordPreview';
+import SimplisticButton from 'components/shared/SimplisticButton';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import useLang from 'hooks/useLang';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import React from 'react';
-import {Button, Icon, List, Sidebar} from 'semantic-ui-react';
+import {Icon, List, Sidebar} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 
@@ -23,6 +24,7 @@ const AppIcon = styled.span`
     width: 2em;
     height: 2em;
     margin-right: 1em;
+    color: #000;
 `;
 
 const AppList = styled(List)`
@@ -129,13 +131,12 @@ function ApplicationsSwitcher(): JSX.Element {
 
     return (
         <>
-            <Button
+            <SimplisticButton
                 icon="th large"
                 aria-label="applications"
-                style={{boxShadow: 'none'}}
+                style={{boxShadow: 'none', color: '#000'}}
                 basic
                 circular
-                inverted
                 onClick={_handleToggleSidebar}
             />
             <AppSidebar

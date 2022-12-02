@@ -5,8 +5,10 @@ import {useQuery} from '@apollo/client';
 import {History} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {BiSpreadsheet} from 'react-icons/bi';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {addWildcardToFilters} from '../../../utils/utils';
@@ -14,6 +16,12 @@ import {GET_ATTRIBUTES, GET_ATTRIBUTESVariables} from '../../../_gqlTypes/GET_AT
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import AttributesList from '../AttributesList';
 import DeleteAttribute from '../DeleteAttribute';
+
+const Title = styled(Header)`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+`;
 
 interface IAttributesProps {
     history: History;
@@ -56,10 +64,10 @@ const Attributes = (props: IAttributesProps): JSX.Element => {
         <div>
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
-                    <Header size="large">
-                        <Icon name="cubes" />
+                    <Title size="large">
+                        <BiSpreadsheet size={30} />
                         {t('attributes.title')}
-                    </Header>
+                    </Title>
                 </Grid.Column>
                 {userData.permissions[PermissionsActions.admin_create_attribute] && (
                     <Grid.Column floated="right" width={6} textAlign="right" verticalAlign="middle">

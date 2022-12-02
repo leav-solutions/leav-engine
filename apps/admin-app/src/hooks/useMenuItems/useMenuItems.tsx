@@ -1,10 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ValueVersionsIcon from 'components/shared/icons/ValueVersionsIcon';
 import useUserData from 'hooks/useUserData';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {AiOutlineAppstore, AiOutlineDatabase, AiOutlineSetting} from 'react-icons/ai';
+import {BiSpreadsheet} from 'react-icons/bi';
+import {RiNodeTree} from 'react-icons/ri';
+import {VscLayers} from 'react-icons/vsc';
+import {Icon} from 'semantic-ui-react';
 import {SemanticICONS} from 'semantic-ui-react/dist/commonjs/generic';
 
 export interface IMenuItem {
@@ -15,7 +19,16 @@ export interface IMenuItem {
     protected: boolean;
 }
 
-function useMenuItems(): IMenuItem[] {
+const iconSize: {[size in IUseMenuItemsProps['size']]: string} = {
+    small: '1.5rem',
+    big: '3rem'
+};
+
+interface IUseMenuItemsProps {
+    size: 'small' | 'big';
+}
+
+function useMenuItems({size}: IUseMenuItemsProps): IMenuItem[] {
     const userData = useUserData();
     const {t} = useTranslation();
 
@@ -23,49 +36,43 @@ function useMenuItems(): IMenuItem[] {
         {
             id: 'libraries',
             label: t('libraries.title'),
-            icon: 'database',
+            icon: <AiOutlineDatabase size={iconSize[size]} />,
             protected: true
         },
         {
             id: 'attributes',
             label: t('attributes.title'),
-            icon: 'cubes',
+            icon: <BiSpreadsheet size={iconSize[size]} />,
             protected: true
         },
         {
             id: 'trees',
             label: t('trees.title'),
-            icon: 'share alternate',
-            iconProps: {
-                rotated: 'clockwise'
-            },
+            icon: <RiNodeTree size={iconSize[size]} />,
             protected: true
         },
         {
             id: 'applications',
             label: t('applications.title'),
-            icon: 'th',
+            icon: <AiOutlineAppstore size={iconSize[size]} />,
             protected: true
         },
         {
             id: 'version_profiles',
             label: t('version_profiles.title'),
-            icon: <ValueVersionsIcon style={{justifySelf: 'center', marginTop: '4px'}} />,
-            iconProps: {
-                size: '1.5rem'
-            },
+            icon: <VscLayers size={iconSize[size]} />,
             protected: true
         },
         {
             id: 'tasks',
             label: t('tasks.title'),
-            icon: 'tasks',
+            icon: <Icon name="tasks" style={{fontSize: `calc(${iconSize[size]} - 2px)`}} />,
             protected: true
         },
         {
             id: 'general',
             label: t('general.title'),
-            icon: 'cogs',
+            icon: <AiOutlineSetting size={iconSize[size]} />,
             protected: false
         }
     ];

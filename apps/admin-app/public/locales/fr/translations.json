@@ -1,6 +1,7 @@
 {
     "admin": {
         "title": "Accueil",
+        "global_app_name": "LEAV-Engine",
         "submit": "Valider",
         "save": "Enregistrer",
         "cancel": "Annuler",
@@ -31,7 +32,7 @@
         "search_placeholder": "Rechercher..."
     },
     "dashboard": {
-        "title": "Administration de LEAV Engine"
+        "title": "Bienvenue sur l'interface d'administration"
     },
     "general": {
         "title": "Général",
