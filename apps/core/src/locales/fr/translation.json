@@ -186,7 +186,7 @@
         }
     },
     "import": {
-        "add_value_error": "Impossible d'ajouter la valeur {{value}} à l'attribut {{attributeId}}",
+        "add_value_error": "Impossible d'ajouter la valeur '{{value}}' à l'attribut '{{attributeId}}'",
         "excel_pos": "Feuille {{sheet}}, Ligne {{line}}",
         "element_pos": "Elément {{index}}",
         "tree_pos": "Arbre {{index}}"

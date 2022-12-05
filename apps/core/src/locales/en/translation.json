@@ -183,7 +183,7 @@
         }
     },
     "import": {
-        "add_value_error": "Cannot add value {{value}} to attribute {{attributeId}}",
+        "add_value_error": "Cannot add value '{{value}}' to attribute '{{attributeId}}'",
         "excel_pos": "Sheet {{sheet}}, Line {{line}}",
         "element_pos": "Element {{index}}",
         "tree_pos": "Tree {{index}}"

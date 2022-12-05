@@ -11,6 +11,7 @@ import ExcelJS from 'exceljs';
 import fs from 'fs';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
+import {ValidatorResultError} from 'jsonschema/lib/helpers';
 import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
@@ -97,7 +98,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
     'core.domain.attribute': attributeDomain = null,
@@ -208,17 +209,18 @@ export default function({
 
                     await _addValue(library, libraryAttribute, recordId, v, ctx, valueId);
                 } catch (err) {
-                    if (!(err instanceof ValidationError || !(err instanceof PermissionError))) {
+                    if (!(err instanceof ValidationError) && !(err instanceof PermissionError)) {
                         throw err;
                     }
 
-                    err.message = translator.t('import.add_value_error', {
-                        lng: ctx.lang || config.lang.default,
-                        attributeId: libraryAttribute.id,
-                        value: v.value
-                    });
-
-                    throw err;
+                    utils.rethrow(
+                        err,
+                        translator.t('import.add_value_error', {
+                            lng: ctx.lang || config.lang.default,
+                            attributeId: libraryAttribute.id,
+                            value: v.value
+                        })
+                    );
                 }
             }
         }
@@ -363,7 +365,7 @@ export default function({
                 fileStream.resume();
             };
 
-            parser.onValue = async function(data: any) {
+            parser.onValue = async function (data: any) {
                 try {
                     if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
                         if (callbacks.length >= config.import.groupData) {
@@ -519,11 +521,11 @@ export default function({
             try {
                 await _jsonSchemaValidation(filename);
             } catch (err) {
-                if (!(err instanceof ValidationError || !(err instanceof PermissionError))) {
+                if (!(err instanceof ValidatorResultError)) {
                     throw err;
                 }
 
-                for (const e of err?.errors ?? [err]) {
+                for (const e of err.errors) {
                     writeReport(e.path.join(' '), e);
                 }
             }
@@ -610,7 +612,7 @@ export default function({
                             lastCacheIndex = index;
                         }
                     } catch (e) {
-                        if (!(e instanceof ValidationError || !(e instanceof PermissionError))) {
+                        if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
                             throw e;
                         }
 
@@ -643,7 +645,7 @@ export default function({
 
                         await _treatTree(tree.library, tree.treeId, parent, recordIds, tree.action, ctx, tree.order);
                     } catch (e) {
-                        if (!(e instanceof ValidationError || !(e instanceof PermissionError))) {
+                        if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
                             throw e;
                         }
 
@@ -670,7 +672,7 @@ export default function({
                         try {
                             await _treatElement(element.library, link, element.recordIds, ctx);
                         } catch (e) {
-                            if (!(e instanceof ValidationError || !(e instanceof PermissionError))) {
+                            if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
                                 throw e;
                             }
 

@@ -107,7 +107,7 @@ export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function({translator = null}: IUtilsDeps = {}): IUtils {
+export default function ({translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getUnixTime: () => Math.floor(Date.now() / 1000),
         deleteFile: async (path: string): Promise<void> => {
@@ -146,7 +146,7 @@ export default function({translator = null}: IUtilsDeps = {}): IUtils {
         },
         rethrow(err: Error, message?: string): void {
             if (message) {
-                err.message = `${message} ${err.message}`;
+                err.message = `${message}, ${err.message}`;
             }
 
             throw err;
