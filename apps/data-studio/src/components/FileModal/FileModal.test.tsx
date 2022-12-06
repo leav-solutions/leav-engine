@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getFileDataQuery, IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
-import React from 'react';
-import {render, screen, waitFor, within} from '_tests/testUtils';
+import {act, fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockRecord} from '__mocks__/common/record';
 import FileModal from './FileModal';
 
@@ -83,6 +82,15 @@ describe('FileModal', () => {
 
             await waitFor(() => screen.getByTestId('content-section'));
             const contentSection = screen.getByTestId('content-section');
+
+            const images = within(contentSection).getAllByRole('img', {hidden: true});
+            // Load images
+            await act(async () => {
+                for (const image of images) {
+                    fireEvent.load(image);
+                }
+            });
+
             expect(
                 within(contentSection)
                     .getAllByRole('img')

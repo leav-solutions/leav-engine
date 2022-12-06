@@ -83,7 +83,7 @@ const DetailNavigation = ({treeElement, closable, onClose}: IDetailNavigationPro
                     color={recordData.whoAmI.color}
                     image={img && getFileUrl(img)}
                     tile
-                    style={{maxHeight: '15rem', maxWidth: '100%'}}
+                    style={{maxHeight: '15rem', maxWidth: '100%', minWidth: '10rem', minHeight: '10rem'}}
                 />
             </PreviewWrapper>
             <Content>

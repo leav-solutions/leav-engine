@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ImageLoading from 'components/shared/ImageLoading';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getInitials, getInvertColor, stringToColor} from 'utils';
 import {IGeneratedPreviewProps, IRecordPreviewProps} from '../_types';

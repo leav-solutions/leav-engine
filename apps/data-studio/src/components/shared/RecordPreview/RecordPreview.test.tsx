@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import 'jest-styled-components';
-import React from 'react';
 import {act, fireEvent, render, screen} from '_tests/testUtils';
 import RecordPreview from './RecordPreview';
 
@@ -22,14 +21,12 @@ describe('RecordPreview', () => {
         const imageElem = screen.getByAltText('record preview');
         expect(imageElem).toBeInTheDocument();
         expect(imageElem).not.toBeVisible();
-        expect(screen.getByTestId('image-loading')).toBeVisible();
 
         await act(async () => {
             fireEvent.load(imageElem);
         });
 
         expect(imageElem).toBeVisible();
-        expect(screen.queryByTestId('image-loading')).not.toBeInTheDocument();
     });
 
     test('Show initial with color if no image', async () => {
