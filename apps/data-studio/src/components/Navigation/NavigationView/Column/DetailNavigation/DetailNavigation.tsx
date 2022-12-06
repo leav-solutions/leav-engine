@@ -71,11 +71,9 @@ const DetailNavigation = ({treeElement, closable, onClose}: IDetailNavigationPro
 
     const img = recordData.whoAmI.preview?.big;
 
-    const _handleClose = () => onClose();
-
     return (
         <Detail data-testid="details-column">
-            {closable && <CloseButton onClick={_handleClose} />}
+            {closable && <CloseButton onClick={onClose} />}
             <PreviewWrapper>
                 <RecordPreviewWithModal
                     key={recordData.id}
