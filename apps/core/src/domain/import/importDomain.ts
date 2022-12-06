@@ -8,7 +8,7 @@ import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
-import fs from 'fs';
+import fs, {stat} from 'fs';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import {ValidatorResultError} from 'jsonschema/lib/helpers';
@@ -40,6 +40,7 @@ import {v4 as uuidv4} from 'uuid';
 import {IUtils} from 'utils/utils';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import PermissionError from '../../errors/PermissionError';
+import {number} from 'joi';
 
 export const IMPORTS_URL = '/imports';
 
@@ -83,6 +84,20 @@ interface ICachedLinks {
     links: IElement['links'];
     JSONLine: number;
 }
+
+enum ImportAction {
+    CREATED = 'created',
+    UPDATED = 'updated',
+    IGNORED = 'ignored'
+}
+
+interface IStat {
+    elements: {[key in ImportAction]?: number};
+    links: number;
+    trees: number;
+}
+
+type Stat = {[sheetIndex: number]: IStat} | IStat;
 
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
@@ -455,6 +470,78 @@ export default function ({
         validate(data, JSON.parse(schema.toString()), {throwAll: true});
     };
 
+    const _writeReport = (
+        writeStream: fs.WriteStream,
+        pos: string,
+        err: ValidationError<any> | PermissionError<any>,
+        lang: string
+    ) => {
+        const errors = err.fields
+            ? Object.values(err.fields)
+                  .map(v => utils.translateError(v as string, lang))
+                  .join(', ')
+            : '';
+
+        const message = err.message || '';
+
+        writeStream.write(`${pos}: ${errors}${errors && message ? ' | ' : ''}${message}\n`);
+    };
+
+    const _writeStats = (writeStream: fs.WriteStream, stats: Stat, lang: string) => {
+        writeStream.write(`\n### ${translator.t('import.stats_title', {lng: lang}).toUpperCase()} ###\n`);
+
+        if (_isExcelMapped(stats)) {
+            for (const sheetIndex of Object.keys(stats)) {
+                if (stats[sheetIndex].elements) {
+                    writeStream.write(
+                        `${translator.t('import.stats_sheet_elements', {
+                            lng: lang,
+                            sheet: Number(sheetIndex) + 1,
+                            created: stats[sheetIndex].elements[ImportAction.CREATED] || 0,
+                            updated: stats[sheetIndex].elements[ImportAction.UPDATED] || 0,
+                            ignored: stats[sheetIndex].elements[ImportAction.IGNORED] || 0
+                        })}\n`
+                    );
+                }
+
+                if (stats[sheetIndex].links) {
+                    writeStream.write(
+                        `${translator.t('import.stats_sheet_links', {
+                            lng: lang,
+                            sheet: Number(sheetIndex) + 1,
+                            links: stats[sheetIndex].links
+                        })}\n`
+                    );
+                }
+            }
+        } else {
+            writeStream.write(
+                `${translator.t('import.stats_elements', {
+                    lng: lang,
+                    created: (stats as IStat).elements[ImportAction.CREATED],
+                    updated: (stats as IStat).elements[ImportAction.UPDATED],
+                    ignored: (stats as IStat).elements[ImportAction.IGNORED]
+                })}\n`
+            );
+
+            writeStream.write(
+                `${translator.t('import.stats_links', {
+                    lng: lang,
+                    links: (stats as IStat).links
+                })}\n`
+            );
+
+            writeStream.write(
+                `${translator.t('import.stats_trees', {
+                    lng: lang,
+                    trees: (stats as IStat).trees
+                })}\n`
+            );
+        }
+    };
+
+    const _isExcelMapped = (stats: Stat): boolean => !(stats as IStat).elements;
+
     return {
         async import(params: IImportParams, task?: ITaskFuncParams): Promise<string> {
             const {filename, ctx, excelMapping} = params;
@@ -488,26 +575,9 @@ export default function ({
             const reportFileName = filename.slice(0, filename.lastIndexOf('.')) + '.report.txt';
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
             const lang = ctx.lang || config.lang.default;
-            let writeReportStream: fs.WriteStream;
-
-            const writeReport = (pos: string, err: ValidationError<any> | PermissionError<any>) => {
-                // check if file exists, if not create it
-                if (!fs.existsSync(reportFilePath)) {
-                    writeReportStream = fs.createWriteStream(reportFilePath, {
-                        flags: 'as' // 'as' - Open file for appending in synchronous mode. The file is created if it does not exist.
-                    });
-                }
-
-                const errors = err.fields
-                    ? Object.values(err.fields)
-                          .map(v => utils.translateError(v as string, lang))
-                          .join(', ')
-                    : '';
-
-                const message = err.message || '';
-
-                writeReportStream.write(`${pos}: ${errors}${errors && message ? ' | ' : ''}${message}\n`);
-            };
+            const writeReportStream: fs.WriteStream = fs.createWriteStream(reportFilePath, {
+                flags: 'as' // 'as' - Open file for appending in synchronous mode. The file is created if it does not exist.
+            });
 
             const _getExcelPos = (elementIndex: number): string => {
                 if (excelMapping) {
@@ -526,7 +596,7 @@ export default function ({
                 }
 
                 for (const e of err.errors) {
-                    writeReport(e.path.join(' '), e);
+                    _writeReport(writeReportStream, e.path.join(' '), e, lang);
                 }
             }
 
@@ -564,6 +634,11 @@ export default function ({
             const cacheDataPath = `${filename}-links`;
             let lastCacheIndex: number;
 
+            let action: ImportAction;
+            const stats: Stat = excelMapping
+                ? {}
+                : {elements: {created: 0, updated: 0, ignored: 0}, links: 0, trees: 0};
+
             await _getStoredFileData(
                 filename,
                 // Treat elements and cache links
@@ -584,16 +659,31 @@ export default function ({
                         }
 
                         if (recordFound && importMode === ImportMode.INSERT) {
+                            action = ImportAction.IGNORED;
                             return;
                         }
 
                         // Create the record if it does not exist
                         if (!recordIds.length) {
                             recordIds = [(await recordDomain.createRecord(element.library, ctx)).id];
+                            action = ImportAction.CREATED;
+                        } else {
+                            action = ImportAction.UPDATED;
                         }
 
                         for (const data of element.data) {
                             await _treatElement(element.library, data, recordIds, ctx);
+                        }
+
+                        // update import stats
+                        if (element.data.length) {
+                            if (excelMapping) {
+                                const sheetIndex = excelMapping[index]?.sheet;
+                                stats[sheetIndex] = stats[sheetIndex] || {elements: {}};
+                                stats[sheetIndex].elements[action] = stats[sheetIndex].elements[action] + 1 || 1;
+                            } else {
+                                (stats as IStat).elements[action] += 1;
+                            }
                         }
 
                         // Caching element links, to treat them later
@@ -620,7 +710,7 @@ export default function ({
                             ? _getExcelPos(index)
                             : translator.t('import.element_pos', {lng: lang, index});
 
-                        writeReport(pos, e);
+                        _writeReport(writeReportStream, pos, e, lang);
                     }
                 },
                 // Treat trees
@@ -644,6 +734,10 @@ export default function ({
                         }
 
                         await _treatTree(tree.library, tree.treeId, parent, recordIds, tree.action, ctx, tree.order);
+
+                        if (!excelMapping) {
+                            (stats as IStat).trees += 1;
+                        }
                     } catch (e) {
                         if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
                             throw e;
@@ -652,7 +746,7 @@ export default function ({
                         // Trees import is impossible with Excel file, so we don't need to check if excelMapping is defined
                         const pos = translator.t('import.tree_pos', {lng: lang, index});
 
-                        writeReport(pos, e);
+                        _writeReport(writeReportStream, pos, e, lang);
                     }
                 },
                 // For each element we check if it increases the progress, and update it if necessary
@@ -671,6 +765,14 @@ export default function ({
                     for (const link of element.links) {
                         try {
                             await _treatElement(element.library, link, element.recordIds, ctx);
+
+                            if (excelMapping) {
+                                const sheetIndex = excelMapping[cacheKey]?.sheet;
+                                stats[sheetIndex] = stats[sheetIndex] || {};
+                                stats[sheetIndex].links = stats[sheetIndex].links + 1 || 1;
+                            } else {
+                                (stats as IStat).links += 1;
+                            }
                         } catch (e) {
                             if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
                                 throw e;
@@ -681,7 +783,7 @@ export default function ({
                                 ? _getExcelPos(cacheKey)
                                 : translator.t('import.element_pos', {lng: lang, index: cacheKey});
 
-                            writeReport(pos, e);
+                            _writeReport(writeReportStream, pos, e, lang);
                         }
                     }
 
@@ -694,14 +796,14 @@ export default function ({
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
 
+            _writeStats(writeReportStream, stats, lang);
+
             // If errors were found, we link report file to task
-            if (typeof writeReportStream !== 'undefined') {
-                await tasksManagerDomain.setLink(
-                    task.id,
-                    {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
-                    ctx
-                );
-            }
+            await tasksManagerDomain.setLink(
+                task.id,
+                {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
+                ctx
+            );
 
             return task.id;
         },

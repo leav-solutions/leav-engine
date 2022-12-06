@@ -167,7 +167,8 @@ describe('importDomain', () => {
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
             createTask: global.__mockPromise(),
-            updateProgress: global.__mockPromise()
+            updateProgress: global.__mockPromise(),
+            setLink: global.__mockPromise()
         };
 
         const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
@@ -278,7 +279,8 @@ describe('importDomain', () => {
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
             createTask: global.__mockPromise(),
-            updateProgress: global.__mockPromise()
+            updateProgress: global.__mockPromise(),
+            setLink: global.__mockPromise()
         };
 
         const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
@@ -355,7 +357,8 @@ describe('importDomain', () => {
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
             createTask: global.__mockPromise(),
-            updateProgress: global.__mockPromise()
+            updateProgress: global.__mockPromise(),
+            setLink: global.__mockPromise()
         };
 
         const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
@@ -439,7 +442,8 @@ describe('importDomain', () => {
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
             createTask: global.__mockPromise(),
-            updateProgress: global.__mockPromise()
+            updateProgress: global.__mockPromise(),
+            setLink: global.__mockPromise()
         };
 
         const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
@@ -521,7 +525,8 @@ describe('importDomain', () => {
 
         const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
             createTask: global.__mockPromise(),
-            updateProgress: global.__mockPromise()
+            updateProgress: global.__mockPromise(),
+            setLink: global.__mockPromise()
         };
 
         const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();

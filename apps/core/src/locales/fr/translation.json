@@ -189,7 +189,13 @@
         "add_value_error": "Impossible d'ajouter la valeur '{{value}}' à l'attribut '{{attributeId}}'",
         "excel_pos": "Feuille {{sheet}}, Ligne {{line}}",
         "element_pos": "Elément {{index}}",
-        "tree_pos": "Arbre {{index}}"
+        "tree_pos": "Arbre {{index}}",
+        "stats_title": "Rapport",
+        "stats_sheet_elements": "Feuille {{sheet}}: {{created}} éléments créés, {{updated}} éléments mis à jour, {{ignored}} éléments ignorés",
+        "stats_sheet_links": "Feuille {{sheet}}: {{links}} liaisons créées",
+        "stats_elements": "{{created}} éléments créés, {{updated}} éléments mis à jour, {{ignored}} éléments ignorés",
+        "stats_links": "{{links}} liaisons créées",
+        "stats_trees": "{{trees}} éléments placés dans un arbre"
     },
     "mailer": {
         "reset_password_subject": "Réinitialiser votre mot de passe"

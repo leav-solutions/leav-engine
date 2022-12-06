@@ -115,17 +115,16 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
             await runImport({
                 variables: {
                     file,
-                    sheets: sheets
-                        .map(sheet => ({
-                            type: sheet.type,
-                            mode: sheet.mode,
-                            library: sheet.library,
-                            mapping: sheet.mapping,
-                            keyIndex: Number(sheet.keyColumnIndex),
-                            linkAttribute: sheet.linkAttribute,
-                            keyToIndex: Number(sheet.keyToColumnIndex),
-                            treeLinkLibrary: sheet.treeLinkLibrary
-                        })),
+                    sheets: sheets.map(sheet => ({
+                        type: sheet.type,
+                        mode: sheet.mode,
+                        library: sheet.library,
+                        mapping: sheet.mapping,
+                        keyIndex: Number(sheet.keyColumnIndex),
+                        linkAttribute: sheet.linkAttribute,
+                        keyToIndex: Number(sheet.keyToColumnIndex),
+                        treeLinkLibrary: sheet.treeLinkLibrary
+                    })),
                     ...(!!scheduleDate && {startAt: scheduleDate.unix()})
                 }
             });

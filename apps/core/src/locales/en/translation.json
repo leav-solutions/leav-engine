@@ -186,7 +186,13 @@
         "add_value_error": "Cannot add value '{{value}}' to attribute '{{attributeId}}'",
         "excel_pos": "Sheet {{sheet}}, Line {{line}}",
         "element_pos": "Element {{index}}",
-        "tree_pos": "Tree {{index}}"
+        "tree_pos": "Tree {{index}}",
+        "stats_title": "Report",
+        "stats_sheet_elements": "Sheet {{sheet}}: {{created}} elements created, {{updated}} elements updated, {{ignored}} elements ignored",
+        "stats_sheet_links": "Sheet {{sheet}}: {{links}} links created",
+        "stats_elements": "{{created}} elements created, {{updated}} elements updated, {{ignored}} elements ignored",
+        "stats_links": "{{links}} links created",
+        "stats_trees": "{{trees}} elements moved in trees"
     },
     "mailer": {
         "reset_password_subject": "Reset your password"
