@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {Skeleton} from 'antd';
+import {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {getInitials, getInvertColor, getPreviewSize, stringToColor} from 'utils';
 import {PreviewSize} from '_types/types';
@@ -41,7 +42,13 @@ const ImagePreview = styled.div<IImagePreviewProps>`
 `;
 ImagePreview.displayName = 'ImagePreview';
 
+const Image = styled.img<{$loaded: boolean}>`
+    display: ${p => (p.$loaded ? 'block' : 'none')};
+`;
+
 function RecordPreviewList({label, color, image, size, style, simplistic = false}: IRecordPreviewProps): JSX.Element {
+    const [imageLoaded, setImageLoaded] = useState(false);
+
     if (simplistic) {
         return <SimplisticRecordPreview label={label} />;
     }
@@ -49,9 +56,21 @@ function RecordPreviewList({label, color, image, size, style, simplistic = false
     if (image) {
         return (
             <ImagePreview size={size} style={style}>
-                <img
+                {!imageLoaded && (
+                    <Skeleton.Image
+                        style={{
+                            width: '65%',
+                            height: '65%',
+                            background: 'none',
+                            margin: 'auto'
+                        }}
+                    />
+                )}
+                <Image
+                    $loaded={imageLoaded}
                     src={image}
                     alt="record preview"
+                    onLoad={() => setImageLoaded(true)}
                     style={{
                         maxHeight: 'auto',
                         maxWidth: 'auto',

@@ -3,27 +3,42 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Image} from 'antd';
 import {icons as defaultPreviewIcons} from 'antd/lib/image/PreviewGroup';
-import React from 'react';
+import ImageLoading from 'components/shared/ImageLoading';
+import {useState} from 'react';
+import styled from 'styled-components';
 import {IFileViewerProps} from '../_types';
 
+const PreviewImage = styled(Image)<{$loaded: boolean}>`
+    display: ${p => (p.$loaded ? 'block' : 'none')};
+`;
 function ImageFile({fileData, fallback}: IFileViewerProps): JSX.Element {
     const imagePreviews = fileData?.whoAmI?.preview;
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     if (!imagePreviews?.huge) {
         return fallback as JSX.Element;
     }
 
+    const _handleLoad = () => {
+        setImageLoaded(true);
+    };
+
     return (
-        <Image
-            src={imagePreviews.huge}
-            preview={{
-                icons: {
-                    ...defaultPreviewIcons,
-                    rotateLeft: false,
-                    rotateRight: false
-                }
-            }}
-        />
+        <>
+            {!imageLoaded && <ImageLoading style={{height: '50%', width: '50%'}} />}
+            <PreviewImage
+                $loaded={imageLoaded}
+                src={imagePreviews.huge}
+                onLoad={_handleLoad}
+                preview={{
+                    icons: {
+                        ...defaultPreviewIcons,
+                        rotateLeft: false,
+                        rotateRight: false
+                    }
+                }}
+            />
+        </>
     );
 }
 
