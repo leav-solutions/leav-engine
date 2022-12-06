@@ -29,7 +29,7 @@ const CreationDetails = styled.div`
 `;
 
 const ModalContent = styled(Modal.Content)`
-    height: calc(100% - 7rem);
+    height: 30rem;
     overflow: auto;
 `;
 
@@ -67,7 +67,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
     };
 
     return (
-        <Modal size="large" open onClose={_handleClose} centered closeIcon style={{height: '90vh'}}>
+        <Modal size="large" open onClose={_handleClose} centered closeIcon style={{maxHeight: '90vh'}}>
             <Modal.Header>
                 {isNewKey ? t('api_keys.new') : currentApiKey.label}
                 {!isNewKey && (
@@ -92,18 +92,19 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
             </Modal.Header>
             <ModalContent>
                 {!isNewKey && currentApiKey.key && (
-                    <Message success>
-                        <Message.Header>
-                            {t('api_keys.key_display', {key: currentApiKey.key})}
-                            <Button
-                                circular
-                                onClick={_handleCopyKey}
-                                icon="copy"
-                                title={t('api_keys.copy_key')}
-                                style={{marginLeft: '1rem'}}
-                            />
-                        </Message.Header>
+                    <Message success icon>
+                        <Icon name="checkmark" size="big" />
                         <Message.Content>
+                            <Message.Header>
+                                {t('api_keys.key_display', {key: currentApiKey.key})}
+                                <Button
+                                    circular
+                                    onClick={_handleCopyKey}
+                                    icon="copy"
+                                    title={t('api_keys.copy_key')}
+                                    style={{marginLeft: '1rem'}}
+                                />
+                            </Message.Header>
                             <Icon name="warning sign" />
                             {t('api_keys.key_display_warning')}
                         </Message.Content>
@@ -112,6 +113,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
                 <EditApiKeyForm
                     apiKey={currentApiKey}
                     onSubmit={_handleFormSubmit}
+                    onClose={_handleClose}
                     readonly={readonly}
                     errors={null}
                     loading={loading}

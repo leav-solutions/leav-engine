@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import TreeExplorer from 'components/trees/TreeExplorer';
-import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useHistory, useLocation} from 'react-router-dom';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils';
@@ -20,13 +20,14 @@ export interface IEditTreeMatchParams {
 interface IEditTreeTabsProps {
     tree: GET_TREE_BY_ID_trees_list | null;
     readonly: boolean;
-    history: History;
-    location?: Location;
 }
 
-function EditTreeTabs({tree, readonly, history, location}: IEditTreeTabsProps): JSX.Element {
+function EditTreeTabs({tree, readonly}: IEditTreeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
+    const history = useHistory();
+    const location = useLocation();
+
     const isCreationMode = tree === null;
 
     const label = isCreationMode ? t('trees.new') : localizedLabel(tree?.label ?? null, lang) || tree!.id;
@@ -38,7 +39,7 @@ function EditTreeTabs({tree, readonly, history, location}: IEditTreeTabsProps): 
             menuItem: t('trees.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <TreeInfosTab tree={tree} readonly={readonly} history={history} />
+                    <TreeInfosTab tree={tree} readonly={readonly} />
                 </Tab.Pane>
             )
         },

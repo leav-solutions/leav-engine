@@ -7,14 +7,16 @@ import {Dimmer, Loader, SemanticSIZES} from 'semantic-ui-react';
 
 interface ILoadingProps {
     withDimmer?: boolean;
+    withLabel?: boolean;
     size?: SemanticSIZES;
+    style?: React.CSSProperties;
 }
 
-const Loading = ({withDimmer, size}: ILoadingProps): JSX.Element => {
+const Loading = ({withDimmer, withLabel = true, size, style}: ILoadingProps): JSX.Element => {
     const {t} = useTranslation();
     const loader = (
-        <Loader active inline="centered" size={size}>
-            {t('admin.loading')}
+        <Loader active inline="centered" size={size} style={style}>
+            {withLabel ? t('admin.loading') : null}
         </Loader>
     );
 

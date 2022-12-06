@@ -20,7 +20,7 @@ interface IEditPermissionsViewProps {
     permissions: GET_PERMISSIONS_perm[];
     actions: GET_PERMISSIONS_ACTIONS_permissionsActionsByType[];
     inheritedPermissions: GET_PERMISSIONS_inheritPerm[];
-    onChange: (permToSave: SAVE_PERMISSION_savePermission_actions) => void;
+    onChange: (permToSave: SAVE_PERMISSION_savePermission_actions) => Promise<void>;
     readOnly?: boolean;
 }
 
@@ -36,7 +36,7 @@ const PermissionsHeader = styled.div`
 const EditPermissionsView = ({
     permissions,
     actions,
-    inheritedPermissions: heritedPermissions,
+    inheritedPermissions,
     onChange,
     readOnly = false
 }: IEditPermissionsViewProps): JSX.Element => {
@@ -50,7 +50,7 @@ const EditPermissionsView = ({
         {}
     );
 
-    const heritPermByName: IKeyValue<boolean> = heritedPermissions.reduce(
+    const heritPermByName: IKeyValue<boolean> = inheritedPermissions.reduce(
         (heritPerms, p) => ({...heritPerms, [p.name]: p.allowed}),
         {}
     );

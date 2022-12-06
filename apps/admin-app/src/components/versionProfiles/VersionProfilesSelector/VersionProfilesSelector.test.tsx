@@ -32,7 +32,7 @@ describe('VersionProfilesSelector', () => {
         const mockOnChange = jest.fn();
         render(<VersionProfilesSelector onChange={mockOnChange} clearable />, {apolloMocks: mocks});
 
-        expect(screen.getByText(/loading/)).toBeInTheDocument();
+        expect(screen.getByRole('combobox').className).toContain('loading');
 
         // Type in input to filter dropdown, click profile on list to select it
         userEvent.type(await screen.findByRole('textbox'), 'A');

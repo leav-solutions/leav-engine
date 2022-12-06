@@ -67,8 +67,8 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
         );
     }
 
-    const _onSave = (permToSave: SAVE_PERMISSION_savePermission_actions) =>
-        savePerms({
+    const _onSave = async (permToSave: SAVE_PERMISSION_savePermission_actions) => {
+        await savePerms({
             variables: {
                 permData: {
                     ...permParams,
@@ -77,6 +77,7 @@ const EditPermissions = ({permParams, readOnly = false}: IEditPermissionsProps):
             },
             refetchQueries: [{query: getPermissionsQuery, variables: getPermsVariables}]
         });
+    };
 
     return (
         <EditPermissionsView

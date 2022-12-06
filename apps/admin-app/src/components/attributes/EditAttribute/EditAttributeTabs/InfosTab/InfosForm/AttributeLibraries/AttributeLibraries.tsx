@@ -4,7 +4,6 @@
 import {useMutation, useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import FormFieldWrapper from 'components/shared/FormFieldWrapper';
-import Loading from 'components/shared/Loading';
 import difference from 'lodash/difference';
 import {getLibrariesWithAttributesQuery} from 'queries/libraries/getLibrariesWithAttributesQuery';
 import {saveLibAttributesMutation} from 'queries/libraries/saveLibAttributesMutation';
@@ -74,10 +73,6 @@ function AttributeLibraries({attribute, onChange, ...fieldProps}: IAttributeLibr
         ]);
     };
 
-    if (loading) {
-        return <Loading />;
-    }
-
     if (error) {
         return <ErrorDisplay message={error.message} />;
     }
@@ -88,7 +83,7 @@ function AttributeLibraries({attribute, onChange, ...fieldProps}: IAttributeLibr
                 libraries={libraries}
                 {...fieldProps}
                 onChange={_handleChange}
-                loading={loadingSave}
+                loading={loading || loadingSave}
                 defaultValue={attribute.libraries.map(l => l.id)}
             />
         </FormFieldWrapper>

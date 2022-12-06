@@ -14,7 +14,6 @@ import {
     GET_ATTRIBUTE_BY_ID_attributes_list,
     GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute,
-    GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_libraries,
     GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {Override} from '_types/Override';
@@ -54,7 +53,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     linked_tree: null,
     linked_library: null,
     reverse_link: null,
-    unique: false,
+    unique: null,
     permissions_conf: null,
     multiple_values: false,
     metadata_fields: null,
@@ -149,6 +148,7 @@ function InfosForm({
         type: yup.string().required(),
         format: yup.string().nullable(),
         multiple_values: yup.boolean(),
+        unique: yup.boolean().nullable(),
         versions_conf: yup
             .object()
             .shape({

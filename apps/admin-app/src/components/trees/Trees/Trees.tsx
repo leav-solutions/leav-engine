@@ -37,7 +37,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
 
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
     const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
-        variables: {...addWildcardToFilters(filters), lang}
+        variables: {...addWildcardToFilters(filters)}
     });
     const userData = useUserData();
 

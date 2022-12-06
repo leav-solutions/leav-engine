@@ -68,7 +68,7 @@ const App = (): JSX.Element => {
     });
 
     if (isAllowedLoading || meLoading || applicationLoading) {
-        return <Loading />;
+        return <Loading style={{margin: '15rem'}} />;
     }
 
     if (

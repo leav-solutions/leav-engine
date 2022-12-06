@@ -6,12 +6,12 @@ import gql from 'graphql-tag';
 export const getTreesQueryName = 'GET_TREES';
 
 export const getTreesQuery = gql`
-    query GET_TREES($id: ID, $label: String, $system: Boolean, $lang: [AvailableLanguage!]) {
+    query GET_TREES($id: ID, $label: String, $system: Boolean) {
         trees(filters: {id: $id, label: $label, system: $system}) {
             totalCount
             list {
                 id
-                label(lang: $lang)
+                label
                 system
                 behavior
                 libraries {

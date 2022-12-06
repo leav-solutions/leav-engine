@@ -7,7 +7,7 @@ import {
     IGetRecordsListQuery,
     IGetRecordsListQueryVariables
 } from 'queries/records/recordsListQuery';
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Pagination, Select, Table} from 'semantic-ui-react';
 import Loading from '../shared/Loading';
@@ -180,6 +180,17 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
         }
     });
 
+    useEffect(() => {
+        if (!data) {
+            return;
+        }
+
+        dispatch({
+            type: ActionTypes.SET_LIST,
+            data: {...data[selectedRootQuery], offset, all}
+        });
+    }, [data]);
+
     if (loading) {
         return <Loading withDimmer />;
     }
@@ -192,9 +203,5 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
 
     const all = t('navigator.display_all');
 
-    dispatch({
-        type: ActionTypes.SET_LIST,
-        data: {...data[selectedRootQuery], offset, all}
-    });
     return null;
 }

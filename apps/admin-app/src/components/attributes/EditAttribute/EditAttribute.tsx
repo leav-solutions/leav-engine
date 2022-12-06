@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {History, Location} from 'history';
 import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import React, {useMemo} from 'react';
 import {match} from 'react-router';
@@ -31,21 +30,12 @@ const Wrapper = styled.div`
 
 interface IEditAttributeProps {
     match?: match<IEditAttributeMatchParams>;
-    history?: History;
     attributeId?: string | null;
     onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
-    location?: Location;
 }
 
-function EditAttribute({
-    match: routeMatch,
-    attributeId,
-    onPostSave,
-    forcedType,
-    history,
-    location
-}: IEditAttributeProps): JSX.Element {
+function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables>(getAttributeByIdQuery, {
@@ -54,14 +44,8 @@ function EditAttribute({
     });
 
     const _renderEditAttributeTabs = useMemo(
-        () => (attribute?: GET_ATTRIBUTE_BY_ID_attributes_list, locationGiven?: Location) => (
-            <EditAttributeTabs
-                attribute={attribute}
-                onPostSave={onPostSave}
-                forcedType={forcedType}
-                history={history}
-                location={locationGiven}
-            />
+        () => (attribute?: GET_ATTRIBUTE_BY_ID_attributes_list) => (
+            <EditAttributeTabs attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
         ),
         [onPostSave, forcedType, history]
     );
@@ -82,7 +66,7 @@ function EditAttribute({
         return <ErrorDisplay message="Unknown attribute" />;
     }
 
-    return <Wrapper className="grow">{_renderEditAttributeTabs(data.attributes.list[0], location)}</Wrapper>;
+    return <Wrapper className="grow">{_renderEditAttributeTabs(data.attributes.list[0])}</Wrapper>;
 }
 
 export default EditAttribute;

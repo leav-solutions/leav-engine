@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import Loading from 'components/shared/Loading';
 import hexToRgba from 'hex-rgba';
 import React from 'react';
 import {Input, InputOnChangeData} from 'semantic-ui-react';
@@ -8,7 +9,7 @@ import {Input, InputOnChangeData} from 'semantic-ui-react';
 interface IPermissionSelectorProps {
     value: boolean | null;
     inheritValue: boolean;
-    onChange: (permValue: boolean | null) => void;
+    onChange: (permValue: boolean | null) => Promise<void>;
     as: any;
     forbiddenColor: string;
     allowedColor: string;
@@ -24,6 +25,7 @@ function PermissionSelector({
     allowedColor,
     readOnly
 }: IPermissionSelectorProps): JSX.Element {
+    const [isLoading, setIsLoading] = React.useState(false);
     const permValToInputVal = permVal => (permVal === false ? 0 : permVal === null ? 1 : 2);
     const inputValToPermVal = {
         0: false,
@@ -43,23 +45,33 @@ function PermissionSelector({
     const Wrapper = as;
     Wrapper.displayName = 'Wrapper';
 
-    const _handleChange = (e: React.ChangeEvent, data: InputOnChangeData) => onChange(inputValToPermVal[data.value]);
+    const _handleChange = async (e: React.ChangeEvent, data: InputOnChangeData) => {
+        setIsLoading(true);
+
+        await onChange(inputValToPermVal[data.value]);
+
+        setIsLoading(false);
+    };
 
     return (
         <Wrapper style={{background: bgColor}}>
-            <Input
-                aria-label="permission-selector"
-                type="range"
-                min="0"
-                max="2"
-                step="1"
-                value={inputVal}
-                disabled={readOnly}
-                style={{border: 'none'}}
-                onChange={_handleChange}
-                transparent
-                fluid
-            />
+            {isLoading ? (
+                <Loading size="tiny" withLabel={false} />
+            ) : (
+                <Input
+                    aria-label="permission-selector"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="1"
+                    value={inputVal}
+                    disabled={readOnly}
+                    style={{border: 'none'}}
+                    onChange={_handleChange}
+                    transparent
+                    fluid
+                />
+            )}
         </Wrapper>
     );
 }

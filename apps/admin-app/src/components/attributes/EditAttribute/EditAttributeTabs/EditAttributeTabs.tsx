@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {History, Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useHistory, useLocation} from 'react-router-dom';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
@@ -22,8 +22,6 @@ interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
     onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
-    history?: History;
-    location?: Location;
 }
 
 const GridTab = styled(Tab)`
@@ -32,15 +30,11 @@ const GridTab = styled(Tab)`
 `;
 GridTab.displayName = 'Tab';
 
-function EditAttributeTabs({
-    attribute,
-    onPostSave,
-    forcedType,
-    history,
-    location
-}: IEditAttributeTabsProps): JSX.Element {
+function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
+    const history = useHistory();
+    const location = useLocation();
     const headerLabel =
         !!attribute && attribute.label ? localizedLabel(attribute.label, availableLanguages) : t('attributes.new');
 
@@ -50,7 +44,7 @@ function EditAttributeTabs({
             menuItem: t('attributes.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <InfosTab attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} history={history} />
+                    <InfosTab attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
                 </Tab.Pane>
             )
         }
@@ -142,7 +136,9 @@ function EditAttributeTabs({
 
     return (
         <>
-            <Header className="no-grow">{headerLabel}</Header>
+            <Header className="no-grow" data-testid="header">
+                {headerLabel}
+            </Header>
             <GridTab
                 onTabChange={_handleOnTabChange}
                 menu={{secondary: true, pointing: true}}

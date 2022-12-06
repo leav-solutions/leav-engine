@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {History, Location} from 'history';
 import React from 'react';
 import useUserData from '../../../hooks/useUserData';
 import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
@@ -13,11 +12,9 @@ import EditTreeTabs from './EditTreeTabs';
 
 interface IEditTreeProps {
     match: any;
-    history: History;
-    location: Location;
 }
 
-const EditTree = ({match, history, location}: IEditTreeProps): JSX.Element => {
+const EditTree = ({match}: IEditTreeProps): JSX.Element => {
     const treeId = match.params.id;
     const userData = useUserData();
 
@@ -40,8 +37,6 @@ const EditTree = ({match, history, location}: IEditTreeProps): JSX.Element => {
 
     return (
         <EditTreeTabs
-            history={history}
-            location={location}
             tree={data?.trees?.list[0] ?? null}
             readonly={!userData.permissions[PermissionsActions.admin_edit_tree]}
         />

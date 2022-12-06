@@ -4,12 +4,12 @@
 import gql from 'graphql-tag';
 
 export const getTreeByIdQuery = gql`
-    query GET_TREE_BY_ID($id: ID, $lang: [AvailableLanguage!]) {
+    query GET_TREE_BY_ID($id: ID) {
         trees(filters: {id: $id}) {
             totalCount
             list {
                 id
-                label(lang: $lang)
+                label
                 system
                 behavior
                 permissions_conf {

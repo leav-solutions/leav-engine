@@ -8,12 +8,13 @@ import React, {Suspense} from 'react';
 import ReactDOM from 'react-dom';
 import {Provider as ReduxProvider} from 'react-redux';
 import {store} from 'redux/store';
+import {Loader} from 'semantic-ui-react';
 import './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
-    <Suspense fallback={'Loader'}>
+    <Suspense fallback={<Loader active inline="centered" style={{margin: '15rem auto'}} />}>
         <ReduxProvider store={store}>
             <ApolloHandler>
                 <App />

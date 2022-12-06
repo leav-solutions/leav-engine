@@ -2,22 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {History, Location} from 'history';
 import React from 'react';
+import {match} from 'react-router-dom';
 import useLang from '../../../hooks/useLang';
 import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables, GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
 
-interface IEditLibraryProps {
-    match: any;
-    history: History;
-    location: Location;
+export interface IEditLibraryMatchParams {
+    id: string;
 }
 
-const EditLibrary = ({match, history, location}: IEditLibraryProps): JSX.Element => {
-    const libraryId = match.params.id;
+interface IEditLibraryProps {
+    match?: match<IEditLibraryMatchParams>;
+}
+
+const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
+    const libraryId = routeMatch.params.id;
     const {lang} = useLang();
 
     const {loading, error, data} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
@@ -26,7 +28,7 @@ const EditLibrary = ({match, history, location}: IEditLibraryProps): JSX.Element
     const readOnly = !data?.libraries?.list[0]?.permissions.admin_library;
 
     const _getEditLibraryTabs = (libToEdit: GET_LIB_BY_ID_libraries_list | null) => {
-        return <EditLibraryTabs library={libToEdit} readOnly={readOnly} history={history} location={location} />;
+        return <EditLibraryTabs library={libToEdit} readOnly={readOnly} />;
     };
 
     if (!libraryId) {

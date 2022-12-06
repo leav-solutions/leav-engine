@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useMutation} from '@apollo/client';
-import {History} from 'history';
 import React from 'react';
+import {useHistory} from 'react-router-dom';
 import {getTreesQuery} from '../../../../../queries/trees/getTreesQuery';
 import {saveTreeQuery} from '../../../../../queries/trees/saveTreeMutation';
 import {clearCacheForQuery} from '../../../../../utils';
@@ -16,10 +16,11 @@ import TreeInfosForm from './InfosForm';
 interface ITreeInfosTabProps {
     tree: GET_TREES_trees_list | null;
     readonly: boolean;
-    history: History;
 }
 
-function TreeInfosTab({tree, history, readonly}: ITreeInfosTabProps): JSX.Element {
+function TreeInfosTab({tree, readonly}: ITreeInfosTabProps): JSX.Element {
+    const history = useHistory();
+    const isNewTree = !tree;
     const [saveTree] = useMutation<SAVE_TREE, SAVE_TREEVariables>(saveTreeQuery, {
         update: async cache => {
             if (!tree) {
@@ -44,7 +45,7 @@ function TreeInfosTab({tree, history, readonly}: ITreeInfosTabProps): JSX.Elemen
             refetchQueries: ['GET_TREES']
         });
 
-        if (history) {
+        if (isNewTree) {
             history.replace({pathname: '/trees/edit/' + treeData.id});
         }
     };

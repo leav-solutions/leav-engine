@@ -2,14 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {History} from 'history';
 import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {getViewsQuery} from 'queries/views/getViewsQuery';
 import React from 'react';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
-import {Mockify} from '../../../../../_types/Mockify';
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import InfosTab from './InfosTab';
 
@@ -26,10 +24,6 @@ describe('InfosTab', () => {
             fullTextAttributes: [],
             recordIdentityConf: null
         }
-    };
-
-    const mockHistory: Mockify<History> = {
-        replace: jest.fn()
     };
 
     const commonMocks = [
@@ -88,7 +82,7 @@ describe('InfosTab', () => {
         ];
 
         await act(async () => {
-            render(<InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />, {
+            render(<InfosTab library={mockLibrary} readonly={false} />, {
                 apolloMocks: mocks
             });
         });
@@ -140,7 +134,7 @@ describe('InfosTab', () => {
         ];
 
         await act(async () => {
-            render(<InfosTab library={mockLibrary} readonly={false} history={mockHistory as History} />, {
+            render(<InfosTab library={mockLibrary} readonly={false} />, {
                 apolloMocks: mocks
             });
         });
@@ -158,7 +152,7 @@ describe('InfosTab', () => {
 
     test('Render form for new library', async () => {
         await act(async () => {
-            render(<InfosTab library={null} readonly={false} history={mockHistory as History} />, {
+            render(<InfosTab library={null} readonly={false} />, {
                 apolloMocks: commonMocks
             });
         });
@@ -168,7 +162,7 @@ describe('InfosTab', () => {
 
     test('Autofill ID with label on new lib', async () => {
         await act(async () => {
-            render(<InfosTab library={null} readonly={false} history={mockHistory as History} />, {
+            render(<InfosTab library={null} readonly={false} />, {
                 apolloMocks: commonMocks
             });
         });

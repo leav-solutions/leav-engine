@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {History, Location} from 'history';
 import React from 'react';
 import {render, screen, within} from '_tests/testUtils';
 import {mockAttrSimple} from '__mocks__/attributes';
@@ -49,8 +48,6 @@ jest.mock('./NavigatorTab', () => {
 });
 
 describe('EditLibraryForm', () => {
-    const mockHistory: Mockify<History> = {};
-
     const attributes: Mockify<GET_LIB_BY_ID_libraries_list_attributes[]> = [
         {
             ...mockAttrSimple,
@@ -83,13 +80,7 @@ describe('EditLibraryForm', () => {
     beforeEach(() => jest.clearAllMocks());
 
     test('Render tabs for existing lib', async () => {
-        render(
-            <EditLibraryTabs
-                library={library as GET_LIB_BY_ID_libraries_list}
-                readOnly={false}
-                history={mockHistory as History}
-            />
-        );
+        render(<EditLibraryTabs library={library as GET_LIB_BY_ID_libraries_list} readOnly={false} />);
 
         const header = screen.getByRole('heading');
 
@@ -103,7 +94,7 @@ describe('EditLibraryForm', () => {
     });
 
     test('Render tabs for new lib', async () => {
-        render(<EditLibraryTabs library={null} readOnly={false} history={mockHistory as History} />);
+        render(<EditLibraryTabs library={null} readOnly={false} />);
 
         const header = screen.getByRole('heading');
 
@@ -111,19 +102,11 @@ describe('EditLibraryForm', () => {
     });
 
     test('Should open the tab in anchor', async () => {
-        const tabName = 'permissions';
-        const mockLocation: Mockify<Location> = {
-            hash: '#' + tabName
-        };
-
-        render(
-            <EditLibraryTabs
-                library={library as GET_LIB_BY_ID_libraries_list}
-                readOnly={false}
-                history={mockHistory as History}
-                location={mockLocation as Location}
-            />
-        );
+        render(<EditLibraryTabs library={library as GET_LIB_BY_ID_libraries_list} readOnly={false} />, {
+            routerProps: {
+                initialEntries: ['/libraries/edit/' + library.id + '#permissions']
+            }
+        });
 
         expect(screen.getByText('PermissionsTab')).toBeInTheDocument();
     });
