@@ -46,6 +46,9 @@ export interface IServer {
         password: string;
         email: string;
     };
+    systemUser: {
+        email: string;
+    };
 }
 
 export interface IDb {

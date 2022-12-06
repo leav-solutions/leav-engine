@@ -50,7 +50,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function (deps: IDeps = {}): ICoreAttributeApp {
+export default function(deps: IDeps = {}): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.record': recordDomain = null,
@@ -492,7 +492,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                 typeToReturn = 'TreeNode';
             } else {
                 // Get actions list output type if any
-                if (attribute?.actions_list?.getValue.length) {
+                if ((attribute?.actions_list?.getValue ?? []).length) {
                     typeToReturn = await getFormatFromALConf([...attribute?.actions_list?.getValue], deps);
                 }
 

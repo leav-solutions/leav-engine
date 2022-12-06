@@ -15,13 +15,22 @@ export const validateConfig = (conf: IConfig) => {
             publicUrl: Joi.string().required(),
             wsUrl: Joi.string().required(),
             apiEndpoint: Joi.string().required(),
-            uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
+            uploadLimit: Joi.alternatives()
+                .try(Joi.string(), Joi.number())
+                .required(),
             supportEmail: Joi.string().required(),
             allowIntrospection: Joi.boolean().required(),
             admin: {
                 login: Joi.string().required(),
                 password: Joi.string().required(),
-                email: Joi.string().email().required()
+                email: Joi.string()
+                    .email()
+                    .required()
+            },
+            systemUser: {
+                email: Joi.string()
+                    .email()
+                    .required()
             }
         }),
         db: Joi.object().keys({
@@ -55,7 +64,9 @@ export const validateConfig = (conf: IConfig) => {
             }
         }),
         lang: Joi.object().keys({
-            available: Joi.array().items(Joi.string()).required(),
+            available: Joi.array()
+                .items(Joi.string())
+                .required(),
             default: Joi.string().required()
         }),
         logs: Joi.object().keys({
@@ -135,7 +146,9 @@ export const validateConfig = (conf: IConfig) => {
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required()
         }),
-        plugins: Joi.object().keys().unknown(),
+        plugins: Joi.object()
+            .keys()
+            .unknown(),
         preview: Joi.object().keys({
             directory: Joi.string().required()
         }),

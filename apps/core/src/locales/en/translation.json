@@ -182,5 +182,8 @@
     },
     "mailer": {
         "reset_password_subject": "Reset your password"
+    },
+    "default": {
+        "admin_users_group_label": "Administrators"
     }
 }
