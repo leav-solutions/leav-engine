@@ -182,12 +182,10 @@
             "excel_writing": "Ecriture du fichier excel"
         }
     },
-<<<<<<< ours
     "mailer": {
         "reset_password_subject": "Réinitialiser votre mot de passe"
-=======
+    },
     "default": {
         "admin_users_group_label": "Administrateurs"
->>>>>>> theirs
     }
 }
