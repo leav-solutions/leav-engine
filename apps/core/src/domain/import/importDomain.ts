@@ -40,9 +40,6 @@ import {v4 as uuidv4} from 'uuid';
 import {IUtils} from 'utils/utils';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import PermissionError from '../../errors/PermissionError';
-import {number} from 'joi';
-
-export const IMPORTS_URL = '/imports';
 
 export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
 

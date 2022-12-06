@@ -23,8 +23,6 @@ import {ITaskFuncParams, TaskPriority} from '../../_types/tasksManager';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 
-export const EXPORTS_URL = '/exports';
-
 export interface IExportParams {
     library: string;
     attributes: string[];
