@@ -14,7 +14,6 @@ import {
     GET_ATTRIBUTE_BY_ID_attributes_list,
     GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute,
-    GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_libraries,
     GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {Override} from '_types/Override';

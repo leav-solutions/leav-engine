@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useMutation} from '@apollo/client';
-import {History} from 'history';
 import React from 'react';
+import {useHistory} from 'react-router-dom';
 import {getLibByIdQuery} from '../../../../../queries/libraries/getLibraryById';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {clearCacheForQuery} from '../../../../../utils';
@@ -18,17 +18,19 @@ import InfosForm from './InfosForm';
 interface IInfosTabProps {
     library: GET_LIB_BY_ID_libraries_list | null;
     readonly: boolean;
-    history: History;
 }
 
-function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
+function InfosTab({library, readonly}: IInfosTabProps): JSX.Element {
+    const history = useHistory();
+    const isNewLib = !library;
+
     const [saveLibrary, {error: errorSave}] = useMutation(saveLibQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: () => undefined,
         update: cache => {
             // There might be a lot of different lists with different
             // filters in cache, thus we just revoke everything
-            if (!library) {
+            if (isNewLib) {
                 clearCacheForQuery(cache, 'libraries');
             }
         }
@@ -75,7 +77,10 @@ function InfosTab({library, history, readonly}: IInfosTabProps): JSX.Element {
                 libData: dataToSave
             }
         });
-        history.replace({pathname: '/libraries/edit/' + libData.id});
+
+        if (isNewLib) {
+            history.replace({pathname: '/libraries/edit/' + libData.id});
+        }
     };
 
     const formErrors = errorSave?.graphQLErrors?.length ? errorSave.graphQLErrors[0] : null;

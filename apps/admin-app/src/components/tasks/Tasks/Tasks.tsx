@@ -183,7 +183,7 @@ const Tasks = (): JSX.Element => {
                             <DeleteAllTasks
                                 confirmMessage={t('tasks.confirm_delete_all_archives')}
                                 label={t('tasks.delete_archives')}
-                                key="btn-delAll"
+                                key="btn-delArchives"
                                 onDeleteAll={() => _onDeleteAll(true)}
                             />
                         ]}

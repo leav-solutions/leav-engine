@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useMutation} from '@apollo/client';
-import {History} from 'history';
 import React from 'react';
+import {useHistory} from 'react-router-dom';
 import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
@@ -19,15 +19,16 @@ interface IInfosTabProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
     onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
-    history?: History;
 }
 
-function InfosTab({attribute, onPostSave, forcedType, history}: IInfosTabProps): JSX.Element {
+function InfosTab({attribute, onPostSave, forcedType}: IInfosTabProps): JSX.Element {
+    const history = useHistory();
+    const isNewAttribute = !attribute;
     const [saveAttribute, {error}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: () => undefined,
         onCompleted: res => {
-            if (history) {
+            if (history && isNewAttribute) {
                 history.replace({pathname: '/attributes/edit/' + res.saveAttribute.id});
             }
         },

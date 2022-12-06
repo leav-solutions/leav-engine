@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render} from 'enzyme';
-import {History} from 'history';
 import React from 'react';
-import {Mockify} from '../../../../_types/Mockify';
+import {render, screen} from '_tests/testUtils';
 import {mockTree} from '../../../../__mocks__/trees';
 import EditTreeTabs from './EditTreeTabs';
 
@@ -16,6 +14,18 @@ jest.mock('./InfosTab', () => {
     };
 });
 
+jest.mock('./PermissionsTab', () => {
+    return function TreePermissionsTab() {
+        return <div>TreePermissionsTab</div>;
+    };
+});
+
+jest.mock('./TreeStructure', () => {
+    return function TreeStructure() {
+        return <div>TreeStructure</div>;
+    };
+});
+
 jest.mock('components/trees/TreeExplorer', () => {
     return function TreeExplorer() {
         return <div>TreeExplorer</div>;
@@ -23,11 +33,13 @@ jest.mock('components/trees/TreeExplorer', () => {
 });
 
 describe('EditTreeTabs', () => {
-    test('Snapshot test', async () => {
-        const mockHistory: Mockify<History> = {};
+    test('Render test', async () => {
+        render(<EditTreeTabs tree={mockTree} readonly={false} />);
 
-        const comp = render(<EditTreeTabs tree={mockTree} readonly={false} history={mockHistory as History} />);
-
-        expect(comp).toMatchSnapshot();
+        expect(screen.getByText(mockTree.label.fr)).toBeInTheDocument();
+        expect(screen.getByText('trees.informations')).toBeInTheDocument();
+        expect(screen.getByText('trees.structure')).toBeInTheDocument();
+        expect(screen.getByText('trees.explorer')).toBeInTheDocument();
+        expect(screen.getByText('trees.permissions')).toBeInTheDocument();
     });
 });

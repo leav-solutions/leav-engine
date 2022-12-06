@@ -2,9 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import LibraryIcon from 'components/shared/LibraryIcon';
-import {History, Location} from 'history';
+import {Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useHistory, useLocation} from 'react-router-dom';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
@@ -26,13 +27,13 @@ Title.displayName = 'Title';
 interface IEditLibraryTabsProps {
     library: GET_LIB_BY_ID_libraries_list | null;
     readOnly: boolean;
-    history: History;
     location?: Location;
 }
 
-/* tslint:disable-next-line:variable-name */
-const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTabsProps): JSX.Element => {
+const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Element => {
     const {t} = useTranslation();
+    const history = useHistory();
+    const location = useLocation();
     const isCreationMode = library === null;
 
     const label = isCreationMode ? t('libraries.new') : library!.label?.fr || library!.label?.en || library!.id;
@@ -44,7 +45,7 @@ const EditLibraryTabs = ({library, readOnly, history, location}: IEditLibraryTab
             menuItem: t('libraries.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <InfosTab library={library} readonly={readOnly} history={history} />
+                    <InfosTab library={library} readonly={readOnly} />
                 </Tab.Pane>
             )
         },

@@ -1,14 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {mount} from 'enzyme';
 import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {wait} from 'utils/testUtils';
+import {render, screen} from '_tests/testUtils';
 import {getAttributesQuery} from '../../../queries/attributes/getAttributesQuery';
 import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
-import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import AttributeSelector from './AttributeSelector';
 
 jest.mock('./AttributeSelectorField', () => {
@@ -58,51 +55,26 @@ describe('AttributeSelector', () => {
             }
         ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <AttributeSelector filters={{type: [AttributeType.tree]}} />
-                </MockedProviderWithFragments>
-            );
-        });
+        render(<AttributeSelector filters={{type: [AttributeType.tree]}} />, {apolloMocks: mocks});
 
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('AttributeSelectorField')).toHaveLength(1);
+        expect(screen.getByText('AttributeSelectorField')).toBeInTheDocument();
     });
 
     test('Error state', async () => {
         const mocks = [
             {
                 request: {
-                    query: getAttributesQuery
+                    query: getAttributesQuery,
+                    variables: {
+                        type: [AttributeType.tree]
+                    }
                 },
                 error: new Error('Boom!')
             }
         ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProviderWithFragments mocks={mocks} addTypename>
-                    <AttributeSelector />
-                </MockedProviderWithFragments>
-            );
-        });
+        render(<AttributeSelector filters={{type: [AttributeType.tree]}} />, {apolloMocks: mocks});
 
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('[data-test-id="error"]')).toHaveLength(1);
+        expect(await screen.findByText(/Boom/)).toBeInTheDocument();
     });
 });

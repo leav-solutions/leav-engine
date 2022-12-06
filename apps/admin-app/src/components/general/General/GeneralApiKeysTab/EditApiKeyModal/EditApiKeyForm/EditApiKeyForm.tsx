@@ -39,7 +39,8 @@ const FormFooter = styled.div`
     text-align: right;
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    align-items: flex-start;
+    gap: 0.5rem;
 `;
 
 interface IEditApiKeyFormProps {
@@ -48,6 +49,7 @@ interface IEditApiKeyFormProps {
     errors?: IFormError;
     readonly: boolean;
     loading: boolean;
+    onClose: () => void;
 }
 
 interface IEditApiKeyFormValues extends Omit<ApiKeyInput, 'userId'> {
@@ -57,7 +59,7 @@ interface IEditApiKeyFormValues extends Omit<ApiKeyInput, 'userId'> {
 export const NEVER_EXPIRATION_DATE = '__never__';
 export const CUSTOM_EXPIRATION_DATE = '__custom__';
 
-function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading}: IEditApiKeyFormProps): JSX.Element {
+function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: IEditApiKeyFormProps): JSX.Element {
     const {t} = useTranslation();
 
     const isNewKey = !apiKey?.id;
@@ -86,6 +88,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading}: IEditApiK
         await onSubmit(apiKeyInput);
     };
 
+    const _handleClose = () => onClose();
     const _renderForm = ({
         handleSubmit,
         handleBlur,
@@ -149,7 +152,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading}: IEditApiK
                                 onChange={_handleChange}
                                 onBlur={_handleBlur}
                                 onKeyPress={_handleKeyPress}
-                                value={values.label}
+                                value={values.label ?? ''}
                             />
                         </FormFieldWrapper>
                         <Form.Group grouped>
@@ -181,14 +184,17 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading}: IEditApiK
                         </FormFieldWrapper>
                     </Form.Group>
                 </FormBody>
-                {isNewKey && (
-                    <FormFooter>
+                <FormFooter>
+                    <Button className="close-button" onClick={_handleClose}>
+                        <Icon name="cancel" /> {t('admin.close')}
+                    </Button>
+                    {isNewKey && (
                         <Button labelPosition="left" icon type="submit" primary disabled={readonly} loading={loading}>
                             <Icon name="save" />
                             {t('admin.submit')}
                         </Button>
-                    </FormFooter>
-                )}
+                    )}
+                </FormFooter>
             </FormWrapper>
         );
     };

@@ -12,6 +12,9 @@ import {
     split
 } from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
+import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
+import {getMainDefinition} from '@apollo/client/utilities';
+import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -22,9 +25,6 @@ import {Message, SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
 import Loading from '../../shared/Loading';
-import {createClient} from 'graphql-ws';
-import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
-import {getMainDefinition} from '@apollo/client/utilities';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -44,7 +44,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
     );
 
     if (possibleTypesLoading) {
-        return <Loading />;
+        return <Loading style={{margin: '15rem'}} />;
     }
 
     if (possibleTypesError) {
@@ -60,10 +60,14 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
         );
     }
 
-    const _handleApolloError = onError(({graphQLErrors, networkError}) => {
+    const _handleApolloError = onError(({graphQLErrors, networkError, operation}) => {
         let title: string;
         let content: string;
         let icon: SemanticICONS;
+        const isMutation = operation.query.definitions.some(
+            def => def.kind === 'OperationDefinition' && def.operation === 'mutation'
+        );
+
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? []).some(err => err.extensions.code === UNAUTHENTICATED)
@@ -93,6 +97,10 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
         } else if (networkError) {
             title = t('errors.network_error');
             icon = 'plug';
+        }
+
+        if (isMutation) {
+            dispatch(endMutation());
         }
 
         dispatch(

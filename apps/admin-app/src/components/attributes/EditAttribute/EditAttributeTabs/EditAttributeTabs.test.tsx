@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {shallow} from 'enzyme';
-import {Location} from 'history';
 import React from 'react';
-import {Mockify} from '../../../../_types/Mockify';
+import {render, screen, within} from '_tests/testUtils';
 import {mockAttrAdv, mockAttrSimple} from '../../../../__mocks__/attributes';
 import EditAttributeTabs from './EditAttributeTabs';
 
@@ -14,59 +12,92 @@ jest.mock('../../../../utils/utils', () => ({
 
 jest.mock('../../../../hooks/useLang');
 
+jest.mock('./ActionsListTab', () => {
+    return function ActionsListTab() {
+        return <div>ActionsListTab</div>;
+    };
+});
+jest.mock('./EmbeddedFieldsTab', () => {
+    return function EmbeddedFieldsTab() {
+        return <div>EmbeddedFieldsTab</div>;
+    };
+});
+jest.mock('./InfosTab', () => {
+    return function InfosTab() {
+        return <div>InfosTab</div>;
+    };
+});
+jest.mock('./MetadataTab', () => {
+    return function MetadataTab() {
+        return <div>MetadataTab</div>;
+    };
+});
+jest.mock('./PermissionsTab', () => {
+    return function PermissionsTab() {
+        return <div>PermissionsTab</div>;
+    };
+});
+jest.mock('./ValuesListTab', () => {
+    return function ValuesListTab() {
+        return <div>ValuesListTab</div>;
+    };
+});
+
 describe('EditAttributeTabs', () => {
     const mockAttribute = {...mockAttrSimple};
 
     describe('Header', () => {
         test('Display header with attribute label', async () => {
-            const comp = shallow(<EditAttributeTabs attribute={mockAttribute} />);
+            render(<EditAttributeTabs attribute={mockAttribute} />);
 
-            expect(comp.find('Header').shallow().text()).toBe('Mon Attribut');
+            const header = screen.getByTestId('header');
+
+            expect(within(header).getByText('Mon Attribut')).toBeInTheDocument();
         });
 
         test('Display header for new attribute', async () => {
-            const comp = shallow(<EditAttributeTabs />);
+            render(<EditAttributeTabs attribute={null} />);
 
-            expect(comp.find('Header').shallow().text()).toBe('attributes.new');
+            const header = screen.getByTestId('header');
+
+            expect(within(header).getByText('attributes.new')).toBeInTheDocument();
         });
     });
 
     describe('Tabs', () => {
         test('If attribute is not new, display all tabs', async () => {
-            const comp = shallow(<EditAttributeTabs attribute={mockAttribute} />);
+            render(<EditAttributeTabs attribute={mockAttribute} />);
 
-            const panes: any[] = comp.find('Tab').prop('panes');
-            expect(panes.map(p => p.key)).toEqual(['infos', 'values_list', 'permissions', 'actions_list']);
+            expect(screen.getByText(/informations/)).toBeInTheDocument();
+            expect(screen.queryByText(/metadata/)).not.toBeInTheDocument();
+            expect(screen.getByText(/values_list/)).toBeInTheDocument();
+            expect(screen.getByText(/permissions/)).toBeInTheDocument();
+            expect(screen.getByText(/action_list/)).toBeInTheDocument();
         });
 
         test('If attribute is new, display only infos tab', async () => {
-            const comp = shallow(<EditAttributeTabs />);
+            render(<EditAttributeTabs />);
 
-            const panes: any[] = comp.find('Tab').prop('panes');
-            expect(panes.map(p => p.key)).toEqual(['infos']);
+            expect(screen.getByText(/informations/)).toBeInTheDocument();
+            expect(screen.queryByText(/values_list/)).not.toBeInTheDocument();
+            expect(screen.queryByText(/permissions/)).not.toBeInTheDocument();
+            expect(screen.queryByText(/action_list/)).not.toBeInTheDocument();
         });
 
         test('Show metadata tab for advanced attribute', async () => {
-            const comp = shallow(<EditAttributeTabs attribute={{...mockAttrAdv}} />);
+            render(<EditAttributeTabs attribute={{...mockAttrAdv}} />);
 
-            const panes: any[] = comp.find('Tab').prop('panes');
-            expect(panes.filter(p => p.key === 'metadata')).toHaveLength(1);
+            expect(screen.getByText(/metadata/)).toBeInTheDocument();
         });
 
         test('should open the tab in anchor', async () => {
-            const tabName = 'permissions';
-            const mockLocation: Mockify<Location> = {
-                hash: '#' + tabName
-            };
+            render(<EditAttributeTabs attribute={{...mockAttrAdv}} />, {
+                routerProps: {
+                    initialEntries: ['/attributes/edit/' + mockAttrAdv.id + '#permissions']
+                }
+            });
 
-            const comp = shallow(
-                <EditAttributeTabs attribute={{...mockAttrAdv}} location={mockLocation as Location} />
-            );
-
-            const activeIndex: number = comp.find('Tab').prop('activeIndex');
-            const panes: any[] = comp.find('Tab').prop('panes');
-
-            expect(panes.findIndex(p => p.key === tabName)).toBe(activeIndex);
+            expect(screen.getByText(/PermissionsTab/)).toBeInTheDocument();
         });
     });
 });

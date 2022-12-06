@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import gql from 'graphql-tag';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Dimmer, Transition} from 'semantic-ui-react';
 import Loading from '../shared/Loading';
 import FiltersPanel from './FiltersPanel';
@@ -70,20 +70,29 @@ function GetLibraryInfos({state, dispatch}: IListProps) {
             lang: state.lang
         }
     });
+
+    useEffect(() => {
+        if (!data) {
+            return;
+        }
+
+        dispatch({
+            type: ActionTypes.SET_ROOT_INFOS,
+            data: {
+                label: data.libraries.list[0].label[`${state.lang[0]}`],
+                query: data.libraries.list[0].gqlNames.query,
+                filter: data.libraries.list[0].gqlNames.filter,
+                attributes: data.libraries.list[0].attributes
+            }
+        });
+    }, [data?.libraries]);
+
     if (loading) {
         return <Loading />;
     }
     if (error) {
         return <p data-testid="error">{error.message}</p>;
     }
-    dispatch({
-        type: ActionTypes.SET_ROOT_INFOS,
-        data: {
-            label: data.libraries.list[0].label[`${state.lang[0]}`],
-            query: data.libraries.list[0].gqlNames.query,
-            filter: data.libraries.list[0].gqlNames.filter,
-            attributes: data.libraries.list[0].attributes
-        }
-    });
+
     return null;
 }

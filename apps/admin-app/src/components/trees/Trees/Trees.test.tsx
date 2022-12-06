@@ -25,7 +25,7 @@ describe('Trees', () => {
             {
                 request: {
                     query: getTreesQuery,
-                    variables: {lang: ['fr']}
+                    variables: {}
                 },
                 result: {
                     data: {
