@@ -1,6 +1,7 @@
 {
     "admin": {
         "title": "Home",
+        "global_app_name": "LEAV-Engine",
         "submit": "Submit",
         "save": "Save",
         "cancel": "Cancel",
