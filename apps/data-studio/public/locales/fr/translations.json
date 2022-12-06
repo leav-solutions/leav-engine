@@ -273,7 +273,10 @@
     },
     "navigation": {
         "header": {
-            "nb-selection": "{{nb}} éléments sélectionnés dans {{selectionType}}"
+            "selection_label": "Sélection: {{count}}",
+            "nb-selection": "{{nb}} éléments sélectionnés dans {{selectionType}}",
+            "add_by_search": "Rechercher et ajouter",
+            "add_by_creation": "Créer et ajouter"
         },
         "list": {
             "header": "Navigation",

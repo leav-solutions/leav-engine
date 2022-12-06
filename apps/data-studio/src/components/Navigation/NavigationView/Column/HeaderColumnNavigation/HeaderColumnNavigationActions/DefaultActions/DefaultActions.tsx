@@ -17,10 +17,10 @@ import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setNavigationPath} from 'redux/navigation';
 import {addInfo} from 'redux/infos';
+import {setNavigationPath} from 'redux/navigation';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
@@ -53,7 +53,9 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
     const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
 
     const _handleClickDetails = () => {
-        const newPath = [...navigation.path, {...parent, showDetails: true}];
+        const parentIndex = navigation.path.findIndex(p => p.id === parent?.id);
+        const newPath = [...navigation.path];
+        newPath[parentIndex] = {...parent, showDetails: true};
 
         dispatch(setNavigationPath(newPath));
     };

@@ -4,7 +4,6 @@
 import {CloseSquareOutlined} from '@ant-design/icons';
 import {Button, Checkbox, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'redux/navigation';
 import {resetSelection, setSelection} from 'redux/selection';
@@ -25,7 +24,7 @@ const HeaderColumn = styled.header<IHeaderColumnProps>`
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: ${themingVar['@item-active-bg']};
+    background: ${themingVar['@leav-secondary-bg']};
     height: 4rem;
     flex-shrink: 0;
     cursor: pointer;
@@ -121,7 +120,7 @@ function HeaderColumnNavigation({
                     })}
                     placement="right"
                 >
-                    {selectionCount}
+                    {t('navigation.header.selection_label', {count: selectionCount})}
                     <Button
                         icon={<CloseSquareOutlined />}
                         aria-label="clear-selection"
@@ -132,7 +131,7 @@ function HeaderColumnNavigation({
                 </Tooltip>
             ) : (
                 <>
-                    {isActive && !isDetail && (
+                    {isActive && !!treeElement?.childrenCount && (
                         <Checkbox className="select-all-checkbox" onClick={_handleClickCheckbox} />
                     )}
                     <Paragraph ellipsis={{tooltip: label, rows: 1}} style={{marginBottom: 0, marginRight: '.5em'}}>

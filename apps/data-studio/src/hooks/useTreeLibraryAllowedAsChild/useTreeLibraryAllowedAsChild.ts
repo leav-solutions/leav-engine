@@ -37,11 +37,13 @@ export const useTreeLibraryAllowedAsChild = (
             const parentLibrary = treeLibraries.find(
                 treeLibrary => treeLibrary.library.id === parent.record.whoAmI.library.id
             );
+            const allChildrenAllowed = parentLibrary?.settings.allowedChildren?.[0] === '__all__';
 
             // If parent is specified, take only libraries allowed as children of parent
             libraries.push(
-                ...treeLibraries.filter(treeLibrary =>
-                    parentLibrary.settings.allowedChildren.includes(treeLibrary.library.id)
+                ...treeLibraries.filter(
+                    treeLibrary =>
+                        allChildrenAllowed || parentLibrary.settings.allowedChildren.includes(treeLibrary.library.id)
                 )
             );
         }
