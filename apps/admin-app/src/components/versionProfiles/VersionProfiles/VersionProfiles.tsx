@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import ValueVersionsIcon from 'components/shared/icons/ValueVersionsIcon';
 import useUserData from 'hooks/useUserData';
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {VscLayers} from 'react-icons/vsc';
 import {useHistory} from 'react-router';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
@@ -20,7 +20,7 @@ import DeleteProfileButton from './VersionProfilesList/DeleteProfileButton';
 
 const Title = styled(Header)`
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
 `;
 
 function VersionProfiles(): JSX.Element {
@@ -52,7 +52,7 @@ function VersionProfiles(): JSX.Element {
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Title size="large">
-                        <ValueVersionsIcon size="1.5rem" />
+                        <VscLayers size={30} />
                         {t('version_profiles.title')}
                     </Title>
                 </Grid.Column>

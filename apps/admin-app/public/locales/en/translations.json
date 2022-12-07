@@ -1,6 +1,7 @@
 {
     "admin": {
         "title": "Home",
+        "global_app_name": "LEAV-Engine",
         "submit": "Submit",
         "save": "Save",
         "cancel": "Cancel",
@@ -31,7 +32,7 @@
         "search_placeholder": "Search..."
     },
     "dashboard": {
-        "title": "LEAV Engine administration"
+        "title": "Welcome to administration panel"
     },
     "general": {
         "title": "General",

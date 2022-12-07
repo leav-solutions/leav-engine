@@ -8,8 +8,10 @@ import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import {History} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {RiNodeTree} from 'react-icons/ri';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import styled from 'styled-components';
 import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
@@ -17,6 +19,12 @@ import {addWildcardToFilters, isTreeInApp} from '../../../utils/utils';
 import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import TreesList from '../TreesList';
+
+const Title = styled(Header)`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+`;
 
 interface ITreesProps {
     history: History;
@@ -54,10 +62,10 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
         <>
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
-                    <Header size="large">
-                        <Icon name="share alternate" rotated="clockwise" />
+                    <Title size="large">
+                        <RiNodeTree size={30} />
                         {t('trees.title')}
-                    </Header>
+                    </Title>
                 </Grid.Column>
                 {userData.permissions[PermissionsActions.admin_create_tree] && (
                     <Grid.Column floated="right" width={6} textAlign="right" verticalAlign="middle">

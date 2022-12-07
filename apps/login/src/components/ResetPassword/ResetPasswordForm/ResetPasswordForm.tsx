@@ -11,32 +11,6 @@ const extractValueFromEventAndThen = (next: any) => (event: any) => {
     next(event.target.value);
 };
 
-const Background = styled.div`
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-image: linear-gradient(to right bottom, #2185d0, #009ad7, #00aabf, #00b58a, #21ba45);
-    background-size: 200% 100%;
-    animation: Gradient 15s ease infinite;
-    z-index: -1;
-
-    @keyframes Gradient {
-        0% {
-            background-position: 0% 0%;
-        }
-
-        50% {
-            background-position: 100% 0%;
-        }
-
-        100% {
-            background-position: 0% 0%;
-        }
-    }
-`;
-
 const Wrapper = styled.div`
     height: 100%;
     display: flex;
@@ -67,93 +41,93 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
     };
 
     return (
-        <>
-            <Background />
-            <Wrapper>
-                <ResetPasswordBlock
-                    title={
-                        <>
-                            <h2>LEAV Engine</h2>
-                            {t('resetPassword.header')}
-                        </>
-                    }
-                    style={{width: '30rem'}}
-                >
-                    <Form onFinish={_processResetPassword}>
-                        <Form.Item
-                            hasFeedback
-                            name="newPassword"
-                            rules={[{required: true, message: t('resetPassword.new_password_required')}]}
-                        >
-                            <Input.Password
-                                aria-label={t('resetPassword.new_password')}
-                                placeholder={t('resetPassword.new_password')}
-                                autoFocus
-                                value={newPassword}
-                                onChange={extractValueFromEventAndThen(setNewPassword)}
+        <Wrapper>
+            <ResetPasswordBlock
+                title={
+                    <img
+                        src={`${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
+                        alt="LEAV Engine"
+                        height="100px"
+                    />
+                }
+                headStyle={{textAlign: 'center'}}
+                style={{width: '30rem'}}
+            >
+                <h3> {t('resetPassword.header')}</h3>
+                <Form onFinish={_processResetPassword}>
+                    <Form.Item
+                        hasFeedback
+                        name="newPassword"
+                        rules={[{required: true, message: t('resetPassword.new_password_required')}]}
+                    >
+                        <Input.Password
+                            aria-label={t('resetPassword.new_password')}
+                            placeholder={t('resetPassword.new_password')}
+                            autoFocus
+                            value={newPassword}
+                            onChange={extractValueFromEventAndThen(setNewPassword)}
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="confirmPassword"
+                        dependencies={['newPassword']}
+                        hasFeedback
+                        rules={[
+                            {required: true, message: t('resetPassword.confirm_password_required')},
+                            ({getFieldValue}) => ({
+                                validator(_, value) {
+                                    return !value || getFieldValue('newPassword') === value
+                                        ? Promise.resolve()
+                                        : Promise.reject(new Error(t('resetPassword.wrong_confirm_password')));
+                                }
+                            })
+                        ]}
+                    >
+                        <Input.Password
+                            aria-label={t('resetPassword.confirm_password')}
+                            placeholder={t('resetPassword.confirm_password')}
+                            value={confirmPassword}
+                            onChange={extractValueFromEventAndThen(setConfirmPassword)}
+                        />
+                    </Form.Item>
+                    {loading && (
+                        <Form.Item>
+                            <Alert
+                                message={t('resetPassword.loading.header')}
+                                description={t('resetPassword.loading.text')}
+                                icon={<Spin />}
+                                type="warning"
+                                showIcon
                             />
                         </Form.Item>
-                        <Form.Item
-                            name="confirmPassword"
-                            dependencies={['newPassword']}
-                            hasFeedback
-                            rules={[
-                                {required: true, message: t('resetPassword.confirm_password_required')},
-                                ({getFieldValue}) => ({
-                                    validator(_, value) {
-                                        return !value || getFieldValue('newPassword') === value
-                                            ? Promise.resolve()
-                                            : Promise.reject(new Error(t('resetPassword.wrong_confirm_password')));
-                                    }
-                                })
-                            ]}
-                        >
-                            <Input.Password
-                                aria-label={t('resetPassword.confirm_password')}
-                                placeholder={t('resetPassword.confirm_password')}
-                                value={confirmPassword}
-                                onChange={extractValueFromEventAndThen(setConfirmPassword)}
+                    )}
+                    {resetPasswordError && (
+                        <Form.Item>
+                            <Alert
+                                message={resetPasswordError}
+                                type="error"
+                                showIcon
+                                icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
                             />
                         </Form.Item>
-                        {loading && (
-                            <Form.Item>
-                                <Alert
-                                    message={t('resetPassword.loading.header')}
-                                    description={t('resetPassword.loading.text')}
-                                    icon={<Spin />}
-                                    type="warning"
-                                    showIcon
-                                />
-                            </Form.Item>
-                        )}
-                        {resetPasswordError && (
-                            <Form.Item>
-                                <Alert
-                                    message={resetPasswordError}
-                                    type="error"
-                                    showIcon
-                                    icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
-                                />
-                            </Form.Item>
-                        )}
-                        {!loading && (
-                            <Form.Item>
-                                <Button
-                                    size="large"
-                                    type="primary"
-                                    loading={loading}
-                                    disabled={loading}
-                                    htmlType="submit"
-                                    block
-                                >
-                                    {t('resetPassword.submit')}
-                                </Button>
-                            </Form.Item>
-                        )}
-                    </Form>
-                </ResetPasswordBlock>
-            </Wrapper>
-        </>
+                    )}
+                    {!loading && (
+                        <Form.Item>
+                            <Button
+                                size="large"
+                                type="primary"
+                                loading={loading}
+                                disabled={loading}
+                                htmlType="submit"
+                                block
+                            >
+                                {t('resetPassword.submit')}
+                            </Button>
+                        </Form.Item>
+                    )}
+                </Form>
+            </ResetPasswordBlock>
+        </Wrapper>
     );
 };
 

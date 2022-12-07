@@ -6,14 +6,22 @@ import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import {History} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {AiOutlineDatabase} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
+import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';
 import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 import {addWildcardToFilters, isLibraryInApp} from '../../../utils/utils';
 import {GET_LIBRARIES, GET_LIBRARIESVariables} from '../../../_gqlTypes/GET_LIBRARIES';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import LibrariesList from '../LibrariesList';
+
+const Title = styled(Header)`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+`;
 
 interface ILibrariesProps {
     history: History;
@@ -49,10 +57,10 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
         <>
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
-                    <Header size="large">
-                        <Icon name="database" />
+                    <Title size="large">
+                        <AiOutlineDatabase size={30} />
                         {t('libraries.title')}
-                    </Header>
+                    </Title>
                 </Grid.Column>
                 {userData.permissions[PermissionsActions.admin_create_library] && (
                     <Grid.Column floated="right" width={6} textAlign="right" verticalAlign="middle">

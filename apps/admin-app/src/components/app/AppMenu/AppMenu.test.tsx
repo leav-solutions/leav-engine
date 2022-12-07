@@ -11,7 +11,7 @@ describe('AppMenu', () => {
         await act(async () => {
             render(
                 <MemoryRouter>
-                    <AppMenu isCollapsed={false} onToggle={jest.fn()} width={42} />
+                    <AppMenu isCollapsed={false} onToggle={jest.fn()} width="42px" />
                 </MemoryRouter>
             );
         });

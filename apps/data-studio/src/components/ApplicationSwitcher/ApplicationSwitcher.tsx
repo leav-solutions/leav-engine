@@ -11,7 +11,7 @@ import RecordPreview from 'components/shared/RecordPreview';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import themingVar from 'themingVar';
@@ -155,7 +155,7 @@ function ApplicationSwitcher(): JSX.Element {
                     ghost
                     shape="circle"
                     size="large"
-                    icon={<AppstoreOutlined style={{fontSize: '1.5em'}} />}
+                    icon={<AppstoreOutlined style={{fontSize: '1.5em', color: '#000'}} />}
                     aria-label="applications"
                     onClick={_handleOpen}
                 />

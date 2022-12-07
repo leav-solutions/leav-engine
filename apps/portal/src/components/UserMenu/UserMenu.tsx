@@ -8,8 +8,10 @@ import styled from 'styled-components';
 import UserPanel from './UserPanel';
 
 const Wrapper = styled.div`
-    float: right;
     cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 1rem;
 `;
 
 function UserMenu(): JSX.Element {

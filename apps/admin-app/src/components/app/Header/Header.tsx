@@ -1,8 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {localizedTranslation} from '@leav/utils';
 import ApplicationsSwitcher from 'components/applications/ApplicationsSwitcher';
 import RecordCard from 'components/shared/RecordCard';
+import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
+import useLang from 'hooks/useLang';
 import useUserData from 'hooks/useUserData';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -15,26 +18,46 @@ import UserPanel from '../UserPanel';
 const StyledMenu = styled(Menu)`
     &&& {
         height: 3rem;
-        background: transparent linear-gradient(85deg, #0f2027 0%, #203a43 52%, #2c5364 100%) 0% 0% no-repeat
-            padding-box;
+        background: #f0f0f0;
+        color: #000;
     }
+`;
+
+const AppLabel = styled.div`
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    padding-left: 1rem;
+    height: 100%;
 `;
 
 const Header = (): JSX.Element => {
     const {t} = useTranslation();
+    const {lang} = useLang();
     const userData = useUserData();
     const [userPanelVisible, setSidebarVisible] = React.useState(false);
     const _toggleUserPanel = () => {
         setSidebarVisible(!userPanelVisible);
     };
     const mutationsWatcher = useAppSelector((state: RootState) => state.mutationsWatcher);
+    const currentApp = useCurrentApplicationContext();
 
     return (
         <>
-            <StyledMenu fixed="top" fluid inverted size="large">
-                <Menu.Item header as={NavLink} to="/" exact style={{width: '70px'}} title={t('admin.title')}>
-                    <Icon name="home" size="big" />
+            <StyledMenu fixed="top" fluid size="large">
+                <Menu.Item
+                    header
+                    as={NavLink}
+                    to="/"
+                    exact
+                    style={{width: '60px', textAlign: 'center'}}
+                    title={t('admin.title')}
+                >
+                    <Icon name="home" style={{fontSize: 'calc(1.5rem - 2px)'}} />
                 </Menu.Item>
+                <AppLabel>
+                    {t('admin.document_title', {appLabel: localizedTranslation(currentApp?.label, lang)})}
+                </AppLabel>
                 <Menu.Menu position="right">
                     {mutationsWatcher?.hasPendingMutations && (
                         <Menu.Item>

@@ -2,24 +2,31 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery, useSubscription} from '@apollo/client';
+import {cancelTaskMutation} from 'queries/tasks/cancelTask';
+import {deleteTaskMutation} from 'queries/tasks/deleteTask';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button, Header, Icon, Tab} from 'semantic-ui-react';
-import useUserData from '../../../hooks/useUserData';
-import {TaskStatus} from '../../../_gqlTypes/globalTypes';
-import TasksList from '../TasksList';
 import {useAppDispatch, useAppSelector} from 'redux/store';
+import {addTask, deleteTask} from 'redux/tasks/tasks';
+import {Button, Header, Icon, Tab} from 'semantic-ui-react';
+import styled from 'styled-components';
+import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
+import {DELETE_TASK, DELETE_TASKVariables} from '_gqlTypes/DELETE_TASK';
+import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import useUserData from '../../../hooks/useUserData';
 import {getTasks} from '../../../queries/tasks/getTasks';
 import {subTaskUpdates} from '../../../queries/tasks/subTaskUpdates';
-import {addTask, deleteTask} from 'redux/tasks/tasks';
-import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
-import DeleteTask from '../DeleteTask';
+import {TaskStatus} from '../../../_gqlTypes/globalTypes';
 import CancelTask from '../CancelTask';
 import DeleteAllTasks from '../DeleteAllTasks';
-import {DELETE_TASK, DELETE_TASKVariables} from '_gqlTypes/DELETE_TASK';
-import {deleteTaskMutation} from 'queries/tasks/deleteTask';
-import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
-import {cancelTaskMutation} from 'queries/tasks/cancelTask';
+import DeleteTask from '../DeleteTask';
+import TasksList from '../TasksList';
+
+const Title = styled(Header)`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+`;
 
 export type Column =
     | 'id'
@@ -188,10 +195,10 @@ const Tasks = (): JSX.Element => {
 
     return (
         <>
-            <Header size="large">
+            <Title size="large">
                 <Icon name="tasks" />
                 {t('tasks.title')}
-            </Header>
+            </Title>
             {typeof error !== 'undefined' ? <p>Error: {error.message}</p> : <Tab panes={panes} />}
         </>
     );

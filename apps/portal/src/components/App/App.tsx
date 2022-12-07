@@ -21,18 +21,13 @@ import {ME} from '_gqlTypes/ME';
 
 const Header = styled(Layout.Header)`
     height: 3rem;
-    background: transparent linear-gradient(85deg, #0f2027 0%, #203a43 52%, #2c5364 100%) 0% 0% no-repeat padding-box;
+    line-height: 3rem;
+    background: #f0f0f0;
     padding-left: 1rem;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-const Title = styled.div`
-    color: white;
-    font-size: 1.5em;
-    font-weight: bold;
+    color: #000;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 1px 2px #ccc;
 `;
 
 const Content = styled(Layout.Content)`
@@ -95,7 +90,11 @@ function App(): JSX.Element {
             <UserContext.Provider value={userData.me}>
                 <Layout>
                     <Header>
-                        <Title>{t('header_title')}</Title>
+                        <img
+                            src={`${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
+                            alt="LEAV Engine"
+                            height="45px"
+                        />
                         <UserMenu />
                     </Header>
                     <Content>
