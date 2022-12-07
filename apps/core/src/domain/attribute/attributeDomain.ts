@@ -22,6 +22,8 @@ import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
+import {IFormRepo} from 'infra/form/formRepo';
+import {IFormStrict} from '_types/forms';
 
 export interface IAttributeDomain {
     getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
@@ -59,6 +61,7 @@ interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.domain.versionProfile'?: IVersionProfileDomain;
+    'core.infra.form'?: IFormRepo;
     'core.infra.library'?: ILibraryRepo;
     'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
@@ -70,6 +73,7 @@ export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
+    'core.infra.form': formRepo = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.versionProfile': versionProfileDomain = null,
     'core.infra.library': libraryRepo = null,
@@ -78,6 +82,31 @@ export default function ({
     config = null,
     'core.infra.cache.cacheService': cacheService = null
 }: IDeps = {}): IAttributeDomain {
+    const _updateFormsUsingAttribute = async (attributeId: string, ctx: IQueryInfos): Promise<void> => {
+        const formsList = await formRepo.getForms({ctx});
+
+        const formsToUpdate = formsList.list.filter(form =>
+            form.elements.some(dependentElements =>
+                dependentElements.elements.some(element => element.settings.attribute === attributeId)
+            )
+        );
+
+        // update form to remove attribute
+        await Promise.all(
+            formsToUpdate.map(form => {
+                form.elements = form.elements.map(dependentElements => {
+                    dependentElements.elements = dependentElements.elements.filter(
+                        element => element.settings.attribute !== attributeId
+                    );
+
+                    return dependentElements;
+                });
+
+                return formRepo.updateForm({formData: form as IFormStrict, ctx});
+            })
+        );
+    };
+
     return {
         async getLibraryAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
             const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
@@ -249,6 +278,8 @@ export default function ({
 
             const cacheKey = utils.getCoreEntityCacheKey('attribute', id);
             await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+
+            await _updateFormsUsingAttribute(id, ctx);
 
             return deletedAttribute;
         },

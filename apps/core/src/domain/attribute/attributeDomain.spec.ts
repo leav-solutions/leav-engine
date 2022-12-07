@@ -4,6 +4,7 @@
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IFormRepo} from 'infra/form/formRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
@@ -19,6 +20,7 @@ import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from 
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain from './attributeDomain';
+import {mockForm} from '../../__tests__/mocks/forms';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -839,12 +841,19 @@ describe('attributeDomain', () => {
 
         test('Should delete an attribute and return deleted attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise(attrData)};
+            const mockFormRepo: Mockify<IFormRepo> = {
+                getForms: global.__mockPromise({list: [mockForm]}),
+                updateForm: global.__mockPromise()
+            };
+
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.form': mockFormRepo as IFormRepo,
                 'core.utils': mockUtils as IUtils
             });
+
             attrDomain.getAttributes = global.__mockPromise({list: [attrData], totalCount: 1});
 
             await attrDomain.deleteAttribute({id: attrData.id, ctx});
