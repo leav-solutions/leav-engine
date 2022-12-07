@@ -54,7 +54,7 @@ const defaultAttributeData: AttributeInfosFormValues = {
     linked_tree: null,
     linked_library: null,
     reverse_link: null,
-    unique: false,
+    unique: null,
     permissions_conf: null,
     multiple_values: false,
     metadata_fields: null,
@@ -149,6 +149,7 @@ function InfosForm({
         type: yup.string().required(),
         format: yup.string().nullable(),
         multiple_values: yup.boolean(),
+        unique: yup.boolean().nullable(),
         versions_conf: yup
             .object()
             .shape({

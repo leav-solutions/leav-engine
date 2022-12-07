@@ -36,7 +36,7 @@ describe('Utils', () => {
             const error = new Error('boom');
 
             expect(() => utilsModule.rethrow(error)).toThrow('boom');
-            expect(() => utilsModule.rethrow(error, 'Error prefix:')).toThrow('Error prefix: boom');
+            expect(() => utilsModule.rethrow(error, 'Error prefix')).toThrow('Error prefix, boom');
         });
     });
     describe('pipe', () => {

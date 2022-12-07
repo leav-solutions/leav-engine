@@ -94,8 +94,6 @@ export default function ({
     const maxNbWorkers = config.tasksManager.nbWorkers || cpus().length;
 
     if (cluster.isWorker) {
-        let taskId = null;
-
         // We send a message on initialization to the master to let it know that this worker is ready to receive a task
         process.send('alive');
 
@@ -103,7 +101,6 @@ export default function ({
             try {
                 if (msg.type === 'execute') {
                     let task = msg.data.task;
-                    taskId = task.id;
 
                     task = await _executeTask(task, {userId: task.created_by});
                 }
@@ -166,7 +163,7 @@ export default function ({
                 funcName: task.func.name
             });
 
-            await func(...task.func.args, {id: task.id});
+            await func(task.func.args, {id: task.id});
 
             status = TaskStatus.DONE;
         } catch (e) {
@@ -463,6 +460,8 @@ export default function ({
             ctx: IQueryInfos
         ): Promise<void> {
             if (typeof progress.percent !== 'undefined' && progress.percent === 100) {
+                // If percent update is equal to 100, task is completed but not yet updated
+                // Only the task manager can update task status to completed
                 progress.percent = 99;
             }
 

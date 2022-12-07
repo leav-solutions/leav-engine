@@ -128,7 +128,8 @@ export default function({
                 filesManagerApp.registerRoute(app);
 
                 app.use('/previews', [_checkAuth, express.static(config.preview.directory)]);
-                app.use('/exports', [_checkAuth, express.static(config.export.directory)]);
+                app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
+                app.use(`/${config.import.endpoint}`, [_checkAuth, express.static(config.import.directory)]);
 
                 // Handling errors
                 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
