@@ -86,8 +86,8 @@ export default function ({
         const formsList = await formRepo.getForms({ctx});
 
         const formsToUpdate = formsList.list.filter(form =>
-            form.elements.some(dependentElements =>
-                dependentElements.elements.some(element => element.settings.attribute === attributeId)
+            form.elements?.some(dependentElements =>
+                dependentElements.elements.some(element => element.settings?.attribute === attributeId)
             )
         );
 
