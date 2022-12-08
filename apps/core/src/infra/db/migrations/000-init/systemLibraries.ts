@@ -26,6 +26,9 @@ export const systemLibraries: MigrationLibraryToCreate[] = [
         _key: 'users',
         label: {fr: 'Utilisateurs', en: 'Users'},
         fullTextAttributes: ['login', 'email', 'label'],
+        recordIdentityConf: {
+            label: 'login'
+        },
         attributes: [...commonLibraryData.attributes, 'login', 'email', 'password', 'user_groups']
     },
     {
