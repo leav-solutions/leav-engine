@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeForRepo} from 'infra/attribute/attributeRepo';
 import {ActionsListEvents} from '../../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
@@ -46,7 +49,11 @@ export const systemAttributes: IAttributeForRepo[] = [
         linked_library: 'users',
         type: AttributeTypes.SIMPLE_LINK,
         label: {fr: 'Créé par', en: 'Created by'},
-        readonly: true
+        readonly: true,
+        actions_list: {
+            ...commonAttributeData.actions_list,
+            saveValue: []
+        }
     },
     {
         ...commonAttributeData,
@@ -90,7 +97,11 @@ export const systemAttributes: IAttributeForRepo[] = [
         linked_library: 'users',
         type: AttributeTypes.SIMPLE_LINK,
         label: {fr: 'Modifié par', en: 'Modified by'},
-        readonly: true
+        readonly: true,
+        actions_list: {
+            ...commonAttributeData.actions_list,
+            saveValue: []
+        }
     },
     {
         ...commonAttributeData,
@@ -212,7 +223,11 @@ export const systemAttributes: IAttributeForRepo[] = [
             en: 'User groups'
         },
         linked_tree: 'users_groups',
-        multiple_values: true
+        multiple_values: true,
+        actions_list: {
+            ...commonAttributeData.actions_list,
+            saveValue: []
+        }
     },
     /** Files attributes */
     {

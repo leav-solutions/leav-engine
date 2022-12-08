@@ -7,6 +7,7 @@ import jwt, {Algorithm} from 'jsonwebtoken';
 import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '_types/attribute';
 import {ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
+import {adminsGroupId} from '../../../_constants/userGroups';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 
 async function _getAuthToken() {
@@ -212,13 +213,8 @@ export async function gqlCreateRecord(library: string): Promise<string> {
     return res.data.data.c.id;
 }
 
-/**
- * Retrieve "all users" element ID in users group tree
- */
-export async function gqlGetAllUsersGroupNodeId(): Promise<string> {
-    const usersGroupsTreeContent = await makeGraphQlCall('{treeContent(treeId: "users_groups") {id}}', true);
-
-    return usersGroupsTreeContent.data.data.treeContent[0].id;
+export async function gqlGetAllUsersGroupNodeId() {
+    return adminsGroupId;
 }
 
 export async function gqlAddUserToGroup(groupNodeId: string) {

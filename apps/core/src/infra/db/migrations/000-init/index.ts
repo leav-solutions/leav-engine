@@ -11,6 +11,7 @@ import moment from 'moment';
 import {IConfig} from '_types/config';
 import {IMigration} from '_types/migration';
 import {IQueryInfos} from '_types/queryInfos';
+import {adminsGroupId, filesAdminsGroupId} from '../../../../_constants/userGroups';
 import {SortOrder} from '../../../../_types/list';
 import {PermissionTypes, TreeNodePermissionsActions} from '../../../../_types/permissions';
 import {ViewSizes, ViewTypes} from '../../../../_types/views';
@@ -36,7 +37,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.attribute': attributeRepo = null,
@@ -48,8 +49,6 @@ export default function({
 }: IDeps = {}): IMigration {
     const adminUserId = '1';
     const systemUserId = String(config.defaultUserId);
-    const adminsGroupId = '1';
-    const filesAdminsGroupId = '2';
     const now = moment().unix();
 
     const _createAttributes = async (attributes: IAttributeForRepo[], ctx: IQueryInfos) => {
@@ -203,12 +202,7 @@ export default function({
 
         // System user password is randomly generated as nobody is supposed to sign in with it
         // It might be changed later on if needed
-        const systemUserPwd = await bcrypt.hash(
-            Math.random()
-                .toString(36)
-                .slice(2),
-            salt
-        );
+        const systemUserPwd = await bcrypt.hash(Math.random().toString(36).slice(2), salt);
 
         const users = [
             {
