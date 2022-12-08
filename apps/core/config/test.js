@@ -45,5 +45,8 @@ module.exports = {
     logs: {
         transport: 'console'
     },
-    debug: true
+    debug: true,
+    redis: {
+        database: 1
+    }
 };
