@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {IDbDocument} from 'infra/db/_types';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
 import {getEdgesCollectionName, getFullNodeId} from '../../infra/tree/helpers/utils';
@@ -23,7 +24,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
@@ -91,20 +92,26 @@ export default function({
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute<IValueEdge[]>({
+            const {id: nodeId, library: nodeCollection} = utils.decomposeValueEdgeDestination(edgeData._to);
+            const resEdge = await dbService.execute<Array<{newEdge: IValueEdge; linkedRecord: IRecord}>>({
                 query: aql`
-                    INSERT ${edgeData}
-                        IN ${edgeCollec}
-                    RETURN NEW`,
+                    LET linkedNode = DOCUMENT(${nodeCollection}, ${nodeId})
+                    LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
+                    INSERT ${edgeData} IN ${edgeCollec}
+                    RETURN {newEdge: NEW, linkedRecord}
+                `,
                 ctx
             });
-            const savedEdge = resEdge.length ? resEdge[0] : {};
+            if (!resEdge.length) {
+                return null;
+            }
+            const savedValue = resEdge[0];
 
             return _buildTreeValue(
                 attribute.linked_tree,
-                value.value,
-                utils.decomposeValueEdgeDestination(value.value),
-                savedEdge as IValueEdge
+                nodeId,
+                dbUtils.cleanup(savedValue.linkedRecord),
+                savedValue.newEdge
             );
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
@@ -125,44 +132,56 @@ export default function({
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute<IValueEdge[]>({
+            const {id: nodeId, library: nodeCollection} = utils.decomposeValueEdgeDestination(edgeData._to);
+            const resEdge = await dbService.execute<Array<{newEdge: IValueEdge; linkedRecord: IRecord}>>({
                 query: aql`
-                    UPDATE ${{_key: String(value.id_value)}}
-                        WITH ${edgeData}
-                        IN ${edgeCollec}
-                    RETURN NEW`,
+                    LET linkedNode = DOCUMENT(${nodeCollection}, ${nodeId})
+                    LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
+                    UPDATE ${{_key: String(value.id_value)}} WITH ${edgeData} IN ${edgeCollec}
+                    RETURN {newEdge: NEW, linkedRecord}
+                `,
                 ctx
             });
-            const savedEdge = resEdge.length ? resEdge[0] : {};
+
+            if (!resEdge.length) {
+                return null;
+            }
+
+            const savedValue = resEdge[0];
 
             return _buildTreeValue(
                 attribute.linked_tree,
-                value.value,
-                utils.decomposeValueEdgeDestination(value.value),
-                savedEdge as IValueEdge
+                nodeId,
+                dbUtils.cleanup(savedValue.linkedRecord),
+                savedValue.newEdge
             );
         },
-        async deleteValue({attribute, value, ctx}): Promise<ITreeValue> {
+        async deleteValue({attribute, value, library, recordId, ctx}): Promise<ITreeValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
-            // Create the link between records and add some metadata on it
-            const edgeData = {
-                _key: value.id_value
-            };
-
-            const resEdge = await dbService.execute<IValueEdge[]>({
+            const resEdge = await dbService.execute<Array<{edge: IValueEdge; linkedRecord: IRecord}>>({
                 query: aql`
-                    REMOVE ${edgeData} IN ${edgeCollec}
-                    RETURN OLD`,
+                    FOR linkedNode, edge IN 1 OUTBOUND ${library + '/' + recordId}
+                        ${edgeCollec}
+                        FILTER edge._key == ${value.id_value}
+                        LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
+                        REMOVE edge IN ${edgeCollec}
+                        RETURN {edge: OLD, linkedRecord}
+                `,
                 ctx
             });
-            const deletedEdge = resEdge.length ? resEdge[0] : {};
+            const deletedValue = resEdge?.[0] ?? null;
 
+            if (!deletedValue) {
+                return null;
+            }
+
+            const {id: nodeId} = utils.decomposeValueEdgeDestination(deletedValue.edge._to);
             return _buildTreeValue(
                 attribute.linked_tree,
-                value.value,
-                utils.decomposeValueEdgeDestination((deletedEdge as IValueEdge)._to),
-                deletedEdge as IValueEdge
+                nodeId,
+                dbUtils.cleanup(deletedValue.linkedRecord),
+                deletedValue.edge
             );
         },
         async getValues({
@@ -223,16 +242,18 @@ export default function({
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
 
             const query = aql`
-                FOR linkedNode, edge
-                    IN 1 OUTBOUND ${library + '/' + recordId}
+                FOR linkedNode, edge IN 1 OUTBOUND ${library + '/' + recordId}
                     ${edgeCollec}
                     FILTER edge._key == ${valueId}
                     FILTER edge.attribute == ${attribute.id}
+                    LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
                     LIMIT 1
-                    RETURN {linkedNode, edge}
+                    RETURN {linkedNode, edge, linkedRecord}
             `;
 
-            const res = await dbService.execute({query, ctx});
+            const res = await dbService.execute<
+                Array<{linkedNode: IDbDocument; edge: IValueEdge; linkedRecord: IRecord}>
+            >({query, ctx});
 
             if (!res.length) {
                 return null;
@@ -241,7 +262,7 @@ export default function({
             return _buildTreeValue(
                 attribute.linked_tree,
                 res[0].linkedNode._key,
-                dbUtils.cleanup(res[0].linkedNode),
+                dbUtils.cleanup(res[0].linkedRecord),
                 res[0].edge
             );
         },

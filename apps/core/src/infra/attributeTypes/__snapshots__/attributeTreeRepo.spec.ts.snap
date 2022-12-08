@@ -2,15 +2,19 @@
 
 exports[`AttributeTreeRepo createValue Should create a new advanced tree value 1`] = `
 "
-                    INSERT @value0
-                        IN @@value1
-                    RETURN NEW"
+                    LET linkedNode = DOCUMENT(@value0, @value1)
+                    LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
+                    INSERT @value2 IN @@value3
+                    RETURN {newEdge: NEW, linkedRecord}
+                "
 `;
 
 exports[`AttributeTreeRepo createValue Should create a new advanced tree value 2`] = `
 {
-  "@value1": "core_edge_values_links",
-  "value0": {
+  "@value3": "core_edge_values_links",
+  "value0": "categories",
+  "value1": "123456",
+  "value2": {
     "_from": "test_lib/12345",
     "_to": "core_nodes_test_tree/categories/123456",
     "attribute": "test_tree_attr",
@@ -30,16 +34,20 @@ exports[`AttributeTreeRepo createValue Should create a new advanced tree value 2
 
 exports[`AttributeTreeRepo deleteValue Should delete a value 1`] = `
 "
-                    REMOVE @value0 IN @@value1
-                    RETURN OLD"
+                    FOR linkedNode, edge IN 1 OUTBOUND @value0
+                        @@value1
+                        FILTER edge._key == @value2
+                        LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
+                        REMOVE edge IN @@value1
+                        RETURN {edge: OLD, linkedRecord}
+                "
 `;
 
 exports[`AttributeTreeRepo deleteValue Should delete a value 2`] = `
 {
   "@value1": "core_edge_values_links",
-  "value0": {
-    "_key": "445566",
-  },
+  "value0": "test_lib/12345",
+  "value2": "445566",
 }
 `;
 
@@ -82,13 +90,13 @@ exports[`AttributeTreeRepo filterValueQueryPart Should return query to retrieve 
 
 exports[`AttributeTreeRepo getValueByID Should return value 1`] = `
 "
-                FOR linkedNode, edge
-                    IN 1 OUTBOUND @value0
+                FOR linkedNode, edge IN 1 OUTBOUND @value0
                     @@value1
                     FILTER edge._key == @value2
                     FILTER edge.attribute == @value3
+                    LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
                     LIMIT 1
-                    RETURN {linkedNode, edge}
+                    RETURN {linkedNode, edge, linkedRecord}
             "
 `;
 
@@ -177,19 +185,22 @@ exports[`AttributeTreeRepo sortQueryPart Should return tree filter 1`] = `
 
 exports[`AttributeTreeRepo updateValue Should update a advanced link value 1`] = `
 "
-                    UPDATE @value0
-                        WITH @value1
-                        IN @@value2
-                    RETURN NEW"
+                    LET linkedNode = DOCUMENT(@value0, @value1)
+                    LET linkedRecord = DOCUMENT(linkedNode.libraryId, linkedNode.recordId)
+                    UPDATE @value2 WITH @value3 IN @@value4
+                    RETURN {newEdge: NEW, linkedRecord}
+                "
 `;
 
 exports[`AttributeTreeRepo updateValue Should update a advanced link value 2`] = `
 {
-  "@value2": "core_edge_values_links",
-  "value0": {
+  "@value4": "core_edge_values_links",
+  "value0": "categories",
+  "value1": "123456",
+  "value2": {
     "_key": "987654",
   },
-  "value1": {
+  "value3": {
     "_from": "test_lib/12345",
     "_to": "core_nodes_test_tree/categories/123456",
     "attribute": "test_tree_attr",
