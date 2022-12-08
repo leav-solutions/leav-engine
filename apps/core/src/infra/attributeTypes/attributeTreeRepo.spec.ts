@@ -60,14 +60,32 @@ describe('AttributeTreeRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new advanced tree value', async function() {
+        test('Should create a new advanced tree value', async function () {
+            const mockRecord = {
+                id: '123456',
+                library: 'categories'
+            };
+
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([savedEdgeData])
+                execute: global.__mockPromise([
+                    {
+                        newEdge: savedEdgeData,
+                        linkedRecord: mockRecord
+                    }
+                ])
+            };
+
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue({
+                    id: '123456',
+                    library: 'categories'
+                })
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -110,14 +128,32 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('updateValue', () => {
-        test('Should update a advanced link value', async function() {
+        test('Should update a advanced link value', async function () {
+            const mockRecord = {
+                id: '123456',
+                library: 'categories'
+            };
+
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([savedEdgeData])
+                execute: global.__mockPromise([
+                    {
+                        newEdge: savedEdgeData,
+                        linkedRecord: mockRecord
+                    }
+                ])
+            };
+
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue({
+                    id: '123456',
+                    library: 'categories'
+                })
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -153,30 +189,40 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('deleteValue', () => {
-        test('Should delete a value', async function() {
+        test('Should delete a value', async function () {
             const deletedEdgeData = {
-                _id: 'core_edge_values_links/222435651',
+                _id: 'core_edge_values_links/445566',
                 _rev: '_WSywvyC--_',
                 _from: 'test_lib/12345',
                 _to: 'categories/123456',
                 _key: '445566'
             };
 
-            const mockDbEdgeCollec = {
-                removeByExample: global.__mockPromise(deletedEdgeData)
+            const mockRecord = {
+                id: '123456',
+                library: 'categories'
             };
 
-            const mockDb = {
-                edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
+            const mockDbUtilsWithCleanup: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue({
+                    id: '123456',
+                    library: 'categories'
+                })
             };
 
             const mockDbServ = {
                 db: new Database(),
-                execute: global.__mockPromise([deletedEdgeData])
+                execute: global.__mockPromise([
+                    {
+                        edge: deletedEdgeData,
+                        linkedRecord: mockRecord
+                    }
+                ])
             };
 
             const attrRepo = attributeTreeRepo({
                 'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtilsWithCleanup,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -209,7 +255,7 @@ describe('AttributeTreeRepo', () => {
     });
 
     describe('getValueByID', () => {
-        test('Should return value', async function() {
+        test('Should return value', async function () {
             const traversalRes = [
                 {
                     linkedNode: {
@@ -285,7 +331,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test("Should return null if value doesn't exists", async function() {
+        test("Should return null if value doesn't exists", async function () {
             const traversalRes = [];
 
             const mockDbServ = {
@@ -361,7 +407,7 @@ describe('AttributeTreeRepo', () => {
             }
         ];
 
-        test('Should return linked tree element', async function() {
+        test('Should return linked tree element', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
@@ -436,7 +482,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test('Should return linked tree element filtered by version', async function() {
+        test('Should return linked tree element filtered by version', async function () {
             const traversalResWithVers = [
                 {
                     id: '987654',
@@ -501,7 +547,7 @@ describe('AttributeTreeRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
 
-        test('Should return only first linked tree element if not multiple values', async function() {
+        test('Should return only first linked tree element if not multiple values', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([traversalRes[0]])
@@ -553,7 +599,7 @@ describe('AttributeTreeRepo', () => {
             });
         });
 
-        test('Should return all values if forced', async function() {
+        test('Should return all values if forced', async function () {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise(traversalRes)
