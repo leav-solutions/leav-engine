@@ -23,6 +23,7 @@ function EditForm({formId, libraryId, readonly}: IEditFormProps): JSX.Element {
             library: libraryId,
             id: formId || ''
         },
+        fetchPolicy: 'no-cache',
         skip: !formId
     });
 
