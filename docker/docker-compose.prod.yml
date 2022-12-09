@@ -40,12 +40,13 @@ x-env-core: &env-core
   SERVER_ADMIN_LOGIN: admin
   SERVER_ADMIN_PASSWORD: admin
   SERVER_ADMIN_EMAIL: admin@example.com
+  SERVER_SUPPORT_EMAIL: support@example.com
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
   AMQP_HOST: message-broker
-  AMQP_USERNAME: guest
-  AMQP_PWD: guest
+  AMQP_USERNAME: leav
+  AMQP_PWD: LeavEngine!
   AMQP_PORT: 5672
 
 x-env-automate-scan: &env-automate-scan
@@ -205,11 +206,13 @@ services:
       - traefik.http.services.arangodb.loadbalancer.server.port=8529
     volumes:
       - arango_data_prod:/var/lib/arangodb3
-      - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
 
   message-broker:
     image: *message_broker_image
     restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: leav
+      RABBITMQ_DEFAULT_PASS: LeavEngine!
     ports:
       - "4369:4369"
       - "5671:5671"
