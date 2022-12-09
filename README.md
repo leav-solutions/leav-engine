@@ -40,7 +40,14 @@ curl -O https://raw.githubusercontent.com/leav-solutions/leav-engine/master/dock
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-4. Once the install is done, you can access LEAV-Engine at http://core.leav.localhost
+4. Once the install is done, you can access LEAV-Engine at http://core.leav.localhost. The initial start might take a while. During this time, you might encounter a `Bad gateway` error. Wait a few minutes and try to refresh the page. You can check the docker logs to see what's going on.
+
+_We advise to use Chrome or Firefox as they will figure out that this is a local domain. Otherwise, you will have to add this domain to the `/etc/hosts` file:_
+```
+127.0.0.1 core.leav.localhost
+```
+
+
 
 Have fun! 🚀
 
@@ -83,6 +90,19 @@ lets_encrypt_cert:
 SERVER_PUBLIC_URL: https://<your public domain>
 SERVER_WS_URL: wss://<your public domain>
 ```
+
+### Getting quicker
+In order to speed up the DB queries, it's possible to enable ArangoDB's query cache.
+To do so:
+- Create a `conf` folder right beside the `docker-compose.prod.yml` with a `arangodb` folder in it
+- Copy our [arangod.conf](https://github.com/leav-solutions/leav-engine/blob/master/docker/conf/arangodb/arangod.conf) file in it.
+- Mount this directory in the `arangodb` service, by adding this volume in the `docker-compose.prod.yml` file:
+```
+- ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
+```
+
+Don't forget to re-launch your containers with a down / up.
+More info about the cache on [ArangoDB docs](https://www.arangodb.com/docs/stable/aql/execution-and-performance-query-cache.html#global-configuration)
 
 -------
 
