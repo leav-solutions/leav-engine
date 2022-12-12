@@ -7456,7 +7456,7 @@ __metadata:
     jsoneditor: 9.7.4
     jsoneditor-react: 3.1.2
     license-check-and-add: 3.0.4
-    lodash: 4.17.20
+    lodash: 4.17.21
     node-fetch: 2.6.1
     react: 16.14.0
     react-dnd: 11.1.3
@@ -20402,13 +20402,6 @@ __metadata:
   version: 4.7.0
   resolution: "lodash.xorby@npm:4.7.0"
   checksum: 397a97d5b60556bb05c7deebd2a130880c4f7b3a72d95a1d6a8efacfa223086decfc51c5dc94f53503017d4c9255f6788c3c56e2b9c66305f29b13e636188509
-  languageName: node
-  linkType: hard
-
-"lodash@npm:4.17.20":
-  version: 4.17.20
-  resolution: "lodash@npm:4.17.20"
-  checksum: b31afa09739b7292a88ec49ffdb2fcaeb41f690def010f7a067eeedffece32da6b6847bfe4d38a77e6f41778b9b2bca75eeab91209936518173271f0b69376ea
   languageName: node
   linkType: hard
 
