@@ -116,7 +116,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
     }
 
-    const validationSchema: yup.ObjectSchema<Partial<LibraryFormValues>> = yup.object().shape({
+    const validationSchema = yup.object().shape({
         label: yup.object().shape({
             [defaultLang || lang[0]]: yup.string().required()
         }),

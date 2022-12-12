@@ -48,7 +48,8 @@
     "react-error-overlay": "6.0.9",
     "@types/react": "^16",
     "@types/react-dom": "^16",
-    "semver": "7.3.7"
+    "semver": "7.3.7",
+    "git-url-parse": "13"
   },
   "lint-staged": {
     "*.{ts, js, tsx, jsx}": [

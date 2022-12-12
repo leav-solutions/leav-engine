@@ -86,7 +86,7 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
     }
 
-    const validationSchema: yup.ObjectSchema<Partial<TreeInfos>> = yup.object().shape({
+    const validationSchema = yup.object().shape({
         label: yup.object().shape({
             [defaultLang || availableLangs[0]]: yup.string().required()
         }),

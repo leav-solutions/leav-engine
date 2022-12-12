@@ -94,7 +94,7 @@ function InfoForm({readonly, loading, profile, onSubmit, errors, onCheckIdUnique
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdUniqueness);
     }
 
-    const validationSchema: yup.ObjectSchema<VersionProfileInput> = yup.object().shape({
+    const validationSchema = yup.object().shape({
         id: idValidator,
         label: yup.object().shape({
             [defaultLang]: yup.string().required()
