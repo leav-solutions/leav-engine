@@ -22,7 +22,7 @@
     "@types/node": "18.7.18",
     "@types/react": "18.0.20",
     "@types/react-dom": "18.0.6",
-    "apollo": "2.33.10",
+    "apollo": "2.34.0",
     "typescript": "4.8.3"
   },
   "scripts": {

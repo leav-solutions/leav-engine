@@ -16,7 +16,6 @@ import {
     GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute,
     GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {Override} from '_types/Override';
 import useLang from '../../../../../../hooks/useLang';
 import {formatIDString, getFieldError} from '../../../../../../utils';
 import {AttributeFormat, AttributeType, ValueVersionMode} from '../../../../../../_gqlTypes/globalTypes';
@@ -127,14 +126,7 @@ function InfosForm({
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdExists);
     }
 
-    const validationSchema: yup.ObjectSchema<
-        Partial<
-            Override<
-                AttributeInfosFormValues,
-                {type: string; format?: string; versions_conf: {versionable: boolean; mode: string; profile: string}}
-            >
-        >
-    > = yup.object().shape({
+    const validationSchema = yup.object().shape({
         label: yup.object().shape({
             [defaultLang]: yup.string().required()
         }),
