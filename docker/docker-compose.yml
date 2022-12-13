@@ -233,7 +233,7 @@ services:
       <<: *env-react
       <<: *env-admin-app
       PUBLIC_URL: http://core.leav.localhost/app/admin
-      REACT_APP_ENDPOINT: /app/admin
+      REACT_APP_ENDPOINT: app/admin
       REACT_APP_APPLICATION_ID: admin
       WDS_SOCKET_HOST: admin.leav.localhost
       WDS_SOCKET_PORT: 80
@@ -262,7 +262,7 @@ services:
     environment:
       <<: *env-react
       <<: *env-data-studio
-      REACT_APP_ENDPOINT: /app/data-studio
+      REACT_APP_ENDPOINT: app/data-studio
       REACT_APP_APPLICATION_ID: data-studio
       PUBLIC_URL: http://core.leav.localhost/app/data-studio
       WDS_SOCKET_HOST: data-studio.leav.localhost
@@ -292,7 +292,7 @@ services:
     environment:
       <<: *env-react
       <<: *env-login
-      REACT_APP_ENDPOINT: /app/login
+      REACT_APP_ENDPOINT: app/login
       REACT_APP_APPLICATION_ID: login
       PUBLIC_URL: http://core.leav.localhost/app/login
       REACT_APP_APPLICATION_ID: login
@@ -329,7 +329,7 @@ services:
       <<: *env-portal
       PUBLIC_URL: http://core.leav.localhost/app/portal
       REACT_APP_APPLICATION_ID: portal
-      REACT_APP_ENDPOINT: /app/portal
+      REACT_APP_ENDPOINT: app/portal
       WDS_SOCKET_HOST: portal.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:
