@@ -86,8 +86,8 @@ RUN apk --no-cache add bash mc openjdk8 \
     libreoffice-impress \
     libreoffice-math \
     libreofficekit \
-    ttf-droid-nonlatin \
-    ttf-droid \
+    font-droid-nonlatin \
+    font-droid \
     ttf-dejavu \
     ttf-freefont \
     ttf-liberation \
