@@ -57,7 +57,7 @@ const ForgotPasswordForm = ({
                 title={
                     <>
                         <img
-                            src={`${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
+                            src={`/${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
                             alt="LEAV Engine"
                             height="100px"
                         />

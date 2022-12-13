@@ -91,7 +91,7 @@ function App(): JSX.Element {
                 <Layout>
                     <Header>
                         <img
-                            src={`${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
+                            src={`/${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
                             alt="LEAV Engine"
                             height="45px"
                         />

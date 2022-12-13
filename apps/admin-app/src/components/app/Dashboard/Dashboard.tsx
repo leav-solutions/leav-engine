@@ -30,7 +30,7 @@ function Dashboard(): JSX.Element {
             <TitleWrapper>
                 <h3 className="title">{t('dashboard.title')}</h3>
                 <img
-                    src={`${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
+                    src={`/${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
                     alt="LEAV Engine"
                     height={iconSize}
                     className="icon"

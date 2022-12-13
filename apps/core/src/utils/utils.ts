@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import fs from 'fs';
 import {i18n} from 'i18next';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
-import fs from 'fs';
 import {IActionsListConfig} from '_types/actionsList';
 import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
 import {LibraryBehavior} from '_types/library';
@@ -107,7 +107,7 @@ export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function ({translator = null}: IUtilsDeps = {}): IUtils {
+export default function({translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getUnixTime: () => Math.floor(Date.now() / 1000),
         deleteFile: async (path: string): Promise<void> => {
