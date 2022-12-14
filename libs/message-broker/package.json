@@ -1,6 +1,6 @@
 {
   "name": "@leav/message-broker",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha3",
   "description": "Shared message broker to use across projects",
   "scripts": {
     "prepublishOnly": "npm run build",
@@ -27,5 +27,6 @@
   },
   "dependencies": {
     "amqplib": "0.10.3"
-  }
+  },
+  "stableVersion": "1.0.0"
 }

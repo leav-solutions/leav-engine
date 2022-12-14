@@ -1,7 +1,7 @@
 {
     "name": "data-studio",
     "description": "Generic application to manage your data",
-    "version": "0.1.0",
+    "version": "1.0.0-alpha3",
     "private": true,
     "dependencies": {
         "@ant-design/icons": "4.7.0",
@@ -110,5 +110,6 @@
         },
         "resetMocks": false
     },
-    "homepage": "."
+    "homepage": ".",
+    "stableVersion": "0.1.0"
 }

@@ -1,5 +1,6 @@
 {
   "name": "leav-monorepo",
+  "version": "1.0.0-alpha3",
   "private": true,
   "workspaces": {
     "packages": [
@@ -58,5 +59,6 @@
       "license-check-and-add add -f license-check-config.json"
     ]
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@3.2.3",
+  "stableVersion": "0.0.0"
 }

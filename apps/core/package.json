@@ -1,6 +1,6 @@
 {
   "name": "core",
-  "version": "1.0.0-alpha2",
+  "version": "1.0.0-alpha3",
   "description": "",
   "scripts": {
     "start": "node .",
@@ -112,5 +112,6 @@
     "winston": "2.4.6",
     "winston-transport": "4.5.0",
     "ws": "8.8.1"
-  }
+  },
+  "stableVersion": "1.0.0-alpha2"
 }

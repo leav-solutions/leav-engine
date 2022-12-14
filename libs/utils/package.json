@@ -1,6 +1,6 @@
 {
   "name": "@leav/utils",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha3",
   "description": "Shared utils and types to use across projects",
   "scripts": {
     "prepublishOnly": "npm run build",
@@ -21,5 +21,6 @@
   "dependencies": {
     "lodash": "4.17.21",
     "minimatch": "3.0.5"
-  }
+  },
+  "stableVersion": "1.0.0"
 }
