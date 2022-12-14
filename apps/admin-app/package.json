@@ -1,7 +1,7 @@
 {
     "name": "admin-app",
     "description": "Administration app",
-    "version": "0.1.0",
+    "version": "1.0.0-alpha3",
     "dependencies": {
         "@apollo/client": "3.3.7",
         "@reduxjs/toolkit": "1.7.1",
@@ -107,5 +107,6 @@
     "jest": {
         "resetMocks": false
     },
-    "homepage": "."
+    "homepage": ".",
+    "stableVersion": "0.1.0"
 }

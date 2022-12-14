@@ -1,6 +1,6 @@
 {
     "name": "preview-generator",
-    "version": "1.0.0",
+    "version": "1.0.0-alpha3",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -37,5 +37,6 @@
         "@leav/utils": "workspace:*",
         "amqplib": "0.10.3",
         "uuid": "3.3.3"
-    }
+    },
+    "stableVersion": "1.0.0"
 }

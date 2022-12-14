@@ -1,6 +1,6 @@
 {
     "name": "automate-scan",
-    "version": "1.0.0",
+    "version": "1.0.0-alpha3",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -48,5 +48,6 @@
         "lodash": "4.17.21",
         "redis-typescript": "0.1.2",
         "uuid": "8.3.2"
-    }
+    },
+    "stableVersion": "1.0.0"
 }
