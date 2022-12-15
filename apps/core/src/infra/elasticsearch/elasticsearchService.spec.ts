@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Mock from '@elastic/elasticsearch-mock';
 import {IConfig} from '_types/config';
-import Client from './elasticsearch';
+// import Client from './elasticsearch';
+import {Client} from '@elastic/elasticsearch';
 import elasticsearchService from './elasticsearchService';
 
 describe('ElasticsearchService', () => {
@@ -12,17 +13,22 @@ describe('ElasticsearchService', () => {
             url: 'http://fake.url'
         }
     };
-    test('Should run multimatch_search', async () => {
-        const mock = new Mock();
 
-        const client = Client({
-            config: {
-                elasticsearch: {
-                    url: conf.elasticsearch.url,
-                    connection: mock.getConnection()
-                }
-            }
-        });
+    const mock = new Mock();
+
+    const mockClient = new Client({
+        node: conf.elasticsearch.url,
+        Connection: mock.getConnection()
+    });
+
+    test('Should run wildcard search', async () => {
+        mock.add(
+            {
+                method: ['GET'],
+                path: '/test_lib/_mapping'
+            },
+            () => ({test_lib: {mappings: {properties: {id: {type: 'wildcard'}}}}})
+        );
 
         mock.add(
             {
@@ -32,50 +38,28 @@ describe('ElasticsearchService', () => {
             () => ({status: 'pass'})
         );
 
-        const esService = elasticsearchService({'core.infra.elasticsearch': client});
-        const res = await esService.multiMatch('test_lib', {query: 'query'});
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
+        const res = await esService.wildcardSearch('test_lib', 'query');
 
         expect(res).toMatchObject({status: 'pass'});
     });
 
     test('indiceGetMapping', async () => {
-        const mock = new Mock();
-
-        const client = Client({
-            config: {
-                elasticsearch: {
-                    url: conf.elasticsearch.url,
-                    connection: mock.getConnection()
-                }
-            }
-        });
-
         mock.add(
             {
                 method: ['GET'],
                 path: '/test_lib/_mapping'
             },
-            () => ({test_lib: {mappings: {properties: {id: {}}}}})
+            () => ({test_lib: {mappings: {properties: {id: {type: 'wildcard'}}}}})
         );
 
-        const esService = elasticsearchService({'core.infra.elasticsearch': client});
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
         const res = await esService.indiceGetMapping('test_lib');
 
-        expect(res).toEqual(['id']);
+        expect(res).toMatchObject({test_lib: {mappings: {properties: {id: {type: 'wildcard'}}}}});
     });
 
     test('indiceExists', async () => {
-        const mock = new Mock();
-
-        const client = Client({
-            config: {
-                elasticsearch: {
-                    url: conf.elasticsearch.url,
-                    connection: mock.getConnection()
-                }
-            }
-        });
-
         mock.add(
             {
                 method: ['HEAD'],
@@ -84,24 +68,13 @@ describe('ElasticsearchService', () => {
             () => ({body: true})
         );
 
-        const esService = elasticsearchService({'core.infra.elasticsearch': client});
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
         const res = await esService.indiceExists('test_lib');
 
         expect(res).toBe(true);
     });
 
     test('index', async () => {
-        const mock = new Mock();
-
-        const client = Client({
-            config: {
-                elasticsearch: {
-                    url: conf.elasticsearch.url,
-                    connection: mock.getConnection()
-                }
-            }
-        });
-
         mock.add(
             {
                 method: ['PUT'],
@@ -110,23 +83,12 @@ describe('ElasticsearchService', () => {
             () => ({status: 'pass'})
         );
 
-        const esService = elasticsearchService({'core.infra.elasticsearch': client});
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
 
-        await esService.index('test_lib', '1', {});
+        await esService.indexData('test_lib', '1', {});
     });
 
     test('update', async () => {
-        const mock = new Mock();
-
-        const client = Client({
-            config: {
-                elasticsearch: {
-                    url: conf.elasticsearch.url,
-                    connection: mock.getConnection()
-                }
-            }
-        });
-
         mock.add(
             {
                 method: ['POST'],
@@ -135,23 +97,12 @@ describe('ElasticsearchService', () => {
             () => ({status: 'pass'})
         );
 
-        const esService = elasticsearchService({'core.infra.elasticsearch': client});
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
 
-        await esService.update('test_lib', '1', {});
+        await esService.updateData('test_lib', '1', {});
     });
 
     test('delete', async () => {
-        const mock = new Mock();
-
-        const client = Client({
-            config: {
-                elasticsearch: {
-                    url: conf.elasticsearch.url,
-                    connection: mock.getConnection()
-                }
-            }
-        });
-
         mock.add(
             {
                 method: ['POST'],
@@ -160,23 +111,12 @@ describe('ElasticsearchService', () => {
             () => ({status: 'pass'})
         );
 
-        const esService = elasticsearchService({'core.infra.elasticsearch': client});
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
 
-        await esService.delete('test_lib', '1', 'id');
+        await esService.deleteData('test_lib', '1', 'id');
     });
 
     test('indiceDelete', async () => {
-        const mock = new Mock();
-
-        const client = Client({
-            config: {
-                elasticsearch: {
-                    url: conf.elasticsearch.url,
-                    connection: mock.getConnection()
-                }
-            }
-        });
-
         mock.add(
             {
                 method: ['DELETE'],
@@ -185,23 +125,12 @@ describe('ElasticsearchService', () => {
             () => ({status: 'pass'})
         );
 
-        const esService = elasticsearchService({'core.infra.elasticsearch': client});
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
 
         await esService.indiceDelete('test_lib');
     });
 
     test('deleteDocument', async () => {
-        const mock = new Mock();
-
-        const client = Client({
-            config: {
-                elasticsearch: {
-                    url: conf.elasticsearch.url,
-                    connection: mock.getConnection()
-                }
-            }
-        });
-
         mock.add(
             {
                 method: ['DELETE'],
@@ -210,7 +139,7 @@ describe('ElasticsearchService', () => {
             () => ({status: 'pass'})
         );
 
-        const esService = elasticsearchService({'core.infra.elasticsearch': client});
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
 
         await esService.deleteDocument('test_lib', '1');
     });

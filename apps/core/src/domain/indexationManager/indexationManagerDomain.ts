@@ -72,7 +72,7 @@ export default function ({
                 )
             ).reduce((acc, e) => ({...acc, ...e}), {});
 
-            await elasticsearchService.index(findRecordParams.library, record.id, data);
+            await elasticsearchService.indexData(findRecordParams.library, record.id, data);
         }
     };
 
@@ -220,12 +220,15 @@ export default function ({
                     }
                 }
 
-                await elasticsearchService.index(data.libraryId, data.id, data.new);
+                await elasticsearchService.indexData(data.libraryId, data.id, data.new);
+
                 break;
             }
             case EventAction.RECORD_DELETE: {
                 data = (event.payload as IRecordPayload).data;
+
                 await elasticsearchService.deleteDocument(data.libraryId, data.id);
+
                 break;
             }
             case EventAction.LIBRARY_SAVE: {
@@ -233,14 +236,19 @@ export default function ({
 
                 const exists = await elasticsearchService.indiceExists(data.new.id);
 
-                if (
-                    !exists ||
-                    (exists && !isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort()))
-                ) {
-                    if (exists) {
-                        await elasticsearchService.indiceDelete(data.new.id);
-                    }
+                const mappings = data.new?.fullTextAttributes?.reduce((acc, attr) => {
+                    acc[attr] = {
+                        type: 'wildcard'
+                    };
 
+                    return acc;
+                }, {});
+
+                if (exists && !isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort())) {
+                    await elasticsearchService.indiceUpdateMapping(data.new.id, mappings);
+                    await _indexRecords({library: data.new.id}, ctx);
+                } else if (!exists) {
+                    await elasticsearchService.indiceCreate(data.new.id, mappings);
                     await _indexRecords({library: data.new.id}, ctx);
                 }
 
@@ -285,7 +293,7 @@ export default function ({
 
                     data.value.new = await _getFormattedValuesAndLabels(attr, data.value.new, ctx);
 
-                    await elasticsearchService.update(data.libraryId, data.recordId, {
+                    await elasticsearchService.updateData(data.libraryId, data.recordId, {
                         [data.attributeId]: Array.isArray(data.value.new)
                             ? data.value.new.map(v => v.value)
                             : data.value.new.value
@@ -317,11 +325,11 @@ export default function ({
 
                     values = (await _getFormattedValuesAndLabels(attrProps, values, ctx)) as IValue[];
 
-                    await elasticsearchService.update(data.libraryId, data.recordId, {
+                    await elasticsearchService.updateData(data.libraryId, data.recordId, {
                         [data.attributeId]: values.map(v => String(v.value))
                     });
                 } else {
-                    await elasticsearchService.delete(data.libraryId, data.recordId, data.attributeId);
+                    await elasticsearchService.deleteData(data.libraryId, data.recordId, data.attributeId);
                 }
 
                 const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);

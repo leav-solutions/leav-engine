@@ -86,7 +86,7 @@ interface IDeps {
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.db.dbUtils': dbUtils = null,
@@ -116,7 +116,7 @@ export default function({
 
     return {
         async search(library: string, query: string, from?: number, size?: number): Promise<IList<IRecord>> {
-            const result = await elasticsearchService.multiMatch(library, {query}, from, size);
+            const result = await elasticsearchService.wildcardSearch(library, query, from, size);
             const records = result.hits.hits.map(h => ({id: h._id, library, ...h._source}));
 
             return {totalCount: result.hits.total.value, list: records};

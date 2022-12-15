@@ -130,11 +130,6 @@ export default function ({
                 ctx
             });
 
-            // Create elasticsearch index
-            if (!(await elasticsearchService.indiceExists(libData.id))) {
-                await elasticsearchService.indiceCreate(libData.id);
-            }
-
             return dbUtils.cleanup(libRes.pop());
         },
         async updateLibrary({libData, ctx}): Promise<ILibrary> {

@@ -5,8 +5,8 @@ x-node-image: &node_image node:18-alpine
 x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
 x-traefik-image: &traefik_image "traefik:2.6"
 x-redis-image: &redis_image "redis"
-x-elasticsearch-image: &elastisearch_image "docker.elastic.co/elasticsearch/elasticsearch:7.8.0"
-x-kibana-image: &kibana_image "docker.elastic.co/kibana/kibana:7.8.1" # must match elasticsearch image
+x-elasticsearch-image: &elastisearch_image "docker.elastic.co/elasticsearch/elasticsearch:8.5.3"
+x-kibana-image: &kibana_image "docker.elastic.co/kibana/kibana:8.5.3" # must match elasticsearch image
 x-arango-image: &arango_image "arangodb:3.10"
 
 x-dir-core: &dir-core /app/apps/core
@@ -506,25 +506,26 @@ services:
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
 
-  # kibana:
-  #   image: *kibana_image
-  #   logging:
-  #     driver: none
-  #   ports:
-  #     - 5611:5601
-  #   volumes:
-  #     - kibana_data:/usr/share/kibana/data
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.http.routers.kibana.rule=Host(`kibana.leav.localhost`)
-  #     - traefik.http.services.kibana.loadbalancer.server.port=5601
-  #   depends_on:
-  #     - elasticsearch
+  kibana:
+    image: *kibana_image
+    logging:
+      driver: none
+    ports:
+      - 5611:5601
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.kibana.rule=Host(`kibana.leav.localhost`)
+      - traefik.http.services.kibana.loadbalancer.server.port=5601
+    depends_on:
+      - elasticsearch
 
 volumes:
   arango_data:
