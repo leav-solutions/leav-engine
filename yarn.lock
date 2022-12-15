@@ -2799,26 +2799,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@elastic/elasticsearch-mock@npm:0.3.1":
-  version: 0.3.1
-  resolution: "@elastic/elasticsearch-mock@npm:0.3.1"
+"@elastic/elasticsearch-mock@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@elastic/elasticsearch-mock@npm:2.0.0"
   dependencies:
     fast-deep-equal: ^3.1.3
-    find-my-way: ^4.3.3
+    find-my-way: ^5.2.0
     into-stream: ^6.0.0
-  checksum: 51b05a2af73636b8f645d138730116ac094b7254372b44bb8d88dd1815d935cafc2c1c56724a75b3d91775722d082b4601942fff7718f5b6a2812c88fc9923df
+  checksum: 8f4eef41e267593f7db4441b03f1c6b43c3e2b4dd8ce9475576d6a8313a1f2ed12a1eb7e55e001479d4da20290e87e797cda6482a6656838cf9bd13115fe38b3
   languageName: node
   linkType: hard
 
-"@elastic/elasticsearch@npm:7.17.0":
-  version: 7.17.0
-  resolution: "@elastic/elasticsearch@npm:7.17.0"
+"@elastic/elasticsearch@npm:8.5.0":
+  version: 8.5.0
+  resolution: "@elastic/elasticsearch@npm:8.5.0"
   dependencies:
-    debug: ^4.3.1
-    hpagent: ^0.1.1
+    "@elastic/transport": ^8.2.0
+    tslib: ^2.4.0
+  checksum: 774c4dce4a15786674111a25051895149e19cb46c2ee6fc594c3390ee6d9e1b100abadf4485c6bd32d6f1362fe5ed31810ea84d14c2d11ef470ad55e976b44e5
+  languageName: node
+  linkType: hard
+
+"@elastic/transport@npm:^8.2.0":
+  version: 8.3.1
+  resolution: "@elastic/transport@npm:8.3.1"
+  dependencies:
+    debug: ^4.3.4
+    hpagent: ^1.0.0
     ms: ^2.1.3
     secure-json-parse: ^2.4.0
-  checksum: 08113bcb14203c5700e6575cb720aa32f5573a1776e13b78bf101ffeae46308c3664b94f16f7e2c5ec26e14c459d8d1491e234940e635cddfe3ee61a52fb51f9
+    tslib: ^2.4.0
+    undici: ^5.5.1
+  checksum: 7b0c9199dfe5c71db052c877b9eb445c5047e50c69a1f30759a872907693106629dddd978a4bf03401673576a5e09347a99db6818e13f4b7b143b4c967dcc3c4
   languageName: node
   linkType: hard
 
@@ -11059,8 +11071,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "core@workspace:apps/core"
   dependencies:
-    "@elastic/elasticsearch": 7.17.0
-    "@elastic/elasticsearch-mock": 0.3.1
+    "@elastic/elasticsearch": 8.5.0
+    "@elastic/elasticsearch-mock": 2.0.0
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/message-broker": "workspace:libs/message-broker"
@@ -14287,15 +14299,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-my-way@npm:^4.3.3":
-  version: 4.5.1
-  resolution: "find-my-way@npm:4.5.1"
+"find-my-way@npm:^5.2.0":
+  version: 5.6.0
+  resolution: "find-my-way@npm:5.6.0"
   dependencies:
     fast-decode-uri-component: ^1.0.1
     fast-deep-equal: ^3.1.3
     safe-regex2: ^2.0.0
-    semver-store: ^0.3.0
-  checksum: 85b8c07d34a36f0203438e0c0f0cdbfaf5e1c521ed2e56f9250bed846ceb0eea074127fad7f70137d61bed56387047f212969cc0ba5d818ed5e37b3e3606c43f
+  checksum: 1686f8d1c0fd1a84302fd06f1cd87e8514833aa35cb57f42d4badbddedc2112bedf65b8333adeddeda44d10c6712ded80fc3828a0f02899d1bc7e7547be8064a
   languageName: node
   linkType: hard
 
@@ -15844,10 +15855,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hpagent@npm:^0.1.1":
-  version: 0.1.2
-  resolution: "hpagent@npm:0.1.2"
-  checksum: 1918518ab937d9fa615a47b94489e23662547bc1edf27069ee9bf40bfefb94da65eb142b6f42336b4b0752fce87f66c284d92b97340fd2a90b24aa3616b5450d
+"hpagent@npm:^1.0.0":
+  version: 1.2.0
+  resolution: "hpagent@npm:1.2.0"
+  checksum: b029da695edae438cee4da2a437386f9db4ac27b3ceb7306d02e1b586c9c194741ed2e943c8a222e0cfefaf27ee3f863aca7ba1721b0950a2a19bf25bc0d85e2
   languageName: node
   linkType: hard
 
@@ -26022,13 +26033,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver-store@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "semver-store@npm:0.3.0"
-  checksum: b38f747123e850191526a912657c653c7e5963d164a8daf99e52aa30bc8c5bdac176dc6dab714e17a1a8489ac138c18ff7161b1961f1882888bce637990442dd
-  languageName: node
-  linkType: hard
-
 "semver@npm:7.3.7":
   version: 7.3.7
   resolution: "semver@npm:7.3.7"
@@ -28340,6 +28344,15 @@ __metadata:
     object.reduce: ^1.0.0
     undertaker-registry: ^1.0.0
   checksum: 4378e3e9d9e5d6f2ceeb81eff0ae5d7c63b9eaba000fae3f0177197f991aabef29104eabf5188622d38f2e3c58dc96cfd9c182b822b6f405dbf3f63f123389d5
+  languageName: node
+  linkType: hard
+
+"undici@npm:^5.5.1":
+  version: 5.14.0
+  resolution: "undici@npm:5.14.0"
+  dependencies:
+    busboy: ^1.6.0
+  checksum: 7a076e44d84b25844b4eb657034437b8b9bb91f17d347de474fdea1d4263ce7ae9406db79cd30de5642519277b4893f43073258bcc8fed420b295da3fdd11b26
   languageName: node
   linkType: hard
 

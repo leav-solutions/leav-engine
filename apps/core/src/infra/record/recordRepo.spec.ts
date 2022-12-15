@@ -565,7 +565,7 @@ describe('RecordRepo', () => {
             };
 
             const mockElasticsearch = {
-                multiMatch: global.__mockPromise(mockQueryRes)
+                wildcardSearch: global.__mockPromise(mockQueryRes)
             };
 
             const recRepo = recordRepo({
@@ -574,8 +574,8 @@ describe('RecordRepo', () => {
 
             const result = await recRepo.search('test_lib', 'text');
 
-            expect(mockElasticsearch.multiMatch.mock.calls.length).toBe(1);
-            expect(mockElasticsearch.multiMatch.mock.calls[0][0]).toMatchSnapshot();
+            expect(mockElasticsearch.wildcardSearch.mock.calls.length).toBe(1);
+            expect(mockElasticsearch.wildcardSearch.mock.calls[0][0]).toMatchSnapshot();
 
             expect(result).toEqual({
                 totalCount: 1,
@@ -608,7 +608,7 @@ describe('RecordRepo', () => {
             };
 
             const mockElasticsearch = {
-                multiMatch: global.__mockPromise(mockQueryRes)
+                wildcardSearch: global.__mockPromise(mockQueryRes)
             };
 
             const recRepo = recordRepo({
@@ -617,8 +617,8 @@ describe('RecordRepo', () => {
 
             const result = await recRepo.search('test_lib', 'text', 0, 1);
 
-            expect(mockElasticsearch.multiMatch.mock.calls.length).toBe(1);
-            expect(mockElasticsearch.multiMatch.mock.calls[0][0]).toMatchSnapshot();
+            expect(mockElasticsearch.wildcardSearch.mock.calls.length).toBe(1);
+            expect(mockElasticsearch.wildcardSearch.mock.calls[0][0]).toMatchSnapshot();
 
             expect(result).toEqual({
                 totalCount: 2,

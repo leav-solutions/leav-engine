@@ -277,7 +277,7 @@ export default function ({
                 });
             }
 
-            await elasticsearchService.index('users', user._key, {
+            await elasticsearchService.indexData('users', user._key, {
                 login: user.login,
                 email: user.email,
                 label: user.label
@@ -381,7 +381,7 @@ export default function ({
                 });
             }
 
-            await elasticsearchService.index('users_groups', groupRecord._key, {
+            await elasticsearchService.indexData('users_groups', groupRecord._key, {
                 label: groupRecord.label
             });
         }

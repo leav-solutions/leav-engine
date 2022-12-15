@@ -1,15 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Client} from '@elastic/elasticsearch';
-
-interface IMultiMatchQuery {
-    multi_match: {
-        query: string;
-        fields?: string[];
-        fuzziness?: string;
-    };
-}
+import {Client, estypes} from '@elastic/elasticsearch';
 
 // Complete definition of the Search response
 interface IShardsResponse {
@@ -56,20 +48,16 @@ interface ISearchResponse<T> {
 
 export interface IElasticsearchService {
     client?: Client;
-    indiceGetMapping?(index: string): Promise<string[]>;
-    indiceCreate?(index: string): Promise<void>;
+    indiceGetMapping?(index: string): Promise<estypes.IndicesGetMappingResponse>;
+    indiceUpdateMapping?(index: string, mappings: {[field: string]: {[type: string]: string}}): Promise<void>;
+    indiceCreate?(index: string, mappings?: {[field: string]: {[type: string]: string}}): Promise<void>;
     indiceDelete?(index: string): Promise<void>;
-    indiceExists?(index: string): Promise<boolean>;
-    index?(index: string, documentId: string, data: any): Promise<void>;
-    update?(index: string, documentId: string, data: any): Promise<void>;
-    delete?(index: string, documentId: string, attributeId: string): Promise<void>;
+    indiceExists?(index: string): Promise<estypes.IndicesExistsResponse>;
+    indexData?(index: string, documentId: string, data: any): Promise<void>;
+    updateData?(index: string, documentId: string, data: any): Promise<void>;
+    deleteData?(index: string, documentId: string, attributeId: string): Promise<void>;
     deleteDocument?(index: string, documentId: string): Promise<void>;
-    multiMatch?<T extends any = any>(
-        index: string,
-        {query, fields, fuzziness}: IMultiMatchQuery['multi_match'],
-        from?: number,
-        size?: number
-    ): Promise<ISearchResponse<T>>;
+    wildcardSearch?(index: string, query: string, from?: number, size?: number): Promise<any>;
 }
 
 interface IDeps {
@@ -79,21 +67,22 @@ interface IDeps {
 export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}): IElasticsearchService {
     return {
         client,
-        async indiceGetMapping(index: string): Promise<string[]> {
-            const res = await client.indices.getMapping({index});
-            return Object.keys(res.body[index].mappings.properties || []);
+        async indiceGetMapping(index: string): Promise<estypes.IndicesGetMappingResponse> {
+            return client.indices.getMapping({index});
         },
-        async indiceExists(index: string): Promise<boolean> {
-            const res = await client.indices.exists({index});
-            return (res.body as unknown) as boolean;
+        async indiceUpdateMapping(index: string, mappings: {[field: string]: {[type: string]: string}}): Promise<void> {
+            await client.indices.putMapping({index, properties: mappings});
         },
-        async index(index: string, documentId: string, data: any): Promise<void> {
+        async indiceExists(index: string): Promise<estypes.IndicesExistsResponse> {
+            return client.indices.exists({index});
+        },
+        async indexData(index: string, documentId: string, data: any): Promise<void> {
             await client.index({index, id: documentId, body: data, refresh: true});
         },
-        async update(index: string, documentId: string, data: any): Promise<void> {
+        async updateData(index: string, documentId: string, data: any): Promise<void> {
             await client.update({index, id: documentId, body: {doc: data}, refresh: true});
         },
-        async delete(index: string, documentId: string, attributeId: string): Promise<void> {
+        async deleteData(index: string, documentId: string, attributeId: string): Promise<void> {
             await client.update({
                 index,
                 id: documentId,
@@ -106,8 +95,17 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
                 refresh: true
             });
         },
-        async indiceCreate(index: string): Promise<void> {
-            await client.indices.create({index});
+        async indiceCreate(index: string, mappings?: {[field: string]: {[type: string]: string}}): Promise<void> {
+            await client.indices.create({
+                index,
+                ...(!!mappings && {
+                    mappings: {
+                        properties: {
+                            ...mappings
+                        }
+                    }
+                })
+            });
         },
         async indiceDelete(index: string): Promise<void> {
             await client.indices.delete({index});
@@ -115,36 +113,30 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
         async deleteDocument(index: string, documentId: string): Promise<void> {
             await client.delete({index, id: documentId, refresh: true});
         },
-        async multiMatch<T extends any = any>(
-            index: string,
-            {query, fields = ['*'], fuzziness = 'AUTO:2,5'}: IMultiMatchQuery['multi_match'],
-            from?: number,
-            size?: number
-        ): Promise<ISearchResponse<T>> {
+        async wildcardSearch(index: string, query, from?: number, size?: number): Promise<any> {
+            const mapping = await client.indices.getMapping({index});
+            const fields = Object.keys(mapping[index]?.mappings?.properties);
+
             const words = query.length ? query.split(' ') : [];
 
-            const response = await client.search<ISearchResponse<any>, any>({
+            const response = await client.search({
                 index,
-                body: {
-                    from,
-                    size,
-                    query: {
-                        bool: {
-                            must: words.map(w => ({
-                                multi_match: {
-                                    query: w,
-                                    fields,
-                                    fuzziness,
-                                    lenient: true,
-                                    analyzer: 'standard'
-                                }
-                            }))
+                from,
+                size,
+                query: {
+                    bool: {
+                        must: {match_all: {}},
+                        filter: {
+                            bool: {
+                                should: words.map(w => fields.map(f => ({wildcard: {[f]: {value: `*${w}*`}}}))).flat(),
+                                minimum_should_match: words.length
+                            }
                         }
                     }
                 }
             });
 
-            return response.body;
+            return response;
         }
     };
 }

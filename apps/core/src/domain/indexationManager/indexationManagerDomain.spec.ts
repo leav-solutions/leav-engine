@@ -77,7 +77,7 @@ describe('Indexation Manager', () => {
 
     test('index database', async () => {
         const mockElasticsearchService: Mockify<IElasticsearchService> = {
-            index: jest.fn()
+            indexData: jest.fn()
         };
 
         const mockRecordDomain: Mockify<IRecordDomain> = {
