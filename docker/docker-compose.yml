@@ -295,7 +295,6 @@ services:
       REACT_APP_ENDPOINT: app/login
       REACT_APP_APPLICATION_ID: login
       PUBLIC_URL: http://core.leav.localhost/app/login
-      REACT_APP_APPLICATION_ID: login
       WDS_SOCKET_HOST: login.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:
