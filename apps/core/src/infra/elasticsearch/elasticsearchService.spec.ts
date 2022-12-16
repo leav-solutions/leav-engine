@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Mock from '@elastic/elasticsearch-mock';
 import {IConfig} from '_types/config';
-// import Client from './elasticsearch';
-import {Client} from '@elastic/elasticsearch';
+import Client from './elasticsearch';
 import elasticsearchService from './elasticsearchService';
 
 describe('ElasticsearchService', () => {
@@ -16,9 +15,17 @@ describe('ElasticsearchService', () => {
 
     const mock = new Mock();
 
-    const mockClient = new Client({
-        node: conf.elasticsearch.url,
-        Connection: mock.getConnection()
+    const mockClient = Client({
+        config: {
+            elasticsearch: {
+                url: conf.elasticsearch.url,
+                connection: mock.getConnection()
+            }
+        }
+    });
+
+    afterEach(() => {
+        mock.clearAll();
     });
 
     test('Should run wildcard search', async () => {
@@ -44,7 +51,22 @@ describe('ElasticsearchService', () => {
         expect(res).toMatchObject({status: 'pass'});
     });
 
-    test('indiceGetMapping', async () => {
+    test('indice update mapping', async () => {
+        mock.add(
+            {
+                method: ['PUT'],
+                path: '/test_lib/_mapping'
+            },
+            () => ({status: 'pass'})
+        );
+
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
+        const res = await esService.indiceUpdateMapping('test_lib', {id: {type: 'wildcard'}});
+
+        expect(res).toMatchObject({status: 'pass'});
+    });
+
+    test('indice get mapping', async () => {
         mock.add(
             {
                 method: ['GET'],
@@ -59,13 +81,43 @@ describe('ElasticsearchService', () => {
         expect(res).toMatchObject({test_lib: {mappings: {properties: {id: {type: 'wildcard'}}}}});
     });
 
+    test('indice create', async () => {
+        mock.add(
+            {
+                method: ['PUT'],
+                path: '/test_lib'
+            },
+            () => ({status: 'pass'})
+        );
+
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
+        const res = await esService.indiceCreate('test_lib');
+
+        expect(res).toMatchObject({status: 'pass'});
+    });
+
+    test('indice delete', async () => {
+        mock.add(
+            {
+                method: ['DELETE'],
+                path: '/test_lib'
+            },
+            () => ({status: 'pass'})
+        );
+
+        const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
+        const res = await esService.indiceDelete('test_lib');
+
+        expect(res).toMatchObject({status: 'pass'});
+    });
+
     test('indiceExists', async () => {
         mock.add(
             {
                 method: ['HEAD'],
                 path: '/test_lib'
             },
-            () => ({body: true})
+            () => ''
         );
 
         const esService = elasticsearchService({'core.infra.elasticsearch': mockClient});
@@ -74,7 +126,7 @@ describe('ElasticsearchService', () => {
         expect(res).toBe(true);
     });
 
-    test('index', async () => {
+    test('index data', async () => {
         mock.add(
             {
                 method: ['PUT'],
@@ -88,7 +140,7 @@ describe('ElasticsearchService', () => {
         await esService.indexData('test_lib', '1', {});
     });
 
-    test('update', async () => {
+    test('update data', async () => {
         mock.add(
             {
                 method: ['POST'],
@@ -102,7 +154,7 @@ describe('ElasticsearchService', () => {
         await esService.updateData('test_lib', '1', {});
     });
 
-    test('delete', async () => {
+    test('delete data', async () => {
         mock.add(
             {
                 method: ['POST'],
@@ -130,7 +182,7 @@ describe('ElasticsearchService', () => {
         await esService.indiceDelete('test_lib');
     });
 
-    test('deleteDocument', async () => {
+    test('delete document', async () => {
         mock.add(
             {
                 method: ['DELETE'],

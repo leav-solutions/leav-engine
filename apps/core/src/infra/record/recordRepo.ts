@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {estypes} from '@elastic/elasticsearch';
 import {aql} from 'arangojs';
 import {GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
 import {GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
@@ -117,9 +118,13 @@ export default function ({
     return {
         async search(library: string, query: string, from?: number, size?: number): Promise<IList<IRecord>> {
             const result = await elasticsearchService.wildcardSearch(library, query, from, size);
-            const records = result.hits.hits.map(h => ({id: h._id, library, ...h._source}));
 
-            return {totalCount: result.hits.total.value, list: records};
+            const records = result.hits.hits.map(h => ({id: h._id, library, ...(h._source as IRecord)}));
+
+            return {
+                totalCount: (result.hits.total as estypes.SearchTotalHits).value,
+                list: records
+            };
         },
         async find({
             libraryId,

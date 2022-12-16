@@ -377,6 +377,7 @@ const valueDomain = function ({
             values = await Promise.all(
                 values.map(v => _runActionsList(ActionsListEvents.GET_VALUE, v, attr, {id: recordId}, library, ctx))
             );
+
             return values;
         },
         async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
@@ -464,6 +465,21 @@ const valueDomain = function ({
                 ctx
             );
 
+            await eventsManager.sendDatabaseEvent(
+                {
+                    action: EventAction.VALUE_SAVE,
+                    data: {
+                        libraryId: library,
+                        recordId,
+                        attributeId: attributeProps.id,
+                        value: {new: savedVal}
+                    }
+                },
+                ctx
+            );
+
+            await updateRecordLastModif(library, recordId, ctx);
+
             // Apply actions list on value
             let processedValue = await _runActionsList(
                 ActionsListEvents.GET_VALUE,
@@ -482,8 +498,6 @@ const valueDomain = function ({
                 library,
                 ctx
             });
-
-            await updateRecordLastModif(library, recordId, ctx);
 
             return {...savedVal, ...processedValue};
         },
@@ -602,6 +616,20 @@ const valueDomain = function ({
                                       ctx
                                   );
 
+                        // TODO: get old value ?
+                        await eventsManager.sendDatabaseEvent(
+                            {
+                                action: EventAction.VALUE_SAVE,
+                                data: {
+                                    libraryId: library,
+                                    recordId,
+                                    attributeId: attributeProps.id,
+                                    value: {new: savedVal}
+                                }
+                            },
+                            ctx
+                        );
+
                         let processedValue = await _runActionsList(
                             ActionsListEvents.GET_VALUE,
                             savedVal,
@@ -619,20 +647,6 @@ const valueDomain = function ({
                         });
 
                         prevRes.values.push(processedValue);
-
-                        // TODO: get old value ?
-                        await eventsManager.sendDatabaseEvent(
-                            {
-                                action: EventAction.VALUE_SAVE,
-                                data: {
-                                    libraryId: library,
-                                    recordId,
-                                    attributeId: attributeProps.id,
-                                    value: {new: savedVal}
-                                }
-                            },
-                            ctx
-                        );
                     } catch (e) {
                         if (
                             !e.type ||

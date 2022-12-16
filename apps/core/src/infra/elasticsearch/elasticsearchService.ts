@@ -49,15 +49,21 @@ interface ISearchResponse<T> {
 export interface IElasticsearchService {
     client?: Client;
     indiceGetMapping?(index: string): Promise<estypes.IndicesGetMappingResponse>;
-    indiceUpdateMapping?(index: string, mappings: {[field: string]: {[type: string]: string}}): Promise<void>;
-    indiceCreate?(index: string, mappings?: {[field: string]: {[type: string]: string}}): Promise<void>;
-    indiceDelete?(index: string): Promise<void>;
+    indiceUpdateMapping?(
+        index: string,
+        mappings: {[field: string]: {[type: string]: string}}
+    ): Promise<estypes.IndicesPutMappingResponse>;
+    indiceCreate?(
+        index: string,
+        mappings?: {[field: string]: {[type: string]: string}}
+    ): Promise<estypes.IndicesCreateResponse>;
+    indiceDelete?(index: string): Promise<estypes.IndicesDeleteResponse>;
     indiceExists?(index: string): Promise<estypes.IndicesExistsResponse>;
-    indexData?(index: string, documentId: string, data: any): Promise<void>;
-    updateData?(index: string, documentId: string, data: any): Promise<void>;
-    deleteData?(index: string, documentId: string, attributeId: string): Promise<void>;
-    deleteDocument?(index: string, documentId: string): Promise<void>;
-    wildcardSearch?(index: string, query: string, from?: number, size?: number): Promise<any>;
+    indexData?(index: string, documentId: string, data: any): Promise<estypes.IndexResponse>;
+    updateData?(index: string, documentId: string, data: any): Promise<estypes.UpdateResponse>;
+    deleteData?(index: string, documentId: string, attributeId: string): Promise<estypes.DeleteResponse>;
+    deleteDocument?(index: string, documentId: string): Promise<estypes.DeleteResponse>;
+    wildcardSearch?(index: string, query: string, from?: number, size?: number): Promise<estypes.SearchResponse>;
 }
 
 interface IDeps {
@@ -70,20 +76,23 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
         async indiceGetMapping(index: string): Promise<estypes.IndicesGetMappingResponse> {
             return client.indices.getMapping({index});
         },
-        async indiceUpdateMapping(index: string, mappings: {[field: string]: {[type: string]: string}}): Promise<void> {
-            await client.indices.putMapping({index, properties: mappings});
+        async indiceUpdateMapping(
+            index: string,
+            mappings: {[field: string]: {[type: string]: string}}
+        ): Promise<estypes.IndicesPutMappingResponse> {
+            return client.indices.putMapping({index, properties: mappings});
         },
         async indiceExists(index: string): Promise<estypes.IndicesExistsResponse> {
             return client.indices.exists({index});
         },
-        async indexData(index: string, documentId: string, data: any): Promise<void> {
-            await client.index({index, id: documentId, body: data, refresh: true});
+        async indexData(index: string, documentId: string, data: any): Promise<estypes.IndexResponse> {
+            return client.index({index, id: documentId, body: data, refresh: true});
         },
-        async updateData(index: string, documentId: string, data: any): Promise<void> {
-            await client.update({index, id: documentId, body: {doc: data}, refresh: true});
+        async updateData(index: string, documentId: string, data: any): Promise<estypes.UpdateResponse> {
+            return client.update({index, id: documentId, body: {doc: data}, refresh: true});
         },
-        async deleteData(index: string, documentId: string, attributeId: string): Promise<void> {
-            await client.update({
+        async deleteData(index: string, documentId: string, attributeId: string): Promise<estypes.DeleteResponse> {
+            return client.update({
                 index,
                 id: documentId,
                 body: {
@@ -95,8 +104,11 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
                 refresh: true
             });
         },
-        async indiceCreate(index: string, mappings?: {[field: string]: {[type: string]: string}}): Promise<void> {
-            await client.indices.create({
+        async indiceCreate(
+            index: string,
+            mappings?: {[field: string]: {[type: string]: string}}
+        ): Promise<estypes.IndicesCreateResponse> {
+            return client.indices.create({
                 index,
                 ...(!!mappings && {
                     mappings: {
@@ -107,13 +119,13 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
                 })
             });
         },
-        async indiceDelete(index: string): Promise<void> {
-            await client.indices.delete({index});
+        async indiceDelete(index: string): Promise<estypes.IndicesDeleteResponse> {
+            return client.indices.delete({index});
         },
-        async deleteDocument(index: string, documentId: string): Promise<void> {
-            await client.delete({index, id: documentId, refresh: true});
+        async deleteDocument(index: string, documentId: string): Promise<estypes.DeleteResponse> {
+            return client.delete({index, id: documentId, refresh: true});
         },
-        async wildcardSearch(index: string, query, from?: number, size?: number): Promise<any> {
+        async wildcardSearch(index: string, query, from?: number, size?: number): Promise<estypes.SearchResponse> {
             const mapping = await client.indices.getMapping({index});
             const fields = Object.keys(mapping[index]?.mappings?.properties);
 
@@ -129,7 +141,7 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
                         filter: {
                             bool: {
                                 should: words.map(w => fields.map(f => ({wildcard: {[f]: {value: `*${w}*`}}}))).flat(),
-                                minimum_should_match: words.length
+                                minimum_should_match: 1
                             }
                         }
                     }
