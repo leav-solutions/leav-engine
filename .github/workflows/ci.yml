@@ -83,7 +83,7 @@ jobs:
       - name: Runs Elasticsearch
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
-          stack-version: 8.5.0
+          stack-version: 8.5.3
       - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/core
@@ -137,7 +137,7 @@ jobs:
       - name: Runs Elasticsearch
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
-          stack-version: 8.5.0
+          stack-version: 8.5.3
       - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/core
