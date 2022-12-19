@@ -139,6 +139,7 @@ jobs:
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
           stack-version: 8.5.3
+          security-enabled: false
       - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/core
