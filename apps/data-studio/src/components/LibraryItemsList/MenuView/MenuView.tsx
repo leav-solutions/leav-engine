@@ -16,15 +16,15 @@ import {addInfo} from 'redux/infos';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
+import {ViewInput, ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
-import {IAddViewMutationVariablesView} from '../../../graphQL/mutations/views/saveViewMutation';
 import {useLang} from '../../../hooks/LangHook/LangHook';
-import {localizedTranslation} from '../../../utils';
+import {localizedTranslation, prepareView} from '../../../utils';
 import {InfoChannel, InfoType, TypeSideItem} from '../../../_types/types';
 import IconViewType from '../../IconViewType/IconViewType';
 import FiltersDropdown from '../FiltersDropdown';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
+import {useUser} from '../../../hooks/UserHook/UserHook';
 
 interface IMenuViewProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
@@ -51,6 +51,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const dispatch = useAppDispatch();
     const {display} = useAppSelector(state => state);
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
+    const [user] = useUser();
 
     const {addView} = useAddViewMutation(library.id);
 
@@ -65,6 +66,45 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         );
     };
 
+    const _resetView = () => {
+        searchDispatch({
+            type: SearchActionTypes.CHANGE_VIEW,
+            view: searchState.view.current
+        });
+    };
+
+    const _getNewViewFromSearchState = (): ViewInput => {
+        // Fields
+        let viewFields: string[] = [];
+
+        if (searchState.view.current.display.type === ViewTypes.list) {
+            viewFields = searchState.fields.map(f => f.key);
+        }
+
+        return {
+            ..._.omit(searchState.view.current, ['id', 'owner']),
+            library: library.id,
+            label: {[defaultLang]: t('view.add-view.title')},
+            display: searchState.display,
+            sort: searchState.sort.active ? {field: searchState.sort.field, order: searchState.sort.order} : undefined,
+            filters: getRequestFromFilters(searchState.filters),
+            valuesVersions: searchState.valuesVersions
+                ? objectToNameValueArray(searchState.valuesVersions)
+                      .map(version => ({
+                          treeId: version?.name ?? null,
+                          treeNode: version?.value?.id ?? null
+                      }))
+                      .filter(v => v.treeId !== null && v.treeNode !== null)
+                : null,
+            settings: [
+                {
+                    name: viewSettingsField,
+                    value: viewFields
+                }
+            ]
+        };
+    };
+
     const _saveView = async () => {
         if (searchState.view.current.id !== defaultView.id) {
             try {
@@ -77,29 +117,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
 
                 // save view in backend
                 await addView({
-                    view: {
-                        ..._.omit(searchState.view.current, 'owner'),
-                        library: library.id,
-                        sort: searchState.sort.active
-                            ? {field: searchState.sort.field, order: searchState.sort.order}
-                            : undefined,
-                        display: searchState.display,
-                        filters: getRequestFromFilters(searchState.filters),
-                        valuesVersions: searchState.valuesVersions
-                            ? objectToNameValueArray(searchState.valuesVersions)
-                                  .map(version => ({
-                                      treeId: version?.name ?? null,
-                                      treeNode: version?.value?.id ?? null
-                                  }))
-                                  .filter(v => v.treeId !== null && v.treeNode !== null)
-                            : null,
-                        settings: [
-                            {
-                                name: viewSettingsField,
-                                value: viewFields
-                            }
-                        ]
-                    }
+                    view: {..._getNewViewFromSearchState(), id: searchState.view.current.id}
                 });
 
                 searchDispatch({
@@ -119,20 +137,17 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         }
     };
 
-    const _resetView = () => {
-        searchDispatch({
-            type: SearchActionTypes.CHANGE_VIEW,
-            view: searchState.view.current
-        });
-    };
-
     const _handleAddView = async (viewType: ViewTypes) => {
-        const newView: IAddViewMutationVariablesView = {
-            ..._.omit(defaultView, ['id', 'owner']),
-            label: {[defaultLang]: t('view.add-view.title')},
-            library: library.id,
-            display: {type: viewType, size: ViewSizes.MEDIUM},
-            filters: []
+        // Fields
+        let viewFields: string[] = [];
+
+        if (searchState.view.current.display.type === ViewTypes.list) {
+            viewFields = searchState.fields.map(f => f.key);
+        }
+
+        const newView: ViewInput = {
+            ..._getNewViewFromSearchState(),
+            display: {...searchState.display, type: viewType}
         };
 
         // save view in backend
@@ -142,12 +157,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
 
         searchDispatch({
             type: SearchActionTypes.CHANGE_VIEW,
-            view: {
-                ...newView,
-                owner: true,
-                id: newViewRes.data.saveView.id,
-                filters: []
-            }
+            view: prepareView(newViewRes.data.saveView, searchState.attributes, searchState.library.id, user?.userId)
         });
 
         searchDispatch({

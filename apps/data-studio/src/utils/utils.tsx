@@ -7,6 +7,7 @@ import {gql} from 'graphql-tag';
 import {i18n, TFunction} from 'i18next';
 import _, {pick} from 'lodash';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
 import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
 import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
@@ -411,7 +412,7 @@ export const getInitials = (label: string, length: number = 2) => {
  * Prepare view coming from the server to be used in the app
  */
 export const prepareView = (
-    view: GET_VIEW_view,
+    view: GET_VIEW_view | ADD_VIEW_saveView,
     attributes: IAttribute[],
     libraryId: string,
     userId: string
