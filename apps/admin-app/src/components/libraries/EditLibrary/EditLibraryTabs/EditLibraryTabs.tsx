@@ -86,18 +86,6 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
             }
         },
         {
-            key: 'navigator',
-            mustBeDisplayed: !isCreationMode && library.permissions.access_library,
-            menuItem: t('navigator.title'),
-            render: () => {
-                return (
-                    <Tab.Pane key="navigator" className="height100" style={{padding: '0', border: '0px none'}}>
-                        <NavigatorTab library={library} />
-                    </Tab.Pane>
-                );
-            }
-        },
-        {
             key: 'purge',
             mustBeDisplayed: !isCreationMode,
             menuItem: t('libraries.purge.title'),
