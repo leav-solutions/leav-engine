@@ -41,11 +41,6 @@ jest.mock('./FormsTab', () => {
         return <div>FormsTab</div>;
     };
 });
-jest.mock('./NavigatorTab', () => {
-    return function NavigatorTab() {
-        return <div>NavigatorTab</div>;
-    };
-});
 
 describe('EditLibraryForm', () => {
     const attributes: Mockify<GET_LIB_BY_ID_libraries_list_attributes[]> = [
@@ -90,7 +85,6 @@ describe('EditLibraryForm', () => {
         expect(screen.getByText(/information/)).toBeInTheDocument();
         expect(screen.getByText(/permissions/)).toBeInTheDocument();
         expect(screen.getByText(/attributes/)).toBeInTheDocument();
-        expect(screen.getByText(/navigator/)).toBeInTheDocument();
     });
 
     test('Render tabs for new lib', async () => {
