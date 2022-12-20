@@ -65,6 +65,10 @@ describe('RecordDomain', () => {
                 getLibraryFullTextAttributes: global.__mockPromise([])
             };
 
+            const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
+                getLibraryPermission: global.__mockPromise(true)
+            };
+
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
                 sendDatabaseEvent: global.__mockPromise()
             };
@@ -74,7 +78,8 @@ describe('RecordDomain', () => {
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
             });
 
             const createdRecord = await recDomain.createRecord('test', ctx);

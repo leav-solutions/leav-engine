@@ -630,6 +630,17 @@ export default function ({
                 active: true
             };
 
+            const canCreate = await libraryPermissionDomain.getLibraryPermission({
+                action: LibraryPermissionsActions.CREATE_RECORD,
+                userId: ctx.userId,
+                libraryId: library,
+                ctx
+            });
+
+            if (!canCreate) {
+                throw new PermissionError(LibraryPermissionsActions.CREATE_RECORD);
+            }
+
             const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
             await eventsManager.sendDatabaseEvent(
