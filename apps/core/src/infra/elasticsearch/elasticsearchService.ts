@@ -71,6 +71,22 @@ interface IDeps {
 }
 
 export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}): IElasticsearchService {
+    const _deleteAccentsFromData = (data: {[key: string]: any}): any => {
+        const newData = {...data};
+
+        Object.keys(newData).forEach(key => {
+            if (typeof newData[key] === 'string') {
+                newData[key] = newData[key].normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // delete accents
+            }
+
+            if (typeof newData[key] === 'object') {
+                newData[key] = _deleteAccentsFromData(newData[key]);
+            }
+        });
+
+        return newData;
+    };
+
     return {
         client,
         async indiceGetMapping(index: string): Promise<estypes.IndicesGetMappingResponse> {
@@ -85,11 +101,11 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
         async indiceExists(index: string): Promise<estypes.IndicesExistsResponse> {
             return client.indices.exists({index});
         },
-        async indexData(index: string, documentId: string, data: any): Promise<estypes.IndexResponse> {
-            return client.index({index, id: documentId, body: data, refresh: true});
+        async indexData(index: string, documentId: string, data: {[key: string]: any}): Promise<estypes.IndexResponse> {
+            return client.index({index, id: documentId, document: _deleteAccentsFromData(data), refresh: true});
         },
         async updateData(index: string, documentId: string, data: any): Promise<estypes.UpdateResponse> {
-            return client.update({index, id: documentId, body: {doc: data}, refresh: true});
+            return client.update({index, id: documentId, doc: _deleteAccentsFromData(data), refresh: true});
         },
         async deleteData(index: string, documentId: string, attributeId: string): Promise<estypes.DeleteResponse> {
             return client.update({
@@ -129,7 +145,12 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
             const mapping = await client.indices.getMapping({index});
             const fields = Object.keys(mapping[index]?.mappings?.properties);
 
-            const words = query.length ? query.split(' ') : [];
+            const words = query.length
+                ? query
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '')
+                      .split(' ')
+                : [];
 
             const response = await client.search({
                 index,
@@ -140,7 +161,11 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
                         must: {match_all: {}},
                         filter: {
                             bool: {
-                                should: words.map(w => fields.map(f => ({wildcard: {[f]: {value: `*${w}*`}}}))).flat(),
+                                should: words
+                                    .map(w =>
+                                        fields.map(f => ({wildcard: {[f]: {value: `*${w}*`, case_insensitive: true}}}))
+                                    )
+                                    .flat(),
                                 minimum_should_match: 1
                             }
                         }
