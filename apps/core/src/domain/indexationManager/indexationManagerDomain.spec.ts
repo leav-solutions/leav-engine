@@ -77,7 +77,9 @@ describe('Indexation Manager', () => {
 
     test('index database', async () => {
         const mockElasticsearchService: Mockify<IElasticsearchService> = {
-            indexData: jest.fn()
+            indexData: jest.fn(),
+            indiceExists: jest.fn().mockReturnValue(false),
+            indiceCreate: jest.fn()
         };
 
         const mockRecordDomain: Mockify<IRecordDomain> = {
@@ -115,6 +117,7 @@ describe('Indexation Manager', () => {
         await indexation.indexDatabase(ctx, 'test');
         await indexation.indexDatabase(ctx, 'test', ['1337']);
 
+        expect(mockElasticsearchService.indiceCreate).toBeCalledTimes(2);
         expect(mockAttributeDomain.getLibraryFullTextAttributes).toBeCalledTimes(2);
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.getRecordFieldValue).toBeCalledTimes(2);

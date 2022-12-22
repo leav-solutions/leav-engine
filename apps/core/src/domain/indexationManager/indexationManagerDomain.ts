@@ -39,12 +39,27 @@ export default function ({
     'core.domain.attribute': attributeDomain = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
+        const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
+
+        // if index doesn't exist we create it
+        if (!(await elasticsearchService.indiceExists(findRecordParams.library))) {
+            const mappings = fullTextAttributes
+                .map(attr => attr.id)
+                .reduce((acc, attr) => {
+                    acc[attr] = {
+                        type: 'wildcard'
+                    };
+
+                    return acc;
+                }, {});
+
+            await elasticsearchService.indiceCreate(findRecordParams.library, mappings);
+        }
+
         const records = await recordDomain.find({
             params: findRecordParams,
             ctx
         });
-
-        const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
 
         for (const record of records.list) {
             const data = (
