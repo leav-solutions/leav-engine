@@ -73,8 +73,9 @@ interface IDeps {
 export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}): IElasticsearchService {
     const _deleteAccentsFromData = (data: {[key: string]: any}): any => {
         const newData = {...data};
+        const keys = Object.keys(newData);
 
-        Object.keys(newData).forEach(key => {
+        for (const key of keys) {
             if (typeof newData[key] === 'string') {
                 newData[key] = newData[key].normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // delete accents
             }
@@ -82,7 +83,7 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
             if (typeof newData[key] === 'object') {
                 newData[key] = _deleteAccentsFromData(newData[key]);
             }
-        });
+        }
 
         return newData;
     };
@@ -166,7 +167,7 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
                                         fields.map(f => ({wildcard: {[f]: {value: `*${w}*`, case_insensitive: true}}}))
                                     )
                                     .flat(),
-                                minimum_should_match: 1
+                                minimum_should_match: words.length
                             }
                         }
                     }
