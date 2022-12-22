@@ -31,7 +31,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.infra.apiKey': apiKeyRepo = null,
     'core.utils': utils = null
@@ -86,11 +86,7 @@ export default function ({
             const keys = await apiKeyRepo.getApiKeys({params: searchParams, ctx});
 
             if (!keys.list.length) {
-                throw utils.generateExplicitValidationError(
-                    'id',
-                    {msg: Errors.UNKNOWN_API_KEY, vars: {apiKey: id}},
-                    ctx.lang
-                );
+                throw utils.generateExplicitValidationError('id', Errors.UNKNOWN_API_KEY, ctx.lang);
             }
 
             return hideKey ? _hideSecrets(keys.list[0]) : keys.list[0];
