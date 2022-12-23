@@ -71,8 +71,8 @@ interface IDeps {
 }
 
 export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}): IElasticsearchService {
-    const _deleteAccentsFromData = (data: {[key: string]: any}): any => {
-        const newData = {...data};
+    const _deleteAccentsFromData = (data: {[key: string]: any} | string[]): any => {
+        const newData = Array.isArray(data) ? [...data] : {...data};
         const keys = Object.keys(newData);
 
         for (const key of keys) {
@@ -103,10 +103,16 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
             return client.indices.exists({index});
         },
         async indexData(index: string, documentId: string, data: {[key: string]: any}): Promise<estypes.IndexResponse> {
-            return client.index({index, id: documentId, document: _deleteAccentsFromData(data), refresh: true});
+            const normalizedData = _deleteAccentsFromData(data);
+            return client.index({index, id: documentId, document: normalizedData, refresh: true});
         },
-        async updateData(index: string, documentId: string, data: any): Promise<estypes.UpdateResponse> {
-            return client.update({index, id: documentId, doc: _deleteAccentsFromData(data), refresh: true});
+        async updateData(
+            index: string,
+            documentId: string,
+            data: {[key: string]: any}
+        ): Promise<estypes.UpdateResponse> {
+            const normalizedData = _deleteAccentsFromData(data);
+            return client.update({index, id: documentId, doc: normalizedData, refresh: true});
         },
         async deleteData(index: string, documentId: string, attributeId: string): Promise<estypes.DeleteResponse> {
             return client.update({
