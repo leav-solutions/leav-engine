@@ -147,7 +147,7 @@ describe('Indexation', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(1);
+        expect(res.data.data[libNameQuery].list.length).toBe(0);
     });
 
     test('Search records with phrase (no matches)', async () => {

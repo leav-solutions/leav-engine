@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
+import {IAmqpService} from '@leav/message-broker';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IFindRecordParams, IRecordDomain} from 'domain/record/recordDomain';
-import {IAmqpService} from '@leav/message-broker';
 import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
+import Joi from 'joi';
 import {isEqual, pick} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
@@ -39,12 +39,26 @@ export default function ({
     'core.domain.attribute': attributeDomain = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
+        const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
+
+        // if index doesn't exist we create it
+        if (!(await elasticsearchService.indiceExists(findRecordParams.library))) {
+            const mappings = fullTextAttributes
+                .map(attr => attr.id)
+                .reduce((acc, attr) => {
+                    acc[attr] = {
+                        type: 'wildcard'
+                    };
+
+                    return acc;
+                }, {});
+
+            await elasticsearchService.indiceCreate(findRecordParams.library, mappings);
+        }
         const records = await recordDomain.find({
             params: findRecordParams,
             ctx
         });
-
-        const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
 
         for (const record of records.list) {
             const data = (
@@ -54,6 +68,9 @@ export default function ({
                             library: findRecordParams.library,
                             record,
                             attributeId: fta.id,
+                            options: {
+                                forceGetAllValues: true
+                            },
                             ctx
                         });
 
@@ -288,6 +305,9 @@ export default function ({
                         library: data.libraryId,
                         record: {id: data.recordId},
                         attributeId: data.attributeId,
+                        options: {
+                            forceGetAllValues: true
+                        },
                         ctx
                     });
 
@@ -320,6 +340,9 @@ export default function ({
                         library: data.libraryId,
                         record: {id: data.recordId},
                         attributeId: data.attributeId,
+                        options: {
+                            forceGetAllValues: true
+                        },
                         ctx
                     });
 
