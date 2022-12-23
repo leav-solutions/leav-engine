@@ -76,6 +76,10 @@ export default function ({'core.infra.elasticsearch': client = null}: IDeps = {}
         const keys = Object.keys(newData);
 
         for (const key of keys) {
+            if (newData[key] === null) {
+                continue;
+            }
+
             if (typeof newData[key] === 'string') {
                 newData[key] = newData[key].normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // delete accents
             }
