@@ -229,6 +229,7 @@ function ViewPanel(): JSX.Element {
                     }
                 };
                 const cacheData = cache.readQuery<GET_USER_DATA, GET_USER_DATAVariables>(queryToUpdate);
+
                 cache.writeQuery<GET_USER_DATA, GET_USER_DATAVariables>({
                     ...queryToUpdate,
                     data: {
@@ -236,7 +237,7 @@ function ViewPanel(): JSX.Element {
                             global: cacheData.userData.global,
                             data: {
                                 ...cacheData.userData.data,
-                                [keyToUpdate]: mutationResult.data.saveUserData
+                                [keyToUpdate]: mutationResult.data.saveUserData.data[keyToUpdate]
                             }
                         }
                     }
