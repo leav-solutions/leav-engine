@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EllipsisOutlined} from '@ant-design/icons';
+import {CopyOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, SearchOutlined} from '@ant-design/icons';
 import {objectToNameValueArray} from '@leav/utils';
-import {Button, Dropdown, Menu, Typography} from 'antd';
+import {Button, Dropdown, Menu, Tooltip, Typography} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
 import useDeleteViewMutation from 'graphQL/mutations/views/hooks/useDeleteViewMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -99,8 +99,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const ROWS_DESCRIPTION = 3;
 
     const _handleDelete = async (event: any) => {
-        // cancel click view selection
-        event.domEvent.stopPropagation();
+        // stop progation to avoid click on view
+        event.stopPropagation();
 
         await deleteView(view.id);
 
@@ -123,8 +123,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     };
 
     const _handleDuplicate = async (event: any) => {
-        // cancel click view selection
-        event.domEvent.stopPropagation();
+        // stop progation to avoid click on view
+        event.stopPropagation();
 
         try {
             const newViewRes = await addView({
@@ -160,8 +160,8 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     };
 
     const _handleEdit = (event: any) => {
-        // cancel click view selection
-        event.domEvent.stopPropagation();
+        // stop progation to avoid click on view
+        event.stopPropagation();
 
         onEdit(view.id);
     };
@@ -176,9 +176,18 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
     const selected = view.id === searchState.view.current?.id;
 
+    const [isActionsShown, setIsActionsShown] = useState(false);
+
     const viewLabel = localizedTranslation(view.label, lang);
     return (
-        <Wrapper key={view.id} selected={selected} onClick={_changeView} color={view.color}>
+        <Wrapper
+            key={view.id}
+            selected={selected}
+            onClick={_changeView}
+            color={view.color}
+            onMouseEnter={() => setIsActionsShown(true)}
+            onMouseLeave={() => setIsActionsShown(false)}
+        >
             <Handle className="view-handle" {...handleProps} />
             <Infos>
                 <Title data-testid="view-title">
@@ -216,19 +225,42 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                 )}
             </Infos>
 
-            <Dropdown
-                overlay={
-                    <Menu
-                        items={[
-                            {key: 'edit', disabled: !view.owner, onClick: _handleEdit, label: t('global.edit')},
-                            {key: 'duplicate', onClick: _handleDuplicate, label: t('global.duplicate')},
-                            {key: 'delete', disabled: !view.owner, onClick: _handleDelete, label: t('view.delete')}
-                        ]}
-                    ></Menu>
-                }
-            >
-                <CustomButton onClick={e => e.stopPropagation()} icon={<EllipsisOutlined />} />
-            </Dropdown>
+            {isActionsShown && (
+                <>
+                    <Tooltip title={t('global.edit')}>
+                        <Button
+                            key="edit"
+                            onClick={_handleEdit}
+                            disabled={!view.owner}
+                            type="text"
+                            size="small"
+                            shape="circle"
+                            icon={<EditOutlined />}
+                        />
+                    </Tooltip>
+                    <Tooltip title={t('global.duplicate')}>
+                        <Button
+                            key="duplicate"
+                            onClick={_handleDuplicate}
+                            type="text"
+                            size="small"
+                            shape="circle"
+                            icon={<CopyOutlined />}
+                        />
+                    </Tooltip>
+                    <Tooltip title={t('global.delete')}>
+                        <Button
+                            key="delete"
+                            onClick={_handleDelete}
+                            disabled={!view.owner}
+                            type="text"
+                            size="small"
+                            shape="circle"
+                            icon={<DeleteOutlined />}
+                        />
+                    </Tooltip>
+                </>
+            )}
         </Wrapper>
     );
 }
