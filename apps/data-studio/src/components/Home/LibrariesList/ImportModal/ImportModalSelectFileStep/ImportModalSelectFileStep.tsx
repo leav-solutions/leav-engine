@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InboxOutlined} from '@ant-design/icons';
 import {extractArgsFromString} from '@leav/utils';
-import {message, Upload} from 'antd';
-import React from 'react';
+import {message, Spin, Upload} from 'antd';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import * as XLSX from 'xlsx';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
@@ -159,6 +159,8 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
         return true;
     };
 
+    const [loading, setLoading] = useState(false);
+
     const draggerProps = {
         name: 'file',
         multiple: false,
@@ -177,18 +179,28 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                 dispatch({type: ImportReducerActionTypes.SET_OK_BTN, okBtn: res});
             };
 
+            reader.onloadstart = e => {
+                setLoading(true);
+            };
+
+            reader.onloadend = e => {
+                setLoading(false);
+            };
+
             // Prevent default upload. We'll handle it ourselves later on
             return false;
         }
     };
 
     return (
-        <Upload.Dragger {...draggerProps}>
-            <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">{file?.name || t('import.file_selection_instruction')}</p>
-        </Upload.Dragger>
+        <Spin spinning={loading}>
+            <Upload.Dragger {...draggerProps}>
+                <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">{file?.name || t('import.file_selection_instruction')}</p>
+            </Upload.Dragger>
+        </Spin>
     );
 }
 

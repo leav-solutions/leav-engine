@@ -23,6 +23,7 @@ export interface GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute {
     label: any | null;
     multiple_values: boolean;
     system: boolean;
+    readonly: boolean;
     linked_library: GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute_linked_library | null;
 }
 
@@ -48,6 +49,7 @@ export interface GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute {
     label: any | null;
     multiple_values: boolean;
     system: boolean;
+    readonly: boolean;
     linked_tree: GET_ATTRIBUTES_BY_LIB_attributes_list_TreeAttribute_linked_tree | null;
 }
 
@@ -64,6 +66,7 @@ export interface GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute {
     label: any | null;
     multiple_values: boolean;
     system: boolean;
+    readonly: boolean;
     embedded_fields: (GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields | null)[] | null;
 }
 

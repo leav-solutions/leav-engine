@@ -13,6 +13,7 @@ export const getAttributesByLibQuery = gql`
                 label
                 multiple_values
                 system
+                readonly
                 ... on LinkAttribute {
                     linked_library {
                         id

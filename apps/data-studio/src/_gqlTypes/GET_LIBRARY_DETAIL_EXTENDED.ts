@@ -84,6 +84,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttri
     label: any | null;
     multiple_values: boolean;
     system: boolean;
+    readonly: boolean;
     id: string;
     linked_library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute_linked_library | null;
     __typename: 'LinkAttribute';
@@ -96,6 +97,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     label: any | null;
     multiple_values: boolean;
     system: boolean;
+    readonly: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes_LinkAttribute {
@@ -105,6 +107,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     label: any | null;
     multiple_values: boolean;
     system: boolean;
+    readonly: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes_TreeAttribute {
@@ -114,6 +117,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     label: any | null;
     multiple_values: boolean;
     system: boolean;
+    readonly: boolean;
 }
 
 export type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes =
@@ -147,6 +151,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     id: string;
     linked_tree: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree | null;
     system: boolean;
+    readonly: boolean;
 }
 
 export type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes =

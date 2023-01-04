@@ -25,7 +25,8 @@ const mockQueryAttribute: GET_ATTRIBUTES_BY_LIB_attributes_list = {
     },
     multiple_values: false,
     embedded_fields: null,
-    system: false
+    system: false,
+    readonly: false
 };
 
 export const mockAttributeStandard: GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute = {

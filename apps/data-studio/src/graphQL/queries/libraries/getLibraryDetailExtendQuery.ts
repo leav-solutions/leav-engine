@@ -119,6 +119,7 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                     label
                     multiple_values
                     system
+                    readonly
                     ... on StandardAttribute {
                         id
                         ${getEmbeddedFields(depthEmbeddedFields)}
@@ -134,6 +135,7 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                                 label
                                 multiple_values
                                 system
+                                readonly
                                 ... on StandardAttribute {
                                     id
                                     ${getEmbeddedFields(depthEmbeddedFields)}
@@ -169,6 +171,7 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                                         label
                                         multiple_values
                                         system
+                                        readonly
                                         ... on StandardAttribute {
                                             id
                                             ${getEmbeddedFields(depthEmbeddedFields)}
