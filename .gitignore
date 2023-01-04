@@ -80,3 +80,5 @@ apps/core/config/local.js
 
 apps/*/dist
 *.tsbuildinfo
+
+apps/*/apollo.apiKey.js
