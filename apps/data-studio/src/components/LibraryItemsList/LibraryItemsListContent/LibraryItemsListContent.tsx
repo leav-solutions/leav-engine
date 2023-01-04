@@ -27,6 +27,7 @@ import DisplayTypeSelector from '../DisplayTypeSelector';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 import extractAttributesFromLibrary from '../helpers/extractAttributesFromLibrary';
 import getFieldFromKey from '../helpers/getFieldFromKey';
+import LibraryItemsListEmpty from '../LibraryItemsListEmpty';
 import {manageItems} from '../manageItems';
 import MenuItemList from '../MenuItemList';
 import MenuItemListSelected from '../MenuItemListSelected';
@@ -215,6 +216,8 @@ function LibraryItemsListContent({
         : !!selectionState.selection.selected.length ||
           (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected);
 
+    const isEmptyLibrary = !searchState.records.length && !searchState.filters.length && !searchState.fullText.length;
+
     return (
         <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
             <SelectionModeContext.Provider value={selectionMode}>
@@ -231,7 +234,9 @@ function LibraryItemsListContent({
                     <SideItems />
                     {isLoading && <Loading />}
                     {!isLoading && getRecordsError && <ErrorDisplay message={getRecordsError.message} />}
-                    {!isLoading && !getRecordsError && <DisplayTypeSelector />}
+                    {!isLoading &&
+                        !getRecordsError &&
+                        (isEmptyLibrary ? <LibraryItemsListEmpty /> : <DisplayTypeSelector />)}
                 </Wrapper>
             </SelectionModeContext.Provider>
         </SearchContext.Provider>
