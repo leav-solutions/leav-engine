@@ -1,16 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IUserDataRepo} from 'infra/userData/userDataRepo';
+import {IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {IQueryInfos} from '_types/queryInfos';
-import userDataDomain from './userDomain';
-import PermissionError from '../../errors/PermissionError';
+import {i18n} from 'i18next';
 import {IMailerService} from 'infra/mailer/mailerService';
+import {IUserDataRepo} from 'infra/userData/userDataRepo';
 import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import PermissionError from '../../errors/PermissionError';
+import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import {i18n} from 'i18next';
+import userDataDomain from './userDomain';
 
 describe('UserDomain', () => {
     const ctx: IQueryInfos = {
@@ -141,6 +143,13 @@ describe('UserDomain', () => {
     });
 
     describe('Reset password email', () => {
+        const mockGlobalSettingsDomain: Mockify<IGlobalSettingsDomain> = {
+            getSettings: global.__mockPromise({
+                name: 'my app',
+                icon: null
+            })
+        };
+
         test('should send a reset password email', async function () {
             const mockUtils: Mockify<IUtils> = {
                 getFullApplicationEndpoint: jest.fn().mockReturnValue('endpoint')
@@ -159,12 +168,13 @@ describe('UserDomain', () => {
 
             const udd = userDataDomain({
                 config: mockConfig as IConfig,
+                'core.domain.globalSettings': mockGlobalSettingsDomain as IGlobalSettingsDomain,
                 'core.infra.mailer.mailerService': mockMailerService as IMailerService,
                 'core.utils': mockUtils as IUtils,
                 translator: mockTranslator as i18n
             });
 
-            await udd.sendResetPasswordEmail('email@domain.com', 'token', 'login', 'firefox', 'Os X', 'fr');
+            await udd.sendResetPasswordEmail('email@domain.com', 'token', 'login', 'firefox', 'Os X', 'fr', mockCtx);
 
             expect(mockMailerService.sendEmail.mock.calls.length).toBe(1);
         });

@@ -4,9 +4,10 @@
 import ForgotPassword from 'components/ForgotPassword';
 import Login from 'components/Login';
 import ChangePassword from 'components/ResetPassword';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import styled from 'styled-components';
+import useAppName from 'useAppName';
 
 const Background = styled.div`
     position: absolute;
@@ -18,6 +19,12 @@ const Background = styled.div`
 `;
 
 function App() {
+    const appName = useAppName();
+
+    useEffect(() => {
+        document.title = `${appName}`;
+    }, [appName]);
+
     return (
         <Background>
             <BrowserRouter basename={`${process.env.REACT_APP_ENDPOINT ?? '/'}`}>

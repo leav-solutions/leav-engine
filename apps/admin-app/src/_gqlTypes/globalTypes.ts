@@ -131,6 +131,7 @@ export enum PermissionsActions {
     admin_edit_api_key = 'admin_edit_api_key',
     admin_edit_application = 'admin_edit_application',
     admin_edit_attribute = 'admin_edit_attribute',
+    admin_edit_global_settings = 'admin_edit_global_settings',
     admin_edit_library = 'admin_edit_library',
     admin_edit_permission = 'admin_edit_permission',
     admin_edit_tree = 'admin_edit_tree',
@@ -294,6 +295,16 @@ export interface FormInput {
     label?: SystemTranslation | null;
     dependencyAttributes?: string[] | null;
     elements?: FormElementsByDepsInput[] | null;
+}
+
+export interface GlobalSettingsIconInput {
+    library: string;
+    recordId: string;
+}
+
+export interface GlobalSettingsInput {
+    name?: string | null;
+    icon?: GlobalSettingsIconInput | null;
 }
 
 export interface LibraryIconInput {

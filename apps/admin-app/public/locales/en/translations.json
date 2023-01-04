@@ -39,7 +39,12 @@
         "infos": "Information",
         "admin_permissions": "Admin permissions",
         "version": "LEAV Engine v{{version}}",
-        "api_keys": "API keys"
+        "api_keys": "API keys",
+        "customization": {
+            "title": "Customization",
+            "name": "Name",
+            "icon": "Icon"
+        }
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occurred",

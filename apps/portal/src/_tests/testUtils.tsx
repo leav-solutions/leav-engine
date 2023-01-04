@@ -5,10 +5,16 @@ import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, MockedResponse} from '@apollo/client/testing';
 import {MockedLangContextProvider} from '@leav/ui';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
-import React, {PropsWithChildren, ReactElement} from 'react';
+import ApplicationContext from 'context/ApplicationContext';
+import {IApplicationContext} from 'context/ApplicationContext/_types';
+import {PropsWithChildren, ReactElement} from 'react';
+import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {mockApplication} from './mocks/applications';
 
 interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];
+    currentApp?: GET_APPLICATION_BY_ID_applications_list;
     cacheSettings?: InMemoryCacheConfig;
     [key: string]: any;
 }
@@ -16,14 +22,32 @@ interface ICustomRenderOptions extends RenderOptions {
 interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];
     cacheSettings?: InMemoryCacheConfig;
+    currentApp?: GET_APPLICATION_BY_ID_applications_list;
+    globalSettings?: GET_GLOBAL_SETTINGS_globalSettings;
 }
 
-const Providers = ({children, apolloMocks, cacheSettings}: PropsWithChildren<IProvidersProps>) => {
+const Providers = ({
+    children,
+    apolloMocks,
+    cacheSettings,
+    currentApp,
+    globalSettings
+}: PropsWithChildren<IProvidersProps>) => {
     const mockCache = new InMemoryCache(cacheSettings);
+
+    const appContextData: IApplicationContext = {
+        currentApp: currentApp ?? mockApplication,
+        globalSettings: {
+            name: 'My App',
+            icon: null,
+            ...globalSettings
+        }
+    };
+
     return (
         <MockedLangContextProvider>
             <MockedProvider mocks={apolloMocks} cache={mockCache}>
-                {children ?? <></>}
+                <ApplicationContext.Provider value={appContextData}>{children ?? <></>}</ApplicationContext.Provider>
             </MockedProvider>
         </MockedLangContextProvider>
     );

@@ -5,10 +5,12 @@ import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import ApplicationContext from 'context/CurrentApplicationContext';
+import {ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
 import React, {PropsWithChildren, ReactElement} from 'react';
 import {MemoryRouterProps} from 'react-router';
 import {MemoryRouter} from 'react-router-dom';
 import {RootState} from 'redux/store';
+import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
@@ -28,6 +30,7 @@ interface IProvidersProps {
     cacheSettings?: InMemoryCacheConfig;
     routerProps?: MemoryRouterProps;
     storeState?: Partial<RootState>;
+    globalSettings?: GET_GLOBAL_SETTINGS_globalSettings;
 }
 
 const Providers = ({
@@ -35,14 +38,24 @@ const Providers = ({
     apolloMocks,
     cacheSettings,
     routerProps,
-    storeState
+    storeState,
+    globalSettings
 }: PropsWithChildren<IProvidersProps>) => {
+    const appContextData: ICurrentApplicationContext = {
+        currentApp: mockApplicationDetails,
+        globalSettings: {
+            name: 'My App',
+            icon: null,
+            ...globalSettings
+        }
+    };
+
     return (
         <MockStore state={storeState}>
             <MockedProviderWithFragments mocks={apolloMocks} cacheSettings={cacheSettings}>
                 <MockedLangContextProvider>
                     <MockedUserContextProvider>
-                        <ApplicationContext.Provider value={mockApplicationDetails}>
+                        <ApplicationContext.Provider value={appContextData}>
                             <MemoryRouter {...routerProps}>{children as ReactElement}</MemoryRouter>
                         </ApplicationContext.Provider>
                     </MockedUserContextProvider>

@@ -23,7 +23,7 @@ interface INavigationProps {
 function Navigation({tree}: INavigationProps): JSX.Element {
     const {t} = useTranslation();
 
-    const currentApp = useApplicationContext();
+    const appData = useApplicationContext();
 
     const dispatch = useAppDispatch();
     const {activePanel} = useAppSelector(state => state);
@@ -54,7 +54,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
             const baseInfo: IBaseInfo = {
                 content: t('info.active-tree', {
                     tree: treeName,
-                    appLabel: localizedTranslation(currentApp.label, lang),
+                    appLabel: localizedTranslation(appData.currentApp.label, lang),
                     interpolation: {escapeValue: false}
                 }),
                 type: InfoType.basic

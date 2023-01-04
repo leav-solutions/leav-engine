@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AvailableLanguage, TreeBehavior, PermissionsRelation, AttributeType} from './globalTypes';
+import {TreeBehavior, PermissionsRelation, AttributeType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_TREE_BY_ID
@@ -84,5 +84,4 @@ export interface GET_TREE_BY_ID {
 
 export interface GET_TREE_BY_IDVariables {
     id?: string | null;
-    lang?: AvailableLanguage[] | null;
 }

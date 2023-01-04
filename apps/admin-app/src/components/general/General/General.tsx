@@ -9,6 +9,7 @@ import {Header, Icon, Tab, TabProps} from 'semantic-ui-react';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
 import GeneralAdminPermissionsTab from './GeneralAdminPermissionsTab';
 import GeneralApiKeysTab from './GeneralApiKeysTab';
+import GeneralCustomizationTab from './GeneralCustomizationTab';
 import GeneralInfosTab from './GeneralInfosTab';
 
 function General(): JSX.Element {
@@ -37,6 +38,20 @@ function General(): JSX.Element {
                 return (
                     <Tab.Pane key="permissions" className="grow flex-col height100">
                         <GeneralAdminPermissionsTab />
+                    </Tab.Pane>
+                );
+            }
+        });
+    }
+
+    if (userData.permissions[PermissionsActions.admin_edit_global_settings]) {
+        panes.push({
+            key: 'customization',
+            menuItem: t('general.customization.title'),
+            render: () => {
+                return (
+                    <Tab.Pane key="customization" className="grow flex-col height100">
+                        <GeneralCustomizationTab />
                     </Tab.Pane>
                 );
             }

@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getSettingsRepo saveSettings Should return settings 1`] = `
+"
+                    FOR s IN @@value0
+                        FILTER s._key == @value1
+                        RETURN s
+                "
+`;
+
+exports[`getSettingsRepo saveSettings Should return settings 2`] = `
+{
+  "@value0": "core_global_settings",
+  "value1": "1",
+}
+`;
+
+exports[`getSettingsRepo saveSettings Should save settings 1`] = `
+"UPSERT {_key: @value0}
+                    INSERT @value1
+                    UPDATE @value1
+                    IN @@value2
+                    RETURN NEW
+                "
+`;
+
+exports[`getSettingsRepo saveSettings Should save settings 2`] = `
+{
+  "@value2": "core_global_settings",
+  "value0": "1",
+  "value1": {
+    "_key": "1",
+    "icon": {
+      "library": "myLibraryId",
+      "recordId": "42",
+    },
+    "name": "My app name",
+  },
+}
+`;

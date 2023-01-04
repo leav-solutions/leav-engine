@@ -8,6 +8,7 @@ export {default} from './coreApp';
 export {default as export} from './exportApp';
 export {default as filesManager} from './filesManagerApp';
 export {default as form} from './formApp/formApp';
+export {default as globalSettings} from './globalSettingsApp';
 export {default as import} from './importApp';
 export {default as indexationManager} from './indexationManagerApp';
 export {default as library} from './libraryApp';

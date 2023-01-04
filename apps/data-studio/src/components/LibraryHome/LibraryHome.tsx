@@ -23,7 +23,7 @@ export interface ILibraryHomeProps {
 function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
-    const currentApp = useApplicationContext();
+    const appData = useApplicationContext();
     const dispatch = useAppDispatch();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {activePanel} = useAppSelector(state => state);
@@ -70,7 +70,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
         const baseInfo: IBaseInfo = {
             content: t('info.active-lib', {
                 lib: currentLibLabel,
-                appLabel: localizedTranslation(currentApp.label, lang),
+                appLabel: localizedTranslation(appData.currentApp.label, lang),
                 interpolation: {escapeValue: false}
             }),
             type: InfoType.basic

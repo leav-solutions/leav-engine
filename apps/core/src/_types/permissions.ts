@@ -87,7 +87,8 @@ export enum AdminPermissionsActions {
     ACCESS_API_KEYS = 'admin_access_api_keys',
     CREATE_API_KEY = 'admin_create_api_key',
     EDIT_API_KEY = 'admin_edit_api_key',
-    DELETE_API_KEY = 'admin_delete_api_key'
+    DELETE_API_KEY = 'admin_delete_api_key',
+    EDIT_GLOBAL_SETTINGS = 'admin_edit_global_settings'
 }
 
 export type PermissionsActions =
