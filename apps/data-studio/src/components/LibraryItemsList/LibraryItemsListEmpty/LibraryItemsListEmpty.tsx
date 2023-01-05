@@ -43,7 +43,7 @@ const LibraryItemsListEmpty = () => {
                 imageStyle={{
                     height: 60
                 }}
-                description={<span>{t('items_list.no_data')}</span>}
+                description={<span>{t('items_list.no_data')}.</span>}
             >
                 <Row>
                     <Col span={11}>
@@ -56,13 +56,13 @@ const LibraryItemsListEmpty = () => {
                                     className="primary-btn"
                                     onClick={_handleCreateRecord}
                                 >
-                                    {t('global.create')}
+                                    {t('items_list.new_record')}
                                 </PrimaryBtn>
                             </Col>
                         </Row>
                     </Col>
                     <Col span={2}>
-                        <span>|</span>
+                        <span>{t('global.or')}</span>
                     </Col>
                     <Col span={11}>
                         <Row justify="start">
@@ -74,7 +74,7 @@ const LibraryItemsListEmpty = () => {
                                     className="primary-btn"
                                     onClick={_handleImportModalOpen}
                                 >
-                                    {t('import.title')}
+                                    {t('items_list.import_data')}
                                 </PrimaryBtn>
                             </Col>
                         </Row>

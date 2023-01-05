@@ -216,8 +216,6 @@ function LibraryItemsListContent({
         : !!selectionState.selection.selected.length ||
           (selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected);
 
-    const isEmptyLibrary = !searchState.records.length && !searchState.filters.length && !searchState.fullText.length;
-
     return (
         <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
             <SelectionModeContext.Provider value={selectionMode}>
@@ -236,7 +234,7 @@ function LibraryItemsListContent({
                     {!isLoading && getRecordsError && <ErrorDisplay message={getRecordsError.message} />}
                     {!isLoading &&
                         !getRecordsError &&
-                        (isEmptyLibrary ? <LibraryItemsListEmpty /> : <DisplayTypeSelector />)}
+                        (!searchState.records.length ? <LibraryItemsListEmpty /> : <DisplayTypeSelector />)}
                 </Wrapper>
             </SelectionModeContext.Provider>
         </SearchContext.Provider>
