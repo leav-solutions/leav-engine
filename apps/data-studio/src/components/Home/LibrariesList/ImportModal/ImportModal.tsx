@@ -179,7 +179,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
             message.error(error.message);
         }
 
-        return (data?.attributes?.list ?? []).filter(attribute => !attribute.system || attribute.id === 'id');
+        return (data?.attributes?.list ?? []).filter(attribute => !attribute.readonly || attribute.id === 'id');
     };
 
     const _onNotificationsClick = () => {

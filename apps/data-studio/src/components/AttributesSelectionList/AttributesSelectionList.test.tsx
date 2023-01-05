@@ -31,7 +31,8 @@ describe('AttributesSelectionList', () => {
                                     label: {fr: 'test attribute'},
                                     multiple_values: false,
                                     embedded_fields: null,
-                                    system: false
+                                    system: false,
+                                    readonly: false
                                 }
                             ]
                         }
@@ -80,7 +81,8 @@ describe('AttributesSelectionList', () => {
                                     label: {fr: 'attributeA'},
                                     multiple_values: false,
                                     embedded_fields: null,
-                                    system: false
+                                    system: false,
+                                    readonly: false
                                 },
                                 {
                                     id: 'attrB',
@@ -89,7 +91,8 @@ describe('AttributesSelectionList', () => {
                                     label: {fr: 'attributeB'},
                                     multiple_values: false,
                                     embedded_fields: null,
-                                    system: false
+                                    system: false,
+                                    readonly: false
                                 }
                             ]
                         }
