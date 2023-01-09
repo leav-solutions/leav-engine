@@ -5,7 +5,8 @@
     <h2>Design powerful and scalable data models for your apps</h2>
     <p align="center">
         <a href="https://leav-engine.com"><b>Website</b></a> •
-        <a href="https://documentation.leav-engine.com"><b>Documentation</b></a>
+        <a href="https://docs.leav-engine.com"><b>Users Docs</b></a> •
+        <a href="https://developers.leav-engine.com"><b>Developers Docs</b></a>
     </p>
     <p align="center">
         <a href="https://opensource.org/licenses/LGPL-3.0">
