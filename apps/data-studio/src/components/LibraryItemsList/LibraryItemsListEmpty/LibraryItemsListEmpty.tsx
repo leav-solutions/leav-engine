@@ -33,9 +33,6 @@ const LibraryItemsListEmpty = () => {
         setIsImportModalVisible(false);
     };
 
-    const maxBtnsWidth =
-        t('global.create').length > t('import.title').length ? t('global.create').length : t('import.title').length;
-
     return (
         <>
             <Empty
@@ -51,7 +48,9 @@ const LibraryItemsListEmpty = () => {
                             <Col>
                                 <PrimaryBtn
                                     block
-                                    style={{width: `${maxBtnsWidth * 10}px`}}
+                                    style={{
+                                        width: 'fit-content'
+                                    }}
                                     icon={<PlusOutlined />}
                                     className="primary-btn"
                                     onClick={_handleCreateRecord}
@@ -68,7 +67,9 @@ const LibraryItemsListEmpty = () => {
                         <Row justify="start">
                             <Col>
                                 <PrimaryBtn
-                                    style={{width: `${maxBtnsWidth * 10}px`}}
+                                    style={{
+                                        width: 'fit-content'
+                                    }}
                                     block
                                     icon={<CloudUploadOutlined />}
                                     className="primary-btn"
