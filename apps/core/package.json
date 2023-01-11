@@ -71,6 +71,7 @@
     "@leav/config-manager": "workspace:libs/config-manager",
     "@leav/message-broker": "workspace:libs/message-broker",
     "@leav/utils": "workspace:*",
+    "add-filename-increment": "1.0.0",
     "amqplib": "0.8.0",
     "apollo-server": "2.26.0",
     "apollo-server-core": "3.11.1",

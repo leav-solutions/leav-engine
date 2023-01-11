@@ -21,12 +21,16 @@ import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
 import {LibraryBehavior} from '../../_types/library';
-import {AttributeCondition, IRecord} from '../../_types/record';
+import {AttributeCondition, IRecord, Operator} from '../../_types/record';
 import {IRecordDomain} from '../record/recordDomain';
 import {createPreview} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewVersions} from './_constants';
+import {IFileUpload} from '_types/import';
+import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
+import {IUtils} from 'utils/utils';
+import increment from 'add-filename-increment';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -46,6 +50,12 @@ interface IGetOriginalPathParams {
     ctx: IQueryInfos;
 }
 
+interface IStoreFilesParams {
+    library: string;
+    path: string;
+    files: Array<{data: IFileUpload; replace: boolean}>;
+}
+
 export interface IFilesManagerDomain {
     init(): Promise<void>;
     getPreviewVersion(): IPreviewVersion[];
@@ -53,10 +63,12 @@ export interface IFilesManagerDomain {
     forcePreviewsGeneration(params: IForcePreviewsGenerationParams): Promise<boolean>;
     getRootPathByKey(rootKey: string): string;
     getOriginalPath(params: IGetOriginalPathParams): Promise<string>;
+    storeFiles({library, path, files}: IStoreFilesParams, ctx: IQueryInfos): Promise<string[]>;
 }
 
 interface IDeps {
     config?: Config.IConfig;
+    'core.utils'?: IUtils;
     'core.infra.amqpService'?: IAmqpService;
     'core.utils.logger'?: winston.Winston;
     'core.domain.record'?: IRecordDomain;
@@ -65,18 +77,21 @@ interface IDeps {
     'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
+    'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
     'core.infra.record'?: IRecordRepo;
     translator?: i18n;
 }
 
 export default function ({
     config = null,
+    'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.domain.filesManager.helpers.messagesHandler': messagesHandler = null,
+    'core.domain.helpers.storeUploadFile': storeUploadFile = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.infra.record': recordRepo = null,
@@ -171,6 +186,93 @@ export default function ({
                 config.filesManager.routingKeys.events,
                 _onMessage
             );
+        },
+        async storeFiles({library, path, files}: IStoreFilesParams, ctx: IQueryInfos): Promise<string[]> {
+            // get root key of library from config
+            const rootKey = Object.keys(config.filesManager.rootKeys).find(
+                key => config.filesManager.rootKeys[key] === library
+            );
+
+            const rootPath = this.getRootPathByKey(rootKey);
+            const fullPath = `${rootPath}/${path}`;
+
+            const recordIds = [];
+
+            for (const file of files) {
+                // check if file already exists
+                const fileExists = await recordDomain.find({
+                    params: {
+                        library,
+                        filters: [
+                            {
+                                field: FilesAttributes.FILE_NAME,
+                                condition: AttributeCondition.EQUAL,
+                                value: file.data.filename
+                            },
+                            {
+                                operator: Operator.AND
+                            },
+                            {
+                                field: FilesAttributes.FILE_PATH,
+                                condition: AttributeCondition.EQUAL,
+                                value: path
+                            }
+                        ],
+                        withCount: true,
+                        retrieveInactive: true
+                    },
+                    ctx
+                });
+
+                let recordId;
+
+                if (fileExists.totalCount && file.replace) {
+                    recordId = fileExists.list[0].id;
+                } else {
+                    recordId = (await recordDomain.createRecord(library, ctx)).id;
+
+                    // if file already exists, we modify the filename
+                    if (fileExists.totalCount && !file.replace) {
+                        const newPath = increment.path(`${fullPath}/${file.data.filename}`, {
+                            fs: true,
+                            platform: 'darwin'
+                        });
+
+                        file.data.filename = newPath.split('/').pop();
+                    }
+
+                    const systemCtx: IQueryInfos = {
+                        userId: config.defaultUserId,
+                        queryId: 'saveValueBatchOnStoringFiles'
+                    };
+
+                    await valueDomain.saveValueBatch({
+                        library,
+                        recordId,
+                        values: [
+                            {
+                                attribute: FilesAttributes.FILE_NAME,
+                                value: file.data.filename
+                            },
+                            {
+                                attribute: FilesAttributes.FILE_PATH,
+                                value: path
+                            },
+                            {
+                                attribute: FilesAttributes.ROOT_KEY,
+                                value: rootKey
+                            }
+                        ],
+                        ctx: systemCtx
+                    });
+                }
+
+                await storeUploadFile(file.data, fullPath);
+
+                recordIds.push(recordId);
+            }
+
+            return recordIds;
         },
         getPreviewVersion(): IPreviewVersion[] {
             return systemPreviewVersions;

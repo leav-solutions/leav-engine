@@ -8277,6 +8277,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"add-filename-increment@npm:1.0.0":
+  version: 1.0.0
+  resolution: "add-filename-increment@npm:1.0.0"
+  dependencies:
+    strip-filename-increment: ^2.0.1
+  checksum: af013e5f6454225e355db6093e2017d90308b5a2d3dd132a0fc1f01191add2059db629573daa1114efa583d0c686355d4bb6777b07ea91cb25528840e3d14d12
+  languageName: node
+  linkType: hard
+
 "add@npm:2.0.6":
   version: 2.0.6
   resolution: "add@npm:2.0.6"
@@ -11898,6 +11907,7 @@ __metadata:
     "@types/uuid": 7.0.5
     "@types/winston": 2.3.9
     "@types/ws": 8.5.3
+    add-filename-increment: 1.0.0
     amqplib: 0.8.0
     apollo-server: 2.26.0
     apollo-server-core: 3.11.1
@@ -27043,6 +27053,13 @@ __metadata:
   version: 1.0.0
   resolution: "strip-eof@npm:1.0.0"
   checksum: 40bc8ddd7e072f8ba0c2d6d05267b4e0a4800898c3435b5fb5f5a21e6e47dfaff18467e7aa0d1844bb5d6274c3097246595841fbfeb317e541974ee992cac506
+  languageName: node
+  linkType: hard
+
+"strip-filename-increment@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "strip-filename-increment@npm:2.0.1"
+  checksum: 06e1c8947ada4270a1c5967a863d32c95b2bff36b05e779d85ba32b2b253725e7264dab4e30ca9770ecec102e546052beeee80fa26be70c31106c8c885cb6228
   languageName: node
   linkType: hard
 

@@ -10,7 +10,10 @@ import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {IQueryInfos} from '_types/queryInfos';
 import {API_KEY_PARAM_NAME} from '../../_types/auth';
+import {IFileUpload} from '../../_types/import';
+import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 
 export interface IFilesManagerApp {
     init(): Promise<void>;
@@ -23,10 +26,18 @@ interface IDeps {
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
     'core.domain.filesManager'?: IFilesManagerDomain;
     'core.utils.logger'?: winston.Winston;
+    'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
     config?: IConfig;
 }
 
+interface IUploadParams {
+    library: string;
+    path: string;
+    files: Array<{data: Promise<IFileUpload>; replace?: boolean}>;
+}
+
 export default function ({
+    'core.domain.helpers.storeUploadFile': storeUploadFile,
     'core.domain.filesManager': filesManager,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.auth': authApp = null,
@@ -42,13 +53,26 @@ export default function ({
                         ${Object.values(FileType).join(' ')}
                     }
 
+                    input FileInput {
+                        data: Upload!
+                        replace: Boolean
+                    }
+
                     extend type Mutation {
                         forcePreviewsGeneration(libraryId: ID!, recordId: ID, failedOnly: Boolean): Boolean!
+                        upload(library: String!, path: String!, files: [FileInput!]!): [String]!
                     }
                 `,
-
                 resolvers: {
                     Mutation: {
+                        async upload(_, {library, path, files}: IUploadParams, ctx: IQueryInfos): Promise<string[]> {
+                            // progress before resolver?
+                            const filesData = await Promise.all(
+                                files.map(async ({data, replace}) => ({data: await data, replace: replace ?? false}))
+                            );
+
+                            return filesManager.storeFiles({library, path, files: filesData}, ctx);
+                        },
                         async forcePreviewsGeneration(
                             parent,
                             {libraryId, recordId, failedOnly},

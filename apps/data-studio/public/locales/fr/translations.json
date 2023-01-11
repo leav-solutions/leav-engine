@@ -154,7 +154,7 @@
     },
     "items-list-row": {
         "nb-elements": "{{nbItems}} résultats",
-        "switch-to-selection-mode": "Passer au mode séléction",
+        "switch-to-selection-mode": "Passer au mode sélection",
         "edit": "Éditer le record",
         "select-only": "seul",
         "select-all": "tout"

@@ -71,6 +71,7 @@ magick-*
 /previews
 /files
 /imports
+/exports
 /cache
 /exports
 docker/previews
