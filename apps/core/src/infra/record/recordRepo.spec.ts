@@ -414,7 +414,7 @@ describe('RecordRepo', () => {
             beforeEach(() => jest.clearAllMocks());
 
             test('Should not retrieve inactive records', async () => {
-                const records = await recRepo.find({
+                await recRepo.find({
                     libraryId: 'test_lib',
                     filters: [],
                     pagination: null,
@@ -426,7 +426,7 @@ describe('RecordRepo', () => {
             });
 
             test('Should retrieve inactive records if forced', async () => {
-                const records = await recRepo.find({
+                await recRepo.find({
                     libraryId: 'test_lib',
                     filters: [],
                     pagination: null,
@@ -435,6 +435,80 @@ describe('RecordRepo', () => {
                     ctx
                 });
                 expect(mockDbServ.execute.mock.calls[0][0].query.query).not.toMatch('active == true');
+            });
+        });
+
+        test('Handle fulltext search result', async () => {
+            const mockQueryRes = {
+                totalCount: 2,
+                results: [
+                    {
+                        _key: '222536283',
+                        _id: 'ubs/222536283',
+                        _rev: '_WgM_51a--_',
+                        created_at: 1520931427,
+                        modified_at: 1520931427,
+                        ean: '9876543219999999',
+                        visual_simple: '222713677'
+                    },
+                    {
+                        _key: '222536515',
+                        _id: 'ubs/222536515',
+                        _rev: '_WgFARB6--_',
+                        created_at: 1520931648,
+                        modified_at: 1520931648,
+                        ean: '9876543219999999'
+                    }
+                ]
+            };
+
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise(mockQueryRes)
+            };
+
+            const mockCleanupRes = [
+                {
+                    id: '222536283',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                },
+                {
+                    id: '222536515',
+                    created_at: 1520931648,
+                    modified_at: 1520931648,
+                    ean: '9876543219999999'
+                }
+            ];
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
+            };
+
+            const recRepo = recordRepo({
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+            });
+
+            const records = await recRepo.find({
+                libraryId: 'test_lib',
+                filters: [],
+                pagination: null,
+                withCount: true,
+                fulltextSearchResult: ['123456', '789012'],
+                ctx
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/r._key IN/);
+            expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
+
+            expect(records).toEqual({
+                cursor: null,
+                totalCount: 2,
+                list: mockCleanupRes
             });
         });
     });
