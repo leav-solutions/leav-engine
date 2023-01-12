@@ -27,6 +27,7 @@ import DisplayTypeSelector from '../DisplayTypeSelector';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 import extractAttributesFromLibrary from '../helpers/extractAttributesFromLibrary';
 import getFieldFromKey from '../helpers/getFieldFromKey';
+import LibraryItemsListEmpty from '../LibraryItemsListEmpty';
 import {manageItems} from '../manageItems';
 import MenuItemList from '../MenuItemList';
 import MenuItemListSelected from '../MenuItemListSelected';
@@ -231,7 +232,9 @@ function LibraryItemsListContent({
                     <SideItems />
                     {isLoading && <Loading />}
                     {!isLoading && getRecordsError && <ErrorDisplay message={getRecordsError.message} />}
-                    {!isLoading && !getRecordsError && <DisplayTypeSelector />}
+                    {!isLoading &&
+                        !getRecordsError &&
+                        (!searchState.records.length ? <LibraryItemsListEmpty /> : <DisplayTypeSelector />)}
                 </Wrapper>
             </SelectionModeContext.Provider>
         </SearchContext.Provider>

@@ -71,9 +71,11 @@ magick-*
 /files
 /imports
 /cache
+/exports
 docker/previews
 docker/files
 docker/imports
+docker/exports
 
 apps/core/applications/instances
 apps/core/config/local.js

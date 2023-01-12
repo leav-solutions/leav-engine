@@ -21,7 +21,9 @@
         "refresh_page": "Rafraîchir la page",
         "document_title": "LEAV Engine - {{appLabel}}",
         "yes": "Oui",
-        "no": "Non"
+        "no": "Non",
+        "or": "ou",
+        "create": "Créer"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
@@ -109,6 +111,9 @@
         "show-filter-panel": "Montrer les filtres",
         "show_more_links": "Voir plus",
         "deactivate_records": "Désactiver les éléments",
+        "no_data": "Aucun résultat contenant tous les termes de recherche n'a été trouvé",
+        "new_record": "Nouvel élément",
+        "import_data": "Importer des données",
         "table": {
             "preview": "Vignette",
             "selected": "Sélectionner",

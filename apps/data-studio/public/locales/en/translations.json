@@ -21,7 +21,9 @@
         "refresh_page": "Refresh Page",
         "document_title": "LEAV Engine - {{appLabel}}",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "or": "or",
+        "create": "Create"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occurred",
@@ -109,6 +111,9 @@
         "show-filter-panel": "Show filters",
         "show_more_links": "Show more",
         "deactivate_records": "Deactivate records",
+        "no_data": "Your search did not match any documents",
+        "new_record": "New element",
+        "import_data": "Import data",
         "table": {
             "preview": "Preview",
             "selected": "Selected",

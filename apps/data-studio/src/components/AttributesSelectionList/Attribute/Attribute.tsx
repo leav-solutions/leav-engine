@@ -57,13 +57,10 @@ function Attribute({attribute, depth, path, library, parentAttribute}: ICommonAt
                 {label && <SmallText>{attribute.id}</SmallText>}
             </Space>
             <CheckboxWrapper>
-                {state.multiple ? (
-                    <Checkbox checked={isSelected} onChange={_handleClick} />
-                ) : (
-                    <Radio checked={isSelected} onChange={_handleClick} />
-                )}
+                {state.multiple ? <Checkbox checked={isSelected} /> : <Radio checked={isSelected} />}
             </CheckboxWrapper>
         </Item>
     );
 }
+
 export default Attribute;
