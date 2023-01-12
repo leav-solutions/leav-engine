@@ -758,10 +758,10 @@ export default function ({
         },
         async find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>> {
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;
-            let {filters = [] as IRecordFilterLight[], searchQuery} = params;
+            const {filters = [] as IRecordFilterLight[], searchQuery} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort;
-            let searchFilters: IRecordFilterLight[] = [];
+            let fulltextSearchResult;
 
             const isLibraryAccessible = await libraryPermissionDomain.getLibraryPermission({
                 libraryId: params.library,
@@ -774,38 +774,24 @@ export default function ({
                 throw new PermissionError(LibraryPermissionsActions.ACCESS_LIBRARY);
             }
 
-            // format search query
-            searchQuery = searchQuery?.replace(/\s+/g, ' ').trim();
-
             // Add ids filters if searchQuery is defined
             if (typeof searchQuery !== 'undefined' && searchQuery !== '') {
+                // format search query
+                const cleanSearchQuery = searchQuery?.replace(/\s+/g, ' ').trim();
+
                 const {from, size} = fulltextSearchDefaultPagination;
-                const searchRecords = await recordRepo.search(library, searchQuery, from, size);
+                const searchRecords = await recordRepo.search(library, cleanSearchQuery, from, size);
 
-                if (searchRecords.list.length) {
-                    searchFilters = searchRecords.list.flatMap((r, i, arr) =>
-                        i < arr.length - 1
-                            ? [{field: 'id', condition: AttributeCondition.EQUAL, value: r.id}, {operator: Operator.OR}]
-                            : {field: 'id', condition: AttributeCondition.EQUAL, value: r.id}
-                    );
-                }
+                fulltextSearchResult = searchRecords.list.map(r => r.id);
 
-                if (!searchFilters.length) {
+                if (!fulltextSearchResult.length) {
                     return {
                         totalCount: 0,
                         list: [],
                         cursor: {}
                     };
                 }
-
-                if (filters.length && searchFilters.length) {
-                    searchFilters.push({operator: Operator.CLOSE_BRACKET});
-                    searchFilters.unshift({operator: Operator.OPEN_BRACKET});
-                    searchFilters.unshift({operator: Operator.AND});
-                }
             }
-
-            filters = filters.concat(searchFilters);
 
             if (filters.length) {
                 await _checkLogicExpr(filters);
@@ -925,6 +911,7 @@ export default function ({
                 pagination,
                 withCount,
                 retrieveInactive,
+                fulltextSearchResult,
                 ctx
             });
 

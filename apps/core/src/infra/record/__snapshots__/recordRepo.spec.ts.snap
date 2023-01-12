@@ -1,5 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RecordRepo find Handle fulltext search result 1`] = `
+{
+  "ctx": {
+    "requestId": "123465",
+    "userId": "0",
+  },
+  "query": {
+    "_source": [Function],
+    "bindVars": {
+      "@value0": "test_lib",
+      "value1": [
+        "123456",
+        "789012",
+      ],
+      "value2": "test_lib",
+    },
+    "query": "FOR r IN @@value0
+FILTER r._key IN @value1
+SORT r._key ASC
+FILTER r.active == true
+RETURN MERGE(r, {library: @value2})",
+  },
+  "withTotalCount": true,
+}
+`;
+
 exports[`RecordRepo find Should find records 1`] = `
 {
   "ctx": {

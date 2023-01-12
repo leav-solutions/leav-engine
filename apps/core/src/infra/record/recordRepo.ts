@@ -56,21 +56,14 @@ export interface IRecordRepo {
         ctx: IQueryInfos;
     }): Promise<IRecord>;
     deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
-    find({
-        libraryId,
-        filters,
-        sort,
-        pagination,
-        withCount,
-        retrieveInactive,
-        ctx
-    }: {
+    find(params: {
         libraryId: string;
         filters?: IRecordFilterOption[];
         sort?: IRecordSort;
         pagination?: IPaginationParams | ICursorPaginationParams;
         withCount?: boolean;
         retrieveInactive?: boolean;
+        fulltextSearchResult?: string[];
         ctx: IQueryInfos;
     }): Promise<IListWithCursor<IRecord>>;
     search(library: string, query: string, from?: number, size?: number): Promise<IList<IRecord>>;
@@ -132,6 +125,7 @@ export default function ({
             sort,
             pagination,
             withCount,
+            fulltextSearchResult,
             retrieveInactive = false,
             ctx
         }): Promise<IListWithCursor<IRecord>> {
@@ -149,6 +143,11 @@ export default function ({
                 [Operator.OPEN_BRACKET]: aql`(`,
                 [Operator.CLOSE_BRACKET]: aql`)`
             };
+
+            if (fulltextSearchResult) {
+                // Full-text search result is just a list of record IDs. Filters on it before applying all other filters
+                queryParts.push(aql`FILTER r._key IN ${fulltextSearchResult}`);
+            }
 
             if (typeof filters !== 'undefined' && filters.length) {
                 // Get all variables definitions
