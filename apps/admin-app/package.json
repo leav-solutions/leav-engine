@@ -1,7 +1,7 @@
 {
     "name": "admin-app",
     "description": "Administration app",
-    "version": "1.0.0-alpha4",
+    "version": "1.0.0-beta",
     "dependencies": {
         "@apollo/client": "3.3.7",
         "@reduxjs/toolkit": "1.7.1",
