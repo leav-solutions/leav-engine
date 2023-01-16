@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import useLang from 'hooks/useLang';
 import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';

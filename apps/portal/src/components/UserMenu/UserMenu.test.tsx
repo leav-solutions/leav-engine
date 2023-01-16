@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ILangContext, LangContext} from '@leav/ui';
 import userEvent from '@testing-library/user-event';
-import LangContext from 'context/LangContext';
 import UserContext from 'context/UserContext';
-import {mockLangContext} from 'hooks/useLang/__mocks__/useLang';
 import React from 'react';
 import {mockUser} from '_tests/mocks/user';
 import {act, render, screen} from '_tests/testUtils';
@@ -16,6 +15,13 @@ jest.mock('hooks/useAuth/useAuth', () => () => ({
 }));
 
 describe('UserMenu', () => {
+    const mockLangContext: ILangContext = {
+        lang: ['fr'],
+        availableLangs: ['fr', 'en'],
+        defaultLang: 'fr',
+        setLang: jest.fn()
+    };
+
     test('Open menu and click on elements', async () => {
         render(
             <LangContext.Provider value={mockLangContext}>

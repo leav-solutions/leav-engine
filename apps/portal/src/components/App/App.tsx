@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {LangContext} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Layout} from 'antd';
 import Applications from 'components/Applications';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import UserMenu from 'components/UserMenu';
-import LangContext from 'context/LangContext';
 import UserContext from 'context/UserContext';
 import useRedirectionError from 'hooks/useRedirectionError';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
@@ -23,11 +23,13 @@ const Header = styled(Layout.Header)`
     height: 3rem;
     line-height: 3rem;
     background: #f0f0f0;
-    padding-left: 1rem;
+    padding: 0 1rem;
     color: #000;
     position: relative;
     text-align: center;
     box-shadow: 0 1px 2px #ccc;
+    display: flex;
+    align-items: center;
 `;
 
 const Content = styled(Layout.Content)`
@@ -94,6 +96,7 @@ function App(): JSX.Element {
                             src={`/${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
                             alt="LEAV Engine"
                             height="45px"
+                            style={{margin: 'auto'}}
                         />
                         <UserMenu />
                     </Header>
