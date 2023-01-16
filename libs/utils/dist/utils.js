@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -203,4 +203,13 @@ const getCallStack = (depth = 2) => {
     return callers.map(c => c.trim().split(' ').splice(1).join(' @ '));
 };
 exports.getCallStack = getCallStack;
+const getInitials = (label, length = 2) => {
+    if (typeof label !== 'string') {
+        return '?';
+    }
+    const words = label.split(' ').slice(0, length);
+    const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
+    return letters.toUpperCase();
+};
+exports.getInitials = getInitials;
 //# sourceMappingURL=utils.js.map

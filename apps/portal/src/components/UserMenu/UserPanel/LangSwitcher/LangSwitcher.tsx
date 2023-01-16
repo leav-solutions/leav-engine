@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FlagOutlined} from '@ant-design/icons';
+import {useLang} from '@leav/ui';
 import {Button} from 'antd';
-import useLang from 'hooks/useLang';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

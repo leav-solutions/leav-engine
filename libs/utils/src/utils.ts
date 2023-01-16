@@ -194,3 +194,14 @@ export const getCallStack = (depth: number = 2): string[] => {
 
     return callers.map(c => c.trim().split(' ').splice(1).join(' @ '));
 };
+
+export const getInitials = (label: string, length: number = 2) => {
+    if (typeof label !== 'string') {
+        return '?';
+    }
+
+    const words = label.split(' ').slice(0, length);
+    const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
+
+    return letters.toUpperCase();
+};

@@ -11,8 +11,6 @@ import {render, screen, within} from '_tests/testUtils';
 import Applications from './Applications';
 import {CONSULTED_APPS_KEY, FAVORITES_APPS_KEY} from './_constants';
 
-jest.mock('hooks/useLang');
-
 describe('Applications', () => {
     const {location} = window;
     beforeAll(() => {

@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import useLang from 'hooks/useLang';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import React, {useState} from 'react';
 import {GET_APPLICATIONS, GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';

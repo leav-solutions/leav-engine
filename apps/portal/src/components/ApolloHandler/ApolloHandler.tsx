@@ -62,7 +62,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
-            _handleApolloError,
+            (_handleApolloError as unknown) as ApolloLink,
             new HttpLink({
                 uri: process.env.REACT_APP_API_URL
             })

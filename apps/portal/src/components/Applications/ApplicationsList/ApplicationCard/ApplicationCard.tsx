@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {StarFilled, StarOutlined} from '@ant-design/icons';
+import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Card, Typography} from 'antd';
-import useLang from 'hooks/useLang';
 import React, {SyntheticEvent} from 'react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';

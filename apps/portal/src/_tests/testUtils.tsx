@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, MockedResponse} from '@apollo/client/testing';
+import {MockedLangContextProvider} from '@leav/ui';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import React, {PropsWithChildren, ReactElement} from 'react';
 
@@ -20,9 +21,11 @@ interface IProvidersProps {
 const Providers = ({children, apolloMocks, cacheSettings}: PropsWithChildren<IProvidersProps>) => {
     const mockCache = new InMemoryCache(cacheSettings);
     return (
-        <MockedProvider mocks={apolloMocks} cache={mockCache}>
-            {children ?? <></>}
-        </MockedProvider>
+        <MockedLangContextProvider>
+            <MockedProvider mocks={apolloMocks} cache={mockCache}>
+                {children ?? <></>}
+            </MockedProvider>
+        </MockedLangContextProvider>
     );
 };
 

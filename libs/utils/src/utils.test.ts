@@ -8,6 +8,7 @@ import {
     getFileType,
     getGraphqlQueryNameFromLibraryName,
     getGraphqlTypeFromLibraryName,
+    getInitials,
     getInvertColor,
     getLibraryGraphqlNames,
     localizedTranslation,
@@ -157,6 +158,14 @@ describe('utils', () => {
             // It would be hazardous to check the real stack as it might break on any change in jest internals.
             // Just check we have something in the stack
             expect(getCallStack().length).toBeGreaterThanOrEqual(1);
+        });
+    });
+
+    describe('getInitials', () => {
+        test('Return label initials for given length', async () => {
+            expect(getInitials('Dwight Schrute', 2)).toBe('DS');
+            expect(getInitials('Dwight Schrute', 1)).toBe('D');
+            expect(getInitials('Dwight', 2)).toBe('DW');
         });
     });
 });

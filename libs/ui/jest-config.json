@@ -1,0 +1,17 @@
+{
+    "testEnvironment": "jsdom",
+    "moduleFileExtensions": [
+        "ts",
+        "tsx",
+        "js"
+    ],
+    "transform": {
+        "\\.(ts|tsx)$": [
+            "ts-jest",
+            {
+                "isolatedModules": true
+            }
+        ]
+    },
+    "testRegex": ".test.(tsx)$"
+}

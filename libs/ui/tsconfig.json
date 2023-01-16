@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "./src",
+    "composite": true,
+    "module": "esnext",
+    "skipLibCheck": true,
+    "types": ["jest", "@types/jest", "@testing-library/jest-dom"],
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "src"
+  ]
+}
