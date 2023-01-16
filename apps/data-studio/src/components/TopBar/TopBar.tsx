@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {BellOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {Badge, Button} from 'antd';
 import ApplicationSwitcher from 'components/ApplicationSwitcher';
 import {setIsPanelOpen} from 'redux/notifications';
 import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
-import {default as themingVar, default as themingVars} from '../../themingVar';
 import HeaderInfo from '../HeaderInfo';
 import UserMenu from './UserMenu';
 
@@ -21,9 +21,9 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: ${themingVar['@leav-header-height']};
+    height: ${themeVars.headerHeight};
     color: white;
-    background: ${themingVar['@leav-secondary-bg']};
+    background: ${themeVars.secondaryBg};
     box-shadow: 0 1px 2px #ccc;
 `;
 
@@ -33,14 +33,14 @@ const MenuItem = styled.div<IMenuItemProps>`
     align-items: center;
     transition: 275ms ease-out;
     padding: 0 1rem;
-    background: ${props => (props.isActive ? themingVars['@primary-color'] : 'none')};
+    background: ${props => (props.isActive ? themeVars.primaryColor : 'none')};
 
     & > * {
         margin: 0 0.5rem;
     }
 
     &:hover {
-        background: ${themingVars['@primary-color']};
+        background: ${themeVars.primaryColor};
     }
 `;
 

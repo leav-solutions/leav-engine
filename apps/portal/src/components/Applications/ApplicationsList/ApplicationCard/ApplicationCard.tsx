@@ -5,7 +5,7 @@ import {StarFilled, StarOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Card, Typography} from 'antd';
-import React, {SyntheticEvent} from 'react';
+import {SyntheticEvent} from 'react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import ApplicationCover from './ApplicationCover';
@@ -54,7 +54,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
             hoverable
             cover={<ApplicationCover application={application} />}
             onClick={_handleClick}
-            bodyStyle={{padding: '1em'}}
+            bodyStyle={{padding: '.5em'}}
             data-testid={`app-card-${application.id}`}
         >
             <Card.Meta
@@ -64,7 +64,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
                     </Typography.Paragraph>
                 }
                 description={
-                    <Typography.Paragraph ellipsis={{rows: 3, tooltip: description}} style={{marginBottom: 0}}>
+                    <Typography.Paragraph ellipsis={{rows: 3, tooltip: description}}  style={{marginBottom: 0}}>
                         {description}
                     </Typography.Paragraph>
                 }

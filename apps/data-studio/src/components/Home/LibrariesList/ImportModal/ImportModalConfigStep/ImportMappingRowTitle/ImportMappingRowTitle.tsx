@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Space} from 'antd';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {useImportReducerContext} from '../../importReducer/ImportReducerContext';
 import {ISheet, SheetSettingsError} from '../../_types';
 
@@ -16,7 +15,7 @@ interface IImportMappingRowTitleProps {
 const ErrorsWrapper = styled(Space)`
     font-weight: bold;
     margin: 0.5em 0;
-    color: ${themingVar['@error-color']};
+    color: ${themeVars.errorColor};
 `;
 
 function ImportMappingRowTitle({sheet}: IImportMappingRowTitleProps): JSX.Element {

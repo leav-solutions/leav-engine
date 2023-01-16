@@ -1,16 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Input} from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {IFilterInputProps} from '../../Filter';
 
 const Text = styled(Input.TextArea)`
-    background: ${themingVar['@default-bg']} 0% 0% no-repeat padding-box;
-    box-shadow: ${themingVar['@leav-small-shadow']};
-    border: ${themingVar['@leav-border']};
+    background: ${themeVars.defaultBg} 0% 0% no-repeat padding-box;
+    border: 1px solid ${themeVars.borderColor};
     border-radius: 3px;
 `;
 

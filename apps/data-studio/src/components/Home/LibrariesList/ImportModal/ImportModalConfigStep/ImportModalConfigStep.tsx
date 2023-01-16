@@ -2,14 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KeyOutlined, LinkOutlined, WarningOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Select, Space, Table, Tabs, Typography} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {
     GET_ATTRIBUTES_BY_LIB_attributes_list,
     GET_ATTRIBUTES_BY_LIB_attributes_list_LinkAttribute,
@@ -23,7 +22,6 @@ import {ISheet} from '../_types';
 import ImportKeysSelector from './ImportKeysSelector';
 import ImportMappingRowTitle from './ImportMappingRowTitle';
 import ImportSheetSettings from './ImportSheetSettings';
-import moment from 'moment';
 
 interface IImportModalConfigStepProps {
     libraries: GET_LIBRARIES_LIST_libraries_list[];
@@ -140,164 +138,156 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         _changeSheetProperty(sheetIndex, {treeLinkLibrary, keyToAttributes});
     };
 
-    return (
-        <Tabs type="card">
-            {sheets.map((sheet, sheetIndex) => {
-                const isSheetIgnored = sheet.type === ImportType.IGNORE;
-                const displayedRows = sheet.data.slice(0, 3);
-                const _handleSelectKey = (columnIndex: number) => (keyType: 'key' | 'keyTo', value: boolean) => {
-                    const newProps: Partial<ISheet> = {};
-                    const colId = sheet.mapping[columnIndex];
-                    const changedProp = keyType;
-                    const otherPropToCheck = keyType === 'key' ? 'keyTo' : 'key';
-                    const changedPropColumnIndex = keyType === 'key' ? 'keyColumnIndex' : 'keyToColumnIndex';
-                    const otherPropToCheckColumnIndex = keyType === 'key' ? 'keyToColumnIndex' : 'keyColumnIndex';
+    const tabItems = sheets.map((sheet, sheetIndex) => {
+        const isSheetIgnored = sheet.type === ImportType.IGNORE;
+        const displayedRows = sheet.data.slice(0, 3);
+        const _handleSelectKey = (columnIndex: number) => (keyType: 'key' | 'keyTo', value: boolean) => {
+            const newProps: Partial<ISheet> = {};
+            const colId = sheet.mapping[columnIndex];
+            const changedProp = keyType;
+            const otherPropToCheck = keyType === 'key' ? 'keyTo' : 'key';
+            const changedPropColumnIndex = keyType === 'key' ? 'keyColumnIndex' : 'keyToColumnIndex';
+            const otherPropToCheckColumnIndex = keyType === 'key' ? 'keyToColumnIndex' : 'keyColumnIndex';
 
-                    newProps[changedProp] = value ? colId : null;
-                    newProps[changedPropColumnIndex] = value ? columnIndex : null;
+            newProps[changedProp] = value ? colId : null;
+            newProps[changedPropColumnIndex] = value ? columnIndex : null;
 
-                    if (sheet[otherPropToCheckColumnIndex] === columnIndex) {
-                        newProps[otherPropToCheck] = null;
-                        newProps[otherPropToCheckColumnIndex] = null;
-                    }
+            if (sheet[otherPropToCheckColumnIndex] === columnIndex) {
+                newProps[otherPropToCheck] = null;
+                newProps[otherPropToCheckColumnIndex] = null;
+            }
 
-                    // If changing keyTo, empty mapping for this column as mappable attributes are not the same
-                    if (keyType === 'keyTo') {
-                        newProps.mapping = [...sheet.mapping];
-                        newProps.mapping[columnIndex] = null;
-                    }
+            // If changing keyTo, empty mapping for this column as mappable attributes are not the same
+            if (keyType === 'keyTo') {
+                newProps.mapping = [...sheet.mapping];
+                newProps.mapping[columnIndex] = null;
+            }
 
-                    _changeSheetProperty(sheetIndex, newProps);
-                };
+            _changeSheetProperty(sheetIndex, newProps);
+        };
 
-                const _setStyleOnMappingRow = (_, rowIndex) => ({
-                    style: {
-                        verticalAlign: 'top',
-                        background:
-                            rowIndex === displayedRows.length // Set background color on last row (= mapping row)
-                                ? themingVar['@leav-secondary-bg']
-                                : themingVar['@table-bg']
-                    }
-                });
+        const _setStyleOnMappingRow = (_, rowIndex) => ({
+            style: {
+                verticalAlign: 'top',
+                background:
+                    rowIndex === displayedRows.length // Set background color on last row (= mapping row)
+                        ? themeVars.secondaryBg
+                        : themeVars.defaultBg
+            }
+        });
 
-                const selectKeyOptions = [
-                    {
-                        value: KeysValues.IMPORT,
-                        label: (
-                            <>
-                                <KeyOutlined /> {t('import.import_key')}
-                            </>
-                        )
-                    }
-                ];
+        const selectKeyOptions = [
+            {
+                value: KeysValues.IMPORT,
+                label: (
+                    <>
+                        <KeyOutlined /> {t('import.import_key')}
+                    </>
+                )
+            }
+        ];
 
-                if (sheet.type === ImportType.LINK) {
-                    selectKeyOptions.push({
-                        value: KeysValues.LINK,
-                        label: (
-                            <>
-                                <LinkOutlined /> {t('import.link_key')}
-                            </>
-                        )
-                    });
-                }
+        if (sheet.type === ImportType.LINK) {
+            selectKeyOptions.push({
+                value: KeysValues.LINK,
+                label: (
+                    <>
+                        <LinkOutlined /> {t('import.link_key')}
+                    </>
+                )
+            });
+        }
 
-                const sheetColumns: ColumnsType<object> = Object.keys(sheet.data[0]).map((col, index) => ({
-                    title: col,
-                    dataIndex: col,
-                    onCell: _setStyleOnMappingRow
-                }));
-                sheetColumns.unshift({
-                    title: <></>,
-                    dataIndex: '__root',
-                    onCell: _setStyleOnMappingRow,
-                    width: '250px'
-                });
+        const sheetColumns: ColumnsType<object> = Object.keys(sheet.data[0]).map((col, index) => ({
+            title: col,
+            dataIndex: col,
+            onCell: _setStyleOnMappingRow
+        }));
+        sheetColumns.unshift({
+            title: <></>,
+            dataIndex: '__root',
+            onCell: _setStyleOnMappingRow,
+            width: '250px'
+        });
 
-                const sheetData = displayedRows.map((row, index) => ({...row, key: index}));
+        const sheetData = displayedRows.map((row, index) => ({...row, key: index}));
 
-                // Mapping row
-                if (sheet.type && sheet.library && (sheet.type !== ImportType.LINK || sheet.linkAttribute)) {
-                    const mappingRow = {
-                        key: sheetData.length,
-                        __root: <ImportMappingRowTitle sheet={sheet} />,
-                        ...Object.keys(sheet.data[0]).reduce((allCols, col, idx) => {
-                            const attributeSelectOptions = (sheet.keyToColumnIndex === idx
-                                ? sheet?.keyToAttributes ?? []
-                                : (sheet?.attributes ?? []).filter(
-                                      a => a?.type === AttributeType.simple || a?.type === AttributeType.advanced
-                                  )
-                            ).map(a => ({
-                                value: a.id,
-                                key: a.id,
-                                label: localizedTranslation(a.label, lang) || a.id
-                            }));
+        // Mapping row
+        if (sheet.type && sheet.library && (sheet.type !== ImportType.LINK || sheet.linkAttribute)) {
+            const mappingRow = {
+                key: sheetData.length,
+                __root: <ImportMappingRowTitle sheet={sheet} />,
+                ...Object.keys(sheet.data[0]).reduce((allCols, col, idx) => {
+                    const attributeSelectOptions = (sheet.keyToColumnIndex === idx
+                        ? sheet?.keyToAttributes ?? []
+                        : (sheet?.attributes ?? []).filter(
+                              a => a?.type === AttributeType.simple || a?.type === AttributeType.advanced
+                          )
+                    ).map(a => ({
+                        value: a.id,
+                        key: a.id,
+                        label: localizedTranslation(a.label, lang) || a.id
+                    }));
 
-                            allCols[col] = (
-                                <Space direction="vertical" style={{width: '100%'}}>
-                                    <Select
-                                        style={{width: '100%'}}
-                                        placeholder={t('import.do_not_import')}
-                                        value={sheet.mapping?.[idx]}
-                                        allowClear
-                                        onClear={() => _handleMappingSelect(sheetIndex, idx, null)}
-                                        onSelect={id => _handleMappingSelect(sheetIndex, idx, id)}
-                                        options={attributeSelectOptions}
-                                    />
-                                    <ImportKeysSelector
-                                        sheet={sheet}
-                                        columnIndex={idx}
-                                        onChange={_handleSelectKey(idx)}
-                                    />
-                                </Space>
-                            );
-
-                            return allCols;
-                        }, {})
-                    };
-                    sheetData.push(mappingRow);
-                }
-
-                const tabTitle = (
-                    <Space>
-                        {sheet.name}
-                        {!!state.settingsError[sheet.name] && (
-                            <WarningOutlined style={{color: themingVar['@error-color']}} />
-                        )}
-                    </Space>
-                );
-
-                return (
-                    <Tabs.TabPane tab={tabTitle} key={sheetIndex}>
-                        <SheetWrapper>
-                            <ImportSheetSettings
-                                sheetIndex={sheetIndex}
-                                libraries={libraries}
-                                onLibrarySelect={_handleLibrarySelect}
-                                onImportTypeSelect={_handleImportTypeSelect}
-                                onImportModeSelect={_handleImportModeSelect}
-                                onLinkAttributeSelect={_handleLinkAttributeSelect}
-                                onTreeLinkLibrarySelect={_handleTreeLinkLibrarySelect}
+                    allCols[col] = (
+                        <Space direction="vertical" style={{width: '100%'}}>
+                            <Select
+                                style={{width: '100%'}}
+                                placeholder={t('import.do_not_import')}
+                                value={sheet.mapping?.[idx]}
+                                allowClear
+                                onClear={() => _handleMappingSelect(sheetIndex, idx, null)}
+                                onSelect={id => _handleMappingSelect(sheetIndex, idx, id)}
+                                options={attributeSelectOptions}
                             />
-                            {!isSheetIgnored && (
-                                <Table
-                                    title={() => (
-                                        <Typography.Title level={5}>{t('import.data_overview')}</Typography.Title>
-                                    )}
-                                    columns={sheetColumns}
-                                    dataSource={sheetData}
-                                    size="small"
-                                    tableLayout="auto"
-                                    pagination={{hideOnSinglePage: true}}
-                                    style={{width: '100%', overflow: 'auto'}}
-                                />
-                            )}
-                        </SheetWrapper>
-                    </Tabs.TabPane>
-                );
-            })}
-        </Tabs>
-    );
+                            <ImportKeysSelector sheet={sheet} columnIndex={idx} onChange={_handleSelectKey(idx)} />
+                        </Space>
+                    );
+
+                    return allCols;
+                }, {})
+            };
+            sheetData.push(mappingRow);
+        }
+
+        const tabTitle = (
+            <Space>
+                {sheet.name}
+                {!!state.settingsError[sheet.name] && <WarningOutlined style={{color: themeVars.errorColor}} />}
+            </Space>
+        );
+
+        return {
+            label: tabTitle,
+            key: String(sheetIndex),
+            children: (
+                <SheetWrapper>
+                    <ImportSheetSettings
+                        sheetIndex={sheetIndex}
+                        libraries={libraries}
+                        onLibrarySelect={_handleLibrarySelect}
+                        onImportTypeSelect={_handleImportTypeSelect}
+                        onImportModeSelect={_handleImportModeSelect}
+                        onLinkAttributeSelect={_handleLinkAttributeSelect}
+                        onTreeLinkLibrarySelect={_handleTreeLinkLibrarySelect}
+                    />
+                    {!isSheetIgnored && (
+                        <Table
+                            title={() => <Typography.Title level={5}>{t('import.data_overview')}</Typography.Title>}
+                            columns={sheetColumns}
+                            dataSource={sheetData}
+                            size="small"
+                            tableLayout="auto"
+                            pagination={{hideOnSinglePage: true}}
+                            style={{width: '100%', overflow: 'auto'}}
+                        />
+                    )}
+                </SheetWrapper>
+            )
+        };
+    });
+
+    return <Tabs type="card" items={tabItems} />;
 }
 
 export default ImportModalConfigStep;

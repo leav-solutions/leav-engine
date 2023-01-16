@@ -3,11 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
+import {Button} from 'antd';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'redux/infos';
 import {resetSelection} from 'redux/selection';
@@ -15,7 +14,7 @@ import {useAppDispatch, useAppSelector} from 'redux/store';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {IInfo, ISharedSelected, InfoChannel, InfoType} from '_types/types';
+import {IInfo, InfoChannel, InfoType, ISharedSelected} from '_types/types';
 import {IMessages, OnMessagesFunc} from '../../_types';
 
 interface IAddSelectionButtonProps {
@@ -88,13 +87,13 @@ function AddSelectionButton({allowedLibraries, parent, onMessages}: IAddSelectio
                 }
             }
 
-            onMessages('navigation.notifications.success-add', 'navigation.notifications.error-add', messages);
+            onMessages('navigation.infos.success-add', 'navigation.infos.error-add', messages);
             refreshTreeContent();
         } else {
             const notification: IInfo = {
                 channel: InfoChannel.trigger,
                 type: InfoType.warning,
-                content: t('navigation.notifications.warning-add-no-selection')
+                content: t('navigation.infos.warning-add-no-selection')
             };
 
             dispatch(addInfo(notification));
@@ -108,7 +107,7 @@ function AddSelectionButton({allowedLibraries, parent, onMessages}: IAddSelectio
     }
 
     return (
-        <StandardBtn
+        <Button
             icon={<PlusOutlined />}
             onClick={_handleAddElements}
             aria-label="add-selection"

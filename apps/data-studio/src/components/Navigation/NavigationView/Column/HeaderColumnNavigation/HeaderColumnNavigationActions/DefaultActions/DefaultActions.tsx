@@ -9,10 +9,9 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Dropdown, Menu, message} from 'antd';
+import {Button, Dropdown, message} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
-import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
@@ -95,8 +94,8 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         refreshTreeContent();
     };
 
-    const _handleClickClassifiedIn = () => message.warn(t('global.feature_not_available'));
-    const _handleClickOrder = () => message.warn(t('global.feature_not_available'));
+    const _handleClickClassifiedIn = () => message.warning(t('global.feature_not_available'));
+    const _handleClickOrder = () => message.warning(t('global.feature_not_available'));
 
     const canEditChildren = parent ? parent.permissions.edit_children : activeTree.permissions.edit_children;
     const canDetach = !!parent && parent.permissions.detach;
@@ -176,8 +175,8 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
                         </>
                     )}
                     <span data-testid="dropdown-tree-actions">
-                        <Dropdown placement="bottomRight" overlay={<Menu items={treeActionsMenuItems} />}>
-                            <StandardBtn icon={<IconEllipsisVertical />} />
+                        <Dropdown placement="bottomRight" menu={{items: treeActionsMenuItems}}>
+                            <Button icon={<IconEllipsisVertical />} />
                         </Dropdown>
                     </span>
                 </>

@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu} from 'antd';
+import {Button, Dropdown} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
-import React, {useContext} from 'react';
+import {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setSearchSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -76,24 +76,22 @@ function MenuSelection(): JSX.Element {
     return (
         <span data-testid="dropdown-menu-selection">
             <Dropdown
-                overlay={
-                    <Menu
-                        items={[
-                            !selectionMode
-                                ? {
-                                      key: 'select_all',
-                                      onClick: selectAll,
-                                      label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
-                                  }
-                                : null,
-                            {
-                                key: 'select',
-                                onClick: selectVisible,
-                                label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
-                            }
-                        ]}
-                    ></Menu>
-                }
+                menu={{
+                    items: [
+                        !selectionMode
+                            ? {
+                                  key: 'select_all',
+                                  onClick: selectAll,
+                                  label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
+                              }
+                            : null,
+                        {
+                            key: 'select',
+                            onClick: selectVisible,
+                            label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
+                        }
+                    ]
+                }}
             >
                 <Button icon={<DownOutlined />}>
                     {t('items-list-row.nb-elements', {

@@ -2,13 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
+import {themeVars} from '@leav/ui';
 import {Badge, Button, Input, Spin} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
@@ -22,7 +23,6 @@ import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
-import themingVar from '../../../themingVar';
 import {localizedTranslation, prepareView} from '../../../utils';
 import {IView} from '../../../_types/types';
 import EditView from './EditView';
@@ -32,19 +32,19 @@ const Wrapper = styled.div`
     width: 100%;
     display: flex;
     flex-flow: column nowrap;
-    border-right: ${themingVar['@divider-color']} 1px solid;
+    border-right: ${themeVars.borderLightColor} 1px solid;
     overflow-y: auto;
 `;
 
 const Header = styled.div`
     width: 100%;
-    background-color: ${themingVar['@leav-view-panel-background-title']};
+    background-color: ${themeVars.headerBg};
     display: grid;
     grid-template-columns: repeat(2, auto);
     justify-content: space-between;
     padding: 0.3rem 0.3rem 0.3rem 1rem;
     font-weight: 700;
-    border-bottom: 1px solid ${themingVar['@divider-color']};
+    border-bottom: 1px solid ${themeVars.borderLightColor};
 
     & > * {
         :first-of-type {
@@ -67,8 +67,8 @@ const Header = styled.div`
 
 const SubHeader = styled.div`
     width: 100%;
-    border-top: ${themingVar['@item-active-bg']} 1px solid;
-    border-bottom: ${themingVar['@item-active-bg']} 1px solid;
+    border-top: ${themeVars.activeColor} 1px solid;
+    border-bottom: ${themeVars.activeColor} 1px solid;
     padding: 0.3rem;
     padding-left: 1rem;
     font-weight: 700;
@@ -86,8 +86,8 @@ const SearchWrapper = styled.div`
 const CustomBadge = styled(Badge)`
     margin-left: 8px;
     && > * {
-        background-color: ${themingVar['@divider-color']};
-        color: ${themingVar['@default-text-color']};
+        background-color: ${themeVars.borderLightColor};
+        color: ${themeVars.defaultTextColor};
     }
 `;
 

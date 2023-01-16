@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
 import {objectToNameValueArray} from '@leav/utils';
-import {Badge, Button, Dropdown, Menu, Space, Tooltip} from 'antd';
+import {Badge, Button, Dropdown, MenuProps, Space, Tooltip} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -19,12 +19,12 @@ import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_
 import {ViewInput, ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {useLang} from '../../../hooks/LangHook/LangHook';
+import {useUser} from '../../../hooks/UserHook/UserHook';
 import {localizedTranslation, prepareView} from '../../../utils';
 import {InfoChannel, InfoType, TypeSideItem} from '../../../_types/types';
 import IconViewType from '../../IconViewType/IconViewType';
 import FiltersDropdown from '../FiltersDropdown';
 import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
-import {useUser} from '../../../hooks/UserHook/UserHook';
 
 interface IMenuViewProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
@@ -166,31 +166,29 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         });
     };
 
-    const menu = (
-        <Menu
-            items={[
-                {
-                    key: 'add-group',
-                    type: 'group',
-                    label: t('view.add-view.title'),
-                    children: [
-                        {
-                            key: 'list',
-                            onClick: () => _handleAddView(ViewTypes.list),
-                            icon: <MenuOutlined />,
-                            label: t('view.type-list')
-                        },
-                        {
-                            key: 'cards',
-                            onClick: () => _handleAddView(ViewTypes.cards),
-                            icon: <AppstoreFilled />,
-                            label: t('view.type-cards')
-                        }
-                    ]
-                }
-            ]}
-        />
-    );
+    const menu: MenuProps = {
+        items: [
+            {
+                key: 'add-group',
+                type: 'group',
+                label: t('view.add-view.title'),
+                children: [
+                    {
+                        key: 'list',
+                        onClick: () => _handleAddView(ViewTypes.list),
+                        icon: <MenuOutlined />,
+                        label: t('view.type-list')
+                    },
+                    {
+                        key: 'cards',
+                        onClick: () => _handleAddView(ViewTypes.cards),
+                        icon: <AppstoreFilled />,
+                        label: t('view.type-cards')
+                    }
+                ]
+            }
+        ]
+    };
 
     const _toggleShowFilters = () => {
         dispatch(
@@ -245,7 +243,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                         !searchState.view.current.owner
                     }
                 />
-                <Dropdown overlay={menu} trigger={['click']}>
+                <Dropdown menu={menu} trigger={['click']}>
                     <Button icon={<PlusOutlined />}></Button>
                 </Dropdown>
             </Button.Group>

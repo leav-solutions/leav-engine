@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Dropdown, Menu, Tooltip} from 'antd';
+import {Dropdown, Tooltip} from 'antd';
 import Button, {ButtonSize} from 'antd/lib/button';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import {IconEllipsisHorizontal} from 'assets/icons/IconEllipsisHorizontal';
@@ -79,20 +79,18 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                 <Tooltip title={t('items_list.table.actions-tooltips.more')} key="more_actions">
                     <Dropdown
                         placement="bottomRight"
-                        overlay={
-                            <Menu
-                                className="floating-menu-overlay"
-                                items={moreActions.map(moreAction => ({
-                                    key: moreAction.title,
-                                    onClick: moreAction.onClick,
-                                    label: (
-                                        <>
-                                            {moreAction.icon} {moreAction.title}
-                                        </>
-                                    )
-                                }))}
-                            ></Menu>
-                        }
+                        menu={{
+                            className: 'floating-menu-overlay',
+                            items: moreActions.map(moreAction => ({
+                                key: moreAction.title,
+                                onClick: moreAction.onClick,
+                                label: (
+                                    <>
+                                        {moreAction.icon} {moreAction.title}
+                                    </>
+                                )
+                            }))
+                        }}
                     >
                         <Button
                             size={size}

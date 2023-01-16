@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {Button, Space, Tooltip} from 'antd';
-import Modal from 'antd/lib/modal/Modal';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
+import {themeVars} from '@leav/ui';
+import {Button, Modal, Space, Tooltip} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -21,7 +20,6 @@ import {useTranslation} from 'react-i18next';
 import {VscLayers} from 'react-icons/vsc';
 import {addInfo} from 'redux/infos';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_whoAmI} from '_gqlTypes/CREATE_RECORD';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
@@ -76,7 +74,7 @@ const Container = styled.div`
     height: calc(100vh - 12rem);
     display: grid;
     grid-template-columns: minmax(0, ${modalWidth - sidebarWidth}px) ${sidebarWidth}px;
-    grid-template-rows: 3.5rem auto;
+    grid-template-rows: calc(3.5rem + 1px) auto; // +1px for border
     grid-template-areas:
         'title title'
         'content sidebar';
@@ -89,7 +87,7 @@ const Title = styled.div`
     align-self: center;
     font-size: 1rem;
     padding: 0.5rem;
-    border-bottom: 1px solid ${themingVar['@border-color-base']};
+    border-bottom: 1px solid ${themeVars.borderColor};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -119,7 +117,7 @@ const Sidebar = styled.div`
     overflow-y: scroll;
     position: relative;
     grid-area: sidebar;
-    background: ${themingVar['@leav-secondary-bg']};
+    background: ${themeVars.secondaryBg};
     border-top-right-radius: 3px;
     z-index: 1;
 `;
@@ -127,10 +125,13 @@ const Sidebar = styled.div`
 const ModalFooter = styled.div`
     display: flex;
     justify-content: space-between;
+    padding: 0.5rem 1rem;
 `;
 
 const StyledModal = styled(Modal)`
-    .ant-modal-close-x {
+    .ant-modal-close {
+        top: 0;
+        right: 0;
         width: 4rem;
         height: 4rem;
         line-height: 4rem;
@@ -418,7 +419,8 @@ function EditRecordModal({
 
     if (isCreationMode) {
         footerButtons.push(
-            <PrimaryBtn
+            <Button
+                type="primary"
                 aria-label={t('global.submit')}
                 key="submit"
                 onClick={_handleRecordSubmit}
@@ -426,7 +428,7 @@ function EditRecordModal({
                 loading={saveValuesLoading}
             >
                 {t('global.submit')}
-            </PrimaryBtn>
+            </Button>
         );
     }
 
@@ -448,13 +450,13 @@ function EditRecordModal({
     return open ? (
         <div onClick={e => e.stopPropagation()} onDoubleClick={e => e.stopPropagation()}>
             <StyledModal
-                visible={open}
+                open={open}
                 onCancel={onClose}
                 destroyOnClose
                 cancelText={t('global.cancel')}
                 width="90vw"
                 centered
-                style={{padding: 0, maxWidth: `${modalWidth}px`}}
+                style={{maxWidth: `${modalWidth}px`}}
                 bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
                 footer={footer}
             >

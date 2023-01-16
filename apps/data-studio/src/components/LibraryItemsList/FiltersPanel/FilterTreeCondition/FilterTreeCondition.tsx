@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Dropdown, Menu} from 'antd';
+import {Dropdown} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {IFilterTree, TreeConditionFilter} from '../../../../_types/types';
 import FilterDropdownButton from '../FilterDropdownButton';
@@ -35,18 +34,16 @@ const FilterTreeCondition = ({filter}: IFilterTreeConditionProps) => {
         searchDispatch({type: SearchActionTypes.SET_FILTERS, filters: newFilters});
     };
 
-    const menu = (
-        <Menu
-            items={conditionOptions.map(condition => ({
-                key: condition.value,
-                onClick: () => handleOperatorChange(condition.value),
-                label: condition.text
-            }))}
-        />
-    );
+    const menu = {
+        items: conditionOptions.map(condition => ({
+            key: condition.value,
+            onClick: () => handleOperatorChange(condition.value),
+            label: condition.text
+        }))
+    };
 
     return (
-        <Dropdown disabled={!filter.active} overlay={menu} trigger={['click']}>
+        <Dropdown disabled={!filter.active} menu={menu} trigger={['click']}>
             <FilterDropdownButton data-testid="filter-condition-dropdown">
                 {conditionOptions.filter(c => c.value === filter.condition)[0].text}
             </FilterDropdownButton>

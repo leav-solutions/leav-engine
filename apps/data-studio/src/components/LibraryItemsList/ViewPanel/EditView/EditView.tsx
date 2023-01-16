@@ -5,7 +5,7 @@ import {useMutation} from '@apollo/client';
 import {Checkbox, Divider, Form, Input, Modal, Select} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ViewTypes} from '_gqlTypes/globalTypes';
 import saveViewMutation, {
@@ -112,7 +112,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
         <Modal
             forceRender
             title={t('view.edit-view.title')}
-            visible={visible}
+            open={visible}
             onCancel={_handleCancel}
             onOk={_handleOk}
             confirmLoading={confirmLoading}

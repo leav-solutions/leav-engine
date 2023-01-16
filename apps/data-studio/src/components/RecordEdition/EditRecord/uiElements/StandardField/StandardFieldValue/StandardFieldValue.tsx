@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {AnyPrimitive} from '@leav/utils';
-import {Button, Form, Input, InputRef, Popover, Space} from 'antd';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
+import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import InheritedFieldLabel from 'components/RecordEdition/EditRecord/shared/InheritedFieldLabel';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
@@ -24,7 +24,6 @@ import moment from 'moment';
 import {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-import themingVar from 'themingVar';
 import {stringifyDateRangeValue} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {
@@ -52,7 +51,7 @@ import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 
 const ErrorMessage = styled.div`
-    color: ${themingVar['@error-color']};
+    color: ${themeVars.errorColor};
     font-weight: bold;
 `;
 
@@ -65,7 +64,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
     position: relative;
 
     && input {
-        background: ${themingVar['@default-bg']};
+        background: ${themeVars.defaultBg};
         transition: none;
         border-radius: 0;
         line-height: 2.5em;
@@ -106,7 +105,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
         font-size: 1.1em;
         background: transparent;
         padding: 0 0.5em;
-        color: ${themingVar['@leav-secondary-font-color']};
+        color: ${themeVars.secondaryTextColor};
         transition: all 0.2s ease;
         transition-property: left, top, font-size;
         z-index: 1;
@@ -121,7 +120,7 @@ const InputWrapper = styled.div<{isEditing: boolean}>`
     }
 
     input:disabled {
-        background: ${themingVar['@default-bg']};
+        background: ${themeVars.defaultBg};
     }
 
     &.has-value:not(.format-boolean) label,
@@ -210,6 +209,8 @@ function StandardFieldValue({
     dispatch
 }: IStandardFieldValueProps): JSX.Element {
     const {t} = useTranslation();
+    const {token} = theme.useToken();
+
     const actionsWrapperRef = useRef<HTMLDivElement>();
     const inputRef = useRef<InputRefPossibleTypes>();
 
@@ -512,7 +513,7 @@ function StandardFieldValue({
         top: '1px',
         left: '1px',
         bottom: hasMultipleValuesDisplay ? '0' : '1px',
-        borderRadius: hasMultipleValuesDisplay ? 'none' : themingVar['@border-radius-base']
+        borderRadius: hasMultipleValuesDisplay ? 'none' : token.borderRadius
     };
 
     return (
@@ -521,7 +522,7 @@ function StandardFieldValue({
             <FormWrapper isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
                 <Form>
                     <FormItem>
-                        <Popover placement="topLeft" visible={isErrorVisible} content={errorContent}>
+                        <Popover placement="topLeft" open={isErrorVisible} content={errorContent}>
                             <InputWrapper
                                 isEditing={fieldValue.isEditing}
                                 className={wrapperClasses}
@@ -558,9 +559,9 @@ function StandardFieldValue({
                                         {t('global.cancel')}
                                     </Button>
                                     {(!isValuesListEnabled || isValuesListOpen) && (
-                                        <PrimaryBtn size="small" onClick={_handleClickSubmit}>
+                                        <Button type="primary" size="small" onClick={_handleClickSubmit}>
                                             {t('global.submit')}
-                                        </PrimaryBtn>
+                                        </Button>
                                     )}
                                 </ButtonsWrapper>
                             )}

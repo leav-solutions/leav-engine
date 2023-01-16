@@ -3,11 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
+import {Button} from 'antd';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'redux/navigation';
 import {resetSelection} from 'redux/selection';
@@ -81,7 +80,7 @@ function DetachSelectionButton({onMessages}: IDetachSelectionButtonProps): JSX.E
     };
 
     return (
-        <StandardBtn
+        <Button
             onClick={_handleDetachElements}
             aria-label="detach-selection"
             icon={<DeleteOutlined />}

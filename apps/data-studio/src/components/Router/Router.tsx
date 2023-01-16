@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Layout} from 'antd';
 import Sidebar from 'components/Sidebar';
 import TopBar from 'components/TopBar';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
-import themingVar from 'themingVar';
-import UserPanel from '../UserPanel';
 import NotifsPanel from '../NotifsPanel';
+import UserPanel from '../UserPanel';
 import Routes from './Routes';
 
 const {Header, Content, Sider} = Layout;
@@ -37,7 +37,7 @@ function Router(): JSX.Element {
                     <Sidebar />
                 </Sider>
                 <Layout>
-                    <Header style={{height: themingVar['@leav-header-height'], padding: 0}}>
+                    <Header style={{height: themeVars.headerHeight, padding: 0}}>
                         <TopBar
                             userPanelVisible={userPanelVisible}
                             toggleUserPanelVisible={toggleUserPanelVisible}
@@ -45,7 +45,7 @@ function Router(): JSX.Element {
                         />
                     </Header>
                     <Layout style={{overflow: 'hidden', position: 'relative'}}>
-                        <Content style={{background: themingVar['@default-bg'], overflow: 'hidden'}}>
+                        <Content style={{background: themeVars.defaultBg, overflow: 'hidden'}}>
                             <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
                             <NotifsPanel setNbNotifs={_setNbNotifs} />
                             <Routes />

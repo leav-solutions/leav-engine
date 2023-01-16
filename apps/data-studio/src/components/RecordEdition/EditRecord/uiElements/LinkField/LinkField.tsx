@@ -1,9 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {AntdThemeToken, themeVars} from '@leav/ui';
 import {AnyPrimitive, ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/utils';
-import {Popover, Skeleton, Switch, Table} from 'antd';
+import {Popover, Skeleton, Switch, Table, theme} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
+import {GlobalToken} from 'antd/lib/theme/interface';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
@@ -25,7 +27,6 @@ import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
 import {Reducer, useContext, useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {arrayValueVersionToObject, localizedTranslation} from 'utils';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements_attribute_LinkAttribute} from '_gqlTypes/RECORD_FORM';
@@ -52,12 +53,12 @@ import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import FloatingMenuHandler from './FloatingMenuHandler';
 import ValuesAdd from './ValuesAdd';
 
-const TableWrapper = styled.div<{isValuesAddVisible: boolean}>`
+const TableWrapper = styled.div<{isValuesAddVisible: boolean; $themeToken: AntdThemeToken}>`
     position: relative;
     z-index: ${p => (p.isValuesAddVisible ? 1 : 'auto')};
-    border: 1px solid ${themingVar['@border-color-base']};
+    border: 1px solid ${themeVars.borderColor};
     margin-bottom: 1.5em;
-    border-radius: ${themingVar['@border-radius-base']};
+    border-radius: ${p => p.$themeToken.borderRadius}px;
 
     tr:not(:hover) .floating-menu {
         display: none;
@@ -80,15 +81,17 @@ const TableWrapper = styled.div<{isValuesAddVisible: boolean}>`
     }
 `;
 
-const FieldLabel = styled(Paragraph)`
+const FieldLabel = styled(Paragraph)<{$themeToken: GlobalToken}>`
     && {
         top: calc(50% - 0.9em);
         font-size: 0.9em;
-        background: ${themingVar['@background-color-light']};
+        background: ${themeVars.lightBg};
         padding: 0 0.5em;
-        color: ${themingVar['@leav-secondary-font-color']};
+        color: ${themeVars.secondaryTextColor};
         z-index: 1;
         margin-bottom: 0;
+        border-top-left-radius: ${p => p.$themeToken.borderRadius}px;
+        border-top-right-radius: ${p => p.$themeToken.borderRadius}px;
     }
 `;
 
@@ -119,6 +122,8 @@ function LinkField({
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
+    const {token} = theme.useToken();
+
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const {state: editRecordModalState, dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
     const creationErrors = useContext(CreationErrorContext);
@@ -440,8 +445,8 @@ function LinkField({
     return (
         <>
             {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
-            <TableWrapper isValuesAddVisible={state.isValuesAddVisible}>
-                <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
+            <TableWrapper isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
+                <FieldLabel ellipsis={{rows: 1, tooltip: true}} $themeToken={token}>
                     {element.settings.label}
                     {state.activeScope === FieldScope.INHERITED && (
                         <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
@@ -466,7 +471,7 @@ function LinkField({
             {state.errorMessage && (
                 <Popover
                     placement="bottomLeft"
-                    visible={!!state.errorMessage}
+                    open={!!state.errorMessage}
                     content={<ErrorMessage error={state.errorMessage} onClose={_handleCloseError} />}
                 ></Popover>
             )}

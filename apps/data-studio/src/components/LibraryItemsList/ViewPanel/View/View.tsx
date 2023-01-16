@@ -1,21 +1,21 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CopyOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, SearchOutlined} from '@ant-design/icons';
+import {CopyOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {objectToNameValueArray} from '@leav/utils';
-import {Button, Dropdown, Menu, Tooltip, Typography} from 'antd';
+import {Button, Tooltip, Typography} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
 import useDeleteViewMutation from 'graphQL/mutations/views/hooks/useDeleteViewMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import _ from 'lodash';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {defaultView} from '../../../../constants/constants';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import themingVar from '../../../../themingVar';
 import {localizedTranslation} from '../../../../utils';
 import {IView} from '../../../../_types/types';
 import IconViewType from '../../../IconViewType';
@@ -30,7 +30,7 @@ const Infos = styled.div`
 `;
 
 const Wrapper = styled.div<IWrapperProps>`
-    background: ${({selected}) => (selected ? `${themingVar['@leav-background-active']} ` : 'none')};
+    background: ${({selected}) => (selected ? `${themeVars.activeColor} ` : 'none')};
     padding: 0.5rem;
     display: flex;
     align-items: center;
@@ -47,7 +47,7 @@ const Handle = styled.div`
     font-size: 12px;
     font-family: sans-serif;
     letter-spacing: 2px;
-    color: ${themingVar['@divider-color']};
+    color: ${themeVars.borderLightColor};
     text-shadow: 1px 0 1px black;
 
     &::after {
@@ -65,14 +65,6 @@ const Description = styled.div`
     opacity: 0.8;
     margin-left: 10px;
     overflow: hidden;
-`;
-
-const CustomButton = styled(Button)`
-    background-color: ${themingVar['@default-bg']};
-    transform: scale(0.8);
-    &:hover {
-        background-color: ${themingVar['@default-bg']};
-    }
 `;
 
 interface IViewProps {

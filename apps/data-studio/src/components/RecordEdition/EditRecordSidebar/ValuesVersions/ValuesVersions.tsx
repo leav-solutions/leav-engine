@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {Space} from 'antd';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
@@ -10,7 +11,6 @@ import ValuesVersionConfigurator from 'components/shared/ValuesVersionConfigurat
 import {useTranslation} from 'react-i18next';
 import {GrUndo} from 'react-icons/gr';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {IValueVersion} from '_types/types';
 
 const Wrapper = styled.div`
@@ -20,18 +20,18 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
-    background-color: ${themingVar['@leav-view-panel-background-title']};
+    background-color: ${themeVars.headerBg};
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.3rem 0.3rem 0.3rem 1rem;
     font-weight: 700;
-    border-bottom: 1px solid ${themingVar['@divider-color']};
+    border-bottom: 1px solid ${themeVars.borderLightColor};
 `;
 
 const Footer = styled(Space)`
-    background-color: ${themingVar['@leav-view-panel-background-title']};
-    border-top: 1px solid ${themingVar['@divider-color']};
+    background-color: ${themeVars.headerBg};
+    border-top: 1px solid ${themeVars.borderLightColor};
     justify-content: flex-end;
     padding: 0.3rem;
 `;

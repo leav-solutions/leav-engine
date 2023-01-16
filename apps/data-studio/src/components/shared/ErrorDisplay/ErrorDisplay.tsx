@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled, FrownOutlined, MinusCircleFilled} from '@ant-design/icons';
-import {Result} from 'antd';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
+import {Button, Result} from 'antd';
 import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
@@ -32,7 +31,11 @@ function ErrorDisplay({
 
     const _handleBackHomeClick = () => history.replace('/');
 
-    const BackHomeButton = <PrimaryBtn onClick={_handleBackHomeClick}>{t('global.go_back_home')}</PrimaryBtn>;
+    const BackHomeButton = (
+        <Button type="primary" onClick={_handleBackHomeClick}>
+            {t('global.go_back_home')}
+        </Button>
+    );
 
     const errorByType = {
         [ErrorDisplayTypes.ERROR]: {

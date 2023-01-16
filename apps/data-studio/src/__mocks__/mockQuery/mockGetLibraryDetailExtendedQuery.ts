@@ -38,6 +38,7 @@ export const mockGetLibraryDetailExtendedElement: GET_LIBRARY_DETAIL_EXTENDED_li
                 fr: 'Actif',
                 en: 'Active'
             },
+            readonly: false,
             multiple_values: false,
             system: false
         }

@@ -2,25 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import RecordPreviewWithModal from 'components/shared/RecordPreviewWithModal';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import themingVar from '../../../../../themingVar';
 import {getFileUrl} from '../../../../../utils';
 
 const Detail = styled.div`
     position: relative;
-    min-width: ${themingVar['@leav-navigation-column-width']};
-    max-width: ${themingVar['@leav-navigation-column-width']};
+    min-width: ${themeVars.navigationColumnWidth};
+    max-width: ${themeVars.navigationColumnWidth};
 
     display: grid;
     justify-items: center;
     word-break: break-all;
 
-    background: ${themingVar['@default-bg']};
-    border-right: 1px solid ${themingVar['@divider-color']};
-    border-bottom: 1px solid ${themingVar['@divider-color']};
+    background: ${themeVars.defaultBg};
+    border-right: 1px solid ${themeVars.borderLightColor};
+    border-bottom: 1px solid ${themeVars.borderLightColor};
     padding-bottom: 1rem;
     box-shadow: 0 1 1rem red;
 

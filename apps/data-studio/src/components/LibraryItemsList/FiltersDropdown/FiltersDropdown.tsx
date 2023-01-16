@@ -207,7 +207,7 @@ function FiltersDropdown({
         );
     };
 
-    const _handleVisibleChange = () => setVisible(!visible);
+    const _handleOpenChange = () => setVisible(!visible);
 
     const _handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
@@ -333,14 +333,14 @@ function FiltersDropdown({
         style: {maxHeight: '75vh', overflowY: 'auto'}
     });
 
-    const menu = <CustomMenu items={menuItems} />;
+    const menu = {items: menuItems};
 
     return (
         <Dropdown
             disabled={!!filter && !filter.active}
-            visible={visible}
-            onVisibleChange={_handleVisibleChange}
-            overlay={menu}
+            open={visible}
+            onOpenChange={_handleOpenChange}
+            menu={menu}
             trigger={['click']}
         >
             {button}

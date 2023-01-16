@@ -3,19 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownloadOutlined, LoadingOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {Button, Result, Steps} from 'antd';
-import Modal from 'antd/lib/modal/Modal';
+import {Button, Modal, Result, StepProps, Steps} from 'antd';
 import AttributesSelectionList from 'components/AttributesSelectionList';
 import {getRequestFromFilters} from 'components/LibraryItemsList/FiltersPanel/getRequestFromFilter';
+import useNotification from 'hooks/useNotification';
 import useSearchReducer from 'hooks/useSearchReducer';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'redux/infos';
+import {setIsPanelOpen} from 'redux/notifications';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
 import {useActiveLibrary} from '../../../../../hooks/ActiveLibHook/ActiveLibHook';
-import {getFileUrl} from '../../../../../utils';
 import {EXPORT, EXPORTVariables} from '../../../../../_gqlTypes/EXPORT';
 import {
     AttributeType,
@@ -25,17 +25,13 @@ import {
 } from '../../../../../_gqlTypes/globalTypes';
 import {
     IInfo,
-    ISelectedAttribute,
     InfoChannel,
     InfoPriority,
     InfoType,
+    ISelectedAttribute,
     SharedStateSelectionType
 } from '../../../../../_types/types';
 import ErrorDisplay from '../../../../shared/ErrorDisplay';
-import useNotification from 'hooks/useNotification';
-import {setIsPanelOpen} from 'redux/notifications';
-
-const {Step} = Steps;
 
 export interface IExportModalProps {
     open: boolean;
@@ -176,31 +172,38 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
         onClose();
     };
 
+    const stepsItems: StepProps[] = [
+        {
+            title: t('export.attributes_selection')
+        },
+        {
+            title: t('export.export_generation'),
+            icon: currentStep === ExportSteps.PROCESSING ? <LoadingOutlined /> : null
+        },
+        {
+            title: t('export.export_done'),
+            status: exportError ? 'error' : null
+        }
+    ];
+
     return (
         <Modal
             title={t('export.title')}
             okText={validateButtonLabel}
+            okType="primary"
             cancelText={t('global.cancel')}
             onOk={_handleOk}
             onCancel={onClose}
-            visible={open}
+            open={open}
             closable
             width="90vw"
             centered
             confirmLoading={currentStep === ExportSteps.PROCESSING}
             bodyStyle={{height: 'calc(100vh - 10rem)'}}
-            okButtonProps={{className: 'submit-btn'}}
             cancelButtonProps={{disabled: currentStep === ExportSteps.DONE}}
             destroyOnClose
         >
-            <Steps current={currentStep} style={{marginBottom: '2em'}}>
-                <Step title={t('export.attributes_selection')}></Step>
-                <Step
-                    title={t('export.export_generation')}
-                    icon={currentStep === ExportSteps.PROCESSING ? <LoadingOutlined /> : null}
-                ></Step>
-                <Step title={t('export.export_done')} status={exportError ? 'error' : undefined}></Step>
-            </Steps>
+            <Steps current={currentStep} style={{marginBottom: '2em'}} items={stepsItems} />
             <Content>
                 {currentStep === ExportSteps.ATTRIBUTE_SELECTION && (
                     <AttributesSelectionList

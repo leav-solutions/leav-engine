@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckCircleFilled, CheckOutlined} from '@ant-design/icons';
-import {Button, Card, message, Space, Tooltip} from 'antd';
+import {themeVars} from '@leav/ui';
+import {Button, Card, Space, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import DeactivateRecordBtn from 'components/LibraryItemsList/shared/DeactivateRecordBtn';
 import SelectCellsBtn, {SelectCellsBtnType} from 'components/LibraryItemsList/shared/SelectCellsBtn';
@@ -17,7 +18,6 @@ import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} fr
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {displayTypeToPreviewSize, getFileUrl, localizedTranslation, stopEvent} from 'utils';
-import themingVar from '../../../../themingVar';
 import {
     IItem,
     ISharedSelected,
@@ -32,8 +32,8 @@ import getItemPreviewSize from '../helpers/getItemPreviewSize';
 const buttonsColor = '#333333';
 
 // Using 8 digit hexadecimal notation to add transparency
-const hoverBackgroundColor = `${themingVar['@leav-background-active']}AA`;
-const selectedBackgroundColor = `${themingVar['@leav-background-active']}DF`;
+const hoverBackgroundColor = `${themeVars.activeColor}AA`;
+const selectedBackgroundColor = `${themeVars.activeColor}DF`;
 
 const Item = styled(Card)<{$previewSize: string}>`
     && {
@@ -47,14 +47,14 @@ const Item = styled(Card)<{$previewSize: string}>`
         }
 
         &:hover {
-            outline-color: ${themingVar['@primary-color']};
+            outline-color: ${themeVars.primaryColor};
         }
     }
 `;
 
 const ImageWrapper = styled.div`
     position: relative;
-    border-bottom: 1px solid ${themingVar['@divider-color']};
+    border-bottom: 1px solid ${themeVars.borderLightColor};
 `;
 
 const ActionsWrapper = styled.div`
@@ -159,7 +159,7 @@ const Actions = styled.div`
 
 const CheckedIconWrapper = styled.div`
     font-size: 3em;
-    color: ${themingVar['@primary-color']};
+    color: ${themeVars.primaryColor};
 `;
 
 interface IItemTileDisplayProps {
@@ -233,12 +233,6 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     const _handleSelect = e => {
         stopEvent(e);
         selectedToggle(e);
-    };
-
-    const _handleDelete = e => {
-        stopEvent(e);
-
-        message.warn(t('global.feature_not_available'));
     };
 
     const isChecked = isSelected || isAllSelected;

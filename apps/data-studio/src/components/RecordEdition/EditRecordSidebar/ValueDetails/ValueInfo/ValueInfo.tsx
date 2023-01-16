@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import PropertiesList from 'components/shared/PropertiesList';
 import RecordCard from 'components/shared/RecordCard';
 import {IRecordPropertyLink, IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {checkTypeIsLink, getValueVersionLabel, isTypeStandard} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {PreviewSize} from '_types/types';
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 `;
 
 const ValueLengthWrapper = styled.div`
-    background: ${themingVar['@item-active-bg']};
+    background: ${themeVars.activeColor};
     padding: 0px 15px;
     border-radius: 1em;
     width: fit-content;

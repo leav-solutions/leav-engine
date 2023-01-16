@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ISystemTranslation, ITreeNode, ITreeNodeWithRecord} from '../../../_types/types';
@@ -48,7 +47,7 @@ export default function SelectTreeNodeModal({
 
     return (
         <Modal
-            visible={visible}
+            open={visible}
             onCancel={handleCancel}
             title={t('tree-node-selection.title')}
             width="70rem"
@@ -58,9 +57,9 @@ export default function SelectTreeNodeModal({
                 <Button key="cancel" onClick={handleCancel}>
                     {t('global.cancel')}
                 </Button>,
-                <PrimaryBtn key="add" onClick={handleApply}>
+                <Button type="primary" key="add" onClick={handleApply}>
                     {t('global.apply')}
-                </PrimaryBtn>
+                </Button>
             ]}
             destroyOnClose
         >

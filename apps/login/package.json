@@ -4,7 +4,8 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "antd": "4.19.5",
+    "@leav/ui": "workspace:*",
+    "antd": "5.1.5",
     "i18next": "21.6.16",
     "i18next-browser-languagedetector": "6.1.4",
     "i18next-http-backend": "1.4.0",

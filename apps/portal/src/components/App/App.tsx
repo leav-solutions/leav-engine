@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {LangContext} from '@leav/ui';
+import {customTheme, LangContext} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {Layout} from 'antd';
+import {ConfigProvider, Layout} from 'antd';
 import Applications from 'components/Applications';
 import AppIcon from 'components/shared/AppIcon';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
@@ -24,13 +24,7 @@ import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {ME} from '_gqlTypes/ME';
 
 const Header = styled(Layout.Header)`
-    height: 3rem;
-    line-height: 3rem;
-    background: #f0f0f0;
-    padding: 0 1rem;
-    color: #000;
     position: relative;
-    text-align: center;
     box-shadow: 0 1px 2px #ccc;
     display: flex;
     align-items: center;
@@ -114,15 +108,17 @@ function App(): JSX.Element {
         <LangContext.Provider value={{lang, availableLangs, defaultLang, setLang: _handleLanguageChange}}>
             <ApplicationContext.Provider value={appContextData}>
                 <UserContext.Provider value={userData.me}>
-                    <Layout>
-                        <Header>
-                            <AppIcon size="tiny" style={{maxHeight: '2rem', margin: 'auto'}} />
-                            <UserMenu />
-                        </Header>
-                        <Content>
-                            <Applications />
-                        </Content>
-                    </Layout>
+                    <ConfigProvider theme={customTheme}>
+                        <Layout>
+                            <Header>
+                                <AppIcon size="tiny" style={{maxHeight: '2rem', margin: 'auto'}} />
+                                <UserMenu />
+                            </Header>
+                            <Content>
+                                <Applications />
+                            </Content>
+                        </Layout>
+                    </ConfigProvider>
                 </UserContext.Provider>
             </ApplicationContext.Provider>
         </LangContext.Provider>

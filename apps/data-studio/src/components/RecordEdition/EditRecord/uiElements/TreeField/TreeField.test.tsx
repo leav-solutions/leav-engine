@@ -57,7 +57,7 @@ describe('TreeField', () => {
         values: [
             {
                 ...(mockTreeValueA as RecordFormElementsValueTreeValue),
-                id_value: '987654',
+                id_value: '987655',
                 version: null,
                 attribute: {...mockAttributeTree, system: false},
                 metadata: null

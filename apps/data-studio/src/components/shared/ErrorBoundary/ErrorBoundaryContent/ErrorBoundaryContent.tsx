@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownOutlined, HomeOutlined, ReloadOutlined} from '@ant-design/icons';
-import {Button, Result, Space} from 'antd';
-import React, {ErrorInfo} from 'react';
+import {AntdThemeToken, themeVars} from '@leav/ui';
+import {Button, Result, Space, theme} from 'antd';
+import {ErrorInfo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 
 interface IErrorBoundaryContentProps {
     error?: Error;
@@ -14,7 +14,7 @@ interface IErrorBoundaryContentProps {
     showRecoveryButtons?: boolean;
 }
 
-const ErrorResult = styled(Result)`
+const ErrorResult = styled(Result)<{themeToken: AntdThemeToken}>`
     font-size: 1rem;
 
     .ant-result-content {
@@ -22,8 +22,8 @@ const ErrorResult = styled(Result)`
         background: none;
 
         details {
-            border: 1px solid ${themingVar['@border-color-base']};
-            border-radius: ${themingVar['@border-radius-base']};
+            border: 1px solid ${themeVars.borderColor};
+            border-radius: ${p => p.themeToken.borderRadius}px;
             padding: 1rem;
         }
     }
@@ -39,6 +39,8 @@ const ButtonsWrapper = styled(Space)`
 
 function ErrorBoundaryContent({error, errorInfo, showRecoveryButtons = true}: IErrorBoundaryContentProps): JSX.Element {
     const {t} = useTranslation();
+    const {token} = theme.useToken();
+
     const homeUrl = `/${process.env.REACT_APP_ENDPOINT ?? ''}`;
     const _handleRefresh = () => {
         window.location.reload();
@@ -49,7 +51,7 @@ function ErrorBoundaryContent({error, errorInfo, showRecoveryButtons = true}: IE
     };
 
     return (
-        <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />}>
+        <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />} themeToken={token}>
             {showRecoveryButtons && (
                 <ButtonsWrapper>
                     <Button onClick={_handleRefresh} type="primary" icon={<ReloadOutlined />}>

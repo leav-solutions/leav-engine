@@ -1,6 +1,6 @@
 import {CSSObject} from 'styled-components';
 import {PreviewSize} from '../../constants';
-import {IRecordIdentityWhoAmI} from '../../_types/RecordIdentity';
+import {IRecordIdentityWhoAmI} from '../../types/RecordIdentity';
 export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;
     size: PreviewSize;

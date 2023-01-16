@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FlagOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
 import {Button} from 'antd';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -27,15 +25,14 @@ function LangSwitcher(): JSX.Element {
     };
 
     return (
-        <Wrapper>
-            <FlagOutlined style={{marginRight: '1em'}} />
+        <>
             {t('choose_lang')} :
             {availableLangs.map(l => (
                 <Button type="text" name={l} key={l} style={{padding: '0 5px'}} onClick={_handleLangChange(l)}>
                     {unicodeFlagByLang[l] ?? l}
                 </Button>
             ))}
-        </Wrapper>
+        </>
     );
 }
 

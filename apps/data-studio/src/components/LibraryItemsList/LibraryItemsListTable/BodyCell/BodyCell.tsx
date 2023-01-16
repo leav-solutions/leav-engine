@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Cell as ReactTableTypeCell} from 'react-table';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {infosCol, selectionColumn} from '../../../../constants/constants';
 import {ITableRow} from '../../../../_types/types';
 import Cell from '../Cell';
@@ -16,9 +16,7 @@ const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
     padding: 4px 0;
 
     :not(:first-child) {
-        border-left: 1px solid
-            ${props =>
-                props.selected ? themingVar['@leav-background-active'] : themingVar['@leav-light-border-color']};
+        border-left: 1px solid ${props => (props.selected ? themeVars.activeColor : themeVars.borderLightColor)};
     }
 
     max-width: ${p => (p.id === selectionColumn ? '35px' : 'auto')};

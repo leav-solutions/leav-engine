@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloudUploadOutlined, DatabaseOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {PageHeader, Table} from 'antd';
+import {Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
@@ -34,6 +34,15 @@ const LibraryLink = styled(Link)`
     gap: 0.5rem;
     width: 100%;
     color: inherit;
+`;
+
+const ListHeader = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem;
+    font-weight: bold;
+    font-size: 1.2em;
 `;
 
 interface IListItem {
@@ -137,14 +146,10 @@ function LibrariesList(): JSX.Element {
 
     return (
         <Wrapper className="wrapper-page">
-            <PageHeader
-                avatar={{
-                    icon: <DatabaseOutlined style={{fontSize: '1.5rem'}} />,
-                    shape: 'square',
-                    style: {background: 'none', color: '#000'}
-                }}
-                title={t('home.libraries')}
-            />
+            <ListHeader>
+                <DatabaseOutlined style={{fontSize: '1.5rem'}} />
+                {t('home.libraries')}
+            </ListHeader>
             <Table
                 bordered
                 columns={columns}

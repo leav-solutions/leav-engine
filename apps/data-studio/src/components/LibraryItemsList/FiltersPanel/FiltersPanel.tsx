@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu} from 'antd';
+import {themeVars} from '@leav/ui';
+import {Button, Dropdown} from 'antd';
 import AvailableSoon from 'components/shared/AvailableSoon';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'redux/display';
@@ -14,7 +14,6 @@ import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
 import {TypeSideItem} from '_types/types';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
-import themingVar from '../../../themingVar';
 import Filter from './Filter/Filter';
 import './Filters.css';
 
@@ -22,20 +21,20 @@ const Wrapper = styled.div`
     width: 100%;
     display: flex;
     flex-flow: column nowrap;
-    border-right: ${themingVar['@divider-color']} 1px solid;
+    border-right: ${themeVars.borderLightColor} 1px solid;
     overflow-y: auto;
     width: 1000px;
 `;
 
 const Header = styled.div`
     width: 100%;
-    background-color: ${themingVar['@leav-view-panel-background-title']};
+    background-color: ${themeVars.headerBg};
     display: grid;
     grid-template-columns: repeat(2, auto);
     justify-content: space-between;
     padding: 0.3rem 0.3rem 0.3rem 1rem;
     font-weight: 700;
-    border-bottom: 1px solid ${themingVar['@divider-color']};
+    border-bottom: 1px solid ${themeVars.borderLightColor};
 
     & > * {
         :first-of-type {
@@ -125,33 +124,31 @@ function FiltersPanel(): JSX.Element {
         <Wrapper>
             <Header>
                 <Dropdown
-                    overlay={
-                        <Menu
-                            items={[
-                                {
-                                    key: 'disable',
-                                    disabled: allFiltersDisabled,
-                                    onClick: _disableFilters,
-                                    label: t('filters.disable-filters')
-                                },
-                                {
-                                    key: 'remove',
-                                    disabled: !searchState.filters.length,
-                                    onClick: _resetFilters,
-                                    label: t('filters.remove-filters')
-                                },
-                                {
-                                    key: 'add',
-                                    disabled: true,
-                                    label: (
-                                        <>
-                                            {t('filters.add-condition')} <AvailableSoon />
-                                        </>
-                                    )
-                                }
-                            ]}
-                        ></Menu>
-                    }
+                    menu={{
+                        items: [
+                            {
+                                key: 'disable',
+                                disabled: allFiltersDisabled,
+                                onClick: _disableFilters,
+                                label: t('filters.disable-filters')
+                            },
+                            {
+                                key: 'remove',
+                                disabled: !searchState.filters.length,
+                                onClick: _resetFilters,
+                                label: t('filters.remove-filters')
+                            },
+                            {
+                                key: 'add',
+                                disabled: true,
+                                label: (
+                                    <>
+                                        {t('filters.add-condition')} <AvailableSoon />
+                                    </>
+                                )
+                            }
+                        ]
+                    }}
                 >
                     <Button type={'text'}>
                         {t('filters.filters')}

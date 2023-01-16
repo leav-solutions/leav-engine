@@ -1,15 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Collapse} from 'antd';
+import {themeVars} from '@leav/ui';
+import {Collapse, theme} from 'antd';
+import {GlobalToken} from 'antd/lib/theme/interface';
 import PropertiesList from 'components/shared/PropertiesList';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {isTypeStandard} from 'utils';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 
-const AttributeDetailsCollapse = styled(Collapse)`
+const AttributeDetailsCollapse = styled(Collapse)<{themeToken: GlobalToken}>`
     &&& {
         margin: 1rem;
         background: none;
@@ -19,9 +20,9 @@ const AttributeDetailsCollapse = styled(Collapse)`
         }
 
         .ant-collapse-content {
-            background: ${themingVar['@default-bg']};
-            border: 1px solid ${themingVar['@border-color-base']};
-            border-radius: ${themingVar['@border-radius-base']};
+            background: ${themeVars.defaultBg};
+            border: 1px solid ${themeVars.borderColor};
+            border-radius: ${p => p.themeToken.borderRadius}px;
         }
     }
 `;
@@ -32,6 +33,7 @@ interface IAttributeDetailsProps {
 
 function AttributeDetails({attribute}: IAttributeDetailsProps): JSX.Element {
     const {t} = useTranslation();
+    const {token} = theme.useToken();
 
     const attributeDetailsContent = [
         {
@@ -52,7 +54,7 @@ function AttributeDetails({attribute}: IAttributeDetailsProps): JSX.Element {
     }
 
     return (
-        <AttributeDetailsCollapse destroyInactivePanel bordered={false} ghost>
+        <AttributeDetailsCollapse destroyInactivePanel bordered={false} ghost themeToken={token}>
             <Collapse.Panel key="attribute" header={t('record_edition.attribute_details_section')}>
                 <PropertiesList items={attributeDetailsContent} />
             </Collapse.Panel>

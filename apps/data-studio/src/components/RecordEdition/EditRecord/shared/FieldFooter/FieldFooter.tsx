@@ -1,9 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
+import {theme} from 'antd';
+import {GlobalToken} from 'antd/lib/theme/interface';
 import React from 'react';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 
 interface IFieldFooterProps {
     children?: React.ReactNode;
@@ -11,25 +13,27 @@ interface IFieldFooterProps {
     style?: React.CSSProperties;
 }
 
-const FooterWrapper = styled.div<{style: React.CSSProperties; $bordered?: boolean}>`
+const FooterWrapper = styled.div<{style: React.CSSProperties; $bordered?: boolean; themeToken: GlobalToken}>`
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: row-reverse;
     padding: 0.25rem;
-    background: ${themingVar['@background-color-light']};
-    border-radius: ${themingVar['@border-radius-base']};
+    background: ${themeVars.lightBg};
+    border-radius: ${p => p.themeToken.borderRadius}px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 
-    ${props => (props.$bordered ? `border: 1px solid ${themingVar['@border-color-base']};` : '')}
+    ${props => (props.$bordered ? `border: 1px solid ${themeVars.borderColor};` : '')}
 
     {...style}
 `;
 
 function FieldFooter({children, bordered, style}: IFieldFooterProps): JSX.Element {
+    const {token} = theme.useToken();
+
     return (
-        <FooterWrapper style={style} $bordered={bordered}>
+        <FooterWrapper style={style} $bordered={bordered} themeToken={token}>
             {children}
         </FooterWrapper>
     );

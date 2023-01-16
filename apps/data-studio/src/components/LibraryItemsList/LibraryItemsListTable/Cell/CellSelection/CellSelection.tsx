@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckCircleFilled, CheckCircleOutlined} from '@ant-design/icons';
-import React from 'react';
+import {themeVars} from '@leav/ui';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 
 const Wrapper = styled.div`
     display: grid;
@@ -17,7 +16,7 @@ const Wrapper = styled.div`
 const CustomCheckbox = styled.span<{checked: boolean}>`
     && {
         display: ${p => (!p.checked ? 'none' : 'block')};
-        color: ${p => (p.checked ? `${themingVar['@primary-color']}` : themingVar['@default-text-color'])};
+        color: ${p => (p.checked ? themeVars.primaryColor : themeVars.defaultTextColor)};
         font-size: 1.5em;
 
         .ant-checkbox-checked::after {

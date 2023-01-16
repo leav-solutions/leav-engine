@@ -2,17 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownFilled} from '@ant-design/icons';
+import {AntdThemeToken, themeVars} from '@leav/ui';
 import {ICommonFieldsSettings} from '@leav/utils';
+import {theme} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {IFormElementProps} from '../../_types';
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{themeToken: AntdThemeToken}>`
     position: relative;
-    border: 1px solid ${themingVar['@error-color']};
+    border: 1px solid ${themeVars.errorColor};
     margin-bottom: 1.5em;
-    border-radius: ${themingVar['@border-radius-base']};
+    border-radius: ${p => p.themeToken.borderRadius}px;
 
     label {
         font-size: 0.9em;
@@ -20,7 +21,7 @@ const Wrapper = styled.div`
         text-shadow: 0px 0px 4px #fff;
         background: transparent;
         padding: 0 0.5em;
-        color: ${themingVar['@error-color']};
+        color: ${themeVars.errorColor};
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -43,7 +44,7 @@ const IconWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    color: ${themingVar['@error-color']};
+    color: ${themeVars.errorColor};
 `;
 
 const Title = styled.div`
@@ -55,16 +56,17 @@ const Title = styled.div`
 
 const Message = styled.div`
     grid-area: message;
-    color: ${themingVar['@leav-secondary-font-color']};
+    color: ${themeVars.secondaryTextColor};
     font-size: 0.8rem;
     align-self: start;
 `;
 
 function ErrorField({element}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
+    const {token} = theme.useToken();
 
     return (
-        <Wrapper>
+        <Wrapper themeToken={token}>
             <label>{element.settings.label}</label>
             <ErrorContent>
                 <IconWrapper>

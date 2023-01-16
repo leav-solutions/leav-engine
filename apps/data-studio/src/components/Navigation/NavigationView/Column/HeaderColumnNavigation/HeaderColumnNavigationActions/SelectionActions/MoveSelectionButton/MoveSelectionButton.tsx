@@ -3,11 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ArrowDownOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
+import {Button} from 'antd';
 import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {resetSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
@@ -92,7 +91,7 @@ function MoveSelectionButton({allowedLibraries, parent, onMessages}: IMoveSelect
     }
 
     return (
-        <StandardBtn
+        <Button
             onClick={_handleMoveEnd}
             icon={<ArrowDownOutlined />}
             aria-label="move-selection"

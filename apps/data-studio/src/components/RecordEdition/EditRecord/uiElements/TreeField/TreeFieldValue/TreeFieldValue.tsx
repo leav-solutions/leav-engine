@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
@@ -8,10 +9,8 @@ import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import RecordCard from 'components/shared/RecordCard';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
 import {PreviewSize} from '_types/types';
 
@@ -26,7 +25,7 @@ const ListItem = styled.div`
     padding: 0.5em 0;
     position: relative;
     &:not(:last-child) {
-        border-bottom: 1px solid ${themingVar['@border-color-base']};
+        border-bottom: 1px solid ${themeVars.borderColor};
     }
 
     &:not(:hover) .floating-menu {

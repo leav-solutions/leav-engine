@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {Dropdown, Menu, Tooltip} from 'antd';
-import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
+import {Button, Dropdown, Tooltip} from 'antd';
 import SearchModal from 'components/SearchModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
@@ -95,7 +94,7 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                 }
             }
 
-            onMessages('navigation.notifications.success-add', 'navigation.notifications.error-add', messages);
+            onMessages('navigation.infos.success-add', 'navigation.infos.error-add', messages);
 
             refreshTreeContent();
         }
@@ -114,23 +113,21 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
         <>
             {availableLibraries.length > 1 ? (
                 <Dropdown // Add by search
-                    overlay={
-                        <Menu
-                            items={availableLibraries.map(library => ({
-                                key: library.library.id,
-                                onClick: () => _showSearch(library.library.id),
-                                label: localizedTranslation(library.library.label, lang)
-                            }))}
-                        ></Menu>
-                    }
+                    menu={{
+                        items: availableLibraries.map(library => ({
+                            key: library.library.id,
+                            onClick: () => _showSearch(library.library.id),
+                            label: localizedTranslation(library.library.label, lang)
+                        }))
+                    }}
                 >
                     <Tooltip title={t('navigation.header.add_by_search')} placement="top">
-                        <StandardBtn icon={buttonIcon} style={buttonStyle} />
+                        <Button icon={buttonIcon} style={buttonStyle} />
                     </Tooltip>
                 </Dropdown>
             ) : (
                 <Tooltip title={t('navigation.header.add_by_search')} placement="top">
-                    <StandardBtn
+                    <Button
                         icon={buttonIcon}
                         aria-label="add-by-search"
                         onClick={() => _showSearch(availableLibraries[0]?.library.id ?? null)}

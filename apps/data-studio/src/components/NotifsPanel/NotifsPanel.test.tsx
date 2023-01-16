@@ -5,10 +5,10 @@ import {MockedResponse} from '@apollo/client/testing';
 import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
 import {deleteTaskMutation} from 'graphQL/mutations/tasks/deleteTask';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {act, render, screen} from '_tests/testUtils';
-import NotifsPanel from './NotifsPanel';
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {TaskStatus} from '_gqlTypes/globalTypes';
+import {act, render, screen} from '_tests/testUtils';
+import NotifsPanel from './NotifsPanel';
 
 export const mockTask: GET_TASKS_tasks_list = {
     id: 'taskId',
@@ -62,13 +62,16 @@ describe('Notifs panel', () => {
                                 Task1: {...mockTask, id: 'Task1', status: TaskStatus.DONE},
                                 Task2: {...mockTask, id: 'Task2'}
                             }
+                        },
+                        notifications: {
+                            isPanelOpen: true
                         }
                     }
                 }
             );
         });
 
-        expect(screen.getByTestId('drawer')).toBeInTheDocument();
+        expect(screen.getByText('notifications.title')).toBeInTheDocument();
         expect(screen.getAllByTestId('itemList').length).toBe(2);
 
         expect(screen.getByTestId('inProgressList')).toBeInTheDocument();

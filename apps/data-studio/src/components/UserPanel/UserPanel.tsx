@@ -31,11 +31,10 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
 
     return (
         <Drawer
-            visible={userPanelVisible}
+            open={userPanelVisible}
             onClose={hideUserPanel}
             placement="right"
             closable={false}
-            getContainer={false}
             bodyStyle={{padding: 0}}
         >
             <CustomMenu

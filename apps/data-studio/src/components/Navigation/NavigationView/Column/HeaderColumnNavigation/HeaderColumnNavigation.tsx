@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseSquareOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {Button, Checkbox, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import {useTranslation} from 'react-i18next';
@@ -12,7 +13,6 @@ import styled from 'styled-components';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {ISharedSelected, SharedStateSelectionType} from '_types/types';
 import {useActiveTree} from '../../../../../hooks/ActiveTreeHook/ActiveTreeHook';
-import themingVar from '../../../../../themingVar';
 import HeaderColumnNavigationActions from './HeaderColumnNavigationActions';
 
 interface IHeaderColumnProps {
@@ -24,11 +24,11 @@ const HeaderColumn = styled.header<IHeaderColumnProps>`
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: ${themingVar['@leav-secondary-bg']};
+    background: ${themeVars.secondaryBg};
     height: 4rem;
     flex-shrink: 0;
     cursor: pointer;
-    max-width: ${themingVar['@leav-navigation-column-details-width']};
+    max-width: ${themeVars.navigationColumnWidth};
 
     &:not(:hover) .select-all-checkbox {
         visibility: hidden;

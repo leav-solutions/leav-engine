@@ -64,7 +64,7 @@ function DeactivateRecordsModal({onClose, open}: IDeactivateRecordsModalProps): 
             onOk={_handleOk}
             onCancel={onClose}
             confirmLoading={loading}
-            visible={open}
+            open={open}
             closable
             centered
             okButtonProps={{className: 'submit-btn'}}

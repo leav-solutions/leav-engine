@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Dropdown, Menu} from 'antd';
+import {Dropdown} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import BooleanFilter from 'components/LibraryItemsList/FiltersPanel/Filter/FilterInput/BooleanFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {checkTypeIsLink} from 'utils';
@@ -104,14 +103,12 @@ const FilterAttributeCondition = ({filter, updateFilterValue}: IFilterAttributeC
             return items;
         }, []);
 
-    const menu = <Menu items={menuItems} />;
-
     if (showStandardCondition) {
         const conditionOption = conditionOptionsByType.filter(c => c.value === filter.condition)[0];
         return (
             <Dropdown
                 disabled={!filter.active || filter.condition === AttributeConditionFilter.THROUGH}
-                overlay={menu}
+                menu={{items: menuItems}}
                 trigger={['click']}
             >
                 <FilterDropdownButton aria-label="filter-condition">

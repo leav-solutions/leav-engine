@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EyeOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import FileModal from 'components/FileModal';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import RecordPreview from '../RecordPreview';
 import {IRecordPreviewProps} from '../RecordPreview/_types';
 
@@ -23,7 +23,7 @@ const ClickHandler = styled.div<{hasPreview: boolean}>`
 `;
 
 const Overlay = styled.div`
-    background: ${themingVar['@leav-secondary-bg']}99; // Hexadecimal color + opacity
+    background: ${themeVars.secondaryBg}99; // Hexadecimal color + opacity
     position: absolute;
     top: 0;
     left: 0;

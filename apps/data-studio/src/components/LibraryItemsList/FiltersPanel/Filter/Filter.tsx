@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu} from 'antd';
+import {themeVars} from '@leav/ui';
+import {Button, Dropdown} from 'antd';
 import DateBetweenFilter from 'components/LibraryItemsList/FiltersPanel/Filter/FilterInput/DateBetweenFilter';
 import {formatNotUsingCondition} from 'constants/constants';
 import {ILibraryDetailExtendedAttributeParentLinkedTree} from 'graphQL/queries/libraries/getLibraryDetailExtendQuery';
@@ -22,7 +23,6 @@ import {
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
-import themingVar from '../../../../themingVar';
 import {
     AttributeConditionFilter,
     AttributeConditionType,
@@ -51,7 +51,7 @@ interface IWrapperProps {
 }
 
 const Wrapper = styled.div<IWrapperProps>`
-    background: ${themingVar['@leav-secondary-item-background']};
+    background: ${themeVars.lightBg};
     padding: 8px 8px 8px 0px;
     border-radius: 3px;
     display: grid;
@@ -64,10 +64,10 @@ const Wrapper = styled.div<IWrapperProps>`
             ? `
         :hover,
         :active {
-            border: 2px solid ${themingVar['@primary-color']};
+            border: 2px solid ${themeVars.primaryColor};
 
             &&& .filter-handle {
-                color: ${themingVar['@primary-color']};
+                color: ${themeVars.primaryColor};
             }
         }
     `
@@ -87,7 +87,7 @@ const Handle = styled.div`
     font-size: 12px;
     font-family: sans-serif;
     letter-spacing: 2px;
-    color: ${themingVar['@divider-color']};
+    color: ${themeVars.borderLightColor};
     text-shadow: 1px 0 1px black;
 
     &::after {
@@ -116,9 +116,8 @@ const HeadInfos = styled.div`
     align-items: center;
     justify-content: center;
 
-    background: ${themingVar['@default-bg']} 0% 0% no-repeat padding-box;
-    box-shadow: ${themingVar['@leav-small-shadow']};
-    border: ${themingVar['@leav-border']};
+    background: ${themeVars.defaultBg} 0% 0% no-repeat padding-box;
+    border: 1px solid ${themeVars.borderColor};
     border-radius: 3px;
 
     min-width: 0;
@@ -129,9 +128,8 @@ const HeadOptions = styled.div`
     place-items: center;
     height: 32px;
 
-    background: ${themingVar['@default-bg']} 0% 0% no-repeat padding-box;
-    box-shadow: ${themingVar['@leav-small-shadow']};
-    border: ${themingVar['@leav-border']};
+    background: ${themeVars.defaultBg} 0% 0% no-repeat padding-box;
+    border: 1px solid ${themeVars.borderColor};
     border-radius: 3px;
 `;
 
@@ -143,11 +141,11 @@ const ParentLabel = styled.div`
 const ClearParentButton = styled(Button)`
     && {
         border: none;
-        color: ${themingVar['@leav-secondary-font-color']};
+        color: ${themeVars.secondaryTextColor};
 
         :hover {
             border: none;
-            color: ${themingVar['@leav-secondary-font-color']};
+            color: ${themeVars.secondaryTextColor};
         }
     }
 `;
@@ -224,22 +222,20 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         });
     };
 
-    const filterOptions = (
-        <Menu
-            items={[
-                {
-                    key: 'deactivate',
-                    label: filter.active ? t('filters.deactivate') : t('filters.activate'),
-                    onClick: toggleActiveStatus
-                },
-                {
-                    key: 'delete',
-                    label: t('global.delete'),
-                    onClick: handleDelete
-                }
-            ]}
-        />
-    );
+    const filterOptions = {
+        items: [
+            {
+                key: 'deactivate',
+                label: filter.active ? t('filters.deactivate') : t('filters.activate'),
+                onClick: toggleActiveStatus
+            },
+            {
+                key: 'delete',
+                label: t('global.delete'),
+                onClick: handleDelete
+            }
+        ]
+    };
 
     const InputByFormat = useCallback(
         (props: IFilterInputProps) => {
@@ -524,7 +520,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                             )}
                             {filter.type === FilterType.TREE && <FilterTreeCondition filter={filter as IFilterTree} />}
                         </HeadInfos>
-                        <Dropdown overlay={filterOptions} placement="bottomRight">
+                        <Dropdown menu={filterOptions} placement="bottomRight">
                             <HeadOptions>
                                 <MoreOutlined />
                             </HeadOptions>

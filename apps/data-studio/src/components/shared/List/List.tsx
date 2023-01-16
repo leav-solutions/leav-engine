@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {List as AntdList, ListProps} from 'antd';
 import Checkbox, {CheckboxChangeEvent} from 'antd/lib/checkbox/Checkbox';
 import isEqual from 'lodash/isEqual';
-import React from 'react';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 
 export interface IListProps<D> extends Omit<ListProps<D>, 'renderItem'> {
     maxHeight?: number | string;
@@ -19,7 +18,7 @@ export interface IListProps<D> extends Omit<ListProps<D>, 'renderItem'> {
 }
 
 const Wrapper = styled.div<{maxHeight: string}>`
-    background-color: ${themingVar['@default-bg']};
+    background-color: ${themeVars.defaultBg};
     border-radius: 5px;
 
     .ant-list-items {
