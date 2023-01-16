@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {themeVars} from '@leav/ui';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {getInitials, getPreviewSize} from 'utils';
 
 interface ISimplisticRecordPreviewProps {
@@ -12,7 +11,7 @@ interface ISimplisticRecordPreviewProps {
 
 const Wrapper = styled.div`
     border-radius: 50%;
-    border: 1px solid ${themingVar['@border-color-base']};
+    border: 1px solid ${themeVars.borderColor};
     width: calc(${getPreviewSize(null, true)} + 0.5rem);
     height: calc(${getPreviewSize(null, true)} + 0.5rem);
     text-align: center;

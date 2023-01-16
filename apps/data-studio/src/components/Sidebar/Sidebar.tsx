@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DatabaseOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
+import {themeVars} from '@leav/ui';
 import {Menu, Spin} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {FAVORITE_LIBRARIES_KEY} from 'components/Home/LibrariesList/LibrariesList';
@@ -22,7 +23,6 @@ import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
 import {useAppSelector} from 'redux/store';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
@@ -36,8 +36,8 @@ interface IGroupedElements<EntityType> {
 }
 
 const HomeButton = styled.div`
-    height: ${themingVar['@leav-header-height']};
-    background: ${themingVar['@leav-secondary-bg']};
+    height: ${themeVars.headerHeight};
+    background: ${themeVars.secondaryBg};
     box-shadow: 0 1px 2px #ccc;
     color: #000;
     text-align: center;

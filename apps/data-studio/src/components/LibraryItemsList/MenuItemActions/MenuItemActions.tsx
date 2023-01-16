@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SettingOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu} from 'antd';
+import {Button, Dropdown} from 'antd';
 import AvailableSoon from 'components/shared/AvailableSoon';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 
 function MenuItemActions(): JSX.Element {
@@ -12,36 +12,34 @@ function MenuItemActions(): JSX.Element {
 
     const [visible, setVisible] = useState<boolean>(false);
 
-    const menu = (
-        <Menu
-            items={[
-                {
-                    key: 'sort-advanced',
-                    disabled: true,
-                    label: (
-                        <>
-                            {t('items_list.table.header-cell-menu.sort-advance')} <AvailableSoon />
-                        </>
-                    )
-                },
-                {
-                    key: 'regroup',
-                    disabled: true,
-                    label: (
-                        <>
-                            {t('items_list.table.header-cell-menu.regroup')} <AvailableSoon />
-                        </>
-                    )
-                }
-            ]}
-        ></Menu>
-    );
+    const menu = {
+        items: [
+            {
+                key: 'sort-advanced',
+                disabled: true,
+                label: (
+                    <>
+                        {t('items_list.table.header-cell-menu.sort-advance')} <AvailableSoon />
+                    </>
+                )
+            },
+            {
+                key: 'regroup',
+                disabled: true,
+                label: (
+                    <>
+                        {t('items_list.table.header-cell-menu.regroup')} <AvailableSoon />
+                    </>
+                )
+            }
+        ]
+    };
 
-    const _handleVisibleChange = () => setVisible(!visible);
+    const _handleOpenChange = () => setVisible(!visible);
 
     return (
         <>
-            <Dropdown visible={visible} onVisibleChange={_handleVisibleChange} trigger={['click']} overlay={menu}>
+            <Dropdown open={visible} onOpenChange={_handleOpenChange} trigger={['click']} menu={menu}>
                 <Button>
                     <SettingOutlined />
                 </Button>

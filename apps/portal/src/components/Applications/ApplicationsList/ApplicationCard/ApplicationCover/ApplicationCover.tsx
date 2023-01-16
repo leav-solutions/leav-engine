@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLang} from '@leav/ui';
+import {AntdThemeToken, useLang} from '@leav/ui';
 import {getInvertColor, localizedTranslation, stringToColor} from '@leav/utils';
-import React from 'react';
+import {theme} from 'antd';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 
@@ -11,7 +11,7 @@ interface IApplicationCoverProps {
     application: GET_APPLICATIONS_applications_list;
 }
 
-const Cover = styled.div<{hasIcon: boolean}>`
+const Cover = styled.div<{hasIcon: boolean; $themeToken: AntdThemeToken}>`
     font-size: 3.5em;
     font-weight!: bold;
     letter-spacing: 0.5em;
@@ -24,6 +24,8 @@ const Cover = styled.div<{hasIcon: boolean}>`
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    border-top-left-radius: ${props => props.$themeToken.borderRadius}px;
+    border-top-right-radius: ${props => props.$themeToken.borderRadius}px;
 `;
 
 const AppImage = styled.img`
@@ -33,6 +35,8 @@ const AppImage = styled.img`
 
 function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
     const {lang} = useLang();
+    const {token} = theme.useToken();
+
     const label = localizedTranslation(application.label, lang);
     const initials = label
         .split(' ')
@@ -45,7 +49,7 @@ function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
     const fontColor = getInvertColor(bgColor);
 
     return (
-        <Cover style={{background: bgColor, color: fontColor}} hasIcon={!!appIcon}>
+        <Cover style={{background: bgColor, color: fontColor}} hasIcon={!!appIcon} $themeToken={token}>
             {appIcon ? <AppImage src={appIcon} height="3rem" /> : initials}
         </Cover>
     );

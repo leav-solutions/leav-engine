@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Breadcrumb, Button, Divider, Space} from 'antd';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import List from 'components/shared/List';
 import RecordCard from 'components/shared/RecordCard';
 import SelectTreeNode from 'components/shared/SelectTreeNode';
@@ -10,7 +10,6 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {getTreeRecordKey, localizedTranslation} from 'utils';
 import {
     RECORD_FORM_recordForm_elements_attribute_TreeAttribute,
@@ -25,7 +24,7 @@ interface IValuesAddProps {
 }
 
 const Wrapper = styled.div`
-    background-color: ${themingVar['@default-bg']};
+    background-color: ${themeVars.defaultBg};
     z-index: 1;
     position: relative;
 `;
@@ -40,7 +39,7 @@ const FooterWrapper = styled.div`
     padding: 0.5em 1em;
     display: flex;
     justify-content: flex-end;
-    background: ${themingVar['@background-color-light']};
+    background: ${themeVars.lightBg};
 `;
 
 const BreadcrumbWrapper = styled.div`
@@ -180,9 +179,9 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                             <Button size="small" onClick={_handleClose}>
                                 {t('global.cancel')}
                             </Button>
-                            <PrimaryBtn size="small" onClick={_handleSubmit}>
+                            <Button type="primary" size="small" onClick={_handleSubmit}>
                                 {t('global.submit')}
-                            </PrimaryBtn>
+                            </Button>
                         </Space>
                     </FooterWrapper>
                 )}

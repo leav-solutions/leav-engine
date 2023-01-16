@@ -166,8 +166,8 @@ function SelectTreeNode({
         _fetchTreeContent();
     }, []);
 
-    const _handleLoadData = async (nodeData: EventDataNode) => {
-        const {id, isShowMore} = nodeData as EventDataNode & ITreeMapElement;
+    const _handleLoadData = async (nodeData: EventDataNode<ITreeMapElement>) => {
+        const {id, isShowMore} = nodeData as EventDataNode<ITreeMapElement>;
 
         // Handle offset if we get here through the "show more" element
         const currentNodeOffset = treeMap[id]?.paginationOffset ?? 0;

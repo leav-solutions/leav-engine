@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Modal, Tooltip} from 'antd';
 import List from 'components/shared/List';
 import RecordCard from 'components/shared/RecordCard';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {stopEvent} from 'utils';
 import {PreviewSize} from '_types/types';
 
@@ -20,8 +20,8 @@ const MoreValuesCount = styled.span`
     height: 1.75em;
     margin: 0 1em;
     border-radius: 2em;
-    background: ${themingVar['@item-active-bg']};
-    color: ${themingVar['@leav-secondary-font-color']};
+    background: ${themeVars.activeColor};
+    color: ${themeVars.secondaryTextColor};
     font-weight: bold;
     font-size: 0.9em;
     cursor: pointer;

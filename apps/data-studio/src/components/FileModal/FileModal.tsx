@@ -6,7 +6,6 @@ import {Button, Modal} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {getFileDataQuery, IFileDataQuery, IFileDataQueryVariables} from 'graphQL/queries/records/getFileDataQuery';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import FileModalContent from './FileModalContent';
 import {fileModalWidth} from './_constants';
@@ -36,7 +35,7 @@ function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Ele
 
     return (
         <Modal
-            visible={open}
+            open={open}
             destroyOnClose
             okText={t('global.close')}
             onCancel={onClose}

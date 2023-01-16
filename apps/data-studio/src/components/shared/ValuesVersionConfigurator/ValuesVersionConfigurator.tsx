@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import useLibraryVersionTrees from 'hooks/useLibraryVersionTrees';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {ITreeNode, IValueVersion} from '_types/types';
 import VersionTree from './VersionTree';
 
@@ -14,7 +14,7 @@ const Wrapper = styled.div`
     padding: 0.5rem;
     display: flex;
     flex-flow: column nowrap;
-    border-right: ${themingVar['@divider-color']} 1px solid;
+    border-right: ${themeVars.borderLightColor} 1px solid;
     overflow-y: auto;
 `;
 
@@ -42,7 +42,10 @@ function ValuesVersionConfigurator({
     }
 
     const _handleNodeSelection = (treeId: string) => (selectedNode: ITreeNode) => {
-        onVersionChange({...selectedVersion, [treeId]: {id: selectedNode.id, label: String(selectedNode.title)}});
+        onVersionChange({
+            ...selectedVersion,
+            [treeId]: selectedNode ? {id: selectedNode.id ?? null, label: String(selectedNode.title)} : null
+        });
     };
 
     return (

@@ -1,21 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DatePicker, Modal, Space} from 'antd';
-import React, {useState} from 'react';
+import {DatePicker, Modal} from 'antd';
+import dayjs from 'dayjs';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
-import themingVar from 'themingVar';
-import {useImportReducerContext} from '../../importReducer/ImportReducerContext';
-import {ISheet, SheetSettingsError} from '../../_types';
-import moment from 'moment';
 
 interface IImportScheduleModalProps {
     isModalOpen: boolean;
-    scheduleDate: moment.Moment;
+    scheduleDate: dayjs.Dayjs;
     onCancelImportScheduleModal: () => void;
     onValidateScheduleImport: () => void;
-    onChangeScheduleDate: (date: moment.Moment) => void;
+    onChangeScheduleDate: (date: dayjs.Dayjs) => void;
 }
 
 function ImportScheduleModal({
@@ -42,7 +37,7 @@ function ImportScheduleModal({
     return (
         <Modal
             title={t('import.import_schedule_title')}
-            visible={isModalOpen}
+            open={isModalOpen}
             okText={t('import.import_schedule')}
             cancelText={t('global.cancel')} // FIXME:
             onOk={handleOk}

@@ -7,7 +7,7 @@ import styled, {CSSObject} from 'styled-components';
 import {PreviewSize} from '../../constants';
 import {getPreviewSize} from '../../helpers/getPreviewSize';
 import useLang from '../../hooks/useLang';
-import {IRecordIdentityPreview} from '../../_types/RecordIdentity';
+import {IRecordIdentityPreview} from '../../types/RecordIdentity';
 import RecordPreview from '../RecordPreview';
 import {IRecordCardProps} from './_types';
 

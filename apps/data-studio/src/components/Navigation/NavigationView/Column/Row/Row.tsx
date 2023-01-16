@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {LockFilled, RightOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {Badge, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -12,7 +13,6 @@ import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled, {CSSObject} from 'styled-components';
 import {localizedTranslation} from 'utils';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import themingVar from '../../../../../themingVar';
 import {
     IRecordIdentityWhoAmI,
     ISharedSelected,
@@ -34,20 +34,20 @@ const RowWrapper = styled.div<IRowProps>`
 
     place-items: flex-start;
     align-items: center;
-    max-width: ${themingVar['@leav-navigation-column-width']};
+    max-width: ${themeVars.navigationColumnWidth};
     overflow: hidden;
 
     grid-template-columns: ${props => (props.isActive ? '1rem auto auto 1rem' : 'auto auto 1rem')};
     padding: 1rem 0.5rem;
     background: ${props => {
         if (props.isInPath) {
-            return themingVar['@leav-background-active'];
+            return themeVars.activeColor;
         }
         return 'none';
     }};
 
     &:hover {
-        ${props => (props.isInPath ? '' : `background: ${themingVar['@item-hover-bg']}`)};
+        ${props => (props.isInPath ? '' : `background: ${themeVars.activeColor}`)};
 
         .checkbox-wrapper {
             opacity: 1;
@@ -198,8 +198,8 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                             count={treeElement.childrenCount}
                             overflowCount={1000}
                             style={{
-                                background: themingVar['@leav-secondary-bg'],
-                                color: themingVar['@default-text-color']
+                                background: themeVars.secondaryBg,
+                                color: themeVars.defaultTextColor
                             }}
                         />
                     </div>

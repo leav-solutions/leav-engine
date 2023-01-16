@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {DatePicker} from 'antd';
-import moment from 'moment';
-import React from 'react';
-import themingVar from '../../../../../../themingVar';
+import dayjs from 'dayjs';
 import {IDateRangeValue} from '../../../../../../_types/types';
 import {IFilterInputProps} from '../../Filter';
 
@@ -13,7 +12,7 @@ const DateBetweenFilter = ({filter, updateFilterValue}: IFilterInputProps) => {
         (filter?.value?.value as IDateRangeValue)?.from && (filter?.value?.value as IDateRangeValue)?.to
             ? (filter.value.value as IDateRangeValue)
             : null;
-    const _handleChange = (value: [moment.Moment, moment.Moment] | null) => {
+    const _handleChange = (value: [dayjs.Dayjs, dayjs.Dayjs] | null) => {
         if (!value) {
             updateFilterValue(null);
             return;
@@ -21,19 +20,19 @@ const DateBetweenFilter = ({filter, updateFilterValue}: IFilterInputProps) => {
 
         // Force time to 00:00:00
         const [dateFrom, dateTo] = value;
-        dateFrom.utcOffset(0).startOf('day');
-        dateTo.utcOffset(0).startOf('day');
+        dateFrom.startOf('day');
+        dateTo.startOf('day');
 
         updateFilterValue({...filter.value, value: {from: String(dateFrom.unix()), to: String(dateTo.unix())}});
     };
 
-    const momentValue: [moment.Moment, moment.Moment] = dateRangeValue
-        ? [moment(Number(dateRangeValue.from) * 1000), moment(Number(dateRangeValue.to) * 1000)]
+    const momentValue: [dayjs.Dayjs, dayjs.Dayjs] = dateRangeValue
+        ? [dayjs(Number(dateRangeValue.from) * 1000), dayjs(Number(dateRangeValue.to) * 1000)]
         : null;
 
     return (
         <DatePicker.RangePicker
-            popupStyle={{background: themingVar['@default-bg']}}
+            popupStyle={{background: themeVars.defaultBg}}
             disabled={!filter.active}
             onChange={_handleChange}
             value={momentValue}

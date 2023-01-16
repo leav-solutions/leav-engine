@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import RecordCard from 'components/shared/RecordCard';
 import {IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
-import React from 'react';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {PreviewSize} from '_types/types';
 import {fileModalSidebarWidth, fileModalWidth} from '../_constants';
 import DocumentFile from './DocumentFile';
@@ -35,7 +34,7 @@ const Title = styled.div`
     align-self: center;
     font-size: 1rem;
     padding: 1rem;
-    border-bottom: 1px solid ${themingVar['@border-color-base']};
+    border-bottom: 1px solid ${themeVars.borderColor};
 `;
 
 const Content = styled.div`
@@ -53,7 +52,7 @@ const Content = styled.div`
 
     .ant-image {
         max-height: calc(100vh - 19rem);
-        border: 1px solid ${themingVar['@leav-light-border-color']};
+        border: 1px solid ${themeVars.borderLightColor};
 
         height: fit-content;
         img {

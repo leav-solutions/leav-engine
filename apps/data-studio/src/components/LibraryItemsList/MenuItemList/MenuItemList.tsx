@@ -10,7 +10,6 @@ import {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
-import {PrimaryBtn} from '../../app/StyledComponent/PrimaryBtn';
 import DisplayOptions from '../DisplayOptions';
 import MenuItemActions from '../MenuItemActions';
 import MenuSelection from '../MenuSelection';
@@ -53,9 +52,14 @@ function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
 
             <Space size="large">
                 {!selectionMode && canCreateRecord && (
-                    <PrimaryBtn icon={<PlusOutlined />} className="primary-btn" onClick={_handleCreateRecord}>
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        className="primary-btn"
+                        onClick={_handleCreateRecord}
+                    >
                         {t('items_list.new')}
-                    </PrimaryBtn>
+                    </Button>
                 )}
 
                 <Space size="small">

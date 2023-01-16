@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {Button, Space} from 'antd';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 
 interface IErrorMessageProps {
     error: string | string[];
@@ -12,7 +12,7 @@ interface IErrorMessageProps {
 }
 
 const ErrorMessageWrapper = styled.div`
-    color: ${themingVar['@error-color']};
+    color: ${themeVars.errorColor};
     font-weight: bold;
 `;
 

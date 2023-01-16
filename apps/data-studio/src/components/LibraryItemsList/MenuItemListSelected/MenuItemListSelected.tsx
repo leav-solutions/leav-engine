@@ -1,20 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+// Copyright LEAV Solutions 2017kn
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, DeleteOutlined, DownOutlined} from '@ant-design/icons';
-import {Button, Dropdown, Menu, message} from 'antd';
+import {themeVars} from '@leav/ui';
+import {Button, Dropdown, message} from 'antd';
 import {SelectionModeContext} from 'context';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import uniqBy from 'lodash/uniqBy';
-import React, {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {resetSearchSelection, resetSelection, setSearchSelection, setSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
 import {SharedStateSelectionType} from '_types/types';
-import themingVars from '../../../themingVar';
 import ActionsMenu from './ActionsMenu';
 
 interface IMenuItemListSelectedProps {
@@ -33,7 +36,7 @@ const Wrapper = styled.div<IWrapperProps>`
     top: 0;
 
     width: 100%;
-    background: ${themingVars['@default-bg']};
+    background: ${themeVars.defaultBg};
     height: 4rem;
     z-index: 11;
 
@@ -177,32 +180,30 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
         : selectionState.selection.type === SharedStateSelectionType.search && selectionState.selection.allSelected;
 
     const _handleClickDelete = () => {
-        message.warn(t('global.feature_not_available'));
+        message.warning(t('global.feature_not_available'));
     };
 
     return (
         <Wrapper active={active}>
             <div>
                 <Dropdown
-                    overlay={
-                        <Menu
-                            items={[
-                                {
-                                    key: 'select-visible',
-                                    onClick: selectVisible,
-                                    label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
-                                },
-                                !selectionMode
-                                    ? {
-                                          key: 'select-all',
-                                          onClick: selectAll,
-                                          label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
-                                      }
-                                    : null,
-                                {key: 'unselect-all', onClick: unselectAll, label: t('menu-selection.unselect-all')}
-                            ]}
-                        />
-                    }
+                    menu={{
+                        items: [
+                            {
+                                key: 'select-visible',
+                                onClick: selectVisible,
+                                label: t('items-menu-dropdown.select-visible', {nb: searchState.records.length})
+                            },
+                            !selectionMode
+                                ? {
+                                      key: 'select-all',
+                                      onClick: selectAll,
+                                      label: t('items-menu-dropdown.select-all', {nb: searchState.totalCount})
+                                  }
+                                : null,
+                            {key: 'unselect-all', onClick: unselectAll, label: t('menu-selection.unselect-all')}
+                        ]
+                    }}
                 >
                     <DropdownButton>
                         <SelectionSummary>

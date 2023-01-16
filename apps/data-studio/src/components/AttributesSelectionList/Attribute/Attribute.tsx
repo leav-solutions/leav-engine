@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Checkbox, Radio, Space} from 'antd';
 import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {attributeToSelectedAttribute, isAttributeSelected, localizedTranslation} from 'utils';
 import {AttributesSelectionListActionTypes} from '../reducer/attributesSelectionListReducer';
 import {useAttributesSelectionListState} from '../reducer/attributesSelectionListStateContext';
@@ -22,8 +21,8 @@ const Item = styled.div`
     border: 2px solid transparent;
 
     &:hover {
-        border-color: ${themingVar['@primary-color']};
-        background-color: ${themingVar['@leav-background-active']};
+        border-color: ${themeVars.primaryColor};
+        background-color: ${themeVars.activeColor};
     }
 `;
 

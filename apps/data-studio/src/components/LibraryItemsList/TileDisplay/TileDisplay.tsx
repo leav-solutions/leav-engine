@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Spin} from 'antd';
 import {SelectionModeContext} from 'context';
 import useSearchReducer from 'hooks/useSearchReducer';
-import React, {useContext} from 'react';
+import {useContext} from 'react';
 import {resetSearchSelection, resetSelection} from 'redux/selection';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {displayTypeToPreviewSize} from 'utils';
-import themingVar from '../../../themingVar';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import getItemPreviewSize from './helpers/getItemPreviewSize';
 import ItemTileDisplay from './ItemTileDisplay';
@@ -37,7 +37,7 @@ const Footer = styled.div`
     grid-area: pagination;
     display: flex;
     justify-content: space-around;
-    border: 1px solid ${themingVar['@divider-color']};
+    border: 1px solid ${themeVars.borderLightColor};
     padding: 0.5rem;
 `;
 

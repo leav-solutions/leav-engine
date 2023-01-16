@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Space} from 'antd';
+import {Space, theme} from 'antd';
 import {IRecordColumnValueLink, IRecordColumnValueStandard} from 'graphQL/queries/records/getRecordColumnsValues';
 import {useLang} from 'hooks/LangHook/LangHook';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {getFileUrl, localizedTranslation} from 'utils';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {PreviewSize} from '_types/types';
@@ -28,6 +27,7 @@ export const Wrapper = styled(Space)`
 function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
     const preview = record?.preview?.medium;
     const previewFile = record?.preview?.file;
+    const {token} = theme.useToken();
 
     const {t} = useTranslation();
     const [{lang}] = useLang();
@@ -95,7 +95,7 @@ function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
                 image={preview && getFileUrl(preview)}
                 tile
                 size={PreviewSize.medium}
-                style={{borderRadius: themingVar['@border-radius-base']}}
+                style={{borderRadius: token.borderRadius}}
                 fileId={previewFile?.id}
                 fileLibraryId={previewFile?.library?.id}
             />

@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {SelectionModeContext} from 'context';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {useContext, useState} from 'react';
@@ -9,7 +10,6 @@ import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} fr
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import themingVar from '../../../../themingVar';
 import {IItem, SharedStateSelectionType} from '../../../../_types/types';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 import BodyCell from '../BodyCell';
@@ -17,23 +17,18 @@ import {isAllSelected, isSelected} from '../BodyCell/getSelectedCell';
 
 const CustomBodyRow = styled.div<{selected: boolean}>`
     position: relative;
-    border-bottom: 1px solid
-        ${props => (props.selected ? themingVar['@leav-background-active'] : themingVar['@leav-light-border-color'])};
+    border-bottom: 1px solid ${props => (props.selected ? themeVars.activeColor : themeVars.borderLightColor)};
     border-collapse: collapse;
 
     // Must set background on row for the case where we just have the infos column (part of the row is empty)
-    background-color: ${p =>
-        p.selected ? themingVar['@leav-view-panel-label-background-active'] : themingVar['@default-bg']};
+    background-color: ${p => (p.selected ? themeVars.activeColor : themeVars.defaultBg)};
 
     &:not(:hover) .floating-menu {
         display: none;
     }
 
     &:hover {
-        background-color: ${p =>
-            p.selected
-                ? themingVar['@leav-view-panel-label-background-active']
-                : `${themingVar['@leav-background-active']}`};
+        background-color: ${p => (p.selected ? themeVars.activeColor : `${themeVars.activeColor}`)};
     }
 `;
 

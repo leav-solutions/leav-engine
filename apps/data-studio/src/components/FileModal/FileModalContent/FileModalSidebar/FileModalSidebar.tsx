@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {Descriptions} from 'antd';
 import {IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 
 interface IFileModalSidebarProps {
     fileData: IFileDataElement;
@@ -15,7 +14,7 @@ interface IFileModalSidebarProps {
 const Sidebar = styled.div`
     position: relative;
     grid-area: sidebar;
-    background: ${themingVar['@leav-secondary-bg']};
+    background: ${themeVars.secondaryBg};
     border-top-right-radius: 3px;
     z-index: 1;
     padding: 1rem;
@@ -25,7 +24,7 @@ const Path = styled.div`
     overflow-x: auto;
     height: 2em;
     white-space: nowrap;
-    background: ${themingVar['@default-bg']};
+    background: ${themeVars.defaultBg};
     padding: 0.5em;
     line-height: 1em;
     width: 135px;

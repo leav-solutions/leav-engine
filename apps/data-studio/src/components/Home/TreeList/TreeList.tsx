@@ -2,14 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
-import {PageHeader, Table} from 'antd';
+import {Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import TreeIcon from 'components/shared/TreeIcon';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useLang} from 'hooks/LangHook/LangHook';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
-import {default as React} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {useAppDispatch} from 'redux/store';
@@ -29,6 +28,15 @@ const TreeLink = styled(Link)`
     gap: 0.5rem;
     width: 100%;
     color: inherit;
+`;
+
+const ListHeader = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem;
+    font-weight: bold;
+    font-size: 1.2em;
 `;
 
 interface IListItem {
@@ -112,14 +120,10 @@ function TreeList(): JSX.Element {
 
     return (
         <div className="wrapper-page">
-            <PageHeader
-                avatar={{
-                    icon: <TreeIcon style={{fontSize: '1.5rem'}} />,
-                    shape: 'square',
-                    style: {background: 'none', color: '#000'}
-                }}
-                title={t('home.trees')}
-            />
+            <ListHeader>
+                <TreeIcon style={{fontSize: '1.5rem'}} />
+                {t('home.trees')}
+            </ListHeader>
             <Table bordered columns={columns} dataSource={list} loading={treeListQuery.loading} pagination={false} />
         </div>
     );

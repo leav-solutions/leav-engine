@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import Loading from 'components/shared/Loading';
 import {useLang} from 'hooks/LangHook/LangHook';
@@ -15,7 +16,6 @@ import styled from 'styled-components';
 import {isTypeStandard} from 'utils';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {infosCol, selectionColumn} from '../../../constants/constants';
-import themingVar from '../../../themingVar';
 import {IField, ITableCell, ITableRow} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
@@ -46,7 +46,7 @@ const CustomTable = styled.div<ICustomTableProps>`
     height: 100%;
     min-width: 0px;
     width: 100%;
-    border: 1px solid ${themingVar['@divider-color']};
+    border: 1px solid ${themeVars.borderLightColor};
     overflow-y: scroll;
 
     &.sticky {
@@ -72,7 +72,7 @@ const CustomTable = styled.div<ICustomTableProps>`
 CustomTable.displayName = 'CustomTable';
 
 const TableHead = styled.div`
-    background: ${themingVar['@leav-secondary-action-bg']};
+    background: ${themeVars.headerBg};
     width: fit-content;
     min-width: 100%;
 `;
@@ -82,8 +82,8 @@ const HeaderRow = styled.div`
 `;
 
 const HeaderCell = styled.div<{id: string}>`
-    background: ${themingVar['@leav-secondary-action-bg']};
-    border-right: 1px solid ${themingVar['@divider-color']};
+    background: ${themeVars.headerBg};
+    border-right: 1px solid ${themeVars.borderLightColor};
     min-width: 35px;
     max-width: ${p => (p.id === selectionColumn ? '35px' : 'auto')};
 
@@ -103,7 +103,7 @@ const Pagination = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top: 1px solid ${themingVar['@divider-color']};
+    border-top: 1px solid ${themeVars.borderLightColor};
     padding-top: 8px;
 `;
 

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook, waitFor} from '@testing-library/react';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {mockRecord} from '__mocks__/common/record';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
@@ -69,7 +69,7 @@ describe('useTreeLibraryAllowedAsChild', () => {
     ];
 
     test('At root, return libraries allowed at root', async () => {
-        const {result, waitForNextUpdate} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree'), {
+        const {result} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree'), {
             wrapper: ({children}) => (
                 <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
             )
@@ -77,7 +77,7 @@ describe('useTreeLibraryAllowedAsChild', () => {
 
         expect(result.current.loading).toBe(true);
 
-        await waitForNextUpdate();
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.loading).toBe(false);
         expect(result.current.error).toBeUndefined();
@@ -101,7 +101,7 @@ describe('useTreeLibraryAllowedAsChild', () => {
             permissions: null
         };
 
-        const {result, waitForNextUpdate} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree', parentNode), {
+        const {result} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree', parentNode), {
             wrapper: ({children}) => (
                 <MockedProviderWithFragments mocks={mocks}>{children as JSX.Element}</MockedProviderWithFragments>
             )
@@ -109,7 +109,7 @@ describe('useTreeLibraryAllowedAsChild', () => {
 
         expect(result.current.loading).toBe(true);
 
-        await waitForNextUpdate();
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.loading).toBe(false);
         expect(result.current.error).toBeUndefined();
@@ -129,7 +129,7 @@ describe('useTreeLibraryAllowedAsChild', () => {
             }
         ];
 
-        const {result, waitForNextUpdate} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree'), {
+        const {result} = renderHook(() => useTreeLibraryAllowedAsChild('my_tree'), {
             wrapper: ({children}) => (
                 <MockedProviderWithFragments mocks={mockError}>{children as JSX.Element}</MockedProviderWithFragments>
             )
@@ -137,7 +137,7 @@ describe('useTreeLibraryAllowedAsChild', () => {
 
         expect(result.current.loading).toBe(true);
 
-        await waitForNextUpdate();
+        await waitFor(() => expect(result.current.loading).toBe(false));
 
         expect(result.current.loading).toBe(false);
         expect(result.current.error).toBeTruthy();

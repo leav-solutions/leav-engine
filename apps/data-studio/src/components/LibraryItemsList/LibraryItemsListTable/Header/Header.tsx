@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CaretDownOutlined, CaretUpOutlined} from '@ant-design/icons';
-import {Dropdown, Menu} from 'antd';
+import {themeVars} from '@leav/ui';
+import {Dropdown} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import React, {useState} from 'react';
@@ -10,7 +11,6 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeType, SortOrder} from '_gqlTypes/globalTypes';
 import {infosCol} from '../../../../constants/constants';
-import themingVar from '../../../../themingVar';
 import {getSortFieldByAttributeType} from '../../../../utils';
 import ChooseTableColumns from '../ChooseTableColumns';
 
@@ -26,14 +26,14 @@ const Wrapper = styled.div<IWrapperProps>`
     height: 100%;
 
     &:hover {
-        border-left: ${themingVar['@primary-color']} 3px solid;
-        border-right: ${themingVar['@primary-color']} 3px solid;
+        border-left: ${themeVars.primaryColor} 3px solid;
+        border-right: ${themeVars.primaryColor} 3px solid;
         box-shadow: 0px 3px 6px #00000029;
 
         .wrapper-arrow {
-            background: ${themingVar['@default-bg']};
+            background: ${themeVars.defaultBg};
             box-shadow: 0px 3px 6px #00000029;
-            border: 1px solid ${themingVar['@leav-secondary-divider-color']};
+            border: 1px solid ${themeVars.borderLightColor};
         }
     }
 `;
@@ -138,42 +138,40 @@ const Header = ({id, children, type}: IHeaderProps) => {
             <Dropdown
                 placement="bottom"
                 trigger={['click']}
-                overlay={
-                    <Menu
-                        style={{transform: 'translateY(-8px)'}} // move overlay to avoid trigger css transition
-                        onMouseEnter={() => setIsHover(true)}
-                        onMouseLeave={() => setIsHover(false)}
-                        items={[
-                            {
-                                key: 'sort-ascend',
-                                onClick: () => handleAsc(id, type),
-                                label: t('items_list.table.header-cell-menu.sort-ascend')
-                            },
-                            {
-                                key: 'sort-descend',
-                                onClick: () => handleDesc(id, type),
-                                label: t('items_list.table.header-cell-menu.sort-descend')
-                            },
-                            {
-                                key: 'cancel-sort',
-                                onClick: cancelSort,
-                                label: t('items_list.table.header-cell-menu.cancel-sort')
-                            },
-                            id !== infosCol
-                                ? {
-                                      key: 'hide-column',
-                                      onClick: () => handleHideColumn(id),
-                                      label: t('items_list.table.header-cell-menu.hide-column')
-                                  }
-                                : null,
-                            {
-                                key: 'choose-columns',
-                                onClick: () => setOpenChangeColumns(true),
-                                label: t('items_list.table.header-cell-menu.choose-columns')
-                            }
-                        ]}
-                    ></Menu>
-                }
+                menu={{
+                    style: {transform: 'translateY(-8px)'}, // move overlay to avoid trigger css transition
+                    onMouseEnter: () => setIsHover(true),
+                    onMouseLeave: () => setIsHover(false),
+                    items: [
+                        {
+                            key: 'sort-ascend',
+                            onClick: () => handleAsc(id, type),
+                            label: t('items_list.table.header-cell-menu.sort-ascend')
+                        },
+                        {
+                            key: 'sort-descend',
+                            onClick: () => handleDesc(id, type),
+                            label: t('items_list.table.header-cell-menu.sort-descend')
+                        },
+                        {
+                            key: 'cancel-sort',
+                            onClick: cancelSort,
+                            label: t('items_list.table.header-cell-menu.cancel-sort')
+                        },
+                        id !== infosCol
+                            ? {
+                                  key: 'hide-column',
+                                  onClick: () => handleHideColumn(id),
+                                  label: t('items_list.table.header-cell-menu.hide-column')
+                              }
+                            : null,
+                        {
+                            key: 'choose-columns',
+                            onClick: () => setOpenChangeColumns(true),
+                            label: t('items_list.table.header-cell-menu.choose-columns')
+                        }
+                    ]
+                }}
             >
                 <DropdownContent>
                     <WrapperArrow

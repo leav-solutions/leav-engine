@@ -1,20 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Divider, Drawer, List, Space, Button, Row, Col} from 'antd';
 import {useMutation} from '@apollo/client';
-import {useAppSelector, useAppDispatch} from 'redux/store';
-import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
-import {DELETE_TASK, DELETE_TASKVariables} from '_gqlTypes/DELETE_TASK';
+import {Button, Col, Drawer, List, Row} from 'antd';
 import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
 import {deleteTaskMutation} from 'graphQL/mutations/tasks/deleteTask';
-import {deleteTask} from 'redux/tasks';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import TaskItem from './TaskItem';
-import {isInProgressTask, isCompletedTask} from './TaskItem/TaskItem';
 import {setIsPanelOpen} from 'redux/notifications';
-import styled from 'styled-components';
+import {useAppDispatch, useAppSelector} from 'redux/store';
+import {deleteTask} from 'redux/tasks';
+import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
+import {DELETE_TASK, DELETE_TASKVariables} from '_gqlTypes/DELETE_TASK';
+import TaskItem from './TaskItem';
+import {isCompletedTask, isInProgressTask} from './TaskItem/TaskItem';
 
 interface INotifsPanelProps {
     setNbNotifs: (count: number) => void;
@@ -104,19 +103,18 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
         <Drawer
             data-testid="drawer"
             title={t('notifications.title')}
-            visible={isPanelOpen}
+            open={isPanelOpen}
             onClose={_onClose}
             placement="right"
-            getContainer={false}
             bodyStyle={{padding: 0}}
         >
             {!!panel.inProgress.length && (
                 <List
                     data-testid="inProgressList"
-                    header={t('notifications.inProgress')}
+                    header={<div style={{padding: '0 0.5rem'}}>{t('notifications.inProgress')}</div>}
                     dataSource={panel.inProgress}
-                    bordered
                     itemLayout="vertical"
+                    bordered={false}
                     size="small"
                     renderItem={(notif, index) =>
                         notif.type === NotifTypes.TASK ? (
@@ -134,12 +132,11 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
                     }
                 />
             )}
-            {!!panel.inProgress.length && !!panel.completed.length && <Divider plain />}
             {!!panel.completed.length && (
                 <List
                     data-testid="completedList"
                     header={
-                        <Row justify="space-between" align="bottom">
+                        <Row justify="space-between" align="bottom" style={{padding: '0 0.5rem'}}>
                             <Col>{t('notifications.done')}</Col>
                             <Col>
                                 <Button size={'small'} onClick={_onDeleteAll}>
@@ -149,7 +146,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
                         </Row>
                     }
                     dataSource={panel.completed}
-                    bordered
+                    bordered={false}
                     itemLayout="vertical"
                     size="small"
                     renderItem={(notif: INotif, index) =>

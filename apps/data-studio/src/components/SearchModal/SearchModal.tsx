@@ -7,7 +7,6 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 import {resetSearchSelection} from 'redux/selection';
@@ -43,7 +42,7 @@ function SearchModal({visible, setVisible, submitAction, libId}: ISearchModalPro
 
     const renderModal = (content: JSX.Element): JSX.Element => (
         <Modal
-            visible={visible}
+            open={visible}
             onCancel={handleModalClose}
             width="95vw"
             bodyStyle={{height: '90vh', overflow: 'hidden'}}

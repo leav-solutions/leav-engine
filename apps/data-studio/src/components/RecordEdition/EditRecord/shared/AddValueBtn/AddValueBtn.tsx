@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
+import {themeVars} from '@leav/ui';
 import {ButtonProps} from 'antd';
 import BasicButton from 'components/shared/BasicButton';
 import {useTranslation} from 'react-i18next';
-import themingVar from 'themingVar';
 import {FieldScope} from '../../_types';
 
 interface IAddValueBtnProps extends ButtonProps {
@@ -23,8 +23,8 @@ function AddValueBtn({bordered = false, linkField = false, activeScope, ...props
             style={{
                 color:
                     activeScope === FieldScope.INHERITED
-                        ? themingVar['@leav-inherited-values-version-color']
-                        : themingVar['@default-text-color']
+                        ? themeVars.inheritedValuesVersionColor
+                        : themeVars.defaultTextColor
             }}
         >
             <PlusOutlined />

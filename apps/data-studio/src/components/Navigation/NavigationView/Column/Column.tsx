@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {themeVars} from '@leav/ui';
 import {Pagination} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -14,20 +15,19 @@ import {INavigationElement} from 'redux/stateType';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
 import {TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables} from '_gqlTypes/TREE_NODE_CHILDREN';
-import themingVar from '../../../../themingVar';
 import DetailNavigation from './DetailNavigation';
 import HeaderColumnNavigation from './HeaderColumnNavigation';
 import Row from './Row';
 
 const ColumnWrapper = styled.div<{showDetails: boolean}>`
-    border-right: 1px solid ${themingVar['@divider-color']};
-    width: ${themingVar['@leav-navigation-column-width']};
+    border-right: 1px solid ${themeVars.borderLightColor};
+    width: ${themeVars.navigationColumnWidth};
     height: 100%;
     display: flex;
     flex-flow: column nowrap;
     flex-shrink: 0;
 
-    background: ${themingVar['@default-bg']};
+    background: ${themeVars.defaultBg};
 `;
 
 const ColumnContent = styled.div`
@@ -39,7 +39,7 @@ const ColumnPagination = styled(Pagination)`
     && {
         text-align: center;
         padding: 0.5em 0;
-        border-bottom: 1px solid ${themingVar['@border-color-base']};
+        border-bottom: 1px solid ${themeVars.borderColor};
     }
 `;
 

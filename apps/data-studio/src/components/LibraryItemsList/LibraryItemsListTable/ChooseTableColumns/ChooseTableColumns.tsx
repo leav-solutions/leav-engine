@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
@@ -117,7 +116,7 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
 
     return (
         <Modal
-            visible={visible}
+            open={visible}
             onCancel={_handleCancel}
             title={t('table-columns-selection.header')}
             width="70rem"
@@ -126,9 +125,9 @@ function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.E
                 <Button key="Cancel" onClick={_handleCancel}>
                     {t('table-columns-selection.cancel')}
                 </Button>,
-                <PrimaryBtn key="Submit" onClick={handleSubmit}>
+                <Button type="primary" key="Submit" onClick={handleSubmit}>
                     {t('table-columns-selection.submit')}
-                </PrimaryBtn>
+                </Button>
             ]}
         >
             <AttributesSelectionList

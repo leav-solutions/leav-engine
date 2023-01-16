@@ -1,28 +1,25 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    CheckOutlined,
-    LoadingOutlined,
-    RightOutlined,
-    FieldTimeOutlined,
-    DownOutlined,
-    UploadOutlined
-} from '@ant-design/icons';
+import {DownOutlined, FieldTimeOutlined, LoadingOutlined, RightOutlined, UploadOutlined} from '@ant-design/icons';
 import {ServerError, useLazyQuery, useMutation} from '@apollo/client';
-import {Button, Dropdown, Menu, message, Space, Steps} from 'antd';
+import {Button, Dropdown, message, Space, Steps} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import dayjs from 'dayjs';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
-import React, {ReactNode, useEffect, useReducer, useState} from 'react';
+import useNotification from 'hooks/useNotification';
+import {ReactNode, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {setIsPanelOpen} from 'redux/notifications';
+import {useAppDispatch} from 'redux/store';
 import styled from 'styled-components';
-import {ImportType} from '_gqlTypes/globalTypes';
 import {IMPORT_EXCEL, IMPORT_EXCELVariables} from '_gqlTypes/IMPORT_EXCEL';
-import {getAttributesByLibQuery} from '../../../../graphQL/queries/attributes/getAttributesByLib';
 import {importExcel} from '../../../../graphQL/mutations/import/importExcel';
+import {getAttributesByLibQuery} from '../../../../graphQL/queries/attributes/getAttributesByLib';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import ImportModalConfigStep from './ImportModalConfigStep';
+import ImportScheduleModal from './ImportModalConfigStep/ImportScheduleModal';
 import ImportModalDoneStep from './ImportModalDoneStep';
 import ImportModalProcessingStep from './ImportModalProcessingStep';
 import ImportModalSelectFileStep from './ImportModalSelectFileStep';
@@ -30,11 +27,6 @@ import importReducer from './importReducer';
 import {ImportReducerActionTypes, initialState} from './importReducer/importReducer';
 import ImportReducerContext from './importReducer/ImportReducerContext';
 import {ImportSteps} from './_types';
-import ImportScheduleModal from './ImportModalConfigStep/ImportScheduleModal';
-import useNotification from 'hooks/useNotification';
-import moment from 'moment';
-import {useAppDispatch, useAppSelector} from 'redux/store';
-import {setIsPanelOpen} from 'redux/notifications';
 
 const {Step} = Steps;
 
@@ -57,7 +49,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
     const {sheets, file, currentStep, okBtn} = state;
 
     const [showImportScheduleModal, setShowImportScheduleModal] = useState<boolean>(false);
-    const [scheduleDate, setScheduleDate] = useState<moment.Moment | null>(null);
+    const [scheduleDate, setScheduleDate] = useState<dayjs.Dayjs | null>(null);
 
     const notification = useNotification();
 
@@ -229,7 +221,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
         setScheduleDate(null);
     };
 
-    const _onChangeScheduleImport = (date: moment.Moment) => {
+    const _onChangeScheduleImport = (date: dayjs.Dayjs) => {
         setScheduleDate(date);
     };
 
@@ -256,7 +248,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                     cancelText={t('global.cancel')}
                     onOk={_onOk}
                     onCancel={onClose}
-                    visible={open}
+                    open={open}
                     closable
                     width="90vw"
                     centered
@@ -275,18 +267,16 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                                     type="primary"
                                     onClick={_onOk}
                                     icon={<DownOutlined />}
-                                    overlay={
-                                        <Menu
-                                            items={[
-                                                {
-                                                    label: t('import.import_schedule'),
-                                                    key: '1',
-                                                    icon: <FieldTimeOutlined />
-                                                }
-                                            ]}
-                                            onClick={_onScheduleImportBtnClick}
-                                        ></Menu>
-                                    }
+                                    menu={{
+                                        items: [
+                                            {
+                                                label: t('import.import_schedule'),
+                                                key: '1',
+                                                icon: <FieldTimeOutlined />
+                                            }
+                                        ],
+                                        onClick: _onScheduleImportBtnClick
+                                    }}
                                 >
                                     {validateButtonLabel}
                                 </Dropdown.Button>

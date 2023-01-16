@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FolderOutlined, FrownOutlined} from '@ant-design/icons';
-import {Space} from 'antd';
-import React from 'react';
+import {Space, theme} from 'antd';
+import {GlobalToken} from 'antd/es/theme/interface';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {getInvertColor, stringToColor} from 'utils';
 import {IFileViewerProps} from '../_types';
 
@@ -14,14 +13,14 @@ interface INoDisplayFileProps extends IFileViewerProps {
     noPreviewMessage?: boolean;
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{themeToken: GlobalToken}>`
     width: 80%;
     height: 80%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: ${themingVar['@border-radius-base']};
+    border-radius: ${p => p.themeToken.borderRadius}px;
 `;
 
 const ExtensionWrapper = styled.div<{isDirectory: boolean}>`
@@ -38,9 +37,10 @@ function NoDisplayFile({fileData, noPreviewMessage = false}: INoDisplayFileProps
     const bgColor = fileData.whoAmI.color || stringToColor(fileData.whoAmI.label);
     const fontColor = getInvertColor(bgColor);
     const isDirectory = fileData.library.behavior === 'directories';
+    const {token} = theme.useToken();
 
     return (
-        <Wrapper style={{backgroundColor: bgColor, color: fontColor}}>
+        <Wrapper style={{backgroundColor: bgColor, color: fontColor}} themeToken={token}>
             <ExtensionWrapper isDirectory={isDirectory}>
                 {isDirectory ? (
                     <Space>

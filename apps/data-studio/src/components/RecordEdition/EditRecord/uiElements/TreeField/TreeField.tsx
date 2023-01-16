@@ -1,8 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {ICommonFieldsSettings} from '@leav/utils';
-import {List, Popover} from 'antd';
+import {List, Popover, theme} from 'antd';
+import {GlobalToken} from 'antd/lib/theme/interface';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
@@ -14,7 +16,6 @@ import {RecordFormElementsValueTreeValue} from 'hooks/useGetRecordForm/useGetRec
 import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
 import {Reducer, useContext, useEffect, useReducer} from 'react';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {arrayValueVersionToObject} from 'utils';
 import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue} from '_gqlTypes/SAVE_VALUE_BATCH';
@@ -39,12 +40,12 @@ import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import TreeFieldValue from './TreeFieldValue';
 import ValuesAdd from './ValuesAdd';
 
-const Wrapper = styled.div<{isValuesAddVisible: boolean}>`
+const Wrapper = styled.div<{isValuesAddVisible: boolean; themeToken: GlobalToken}>`
     position: relative;
-    border: 1px solid ${themingVar['@border-color-base']};
+    border: 1px solid ${themeVars.borderColor};
     margin-bottom: 1.5em;
-    border-radius: ${themingVar['@border-radius-base']};
-    background: ${themingVar['@default-bg']};
+    border-radius: ${p => p.themeToken.borderRadius}px;
+    background: ${themeVars.defaultBg};
     z-index: ${p => (p.isValuesAddVisible ? 1 : 'auto')};
 
     .ant-list-items {
@@ -54,7 +55,7 @@ const Wrapper = styled.div<{isValuesAddVisible: boolean}>`
 
     .ant-list-footer {
         padding: 0;
-        border-radius: ${themingVar['@border-radius-base']};
+        border-radius: ${p => p.themeToken.borderRadius}px;
     }
 `;
 
@@ -63,7 +64,7 @@ const FieldLabel = styled(Paragraph)`
         top: calc(50% - 0.9em);
         font-size: 0.9em;
         padding: 0 0.5em;
-        color: ${themingVar['@leav-secondary-font-color']};
+        color: ${themeVars.secondaryTextColor};
         z-index: 1;
         margin-bottom: 0;
     }
@@ -78,6 +79,7 @@ function TreeField({
     onValueDelete,
     onDeleteMultipleValues
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+    const {token} = theme.useToken();
     const {state: editRecordModalState, dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
 
@@ -303,7 +305,7 @@ function TreeField({
     return (
         <>
             {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
-            <Wrapper isValuesAddVisible={state.isValuesAddVisible}>
+            <Wrapper isValuesAddVisible={state.isValuesAddVisible} themeToken={token}>
                 <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
                     {element.settings.label}
                     {state.activeScope === FieldScope.INHERITED && (
@@ -330,7 +332,7 @@ function TreeField({
             {state.errorMessage && (
                 <Popover
                     placement="bottomLeft"
-                    visible={!!state.errorMessage}
+                    open={!!state.errorMessage}
                     content={<ErrorMessage error={state.errorMessage} onClose={_handleCloseError} />}
                 ></Popover>
             )}

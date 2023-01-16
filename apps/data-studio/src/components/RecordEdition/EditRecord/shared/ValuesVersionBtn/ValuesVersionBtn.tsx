@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, ButtonProps, Dropdown, Menu, Space} from 'antd';
+import {themeVars} from '@leav/ui';
+import {Button, ButtonProps, Dropdown, Space} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import BasicButton from 'components/shared/BasicButton';
 import {MenuItemType} from 'rc-menu/lib/interface';
 import {useTranslation} from 'react-i18next';
 import {VscLayers, VscLayersActive} from 'react-icons/vsc';
-import themingVar from 'themingVar';
 import {getValueVersionLabel} from 'utils';
 import {IValueVersion} from '_types/types';
 import {FieldScope} from '../../_types';
@@ -65,7 +65,7 @@ function ValuesVersionBtn({
             size: '1.8em',
             style: {
                 paddingTop: '5px',
-                color: themingVar['@leav-inherited-values-version-color']
+                color: themeVars.inheritedValuesVersionColor
             }
         };
 
@@ -95,11 +95,7 @@ function ValuesVersionBtn({
     );
 
     return (
-        <Dropdown
-            trigger={['click']}
-            overlay={<Menu items={menuItems} activeKey={activeScope}></Menu>}
-            overlayStyle={{zIndex: 1000}}
-        >
+        <Dropdown trigger={['click']} menu={{items: menuItems, activeKey: activeScope}} overlayStyle={{zIndex: 1000}}>
             {button}
         </Dropdown>
     );

@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {Dropdown, Menu, Tooltip} from 'antd';
-import {StandardBtn} from 'components/app/StyledComponent/StandardBtn';
+import {Button, Dropdown, Tooltip} from 'antd';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
@@ -88,7 +87,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                 };
             }
         }
-        onMessages('navigation.notifications.success-add', 'navigation.notifications.error-add', messages);
+        onMessages('navigation.infos.success-add', 'navigation.infos.error-add', messages);
 
         refreshTreeContent();
     };
@@ -103,23 +102,21 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
         <>
             {availableLibraries.length > 1 ? (
                 <Dropdown // Add by creation
-                    overlay={
-                        <Menu
-                            items={availableLibraries.map(library => ({
-                                key: library.library.id,
-                                onClick: _handleOpenCreateRecordModal(library.library.id),
-                                label: localizedTranslation(library.library.label, lang)
-                            }))}
-                        ></Menu>
-                    }
+                    menu={{
+                        items: availableLibraries.map(library => ({
+                            key: library.library.id,
+                            onClick: _handleOpenCreateRecordModal(library.library.id),
+                            label: localizedTranslation(library.library.label, lang)
+                        }))
+                    }}
                 >
                     <Tooltip title={t('navigation.header.add_by_creation')} placement="top">
-                        <StandardBtn icon={buttonIcon} />
+                        <Button icon={buttonIcon} />
                     </Tooltip>
                 </Dropdown>
             ) : (
                 <Tooltip title={t('navigation.header.add_by_creation')} placement="top">
-                    <StandardBtn
+                    <Button
                         icon={buttonIcon}
                         aria-label="add-by-creation"
                         onClick={_handleOpenCreateRecordModal(availableLibraries[0]?.library.id ?? null)}

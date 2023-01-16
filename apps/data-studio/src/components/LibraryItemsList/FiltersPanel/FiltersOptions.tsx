@@ -88,12 +88,12 @@ export function getAttributeConditionOptions(t: TFunction): Array<IFilterConditi
         {
             text: t('filters.greater-than'),
             textByFormat: {[AttributeFormat.date]: t('filters.before')},
-            value: AttributeConditionFilter.GREATER_THAN
+            value: AttributeConditionFilter.LESS_THAN
         },
         {
             text: t('filters.less-than'),
             textByFormat: {[AttributeFormat.date]: t('filters.after')},
-            value: AttributeConditionFilter.LESS_THAN
+            value: AttributeConditionFilter.GREATER_THAN
         },
         {text: t('filters.today'), value: AttributeConditionFilter.TODAY},
         {text: t('filters.tomorrow'), value: AttributeConditionFilter.TOMORROW},

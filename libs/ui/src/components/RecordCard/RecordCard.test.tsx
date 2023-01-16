@@ -4,8 +4,8 @@
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
 import {PreviewSize} from '../../constants';
+import {IRecordIdentityWhoAmI} from '../../types/RecordIdentity';
 import {act, render, screen} from '../../_tests/testUtils';
-import {IRecordIdentityWhoAmI} from '../../_types/RecordIdentity';
 import {mockRecord} from '../../__mocks__/common/record';
 import RecordCard from './RecordCard';
 

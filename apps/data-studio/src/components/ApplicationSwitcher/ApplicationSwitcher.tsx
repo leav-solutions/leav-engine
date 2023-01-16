@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
+import {themeVars} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
@@ -14,7 +15,6 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 import AppLink from './AppLink';
 
@@ -42,7 +42,7 @@ const CustomMenu = styled(Menu)`
             height: auto;
 
             .description {
-                color: ${themingVar['@leav-secondary-font-color']};
+                color: ${themeVars.secondaryTextColor};
             }
         }
 
@@ -160,14 +160,7 @@ function ApplicationSwitcher(): JSX.Element {
                     onClick={_handleOpen}
                 />
             </Tooltip>
-            <Drawer
-                visible={isVisible}
-                onClose={_handleClose}
-                placement="right"
-                closable={false}
-                getContainer={false}
-                bodyStyle={{padding: 0}}
-            >
+            <Drawer open={isVisible} onClose={_handleClose} placement="right" closable={false} bodyStyle={{padding: 0}}>
                 {dropdownContent}
             </Drawer>
         </>

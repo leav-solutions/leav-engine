@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {BulbOutlined, CloseOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
+import {themeVars} from '@leav/ui';
 import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
-import {PrimaryBtn} from 'components/app/StyledComponent/PrimaryBtn';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import SearchModal from 'components/SearchModal';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
@@ -21,7 +21,6 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import themingVar from 'themingVar';
 import {localizedTranslation} from 'utils';
 import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
@@ -40,7 +39,7 @@ interface IValuesAddProps {
 }
 
 const Wrapper = styled.div`
-    background-color: ${themingVar['@default-bg']};
+    background-color: ${themeVars.defaultBg};
     padding: 1em;
     z-index: 1;
     position: relative;
@@ -313,9 +312,9 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                         <Button size="small" onClick={_handleClose}>
                             {t('global.cancel')}
                         </Button>
-                        <PrimaryBtn size="small" onClick={_handleSubmit}>
+                        <Button type="primary" size="small" onClick={_handleSubmit}>
                             {t('global.submit')}
-                        </PrimaryBtn>
+                        </Button>
                     </Space>
                 </FooterWrapper>
             </Wrapper>

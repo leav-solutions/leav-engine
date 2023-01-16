@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import {IRecordCardProps} from './_types';
 declare const RecordCard: ({
     record,
