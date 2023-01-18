@@ -27,10 +27,12 @@ import {createPreview} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewVersions} from './_constants';
-import {IFileUpload} from '_types/import';
+import {FileUpload} from 'graphql-upload';
 import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {IUtils} from 'utils/utils';
 import increment from 'add-filename-increment';
+import {Progress} from 'progress-stream';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -53,8 +55,10 @@ interface IGetOriginalPathParams {
 interface IStoreFilesParams {
     library: string;
     path: string;
-    files: Array<{data: IFileUpload; replace: boolean}>;
+    files: Array<{data: FileUpload; size?: number; replace?: boolean}>;
 }
+
+export const TRIGGER_NAME_UPLOAD_FILE = 'UPLOAD_FILE';
 
 export interface IFilesManagerDomain {
     init(): Promise<void>;
@@ -63,7 +67,10 @@ export interface IFilesManagerDomain {
     forcePreviewsGeneration(params: IForcePreviewsGenerationParams): Promise<boolean>;
     getRootPathByKey(rootKey: string): string;
     getOriginalPath(params: IGetOriginalPathParams): Promise<string>;
-    storeFiles({library, path, files}: IStoreFilesParams, ctx: IQueryInfos): Promise<string[]>;
+    storeFiles(
+        {library, path, files}: IStoreFilesParams,
+        ctx: IQueryInfos
+    ): Promise<Array<{filename: string; recordId: string}>>;
 }
 
 interface IDeps {
@@ -79,6 +86,7 @@ interface IDeps {
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
     'core.infra.record'?: IRecordRepo;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     translator?: i18n;
 }
 
@@ -94,6 +102,7 @@ export default function ({
     'core.domain.helpers.storeUploadFile': storeUploadFile = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
+    'core.domain.eventsManager': eventsManager = null,
     'core.infra.record': recordRepo = null,
     translator = null
 }: IDeps): IFilesManagerDomain {
@@ -187,7 +196,15 @@ export default function ({
                 _onMessage
             );
         },
-        async storeFiles({library, path, files}: IStoreFilesParams, ctx: IQueryInfos): Promise<string[]> {
+        async storeFiles(
+            {library, path, files}: IStoreFilesParams,
+            ctx: IQueryInfos
+        ): Promise<Array<{filename: string; recordId: string}>> {
+            // Check if files have the same filename
+            if (!files.filter((f, i) => files.indexOf(f) !== i).length) {
+                throw new ValidationError({condition: Errors.DUPLICATE_FILENAMES});
+            }
+
             // get root key of library from config
             const rootKey = Object.keys(config.filesManager.rootKeys).find(
                 key => config.filesManager.rootKeys[key] === library
@@ -199,6 +216,9 @@ export default function ({
             const recordIds = [];
 
             for (const file of files) {
+                file.replace = file.replace ?? false;
+                const originalFilename = file.data.filename;
+
                 // check if file already exists
                 const fileExists = await recordDomain.find({
                     params: {
@@ -207,7 +227,7 @@ export default function ({
                             {
                                 field: FilesAttributes.FILE_NAME,
                                 condition: AttributeCondition.EQUAL,
-                                value: file.data.filename
+                                value: originalFilename
                             },
                             {
                                 operator: Operator.AND
@@ -233,7 +253,7 @@ export default function ({
 
                     // if file already exists, we modify the filename
                     if (fileExists.totalCount && !file.replace) {
-                        const newPath = increment.path(`${fullPath}/${file.data.filename}`, {
+                        const newPath = increment.path(`${fullPath}/${originalFilename}`, {
                             fs: true,
                             platform: 'darwin'
                         });
@@ -267,9 +287,19 @@ export default function ({
                     });
                 }
 
-                await storeUploadFile(file.data, fullPath);
+                const getProgress = async (progress: Progress) => {
+                    await eventsManager.sendPubSubEvent(
+                        {
+                            triggerName: TRIGGER_NAME_UPLOAD_FILE,
+                            data: {upload: {originalFilename, userId: ctx.userId, progress}}
+                        },
+                        ctx
+                    );
+                };
 
-                recordIds.push(recordId);
+                await storeUploadFile(file.data, fullPath, getProgress, file.size);
+
+                recordIds.push({filename: originalFilename, recordId});
             }
 
             return recordIds;

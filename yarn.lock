@@ -6815,18 +6815,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/graphql-upload@npm:8.0.10":
-  version: 8.0.10
-  resolution: "@types/graphql-upload@npm:8.0.10"
-  dependencies:
-    "@types/express": "*"
-    "@types/fs-capacitor": "*"
-    "@types/koa": "*"
-    graphql: ^16.2.0
-  checksum: 7c5eda17a8abfd1a251617c048116fcee045bebf169721a04f88f674fe1fe78265d697559a19eaec03d3c67995654ca962e741f46bfe31222fb4429eba4bb51c
-  languageName: node
-  linkType: hard
-
 "@types/history@npm:*, @types/history@npm:^4.7.11":
   version: 4.7.11
   resolution: "@types/history@npm:4.7.11"
@@ -11896,7 +11884,6 @@ __metadata:
     "@types/debug": 0.0.31
     "@types/elasticsearch": 5.0.40
     "@types/glob": 5.0.37
-    "@types/graphql-upload": 8.0.10
     "@types/i18next-fs-backend": 1.1.2
     "@types/jest": 29.0.2
     "@types/jest-when": 3.5.2
@@ -11928,7 +11915,7 @@ __metadata:
     graphql: 14.7.0
     graphql-subscriptions: 2.0.0
     graphql-type-json: 0.3.2
-    graphql-upload: 13.0.0
+    graphql-upload: 16.0.2
     graphql-ws: 5.10.0
     handlebars: 4.7.7
     hot-formula-parser: 4.0.0
@@ -11953,6 +11940,7 @@ __metadata:
     npm-run-all: 4.1.5
     onchange: 4.1.0
     prettier: 1.19.1
+    progress-stream: 2.0.0
     redis: 4.0.4
     ts-jest: 29.0.1
     ts-node: 10.9.1
@@ -23295,6 +23283,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"progress-stream@npm:2.0.0":
+  version: 2.0.0
+  resolution: "progress-stream@npm:2.0.0"
+  dependencies:
+    speedometer: ~1.0.0
+    through2: ~2.0.3
+  checksum: 6aab6a9cf2c8bf0ea222e925d13e31dbf0f74c33a6fec773824995382e299417bcb77aec762a9d240cca3c9d31983bd3d5c195aa97608e39dc40083a8a02c393
+  languageName: node
+  linkType: hard
+
 "progress@npm:^2.0.0":
   version: 2.0.3
   resolution: "progress@npm:2.0.3"
@@ -26648,6 +26646,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"speedometer@npm:~1.0.0":
+  version: 1.0.0
+  resolution: "speedometer@npm:1.0.0"
+  checksum: 6b322bbb0607c9994fba2a6ac189cf6caea4ce9f5067c1ccfc2848b55883f65d48292bfed4244ce855573ed7cdf0f69943ae6e507f7ec90eef232b64cdba6237
+  languageName: node
+  linkType: hard
+
 "split-string@npm:^3.0.1, split-string@npm:^3.0.2":
   version: 3.1.0
   resolution: "split-string@npm:3.1.0"
@@ -27546,6 +27551,16 @@ __metadata:
   version: 5.0.0
   resolution: "throttle-debounce@npm:5.0.0"
   checksum: aa8bf25828b4f8645ce863589de05d6807ea3debc147ce7d89624638ff8a16792d6d0baa0f8a32a260f0b163444d74020c6087b713ae561fde594b97b6e51f28
+  languageName: node
+  linkType: hard
+
+"through2@npm:~2.0.3":
+  version: 2.0.5
+  resolution: "through2@npm:2.0.5"
+  dependencies:
+    readable-stream: ~2.3.6
+    xtend: ~4.0.1
+  checksum: beb0f338aa2931e5660ec7bf3ad949e6d2e068c31f4737b9525e5201b824ac40cac6a337224856b56bd1ddd866334bbfb92a9f57cd6f66bc3f18d3d86fc0fe50
   languageName: node
   linkType: hard
 
@@ -29854,7 +29869,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xtend@npm:^4.0.0, xtend@npm:^4.0.1, xtend@npm:^4.0.2":
+"xtend@npm:^4.0.0, xtend@npm:^4.0.1, xtend@npm:^4.0.2, xtend@npm:~4.0.1":
   version: 4.0.2
   resolution: "xtend@npm:4.0.2"
   checksum: ac5dfa738b21f6e7f0dd6e65e1b3155036d68104e67e5d5d1bde74892e327d7e5636a076f625599dc394330a731861e87343ff184b0047fef1360a7ec0a5a36a
