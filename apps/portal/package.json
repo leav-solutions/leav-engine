@@ -3,14 +3,15 @@
   "version": "1.0.0-beta3",
   "private": true,
   "dependencies": {
-    "@apollo/client": "3.5.10",
+    "@apollo/client": "3.7.10",
     "@leav/ui": "workspace:*",
-    "antd": "5.1.5",
+    "antd": "5.2.3",
     "cross-fetch": "3.1.5",
-    "i18next": "21.6.16",
+    "graphql-ws": "5.12.0",
+    "i18next": "22.4.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-i18next": "11.16.7",
+    "react-i18next": "12.2.0",
     "styled-components": "5.3.5"
   },
   "devDependencies": {
@@ -24,6 +25,7 @@
     "@types/react-dom": "18.0.6",
     "@vitejs/plugin-react": "3.1.0",
     "apollo": "2.34.0",
+    "commander": "10.0.0",
     "jest": "29.4.1",
     "jest-environment-jsdom": "29.4.1",
     "ts-jest": "29.0.5",

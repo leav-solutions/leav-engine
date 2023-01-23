@@ -46,7 +46,7 @@ describe('Applications', () => {
 
         const testAppRes = appsRes.data.data.applications.list.find(app => app.id === 'test_app');
         expect(testAppRes).toBeDefined();
-        expect(testAppRes.install.status).toBe(ApplicationInstallStatuses.SUCCESS);
+        expect(testAppRes.install.status).toBe(ApplicationInstallStatuses.NONE);
         expect(testAppRes.permissions.access_application).toBeDefined();
     });
 

@@ -5,12 +5,16 @@ import userEvent from '@testing-library/user-event';
 import EditApplicationContext from 'context/EditApplicationContext';
 import {installApplicationMutation} from 'queries/applications/installApplicationMutation';
 import React from 'react';
+import * as reactRedux from 'react-redux';
 import {ApplicationInstallStatus} from '_gqlTypes/globalTypes';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockEditApplicationContextValue} from '__mocks__/common/applications';
 import InstallTab from './InstallTab';
 
 describe('InstallTab', () => {
+    const mockDispatch = jest.fn();
+    jest.spyOn(reactRedux, 'useDispatch').mockReturnValue(mockDispatch);
+
     test('Display install infos', async () => {
         render(
             <EditApplicationContext.Provider value={mockEditApplicationContextValue}>

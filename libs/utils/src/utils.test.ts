@@ -4,6 +4,7 @@
 import {FileType} from './types/files';
 import {
     extractArgsFromString,
+    formatId,
     getCallStack,
     getFileType,
     getGraphqlQueryNameFromLibraryName,
@@ -166,6 +167,24 @@ describe('utils', () => {
             expect(getInitials('Dwight Schrute', 2)).toBe('DS');
             expect(getInitials('Dwight Schrute', 1)).toBe('D');
             expect(getInitials('Dwight', 2)).toBe('DW');
+        });
+    });
+
+    describe('formatID', () => {
+        test('Return formatted ID', async () => {
+            expect(formatId('123456789')).toBe('123456789');
+            expect(formatId('foo')).toBe('foo');
+            expect(formatId('foo_bar')).toBe('foo_bar');
+            expect(formatId('My ID')).toBe('my_id');
+            expect(formatId('Méh bàèrùçû')).toBe('meh_baerucu');
+            expect(formatId('Foo-bar')).toBe('foo_bar');
+            expect(formatId('   foo   ')).toBe('foo');
+            expect(formatId('foo bar')).toBe('foo_bar');
+            expect(formatId('foo   bar')).toBe('foo_bar');
+            expect(formatId('foo   ')).toBe('foo');
+            expect(formatId('foo^$$bar')).toBe('foo_bar');
+            expect(formatId('foo_bar99')).toBe('foo_bar99');
+            expect(formatId('# my string-not"  ok\'!  ')).toBe('my_string_not_ok');
         });
     });
 });

@@ -1,9 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {WithTypename} from '@leav/utils';
+import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {ApplicationInstallStatus, ApplicationType} from '_gqlTypes/globalTypes';
 
-export const mockApplication: GET_APPLICATIONS_applications_list = {
+export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_list> = {
+    __typename: 'Application',
     id: 'my-app',
     label: {
         en: 'My App'
@@ -12,20 +15,20 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
         en: 'My description'
     },
     endpoint: 'my-app',
-    url: 'http://example.com/app/my-app',
-    color: 'orange',
-    libraries: [
-        {
-            id: 'my-lib',
-            label: {
-                en: 'My Library'
-            }
-        }
-    ],
     permissions: {
-        access_application: true
+        access_application: true,
+        __typename: 'ApplicationPermissions'
+    },
+    type: ApplicationType.internal,
+    color: null,
+    url: 'https://example.com/app/my-app',
+    install: {
+        status: ApplicationInstallStatus.SUCCESS,
+        lastCallResult: 'OK',
+        __typename: 'ApplicationInstall'
     },
     icon: {
+        __typename: 'Icon',
         id: 'my-icon',
         whoAmI: {
             id: 'my-icon',

@@ -43,10 +43,10 @@ export interface GET_APPLICATIONS_applications_list {
     label: SystemTranslation;
     type: ApplicationType;
     description: SystemTranslation | null;
-    endpoint: string;
+    endpoint: string | null;
     color: string | null;
     icon: GET_APPLICATIONS_applications_list_icon | null;
-    url: string;
+    url: string | null;
 }
 
 export interface GET_APPLICATIONS_applications {

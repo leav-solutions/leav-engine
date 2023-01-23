@@ -21,7 +21,9 @@ export enum TaskPriority {
     HIGH = 2
 }
 
-export type ITaskCreatePayload = Pick<ITask, 'id' | 'label' | 'func' | 'startAt' | 'priority' | 'callback'>;
+export type ITaskCreatePayload = Pick<ITask, 'label' | 'func' | 'priority' | 'callback'> &
+    Partial<Pick<ITask, 'id' | 'startAt'>>;
+
 export type ITaskCancelPayload = Pick<ITask, 'id'>;
 
 export type Payload = ITaskCreatePayload | ITaskCancelPayload;

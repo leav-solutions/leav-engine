@@ -7,7 +7,7 @@ import {Divider, message} from 'antd';
 import Loading from 'components/shared/Loading';
 import {getUserDataQuery} from 'queries/userData/getUserData';
 import {saveUserData} from 'queries/userData/saveUserData';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
@@ -36,7 +36,7 @@ const ListWrapper = styled.div`
 const dividerIconStyle = {marginRight: '0.5em'};
 
 function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
     const [favorites, setFavorites] = useState<string[]>([]);
     const [consulted, setConsulted] = useState<string[]>([]);
 

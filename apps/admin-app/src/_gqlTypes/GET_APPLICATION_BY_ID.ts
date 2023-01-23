@@ -61,11 +61,11 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     label: SystemTranslation;
     type: ApplicationType;
     description: SystemTranslation | null;
-    endpoint: string;
-    url: string;
+    endpoint: string | null;
+    url: string | null;
     color: string | null;
     icon: GET_APPLICATION_BY_ID_applications_list_icon | null;
-    module: string;
+    module: string | null;
     libraries: GET_APPLICATION_BY_ID_applications_list_libraries[] | null;
     trees: GET_APPLICATION_BY_ID_applications_list_trees[] | null;
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;

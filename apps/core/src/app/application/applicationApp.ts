@@ -5,9 +5,10 @@ import {appRootPath} from '@leav/app-root-path';
 import {Override} from '@leav/utils';
 import {GraphQLUpload} from 'apollo-server';
 import {IAuthApp} from 'app/auth/authApp';
+import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core/helpers/subscriptions';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {IApplicationDomain} from 'domain/application/applicationDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IApplicationPermissionDomain} from 'domain/permission/applicationPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
@@ -16,10 +17,12 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import express, {Express} from 'express';
 import glob from 'glob';
 import {GraphQLResolveInfo} from 'graphql';
+import {withFilter} from 'graphql-subscriptions';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IGetCoreAttributesParams} from '_types/attribute';
+import {PublishedEvent} from '_types/event';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
@@ -27,14 +30,17 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
+import {IApplicationDomain, TRIGGER_NAME_APPLICATION_EVENT} from '../../domain/application/applicationDomain';
 import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
+    ApplicationEventTypes,
     ApplicationInstallStatuses,
     ApplicationTypes,
     APPS_INSTANCES_FOLDER,
     APPS_URL_PREFIX,
     IApplication,
-    IApplicationInstall,
+    IApplicationEvent,
+    IApplicationEventFilters,
     IApplicationModule
 } from '../../_types/application';
 import {API_KEY_PARAM_NAME} from '../../_types/auth';
@@ -50,27 +56,31 @@ interface IDeps {
     'core.app.auth'?: IAuthApp;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
+    'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
     'core.domain.application'?: IApplicationDomain;
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.permission.application'?: IApplicationPermissionDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.domain.record'?: IRecordDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.app.auth': authApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
+    'core.app.core.subscriptionsHelper': subscriptionsHelper = null,
     'core.domain.application': applicationDomain = null,
     'core.domain.permission': permissionDomain = null,
     'core.domain.permission.application': applicationPermissionDomain = null,
     'core.domain.library': libraryDomain,
     'core.domain.tree': treeDomain,
     'core.domain.record': recordDomain,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
     config = null
@@ -112,9 +122,9 @@ export default function ({
                     trees: [Tree!],
                     color: String,
                     icon: Record,
-                    module: String!,
-                    endpoint: String!,
-                    url: String!,
+                    module: String,
+                    endpoint: String,
+                    url: String,
                     permissions: ApplicationPermissions!,
                     install: ApplicationInstall,
                     settings: JSONObject
@@ -172,6 +182,22 @@ export default function ({
                     order: SortOrder
                 }
 
+                enum ApplicationEventTypes {
+                    ${Object.values(ApplicationEventTypes).join(' ')}
+                }
+
+                type ApplicationEvent {
+                    type: ApplicationEventTypes!,
+                    application: Application!
+                }
+
+                input ApplicationEventFiltersInput {
+                    ${subscriptionsHelper.commonSubscriptionsFilters}
+
+                    applicationId: ID,
+                    events: [ApplicationEventTypes!]
+                }
+
                 extend type Query {
                     applications(
                         filters: ApplicationsFiltersInput,
@@ -184,7 +210,11 @@ export default function ({
                 extend type Mutation {
                     saveApplication(application: ApplicationInput!): Application!
                     deleteApplication(id: ID!): Application!
-                    installApplication(id: ID!): ApplicationInstall!
+                    installApplication(id: ID!): String!
+                }
+
+                extend type Subscription {
+                    applicationEvent(filters: ApplicationEventFiltersInput): ApplicationEvent!
                 }
             `,
                 resolvers: {
@@ -215,8 +245,36 @@ export default function ({
                         async deleteApplication(_, {id}, ctx): Promise<IApplication> {
                             return applicationDomain.deleteApplication({id, ctx});
                         },
-                        async installApplication(_, {id}, ctx): Promise<IApplicationInstall> {
+                        async installApplication(_, {id}, ctx): Promise<string> {
                             return applicationDomain.runInstall({applicationId: id, ctx});
+                        }
+                    },
+                    Subscription: {
+                        applicationEvent: {
+                            subscribe: withFilter(
+                                () => eventsManagerDomain.subscribe([TRIGGER_NAME_APPLICATION_EVENT]),
+                                (
+                                    event: PublishedEvent<{applicationEvent: IApplicationEvent}>,
+                                    {filters}: {filters: ICommonSubscriptionFilters & IApplicationEventFilters},
+                                    ctx: IQueryInfos
+                                ) => {
+                                    if (filters?.ignoreOwnEvents && subscriptionsHelper.isOwnEvent(event, ctx)) {
+                                        return false;
+                                    }
+
+                                    const {applicationEvent} = event;
+                                    let mustReturn = true;
+                                    if (filters?.applicationId) {
+                                        mustReturn = applicationEvent.application.id === filters.applicationId;
+                                    }
+
+                                    if (mustReturn && filters?.events) {
+                                        mustReturn = filters.events.includes(applicationEvent.type);
+                                    }
+
+                                    return mustReturn;
+                                }
+                            )
                         }
                     },
                     Application: {

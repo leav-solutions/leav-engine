@@ -6,19 +6,12 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationInstallStatus} from './globalTypes';
-
 // ====================================================
 // GraphQL mutation operation: INSTALL_APPLICATION
 // ====================================================
 
-export interface INSTALL_APPLICATION_installApplication {
-    status: ApplicationInstallStatus;
-    lastCallResult: string | null;
-}
-
 export interface INSTALL_APPLICATION {
-    installApplication: INSTALL_APPLICATION_installApplication;
+    installApplication: string;
 }
 
 export interface INSTALL_APPLICATIONVariables {

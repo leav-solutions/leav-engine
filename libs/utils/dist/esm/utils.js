@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// import {camelCase, flow, partialRight, trimEnd, upperFirst} from 'lodash';
 import camelCase from 'lodash/camelCase';
 import flow from 'lodash/flow';
 import partialRight from 'lodash/partialRight';
@@ -174,5 +173,23 @@ export const getInitials = (label, length = 2) => {
     const words = label.split(' ').slice(0, length);
     const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
     return letters.toUpperCase();
+};
+/**
+ * Format an ID: remove accents, any special characters, replace spaces by underscore and make sure there is no double underscore
+ *
+ * @param id
+ * @returns formatted ID
+ */
+export const formatId = (id) => {
+    return id
+        .normalize('NFD') // Decompose the string in the base and the accents
+        .toLowerCase() // Lowercase the string
+        .replace(/[\u0300-\u036f]/g, '') // Remove accents
+        .replace(/[^a-zA-Z0-9\s]/g, '_') // Transform any special character into an underscore
+        .trim() // Remove spaces at the beginning and the end
+        .replace(/\s/g, '_') // Replace spaces by underscore
+        .replace(/__+/g, '_') // Remove double underscores
+        .replace(/_$/g, '') // Remove underscore at the end
+        .replace(/^_/g, ''); // Remove underscore at the beginning
 };
 //# sourceMappingURL=utils.js.map

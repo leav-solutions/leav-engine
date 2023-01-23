@@ -2,7 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CONSULTED_APPS_KEY} from '@leav/utils';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {IUserDomain} from 'domain/user/userDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
 import {IApplicationService} from 'infra/application/applicationService';
@@ -24,6 +26,14 @@ describe('applicationDomain', () => {
 
     const mockAdminPermissionDomainNotAllowed: Mockify<IAdminPermissionDomain> = {
         getAdminPermission: global.__mockPromise(false)
+    };
+
+    const mockEventsManager: Mockify<IEventsManagerDomain> = {
+        sendPubSubEvent: global.__mockPromise()
+    };
+
+    const mockTasksManager: Mockify<ITasksManagerDomain> = {
+        createTask: global.__mockPromise()
     };
 
     describe('getApplicationProperties', () => {
@@ -94,7 +104,9 @@ describe('applicationDomain', () => {
 
                 const appDomain = applicationDomain({
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
+                    'core.domain.tasksManager': mockTasksManager as ITasksManagerDomain,
                     'core.utils': mockUtils as IUtils
                 });
                 appDomain.runInstall = jest.fn();
@@ -116,6 +128,7 @@ describe('applicationDomain', () => {
 
                 const appDomain = applicationDomain({
                     'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
                     'core.utils': mockUtils as IUtils
                 });
@@ -143,6 +156,7 @@ describe('applicationDomain', () => {
 
                 const appDomain = applicationDomain({
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
                     'core.utils': mockUtils as IUtils
                 });
@@ -162,6 +176,7 @@ describe('applicationDomain', () => {
 
                 const appDomain = applicationDomain({
                     'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
                     'core.utils': mockUtils as IUtils
                 });
@@ -224,22 +239,6 @@ describe('applicationDomain', () => {
                     })
                 ).rejects.toThrow(ValidationError);
             });
-
-            test('Throws if endpoint is not allowed (protected)', async () => {
-                const appDomain = applicationDomain({
-                    'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
-                    'core.infra.application': mockAppRepo as IApplicationRepo,
-                    'core.utils': mockUtils as IUtils
-                });
-
-                // "login" is a protected endpoint
-                await expect(
-                    appDomain.saveApplication({
-                        applicationData: {...mockApplication, endpoint: 'login'},
-                        ctx: mockCtx
-                    })
-                ).rejects.toThrow(ValidationError);
-            });
         });
     });
     describe('deleteApplication', () => {
@@ -255,6 +254,7 @@ describe('applicationDomain', () => {
 
             const appDomain = applicationDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo,
                 'core.infra.application.service': mockApplicationService as IApplicationService
             });
@@ -277,6 +277,7 @@ describe('applicationDomain', () => {
 
             const appDomain = applicationDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo,
                 'core.infra.application.service': mockApplicationService as IApplicationService
             });
@@ -294,6 +295,7 @@ describe('applicationDomain', () => {
 
             const appDomain = applicationDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
             });
 
@@ -310,6 +312,7 @@ describe('applicationDomain', () => {
 
             const appDomain = applicationDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
             });
 

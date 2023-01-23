@@ -2,11 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
-import {aql} from 'arangojs';
 import {exec} from 'child_process';
 import {R_OK} from 'constants';
 import fs from 'fs/promises';
-import {IDbService} from 'infra/db/dbService';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
@@ -126,6 +124,7 @@ export default function ({
 
         // Define env variables
         const leavEnv = {
+            LEAV_CORE_URL: `${config.server.publicUrl}`,
             LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
             LEAV_WS_URL: `${config.server.wsUrl}/${config.server.apiEndpoint}`,
             LEAV_AUTH_URL: `${config.server.publicUrl}/auth/authenticate`,
@@ -133,6 +132,7 @@ export default function ({
             LEAV_AVAILABLE_LANG: config.lang.available.join(','),
             LEAV_LOGIN_ENDPOINT: utils.getFullApplicationEndpoint('login'),
             LEAV_APP_ENDPOINT: utils.getFullApplicationEndpoint(application.endpoint),
+            LEAV_APP_ENDPOINT_BASE: utils.getFullApplicationEndpoint(),
             LEAV_APPLICATION_ID: application.id,
             LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
         };

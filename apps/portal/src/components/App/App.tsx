@@ -4,7 +4,7 @@
 import {useQuery} from '@apollo/client';
 import {customTheme, LangContext} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {ConfigProvider, Layout} from 'antd';
+import {ConfigProvider, Layout, theme} from 'antd';
 import Applications from 'components/Applications';
 import AppIcon from 'components/shared/AppIcon';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
@@ -12,13 +12,14 @@ import Loading from 'components/shared/Loading';
 import UserMenu from 'components/UserMenu';
 import ApplicationContext from 'context/ApplicationContext';
 import UserContext from 'context/UserContext';
+import {useApplicationEventsSubscription} from 'hooks/useApplicationEventsSubscription';
 import useRedirectionError from 'hooks/useRedirectionError';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {getMe} from 'queries/me/me';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
+import styled, {ThemeProvider} from 'styled-components';
 import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {ME} from '_gqlTypes/ME';
@@ -42,6 +43,7 @@ function App(): JSX.Element {
     const {t, i18n} = useTranslation();
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
     const appId = import.meta.env.VITE_APPLICATION_ID;
+    const {token: themeToken} = theme.useToken();
 
     // Init lang
     const availableLangs = import.meta.env.VITE_AVAILABLE_LANG ? import.meta.env.VITE_AVAILABLE_LANG.split(',') : [];
@@ -63,6 +65,8 @@ function App(): JSX.Element {
 
     const currentApp = applicationData?.applications?.list?.[0];
     const globalSettings = globalSettingsData?.globalSettings;
+
+    useApplicationEventsSubscription();
 
     useEffect(() => {
         if (!globalSettings || !currentApp) {
@@ -109,15 +113,17 @@ function App(): JSX.Element {
             <ApplicationContext.Provider value={appContextData}>
                 <UserContext.Provider value={userData.me}>
                     <ConfigProvider theme={customTheme}>
-                        <Layout>
-                            <Header>
-                                <AppIcon size="tiny" style={{maxHeight: '2rem', margin: 'auto'}} />
-                                <UserMenu />
-                            </Header>
-                            <Content>
-                                <Applications />
-                            </Content>
-                        </Layout>
+                        <ThemeProvider theme={{antd: themeToken}}>
+                            <Layout>
+                                <Header>
+                                    <AppIcon size="tiny" style={{maxHeight: '2rem', margin: 'auto'}} />
+                                    <UserMenu />
+                                </Header>
+                                <Content>
+                                    <Applications />
+                                </Content>
+                            </Layout>
+                        </ThemeProvider>
                     </ConfigProvider>
                 </UserContext.Provider>
             </ApplicationContext.Provider>

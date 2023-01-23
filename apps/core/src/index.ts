@@ -1,7 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {amqpService} from '@leav/message-broker';
 import fs from 'fs';
+import {IApplicationService} from 'infra/application/applicationService';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import {ITasksManagerInterface} from 'interface/tasksManager';
@@ -11,12 +13,10 @@ import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
 import {initRedis} from './infra/cache';
 import {initDb} from './infra/db/db';
-import {initPlugins} from './pluginsLoader';
-import {amqpService} from '@leav/message-broker';
-import {IApplicationService} from 'infra/application/applicationService';
 import {initMailer} from './infra/mailer';
+import {initPlugins} from './pluginsLoader';
 
-(async function () {
+(async function() {
     let conf: Config.IConfig;
 
     try {
@@ -28,15 +28,14 @@ import {initMailer} from './infra/mailer';
         process.exit(1);
     }
 
-    await initDb(conf);
-
-    // Init i18next
-    const translator = await i18nextInit(conf);
-
-    // Init AMQP
-    const amqp = await amqpService({config: conf.amqp});
-    const redisClient = await initRedis({config: conf});
-    const mailer = await initMailer({config: conf});
+    // Init services
+    const [translator, amqp, redisClient, mailer] = await Promise.all([
+        i18nextInit(conf),
+        amqpService({config: conf.amqp}),
+        initRedis({config: conf}),
+        initMailer({config: conf}),
+        initDb(conf)
+    ]);
 
     const {coreContainer, pluginsContainer} = await initDI({
         translator,
@@ -80,6 +79,7 @@ import {initMailer} from './infra/mailer';
 
         if (typeof opt !== 'undefined' && opt.indexOf('server') !== -1) {
             await server.init();
+
             await eventsManager.init();
         } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
             // Run db migrations

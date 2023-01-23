@@ -26,20 +26,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.formatId = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-const lodash_1 = require("lodash");
+const camelCase_1 = __importDefault(require("lodash/camelCase"));
+const flow_1 = __importDefault(require("lodash/flow"));
+const partialRight_1 = __importDefault(require("lodash/partialRight"));
+const trimEnd_1 = __importDefault(require("lodash/trimEnd"));
+const upperFirst_1 = __importDefault(require("lodash/upperFirst"));
 const minimatch_1 = __importDefault(require("minimatch"));
 const extensions = __importStar(require("./MIMEByExtension.json"));
 const files_1 = require("./types/files");
 const getGraphqlTypeFromLibraryName = (library) => {
-    return (0, lodash_1.flow)([lodash_1.camelCase, lodash_1.upperFirst, lodash_1.trimEnd, (0, lodash_1.partialRight)(lodash_1.trimEnd, 's')])(library);
+    return (0, flow_1.default)([camelCase_1.default, upperFirst_1.default, trimEnd_1.default, (0, partialRight_1.default)(trimEnd_1.default, 's')])(library);
 };
 exports.getGraphqlTypeFromLibraryName = getGraphqlTypeFromLibraryName;
 const getGraphqlQueryNameFromLibraryName = (library) => {
-    return (0, lodash_1.flow)([lodash_1.camelCase, lodash_1.trimEnd])(library);
+    return (0, flow_1.default)([camelCase_1.default, trimEnd_1.default])(library);
 };
 exports.getGraphqlQueryNameFromLibraryName = getGraphqlQueryNameFromLibraryName;
 const isFileAllowed = (fsPath, allowList, ignoreList, filePath) => {
@@ -212,4 +216,23 @@ const getInitials = (label, length = 2) => {
     return letters.toUpperCase();
 };
 exports.getInitials = getInitials;
+/**
+ * Format an ID: remove accents, any special characters, replace spaces by underscore and make sure there is no double underscore
+ *
+ * @param id
+ * @returns formatted ID
+ */
+const formatId = (id) => {
+    return id
+        .normalize('NFD') // Decompose the string in the base and the accents
+        .toLowerCase() // Lowercase the string
+        .replace(/[\u0300-\u036f]/g, '') // Remove accents
+        .replace(/[^a-zA-Z0-9\s]/g, '_') // Transform any special character into an underscore
+        .trim() // Remove spaces at the beginning and the end
+        .replace(/\s/g, '_') // Replace spaces by underscore
+        .replace(/__+/g, '_') // Remove double underscores
+        .replace(/_$/g, '') // Remove underscore at the end
+        .replace(/^_/g, ''); // Remove underscore at the beginning
+};
+exports.formatId = formatId;
 //# sourceMappingURL=utils.js.map
