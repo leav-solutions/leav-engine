@@ -139,6 +139,9 @@ export default function ({
                 label: {fr: '', en: ''}
             };
 
+            // We need behavior later on for validation. It's forbidden to change it so we get it from the existing lib
+            const libBehavior = library?.behavior ?? defaultParams.behavior;
+
             // If existing lib, skip all uneditable fields from supplied params.
             // If new lib, merge default params with supplied params
             const uneditableFields = ['behavior', 'system'];
@@ -190,7 +193,12 @@ export default function ({
             delete dataToSave.fullTextAttributes;
 
             validationErrors.push(
-                await validateLibAttributes(dataToSave, libAttributes, {attributeDomain}, ctx),
+                await validateLibAttributes(
+                    {...dataToSave, behavior: libBehavior},
+                    libAttributes,
+                    {attributeDomain},
+                    ctx
+                ),
                 validateLibFullTextAttributes(
                     union(defaultAttributes, attributesToSave.length ? attributesToSave : currentLibraryAttributes),
                     libFullTextAttributes
