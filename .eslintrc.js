@@ -2,6 +2,7 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
     env: {browser: true, node: true, es6: true},
+    ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*'],
     parser: '@typescript-eslint/parser',
     parserOptions: {tsconfigRootDir: __dirname},
     plugins: ['@typescript-eslint', 'react-app'],

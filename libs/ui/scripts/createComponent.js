@@ -55,7 +55,7 @@ prog.version('0.1.0')
         // Create index file
         const indexFile = compFolder + '/index.ts';
         if (!fs.existsSync(indexFile)) {
-            const fileContent = `import ${name} from './${name}';\nexport default ${name};`;
+            const fileContent = `export {default as ${name}} from './${name}';`;
 
             fs.writeFileSync(indexFile, fileContent);
         }

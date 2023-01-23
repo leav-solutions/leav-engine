@@ -1,15 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AntdThemeToken, useLang} from '@leav/ui';
+import {AntdThemeToken, ApplicationInstallTag, useLang} from '@leav/ui';
 import {getInvertColor, localizedTranslation, stringToColor} from '@leav/utils';
 import {theme} from 'antd';
+import {SyntheticEvent} from 'react';
+import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 
 interface IApplicationCoverProps {
     application: GET_APPLICATIONS_applications_list;
+    onInstallTagClick: (e: SyntheticEvent<any>) => void;
 }
+
+const Wrapper = styled.div`
+    position: relative;
+`;
 
 const Cover = styled.div<{hasIcon: boolean; $themeToken: AntdThemeToken}>`
     font-size: 3.5em;
@@ -33,8 +40,9 @@ const AppImage = styled.img`
     object-fit: cover;
 `;
 
-function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
+function ApplicationCover({application, onInstallTagClick}: IApplicationCoverProps): JSX.Element {
     const {lang} = useLang();
+    const {t} = useTranslation();
     const {token} = theme.useToken();
 
     const label = localizedTranslation(application.label, lang);
@@ -49,9 +57,16 @@ function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
     const fontColor = getInvertColor(bgColor);
 
     return (
-        <Cover style={{background: bgColor, color: fontColor}} hasIcon={!!appIcon} $themeToken={token}>
-            {appIcon ? <AppImage src={appIcon} height="3rem" /> : initials}
-        </Cover>
+        <Wrapper>
+            <Cover style={{background: bgColor, color: fontColor}} hasIcon={!!appIcon} $themeToken={token}>
+                {appIcon ? <AppImage src={appIcon} height="3rem" /> : initials}
+            </Cover>
+            <ApplicationInstallTag
+                application={application}
+                style={{position: 'absolute', bottom: '1em', left: '1em'}}
+                onClick={onInstallTagClick}
+            />
+        </Wrapper>
     );
 }
 

@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
 
 import {ThemeConfig} from 'antd/lib/config-provider/context';
 
@@ -13,7 +11,9 @@ const baseTextColor = '#000000';
 export const themeVars = {
     primaryColor: '#0f97e4',
     defaultBg: '#ffffff',
+    invertedDefaultBg: '#000000',
     defaultTextColor: baseTextColor,
+    invertedDefaultTextColor: '#ffffff',
     secondaryTextColor: baseTextColor + '80',
     activeColor: '#def4ff',
     errorColor: '#e02020',

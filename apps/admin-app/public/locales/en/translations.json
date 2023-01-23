@@ -352,7 +352,8 @@
             "external": "External"
         },
         "settings": "Settings",
-        "icon": "Icon"
+        "icon": "Icon",
+        "install_request_success": "The request has been taken into account. The installation will begin in a few moments"
     },
     "tasks": {
         "title": "Tasks",

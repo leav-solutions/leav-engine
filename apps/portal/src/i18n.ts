@@ -11,7 +11,7 @@ i18n.use(initReactI18next)
     .use(LanguageDetector)
     .init({
         fallbackLng: import.meta.env.VITE_DEFAULT_LANG,
-        ns: ['translations'],
+        ns: ['translations', 'shared'],
         defaultNS: 'translations',
         backend: {
             loadPath: `/${import.meta.env.VITE_ENDPOINT}/locales/{{lng}}/{{ns}}.json`

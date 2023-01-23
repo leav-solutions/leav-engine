@@ -1,33 +1,25 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
-import * as Config from '_types/config';
 import {IAmqpService} from '@leav/message-broker';
-import {IQueryInfos} from '_types/queryInfos';
-import {
-    Payload,
-    ITaskOrder,
-    TaskStatus,
-    ITask,
-    TaskPriority,
-    TaskCallbackType,
-    OrderType,
-    ITaskCreatePayload,
-    ITaskCancelPayload,
-    ITaskFuncParams
-} from '../../_types/tasksManager';
-import winston from 'winston';
-import {IList, SortOrder} from '../../_types/list';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {ITaskRepo} from '../../infra/task/taskRepo';
 import {AwilixContainer} from 'awilix';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IUtils} from 'utils/utils';
 import cluster from 'cluster';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import Joi from 'joi';
 import {cpus} from 'os';
 import process from 'process';
+import {IUtils} from 'utils/utils';
+import {v4 as uuidv4} from 'uuid';
+import winston from 'winston';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {IGetCoreEntitiesParams} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
+import {ITaskRepo} from '../../infra/task/taskRepo';
+import {IList,SortOrder} from '../../_types/list';
+import {
+    ITask,ITaskCancelPayload,ITaskCreatePayload,ITaskFuncParams,ITaskOrder,OrderType,Payload,TaskCallbackType,TaskPriority,TaskStatus
+} from '../../_types/tasksManager';
 
 export interface IUpdateData {
     status?: TaskStatus;
@@ -58,7 +50,7 @@ export interface ITasksManagerDomain {
         progress: {percent?: number; description?: ISystemTranslation},
         ctx: IQueryInfos
     ): Promise<void>;
-    createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<void>;
+    createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<string>;
     cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void>;
     deleteTask(taskId: string, archive: boolean, ctx: IQueryInfos): Promise<ITask>;
 }
@@ -445,8 +437,16 @@ export default function ({
                 _monitorTasks({userId: '1'});
             }
         },
-        async createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<void> {
-            await _sendOrder(OrderType.CREATE, task, ctx);
+        async createTask(task: ITaskCreatePayload, ctx: IQueryInfos) {
+            const taskToCreate = {
+                ...task,
+                id: task.id ?? uuidv4(),
+                startAt: task.startAt ? task.startAt : Math.floor(Date.now() / 1000)
+            };
+
+            await _sendOrder(OrderType.CREATE, taskToCreate, ctx);
+
+            return taskToCreate.id;
         },
         async cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void> {
             await _sendOrder(OrderType.CANCEL, task, ctx);

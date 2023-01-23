@@ -5,10 +5,21 @@ import {MockedProvider} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {getUserDataQuery} from 'queries/userData/getUserData';
+import {saveUserData} from 'queries/userData/saveUserData';
 import {mockApplication} from '_tests/mocks/applications';
 import {render, screen, within} from '_tests/testUtils';
+import * as useApplicationsPermissions from '../../hooks/useApplicationsPermissions/useApplicationsPermissions';
 import Applications from './Applications';
 import {CONSULTED_APPS_KEY, FAVORITES_APPS_KEY} from './_constants';
+
+jest.mock('hooks/useApplicationsPermissions', () => ({
+    useApplicationsPermissions: () => ({
+        loading: false,
+        canCreate: true,
+        canDelete: true,
+        error: null
+    })
+}));
 
 describe('Applications', () => {
     const {location} = window;
@@ -20,6 +31,10 @@ describe('Applications', () => {
 
     afterAll(() => {
         window.location = location;
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
 
     const mocks = [
@@ -95,12 +110,54 @@ describe('Applications', () => {
                     }
                 }
             }
+        },
+        {
+            request: {
+                query: saveUserData,
+                variables: {
+                    key: 'favorites_applications_ids',
+                    value: ['my-third-app', 'my-app'],
+                    global: false
+                }
+            },
+            result: {
+                data: {
+                    saveUserData: {
+                        global: false,
+                        data: {
+                            favorites_applications_ids: ['my-third-app', 'my-app']
+                        },
+                        __typename: 'UserData'
+                    }
+                }
+            }
+        },
+        {
+            request: {
+                query: saveUserData,
+                variables: {
+                    key: 'favorites_applications_ids',
+                    value: ['my-third-app', 'my-fourth-app', 'my-app'],
+                    global: false
+                }
+            },
+            result: {
+                data: {
+                    saveUserData: {
+                        global: false,
+                        data: {
+                            favorites_applications_ids: ['my-third-app', 'my-fourth-app', 'my-app']
+                        },
+                        __typename: 'UserData'
+                    }
+                }
+            }
         }
     ];
 
     test('Display list of applications, open app on click', async () => {
         render(
-            <MockedProvider mocks={mocks}>
+            <MockedProvider mocks={[...mocks]}>
                 <Applications />
             </MockedProvider>
         );
@@ -122,7 +179,7 @@ describe('Applications', () => {
 
     test('Can filter applications list', async () => {
         render(
-            <MockedProvider mocks={mocks}>
+            <MockedProvider mocks={[...mocks]}>
                 <Applications />
             </MockedProvider>
         );
@@ -135,12 +192,26 @@ describe('Applications', () => {
         expect(screen.queryByText('My second app')).not.toBeInTheDocument();
     });
 
+    test('Can create a new app', async () => {
+        render(<Applications />, {apolloMocks: [...mocks]});
+
+        expect(await screen.findByTestId('create-app-button')).toBeInTheDocument();
+    });
+
+    test('If not allowed, cannot create a new app', async () => {
+        // Override jest mock for this test only to return false for canCreate
+        jest.spyOn(useApplicationsPermissions, 'useApplicationsPermissions').mockImplementation(() => ({
+            loading: false,
+            canCreate: false,
+            canDelete: true,
+            error: null
+        }));
+
+        render(<Applications />, {apolloMocks: mocks});
+    });
+
     test('Can add and remove apps from favorites', async () => {
-        render(
-            <MockedProvider mocks={mocks}>
-                <Applications />
-            </MockedProvider>
-        );
+        render(<Applications />, {apolloMocks: [...mocks]});
 
         const favoritesList = await screen.findByTestId('favorites-list');
         expect(within(favoritesList).getAllByTestId(/app-card/)).toHaveLength(2);

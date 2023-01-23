@@ -41,9 +41,9 @@ export interface SAVE_APPLICATION_saveApplication_icon {
 export interface SAVE_APPLICATION_saveApplication {
     id: string;
     color: string | null;
-    module: string;
+    module: string | null;
     description: SystemTranslation | null;
-    endpoint: string;
+    endpoint: string | null;
     label: SystemTranslation;
     system: boolean;
     icon: SAVE_APPLICATION_saveApplication_icon | null;

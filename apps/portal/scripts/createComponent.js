@@ -36,7 +36,7 @@ describe('${name}', () => {
 
 prog.version('0.1.0')
     .usage('<parent folder> <compName>')
-    .action((_, {args}) => {
+    .action((cmd, {args}) => {
         const [parent, name] = args;
         const destDir = __dirname + '/../src/components/' + parent + '/';
 

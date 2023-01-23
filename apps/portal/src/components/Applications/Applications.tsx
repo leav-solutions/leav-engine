@@ -1,18 +1,26 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {PlusOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
+import {FloatButton} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
+import {useApplicationsPermissions} from 'hooks/useApplicationsPermissions';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
-import React, {useState} from 'react';
+import {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {GET_APPLICATIONS, GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+import {APPS_BASE_URL} from '../../constants';
 import ApplicationsList from './ApplicationsList';
 import ApplicationsSearch from './ApplicationsSearch';
+import {EditApplicationModal} from './EditApplicationModal';
 
 function Applications(): JSX.Element {
+    const {t} = useTranslation();
+
     const hiddenApps = ['portal', 'login'];
     const {lang} = useLang();
     const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery, {
@@ -23,16 +31,18 @@ function Applications(): JSX.Element {
             setApplications(apps);
         }
     });
+    const {loading: permissionsLoading, canCreate, error: permissionsError} = useApplicationsPermissions();
+    const [showEditApplicationModal, setShowEditApplicationModal] = useState(false);
 
     const allApps = data?.applications.list ?? [];
     const [applications, setApplications] = useState<GET_APPLICATIONS_applications_list[]>([]);
 
-    if (loading) {
+    if (loading || permissionsLoading) {
         return <Loading />;
     }
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (error || permissionsError) {
+        return <ErrorDisplay message={error?.message || permissionsError?.message} />;
     }
 
     const _handleSearch = (search: string) => {
@@ -49,10 +59,35 @@ function Applications(): JSX.Element {
         setApplications(filteredApps);
     };
 
+    const _handleClickCreateApplication = () => {
+        setShowEditApplicationModal(true);
+    };
+
+    const _handleCloseCreateApplication = () => {
+        setShowEditApplicationModal(false);
+    };
+
     return (
         <>
             <ApplicationsSearch onSearch={_handleSearch} />
             <ApplicationsList applications={applications} />
+            {canCreate && (
+                <FloatButton
+                    data-testid="create-app-button"
+                    tooltip={t('application.create')}
+                    type="primary"
+                    aria-label="plus"
+                    icon={<PlusOutlined />}
+                    onClick={_handleClickCreateApplication}
+                />
+            )}
+            {showEditApplicationModal && (
+                <EditApplicationModal
+                    open={showEditApplicationModal}
+                    onClose={_handleCloseCreateApplication}
+                    appsBaseUrl={APPS_BASE_URL}
+                />
+            )}
         </>
     );
 }

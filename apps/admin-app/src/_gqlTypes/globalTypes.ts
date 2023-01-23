@@ -26,6 +26,11 @@ export enum ApiKeysSortableFields {
     modifiedBy = 'modifiedBy'
 }
 
+export enum ApplicationEventTypes {
+    DELETE = 'DELETE',
+    SAVE = 'SAVE'
+}
+
 export enum ApplicationInstallStatus {
     ERROR = 'ERROR',
     NONE = 'NONE',
@@ -206,6 +211,12 @@ export interface ApiKeysFiltersInput {
     user_id?: string | null;
     createdBy?: number | null;
     modifiedBy?: number | null;
+}
+
+export interface ApplicationEventFiltersInput {
+    ignoreOwnEvents?: boolean | null;
+    applicationId?: string | null;
+    events?: ApplicationEventTypes[] | null;
 }
 
 export interface ApplicationIconInput {

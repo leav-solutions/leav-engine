@@ -58,3 +58,18 @@ export interface IApplicationModule {
     description: string;
     version: string;
 }
+
+export enum ApplicationEventTypes {
+    SAVE = 'SAVE',
+    DELETE = 'DELETE'
+}
+
+export interface IApplicationEvent {
+    type: ApplicationEventTypes;
+    application: IApplication;
+}
+
+export interface IApplicationEventFilters {
+    applicationId: string;
+    events: ApplicationEventTypes[];
+}

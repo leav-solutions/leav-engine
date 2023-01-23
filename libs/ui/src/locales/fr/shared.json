@@ -1,0 +1,42 @@
+{
+    "global": {
+        "submit": "Valider",
+        "cancel": "Annuler",
+        "close": "Fermer"
+    },
+    "errors": {
+        "default_language_required": "La langue par défaut est requise",
+        "field_required": "Le champ {{fieldName}} est requis",
+        "invalid_id_format": "L'identifiant peut être composé uniquement de lettres minuscules, de chiffres et du caractère \"_\" (ex: \"mon_id\")",
+        "invalid_endpoint_format": "Le point d'accès peut être composé uniquement de lettres minuscules, de chiffres et du caractère \"-\" (ex: \"mon-app\")",
+        "id_already_exists": "Cet identifiant existe déjà",
+        "endpoint_already_used": "Ce point d'accès est déjà utilisé",
+        "invalid_url_format": "L'URL n'est pas valide"
+    },
+    "applications": {
+        "id": "Identifiant",
+        "label": "Libellé",
+        "description": "Description",
+        "type": "Type",
+        "type_internal": "Interne",
+        "type_external": "Externe",
+        "module": "Module",
+        "endpoint": "Point d'accès",
+        "url": "URL",
+        "libraries": "Bibliothèques accessibles",
+        "all_libraries": "Toutes les bibliothèques",
+        "no_libraries": "Aucune bibliothèque",
+        "trees": "Arbres accessibles",
+        "all_trees": "Tous les arbres",
+        "no_trees": "Aucun  arbre",
+        "info": "Informations",
+        "install": "Installation",
+        "install_waiting": "Installation en attente...",
+        "install_processing": "Installation en cours...",
+        "install_error": "Échec de l'installation",
+        "install_success": "Installation réussie",
+        "install_details": "Compte-rendu de la dernière installation",
+        "re_install": "Réinstaller l'application",
+        "re_install_success": "La demande a bien été prise en compte. L'installation va bientôt démarrer."
+    }
+}

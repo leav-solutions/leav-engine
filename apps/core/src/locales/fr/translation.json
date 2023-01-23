@@ -143,9 +143,9 @@
         "admin_edit_tree": "Éditer un arbre",
         "admin_delete_tree": "Supprimer un arbre",
         "admin_access_applications": "Accéder aux applications",
-        "admin_create_application": "Créer un application",
-        "admin_edit_application": "Éditer un application",
-        "admin_delete_application": "Supprimer un application",
+        "admin_create_application": "Créer une application",
+        "admin_edit_application": "Éditer une application",
+        "admin_delete_application": "Supprimer une application",
         "admin_access_forms": "Accéder aux formulaires",
         "admin_create_form": "Créer un formulaire",
         "admin_edit_form": "Éditer un formulaire",
@@ -188,7 +188,8 @@
         "export_description": {
             "elements_retrieval": "Récupération des fichiers",
             "excel_writing": "Ecriture du fichier excel"
-        }
+        },
+        "app_install": "Installation de l'application {{appId}}"
     },
     "import": {
         "add_value_error": "Impossible d'ajouter la valeur '{{value}}' à l'attribut '{{attributeId}}'",

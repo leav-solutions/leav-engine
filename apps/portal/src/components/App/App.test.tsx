@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
+import {getApplicationsEventsSubscription} from 'queries/applications/getApplicationsEventsSubscription';
 import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {getMe} from 'queries/me/me';
 import {mockUser} from '_tests/mocks/user';
@@ -68,6 +69,17 @@ describe('App', () => {
                             name: 'My App',
                             icon: null
                         }
+                    }
+                }
+            },
+            {
+                request: {
+                    query: getApplicationsEventsSubscription,
+                    variables: {}
+                },
+                result: {
+                    data: {
+                        applicationsEvents: null
                     }
                 }
             }

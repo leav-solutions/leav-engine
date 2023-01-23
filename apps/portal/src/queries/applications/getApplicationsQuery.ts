@@ -2,29 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {recordIdentityFragment} from 'queries/records/recordIdentityFragment';
+import {applicationDetailsFragment} from './applicationDetailsFragment';
 
 export const getApplicationsQuery = gql`
-    ${recordIdentityFragment}
+    ${applicationDetailsFragment}
     query GET_APPLICATIONS {
         applications {
             list {
-                id
-                label
-                description
-                endpoint
-                url
-                color
-                libraries {
-                    id
-                    label
-                }
-                permissions {
-                    access_application
-                }
-                icon {
-                    ...RecordIdentity
-                }
+                ...ApplicationDetails
             }
         }
     }

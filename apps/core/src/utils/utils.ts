@@ -95,7 +95,7 @@ export interface IUtils {
 
     translateError(error: Errors | IExtendedErrorMsg | string, lang: string): string;
 
-    getFullApplicationEndpoint(endpoint: string): string;
+    getFullApplicationEndpoint(endpoint?: string): string;
 
     getCoreEntityCacheKey(entityType: string, entityId: string): string;
 
@@ -247,8 +247,8 @@ export default function ({translator = null}: IUtilsDeps = {}): IUtils {
                 interpolation: {escapeValue: false}
             });
         },
-        getFullApplicationEndpoint(endpoint: string): string {
-            return `${APPS_URL_PREFIX}/${endpoint}`;
+        getFullApplicationEndpoint(endpoint): string {
+            return `${APPS_URL_PREFIX}/${endpoint ?? ''}`;
         },
         getCoreEntityCacheKey(entityType: string, entityId: string): string {
             return `coreEntity:${entityType}:${entityId}`;

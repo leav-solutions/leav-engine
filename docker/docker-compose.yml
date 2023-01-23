@@ -89,6 +89,7 @@ x-env-react: &env-react
   VITE_DEFAULT_LANG: fr
   VITE_AVAILABLE_LANG: fr,en
   VITE_LOGIN_ENDPOINT: /app/login/
+  VITE_ENDPOINT_BASE: /app/
   SKIP_PREFLIGHT_CHECK: "true"
   TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling # To reduce CPU usage of TSC's file watching
   ESLINT_NO_DEV_ERRORS: "true" # To keep compiling on eslint errors

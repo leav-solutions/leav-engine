@@ -5,7 +5,7 @@
   "homepage": ".",
   "dependencies": {
     "@leav/ui": "workspace:*",
-    "antd": "5.1.5",
+    "antd": "5.2.3",
     "i18next": "22.4.9",
     "i18next-browser-languagedetector": "6.1.4",
     "i18next-http-backend": "2.1.1",

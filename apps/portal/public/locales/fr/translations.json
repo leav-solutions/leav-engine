@@ -1,4 +1,9 @@
 {
+    "global": {
+        "submit": "Valider",
+        "cancel": "Annuler",
+        "close": "Fermer"
+    },
     "document_title": "LEAV Engine - {{appLabel}}",
     "header_title": "LEAV Engine",
     "search_placeholder": "Rechercher...",
@@ -13,5 +18,12 @@
         "error_occurred": "Une erreur est survenue",
         "unknown_app": "Le chemin d'accès \"{{app}}\" n'existe pas",
         "forbidden": "Vous n'êtes pas autorisé à accéder à l'application \"{{app}}\""
+    },
+    "application": {
+        "new_app": "Nouvelle application",
+        "create": "Créer une nouvelle appli",
+        "install_waiting": "Installation en attente...",
+        "install_processing": "Installation en cours...",
+        "install_error": "Échec de l'installation"
     }
 }
