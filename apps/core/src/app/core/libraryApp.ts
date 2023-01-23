@@ -44,7 +44,7 @@ interface IDeps {
     'core.app.core'?: ICoreApp;
 }
 
-export default function({
+export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -281,9 +281,10 @@ export default function({
                 const gqlNames = getLibraryGraphqlNames(lib.id);
                 const libQueryName = gqlNames.query;
                 const libTypeName = gqlNames.type;
+                const isFileLibrary = lib.behavior === LibraryBehavior.FILES;
 
                 baseSchema.typeDefs += `
-                    type ${libTypeName} implements Record {
+                    type ${libTypeName} implements Record ${isFileLibrary ? '& FileRecord' : ''} {
                         library: Library!,
                         whoAmI: RecordIdentity!,
                         property(attribute: ID!): [GenericValue!],
@@ -294,7 +295,7 @@ export default function({
                             )
                         )},
                         permissions: RecordPermissions!
-                        ${lib.behavior === LibraryBehavior.FILES ? 'file_type: FileType!' : ''}
+                        ${isFileLibrary ? 'file_type: FileType!' : ''}
                     }
 
                     type ${_getLibGqlListType(libTypeName)} {

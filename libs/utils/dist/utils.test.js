@@ -127,5 +127,12 @@ describe('utils', () => {
             expect((0, utils_1.getCallStack)().length).toBeGreaterThanOrEqual(1);
         });
     });
+    describe('getInitials', () => {
+        test('Return label initials for given length', async () => {
+            expect((0, utils_1.getInitials)('Dwight Schrute', 2)).toBe('DS');
+            expect((0, utils_1.getInitials)('Dwight Schrute', 1)).toBe('D');
+            expect((0, utils_1.getInitials)('Dwight', 2)).toBe('DW');
+        });
+    });
 });
 //# sourceMappingURL=utils.test.js.map

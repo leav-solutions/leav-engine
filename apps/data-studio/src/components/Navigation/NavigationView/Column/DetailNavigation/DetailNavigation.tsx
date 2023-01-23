@@ -6,6 +6,7 @@ import {themeVars} from '@leav/ui';
 import RecordPreviewWithModal from 'components/shared/RecordPreviewWithModal';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {RecordIdentity_whoAmI_preview_file} from '_gqlTypes/RecordIdentity';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {getFileUrl} from '../../../../../utils';
 
@@ -65,7 +66,7 @@ const DetailNavigation = ({treeElement, closable, onClose}: IDetailNavigationPro
     const {t} = useTranslation();
 
     const recordData = treeElement.record;
-    const previewFile = recordData?.whoAmI?.preview?.file;
+    const previewFile = recordData?.whoAmI?.preview?.file as RecordIdentity_whoAmI_preview_file;
 
     const label = recordData.whoAmI.label ? recordData.whoAmI.label : t('navigation.list.info.no-label');
 
@@ -77,8 +78,7 @@ const DetailNavigation = ({treeElement, closable, onClose}: IDetailNavigationPro
             <PreviewWrapper>
                 <RecordPreviewWithModal
                     key={recordData.id}
-                    fileId={previewFile?.id}
-                    fileLibraryId={previewFile?.library?.id}
+                    previewFile={previewFile}
                     label={recordData.whoAmI.label ? label : recordData.id}
                     color={recordData.whoAmI.color}
                     image={img && getFileUrl(img)}

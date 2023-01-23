@@ -28,6 +28,14 @@ export enum AttributeType {
     tree = 'tree'
 }
 
+export enum FileType {
+    audio = 'audio',
+    document = 'document',
+    image = 'image',
+    other = 'other',
+    video = 'video'
+}
+
 export enum FormElementTypes {
     field = 'field',
     layout = 'layout'

@@ -96,8 +96,7 @@ function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
                 tile
                 size={PreviewSize.medium}
                 style={{borderRadius: token.borderRadius}}
-                fileId={previewFile?.id}
-                fileLibraryId={previewFile?.library?.id}
+                previewFile={previewFile}
             />
             <PropertiesList items={summaryContent} />
         </Wrapper>

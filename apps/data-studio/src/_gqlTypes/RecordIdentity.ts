@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {FileType} from './globalTypes';
+
 // ====================================================
 // GraphQL fragment: RecordIdentity
 // ====================================================
@@ -27,6 +29,7 @@ export interface RecordIdentity_whoAmI_preview_file_library {
 
 export interface RecordIdentity_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RecordIdentity_whoAmI_preview_file_library;
 }
 

@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {FileType} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: GET_USER
 // ====================================================
@@ -16,6 +18,7 @@ export interface GET_USER_userWhoAmI_preview_file_library {
 
 export interface GET_USER_userWhoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: GET_USER_userWhoAmI_preview_file_library;
 }
 

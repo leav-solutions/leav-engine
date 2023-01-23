@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TaskFiltersInput, TaskStatus} from './globalTypes';
+import {TaskFiltersInput, FileType, TaskStatus} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_TASKS
@@ -29,6 +29,7 @@ export interface GET_TASKS_tasks_list_created_by_whoAmI_preview_file_library {
 
 export interface GET_TASKS_tasks_list_created_by_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: GET_TASKS_tasks_list_created_by_whoAmI_preview_file_library;
 }
 
@@ -83,6 +84,7 @@ export interface GET_TASKS_tasks_list_canceledBy_whoAmI_preview_file_library {
 
 export interface GET_TASKS_tasks_list_canceledBy_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: GET_TASKS_tasks_list_canceledBy_whoAmI_preview_file_library;
 }
 

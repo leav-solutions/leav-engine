@@ -181,6 +181,64 @@ describe('FileModal', () => {
         });
     });
 
+    describe('Handle audio file', () => {
+        test('Display audio player', async () => {
+            const mocks = [
+                {
+                    request: {
+                        query: getFileDataQuery('files'),
+                        variables: {
+                            fileId: mockRecord.id
+                        }
+                    },
+                    result: {data: {files: {list: [{...mockFileData, file_type: 'audio'}]}}}
+                }
+            ];
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+                apolloMocks: mocks,
+                cacheSettings
+            });
+
+            await waitFor(() => screen.getByTestId('content-section'));
+            const contentSection = screen.getByTestId('content-section');
+            expect(within(contentSection).getByTestId('audio-player')).toBeInTheDocument();
+        });
+
+        test('Display fallback if audio file is not available', async () => {
+            const mocks = [
+                {
+                    request: {
+                        query: getFileDataQuery('files'),
+                        variables: {
+                            fileId: mockRecord.id
+                        }
+                    },
+                    result: {
+                        data: {
+                            files: {
+                                list: [
+                                    {
+                                        ...mockFileData,
+                                        file_type: 'audio',
+                                        whoAmI: {...mockFileData.whoAmI, preview: null}
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            ];
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+                apolloMocks: mocks,
+                cacheSettings
+            });
+
+            await waitFor(() => screen.getByTestId('content-section'));
+            const contentSection = screen.getByTestId('content-section');
+            expect(within(contentSection).getByText(/no_preview/)).toBeInTheDocument();
+        });
+    });
+
     describe('Handle document file', () => {
         test('Display document viewer', async () => {
             const mocks = [

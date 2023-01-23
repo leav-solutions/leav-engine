@@ -6,7 +6,15 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ViewInput, ViewSizes, ViewTypes, RecordFilterCondition, RecordFilterOperator, SortOrder} from './globalTypes';
+import {
+    ViewInput,
+    ViewSizes,
+    ViewTypes,
+    RecordFilterCondition,
+    RecordFilterOperator,
+    SortOrder,
+    FileType
+} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: ADD_VIEW
@@ -73,6 +81,7 @@ export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview
 
 export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_preview_file_library;
 }
 
