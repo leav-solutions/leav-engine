@@ -6,19 +6,19 @@ import {themeVars} from '@leav/ui';
 import FileModal from 'components/FileModal';
 import {useState} from 'react';
 import styled from 'styled-components';
+import {RecordIdentity_whoAmI_preview_file} from '_gqlTypes/RecordIdentity';
 import RecordPreview from '../RecordPreview';
 import {IRecordPreviewProps} from '../RecordPreview/_types';
 
 interface IRecordPreviewWithModalProps extends Omit<IRecordPreviewProps, 'onClick'> {
-    fileId?: string;
-    fileLibraryId?: string;
+    previewFile: RecordIdentity_whoAmI_preview_file;
 }
 
-const ClickHandler = styled.div<{hasPreview: boolean}>`
+const ClickHandler = styled.div`
     position: relative;
     cursor: pointer;
-    width: ${p => (p.hasPreview ? 'fit-content' : '100%')};
-    height: ${p => (p.hasPreview ? 'fit-content' : '100%')};
+    width: fit-content;
+    height: fit-content;
     margin: auto;
 `;
 
@@ -39,18 +39,12 @@ const Overlay = styled.div`
     }
 `;
 
-function RecordPreviewWithModal({
-    fileId,
-    fileLibraryId,
-    ...recordPreviewProps
-}: IRecordPreviewWithModalProps): JSX.Element {
+function RecordPreviewWithModal({previewFile, ...recordPreviewProps}: IRecordPreviewWithModalProps): JSX.Element {
     const [isPreviewModalOpen, setPreviewModalOpen] = useState(false);
-    const hasPreview = !!(fileId && fileLibraryId && recordPreviewProps.image);
+    const fileId = previewFile?.id;
+    const fileLibraryId = previewFile?.library?.id;
 
     const _handlePreviewClick = () => {
-        if (!hasPreview) {
-            return;
-        }
         setPreviewModalOpen(true);
     };
 
@@ -58,13 +52,11 @@ function RecordPreviewWithModal({
 
     return (
         <>
-            <ClickHandler onClick={_handlePreviewClick} data-testid="click-handler" hasPreview={hasPreview}>
+            <ClickHandler onClick={_handlePreviewClick} data-testid="click-handler">
                 <RecordPreview {...recordPreviewProps} />
-                {hasPreview && (
-                    <Overlay>
-                        <EyeOutlined />
-                    </Overlay>
-                )}
+                <Overlay>
+                    <EyeOutlined />
+                </Overlay>
             </ClickHandler>
             {isPreviewModalOpen && (
                 <FileModal

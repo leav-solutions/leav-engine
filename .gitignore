@@ -60,6 +60,7 @@ logs
 
 ### Apollo auth token ###
 apollo.token.js
+apollo.apiKey.js
 
 # ignore imageMagick tmp files
 magick-*
@@ -82,5 +83,3 @@ apps/core/config/local.js
 
 apps/*/dist
 *.tsbuildinfo
-
-apps/*/apollo.apiKey.js

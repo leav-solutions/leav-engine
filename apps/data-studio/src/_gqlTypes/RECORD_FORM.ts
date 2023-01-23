@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueVersionInput, FormElementTypes, AttributeType, AttributeFormat} from './globalTypes';
+import {ValueVersionInput, FormElementTypes, FileType, AttributeType, AttributeFormat} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: RECORD_FORM
@@ -33,6 +33,7 @@ export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_
 
 export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview_file_library;
 }
 
@@ -77,6 +78,7 @@ export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI
 
 export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview_file_library;
 }
 
@@ -169,6 +171,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_who
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview_file_library;
 }
 
@@ -213,6 +216,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_wh
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview_file_library;
 }
 
@@ -293,6 +297,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoA
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview_file_library;
 }
 
@@ -348,6 +353,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_who
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview_file_library;
 }
 
@@ -392,6 +398,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_wh
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview_file_library;
 }
 
@@ -472,6 +479,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_reco
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview_file_library;
 }
 
@@ -516,6 +524,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ance
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview_file_library;
 }
 
@@ -786,6 +795,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkVal
 
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview_file_library;
 }
 
@@ -931,6 +941,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview_file_library;
 }
 
@@ -975,6 +986,7 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview_file_library;
 }
 

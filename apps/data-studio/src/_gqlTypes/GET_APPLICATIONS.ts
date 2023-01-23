@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {FileType} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: GET_APPLICATIONS
 // ====================================================
@@ -27,6 +29,7 @@ export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview_file_lib
 
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: GET_APPLICATIONS_applications_list_icon_whoAmI_preview_file_library;
 }
 

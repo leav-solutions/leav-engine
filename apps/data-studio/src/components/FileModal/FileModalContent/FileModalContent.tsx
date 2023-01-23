@@ -7,6 +7,7 @@ import {IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
 import styled from 'styled-components';
 import {PreviewSize} from '_types/types';
 import {fileModalSidebarWidth, fileModalWidth} from '../_constants';
+import AudioFile from './AudioFile';
 import DocumentFile from './DocumentFile';
 import FileModalSidebar from './FileModalSidebar';
 import ImageFile from './ImageFile';
@@ -74,6 +75,9 @@ function FileModalContent({fileData}: IFileModalContentProps): JSX.Element {
             break;
         case 'video':
             fileViewer = <VideoFile {...viewerProps} />;
+            break;
+        case 'audio':
+            fileViewer = <AudioFile {...viewerProps} />;
             break;
         case 'document':
             fileViewer = <DocumentFile {...viewerProps} />;

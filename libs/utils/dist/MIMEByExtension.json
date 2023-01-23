@@ -634,5 +634,173 @@
     "smv": {
         "mime": "video/x-smv",
         "type": "video"
+    },
+    "669": {
+        "mime": "audio/x-mod",
+        "type": "audio"
+    },
+    "aac": {
+        "mime": "audio/x-aac",
+        "type": "audio"
+    },
+    "aax": {
+        "mime": "audio/x-aac",
+        "type": "audio"
+    },
+    "adp": {
+        "mime": "audio/adpcm",
+        "type": "audio"
+    },
+    "aif": {
+        "mime": "audio/x-aiff",
+        "type": "audio"
+    },
+    "aiff": {
+        "mime": "audio/x-aiff",
+        "type": "audio"
+    },
+    "au": {
+        "mime": "audio/x-au",
+        "type": "audio"
+    },
+    "dra": {
+        "mime": "audio/vnd.dra",
+        "type": "audio"
+    },
+    "dts": {
+        "mime": "audio/vnd.dts",
+        "type": "audio"
+    },
+    "dtshd": {
+        "mime": "audio/vnd.dts.hd",
+        "type": "audio"
+    },
+    "ecelp4800": {
+        "mime": "audio/vnd.nuera.ecelp4800",
+        "type": "audio"
+    },
+    "ecelp7470": {
+        "mime": "audio/vnd.nuera.ecelp7470",
+        "type": "audio"
+    },
+    "ecelp9600": {
+        "mime": "audio/vnd.nuera.ecelp9600",
+        "type": "audio"
+    },
+    "eol": {
+        "mime": "audio/vnd.digital-winds",
+        "type": "audio"
+    },
+    "flac": {
+        "mime": "audio/x-flac",
+        "type": "audio"
+    },
+    "jam": {
+        "mime": "audio/x-jam",
+        "type": "audio"
+    },
+    "lvp": {
+        "mime": "audio/vnd.lucent.voice",
+        "type": "audio"
+    },
+    "m3u": {
+        "mime": "audio/x-mpequrl",
+        "type": "audio"
+    },
+    "mid": {
+        "mime": "audio/x-midi",
+        "type": "audio"
+    },
+    "midi": {
+        "mime": "audio/x-midi",
+        "type": "audio"
+    },
+    "mod": {
+        "mime": "audio/x-mod",
+        "type": "audio"
+    },
+    "mp2": {
+        "mime": "audio/x-mpeg",
+        "type": "audio"
+    },
+    "mp3": {
+        "mime": "audio/x-mpeg-3",
+        "type": "audio"
+    },
+    "mp4a": {
+        "mime": "audio/mp4",
+        "type": "audio"
+    },
+    "mpa": {
+        "mime": "audio/mpeg",
+        "type": "audio"
+    },
+    "mpga": {
+        "mime": "audio/mpeg",
+        "type": "audio"
+    },
+    "oga": {
+        "mime": "audio/ogg",
+        "type": "audio"
+    },
+    "ogg": {
+        "mime": "audio/ogg",
+        "type": "audio"
+    },
+    "opus": {
+        "mime": "audio/opus",
+        "type": "audio"
+    },
+    "pya": {
+        "mime": "audio/vnd.ms-playready.media.pya",
+        "type": "audio"
+    },
+    "ra": {
+        "mime": "audio/x-realaudio",
+        "type": "audio"
+    },
+    "ram": {
+        "mime": "audio/x-pn-realaudio",
+        "type": "audio"
+    },
+    "rip": {
+        "mime": "audio/vnd.rip",
+        "type": "audio"
+    },
+    "rm": {
+        "mime": "audio/x-pn-realaudio",
+        "type": "audio"
+    },
+    "rmp": {
+        "mime": "audio/x-pn-realaudio-plugin",
+        "type": "audio"
+    },
+    "rpm": {
+        "mime": "audio/x-pn-realaudio-plugin",
+        "type": "audio"
+    },
+    "uva": {
+        "mime": "audio/vnd.dece.audio",
+        "type": "audio"
+    },
+    "wav": {
+        "mime": "audio/x-wav",
+        "type": "audio"
+    },
+    "wax": {
+        "mime": "audio/x-ms-wax",
+        "type": "audio"
+    },
+    "weba": {
+        "mime": "audio/webm",
+        "type": "audio"
+    },
+    "wma": {
+        "mime": "audio/x-ms-wma",
+        "type": "audio"
+    },
+    "xm": {
+        "mime": "audio/xm",
+        "type": "audio"
     }
 }

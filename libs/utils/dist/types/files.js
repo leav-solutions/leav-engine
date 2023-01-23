@@ -8,6 +8,7 @@ var FileType;
 (function (FileType) {
     FileType["IMAGE"] = "image";
     FileType["VIDEO"] = "video";
+    FileType["AUDIO"] = "audio";
     FileType["DOCUMENT"] = "document";
     FileType["OTHER"] = "other";
 })(FileType = exports.FileType || (exports.FileType = {}));

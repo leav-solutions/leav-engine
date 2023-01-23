@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {FileType} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: ME
 // ====================================================
@@ -27,6 +29,7 @@ export interface ME_me_whoAmI_preview_file_library {
 
 export interface ME_me_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: ME_me_whoAmI_preview_file_library;
 }
 

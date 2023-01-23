@@ -13,7 +13,7 @@ export interface IFileDataElement extends RecordIdentity {
     modified_by: RecordIdentity;
     file_name: string;
     file_path: string;
-    file_type: 'image' | 'video' | 'document' | 'other';
+    file_type: 'image' | 'video' | 'audio' | 'document' | 'other';
     library: {
         behavior: 'standard' | 'files' | 'directories';
     };

@@ -28,6 +28,7 @@ const recordIdentityFragment = gql`
                 original
                 file {
                     id
+                    file_type
                     library {
                         id
                     }

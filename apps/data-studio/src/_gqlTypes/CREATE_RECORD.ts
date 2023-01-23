@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {FileType} from './globalTypes';
+
 // ====================================================
 // GraphQL mutation operation: CREATE_RECORD
 // ====================================================
@@ -27,6 +29,7 @@ export interface CREATE_RECORD_createRecord_whoAmI_preview_file_library {
 
 export interface CREATE_RECORD_createRecord_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: CREATE_RECORD_createRecord_whoAmI_preview_file_library;
 }
 

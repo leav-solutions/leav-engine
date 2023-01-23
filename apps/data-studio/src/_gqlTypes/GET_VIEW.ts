@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ViewSizes, ViewTypes, RecordFilterCondition, RecordFilterOperator, SortOrder} from './globalTypes';
+import {ViewSizes, ViewTypes, RecordFilterCondition, RecordFilterOperator, SortOrder, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_VIEW
@@ -73,6 +73,7 @@ export interface GET_VIEW_view_valuesVersions_treeNode_record_whoAmI_preview_fil
 
 export interface GET_VIEW_view_valuesVersions_treeNode_record_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: GET_VIEW_view_valuesVersions_treeNode_record_whoAmI_preview_file_library;
 }
 

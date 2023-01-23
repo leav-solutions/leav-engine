@@ -28,6 +28,7 @@ export const getUser = gql`
                 original
                 file {
                     id
+                    file_type
                     library {
                         id
                     }

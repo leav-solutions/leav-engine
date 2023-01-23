@@ -30,7 +30,7 @@ interface IDeps {
     'core.app.core.indexationManager'?: IIndexationManagerApp;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
@@ -42,6 +42,25 @@ export default function({
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const systemAttributes = ['created_at', 'created_by', 'modified_at', 'modified_by', 'active'];
+            const recordInterfaceDef = `
+                id: ID!,
+                library: Library!,
+                whoAmI: RecordIdentity!
+                property(attribute: ID!): [GenericValue!]
+                ${await Promise.all(
+                    systemAttributes.map(async a => {
+                        const attrProps = await attributeDomain.getAttributeProperties({
+                            id: a,
+                            ctx: {
+                                userId: '0',
+                                queryId: 'recordAppGenerateBaseSchema'
+                            }
+                        });
+                        return `${a}: ${await attributeApp.getGraphQLFormat(attrProps)}`;
+                    })
+                )},
+                permissions: RecordPermissions!
+            `;
 
             const baseSchema = {
                 typeDefs: `
@@ -52,23 +71,12 @@ export default function({
                     }
 
                     interface Record {
-                        id: ID!,
-                        library: Library!,
-                        whoAmI: RecordIdentity!
-                        property(attribute: ID!): [GenericValue!]
-                        ${await Promise.all(
-                            systemAttributes.map(async a => {
-                                const attrProps = await attributeDomain.getAttributeProperties({
-                                    id: a,
-                                    ctx: {
-                                        userId: '0',
-                                        queryId: 'recordAppGenerateBaseSchema'
-                                    }
-                                });
-                                return `${a}: ${await attributeApp.getGraphQLFormat(attrProps)}`;
-                            })
-                        )},
-                        permissions: RecordPermissions!
+                        ${recordInterfaceDef}
+                    }
+
+                    interface FileRecord {
+                        ${recordInterfaceDef}
+                        file_type: FileType!
                     }
 
                     type RecordIdentity {
@@ -85,7 +93,7 @@ export default function({
                             .reduce((sizes, version) => [...sizes, ...version.sizes.map(s => `${s.name}: String,`)], [])
                             .join(' ')}
                         pdf: String
-                        file: Record
+                        file: FileRecord
                         original: String!
                     }
 
@@ -177,6 +185,11 @@ export default function({
                 `,
                 resolvers: {
                     Record: {
+                        __resolveType(obj) {
+                            return utils.libNameToTypeName(obj.library);
+                        }
+                    },
+                    FileRecord: {
                         __resolveType(obj) {
                             return utils.libNameToTypeName(obj.library);
                         }
