@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
 import {IAmqpService} from '@leav/message-broker';
-import * as Config from '_types/config';
-import {DbPayload, IPubSubPayload, IPubSubEvent} from '../../_types/event';
-import {IQueryInfos} from '_types/queryInfos';
 import {PubSub} from 'graphql-subscriptions';
+import Joi from 'joi';
 import winston from 'winston';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {DbPayload, IPubSubEvent, IPubSubPayload} from '../../_types/event';
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent(payload: DbPayload, ctx: IQueryInfos): Promise<void>;
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
-    suscribe(triggersName: string[]): AsyncIterator<any>;
+    subscribe(triggersName: string[]): AsyncIterator<any>;
     init(): Promise<void>;
 }
 
@@ -22,7 +22,7 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null
@@ -56,7 +56,12 @@ export default function({
             logger.error(e);
         }
 
-        await pubsub.publish(pubSubEvent.payload.triggerName, pubSubEvent.payload.data);
+        const publishedPayload = {
+            time: pubSubEvent.time,
+            userId: pubSubEvent.userId,
+            ...pubSubEvent.payload.data
+        };
+        await pubsub.publish(pubSubEvent.payload.triggerName, publishedPayload);
     };
 
     const _send = async (routingKey: string, payload: any, ctx: IQueryInfos): Promise<void> => {
@@ -89,7 +94,7 @@ export default function({
         async sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void> {
             await _send(config.eventsManager.routingKeys.pubsub_events, payload, ctx);
         },
-        suscribe(triggersName: string[]): AsyncIterator<any> {
+        subscribe(triggersName: string[]): AsyncIterator<any> {
             return pubsub.asyncIterator(triggersName);
         }
     };

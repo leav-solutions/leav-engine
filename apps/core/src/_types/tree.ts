@@ -55,3 +55,18 @@ export enum TreeBehavior {
     STANDARD = 'standard',
     FILES = 'files'
 }
+
+export enum TreeEventTypes {
+    ADD = 'add',
+    REMOVE = 'remove',
+    MOVE = 'move'
+}
+
+export interface ITreeEvent {
+    type: TreeEventTypes;
+    treeId: string;
+    element: ITreeNodeLight & {treeId: string};
+    parentNode?: ITreeNodeLight & {treeId: string};
+    parentNodeBefore?: ITreeNodeLight & {treeId: string};
+    order: number;
+}

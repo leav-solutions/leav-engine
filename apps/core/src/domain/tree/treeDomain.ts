@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
@@ -31,6 +32,7 @@ import {
     ITreeNode,
     ITreeNodeLight,
     TreeBehavior,
+    TreeEventTypes,
     TreePaths
 } from '../../_types/tree';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -150,12 +152,15 @@ interface IDeps {
     'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
     'core.domain.tree.helpers.handleRemovedLibraries'?: HandleRemovedLibrariesFunc;
     'core.domain.tree.helpers.getDefaultElement'?: IGetDefaultElementHelper;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.versionProfile'?: IVersionProfileRepo;
     'core.utils'?: IUtils;
     'core.infra.cache.cacheService'?: ICachesService;
 }
+
+export const TRIGGER_NAME_TREE_EVENT = 'treeEvent';
 
 export default function ({
     'core.domain.record': recordDomain = null,
@@ -168,6 +173,7 @@ export default function ({
     'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper = null,
     'core.domain.tree.helpers.handleRemovedLibraries': handleRemovedLibraries = null,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.versionProfile': versionProfileRepo = null,
@@ -310,6 +316,37 @@ export default function ({
         await _cleanPermissionsCacheRelatedToTree(treeId, ctx);
         await elementAncestorsHelper.clearElementAncestorsCache({treeId, ctx});
         await getDefaultElementHelper.clearCache({treeId, ctx});
+    };
+
+    const _sendTreeEvent = async (
+        params: {
+            treeId: string;
+            type: TreeEventTypes;
+            element?: ITreeNodeLight;
+            parentNode: string;
+            parentNodeBefore?: string;
+            order: number;
+        },
+        ctx: IQueryInfos
+    ): Promise<void> => {
+        const {treeId, type, element, parentNode, parentNodeBefore, order} = params;
+
+        return eventsManagerDomain.sendPubSubEvent(
+            {
+                data: {
+                    treeEvent: {
+                        type,
+                        treeId,
+                        element: {...element, treeId},
+                        parentNode: parentNode ? {id: parentNode, treeId} : null,
+                        parentNodeBefore: parentNodeBefore ? {id: parentNodeBefore, treeId} : null,
+                        order
+                    }
+                },
+                triggerName: TRIGGER_NAME_TREE_EVENT
+            },
+            ctx
+        );
     };
 
     return {
@@ -483,13 +520,20 @@ export default function ({
 
             await getDefaultElementHelper.clearCache({treeId, ctx});
 
-            return treeRepo.addElement({
+            const addedElement = await treeRepo.addElement({
                 treeId,
                 element,
                 parent,
                 order,
                 ctx
             });
+
+            await _sendTreeEvent(
+                {type: TreeEventTypes.ADD, treeId, element: addedElement, parentNode: parent, order},
+                ctx
+            );
+
+            return addedElement;
         },
         async moveElement({treeId, nodeId, parentTo = null, order = 0, ctx}): Promise<ITreeNodeLight> {
             const errors: any = {};
@@ -517,13 +561,13 @@ export default function ({
 
             // Check permissions on source
             const parents = await this.getElementAncestors({treeId, nodeId, ctx});
+            const parentBefore = parents.length > 1 ? [...parents].splice(-2, 1)[0] : null;
             let canEditSourceChildren: boolean;
-            if (parents.length > 1) {
-                const parent = parents.splice(-2, 1)[0]; // parent is before-last in the list of ancestors
+            if (parentBefore) {
                 canEditSourceChildren = await treeNodePermissionDomain.getTreeNodePermission({
                     treeId,
                     action: TreeNodePermissionsActions.EDIT_CHILDREN,
-                    nodeId: parent.id,
+                    nodeId: parentBefore.id,
                     userId: ctx.userId,
                     ctx
                 });
@@ -578,7 +622,21 @@ export default function ({
 
             await _clearAllTreeCaches(treeId, ctx);
 
-            return treeRepo.moveElement({treeId, nodeId, parentTo, order, ctx});
+            const movedElement = await treeRepo.moveElement({treeId, nodeId, parentTo, order, ctx});
+
+            await _sendTreeEvent(
+                {
+                    type: TreeEventTypes.MOVE,
+                    treeId,
+                    element: movedElement,
+                    parentNode: parentTo ?? null,
+                    parentNodeBefore: parentBefore?.id ?? null,
+                    order
+                },
+                ctx
+            );
+
+            return movedElement;
         },
         async deleteElement({treeId, nodeId, deleteChildren = true, ctx}): Promise<ITreeNodeLight> {
             const errors: any = {};
@@ -609,7 +667,24 @@ export default function ({
 
             await _clearAllTreeCaches(treeId, ctx);
 
-            return treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
+            const parents = await this.getElementAncestors({treeId, nodeId, ctx});
+            const parentBefore = parents.length > 1 ? [...parents].splice(-2, 1)[0] : null;
+
+            const deletedElement = await treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
+
+            await _sendTreeEvent(
+                {
+                    type: TreeEventTypes.REMOVE,
+                    treeId,
+                    element: deletedElement,
+                    parentNode: null,
+                    parentNodeBefore: parentBefore?.id ?? null,
+                    order: null
+                },
+                ctx
+            );
+
+            return deletedElement;
         },
         async getTreeContent({treeId, startingNode = null, depth, childrenCount, ctx}): Promise<ITreeNode[]> {
             const errors: any = {};

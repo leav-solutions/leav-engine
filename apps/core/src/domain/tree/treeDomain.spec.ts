@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {ITreeNodePermissionDomain} from 'domain/permission/treeNodePermissionDomain';
@@ -75,6 +76,10 @@ describe('treeDomain', () => {
     const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockTree);
     const mockGetEntityByIdHelperNoResult = jest.fn().mockReturnValue(null);
     const mockGetEntityByIdHelperFilesTree = jest.fn().mockReturnValue({...mockFilesTree});
+
+    const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
+        sendPubSubEvent: jest.fn()
+    };
 
     const mockUtils: Mockify<IUtils> = {
         isIdValid: jest.fn().mockReturnValue(true),
@@ -419,7 +424,8 @@ describe('treeDomain', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             await domain.addElement({
@@ -430,6 +436,7 @@ describe('treeDomain', () => {
             });
 
             expect(treeRepo.addElement).toBeCalled();
+            expect(mockEventsManagerDomain.sendPubSubEvent).toBeCalled();
         });
 
         test('Should throw if unknown tree, element or destination', async () => {
@@ -655,7 +662,8 @@ describe('treeDomain', () => {
                 'core.infra.library': mockLibDomain as ILibraryRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             await domain.moveElement({
@@ -667,6 +675,7 @@ describe('treeDomain', () => {
 
             expect(mockCacheService.deleteData).toBeCalledTimes(3);
             expect(treeRepo.moveElement).toBeCalled();
+            expect(mockEventsManagerDomain.sendPubSubEvent).toBeCalled();
         });
 
         test('Should throw if unknown tree, element or destination', async () => {
@@ -866,7 +875,8 @@ describe('treeDomain', () => {
                 'core.infra.library': mockLibDomain as ILibraryRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperWithPermissions as GetCoreEntityByIdFunc,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             await domain.deleteElement({
@@ -878,6 +888,7 @@ describe('treeDomain', () => {
 
             expect(mockCacheService.deleteData).toBeCalledTimes(3);
             expect(treeRepo.deleteElement).toBeCalled();
+            expect(mockEventsManagerDomain.sendPubSubEvent).toBeCalled();
         });
 
         test('Should throw if unknown tree, element or destination', async () => {
