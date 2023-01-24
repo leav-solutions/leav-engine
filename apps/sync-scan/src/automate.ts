@@ -2,20 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {groupDbFilesByDatas, groupFsFilesByDatas, _logMem} from './utils';
 import * as events from './events';
-import {FilesystemContent, IFileContent} from './_types/filesystem';
-import {FullTreeContent, IDbLibrariesSettings, IDbScanResult, IRecord} from './_types/queries';
+import {FilesystemContent, IFileContent, IFilesystemDatas} from './_types/filesystem';
+import {FullTreeContent, IDbFilesDatas, IDbLibrariesSettings, IRecord} from './_types/queries';
 
-enum Attr {
-    NOTHING = 0,
-    INODE = 1,
-    NAME = 2,
-    PATH = 4
+enum EMatches {
+    EXACT = 'exact',
+    NAMEANDPATH = 'nameAndPath',
+    INODEANDNAME = 'inodeAndName',
+    INODEANDPATH = 'inodeAndPath',
+    NOTFOUND = 'notFound',
+    DELETE = 'delete'
 }
 
-const HASH_DIFF = 8;
-
-const _extractChildrenDbElements = (
+export const _extractChildrenDbElements = (
     dbSettings: IDbLibrariesSettings,
     database: FullTreeContent,
     dbEl?: FullTreeContent
@@ -52,127 +53,150 @@ const _extractChildrenDbElements = (
     return dbEl;
 };
 
-const _getEventTypeAndDbElIdx = (fc: IFileContent, dbEl: FullTreeContent) => {
-    let match: Attr | number = Attr.NOTHING;
-    const dbElIdx = [];
+const _removeAlreadyTreatedFromList = (f: IRecord) => f.record.trt === undefined;
+const _setTreated = (f: IRecord) => (f.record.trt = true);
 
-    for (const [i, e] of dbEl.entries()) {
-        if (typeof e.record.trt === 'undefined') {
-            const res: number =
-                (fc.ino === e.record.inode ? Attr.INODE : 0) +
-                (fc.name === e.record.file_name ? Attr.NAME : 0) +
-                (fc.path === e.record.treePath ? Attr.PATH : 0);
+const _findDbFileForFsFile = (fsFile: IFileContent, dbFilesByData: IDbFilesDatas) => {
+    const matchdbFilesByInode = dbFilesByData.filesByInode[fsFile.ino] || [];
+    const matchdbFilesByName = dbFilesByData.filesByName[fsFile.name] || [];
+    const matchdbFilesByPath = dbFilesByData.filesByPath[fsFile.path] || [];
 
-            if (res > match && [1, 3, 5, 6, 7].includes(res)) {
-                match = res;
-                dbElIdx.push(i);
-            }
-        }
+    const matchesByNameAndPath = matchdbFilesByName
+        .filter(x => matchdbFilesByPath.includes(x))
+        .filter(_removeAlreadyTreatedFromList);
+    const matchesByAll = matchesByNameAndPath
+        .filter(x => matchdbFilesByInode.includes(x))
+        .filter(_removeAlreadyTreatedFromList);
+
+    if (matchesByAll.length) {
+        _setTreated(matchesByAll[0]);
+        return {match: EMatches.EXACT, dbFile: matchesByAll[0]};
     }
 
-    if (dbElIdx.length) {
-        dbEl[dbElIdx[dbElIdx.length - 1]].record.trt = true;
-
-        // if hashs are differents, it's a move and not an ignore event
-        if (match === Attr.INODE + Attr.NAME + Attr.PATH && dbEl[dbElIdx[dbElIdx.length - 1]].record.hash !== fc.hash) {
-            match = HASH_DIFF;
-        }
+    if (matchesByNameAndPath.length) {
+        _setTreated(matchesByNameAndPath[0]);
+        return {match: EMatches.NAMEANDPATH, dbFile: matchesByNameAndPath[0]};
     }
 
-    return {match, dbElIdx};
+    const matchesByInodeAndName = matchdbFilesByInode
+        .filter(x => matchdbFilesByName.includes(x))
+        .filter(_removeAlreadyTreatedFromList);
+    if (matchesByInodeAndName.length) {
+        _setTreated(matchesByInodeAndName[0]);
+        return {match: EMatches.INODEANDNAME, dbFile: matchesByInodeAndName[0]};
+    }
+
+    const matchesByInodeAndPath = matchdbFilesByInode
+        .filter(x => matchdbFilesByName.includes(x))
+        .filter(_removeAlreadyTreatedFromList);
+    if (matchesByInodeAndPath.length) {
+        _setTreated(matchesByInodeAndPath[0]);
+        return {match: EMatches.INODEANDPATH, dbFile: matchesByInodeAndPath[0]};
+    }
+
+    return {match: EMatches.NOTFOUND, dbFile: null};
 };
 
-const _delUntreatedDbElements = async (
-    dbEl: FullTreeContent,
-    dbSettings: IDbLibrariesSettings,
-    amqp: IAmqpService
-): Promise<void> => {
-    for (const de of dbEl.filter(e => typeof e.record.trt === 'undefined')) {
-        await events.remove(
-            de.record.treePath === '.' ? de.record.file_name : `${de.record.treePath}/${de.record.file_name}`,
-            de.record.inode,
-            de.record.library === dbSettings.directoriesLibraryId,
-            de.record.id,
-            amqp
-        );
-    }
-};
-
-const _treatFile = async (match: Attr | number, dbEl: IRecord, fc: IFileContent, amqp: IAmqpService): Promise<void> => {
+const _sendCommand = async (
+    match: string,
+    fsFile: IFileContent | null,
+    dbFile: IRecord | null,
+    amqp: IAmqpService,
+    dbSettings: IDbLibrariesSettings
+) => {
     switch (match) {
-        case Attr.INODE: // Identical inode only
-        case Attr.INODE + Attr.NAME: // 3 - move
-        case Attr.INODE + Attr.PATH: // 5 - rename
-        case Attr.NAME + Attr.PATH: // different inode only (e.g: remount disk)
-            await events.move(
-                dbEl.record.treePath === '.'
-                    ? dbEl.record.file_name
-                    : `${dbEl.record.treePath}/${dbEl.record.file_name}`,
-                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
-                fc.ino,
-                fc.type === 'directory' ? true : false,
-                dbEl.record.id,
+        case EMatches.EXACT:
+            if (fsFile.hash !== dbFile.record.hash) {
+                return events.update(
+                    fsFile.path === '.' ? fsFile.name : `${fsFile.path}/${fsFile.name}`,
+                    fsFile.ino,
+                    false, // isDirectory parameter, in this case it is sure we are not on a directory
+                    amqp,
+                    fsFile.hash,
+                    dbFile.record.id
+                );
+            }
+            // otherwise we do nothing cause fsFile and dbFile are "in sync"
+            break;
+        case EMatches.NAMEANDPATH:
+        case EMatches.INODEANDPATH:
+        case EMatches.INODEANDNAME:
+            return events.move(
+                dbFile.record.treePath === '.'
+                    ? dbFile.record.file_name
+                    : `${dbFile.record.treePath}/${dbFile.record.file_name}`,
+                fsFile.path === '.' ? fsFile.name : `${fsFile.path}/${fsFile.name}`,
+                fsFile.ino,
+                fsFile.type === 'directory' ? true : false,
+                dbFile.record.id,
                 amqp
             );
             break;
-        case Attr.INODE + Attr.NAME + Attr.PATH: // 7 - ignore (totally identical)
-            break;
-        case HASH_DIFF: // hash changed
-            await events.update(
-                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
-                fc.ino,
-                false, // isDirectory,
+        case EMatches.NOTFOUND:
+            return events.create(
+                fsFile.path === '.' ? fsFile.name : `${fsFile.path}/${fsFile.name}`,
+                fsFile.ino,
+                fsFile.type === 'directory' ? true : false,
                 amqp,
-                fc.hash,
-                dbEl.record.id
+                fsFile.hash
+            );
+            break;
+        case EMatches.DELETE:
+            return events.remove(
+                dbFile.record.treePath === '.'
+                    ? dbFile.record.file_name
+                    : `${dbFile.record.treePath}/${dbFile.record.file_name}`,
+                dbFile.record.inode,
+                dbFile.record.library === dbSettings.directoriesLibraryId,
+                dbFile.record.id,
+                amqp
             );
             break;
         default:
-            // 0 or Attr.PATH - create
-            await events.create(
-                fc.path === '.' ? fc.name : `${fc.path}/${fc.name}`,
-                fc.ino,
-                fc.type === 'directory' ? true : false,
-                amqp,
-                fc.hash
-            );
+            return null;
             break;
     }
+    return null;
 };
-
 const _process = async (
-    fsElements: FilesystemContent,
-    dbElements: FullTreeContent,
-    level: number,
+    fsFiles: FilesystemContent,
+    dbFiles: IRecord[],
+    fsFilesByData: IFilesystemDatas,
+    dbFilesByData: IDbFilesDatas,
     dbSettings: IDbLibrariesSettings,
     amqp: IAmqpService
 ): Promise<void> => {
-    if (!fsElements.filter(fse => fse.level === level).length) {
-        // delete all untreated elements in database before end of process
-        await _delUntreatedDbElements(dbElements, dbSettings, amqp);
-        return;
-    }
-
-    let match: Attr;
-    let dbElIdx: number[];
-    for (const fc of fsElements) {
-        if (fc.level === level && !fc.trt) {
-            ({match, dbElIdx} = _getEventTypeAndDbElIdx(fc, dbElements));
-            await _treatFile(match, dbElements[dbElIdx[dbElIdx.length - 1]], fc, amqp);
-            fc.trt = true;
+    const fsLevels = Object.keys(fsFilesByData.filesByLevel);
+    fsLevels.sort();
+    // we process elements from least nested to most nested = we process folder before its children
+    for (const level of fsLevels) {
+        //fsLevels.forEach(async(level) => {
+        for (const fsFile of fsFilesByData.filesByLevel[level]) {
+            //fsFilesByData.filesByLevel[level].forEach(async(fsFile) => {
+            const {match, dbFile} = _findDbFileForFsFile(fsFile, dbFilesByData);
+            await _sendCommand(match, fsFile, dbFile, amqp, dbSettings);
+            //});
         }
+        //});
     }
 
-    await _process(fsElements, dbElements, level + 1, dbSettings, amqp);
+    const dbFilesToRemove = dbFiles.filter(_removeAlreadyTreatedFromList);
+
+    for (const dbFile of dbFilesToRemove) {
+        //dbFilesToRemove.forEach(async(dbFile) => {
+        await _sendCommand('delete', null, dbFile, amqp, dbSettings);
+        //});
+    }
 };
 
-export default async (fsScan: FilesystemContent, dbScan: IDbScanResult, amqp: IAmqpService): Promise<void> => {
-    const dbSettings = {
-        filesLibraryId: dbScan.filesLibraryId,
-        directoriesLibraryId: dbScan.directoriesLibraryId
-    };
+export default async (
+    fsFiles: FilesystemContent,
+    dbFiles: IRecord[],
+    dbSettings: IDbLibrariesSettings,
+    amqp: IAmqpService
+): Promise<void> => {
+    const fsFilesByData = groupFsFilesByDatas(fsFiles);
+    const dbFilesByData = groupDbFilesByDatas(dbFiles);
 
-    const dbElements = _extractChildrenDbElements(dbSettings, dbScan.treeContent);
-
-    await _process(fsScan, dbElements, 0, dbSettings, amqp);
+    await _process(fsFiles, dbFiles, fsFilesByData, dbFilesByData, dbSettings, amqp);
 };

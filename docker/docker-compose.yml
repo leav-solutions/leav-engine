@@ -515,8 +515,8 @@ services:
 
   kibana:
     image: *kibana_image
-    logging:
-      driver: none
+    #logging:
+    #  driver: none
     ports:
       - 5611:5601
     volumes:
