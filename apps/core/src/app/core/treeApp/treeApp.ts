@@ -2,25 +2,38 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
+import {withFilter} from 'graphql-subscriptions';
 import {omit} from 'lodash';
+import {PublishedEvent} from '_types/event';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
+import {ITreeDomain, TRIGGER_NAME_TREE_EVENT} from '../../../domain/tree/treeDomain';
 import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
 import {IQueryField, IRecord} from '../../../_types/record';
-import {ITree, ITreeNode, ITreeNodeWithTreeId, TreeBehavior, TreePaths} from '../../../_types/tree';
+import {
+    ITree,
+    ITreeEvent,
+    ITreeNode,
+    ITreeNodeWithTreeId,
+    TreeBehavior,
+    TreeEventTypes,
+    TreePaths
+} from '../../../_types/tree';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
+import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {
     IAddElementMutationArgs,
     IDeleteElementMutationArgs,
     IMoveElementMutationArgs,
     ISaveTreeMutationArgs,
+    ITreeEventFilters,
     ITreeLibraryForGraphQL,
     ITreePermissionsConfForGraphQL,
     ITreesQueryArgs
@@ -34,8 +47,10 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.permission'?: IPermissionDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core'?: ICoreApp;
+    'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
     'core.domain.library'?: ILibraryDomain;
 }
 
@@ -43,8 +58,10 @@ export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.app.core': coreApp = null,
     'core.app.graphql': graphqlApp = null,
+    'core.app.core.subscriptionsHelper': subscriptionsHelper = null,
     'core.domain.library': libraryDomain = null
 }: IDeps = {}): ITreeAttributeApp {
     /**
@@ -188,7 +205,7 @@ export default function ({
                         id: ID!,
                         order: Int,
                         childrenCount: Int,
-                        record: Record!,
+                        record: Record,
                         ancestors: [TreeNode!],
                         children: [TreeNode!],
                         linkedRecords(attribute: ID): [Record!],
@@ -238,6 +255,27 @@ export default function ({
                         order: SortOrder
                     }
 
+                    enum TreeEventTypes {
+                        ${Object.values(TreeEventTypes).join(' ')}
+                    }
+
+                    type TreeEvent {
+                        type: TreeEventTypes!,
+                        treeId: ID!,
+                        element: TreeNode!,
+                        parentNode: TreeNode,
+                        parentNodeBefore: TreeNode,
+                    }
+
+                    input TreeEventFiltersInput {
+                        ${subscriptionsHelper.commonSubscriptionsFilters}
+
+                        treeId: ID!,
+                        parentNode: ID,
+                        parentNodeBefore: ID,
+                        events: [TreeEventTypes!]
+                    }
+
                     extend type Query {
                         trees(
                             filters: TreesFiltersInput,
@@ -277,6 +315,10 @@ export default function ({
                             nodeId: ID!,
                             deleteChildren: Boolean
                         ): ID!
+                    }
+
+                    extend type Subscription {
+                        treeEvent(filters: TreeEventFiltersInput): TreeEvent!
                     }
                 `,
                 resolvers: {
@@ -416,6 +458,42 @@ export default function ({
                             return deletedNode.id;
                         }
                     },
+                    Subscription: {
+                        treeEvent: {
+                            subscribe: withFilter(
+                                () => eventsManagerDomain.subscribe([TRIGGER_NAME_TREE_EVENT]),
+                                (
+                                    event: PublishedEvent<{treeEvent: ITreeEvent}>,
+                                    {filters}: {filters: ICommonSubscriptionFilters & ITreeEventFilters},
+                                    ctx: IQueryInfos
+                                ) => {
+                                    if (filters.ignoreOwnEvents && subscriptionsHelper.isOwnEvent(event, ctx)) {
+                                        return false;
+                                    }
+
+                                    const {treeEvent} = event;
+                                    let mustReturn = true;
+                                    if (filters?.treeId) {
+                                        mustReturn = treeEvent.treeId === filters.treeId;
+                                    }
+
+                                    if (mustReturn && filters?.parentNode) {
+                                        mustReturn = treeEvent.parentNode?.id === filters.parentNode;
+                                    }
+
+                                    if (mustReturn && filters?.parentNodeBefore) {
+                                        mustReturn = treeEvent.parentNodeBefore?.id === filters.parentNodeBefore;
+                                    }
+
+                                    if (mustReturn && filters?.events) {
+                                        mustReturn = filters.events.includes(treeEvent.type);
+                                    }
+
+                                    return mustReturn;
+                                }
+                            )
+                        }
+                    },
                     FullTreeContent: new GraphQLScalarType({
                         name: 'FullTreeContent',
                         description: `Object representing the full tree structure.
@@ -488,7 +566,7 @@ export default function ({
                             const treeId =
                                 parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
                             const record = await treeDomain.getRecordByNodeId({treeId, nodeId: parent.id, ctx});
-                            return record;
+                            return record ?? null;
                         },
                         children: async (
                             parent: ITreeNode & {treeId?: string},

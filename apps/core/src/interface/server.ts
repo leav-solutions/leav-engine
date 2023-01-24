@@ -5,7 +5,6 @@ import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
 import {ApolloServer, AuthenticationError as ApolloAuthenticationError} from 'apollo-server-express';
 import {IApplicationApp} from 'app/application/applicationApp';
 import {IAuthApp} from 'app/auth/authApp';
-import {IFilesManagerApp} from 'app/core/filesManagerApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {AwilixContainer} from 'awilix';
 import cookieParser from 'cookie-parser';
@@ -32,18 +31,16 @@ interface IDeps {
     config?: IConfig;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.auth'?: IAuthApp;
-    'core.app.core.filesManager'?: IFilesManagerApp;
     'core.app.application'?: IApplicationApp;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
     'core.depsManager'?: AwilixContainer;
 }
 
-export default function({
+export default function ({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
-    'core.app.core.filesManager': filesManagerApp = null,
     'core.app.application': applicationApp = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
@@ -186,24 +183,26 @@ export default function({
                                     return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
                                 }, {});
 
-                                if (headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME)) {
-                                    const arrCookie = headers.Cookie.split('=');
-                                    const tokenIdx = headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1;
+                                const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
+                                const cookieIncluded = headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME);
 
-                                    const payload = await authApp.validateRequestToken({
-                                        apiKey: null,
-                                        cookies: {[ACCESS_TOKEN_COOKIE_NAME]: arrCookie[tokenIdx]}
-                                    });
+                                const payload = await authApp.validateRequestToken({
+                                    apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
+                                    cookies: cookieIncluded
+                                        ? {
+                                              [ACCESS_TOKEN_COOKIE_NAME]: headers.Cookie.split('=')[
+                                                  headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1
+                                              ]
+                                          }
+                                        : null
+                                });
 
-                                    const context: IQueryInfos = {
-                                        userId: payload.userId,
-                                        groupsId: payload.groupsId
-                                    };
+                                const context: IQueryInfos = {
+                                    userId: payload.userId,
+                                    groupsId: payload.groupsId
+                                };
 
-                                    return context;
-                                } else {
-                                    throw new ApolloAuthenticationError('you must be logged in');
-                                }
+                                return context;
                             } catch (e) {
                                 throw new ApolloAuthenticationError('you must be logged in');
                             }

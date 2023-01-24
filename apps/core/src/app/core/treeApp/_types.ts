@@ -4,7 +4,7 @@
 import {ILibrary} from '_types/library';
 import {IPaginationParams, ISortParams} from '_types/list';
 import {ITreePermissionsConf} from '_types/permissions';
-import {ITree, ITreeElement, ITreeFilterOptions, ITreeLibrarySettings} from '_types/tree';
+import {ITree, ITreeElement, ITreeFilterOptions, ITreeLibrarySettings, TreeEventTypes} from '_types/tree';
 
 export interface ITreeLibraryForGraphQL {
     library: ILibrary;
@@ -54,4 +54,11 @@ export interface IDeleteElementMutationArgs {
     treeId: string;
     nodeId: string;
     deleteChildren?: boolean;
+}
+
+export interface ITreeEventFilters {
+    treeId: string;
+    parentNode: string;
+    parentNodeBefore: string;
+    events: TreeEventTypes[];
 }

@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {withFilter} from 'graphql-subscriptions';
+import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {TaskStatus, TaskPriority, ITask, OrderType} from '../../_types/tasksManager';
-import {IPaginationParams, ISortParams, IList} from '_types/list';
+import {IList, IPaginationParams, ISortParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {IUtils} from 'utils/utils';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {withFilter} from 'graphql-subscriptions';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ITasksManagerDomain, TRIGGER_NAME_TASK} from '../../domain/tasksManager/tasksManagerDomain';
 import {IRecord} from '_types/record';
-import {AttributeCondition} from '../../_types/record';
+import {ITasksManagerDomain, TRIGGER_NAME_TASK} from '../../domain/tasksManager/tasksManagerDomain';
 import {USERS_LIBRARY} from '../../_types/library';
+import {AttributeCondition} from '../../_types/record';
+import {ITask, TaskPriority, TaskStatus} from '../../_types/tasksManager';
 
 export interface ITasksManagerApp {
     init(): Promise<void>;
@@ -40,7 +40,7 @@ export interface IGetTasksArgs {
     sort?: ISortParams;
 }
 
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null
@@ -166,7 +166,7 @@ export default function ({
                     Subscription: {
                         task: {
                             subscribe: withFilter(
-                                () => eventsManager.suscribe([TRIGGER_NAME_TASK]),
+                                () => eventsManager.subscribe([TRIGGER_NAME_TASK]),
                                 (payload, variables) => {
                                     let toReturn = true;
 
