@@ -7,6 +7,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUserDomain} from 'domain/user/userDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {Express, NextFunction, Request, Response} from 'express';
+import useragent from 'express-useragent';
 import jwt, {Algorithm} from 'jsonwebtoken';
 import ms from 'ms';
 import {IConfig} from '_types/config';
@@ -18,7 +19,6 @@ import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo'
 import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import useragent from 'express-useragent';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -34,7 +34,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -217,7 +217,15 @@ export default function ({
                             }
                         );
 
-                        await userDomain.sendResetPasswordEmail(user.email, token, user.login, ua.browser, ua.os, lang);
+                        await userDomain.sendResetPasswordEmail(
+                            user.email,
+                            token,
+                            user.login,
+                            ua.browser,
+                            ua.os,
+                            lang,
+                            ctx
+                        );
 
                         return res.sendStatus(200);
                     } catch (err) {

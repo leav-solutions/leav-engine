@@ -5,9 +5,11 @@ import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import ApplicationContext from 'context/ApplicationContext';
+import {IApplicationContext} from 'context/ApplicationContext/_types';
 import {PropsWithChildren, ReactElement} from 'react';
 import {RootState} from 'redux/store';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
@@ -25,6 +27,7 @@ interface IProvidersProps {
     storeState?: Partial<RootState>;
     cacheSettings?: InMemoryCacheConfig;
     currentApp?: GET_APPLICATION_BY_ID_applications_list;
+    globalSettings?: GET_GLOBAL_SETTINGS_globalSettings;
 }
 
 const Providers = ({
@@ -32,14 +35,22 @@ const Providers = ({
     apolloMocks,
     storeState,
     cacheSettings,
-    currentApp
+    currentApp,
+    globalSettings
 }: PropsWithChildren<IProvidersProps>) => {
+    const appContextData: IApplicationContext = {
+        currentApp: currentApp ?? mockApplicationDetails,
+        globalSettings: {
+            name: 'My App',
+            icon: null,
+            ...globalSettings
+        }
+    };
+
     return (
         <MockedProviderWithFragments mocks={apolloMocks} cacheSettings={cacheSettings}>
             <MockStore state={storeState}>
-                <ApplicationContext.Provider value={currentApp ?? mockApplicationDetails}>
-                    {children ?? <></>}
-                </ApplicationContext.Provider>
+                <ApplicationContext.Provider value={appContextData}>{children ?? <></>}</ApplicationContext.Provider>
             </MockStore>
         </MockedProviderWithFragments>
     );

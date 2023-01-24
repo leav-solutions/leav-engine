@@ -5,8 +5,8 @@ import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import {useEffect, useState} from 'react';
 
 function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => void] {
-    const currentApp = useCurrentApplicationContext();
-    const storageKey = `${currentApp.id}-${key}`;
+    const applicationData = useCurrentApplicationContext();
+    const storageKey = `${applicationData.currentApp.id}-${key}`;
 
     const _getStorageValue = (): T => {
         // getting stored value

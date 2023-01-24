@@ -21,6 +21,7 @@ export const coreCollections: IMigrationCoreCollection[] = [
     {name: 'core_tasks', type: collectionTypes.DOCUMENT},
     {name: 'core_version_profiles', type: collectionTypes.DOCUMENT},
     {name: 'core_api_keys', type: collectionTypes.DOCUMENT},
+    {name: 'core_global_settings', type: collectionTypes.DOCUMENT},
     {name: 'core_edge_libraries_attributes', type: collectionTypes.EDGE},
     {name: 'core_edge_values_links', type: collectionTypes.EDGE}
 ];

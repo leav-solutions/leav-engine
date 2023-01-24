@@ -17,12 +17,12 @@ function Home(): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
     const dispatch = useAppDispatch();
-    const currentApp = useApplicationContext();
+    const appData = useApplicationContext();
 
     useEffect(() => {
         const baseInfo: IBaseInfo = {
             content: t('info.base-message', {
-                appLabel: localizedTranslation(currentApp.label, lang),
+                appLabel: `${appData.globalSettings.name} - ${localizedTranslation(appData.currentApp.label, lang)}`,
                 interpolation: {escapeValue: false}
             }),
             type: InfoType.basic

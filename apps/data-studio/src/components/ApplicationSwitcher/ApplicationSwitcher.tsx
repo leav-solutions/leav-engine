@@ -61,7 +61,7 @@ const skeletonItems: ItemType[] = [1, 2, 3].map(el => ({
 function ApplicationSwitcher(): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
-    const currentApp = useApplicationContext();
+    const appData = useApplicationContext();
 
     const [isVisible, setIsVisible] = useState(false);
 
@@ -77,7 +77,7 @@ function ApplicationSwitcher(): JSX.Element {
     const menuItems: ItemType[] = loading
         ? skeletonItems
         : apps
-              .filter(app => app.id !== currentApp.id && ![portalApp?.id, loginApp?.id].includes(app.id))
+              .filter(app => app.id !== appData.currentApp.id && ![portalApp?.id, loginApp?.id].includes(app.id))
               .map(app => {
                   const label = localizedTranslation(app.label, lang);
                   const description = localizedTranslation(app.description, lang);

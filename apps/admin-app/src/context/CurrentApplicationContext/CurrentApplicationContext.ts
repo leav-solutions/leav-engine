@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useContext} from 'react';
-import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {ICurrentApplicationContext} from './_types';
 
-const CurrentApplicationContext = React.createContext<GET_APPLICATION_BY_ID_applications_list>(null);
+const CurrentApplicationContext = React.createContext<ICurrentApplicationContext>(null);
 
 export const useCurrentApplicationContext = () => useContext(CurrentApplicationContext);
 

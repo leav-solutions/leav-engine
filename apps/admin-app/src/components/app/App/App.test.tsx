@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
+import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {isAllowedQuery} from 'queries/permissions/isAllowedQuery';
 import {getMe} from 'queries/users/me';
 import React from 'react';
@@ -82,6 +83,21 @@ test('Renders app', async () => {
                     applications: {
                         __typename: 'ApplicationsList',
                         list: [mockApplicationDetails]
+                    }
+                }
+            }
+        },
+        {
+            request: {
+                query: getGlobalSettingsQuery,
+                variables: {}
+            },
+            result: {
+                data: {
+                    globalSettings: {
+                        __typename: 'GlobalSettings',
+                        name: 'my app',
+                        icon: null
                     }
                 }
             }

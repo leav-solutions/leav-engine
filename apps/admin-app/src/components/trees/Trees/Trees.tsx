@@ -12,7 +12,6 @@ import {RiNodeTree} from 'react-icons/ri';
 import {Link} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import useLang from '../../../hooks/useLang';
 import useUserData from '../../../hooks/useUserData';
 import {getTreesQuery} from '../../../queries/trees/getTreesQuery';
 import {addWildcardToFilters, isTreeInApp} from '../../../utils/utils';
@@ -32,8 +31,7 @@ interface ITreesProps {
 
 const Trees = ({history}: ITreesProps): JSX.Element => {
     const {t} = useTranslation();
-    const {lang} = useLang();
-    const currentApp = useCurrentApplicationContext();
+    const applicationData = useCurrentApplicationContext();
 
     const [filters, setFilters] = useState<Partial<GET_TREESVariables>>({});
     const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreesQuery, {
@@ -56,7 +54,7 @@ const Trees = ({history}: ITreesProps): JSX.Element => {
     };
 
     const _handleRowClick = (tree: GET_TREES_trees_list) => history.push('/trees/edit/' + tree.id);
-    const trees = (data?.trees?.list ?? []).filter(tree => isTreeInApp(currentApp, tree.id));
+    const trees = (data?.trees?.list ?? []).filter(tree => isTreeInApp(applicationData.currentApp, tree.id));
 
     return (
         <>

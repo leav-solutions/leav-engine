@@ -69,16 +69,7 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
 
     return (
         <Wrapper>
-            <LoginBlock
-                title={
-                    <img
-                        src={`/${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
-                        alt="LEAV Engine"
-                        height="100px"
-                    />
-                }
-                headStyle={{textAlign: 'center'}}
-            >
+            <LoginBlock title={<img src="/global-icon/small" height="100px" />} headStyle={{textAlign: 'center'}}>
                 <Form onFinish={_processLogin}>
                     <Form.Item>
                         <Input

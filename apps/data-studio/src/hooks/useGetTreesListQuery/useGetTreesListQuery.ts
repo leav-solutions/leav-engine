@@ -20,7 +20,7 @@ export interface IUseGetTreesListQueryHookParams {
 export default function useGetTreesListQuery(params: IUseGetTreesListQueryHookParams = {}): IUseGetTreesListQueryHook {
     const [queryData, setQueryData] = useState<GET_TREE_LIST_QUERY>();
     const {treeId, onlyAllowed = true, skip = false} = params;
-    const currentApp = useApplicationContext();
+    const appData = useApplicationContext();
 
     const variables: GET_TREE_LIST_QUERYVariables = {};
 
@@ -33,13 +33,13 @@ export default function useGetTreesListQuery(params: IUseGetTreesListQueryHookPa
         skip,
         onCompleted: data => {
             const allowedTrees = data.trees.list.filter(
-                tree => (!onlyAllowed || tree.permissions.access_tree) && isTreeInApp(currentApp, tree.id)
+                tree => (!onlyAllowed || tree.permissions.access_tree) && isTreeInApp(appData.currentApp, tree.id)
             );
 
-            if (currentApp.trees.length) {
+            if (appData.currentApp.trees.length) {
                 allowedTrees.sort((treeA, treeB) => {
-                    const indexTreeA = currentApp.trees.findIndex(tree => tree.id === treeA.id);
-                    const indexLibB = currentApp.trees.findIndex(tree => tree.id === treeB.id);
+                    const indexTreeA = appData.currentApp.trees.findIndex(tree => tree.id === treeA.id);
+                    const indexLibB = appData.currentApp.trees.findIndex(tree => tree.id === treeB.id);
 
                     return indexTreeA - indexLibB;
                 });

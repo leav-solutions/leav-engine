@@ -19,18 +19,18 @@ export default function useGetLibrariesListQuery({
     onlyAllowed = true
 }: IUseGetLibrariesListQueryHookParams = {}): IUseGetLibrariesListQueryHook {
     const [queryData, setQueryData] = useState<GET_LIBRARIES_LIST>();
-    const currentApp = useApplicationContext();
+    const appData = useApplicationContext();
 
     const query = useQuery<GET_LIBRARIES_LIST>(getLibrariesListQuery, {
         onCompleted: data => {
             const allowedLibraries = data.libraries.list.filter(
-                lib => (!onlyAllowed || lib.permissions.access_library) && isLibraryInApp(currentApp, lib.id)
+                lib => (!onlyAllowed || lib.permissions.access_library) && isLibraryInApp(appData.currentApp, lib.id)
             );
 
-            if (currentApp.libraries.length) {
+            if (appData.currentApp.libraries.length) {
                 allowedLibraries.sort((libA, libB) => {
-                    const indexLibA = currentApp.libraries.findIndex(lib => lib.id === libA.id);
-                    const indexLibB = currentApp.libraries.findIndex(lib => lib.id === libB.id);
+                    const indexLibA = appData.currentApp.libraries.findIndex(lib => lib.id === libA.id);
+                    const indexLibB = appData.currentApp.libraries.findIndex(lib => lib.id === libB.id);
 
                     return indexLibA - indexLibB;
                 });

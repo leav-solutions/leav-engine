@@ -30,7 +30,7 @@ interface ILibrariesProps {
 const Libraries = ({history}: ILibrariesProps): JSX.Element => {
     const {t} = useTranslation();
     const userData = useUserData();
-    const currentApp = useCurrentApplicationContext();
+    const applicationData = useCurrentApplicationContext();
 
     const [filters, setFilters] = useState<any>({});
     const {loading, error, data} = useQuery<GET_LIBRARIES, GET_LIBRARIESVariables>(getLibsQuery, {
@@ -51,7 +51,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
         });
     };
     const onRowClick = library => history.push('/libraries/edit/' + library.id);
-    const libraries = (data?.libraries?.list ?? []).filter(lib => isLibraryInApp(currentApp, lib.id));
+    const libraries = (data?.libraries?.list ?? []).filter(lib => isLibraryInApp(applicationData.currentApp, lib.id));
 
     return (
         <>

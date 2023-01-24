@@ -1,13 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DatabaseOutlined, HomeOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
+import {DatabaseOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {Menu, Spin} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {FAVORITE_LIBRARIES_KEY} from 'components/Home/LibrariesList/LibrariesList';
 import LibraryIcon from 'components/Home/LibrariesList/LibraryIcon';
 import {FAVORITE_TREES_KEY} from 'components/Home/TreeList/TreeList';
+import AppIcon from 'components/shared/AppIcon';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import TreeIcon from 'components/shared/TreeIcon';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
@@ -289,7 +290,15 @@ function Sidebar(): JSX.Element {
     return (
         <>
             <HomeButton onClick={_handleClickHome}>
-                <HomeOutlined role="button" />
+                <AppIcon
+                    size="tiny"
+                    style={{
+                        height: '100%',
+                        width: '100%',
+                        objectFit: 'contain',
+                        padding: '5px'
+                    }}
+                />
             </HomeButton>
             <NavWrapper>
                 <Menu

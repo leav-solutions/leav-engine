@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import AppIcon from 'components/shared/AppIcon';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import Stats from './Stats';
-
-const iconSize = '100px';
 
 const Wrapper = styled.div`
     display: flex;
@@ -29,12 +28,7 @@ function Dashboard(): JSX.Element {
         <Wrapper>
             <TitleWrapper>
                 <h3 className="title">{t('dashboard.title')}</h3>
-                <img
-                    src={`/${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
-                    alt="LEAV Engine"
-                    height={iconSize}
-                    className="icon"
-                />
+                <AppIcon size="small" />
             </TitleWrapper>
             <Stats />
         </Wrapper>

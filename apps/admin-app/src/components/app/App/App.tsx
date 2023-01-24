@@ -6,7 +6,9 @@ import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import ApplicationContext from 'context/CurrentApplicationContext';
+import {ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
+import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {getMe} from 'queries/users/me';
 import React, {useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd';
@@ -15,6 +17,7 @@ import {useTranslation} from 'react-i18next';
 import {Message} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {IS_ALLOWED, IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
 import {ME} from '_gqlTypes/ME';
 import {isAllowedQuery} from '../../../queries/permissions/isAllowedQuery';
@@ -45,16 +48,23 @@ const App = (): JSX.Element => {
         GET_APPLICATION_BY_ID,
         GET_APPLICATION_BY_IDVariables
     >(getApplicationByIdQuery, {variables: {id: appId ?? ''}});
+    const {
+        data: globalSettingsData,
+        loading: globalSettingsLoading,
+        error: globalSettingsError
+    } = useQuery<GET_GLOBAL_SETTINGS>(getGlobalSettingsQuery);
     const [lang, setLang] = useState<AvailableLanguage[]>(getSysTranslationQueryLanguage(i18n));
 
     const currentApp = applicationData?.applications?.list?.[0];
+    const globalSettings = globalSettingsData?.globalSettings;
 
     useEffect(() => {
-        document.title = t('admin.document_title', {
-            appLabel: localizedTranslation(currentApp?.label, lang),
-            interpolation: {escapeValue: false}
-        });
-    }, [currentApp, lang, t]);
+        if (!globalSettings || !currentApp) {
+            return;
+        }
+
+        document.title = `${globalSettings.name} - ${localizedTranslation(currentApp.label, lang)}`;
+    }, [currentApp, globalSettings, lang, t]);
 
     // Load yup messages translations
     yup.setLocale({
@@ -67,7 +77,7 @@ const App = (): JSX.Element => {
         }
     });
 
-    if (isAllowedLoading || meLoading || applicationLoading) {
+    if (isAllowedLoading || meLoading || applicationLoading || globalSettingsLoading) {
         return <Loading style={{margin: '15rem'}} />;
     }
 
@@ -75,12 +85,17 @@ const App = (): JSX.Element => {
         isAllowedError ||
         meError ||
         applicationError ||
+        globalSettingsError ||
         (!isAllowedLoading && !isAllowedData?.isAllowed) ||
         (!meLoading && !meData?.me)
     ) {
         return (
             <Message negative style={{margin: '2em'}}>
-                {isAllowedError?.message ?? meError?.message ?? applicationError?.message ?? t('errors.INTERNAL_ERROR')}
+                {isAllowedError?.message ??
+                    meError?.message ??
+                    applicationError?.message ??
+                    globalSettingsError?.message ??
+                    t('errors.INTERNAL_ERROR')}
             </Message>
         );
     }
@@ -108,11 +123,16 @@ const App = (): JSX.Element => {
         ? AvailableLanguage[process.env.REACT_APP_DEFAULT_LANG]
         : AvailableLanguage.en;
 
+    const applicationContextData: ICurrentApplicationContext = {
+        currentApp,
+        globalSettings: globalSettingsData?.globalSettings
+    };
+
     return (
         <DndProvider backend={HTML5Backend}>
             <LangContext.Provider value={{lang, availableLangs, defaultLang, setLang}}>
                 <UserContext.Provider value={userData}>
-                    <ApplicationContext.Provider value={currentApp}>
+                    <ApplicationContext.Provider value={applicationContextData}>
                         <div className="App height100">
                             <MessagesDisplay />
                             <Home />

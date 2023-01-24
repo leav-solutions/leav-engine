@@ -61,7 +61,7 @@ const AppItem = styled(List.Item)`
 function ApplicationsSwitcher(): JSX.Element {
     const {lang} = useLang();
     const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery);
-    const currentApp = useCurrentApplicationContext();
+    const applicationData = useCurrentApplicationContext();
     const [isSidebarVisible, setSidebarVisible] = React.useState(false);
 
     let content: JSX.Element;
@@ -97,7 +97,10 @@ function ApplicationsSwitcher(): JSX.Element {
                 {apps
                     // Do not display current app in the list
                     // Portal and login are also filtered out.
-                    .filter(app => app.id !== currentApp.id && ![portalApp?.id, loginApp?.id].includes(app.id))
+                    .filter(
+                        app =>
+                            app.id !== applicationData.currentApp.id && ![portalApp?.id, loginApp?.id].includes(app.id)
+                    )
                     .map(app => {
                         const label = localizedTranslation(app.label, lang);
                         const description = localizedTranslation(app.description, lang);

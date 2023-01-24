@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import LEAVEngineIcon from 'components/shared/LEAVEngineIcon';
 import useAuth from 'hooks/useAuth';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
@@ -39,6 +40,9 @@ function UserPanel({visible, onHide}: IUserPanelProps): JSX.Element {
             <Menu.Item role="menuitem">
                 <LangSwitcher />
             </Menu.Item>
+            <a href="https://leav-engine.com" target="_blank">
+                <LEAVEngineIcon height="30px" style={{position: 'absolute', bottom: '15px', width: '100%'}} />
+            </a>
         </Sidebar>
     );
 }

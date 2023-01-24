@@ -7,6 +7,7 @@ import {IApplicationApp} from 'app/application/applicationApp';
 import {IAuthApp} from 'app/auth/authApp';
 import {IFilesManagerApp} from 'app/core/filesManagerApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
+import {AwilixContainer} from 'awilix';
 import cookieParser from 'cookie-parser';
 import express, {NextFunction, Request, Response} from 'express';
 import {execute, GraphQLFormattedError} from 'graphql';
@@ -35,6 +36,7 @@ interface IDeps {
     'core.app.application'?: IApplicationApp;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
+    'core.depsManager'?: AwilixContainer;
 }
 
 export default function({
@@ -44,7 +46,8 @@ export default function({
     'core.app.core.filesManager': filesManagerApp = null,
     'core.app.application': applicationApp = null,
     'core.utils.logger': logger = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    'core.depsManager': depsManager = null
 }: IDeps = {}): IServer {
     const _handleError = (err: GraphQLFormattedError, {context}: any) => {
         const newError = {...err};
@@ -124,8 +127,14 @@ export default function({
                 });
 
                 // Initialize routes
-                authApp.registerRoute(app);
-                filesManagerApp.registerRoute(app);
+                const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
+                for (const modName of modules) {
+                    const appModule = depsManager.cradle[modName];
+
+                    if (typeof appModule.registerRoute === 'function') {
+                        await appModule.registerRoute(app);
+                    }
+                }
 
                 app.use('/previews', [_checkAuth, express.static(config.preview.directory)]);
                 app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);

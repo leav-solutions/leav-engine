@@ -1,18 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {readFile} from 'fs/promises';
+import handlebars from 'handlebars';
+import {i18n} from 'i18next';
 import {IMailerService} from 'infra/mailer/mailerService';
 import {IUserDataRepo} from 'infra/userData/userDataRepo';
+import {IUtils} from 'utils/utils';
+import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUserData} from '_types/userData';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
-import handlebars from 'handlebars';
-import * as Config from '_types/config';
-import {i18n} from 'i18next';
-import {IUtils} from 'utils/utils';
 
 export interface IUserDomain {
     saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
@@ -23,7 +24,8 @@ export interface IUserDomain {
         login: string,
         browser: string,
         os: string,
-        lang: 'fr' | 'en'
+        lang: 'fr' | 'en',
+        ctx: IQueryInfos
     ): Promise<void>;
 }
 
@@ -33,15 +35,17 @@ interface IDeps {
     'core.infra.userData'?: IUserDataRepo;
     'core.domain.permission'?: IPermissionDomain;
     'core.infra.mailer.mailerService'?: IMailerService;
+    'core.domain.globalSettings'?: IGlobalSettingsDomain;
     'core.utils'?: IUtils;
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.userData': userDataRepo = null,
     'core.domain.permission': permissionDomain = null,
     'core.infra.mailer.mailerService': mailerService = null,
+    'core.domain.globalSettings': globalSettingsDomain = null,
     'core.utils': utils = null,
     translator = null
 }: IDeps = {}): IUserDomain {
@@ -52,26 +56,31 @@ export default function ({
             login: string,
             browser: string,
             os: string,
-            lang: 'fr' | 'en' // FIXME: temporary
+            lang: 'fr' | 'en', // FIXME: temporary
+            ctx: IQueryInfos
         ): Promise<void> {
             const html = await readFile(__dirname + `/resetPassword_${lang}.html`, {encoding: 'utf-8'});
             const template = handlebars.compile(html);
 
             const loginAppEndpoint = utils.getFullApplicationEndpoint('login');
+            const globalSettings = await globalSettingsDomain.getSettings(ctx);
 
             const htmlWithData = template({
                 login,
                 resetPasswordUrl: `${config.server.publicUrl}/${loginAppEndpoint}/reset-password/${token}`,
                 supportEmail: config.server.supportEmail,
                 browser,
-                os
+                appName: globalSettings.name
             });
 
-            await mailerService.sendEmail({
-                to: email,
-                subject: translator.t('mailer.reset_password_subject', {lng: lang}),
-                html: htmlWithData
-            });
+            await mailerService.sendEmail(
+                {
+                    to: email,
+                    subject: translator.t('mailer.reset_password_subject', {lng: lang}),
+                    html: htmlWithData
+                },
+                ctx
+            );
         },
         async saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData> {
             if (

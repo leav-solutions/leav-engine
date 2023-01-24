@@ -95,6 +95,7 @@ export enum PermissionsActions {
     admin_edit_api_key = 'admin_edit_api_key',
     admin_edit_application = 'admin_edit_application',
     admin_edit_attribute = 'admin_edit_attribute',
+    admin_edit_global_settings = 'admin_edit_global_settings',
     admin_edit_library = 'admin_edit_library',
     admin_edit_permission = 'admin_edit_permission',
     admin_edit_tree = 'admin_edit_tree',

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import ApplicationsSwitcher from 'components/applications/ApplicationsSwitcher';
+import AppIcon from 'components/shared/AppIcon';
 import RecordCard from 'components/shared/RecordCard';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import useLang from 'hooks/useLang';
@@ -11,7 +12,7 @@ import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {RootState, useAppSelector} from 'redux/store';
-import {Icon, Loader, Menu} from 'semantic-ui-react';
+import {Loader, Menu} from 'semantic-ui-react';
 import styled from 'styled-components';
 import UserPanel from '../UserPanel';
 
@@ -40,7 +41,7 @@ const Header = (): JSX.Element => {
         setSidebarVisible(!userPanelVisible);
     };
     const mutationsWatcher = useAppSelector((state: RootState) => state.mutationsWatcher);
-    const currentApp = useCurrentApplicationContext();
+    const applicationData = useCurrentApplicationContext();
 
     return (
         <>
@@ -50,13 +51,23 @@ const Header = (): JSX.Element => {
                     as={NavLink}
                     to="/"
                     exact
-                    style={{width: '60px', textAlign: 'center'}}
+                    style={{width: '60px', textAlign: 'center', padding: 0}}
                     title={t('admin.title')}
                 >
-                    <Icon name="home" style={{fontSize: 'calc(1.5rem - 2px)'}} />
+                    <AppIcon
+                        size="tiny"
+                        style={{
+                            height: '100%',
+                            width: '100%',
+                            objectFit: 'contain',
+                            padding: '5px'
+                        }}
+                    />
                 </Menu.Item>
                 <AppLabel>
-                    {t('admin.document_title', {appLabel: localizedTranslation(currentApp?.label, lang)})}
+                    {applicationData?.globalSettings.name}
+                    &nbsp;-&nbsp;
+                    {localizedTranslation(applicationData?.currentApp.label, lang)}
                 </AppLabel>
                 <Menu.Menu position="right">
                     {mutationsWatcher?.hasPendingMutations && (

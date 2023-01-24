@@ -4,8 +4,8 @@
 import {CarryOutOutlined, DoubleRightOutlined, ExclamationCircleOutlined, LogoutOutlined} from '@ant-design/icons';
 import {Drawer, Menu} from 'antd';
 import AvailableSoon from 'components/shared/AvailableSoon';
+import LEAVEngineIcon from 'components/shared/LEAVEngineIcon';
 import useAuth from 'hooks/useAuth';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import LangSwitcher from './LangSwitcher';
@@ -91,6 +91,9 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
                     }
                 ]}
             />
+            <a href="https://leav-engine.com" target="_blank">
+                <LEAVEngineIcon height="30px" style={{position: 'absolute', bottom: '15px', width: '100%'}} />
+            </a>
         </Drawer>
     );
 }
