@@ -87,7 +87,7 @@ const _findDbFileForFsFile = (fsFile: IFileContent, dbFilesByData: IDbFilesDatas
     }
 
     const matchesByInodeAndPath = matchdbFilesByInode
-        .filter(x => matchdbFilesByName.includes(x))
+        .filter(x => matchdbFilesByPath.includes(x))
         .filter(_removeAlreadyTreatedFromList);
     if (matchesByInodeAndPath.length) {
         _setTreated(matchesByInodeAndPath[0]);
