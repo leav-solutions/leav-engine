@@ -9,14 +9,14 @@ import {FullTreeContent, IDbFilesDatas, IDbLibrariesSettings, IRecord} from './_
 
 enum EMatches {
     EXACT = 'exact',
-    NAMEANDPATH = 'nameAndPath',
-    INODEANDNAME = 'inodeAndName',
-    INODEANDPATH = 'inodeAndPath',
-    NOTFOUND = 'notFound',
+    NAME_AND_PATH = 'nameAndPath',
+    INODE_AND_NAME = 'inodeAndName',
+    INODE_AND_PATH = 'inodeAndPath',
+    NOT_FOUND = 'notFound',
     DELETE = 'delete'
 }
 
-export const _extractChildrenDbElements = (
+export const extractChildrenDbElements = (
     dbSettings: IDbLibrariesSettings,
     database: FullTreeContent,
     dbEl?: FullTreeContent
@@ -47,7 +47,7 @@ export const _extractChildrenDbElements = (
     dbEl = typeof dbEl !== 'undefined' ? dbEl.concat(database) : database;
 
     if (toList.length) {
-        return _extractChildrenDbElements(dbSettings, toList, dbEl);
+        return extractChildrenDbElements(dbSettings, toList, dbEl);
     }
 
     return dbEl;
@@ -75,7 +75,7 @@ const _findDbFileForFsFile = (fsFile: IFileContent, dbFilesByData: IDbFilesDatas
 
     if (matchesByNameAndPath.length) {
         _setTreated(matchesByNameAndPath[0]);
-        return {match: EMatches.NAMEANDPATH, dbFile: matchesByNameAndPath[0]};
+        return {match: EMatches.NAME_AND_PATH, dbFile: matchesByNameAndPath[0]};
     }
 
     const matchesByInodeAndName = matchdbFilesByInode
@@ -83,7 +83,7 @@ const _findDbFileForFsFile = (fsFile: IFileContent, dbFilesByData: IDbFilesDatas
         .filter(_removeAlreadyTreatedFromList);
     if (matchesByInodeAndName.length) {
         _setTreated(matchesByInodeAndName[0]);
-        return {match: EMatches.INODEANDNAME, dbFile: matchesByInodeAndName[0]};
+        return {match: EMatches.INODE_AND_NAME, dbFile: matchesByInodeAndName[0]};
     }
 
     const matchesByInodeAndPath = matchdbFilesByInode
@@ -91,10 +91,10 @@ const _findDbFileForFsFile = (fsFile: IFileContent, dbFilesByData: IDbFilesDatas
         .filter(_removeAlreadyTreatedFromList);
     if (matchesByInodeAndPath.length) {
         _setTreated(matchesByInodeAndPath[0]);
-        return {match: EMatches.INODEANDPATH, dbFile: matchesByInodeAndPath[0]};
+        return {match: EMatches.INODE_AND_PATH, dbFile: matchesByInodeAndPath[0]};
     }
 
-    return {match: EMatches.NOTFOUND, dbFile: null};
+    return {match: EMatches.NOT_FOUND, dbFile: null};
 };
 
 const _sendCommand = async (
@@ -118,7 +118,7 @@ const _sendCommand = async (
             }
             // otherwise we do nothing cause fsFile and dbFile are "in sync"
             break;
-        case EMatches.NAMEANDPATH:
+        case EMatches.NAME_AND_PATH:
             return events.update(
                 fsFile.path === '.' ? fsFile.name : `${fsFile.path}/${fsFile.name}`,
                 fsFile.ino,
@@ -128,8 +128,8 @@ const _sendCommand = async (
                 dbFile.record.id
             );
             break;
-        case EMatches.INODEANDPATH:
-        case EMatches.INODEANDNAME:
+        case EMatches.INODE_AND_PATH:
+        case EMatches.INODE_AND_NAME:
             return events.move(
                 dbFile.record.treePath === '.'
                     ? dbFile.record.file_name
@@ -141,7 +141,7 @@ const _sendCommand = async (
                 amqp
             );
             break;
-        case EMatches.NOTFOUND:
+        case EMatches.NOT_FOUND:
             return events.create(
                 fsFile.path === '.' ? fsFile.name : `${fsFile.path}/${fsFile.name}`,
                 fsFile.ino,
@@ -179,22 +179,16 @@ const _process = async (
     fsLevels.sort();
     // we process elements from least nested to most nested = we process folder before its children
     for (const level of fsLevels) {
-        //fsLevels.forEach(async(level) => {
         for (const fsFile of fsFilesByData.filesByLevel[level]) {
-            //fsFilesByData.filesByLevel[level].forEach(async(fsFile) => {
             const {match, dbFile} = _findDbFileForFsFile(fsFile, dbFilesByData);
             await _sendCommand(match, fsFile, dbFile, amqp, dbSettings);
-            //});
         }
-        //});
     }
 
     const dbFilesToRemove = dbFiles.filter(_removeAlreadyTreatedFromList);
 
     for (const dbFile of dbFilesToRemove) {
-        //dbFilesToRemove.forEach(async(dbFile) => {
         await _sendCommand('delete', null, dbFile, amqp, dbSettings);
-        //});
     }
 };
 

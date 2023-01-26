@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService, IAmqpService} from '@leav/message-broker';
 import fs from 'fs';
-import automate, {_extractChildrenDbElements} from '../../automate';
+import automate, {extractChildrenDbElements} from '../../automate';
 import {getConfig} from '../../config';
 import * as scan from '../../scan';
 import {IConfig} from '../../_types/config';
@@ -99,7 +99,7 @@ describe('e2e tests', () => {
                 treeContent: []
             };
 
-            const dbScan = _extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
+            const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
 
             await automate(fsc, dbScan, DB_SETTINGS, amqp);
 
@@ -145,7 +145,7 @@ describe('e2e tests', () => {
                 treeContent: test3Db(inodes)
             };
 
-            const dbScan = _extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
+            const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
 
             await automate(fsc, dbScan, DB_SETTINGS, amqp);
 
@@ -189,7 +189,7 @@ describe('e2e tests', () => {
                 treeContent: test4Db(inodes)
             };
 
-            const dbScan = _extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
+            const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
             await automate(fsc, dbScan, DB_SETTINGS, amqp);
 
             const expected = {

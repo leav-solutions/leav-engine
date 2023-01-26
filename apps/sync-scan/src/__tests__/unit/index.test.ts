@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
-import automate, {_extractChildrenDbElements} from '../../automate';
+import automate, {extractChildrenDbElements} from '../../automate';
 import * as events from '../../events';
 import * as scan from '../../scan';
 import {mockDbResult, mockFsContent, mockDbSettings} from './scan';
@@ -67,7 +67,7 @@ describe('unit tests', () => {
             const create = jest.spyOn(events, 'create');
             const update = jest.spyOn(events, 'update');
 
-            const dbScan = _extractChildrenDbElements(mockDbSettings, mockDbResult.treeContent);
+            const dbScan = extractChildrenDbElements(mockDbSettings, mockDbResult.treeContent);
 
             await expect(automate(mockFsContent, dbScan, mockDbSettings, amqp as IAmqpService)).resolves.toStrictEqual(
                 undefined
