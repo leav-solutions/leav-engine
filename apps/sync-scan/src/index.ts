@@ -1,12 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {amqpService, IAmqpService} from '@leav/message-broker';
+import {amqpService} from '@leav/message-broker';
 import automate, {extractChildrenDbElements} from './automate';
 import {getConfig} from './config';
 import * as scan from './scan';
 import {IConfig} from './_types/config';
-import * as fs from 'fs';
 import {_logMem} from './utils';
 
 (async function () {
