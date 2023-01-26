@@ -53,6 +53,7 @@ const checkConfig = (conf: IConfig) => {
     }
 };
 
+let loadedConfig: IConfig;
 /**
  * Load appropriate config based on application environment.
  * We first load default config, then env specified config (production, development...).
@@ -62,12 +63,16 @@ const checkConfig = (conf: IConfig) => {
  *
  * @return {Promise} Full config
  */
+
 export const getConfig = async (): Promise<IConfig> => {
+    if (loadedConfig !== undefined) {
+        return loadedConfig;
+    }
     const definedEnv: string = appEnv || '';
 
     const conf = await loadConfig<IConfig>(appRootPath() + '/config', definedEnv);
 
     checkConfig(conf);
-
+    loadedConfig = conf;
     return conf;
 };

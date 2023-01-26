@@ -52,3 +52,23 @@ export interface IPreviewStatus {
     status: number;
     message: string;
 }
+
+interface IFilesByInode {
+    [key: number] : IRecord[]
+}
+interface IFilesByName {
+    [key: string] : IRecord[]
+}
+interface IFilesByPath {
+    [key: string] : IRecord[]
+}
+interface IFilesByHash {
+    [key: string] : IRecord[]
+}
+
+export interface IDbFilesDatas {
+    filesByInode : IFilesByInode;
+    filesByName : IFilesByName;
+    filesByPath : IFilesByPath;
+    filesByHash : IFilesByHash;
+}

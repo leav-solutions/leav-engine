@@ -2,14 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
-import automate from '../../automate';
+import automate, {extractChildrenDbElements} from '../../automate';
 import * as events from '../../events';
 import * as scan from '../../scan';
-import {mockDbResult, mockFsContent} from './scan';
+import {mockDbResult, mockFsContent, mockDbSettings} from './scan';
 
 jest.mock('../../events', () => ({
     create: jest.fn(),
-    move: jest.fn()
+    move: jest.fn(),
+    update: jest.fn()
 }));
 
 let amqp;
@@ -64,12 +65,16 @@ describe('unit tests', () => {
             expect.assertions(3);
 
             const create = jest.spyOn(events, 'create');
-            const move = jest.spyOn(events, 'move');
+            const update = jest.spyOn(events, 'update');
 
-            await expect(automate(mockFsContent, mockDbResult, amqp as IAmqpService)).resolves.toStrictEqual(undefined);
+            const dbScan = extractChildrenDbElements(mockDbSettings, mockDbResult.treeContent);
+
+            await expect(automate(mockFsContent, dbScan, mockDbSettings, amqp as IAmqpService)).resolves.toStrictEqual(
+                undefined
+            );
 
             expect(create).toHaveBeenCalledTimes(1);
-            expect(move).toHaveBeenCalledTimes(1);
+            expect(update).toHaveBeenCalledTimes(1);
         } catch (e) {
             console.error(e);
         }

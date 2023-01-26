@@ -4,6 +4,10 @@
 
 import {FilesystemContent} from '_types/filesystem';
 import {IDbScanResult} from '_types/queries';
+export const mockDbSettings = {
+    filesLibraryId: 'files',
+    directoriesLibraryId: 'directories'
+};
 
 export const mockDbResult: IDbScanResult = {
     filesLibraryId: 'files',

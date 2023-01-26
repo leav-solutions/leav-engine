@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService, IAmqpService} from '@leav/message-broker';
 import fs from 'fs';
-import automate from '../../automate';
+import automate, {extractChildrenDbElements} from '../../automate';
 import {getConfig} from '../../config';
 import * as scan from '../../scan';
 import {IConfig} from '../../_types/config';
@@ -99,7 +99,9 @@ describe('e2e tests', () => {
                 treeContent: []
             };
 
-            await automate(fsc, dbs, amqp);
+            const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
+
+            await automate(fsc, dbScan, DB_SETTINGS, amqp);
 
             const expected = {
                 // pathAfter as keys
@@ -132,7 +134,7 @@ describe('e2e tests', () => {
         try {
             expect.assertions(10);
 
-            fs.renameSync(`${cfg.filesystem.absolutePath}/file`, `${cfg.filesystem.absolutePath}/dir/f`); // MOVE
+            fs.renameSync(`${cfg.filesystem.absolutePath}/file`, `${cfg.filesystem.absolutePath}/dir/file`); // MOVE
             fs.renameSync(`${cfg.filesystem.absolutePath}/dir/sfile`, `${cfg.filesystem.absolutePath}/dir/sf`); // RENAME
             fs.writeFileSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, 'content\n'); // EDIT CONTENT
 
@@ -143,11 +145,13 @@ describe('e2e tests', () => {
                 treeContent: test3Db(inodes)
             };
 
-            await automate(fsc, dbs, amqp);
+            const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
+
+            await automate(fsc, dbScan, DB_SETTINGS, amqp);
 
             const expected = {
                 // pathBefore as keys
-                file: {pathAfter: 'dir/f', event: 'MOVE'},
+                file: {pathAfter: 'dir/file', event: 'MOVE'},
                 'dir/sfile': {pathAfter: 'dir/sf', event: 'MOVE'},
                 'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'UPDATE'}
             };
@@ -185,7 +189,8 @@ describe('e2e tests', () => {
                 treeContent: test4Db(inodes)
             };
 
-            await automate(fsc, dbs, amqp);
+            const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
+            await automate(fsc, dbScan, DB_SETTINGS, amqp);
 
             const expected = {
                 // pathBefore as keys
