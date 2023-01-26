@@ -7,6 +7,7 @@
         "@apollo/client": "3.6.9",
         "@apollo/link-error": "2.0.0-beta.3",
         "@craco/craco": "6.4.5",
+        "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "@reduxjs/toolkit": "1.9.2",
         "@types/object-path": "0.11.1",

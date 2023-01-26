@@ -33,8 +33,8 @@ interface IDeps {
 
 interface IUploadParams {
     library: string;
-    path: string;
-    files: Array<{data: Promise<FileUpload>; size?: number; replace?: boolean}>;
+    nodeId: string;
+    files: Array<{data: Promise<FileUpload>; uid: string; size?: number; replace?: boolean}>;
 }
 
 export default function ({
@@ -56,23 +56,24 @@ export default function ({
 
                     input FileInput {
                         data: Upload!,
+                        uid: String!,
                         size: Int,
                         replace: Boolean
                     }
 
                     type UploadList {
-                        filename: String!,
+                        uid: String!,
                         recordId: String!
                     }
 
                     extend type Mutation {
                         forcePreviewsGeneration(libraryId: ID!, recordId: ID, failedOnly: Boolean): Boolean!
-                        upload(library: String!, path: String!, files: [FileInput!]!): [UploadList!]!
+                        upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadList!]!
                     }
 
                     input UploadFiltersInput {
                         userId: ID,
-                        originalFilename: String
+                        uid: String
                     }
 
                     type StreamProgress {
@@ -87,7 +88,7 @@ export default function ({
                     }
 
                     type UploadProgress {
-                        originalFilename: String!,
+                        uid: String!,
                         userId: String!,
                         progress: StreamProgress!
                     }
@@ -100,19 +101,20 @@ export default function ({
                     Mutation: {
                         async upload(
                             _,
-                            {library, path, files}: IUploadParams,
+                            {library, nodeId, files}: IUploadParams,
                             ctx: IQueryInfos
                         ): Promise<Array<{filename: string; recordId: string}>> {
                             // progress before resolver?
                             const filesData = await Promise.all(
-                                files.map(async ({data, size, replace}) => ({
+                                files.map(async ({data, uid, size, replace}) => ({
                                     data: await data,
+                                    uid,
                                     size,
                                     replace
                                 }))
                             );
 
-                            return filesManagerDomain.storeFiles({library, path, files: filesData}, ctx);
+                            return filesManagerDomain.storeFiles({library, nodeId, files: filesData}, ctx);
                         },
                         async forcePreviewsGeneration(
                             parent,
@@ -130,11 +132,11 @@ export default function ({
                                     let toReturn = true;
 
                                     if (typeof variables.filters?.userId !== 'undefined') {
-                                        toReturn = payload.userId === variables.filters.userId;
+                                        toReturn = payload.upload.userId === variables.filters.userId;
                                     }
 
-                                    if (toReturn && typeof variables.filters?.originalFilename !== 'undefined') {
-                                        toReturn = payload.originalFilename === variables.filters.originalFilename;
+                                    if (toReturn && typeof variables.filters?.uid !== 'undefined') {
+                                        toReturn = payload.upload.uid === variables.filters.uid;
                                     }
 
                                     return toReturn;

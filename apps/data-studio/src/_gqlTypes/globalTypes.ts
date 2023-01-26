@@ -186,6 +186,13 @@ export enum ViewTypes {
     timeline = 'timeline'
 }
 
+export interface FileInput {
+    data: any;
+    uid: string;
+    size?: number | null;
+    replace?: boolean | null;
+}
+
 export interface Pagination {
     limit: number;
     offset: number;
@@ -244,6 +251,11 @@ export interface TreeEventFiltersInput {
     treeId: string;
     nodes?: (string | null)[] | null;
     events?: TreeEventTypes[] | null;
+}
+
+export interface UploadFiltersInput {
+    userId?: string | null;
+    uid?: string | null;
 }
 
 export interface ValueBatchInput {

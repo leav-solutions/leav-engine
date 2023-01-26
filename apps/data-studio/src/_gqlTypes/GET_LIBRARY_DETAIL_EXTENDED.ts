@@ -13,7 +13,8 @@ import {
     RecordFilterOperator,
     SortOrder,
     ViewSizes,
-    ViewTypes
+    ViewTypes,
+    LibraryBehavior
 } from './globalTypes';
 
 // ====================================================
@@ -210,6 +211,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView {
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list {
     id: string;
     system: boolean | null;
+    behavior: LibraryBehavior | null;
     label: any | null;
     linkedTrees: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[] | null;
     attributes: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] | null;

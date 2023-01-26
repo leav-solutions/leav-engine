@@ -54,8 +54,8 @@ interface IGetOriginalPathParams {
 
 interface IStoreFilesParams {
     library: string;
-    path: string;
-    files: Array<{data: FileUpload; size?: number; replace?: boolean}>;
+    nodeId: string;
+    files: Array<{data: FileUpload; uid: string; size?: number; replace?: boolean}>;
 }
 
 export const TRIGGER_NAME_UPLOAD_FILE = 'UPLOAD_FILE';
@@ -68,7 +68,7 @@ export interface IFilesManagerDomain {
     getRootPathByKey(rootKey: string): string;
     getOriginalPath(params: IGetOriginalPathParams): Promise<string>;
     storeFiles(
-        {library, path, files}: IStoreFilesParams,
+        {library, nodeId, files}: IStoreFilesParams,
         ctx: IQueryInfos
     ): Promise<Array<{filename: string; recordId: string}>>;
 }
@@ -197,12 +197,27 @@ export default function ({
             );
         },
         async storeFiles(
-            {library, path, files}: IStoreFilesParams,
+            {library, nodeId, files}: IStoreFilesParams,
             ctx: IQueryInfos
         ): Promise<Array<{filename: string; recordId: string}>> {
             // Check if files have the same filename
-            if (!files.filter((f, i) => files.indexOf(f) !== i).length) {
-                throw new ValidationError({condition: Errors.DUPLICATE_FILENAMES});
+            // FIXME:
+            // if (files.map(f => f.data.filename).filter((f, i) => files.indexOf(f) !== i).length) {
+            //     throw new ValidationError({condition: Errors.DUPLICATE_FILENAMES});
+            // }
+
+            const treeId = treeDomain.getLibraryTreeId(library, ctx);
+            const record = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
+
+            // default path is root path
+            let path = '.';
+
+            if (!!record) {
+                const libProperties = await libraryDomain.getLibraryProperties(record.library, ctx);
+                path =
+                    libProperties.behavior === LibraryBehavior.DIRECTORIES
+                        ? `${record.file_path}/${record.file_name}`
+                        : record.file_path;
             }
 
             // get root key of library from config
@@ -217,7 +232,6 @@ export default function ({
 
             for (const file of files) {
                 file.replace = file.replace ?? false;
-                const originalFilename = file.data.filename;
 
                 // check if file already exists
                 const fileExists = await recordDomain.find({
@@ -227,7 +241,7 @@ export default function ({
                             {
                                 field: FilesAttributes.FILE_NAME,
                                 condition: AttributeCondition.EQUAL,
-                                value: originalFilename
+                                value: file.data.filename
                             },
                             {
                                 operator: Operator.AND
@@ -253,7 +267,7 @@ export default function ({
 
                     // if file already exists, we modify the filename
                     if (fileExists.totalCount && !file.replace) {
-                        const newPath = increment.path(`${fullPath}/${originalFilename}`, {
+                        const newPath = increment.path(`${fullPath}/${file.data.filename}`, {
                             fs: true,
                             platform: 'darwin'
                         });
@@ -288,10 +302,15 @@ export default function ({
                 }
 
                 const getProgress = async (progress: Progress) => {
+                    // Round all progress values to have integers
+                    Object.keys(progress).forEach(key => {
+                        progress[key] = Math.floor(progress[key]);
+                    });
+
                     await eventsManager.sendPubSubEvent(
                         {
                             triggerName: TRIGGER_NAME_UPLOAD_FILE,
-                            data: {upload: {originalFilename, userId: ctx.userId, progress}}
+                            data: {upload: {uid: file.uid, userId: ctx.userId, progress}}
                         },
                         ctx
                     );
@@ -299,7 +318,7 @@ export default function ({
 
                 await storeUploadFile(file.data, fullPath, getProgress, file.size);
 
-                recordIds.push({filename: originalFilename, recordId});
+                recordIds.push({uid: file.uid, recordId});
             }
 
             return recordIds;

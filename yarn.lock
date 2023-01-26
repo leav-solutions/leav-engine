@@ -12545,6 +12545,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": 2.5.3
     "@graphql-codegen/typescript-react-apollo": 3.3.3
     "@graphql-codegen/typescript-react-query": 4.0.1
+    "@leav/ui": "workspace:libs/ui"
     "@leav/utils": "workspace:libs/utils"
     "@reduxjs/toolkit": 1.9.2
     "@testing-library/jest-dom": 4.2.4
