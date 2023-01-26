@@ -134,7 +134,7 @@ export interface RECORD_FORM_recordForm_elements_values_Value_version_treeNode_r
 
 export interface RECORD_FORM_recordForm_elements_values_Value_version_treeNode {
     id: string;
-    record: RECORD_FORM_recordForm_elements_values_Value_version_treeNode_record;
+    record: RECORD_FORM_recordForm_elements_values_Value_version_treeNode_record | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_Value_version {
@@ -272,7 +272,7 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNo
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode {
     id: string;
-    record: RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode_record;
+    record: RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode_record | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_version {
@@ -454,7 +454,7 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNo
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode {
     id: string;
-    record: RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode_record;
+    record: RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode_record | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_version {
@@ -553,12 +553,12 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ance
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors {
-    record: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record;
+    record: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue {
     id: string;
-    record: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record;
+    record: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record | null;
     ancestors: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors[] | null;
 }
 
@@ -1015,12 +1015,12 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors {
-    record: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record;
+    record: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values {
     id: string;
-    record: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record;
+    record: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record | null;
     ancestors: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors[] | null;
 }
 

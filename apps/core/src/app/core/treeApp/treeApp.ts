@@ -271,8 +271,8 @@ export default function ({
                         ${subscriptionsHelper.commonSubscriptionsFilters}
 
                         treeId: ID!,
-                        parentNode: ID,
-                        parentNodeBefore: ID,
+                        # Nodes concerned by the event, whether be the source or the target
+                        nodes: [ID],
                         events: [TreeEventTypes!]
                     }
 
@@ -477,12 +477,10 @@ export default function ({
                                         mustReturn = treeEvent.treeId === filters.treeId;
                                     }
 
-                                    if (mustReturn && filters?.parentNode) {
-                                        mustReturn = treeEvent.parentNode?.id === filters.parentNode;
-                                    }
-
-                                    if (mustReturn && filters?.parentNodeBefore) {
-                                        mustReturn = treeEvent.parentNodeBefore?.id === filters.parentNodeBefore;
+                                    if (mustReturn && filters?.nodes) {
+                                        mustReturn =
+                                            filters.nodes.includes(treeEvent.parentNode?.id ?? null) ||
+                                            filters.nodes.includes(treeEvent.parentNodeBefore?.id ?? null);
                                     }
 
                                     if (mustReturn && filters?.events) {

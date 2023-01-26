@@ -168,6 +168,12 @@ export enum TaskStatus {
     RUNNING = 'RUNNING'
 }
 
+export enum TreeEventTypes {
+    add = 'add',
+    move = 'move',
+    remove = 'remove'
+}
+
 export enum ViewSizes {
     BIG = 'BIG',
     MEDIUM = 'MEDIUM',
@@ -231,6 +237,13 @@ export interface TaskFiltersInput {
 export interface TreeElementInput {
     id: string;
     library: string;
+}
+
+export interface TreeEventFiltersInput {
+    ignoreOwnEvents?: boolean | null;
+    treeId: string;
+    nodes?: (string | null)[] | null;
+    events?: TreeEventTypes[] | null;
 }
 
 export interface ValueBatchInput {

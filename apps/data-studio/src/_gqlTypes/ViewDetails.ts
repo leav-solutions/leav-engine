@@ -103,7 +103,7 @@ export interface ViewDetails_valuesVersions_treeNode_record {
 
 export interface ViewDetails_valuesVersions_treeNode {
     id: string;
-    record: ViewDetails_valuesVersions_treeNode_record;
+    record: ViewDetails_valuesVersions_treeNode_record | null;
 }
 
 export interface ViewDetails_valuesVersions {

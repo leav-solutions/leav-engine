@@ -58,7 +58,6 @@ export interface IDeleteElementMutationArgs {
 
 export interface ITreeEventFilters {
     treeId: string;
-    parentNode: string;
-    parentNodeBefore: string;
+    nodes: string;
     events: TreeEventTypes[];
 }

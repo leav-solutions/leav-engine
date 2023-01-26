@@ -132,6 +132,15 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
             // Retrieve permissions conf for this node library
             // Call repo instead of domain to avoid some cyclic reference issues
             const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
+            if (!nodeRecord) {
+                return treePermissionDomain.getTreePermission({
+                    action: (action as unknown) as TreePermissionsActions,
+                    userId,
+                    treeId,
+                    ctx
+                });
+            }
+
             const nodeElement = {id: nodeRecord.id, library: nodeRecord.library};
 
             const treeData = await getCoreEntityById<ITree>('tree', treeId, ctx);
