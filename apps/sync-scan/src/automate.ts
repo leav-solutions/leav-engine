@@ -119,6 +119,15 @@ const _sendCommand = async (
             // otherwise we do nothing cause fsFile and dbFile are "in sync"
             break;
         case EMatches.NAMEANDPATH:
+            return events.update(
+                fsFile.path === '.' ? fsFile.name : `${fsFile.path}/${fsFile.name}`,
+                fsFile.ino,
+                fsFile.type === 'directory' ? true : false,
+                amqp,
+                fsFile.hash,
+                dbFile.record.id
+            );
+            break;
         case EMatches.INODEANDPATH:
         case EMatches.INODEANDNAME:
             return events.move(

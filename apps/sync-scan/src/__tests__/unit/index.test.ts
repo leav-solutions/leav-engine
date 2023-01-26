@@ -9,7 +9,8 @@ import {mockDbResult, mockFsContent, mockDbSettings} from './scan';
 
 jest.mock('../../events', () => ({
     create: jest.fn(),
-    move: jest.fn()
+    move: jest.fn(),
+    update: jest.fn()
 }));
 
 let amqp;
@@ -64,7 +65,7 @@ describe('unit tests', () => {
             expect.assertions(3);
 
             const create = jest.spyOn(events, 'create');
-            const move = jest.spyOn(events, 'move');
+            const update = jest.spyOn(events, 'update');
 
             const dbScan = _extractChildrenDbElements(mockDbSettings, mockDbResult.treeContent);
 
@@ -73,7 +74,7 @@ describe('unit tests', () => {
             );
 
             expect(create).toHaveBeenCalledTimes(1);
-            expect(move).toHaveBeenCalledTimes(1);
+            expect(update).toHaveBeenCalledTimes(1);
         } catch (e) {
             console.error(e);
         }
