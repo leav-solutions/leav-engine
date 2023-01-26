@@ -1,19 +1,21 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
+import {useQuery, useSubscription} from '@apollo/client';
 import {themeVars} from '@leav/ui';
 import {Pagination} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
+import {getTreeEvents} from 'graphQL/subscribes/trees/getTreeEvents';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {createRef, useEffect, useState} from 'react';
 import {setNavigationPath} from 'redux/navigation';
 import {INavigationElement} from 'redux/stateType';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import styled from 'styled-components';
+import {TREE_EVENTS, TREE_EVENTSVariables} from '_gqlTypes/TREE_EVENTS';
 import {TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables} from '_gqlTypes/TREE_NODE_CHILDREN';
 import DetailNavigation from './DetailNavigation';
 import HeaderColumnNavigation from './HeaderColumnNavigation';
@@ -77,6 +79,16 @@ const Column = ({treeElement, depth, isActive: columnActive}: IColumnProps) => {
             skip: !activeTree
         }
     );
+
+    useSubscription<TREE_EVENTS, TREE_EVENTSVariables>(getTreeEvents, {
+        variables: {filters: {ignoreOwnEvents: true, treeId: activeTree?.id, nodes: [treeElement?.id ?? null]}},
+        skip: !activeTree?.id || loading,
+        onSubscriptionData() {
+            // We known something happened concerning this node.
+            // To make sure everything is clean and up to date, we just refetch data
+            refetch(queryVariables);
+        }
+    });
 
     const ref = createRef<HTMLDivElement>();
 

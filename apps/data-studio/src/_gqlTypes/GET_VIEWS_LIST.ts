@@ -103,7 +103,7 @@ export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record {
 
 export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode {
     id: string;
-    record: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record;
+    record: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record | null;
 }
 
 export interface GET_VIEWS_LIST_views_list_valuesVersions {

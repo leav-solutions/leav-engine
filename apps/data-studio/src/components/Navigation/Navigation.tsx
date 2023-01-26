@@ -32,7 +32,6 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     const [activeTree, updateActiveTree] = useActiveTree();
 
     const {data, loading, error} = useGetTreesListQuery({onlyAllowed: false, treeId: tree, skip: !tree});
-
     const hasAccess = data?.trees?.list[0]?.permissions.access_tree;
 
     useEffect(() => {

@@ -111,7 +111,7 @@ export interface ADD_VIEW_saveView_valuesVersions_treeNode_record {
 
 export interface ADD_VIEW_saveView_valuesVersions_treeNode {
     id: string;
-    record: ADD_VIEW_saveView_valuesVersions_treeNode_record;
+    record: ADD_VIEW_saveView_valuesVersions_treeNode_record | null;
 }
 
 export interface ADD_VIEW_saveView_valuesVersions {

@@ -27,7 +27,7 @@ export interface ValuesVersionDetails_treeNode_record {
 
 export interface ValuesVersionDetails_treeNode {
     id: string;
-    record: ValuesVersionDetails_treeNode_record;
+    record: ValuesVersionDetails_treeNode_record | null;
 }
 
 export interface ValuesVersionDetails {

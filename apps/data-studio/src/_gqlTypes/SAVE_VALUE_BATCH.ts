@@ -119,7 +119,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_r
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode {
     id: string;
-    record: SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_record;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_Value_version_treeNode_record | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_version {
@@ -241,7 +241,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_ver
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_version_treeNode {
     id: string;
-    record: SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_version_treeNode_record;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_version_treeNode_record | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_version {
@@ -385,7 +385,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNo
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode {
     id: string;
-    record: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode_record;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version_treeNode_record | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_version {
@@ -507,7 +507,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_version_treeNode {
     id: string;
-    record: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_version_treeNode_record;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_version_treeNode_record | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_version {
@@ -695,7 +695,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNo
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode {
     id: string;
-    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode_record;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version_treeNode_record | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_version {
@@ -817,7 +817,7 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_version_treeNode {
     id: string;
-    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_version_treeNode_record;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_version_treeNode_record | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_version {
@@ -932,12 +932,12 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ance
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors {
-    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record | null;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue {
     id: string;
-    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record;
+    record: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record | null;
     ancestors: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors[] | null;
 }
 
