@@ -51,6 +51,14 @@ describe('RecordDomain', () => {
         queryId: 'recordDomainTest'
     };
 
+    const mockEventsManager: Mockify<IEventsManagerDomain> = {
+        sendDatabaseEvent: global.__mockPromise()
+    };
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     describe('createRecord', () => {
         test('Should create a new record', async function () {
             const createdRecordData = {
@@ -67,10 +75,6 @@ describe('RecordDomain', () => {
 
             const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
                 getLibraryPermission: global.__mockPromise(true)
-            };
-
-            const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                sendDatabaseEvent: global.__mockPromise()
             };
 
             const recDomain = recordDomain({
@@ -106,6 +110,7 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
             });
 
@@ -137,9 +142,6 @@ describe('RecordDomain', () => {
             const libRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1})
                 // getLibraryFullTextAttributes: global.__mockPromise([])
-            };
-            const mockEventsManager: Mockify<IEventsManagerDomain> = {
-                sendDatabaseEvent: global.__mockPromise()
             };
 
             const mockValidateHelper: Mockify<IValidateHelper> = {

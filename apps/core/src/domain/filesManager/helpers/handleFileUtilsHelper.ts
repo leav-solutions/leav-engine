@@ -142,8 +142,8 @@ export const createRecordFile = async (
         dataToSave.id = newRecord.id;
 
         try {
-            await deps.recordRepo.updateRecord({
-                libraryId: library,
+            await deps.recordDomain.updateRecord({
+                library,
                 recordData: dataToSave,
                 ctx
             });

@@ -671,7 +671,21 @@ export default function ({
                 throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
             }
 
-            return recordRepo.updateRecord({libraryId: library, recordData, ctx});
+            const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData, ctx});
+
+            await eventsManager.sendDatabaseEvent(
+                {
+                    action: EventAction.RECORD_SAVE,
+                    data: {
+                        id: recordData.id,
+                        libraryId: library,
+                        new: recordData
+                    }
+                },
+                ctx
+            );
+
+            return savedRecord;
         },
         async deleteRecord({library, id, ctx}): Promise<IRecord> {
             await validateHelper.validateLibrary(library, ctx);
