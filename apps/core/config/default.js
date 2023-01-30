@@ -99,7 +99,7 @@ module.exports = {
             files1: 'files'
         },
         userId: process.env.FM_USER_ID || '2',
-        userGroupsIds: process.env.FM_USER_GROUPS_IDS || '1'
+        userGroupsIds: process.env.FM_USER_GROUPS_IDS || '2'
     },
     tasksManager: {
         nbWorkers: process.env.TM_NB_WORKERS,

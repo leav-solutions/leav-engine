@@ -362,6 +362,15 @@
         "export_notification_title": "Nouvel export en tâche de fond",
         "export_notification_description": "Planifié le"
     },
+    "upload": {
+        "title": "Upload de fichiers",
+        "select_path_step_title": "Choisir une destination",
+        "select_files_step_title": "Sélection des fichiers",
+        "upload_step_title":  "Upload",
+        "next": "Suivant",
+        "previous": "Précédent",
+        "dragger_content": "Cliquez ou faites glisser les fichiers dans cette zone"
+    },
     "import": {
         "title": "Importer des données",
         "file_selection": "Sélection du fichier",

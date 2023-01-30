@@ -16,7 +16,7 @@ import MenuItemActions from '../MenuItemActions';
 import MenuSelection from '../MenuSelection';
 import MenuView from '../MenuView';
 import SearchItems from '../SearchItems';
-import UploadFiles from '../../tmp-uploadFiles';
+import UploadFiles from '../../UploadFiles';
 
 interface IMenuItemListProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;

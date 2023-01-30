@@ -200,11 +200,12 @@ export default function ({
             {library, nodeId, files}: IStoreFilesParams,
             ctx: IQueryInfos
         ): Promise<Array<{filename: string; recordId: string}>> {
+            const filenames = files.map(f => f.data.filename);
+
             // Check if files have the same filename
-            // FIXME:
-            // if (files.map(f => f.data.filename).filter((f, i) => files.indexOf(f) !== i).length) {
-            //     throw new ValidationError({condition: Errors.DUPLICATE_FILENAMES});
-            // }
+            if (filenames.filter((f, i) => filenames.indexOf(f) !== i).length) {
+                throw new ValidationError({condition: Errors.DUPLICATE_FILENAMES});
+            }
 
             const treeId = treeDomain.getLibraryTreeId(library, ctx);
             const record = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
