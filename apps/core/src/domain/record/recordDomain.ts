@@ -235,13 +235,13 @@ export default function ({
         return values;
     };
 
-    const _checkLogicExpr = async (filters: IRecordFilterLight[]) => {
+    const _checkLogicExpr = async (filters: IRecordFilterLight[], ctx: IQueryInfos) => {
         const stack = [];
         const output = [];
 
         // convert to Reverse Polish Notation
         for (const f of filters) {
-            await _validationFilter(f);
+            await _validationFilter(f, ctx);
 
             if (!_isOperatorFilter(f)) {
                 output.push(f);
@@ -366,26 +366,17 @@ export default function ({
 
     const _isOperatorFilter = (filter: IRecordFilterLight): boolean => filter.operator in Operator;
 
-    const _validationFilter = async (filter: IRecordFilterLight): Promise<void> => {
+    const _validationFilter = async (filter: IRecordFilterLight, ctx: IQueryInfos): Promise<void> => {
         if (typeof filter.condition === 'undefined' && typeof filter.operator === 'undefined') {
-            throw new ValidationError({
-                id: Errors.INVALID_FILTER_FORMAT,
-                message: 'Filter must have a condition or operator'
-            });
+            throw utils.generateExplicitValidationError('filters', Errors.INVALID_FILTER_FORMAT, ctx.lang);
         }
 
         if (filter.condition in AttributeCondition && !_isAttributeFilter(filter)) {
-            throw new ValidationError({
-                id: Errors.INVALID_FILTER_FORMAT,
-                message: 'Attribute filter must have condition, field and value'
-            });
+            throw utils.generateExplicitValidationError('filters', Errors.INVALID_ATTRIBUTE_FILTER_FORMAT, ctx.lang);
         }
 
         if (filter.condition in TreeCondition && !_isClassifiedFilter(filter)) {
-            throw new ValidationError({
-                id: Errors.INVALID_FILTER_FORMAT,
-                message: 'Classified filter must have condition, value and treeId'
-            });
+            throw utils.generateExplicitValidationError('filters', Errors.INVALID_TREE_FILTER_FORMAT, ctx.lang);
         }
     };
 
@@ -904,7 +895,7 @@ export default function ({
                 ctx
             );
 
-            await sendRecordUpdateEvent({recordData, library}, null, ctx);
+            await sendRecordUpdateEvent({recordData, library}, [], ctx);
 
             return savedRecord;
         },
@@ -1011,7 +1002,7 @@ export default function ({
             }
 
             if (filters.length) {
-                await _checkLogicExpr(filters);
+                await _checkLogicExpr(filters, ctx);
             }
 
             // Hydrate filters with attribute properties and cast filters values if needed

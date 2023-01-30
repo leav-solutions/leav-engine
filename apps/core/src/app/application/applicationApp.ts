@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
 import {Override, PublishedEvent} from '@leav/utils';
-import {GraphQLUpload} from 'apollo-server';
 import {IAuthApp} from 'app/auth/authApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core/helpers/subscriptions';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
@@ -191,7 +190,6 @@ export default function ({
                 }
             `,
                 resolvers: {
-                    Upload: GraphQLUpload,
                     Query: {
                         async applications(
                             parent,

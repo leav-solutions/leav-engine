@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAppGraphQLSchema} from '_types/graphql';
 import {IExportDomain} from 'domain/export/exportDomain';
-import {GraphQLUpload} from 'apollo-server';
+import {IAppGraphQLSchema} from '_types/graphql';
 
 export interface ICoreExportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -23,7 +22,6 @@ export default function ({'core.domain.export': exportDomain = null}: IDeps = {}
                     }
                 `,
                 resolvers: {
-                    Upload: GraphQLUpload,
                     Query: {
                         async export(parent, {library, attributes, filters, startAt}, ctx): Promise<string> {
                             return exportDomain.export(

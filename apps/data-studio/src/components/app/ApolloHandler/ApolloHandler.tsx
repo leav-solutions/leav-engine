@@ -157,7 +157,12 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
         link: ApolloLink.from([
             _handleApolloError,
             splitLink,
-            createUploadLink({uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}`})
+            createUploadLink({
+                uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}`,
+                headers: {
+                    'Apollo-Require-Preflight': 'true' // Required to get upload working with Apollo Server v4+
+                }
+            })
         ]),
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up

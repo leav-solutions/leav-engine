@@ -2,13 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {ErrorTypes} from '../_types/errors';
+import LeavError from './LeavError';
+
 export enum ApplicationErrorType {
     UNKNOWN_APP_ERROR = 'unknown_app',
     FORBIDDEN_ERROR = 'forbidden'
 }
 
-export default class ApplicationError extends Error {
-    public type: ApplicationErrorType;
+export default class ApplicationError extends LeavError<{}> {
+    public applicationErrorType: ApplicationErrorType;
     public appEndpoint: string;
     public statusCode: number;
 
@@ -18,11 +21,10 @@ export default class ApplicationError extends Error {
     };
 
     public constructor(type: ApplicationErrorType, appEndpoint: string) {
-        super(type);
+        super(ErrorTypes.VALIDATION_ERROR, type);
 
-        this.type = type;
+        this.applicationErrorType = type;
         this.statusCode = this._statusCodeByType[type];
-        this.message = type;
         this.appEndpoint = appEndpoint;
     }
 }

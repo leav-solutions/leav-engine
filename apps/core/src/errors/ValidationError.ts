@@ -2,17 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorFieldDetail, ErrorTypes} from '../_types/errors';
+import LeavError from './LeavError';
 
-export default class ValidationError<T> extends Error {
+export default class ValidationError<T> extends LeavError<T> {
     /**
      * Details about fields which did not pass validation
      */
-    public fields: ErrorFieldDetail<T>;
-
-    public type: ErrorTypes;
-
     public isCustomMessage: boolean;
-
     public context: any;
 
     public constructor(
@@ -21,10 +17,8 @@ export default class ValidationError<T> extends Error {
         isCustomMessage: boolean = false,
         context?: any
     ) {
-        super(message);
+        super(ErrorTypes.VALIDATION_ERROR, message, fields);
 
-        this.type = ErrorTypes.VALIDATION_ERROR;
-        this.fields = fields;
         this.isCustomMessage = isCustomMessage;
         this.context = context;
     }

@@ -79,7 +79,9 @@ function EditRecord({
 
     if (error) {
         const message =
-            Object.values(error.graphQLErrors[0]?.extensions?.exception?.fields ?? {}).join('\n') ?? error?.message;
+            Object.values((error.graphQLErrors[0]?.extensions?.exception as {fields: string})?.fields ?? {}).join(
+                '\n'
+            ) ?? error?.message;
 
         return <ErrorDisplay message={message ?? t('record_edition.no_form_error')} />;
     }

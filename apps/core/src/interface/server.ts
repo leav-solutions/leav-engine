@@ -1,6 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ApolloServerPlugin} from '@apollo/server';
+import {expressMiddleware} from '@apollo/server/express4';
 import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
 import {ApolloServer, AuthenticationError as ApolloAuthenticationError} from 'apollo-server-express';
 import {IApplicationApp} from 'app/application/applicationApp';
@@ -10,13 +12,15 @@ import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {AwilixContainer} from 'awilix';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
+import PermissionError from 'errors/PermissionError';
+import ValidationError from 'errors/ValidationError';
 import express, {NextFunction, Request, Response} from 'express';
 import fs from 'fs';
-import {execute, GraphQLFormattedError} from 'graphql';
+import {execute, GraphQLError, GraphQLFormattedError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
 import {ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
-import {createServer} from 'http';
+import {createServer, Server} from 'http';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
@@ -24,6 +28,7 @@ import {WebSocketServer} from 'ws';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../errors/AuthenticationError';
+import LeavError from '../errors/LeavError';
 import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 
@@ -43,7 +48,7 @@ interface IDeps {
     'core.depsManager'?: AwilixContainer;
 }
 
-export default function ({
+export default function({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
@@ -53,14 +58,18 @@ export default function ({
     'core.utils': utils = null,
     'core.depsManager': depsManager = null
 }: IDeps = {}): IServer {
-    const _handleError = (err: GraphQLFormattedError, {context}: any) => {
+    let _currentApolloMiddleware: express.RequestHandler;
+    let _currentGraphqlWsServer: ReturnType<typeof graphqlWS.useServer>;
+
+    const _handleError = (err: GraphQLError, context: IQueryInfos): GraphQLFormattedError => {
         const newError = {...err};
+        const originalError = err.originalError;
 
         const isGraphlValidationError = err.extensions && err.extensions.code === 'GRAPHQL_VALIDATION_FAILED';
-        const errorType = err?.extensions.exception?.type ?? ErrorTypes.INTERNAL_ERROR;
-        const errorFields = err?.extensions.exception?.fields ?? {};
-        const errorAction = err?.extensions.exception?.action ?? null;
-        const errorCustomMessage = err?.extensions.exception?.isCustomMessage ?? false;
+        const errorType = (originalError as LeavError<unknown>)?.type ?? ErrorTypes.INTERNAL_ERROR;
+        const errorFields = (originalError as LeavError<unknown>)?.fields ?? {};
+        const errorAction = (originalError as PermissionError<unknown>)?.action ?? null;
+        const errorCustomMessage = (originalError as ValidationError<unknown>)?.isCustomMessage ?? false;
 
         // Translate errors details
         for (const [field, errorDetails] of Object.entries(errorFields)) {
@@ -88,6 +97,7 @@ export default function ({
 
         // Error is logged with original message
         newError.message = `[${errId}] ${err.message}`;
+        // @ts-ignore
         logger.error(`${newError.message}\n${(err.extensions.exception?.stacktrace ?? []).join('\n')}`);
 
         if (!config.debug) {
@@ -111,10 +121,179 @@ export default function ({
         }
     };
 
+    // The schema is dynamic and might change at runtime, like on library create. As Apollo doesn't support schema
+    // updates easily, we need to recreate the middleware with a new ApolloServer each time the schema is updated.
+    const _initExpressMiddleware = async (httpServer: Server, wsServer: WebSocketServer, firstCall = false) => {
+        _currentGraphqlWsServer = graphqlWS.useServer(
+            {
+                schema: graphqlApp.schema,
+                context: async (ctx: any) => {
+                    try {
+                        // recreate headers object from rawHeaders array
+                        const headers = ctx.extra.request.rawHeaders.reduce((prev, curr, i, arr) => {
+                            return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
+                        }, {});
+
+                        const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
+                        const cookieIncluded = headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME);
+
+                        const payload = await authApp.validateRequestToken({
+                            apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
+                            cookies: cookieIncluded
+                                ? {
+                                      [ACCESS_TOKEN_COOKIE_NAME]: headers.Cookie.split('=')[
+                                          headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1
+                                      ]
+                                  }
+                                : null
+                        });
+
+                        const context: IQueryInfos = {
+                            userId: payload.userId,
+                            groupsId: payload.groupsId
+                        };
+
+                        return context;
+                    } catch (e) {
+                        throw new GraphQLError('You must be logged in', {
+                            extensions: {
+                                code: 'UNAUTHENTICATED',
+                                http: {status: 401}
+                            }
+                        });
+                    }
+                }
+            },
+            wsServer
+        );
+
+        const responseFormattingPlugin: ApolloServerPlugin<IQueryInfos> = {
+            async requestDidStart() {
+                return {
+                    async willSendResponse(requestContext) {
+                        const {response, contextValue} = requestContext;
+
+                        if (contextValue.dbProfiler && response.body.kind === 'single') {
+                            response.body.singleResult.extensions = {
+                                ...response.body.singleResult.extensions,
+                                dbProfiler: {
+                                    ...contextValue.dbProfiler,
+                                    // Transform queries hash map into an array, sort queries by count
+                                    queries: Object.values(contextValue.dbProfiler.queries)
+                                        .map(q => ({...q, callers: [...q.callers]})) // Transform callers Set into Array
+                                        .sort((a: any, b: any) => b.count - a.count)
+                                }
+                            };
+                        }
+                    },
+                    async didEncounterErrors(requestContext) {
+                        const {contextValue} = requestContext;
+                        let {errors} = requestContext;
+
+                        // Format and translate errors before sending them to client
+                        if (errors) {
+                            errors = errors.map(e => {
+                                const formattedError = _handleError(e, contextValue);
+                                e = Object.assign(e, {
+                                    extensions: {...e.extensions, ...formattedError.extensions},
+                                    message: formattedError.message
+                                });
+
+                                return e;
+                            });
+                        }
+
+                        return;
+                    }
+                };
+            }
+        };
+
+        const plugins = [
+            ApolloServerPluginCacheControlDisabled(),
+            {
+                async serverWillStart() {
+                    return {
+                        async drainServer() {
+                            // This will turn off all listeners to wsServer and actually close the wsServer
+                            await _currentGraphqlWsServer.dispose();
+                        }
+                    };
+                }
+            },
+            responseFormattingPlugin
+        ];
+
+        if (config.debug) {
+            plugins.push(require('apollo-tracing').plugin());
+        }
+
+        const server = new ApolloServer<IQueryInfos>({
+            // Hiding error details in production is handled in _handleError
+            includeStacktraceInErrorResponses: true,
+            introspection: config.server.allowIntrospection,
+            schema: graphqlApp.schema,
+            plugins,
+            csrfPrevention: true,
+            // To avoid adding listeners to SIGINT and SIGTERM events on each schema update (leading to memory leaks),
+            // we only add them on the first call
+            stopOnTerminationSignals: firstCall
+        });
+
+        await server.start();
+
+        const newMiddleware = expressMiddleware(server, {
+            context: async ({req, res}): Promise<IQueryInfos> => {
+                try {
+                    const payload = await authApp.validateRequestToken({
+                        apiKey: String(req.query[API_KEY_PARAM_NAME]),
+                        cookies: req.cookies
+                    });
+
+                    const ctx: IQueryInfos = {
+                        userId: payload.userId,
+                        lang: (req.query.lang as string) ?? config.lang.default,
+                        queryId: req.body.requestId || uuidv4(),
+                        groupsId: payload.groupsId
+                    };
+
+                    return ctx;
+                } catch (e) {
+                    throw new GraphQLError(e.message ?? 'You must be logged in', {
+                        extensions: {
+                            code: 'UNAUTHENTICATED',
+                            http: {status: 401}
+                        }
+                    });
+                }
+            }
+        });
+
+        // Calling useServer() adds a listener to the wsServer.
+        // To avoid memory leaks, we keep only the last listener for each event.
+        // We don't remove all listeners to keep the active one
+        // We cannot call the dispose function returned by useServer() as it would close the web socket server.
+        const listenersEventNames = wsServer.eventNames();
+        for (const eventName of listenersEventNames) {
+            const listeners = wsServer.listeners(eventName);
+            if (listeners.length > 1) {
+                wsServer.removeAllListeners(eventName);
+                wsServer.on(eventName, listeners[listeners.length - 1] as (...args: any[]) => void);
+            }
+        }
+
+        _currentApolloMiddleware = newMiddleware;
+    };
+
     return {
         async init(): Promise<void> {
             const app = express();
             const httpServer = createServer(app);
+            const wsServer = new WebSocketServer({
+                server: httpServer,
+                path: '/graphql'
+            });
+            wsServer.setMaxListeners(10);
 
             try {
                 // Express settings
@@ -155,7 +334,9 @@ export default function ({
                     express.static(config.preview.directory, {fallthrough: false}),
                     async (err, req, res, next) => {
                         const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
-                        res.status(404).type('html').send(htmlContent);
+                        res.status(404)
+                            .type('html')
+                            .send(htmlContent);
                     }
                 ]);
                 app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
@@ -176,7 +357,7 @@ export default function ({
                     }
 
                     logger.error(err);
-                    res.status(500).json({error: 'INTERNAL_SERVER_ERROR'}); // FIXME: format error msg?
+                    res.status(500).json({error: 'INTERNAL_SERVER_ERROR'});
                 });
 
                 await graphqlApp.generateSchema();
@@ -184,13 +365,13 @@ export default function ({
                 const _executor = args =>
                     execute({
                         ...args,
-                        schema: graphqlApp.schema,
+                        schema: graphqlApp.getSchema,
                         contextValue: args.context,
                         variableValues: args.request.variables
                     }) as Promise<any>;
 
                 const wsServerOptions: ServerOptions<null, {leavCtx?: IQueryInfos} & graphqlWS.Extra> = {
-                    schema: graphqlApp.schema,
+                    schema: graphqlApp.getSchema,
                     onConnect: async ctx => {
                         // Check auth
                         try {
@@ -234,12 +415,6 @@ export default function ({
                         return ctx.extra.leavCtx;
                     }
                 };
-
-                // Create Web Socket Server
-                const wsServer = new WebSocketServer({
-                    server: httpServer,
-                    path: '/graphql'
-                });
 
                 // Init GraphQL WS server
                 const serverCleanup = graphqlWS.useServer(wsServerOptions, wsServer);
@@ -338,7 +513,7 @@ export default function ({
                 applicationApp.registerRoute(app);
 
                 await new Promise<void>(resolve => httpServer.listen(config.server.port, resolve));
-                logger.info(`🚀 Server ready at http://localhost:${config.server.port}${server.graphqlPath}`);
+                logger.info(`🚀 Server ready at http://localhost:${config.server.port}/graphql`);
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');
             }
