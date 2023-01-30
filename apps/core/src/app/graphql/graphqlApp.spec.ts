@@ -8,6 +8,7 @@ import {
     FragmentSpreadNode,
     GraphQLResolveInfo,
     InlineFragmentNode,
+    Kind,
     NameNode,
     SelectionSetNode,
     StringValueNode
@@ -28,51 +29,50 @@ describe('GraphqlApp', () => {
             fragments: null,
             rootValue: null,
             operation: null,
-            variableValues: null,
-            cacheControl: null
+            variableValues: null
         };
 
         const mockFieldNode: FieldNode = {
-            kind: 'Field',
+            kind: Kind.FIELD,
             name: null,
             selectionSet: null
         };
 
         const mockNameNode: NameNode = {
-            kind: 'Name',
+            kind: Kind.NAME,
             value: null
         };
 
         const mockInlineFragment: InlineFragmentNode = {
-            kind: 'InlineFragment',
+            kind: Kind.INLINE_FRAGMENT,
             selectionSet: null
         };
 
         const mockFragmentSpread: FragmentSpreadNode = {
-            kind: 'FragmentSpread',
+            kind: Kind.FRAGMENT_SPREAD,
             name: {...mockNameNode, value: 'frag spread name'}
         };
 
         const mockFragmentDef: FragmentDefinitionNode = {
-            kind: 'FragmentDefinition',
+            kind: Kind.FRAGMENT_DEFINITION,
             name: {...mockNameNode, value: 'frag name'},
             typeCondition: null,
             selectionSet: null
         };
 
         const mockSelectionSet: SelectionSetNode = {
-            kind: 'SelectionSet',
+            kind: Kind.SELECTION_SET,
             selections: null
         };
 
         const mockArgumentNode: ArgumentNode = {
-            kind: 'Argument',
+            kind: Kind.ARGUMENT,
             name: null,
             value: null
         };
 
         const mockValueNode: StringValueNode = {
-            kind: 'StringValue',
+            kind: Kind.STRING,
             value: null
         };
 

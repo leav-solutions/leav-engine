@@ -47,7 +47,7 @@
   "resolutions": {
     "fs-capacitor": "6.2.0",
     "graphql-upload": "11.0.0",
-    "graphql": "15",
+    "graphql": "16",
     "data-studio:babel-jest": "26",
     "data-studio:jest": "26.6.0",
     "react-error-overlay": "6.0.9",
@@ -57,7 +57,7 @@
     "git-url-parse": "13",
     "glob-parent": ">=5.1.2",
     "node-fetch": "2.6.7",
-    "apollo-server-core": ">=3.11.1"
+    "@types/express": ">=4.17.21"
   },
   "lint-staged": {
     "*.{ts, js, tsx, jsx}": [

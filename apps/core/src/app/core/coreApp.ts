@@ -1,17 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IQueryInfos} from '_types/queryInfos';
-import {IAppModule} from '_types/shared';
-import {ISystemTranslation} from '_types/systemTranslation';
 import {ISystemTranslationGenerator} from 'app/graphql/customScalars/systemTranslation/systemTranslation';
 import {ICoreDomain} from 'domain/core/coreDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {constants, promises as fs} from 'fs';
 import {GraphQLScalarType, Kind} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
+import {GraphQLUpload} from 'graphql-upload';
 import {i18n} from 'i18next';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IQueryInfos} from '_types/queryInfos';
+import {IAppModule} from '_types/shared';
+import {ISystemTranslation} from '_types/systemTranslation';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreApp extends IAppModule {
@@ -73,13 +74,12 @@ export default function (
                     scalar JSONObject
                     scalar Any
                     scalar DateTime
+                    scalar SystemTranslation
+                    scalar SystemTranslationOptional
 
                     enum AvailableLanguage {
                         ${config.lang.available.join(' ')}
                     }
-
-                    scalar SystemTranslation
-                    scalar SystemTranslationOptional
 
                     input Pagination {
                         limit: Int!,
@@ -102,6 +102,7 @@ export default function (
                         langs: (parent, args, ctx: IQueryInfos) => config.lang.available
                     } as any,
                     Mutation: {} as any,
+                    Upload: GraphQLUpload,
                     JSON: GraphQLJSON,
                     JSONObject: GraphQLJSONObject,
                     Any,

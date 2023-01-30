@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
 import {GraphQLScalarType, ValueNode} from 'graphql';
+import Joi from 'joi';
 import {IConfig} from '_types/config';
 import {IKeyValue} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
@@ -41,9 +41,9 @@ export default function ({config}: IDeps): ISystemTranslationGenerator {
 
     const getScalar = (optional: boolean = true) =>
         new GraphQLScalarType({
-            name: 'SystemTranslation',
+            name: optional ? 'SystemTranslationOptional' : 'SystemTranslation',
             description: 'System entities fields translation (label...)',
-            serialize: (val: ISystemTranslation): ISystemTranslation => val,
+            serialize: (val: unknown): ISystemTranslation => val as ISystemTranslation,
             parseValue: (val: unknown): ISystemTranslation => {
                 _validateValue(val, optional);
 

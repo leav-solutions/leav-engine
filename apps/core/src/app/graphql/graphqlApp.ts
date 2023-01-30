@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {makeExecutableSchema} from '@graphql-tools/schema';
 import {EventAction, IDbEvent} from '@leav/utils';
 import {ConfirmChannel, ConsumeMessage} from 'amqplib';
-import {makeExecutableSchema} from 'apollo-server';
 import {AwilixContainer} from 'awilix';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {EventEmitter} from 'events';

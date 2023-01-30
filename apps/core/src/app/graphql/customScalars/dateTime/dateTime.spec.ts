@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Kind} from 'graphql';
+import {Kind, ObjectValueNode, StringValueNode} from 'graphql';
 import utils from '../../../../utils';
 import dateTime from './dateTime';
 
@@ -40,7 +40,7 @@ describe('SystemTranslation', () => {
 
     describe('parseLiteral', () => {
         test('Convert unix timestamp to Date object', async () => {
-            const mockAst = {
+            const mockAst: StringValueNode = {
                 kind: Kind.STRING,
                 value: '2119480920'
             };
@@ -49,7 +49,7 @@ describe('SystemTranslation', () => {
         });
 
         test('Reject invalid input', async () => {
-            const mockAst = {
+            const mockAst: ObjectValueNode = {
                 kind: Kind.OBJECT,
                 fields: [
                     {

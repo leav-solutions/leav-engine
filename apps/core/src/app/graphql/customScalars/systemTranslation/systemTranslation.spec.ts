@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Kind} from 'graphql';
+import {Kind, ObjectValueNode, StringValueNode} from 'graphql';
 import {IConfig} from '_types/config';
 import systemTranslation from './systemTranslation';
 
@@ -50,7 +50,7 @@ describe('SystemTranslation', () => {
 
     describe('parseLiteral', () => {
         test('Accept incoming key/value object', async () => {
-            const mockAst = {
+            const mockAst: ObjectValueNode = {
                 kind: Kind.OBJECT,
                 fields: [
                     {
@@ -82,7 +82,7 @@ describe('SystemTranslation', () => {
         });
 
         test('Reject invalid (not key/value) input', async () => {
-            const mockAst = {
+            const mockAst: StringValueNode = {
                 kind: Kind.STRING,
                 value: 'coucou'
             };
@@ -91,7 +91,7 @@ describe('SystemTranslation', () => {
         });
 
         test('Accept only languages available in config', async () => {
-            const mockAst = {
+            const mockAst: ObjectValueNode = {
                 kind: Kind.OBJECT,
                 fields: [
                     {
@@ -122,7 +122,7 @@ describe('SystemTranslation', () => {
         });
 
         test('Default language must be present', async () => {
-            const mockAst = {
+            const mockAst: ObjectValueNode = {
                 kind: Kind.OBJECT,
                 fields: [
                     {
@@ -142,7 +142,7 @@ describe('SystemTranslation', () => {
         });
 
         test('If optional, default language can be absent', async () => {
-            const mockAst = {
+            const mockAst: ObjectValueNode = {
                 kind: Kind.OBJECT,
                 fields: [
                     {
@@ -158,6 +158,7 @@ describe('SystemTranslation', () => {
                     }
                 ]
             };
+
             expect(scalarOptional.parseLiteral(mockAst, null)).toEqual({en: 'The description'});
         });
     });

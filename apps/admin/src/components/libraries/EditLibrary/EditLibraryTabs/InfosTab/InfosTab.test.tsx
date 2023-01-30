@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {getViewsQuery} from 'queries/views/getViewsQuery';
-import React from 'react';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
@@ -135,7 +135,7 @@ describe('InfosTab', () => {
 
         await act(async () => {
             render(<InfosTab library={mockLibrary} readonly={false} />, {
-                apolloMocks: mocks
+                apolloMocks: mocks as Array<MockedResponse<Record<string, any>>>
             });
         });
 

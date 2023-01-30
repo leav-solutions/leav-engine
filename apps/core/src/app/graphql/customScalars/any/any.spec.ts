@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Kind} from 'graphql';
+import {Kind, ObjectValueNode, StringValueNode} from 'graphql';
 import any from './any';
 
 describe('SystemTranslation', () => {
@@ -23,12 +23,12 @@ describe('SystemTranslation', () => {
 
     describe('parseLiteral', () => {
         test('Convert value', async () => {
-            const mockAst = {
+            const mockAst: StringValueNode = {
                 kind: Kind.STRING,
                 value: 'toto'
             };
 
-            const mockObj = {
+            const mockObj: ObjectValueNode = {
                 kind: Kind.OBJECT,
                 fields: [
                     {

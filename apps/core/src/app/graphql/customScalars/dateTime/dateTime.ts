@@ -8,12 +8,12 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({'core.utils': utils = null}: IDeps): GraphQLScalarType {
+export default function({'core.utils': utils = null}: IDeps): GraphQLScalarType {
     return new GraphQLScalarType({
         name: 'DateTime',
         description: `The DateTime scalar type represents time data,
             represented as an ISO-8601 encoded UTC date string.`,
-        parseValue(value: string | number): Date {
+        parseValue(value): Date {
             // value from the client in a variable
             if (typeof value !== 'string' && typeof value !== 'number') {
                 throw new Error(`Value must be a string or a number, received ${value}`);
@@ -21,7 +21,7 @@ export default function ({'core.utils': utils = null}: IDeps): GraphQLScalarType
 
             return new Date(Number(value) * 1000);
         },
-        serialize(value: Date | number | string): string {
+        serialize(value): string {
             if (!(value instanceof Date) && typeof value !== 'string' && typeof value !== 'number') {
                 throw new Error(`Invalid date ${value}`);
             }

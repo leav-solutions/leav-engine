@@ -94,6 +94,7 @@ export default function ({
                     time: Date.now(),
                     instanceId: config.instanceId,
                     userId: ctx.userId,
+                    instanceId: config.instanceId,
                     queryId: ctx.queryId,
                     emitter: utils.getProcessIdentifier(),
                     trigger: ctx.trigger,

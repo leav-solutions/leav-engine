@@ -32,7 +32,7 @@ jobs:
             ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
             ${{ runner.OS }}-yarn
       - name: Install dependency
-        run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+        run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: install node module
         run: yarn install
 
@@ -73,7 +73,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - run: yarn lint
 
   tscheck:
@@ -94,7 +94,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - run: yarn tscheck
 
   workspace-unit-tests:
@@ -169,7 +169,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: Run e2e tests
         working-directory: ./apps/core
         run: yarn run test:e2e:api
@@ -233,7 +233,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: Run e2e tests
         working-directory: ./apps/core
         run: yarn run test:e2e:indexationManager
@@ -274,7 +274,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: Run e2e tests
         working-directory: ./apps/sync-scan
         run: yarn run test:e2e
