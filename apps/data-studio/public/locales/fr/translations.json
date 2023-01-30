@@ -313,7 +313,8 @@
             "success-detach": "{{nb}} élément(s) détaché(s)",
             "error-detach": "Une erreur est survenue lors du détachement des élements {{elements}}: {{errorMessage}}"
         },
-        "access_denied": "Vous ne pouvez pas accéder à cet élément"
+        "access_denied": "Vous ne pouvez pas accéder à cet élément",
+        "inactive_element": "Cet élément est inactif"
     },
     "info": {
         "base-message": "Bienvenue dans {{appLabel}}",

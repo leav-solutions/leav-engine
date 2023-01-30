@@ -96,7 +96,8 @@ describe('useTreeLibraryAllowedAsChild', () => {
                         ...mockRecord.library,
                         id: mockLib1.library.id
                     }
-                }
+                },
+                active: true
             },
             permissions: null
         };

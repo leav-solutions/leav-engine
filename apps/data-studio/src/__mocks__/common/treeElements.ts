@@ -61,7 +61,8 @@ export const mockTreeNodePermissions: TREE_NODE_CHILDREN_treeNodeChildren_list_p
 export const mockTreeElement: TREE_NODE_CHILDREN_treeNodeChildren_list = {
     id: '12345',
     record: {
-        ...mockTreeRecord
+        ...mockTreeRecord,
+        active: true
     },
     childrenCount: 1,
     permissions: mockTreeNodePermissions

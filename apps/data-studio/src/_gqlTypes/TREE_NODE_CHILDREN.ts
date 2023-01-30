@@ -54,6 +54,7 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI {
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record {
     id: string;
     whoAmI: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI;
+    active: boolean | null;
 }
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_permissions {

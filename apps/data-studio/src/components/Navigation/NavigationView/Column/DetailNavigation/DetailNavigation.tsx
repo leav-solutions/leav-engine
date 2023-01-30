@@ -21,7 +21,7 @@ const Detail = styled.div`
     background: ${themeVars.defaultBg};
     border-right: 1px solid ${themeVars.borderLightColor};
     border-bottom: 1px solid ${themeVars.borderLightColor};
-    padding-bottom: 1rem;
+    padding: 1rem;
     box-shadow: 0 1 1rem red;
 
     .header-detail {

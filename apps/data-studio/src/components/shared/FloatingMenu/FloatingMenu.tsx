@@ -36,7 +36,8 @@ const FloatingMenuWrapper = styled.div<{overrideStyle?: CSSObject}>`
     position: absolute;
     z-index: 1000;
     right: 0;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%); // center vertically
 
     display: flex;
     justify-content: space-around;
@@ -75,7 +76,7 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                     )}
                 </Tooltip>
             ))}
-            {moreActions?.length && (
+            {!!moreActions?.length && (
                 <Tooltip title={t('items_list.table.actions-tooltips.more')} key="more_actions">
                     <Dropdown
                         placement="bottomRight"

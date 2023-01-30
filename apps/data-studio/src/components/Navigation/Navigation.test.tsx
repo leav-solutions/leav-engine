@@ -152,7 +152,8 @@ describe('Navigation', () => {
                     record: {
                         __typename: 'RecordLib',
                         id: '1',
-                        whoAmI: {...mockRecordWithTypenames, id: '1', label: 'child-first-page'}
+                        whoAmI: {...mockRecordWithTypenames, id: '1', label: 'child-first-page'},
+                        active: true
                     },
                     childrenCount: 2,
                     permissions: mockTreeNodePermissions
@@ -390,7 +391,8 @@ describe('Navigation', () => {
                                             ...mockRecordWithTypenames.library,
                                             id: 'my_lib'
                                         }
-                                    }
+                                    },
+                                    active: true
                                 },
                                 permissions: mockTreeNodePermissions,
                                 childrenCount: 0
@@ -401,9 +403,7 @@ describe('Navigation', () => {
             });
         });
 
-        // await act(async () => {
         await screen.findAllByTestId('navigation-column');
-        // });
 
         const childColHeader = screen.getAllByRole('banner')[1];
         expect(await within(childColHeader).findByText('first-child')).toBeInTheDocument();
@@ -411,73 +411,6 @@ describe('Navigation', () => {
         const childColumn = screen.getAllByTestId('navigation-column')[1];
         expect(await within(childColumn).findByText('child-1-2')).toBeInTheDocument();
     });
-
-    // test('When element has no children, display its details', async () => {
-    //     const mocksNoChildren: MockedResponse[] = [
-    //         getTreeListMock,
-    //         // Call on first level
-    //         {
-    //             request: {
-    //                 query: treeNodeChildrenQuery,
-    //                 variables: {
-    //                     treeId: 'my_tree',
-    //                     node: null,
-    //                     pagination: {
-    //                         limit: treeNavigationPageSize,
-    //                         offset: 0
-    //                     }
-    //                 }
-    //             },
-    //             result: getTreeNodeChildrenMockResultFirstLevel
-    //         },
-    //         {
-    //             request: {
-    //                 query: treeNodeChildrenQuery,
-    //                 variables: {
-    //                     treeId: 'my_tree',
-    //                     node: '12345',
-    //                     pagination: {
-    //                         limit: treeNavigationPageSize,
-    //                         offset: 0
-    //                     }
-    //                 }
-    //             },
-    //             result: getTreeContentMockResultNoChildren
-    //         }
-    //     ];
-
-    //     await act(async () => {
-    //         render(<Navigation tree="my_tree" />, {
-    //             ...renderOptions,
-    //             apolloMocks: mocksNoChildren,
-    //             storeState: {
-    //                 ...mockInitialState,
-    //                 navigation: {
-    //                     ...mockInitialState.navigation,
-    //                     activeTree: 'my_tree',
-    //                     path: [
-    //                         {
-    //                             id: '12345',
-    //                             record: {id: '1', whoAmI: {...mockRecordWithTypenames, label: 'first-child'}},
-    //                             permissions: mockTreeNodePermissions,
-    //                             childrenCount: 0
-    //                         }
-    //                     ]
-    //                 }
-    //             }
-    //         });
-    //     });
-
-    //     expect(screen.getByTestId('loading')).toBeInTheDocument();
-    //     expect(await screen.findByTestId('navigation-column')).toBeInTheDocument();
-
-    //     // await act(async () => {
-    //     // await waitFor(() => screen.findAllByTestId('navigation-column'));
-    //     // });
-
-    //     expect(await screen.findAllByTestId('navigation-column-with-details')).toHaveLength(1);
-    //     expect(await screen.findAllByTestId('navigation-column')).toHaveLength(1);
-    // });
 
     test('When no selection is set, display appropriate buttons on header', async () => {
         render(<Navigation tree="my_tree" />, renderOptions);
@@ -544,7 +477,8 @@ describe('Navigation', () => {
                                         ...mockRecordWithTypenames.library,
                                         id: 'my_lib'
                                     }
-                                }
+                                },
+                                active: true
                             },
                             permissions: mockTreeNodePermissions,
                             childrenCount: 0
@@ -600,7 +534,8 @@ describe('Navigation', () => {
                                         ...mockRecordWithTypenames.library,
                                         id: 'my_lib'
                                     }
-                                }
+                                },
+                                active: true
                             },
                             permissions: mockTreeNodePermissions,
                             childrenCount: 0
