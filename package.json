@@ -50,7 +50,10 @@
     "@types/react": "^16",
     "@types/react-dom": "^16",
     "semver": "7.3.7",
-    "git-url-parse": "13"
+    "git-url-parse": "13",
+    "glob-parent": ">=5.1.2",
+    "node-fetch": "2.6.7",
+    "apollo-server-core": ">=3.11.1"
   },
   "lint-staged": {
     "*.{ts, js, tsx, jsx}": [

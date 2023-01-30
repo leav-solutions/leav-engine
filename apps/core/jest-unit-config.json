@@ -18,6 +18,7 @@
         "<rootDir>/src/__tests__/jestUtils.ts"
     ],
     "moduleNameMapper": {
-        "exceljs": "<rootDir>/../../node_modules/exceljs/dist/exceljs.js"
+        "exceljs": "<rootDir>/../../node_modules/exceljs/dist/exceljs.js",
+        "^uuid$": "uuid"
     }
 }
