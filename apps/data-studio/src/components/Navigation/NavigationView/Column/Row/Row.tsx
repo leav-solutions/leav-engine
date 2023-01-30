@@ -1,10 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {LockFilled, RightOutlined} from '@ant-design/icons';
+import {InfoCircleOutlined, LockFilled, RightOutlined, SearchOutlined, WarningOutlined} from '@ant-design/icons';
 import {themeVars} from '@leav/ui';
-import {Badge, Tooltip} from 'antd';
+import {Badge, message, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
+import {SizeType} from 'antd/lib/config-provider/SizeContext';
+import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
+import FloatingMenu from 'components/shared/FloatingMenu';
+import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {useLang} from 'hooks/LangHook/LangHook';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'redux/navigation';
@@ -26,7 +30,24 @@ interface IRowProps {
     style?: CSSObject;
     isInPath: boolean;
     isActive: boolean;
+    isRecordActive: boolean;
 }
+
+const _getGridTemplateColumns = (isActive: boolean, isRecordActive) => {
+    let template = [];
+
+    if (isActive) {
+        template = ['1rem'];
+    }
+
+    if (!isRecordActive) {
+        template = [...template, '1rem'];
+    }
+
+    template = [...template, 'auto', 'auto', '1rem'];
+
+    return template.join(' ');
+};
 
 const RowWrapper = styled.div<IRowProps>`
     position: relative;
@@ -37,7 +58,7 @@ const RowWrapper = styled.div<IRowProps>`
     max-width: ${themeVars.navigationColumnWidth};
     overflow: hidden;
 
-    grid-template-columns: ${props => (props.isActive ? '1rem auto auto 1rem' : 'auto auto 1rem')};
+    grid-template-columns: ${props => _getGridTemplateColumns(props.isActive, props.isRecordActive)};
     padding: 1rem 0.5rem;
     background: ${props => {
         if (props.isInPath) {
@@ -56,6 +77,10 @@ const RowWrapper = styled.div<IRowProps>`
 
     .counter {
         justify-self: flex-end;
+    }
+
+    :not(:hover) .floating-menu {
+        display: none;
     }
 `;
 
@@ -158,6 +183,14 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
         }
     };
 
+    const _handleClickClassifiedIn = () => message.warning(t('global.feature_not_available'));
+
+    const _handleClickDetails = () => {
+        const newPath = [...navigation.path.slice(0, depth), {...treeElement, showDetails: true}];
+
+        dispatch(setNavigationPath(newPath));
+    };
+
     const record: IRecordIdentityWhoAmI = {
         ...treeElement.record.whoAmI,
         label: recordLabel ?? ''
@@ -166,9 +199,39 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
     const isInPath = navigation.path.some(pathPart => pathPart.id === treeElement.id);
 
     const isChecked = selectionState.selection.selected.some(element => element.nodeId === treeElement.id);
+    const isRecordActive = treeElement.record.active;
+
+    const menuBtnSize: SizeType = 'middle';
+    const menuActions: FloatingMenuAction[] = [
+        {
+            title: t('global.details'),
+            button: <EditRecordBtn shape={'circle'} record={record} size={menuBtnSize} />
+        }
+    ];
+
+    const moreMenuActions: FloatingMenuAction[] = isAccessible
+        ? [
+              {
+                  title: t('navigation.actions.details'),
+                  icon: <InfoCircleOutlined />,
+                  onClick: _handleClickDetails
+              },
+              {
+                  title: t('navigation.actions.classified_in'),
+                  icon: <SearchOutlined />,
+                  onClick: _handleClickClassifiedIn
+              }
+          ]
+        : [];
 
     return (
-        <RowWrapper onClick={addPath} isInPath={isInPath} isActive={isActive}>
+        <RowWrapper onClick={addPath} isInPath={isInPath} isActive={isActive} isRecordActive={isRecordActive}>
+            <FloatingMenu
+                actions={menuActions}
+                moreActions={moreMenuActions}
+                style={{right: '15px'}}
+                size={menuBtnSize}
+            />
             {!isAccessible && (
                 <Tooltip title={t('navigation.access_denied')}>
                     <LockFilled />
@@ -186,6 +249,11 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                 >
                     <Checkbox onClick={handleCheckboxOnClick} checked={isChecked} />
                 </CheckboxWrapper>
+            )}
+            {!isRecordActive && (
+                <Tooltip title={t('navigation.inactive_element')}>
+                    <WarningOutlined style={{color: themeVars.errorColor, fontSize: '1.3em', marginLeft: '0.5rem'}} />
+                </Tooltip>
             )}
             <RecordCardWrapper>
                 <RecordCard record={record} size={PreviewSize.small} />

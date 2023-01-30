@@ -14,6 +14,7 @@ export const treeNodeChildrenQuery = gql`
                 childrenCount
                 record {
                     ...RecordIdentity
+                    active
                 }
                 permissions {
                     access_tree
