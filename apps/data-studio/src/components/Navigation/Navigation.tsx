@@ -46,6 +46,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
             updateActiveTree({
                 id: currentTree.id,
                 label: treeName,
+                behavior: currentTree.behavior,
                 libraries: currentTree.libraries.map(lib => ({id: lib.library.id})),
                 permissions: currentTree.permissions
             });

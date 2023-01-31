@@ -6,13 +6,15 @@ import {
     ExpandAltOutlined,
     InfoCircleOutlined,
     OrderedListOutlined,
-    SearchOutlined
+    SearchOutlined,
+    CloudUploadOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, message} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
+import UploadFiles from 'components/UploadFiles';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
@@ -22,6 +24,7 @@ import {addInfo} from 'redux/infos';
 import {setNavigationPath} from 'redux/navigation';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
+import {TreeBehavior} from '_gqlTypes/globalTypes';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
@@ -47,6 +50,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
     const [activeTree] = useActiveTree();
 
     const [editRecordModalVisible, setEditRecordModalVisible] = useState(false);
+    const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
 
     const [removeFromTree] = useMutation<REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables>(removeTreeElementMutation);
     const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
@@ -94,6 +98,9 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         refreshTreeContent();
     };
 
+    const _handleClickUpload = () => setIsUploadFilesModalVisible(true);
+    const _handleCloseUpload = () => setIsUploadFilesModalVisible(false);
+
     const _handleClickClassifiedIn = () => message.warning(t('global.feature_not_available'));
     const _handleClickOrder = () => message.warning(t('global.feature_not_available'));
 
@@ -101,6 +108,13 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
     const canDetach = !!parent && parent.permissions.detach;
 
     const treeActionsMenuItems: Array<ItemType & {displayCondition: boolean}> = [
+        {
+            key: 'upload',
+            icon: <CloudUploadOutlined />,
+            onClick: _handleClickUpload,
+            label: t('upload.title'),
+            displayCondition: activeTree.behavior === TreeBehavior.files
+        },
         {
             key: 'details',
             icon: <InfoCircleOutlined />,
@@ -150,6 +164,14 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
 
     return (
         <>
+            {isUploadFilesModalVisible && (
+                <UploadFiles
+                    defaultSelectedKey={parent?.id || activeTree.id}
+                    libraryId={activeTree.libraries[0].id}
+                    multiple
+                    onClose={_handleCloseUpload}
+                />
+            )}
             {editRecordModalVisible && (
                 <EditRecordModal
                     open={editRecordModalVisible}

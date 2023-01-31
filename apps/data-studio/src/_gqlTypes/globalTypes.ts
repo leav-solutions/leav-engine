@@ -168,6 +168,11 @@ export enum TaskStatus {
     RUNNING = 'RUNNING'
 }
 
+export enum TreeBehavior {
+    files = 'files',
+    standard = 'standard'
+}
+
 export enum TreeEventTypes {
     add = 'add',
     move = 'move',

@@ -16,19 +16,20 @@ import {ITreeNode} from '../../_types/types';
 import SelectTreeNode from '../shared/SelectTreeNode';
 
 interface IUploadFilesProps {
+    defaultSelectedKey?: string;
     libraryId: string;
     multiple: boolean;
     onClose: () => void;
 }
 
-function UploadFiles({libraryId, multiple, onClose}: IUploadFilesProps): JSX.Element {
+function UploadFiles({defaultSelectedKey, libraryId, multiple = false, onClose}: IUploadFilesProps): JSX.Element {
     const {t} = useTranslation();
     const {token} = theme.useToken();
-    const [selectedNode, setSelectedNode] = useState<ITreeNode>();
+    const [selectedNodeKey, setSelectedNodeKey] = useState<string>(defaultSelectedKey);
     const [files, setFiles] = useState<any[]>([]);
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
     const [status, setStatus] = useState<StepProps['status']>('wait');
-    const [currentStep, setCurrentStep] = useState(0);
+    const [currentStep, setCurrentStep] = useState(!!defaultSelectedKey ? 1 : 0);
 
     const props = {
         name: 'files',
@@ -65,7 +66,6 @@ function UploadFiles({libraryId, multiple, onClose}: IUploadFilesProps): JSX.Ele
         },
         onError: err => {
             setStatus('error');
-
             console.debug('error', JSON.stringify(err));
         }
     });
@@ -94,7 +94,7 @@ function UploadFiles({libraryId, multiple, onClose}: IUploadFilesProps): JSX.Ele
         await runUpload({
             variables: {
                 library: libraryId,
-                nodeId: selectedNode.id,
+                nodeId: selectedNodeKey,
                 files: files.map(f => ({
                     data: f,
                     uid: f.uid,
@@ -124,7 +124,7 @@ function UploadFiles({libraryId, multiple, onClose}: IUploadFilesProps): JSX.Ele
     };
 
     const onSelectPath = (node: ITreeNode, selected: boolean) => {
-        setSelectedNode(!selected ? undefined : node);
+        setSelectedNodeKey(!selected ? undefined : node.key);
     };
 
     const dragger = (
@@ -153,7 +153,7 @@ function UploadFiles({libraryId, multiple, onClose}: IUploadFilesProps): JSX.Ele
                     <SelectTreeNode
                         tree={{id: libraryTree}}
                         onSelect={onSelectPath}
-                        selectedNode={selectedNode?.key}
+                        selectedNode={selectedNodeKey}
                         canSelectRoot
                     />
                 </div>

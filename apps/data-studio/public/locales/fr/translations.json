@@ -363,7 +363,7 @@
         "export_notification_description": "Planifié le"
     },
     "upload": {
-        "title": "Upload de fichiers",
+        "title": "Upload",
         "select_path_step_title": "Choisir une destination",
         "select_files_step_title": "Sélection des fichiers",
         "upload_step_title":  "Upload",
