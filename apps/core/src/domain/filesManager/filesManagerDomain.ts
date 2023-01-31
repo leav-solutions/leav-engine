@@ -2,13 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import increment from 'add-filename-increment';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {FileUpload} from 'graphql-upload';
 import {i18n} from 'i18next';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import Joi from 'joi';
+import * as Path from 'path';
+import {Progress} from 'progress-stream';
+import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
 import * as Config from '_types/config';
@@ -22,18 +29,11 @@ import {Errors} from '../../_types/errors';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
 import {LibraryBehavior} from '../../_types/library';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
-import {IRecordDomain} from '../record/recordDomain';
+import {IRecordDomain, IRecordFilterLight} from '../record/recordDomain';
 import {createPreview} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewVersions} from './_constants';
-import {FileUpload} from 'graphql-upload';
-import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
-import {IUtils} from 'utils/utils';
-import increment from 'add-filename-increment';
-import {Progress} from 'progress-stream';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import * as Path from 'path';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -44,7 +44,8 @@ interface IForcePreviewsGenerationParams {
     ctx: IQueryInfos;
     libraryId: string;
     failedOnly?: boolean;
-    recordId?: string;
+    recordIds?: string[];
+    filters?: IRecordFilterLight[];
 }
 
 interface IGetOriginalPathParams {
@@ -98,7 +99,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -176,6 +177,55 @@ export default function ({
             const errorMsg = isValid.error.details.map(e => e.message).join(', ');
             throw new Error(errorMsg);
         }
+    };
+
+    const _extractChildrenFromNodes = (nodes: ITreeNode[], records: IRecord[] = []): IRecord[] => {
+        for (const n of nodes) {
+            records.push(n.record);
+
+            if (!!n.children) {
+                records = _extractChildrenFromNodes(n.children, records);
+            }
+        }
+
+        return records;
+    };
+
+    /**
+     * Retrieve children nodes for each record
+     * To make sure we don't have duplicates, store it on an object */
+    const _getAllChildrenRecords = async (
+        treeId: string,
+        records: IRecord[],
+        libraryId: string,
+        filesLibraryId: string,
+        ctx: IQueryInfos
+    ) => {
+        return records.reduce(async (promAcc, record): Promise<Record<string, IRecord>> => {
+            const acc = await promAcc;
+            const treeNodes = await treeDomain.getNodesByRecord({
+                treeId,
+                record: {id: record.id, library: libraryId},
+                ctx
+            });
+
+            // Get children for first node only, as a record in file tree shouldn't be at multiple places
+            const nodes: ITreeNode[] = await treeDomain.getTreeContent({
+                treeId,
+                startingNode: treeNodes[0],
+                ctx
+            });
+
+            const childrenRecords = _extractChildrenFromNodes(nodes);
+            for (const childRecord of childrenRecords) {
+                // Only keep records from files library (ignore directories)
+                if (childRecord.library === filesLibraryId) {
+                    acc[childRecord.id] = childRecord;
+                }
+            }
+
+            return acc;
+        }, {});
     };
 
     return {
@@ -374,55 +424,50 @@ export default function ({
             ctx,
             libraryId,
             failedOnly,
-            recordId
+            filters,
+            recordIds = []
         }: IForcePreviewsGenerationParams): Promise<boolean> {
-            const _getChildren = (nodes: ITreeNode[], records: IRecord[] = []): IRecord[] => {
-                for (const n of nodes) {
-                    records.push(n.record);
-
-                    if (!!n.children) {
-                        records = _getChildren(n.children, records);
-                    }
-                }
-
-                return records;
-            };
-
             const libraryProps = await libraryDomain.getLibraryProperties(libraryId, ctx);
 
-            if (!recordId && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
+            if (!recordIds.length && !filters && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
                 // Nothing to do if we ask to generate previews for directories
                 return false;
             }
 
-            let records = (
-                await recordDomain.find({
-                    params: {
-                        library: libraryId,
-                        ...(recordId && {
-                            filters: [{field: 'id', value: recordId, condition: AttributeCondition.EQUAL}]
-                        })
-                    },
-                    ctx
-                })
-            ).list;
+            // If we have both filters and recordIds, ignore filters
+            const recordsFilters =
+                filters && !recordIds.length
+                    ? filters
+                    : recordIds.reduce((allFilters, recordId, index) => {
+                          allFilters.push({
+                              field: 'id',
+                              value: recordId,
+                              condition: AttributeCondition.EQUAL
+                          });
+
+                          if (index !== recordIds.length - 1) {
+                              allFilters.push({
+                                  operator: Operator.OR
+                              });
+                          }
+
+                          return allFilters;
+                      }, []);
+
+            const records = (await recordDomain.find({params: {library: libraryId, filters: recordsFilters}, ctx}))
+                .list;
 
             if (!records.length) {
                 // No records found, nothing to do
                 return false;
             }
 
-            // If recordId is a directory: recreate all previews of subfiles
-            if (recordId && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
+            // If library is a directory library: recreate all previews of subfiles
+            let recordsToProcess: IRecord[];
+            if (libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
                 // Find tree where this directory belongs
-                const trees = await treeDomain.getTrees({
-                    params: {
-                        filters: {
-                            library: libraryId
-                        }
-                    },
-                    ctx
-                });
+                const trees = await treeDomain.getTrees({params: {filters: {library: libraryId}}, ctx});
+
                 const tree = trees.list[0];
                 const treeLibraries = await Promise.all(
                     Object.keys(tree.libraries).map(treeLibraryId =>
@@ -433,27 +478,16 @@ export default function ({
 
                 if (trees.list.length) {
                     const treeId = tree.id;
-                    const treeNodes = await treeDomain.getNodesByRecord({
-                        treeId,
-                        record: {id: records[0].id, library: libraryId},
-                        ctx
-                    });
 
-                    // Get children for first node only, as a record in file tree shouldn't be at multiple places
-                    const nodes: ITreeNode[] = await treeDomain.getTreeContent({
-                        treeId,
-                        startingNode: treeNodes[0],
-                        ctx
-                    });
+                    const recordsById = await _getAllChildrenRecords(treeId, records, libraryId, filesLibraryId, ctx);
 
-                    records = _getChildren(nodes);
-
-                    // del all directories records
-                    records = records.filter(r => r.library === filesLibraryId);
+                    recordsToProcess = Object.values(recordsById);
                 }
+            } else {
+                recordsToProcess = records;
             }
 
-            for (const r of records) {
+            for (const r of recordsToProcess) {
                 if (
                     !failedOnly ||
                     (failedOnly &&

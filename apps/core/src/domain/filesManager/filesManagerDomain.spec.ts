@@ -11,6 +11,7 @@ import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {LibraryBehavior} from '../../_types/library';
+import {AttributeCondition, Operator} from '../../_types/record';
 import {mockLibraryFiles} from '../../__tests__/mocks/library';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
@@ -110,212 +111,312 @@ describe('FilesManager', () => {
         expect(mockAmqpService.consumer.channel.bindQueue).toBeCalled();
     });
 
-    test('Force preview generation one file', async () => {
-        const mockRecordDomain: Mockify<IRecordDomain> = {
-            find: global.__mockPromise({
-                cursor: {},
-                totalCount: 1,
-                list: [{id: 'id', file_path: 'file_path', file_name: 'file_name', library: mockLibraryFiles.id}]
-            })
-        };
+    describe('forcePreviewsGeneration', () => {
+        test('Force preview generation one file', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    cursor: {},
+                    totalCount: 1,
+                    list: [{id: 'id', file_path: 'file_path', file_name: 'file_name', library: mockLibraryFiles.id}]
+                })
+            };
 
-        const files = filesManager({
-            config: mockConfig as Config.IConfig,
-            'core.utils.logger': logger as winston.Winston,
-            'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.domain.library': mockLibraryDomain as ILibraryDomain,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.utils.logger': logger as winston.Winston,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.infra.amqpService': mockAmqpService as IAmqpService
+            });
+
+            await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id']});
+
+            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
+                {field: 'id', value: 'id', condition: AttributeCondition.EQUAL}
+            ]);
+            expect(createPreview).toBeCalledTimes(1);
+
+            expect(createPreview).toBeCalledWith(
+                'id',
+                'file_path/file_name',
+                mockLibraryFiles.id,
+                systemPreviewVersions,
+                mockAmqpService,
+                mockConfig
+            );
         });
 
-        await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordId: 'id'});
+        test('Force preview generation multiple files', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    cursor: {},
+                    totalCount: 1,
+                    list: [
+                        {id: 'id1', file_path: 'file_path', file_name: 'file_name1', library: mockLibraryFiles.id},
+                        {id: 'id2', file_path: 'file_path', file_name: 'file_name2', library: mockLibraryFiles.id},
+                        {id: 'id3', file_path: 'file_path', file_name: 'file_name3', library: mockLibraryFiles.id}
+                    ]
+                })
+            };
 
-        expect(createPreview).toBeCalledTimes(1);
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.utils.logger': logger as winston.Winston,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.infra.amqpService': mockAmqpService as IAmqpService
+            });
 
-        expect(createPreview).toBeCalledWith(
-            'id',
-            'file_path/file_name',
-            mockLibraryFiles.id,
-            systemPreviewVersions,
-            mockAmqpService,
-            mockConfig
-        );
-    });
+            await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']});
 
-    test('Force preview generation one directory', async () => {
-        const mockRecordDomain: Mockify<IRecordDomain> = {
-            find: global.__mockPromise({
-                cursor: {},
-                totalCount: 1,
-                list: [{id: 'id', file_path: 'dir_path', file_name: 'file_name'}]
-            })
-        };
+            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
+                {field: 'id', value: 'id1', condition: AttributeCondition.EQUAL},
+                {operator: Operator.OR},
+                {field: 'id', value: 'id2', condition: AttributeCondition.EQUAL},
+                {operator: Operator.OR},
+                {field: 'id', value: 'id3', condition: AttributeCondition.EQUAL}
+            ]);
+            expect(createPreview).toBeCalledTimes(3);
+        });
 
-        const mockTreeDomain: Mockify<ITreeDomain> = {
-            getTrees: global.__mockPromise({
-                list: [
+        test('Force preview generation one directory', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    cursor: {},
+                    totalCount: 1,
+                    list: [{id: 'id', file_path: 'dir_path', file_name: 'file_name'}]
+                })
+            };
+
+            const mockTreeDomain: Mockify<ITreeDomain> = {
+                getTrees: global.__mockPromise({
+                    list: [
+                        {
+                            ...mockFilesTree
+                        }
+                    ]
+                }),
+                getTreeContent: global.__mockPromise([
                     {
-                        ...mockFilesTree
-                    }
-                ]
-            }),
-            getTreeContent: global.__mockPromise([
-                {
-                    record: {
-                        id: 'file1',
-                        file_path: 'file_path_1',
-                        file_name: 'file_name_1',
-                        library: 'lib2'
-                    }
-                },
-                {
-                    record: {
-                        id: 'file2',
-                        file_path: 'file_path_2',
-                        file_name: 'file_name_2',
-                        library: 'lib2'
-                    }
-                }
-            ]),
-            getNodesByRecord: global.__mockPromise({
-                id: '12345',
-                record: {id: 'file1', file_path: 'file_path_1', file_name: 'file_name_1', library: mockLibraryFiles.id}
-            })
-        };
-
-        const mockLibraryDomainForDirectories: Mockify<ILibraryDomain> = {
-            getLibraryProperties: jest.fn(id => {
-                return id === 'lib2'
-                    ? {...mockLibraryFiles, id}
-                    : {...mockLibraryFiles, id, behavior: LibraryBehavior.DIRECTORIES};
-            })
-        };
-
-        const files = filesManager({
-            config: mockConfig as Config.IConfig,
-            'core.utils.logger': logger as winston.Winston,
-            'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
-            'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.domain.tree': mockTreeDomain as ITreeDomain
-        });
-
-        await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordId: 'id'});
-
-        expect(createPreview).toBeCalledTimes(2);
-
-        expect(createPreview).toHaveBeenNthCalledWith(
-            1,
-            'file1',
-            'file_path_1/file_name_1',
-            'lib2',
-            systemPreviewVersions,
-            mockAmqpService,
-            mockConfig
-        );
-
-        expect(createPreview).toHaveBeenNthCalledWith(
-            2,
-            'file2',
-            'file_path_2/file_name_2',
-            'lib2',
-            systemPreviewVersions,
-            mockAmqpService,
-            mockConfig
-        );
-    });
-
-    test('Force preview generation full library', async () => {
-        const mockRecordDomain: Mockify<IRecordDomain> = {
-            find: global.__mockPromise({
-                cursor: {},
-                totalCount: 1,
-                list: [
-                    {id: 'file1', file_path: 'file_path_1', file_name: 'file_name_1', library: mockLibraryFiles.id},
-                    {id: 'file2', file_path: 'file_path_2', file_name: 'file_name_2', library: mockLibraryFiles.id}
-                ]
-            })
-        };
-
-        const files = filesManager({
-            config: mockConfig as Config.IConfig,
-            'core.utils.logger': logger as winston.Winston,
-            'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.domain.library': mockLibraryDomain as ILibraryDomain,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
-        });
-
-        await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId'});
-
-        expect(createPreview).toBeCalledTimes(2);
-
-        expect(createPreview).toHaveBeenNthCalledWith(
-            1,
-            'file1',
-            'file_path_1/file_name_1',
-            mockLibraryFiles.id,
-            systemPreviewVersions,
-            mockAmqpService,
-            mockConfig
-        );
-
-        expect(createPreview).toHaveBeenNthCalledWith(
-            2,
-            'file2',
-            'file_path_2/file_name_2',
-            mockLibraryFiles.id,
-            systemPreviewVersions,
-            mockAmqpService,
-            mockConfig
-        );
-    });
-
-    test('Force preview generation with failedOnly', async () => {
-        const mockRecordDomain: Mockify<IRecordDomain> = {
-            find: global.__mockPromise({
-                cursor: {},
-                totalCount: 1,
-                list: [
-                    {
-                        id: 'file1',
-                        file_path: 'file_path_1',
-                        file_name: 'file_name_1',
-                        library: mockLibraryFiles.id,
-                        previews_status: [{status: 0, message: 'msg'}]
+                        record: {
+                            id: 'file1',
+                            file_path: 'file_path_1',
+                            file_name: 'file_name_1',
+                            library: 'lib2'
+                        }
                     },
                     {
-                        id: 'file2',
-                        file_path: 'file_path_2',
-                        file_name: 'file_name_2',
-                        library: mockLibraryFiles.id,
-                        previews_status: [
-                            {status: -1, message: 'msg'},
-                            {status: 0, message: 'msg'}
-                        ]
+                        record: {
+                            id: 'file2',
+                            file_path: 'file_path_2',
+                            file_name: 'file_name_2',
+                            library: 'lib2'
+                        }
                     }
-                ]
-            })
-        };
+                ]),
+                getNodesByRecord: global.__mockPromise({
+                    id: '12345',
+                    record: {
+                        id: 'file1',
+                        file_path: 'file_path_1',
+                        file_name: 'file_name_1',
+                        library: mockLibraryFiles.id
+                    }
+                })
+            };
 
-        const files = filesManager({
-            config: mockConfig as Config.IConfig,
-            'core.utils.logger': logger as winston.Winston,
-            'core.domain.record': mockRecordDomain as IRecordDomain,
-            'core.domain.library': mockLibraryDomain as ILibraryDomain,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
+            const mockLibraryDomainForDirectories: Mockify<ILibraryDomain> = {
+                getLibraryProperties: jest.fn(id => {
+                    return id === 'lib2'
+                        ? {...mockLibraryFiles, id}
+                        : {...mockLibraryFiles, id, behavior: LibraryBehavior.DIRECTORIES};
+                })
+            };
+
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.utils.logger': logger as winston.Winston,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.domain.tree': mockTreeDomain as ITreeDomain
+            });
+
+            await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordIds: ['id']});
+
+            expect(createPreview).toBeCalledTimes(2);
+
+            expect(createPreview).toHaveBeenNthCalledWith(
+                1,
+                'file1',
+                'file_path_1/file_name_1',
+                'lib2',
+                systemPreviewVersions,
+                mockAmqpService,
+                mockConfig
+            );
+
+            expect(createPreview).toHaveBeenNthCalledWith(
+                2,
+                'file2',
+                'file_path_2/file_name_2',
+                'lib2',
+                systemPreviewVersions,
+                mockAmqpService,
+                mockConfig
+            );
         });
 
-        await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', failedOnly: true});
+        test('Force preview generation full library', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    cursor: {},
+                    totalCount: 1,
+                    list: [
+                        {id: 'file1', file_path: 'file_path_1', file_name: 'file_name_1', library: mockLibraryFiles.id},
+                        {id: 'file2', file_path: 'file_path_2', file_name: 'file_name_2', library: mockLibraryFiles.id}
+                    ]
+                })
+            };
 
-        expect(createPreview).toBeCalledTimes(1);
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.utils.logger': logger as winston.Winston,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.infra.amqpService': mockAmqpService as IAmqpService
+            });
 
-        expect(createPreview).toHaveBeenCalledWith(
-            'file2',
-            'file_path_2/file_name_2',
-            mockLibraryFiles.id,
-            systemPreviewVersions,
-            mockAmqpService,
-            mockConfig
-        );
+            await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId'});
+
+            expect(createPreview).toBeCalledTimes(2);
+
+            expect(createPreview).toHaveBeenNthCalledWith(
+                1,
+                'file1',
+                'file_path_1/file_name_1',
+                mockLibraryFiles.id,
+                systemPreviewVersions,
+                mockAmqpService,
+                mockConfig
+            );
+
+            expect(createPreview).toHaveBeenNthCalledWith(
+                2,
+                'file2',
+                'file_path_2/file_name_2',
+                mockLibraryFiles.id,
+                systemPreviewVersions,
+                mockAmqpService,
+                mockConfig
+            );
+        });
+
+        test('Force preview generation with failedOnly', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    cursor: {},
+                    totalCount: 1,
+                    list: [
+                        {
+                            id: 'file1',
+                            file_path: 'file_path_1',
+                            file_name: 'file_name_1',
+                            library: mockLibraryFiles.id,
+                            previews_status: [{status: 0, message: 'msg'}]
+                        },
+                        {
+                            id: 'file2',
+                            file_path: 'file_path_2',
+                            file_name: 'file_name_2',
+                            library: mockLibraryFiles.id,
+                            previews_status: [
+                                {status: -1, message: 'msg'},
+                                {status: 0, message: 'msg'}
+                            ]
+                        }
+                    ]
+                })
+            };
+
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.utils.logger': logger as winston.Winston,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.infra.amqpService': mockAmqpService as IAmqpService
+            });
+
+            await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', failedOnly: true});
+
+            expect(createPreview).toBeCalledTimes(1);
+
+            expect(createPreview).toHaveBeenCalledWith(
+                'file2',
+                'file_path_2/file_name_2',
+                mockLibraryFiles.id,
+                systemPreviewVersions,
+                mockAmqpService,
+                mockConfig
+            );
+        });
+
+        test('Force preview generation with filters', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    cursor: {},
+                    totalCount: 1,
+                    list: [
+                        {
+                            id: 'file1',
+                            file_path: 'file_path_1',
+                            file_name: 'file_name_1',
+                            library: mockLibraryFiles.id,
+                            previews_status: [{status: 0, message: 'msg'}]
+                        }
+                    ]
+                })
+            };
+
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.utils.logger': logger as winston.Winston,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.infra.amqpService': mockAmqpService as IAmqpService
+            });
+
+            await files.forcePreviewsGeneration({
+                ctx,
+                libraryId: 'libraryId',
+                filters: [
+                    {
+                        field: 'file_name',
+                        condition: AttributeCondition.EQUAL,
+                        value: 'file_name_1'
+                    }
+                ]
+            });
+
+            expect(mockRecordDomain.find).toBeCalledTimes(1);
+            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
+                {
+                    field: 'file_name',
+                    condition: AttributeCondition.EQUAL,
+                    value: 'file_name_1'
+                }
+            ]);
+
+            expect(createPreview).toBeCalledTimes(1);
+            expect(createPreview).toHaveBeenCalledWith(
+                'file1',
+                'file_path_1/file_name_1',
+                mockLibraryFiles.id,
+                systemPreviewVersions,
+                mockAmqpService,
+                mockConfig
+            );
+        });
     });
 
     describe('getRootPathByKey', () => {

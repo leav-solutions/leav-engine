@@ -4,18 +4,19 @@
 import {FileType} from '@leav/utils';
 import {IAuthApp} from 'app/auth/authApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {IFilesManagerDomain, TRIGGER_NAME_UPLOAD_FILE} from '../../domain/filesManager/filesManagerDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IRecordFilterLight} from 'domain/record/recordDomain';
 import express, {Express, NextFunction, Response} from 'express';
+import {withFilter} from 'graphql-subscriptions';
+import {FileUpload} from 'graphql-upload';
 import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
-import {API_KEY_PARAM_NAME} from '../../_types/auth';
-import {FileUpload} from 'graphql-upload';
-import {withFilter} from 'graphql-subscriptions';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IRecord} from '_types/record';
+import {IFilesManagerDomain, TRIGGER_NAME_UPLOAD_FILE} from '../../domain/filesManager/filesManagerDomain';
+import {API_KEY_PARAM_NAME} from '../../_types/auth';
 
 export interface IFilesManagerApp {
     init(): Promise<void>;
@@ -38,7 +39,7 @@ interface IUploadParams {
     files: Array<{data: Promise<FileUpload>; uid: string; size?: number; replace?: boolean}>;
 }
 
-export default function ({
+export default function({
     'core.domain.filesManager': filesManagerDomain = null,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.auth': authApp = null,
@@ -94,7 +95,13 @@ export default function ({
                     }
 
                     extend type Mutation {
-                        forcePreviewsGeneration(libraryId: ID!, recordId: ID, failedOnly: Boolean): Boolean!
+                        # Force previews generation for the given records. If filters is specified, it will perform a search applying these filters and generate previews for results. If both filters and recordIds are specified, filters will be ignored. If failedOnly is true, only failed previews will be generated.
+                        forcePreviewsGeneration(
+                            libraryId: ID!,
+                            recordIds: [ID!],
+                            filters: [RecordFilterInput],
+                            failedOnly: Boolean
+                        ): Boolean!
                         upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadList!]!
                     }
 
@@ -134,11 +141,27 @@ export default function ({
                             return filesManagerDomain.storeFiles({library, nodeId, files: filesData}, ctx);
                         },
                         async forcePreviewsGeneration(
-                            parent,
-                            {libraryId, recordId, failedOnly},
-                            ctx
+                            _,
+                            {
+                                libraryId,
+                                recordIds,
+                                filters,
+                                failedOnly
+                            }: {
+                                libraryId: string;
+                                recordIds: string[];
+                                filters: IRecordFilterLight[];
+                                failedOnly: boolean;
+                            },
+                            ctx: IQueryInfos
                         ): Promise<boolean> {
-                            return filesManagerDomain.forcePreviewsGeneration({ctx, libraryId, recordId, failedOnly});
+                            return filesManagerDomain.forcePreviewsGeneration({
+                                libraryId,
+                                recordIds,
+                                filters,
+                                failedOnly,
+                                ctx
+                            });
                         }
                     },
                     Subscription: {
