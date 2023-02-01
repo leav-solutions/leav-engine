@@ -16,17 +16,23 @@ import {handleMoveEvent} from './handleFileSystem/handleMoveEvent';
 import {handleRemoveEvent} from './handleFileSystem/handleRemoveEvent';
 import {handleUpdateEvent} from './handleFileSystem/handleUpdateEvent';
 import winston = require('winston');
+import { IDbService } from 'infra/db/dbService';
+import { IDbUtils } from 'infra/db/dbUtils';
+import { ITreeRepo } from 'infra/tree/treeRepo';
 
 export interface IHandleFileSystemDeps {
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
     treeDomain: ITreeDomain;
     recordRepo: IRecordRepo;
+    treeRepo: ITreeRepo;
     amqpService: IAmqpService;
     updateRecordLastModif: UpdateRecordLastModifFunc;
     logger: winston.Winston;
     config: Config.IConfig;
     utils: IUtils;
+    dbService: IDbService;
+    dbUtils: IDbUtils
 }
 
 export interface IHandleFileSystemResources {
@@ -40,7 +46,6 @@ export const handleEventFileSystem = async (
     ctx: IQueryInfos
 ) => {
     const event = scanMsg.event;
-
     switch (event) {
         case FileEvents.CREATE:
             await handleCreateEvent(scanMsg, resources, deps, ctx);

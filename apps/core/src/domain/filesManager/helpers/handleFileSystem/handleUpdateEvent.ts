@@ -46,10 +46,10 @@ export const handleUpdateEvent = async (
     };
 
     // Update datas
-    await updateRecordFile(recordData, record.id, library, deps, ctx);
+    updateRecordFile(recordData, record.id, library, deps, ctx);
 
     // Regenerate Previews
-    await requestPreviewGeneration(
+    requestPreviewGeneration(
         record.id,
         scanMsg.pathAfter,
         library,

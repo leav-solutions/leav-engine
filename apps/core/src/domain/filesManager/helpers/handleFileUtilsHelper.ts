@@ -20,11 +20,17 @@ import {AttributeCondition, IRecord, Operator} from '../../../_types/record';
 import updateRecordLastModif from '../../value/helpers/updateRecordLastModif';
 import {IHandleFileSystemDeps} from './handleFileSystem';
 import winston = require('winston');
+import { IDbService } from 'infra/db/dbService';
+import { aql } from 'arangojs';
+import { IDbUtils } from 'infra/db/dbUtils';
+import { IDbDocument } from 'infra/db/_types';
 
 interface IGetRecord {
     recordDomain: IRecordDomain;
     config: Config.IConfig;
     logger: winston.Winston;
+    dbService: IDbService;
+    dbUtils: IDbUtils
 }
 
 export const getRecord = async (
@@ -33,63 +39,54 @@ export const getRecord = async (
     retrieveInactive: boolean,
     deps: IGetRecord,
     ctx: IQueryInfos
-): Promise<IRecord> => {
+): Promise<IRecord|null> => {
     let recordsFind: IListWithCursor<IRecord>;
+    const coll = deps.dbService.db.collection(recordLibrary);
 
-    try {
-        const filters = [];
+    const queryParts = [aql`FOR r in ${coll}`];
+    let results: IDbDocument[];
+    if (recordId) {
+        queryParts.push(aql`FILTER (r.id == ${recordId})`);
+    } else if (!!fileInode) {
+        queryParts.push(aql`FILTER (r.${FilesAttributes.INODE} == ${fileInode} 
+                OR (r.${FilesAttributes.FILE_PATH} == ${filePath} AND r.${FilesAttributes.FILE_NAME} == ${fileName})
+            )`);
+    } else {
+        queryParts.push(aql`FILTER (r.${FilesAttributes.FILE_PATH} == ${filePath} 
+                AND r.${FilesAttributes.FILE_NAME} == ${fileName}
+            )`);
+    }
+    if (!retrieveInactive) {
+        queryParts.push(aql`FILTER r.active == true`);
+    }
+    queryParts.push(aql`SORT r._key DESC`);
+    queryParts.push(aql`RETURN MERGE(r, {library: ${recordLibrary}})`);
+    const query  = aql.join(queryParts, '\n');
 
-        if (typeof recordId !== 'undefined') {
-            filters.push({
-                field: 'id',
-                condition: AttributeCondition.EQUAL,
-                value: recordId
-            });
-        } else {
-            filters.push(
-                ...(!!fileInode
-                    ? [
-                          {
-                              field: FilesAttributes.INODE,
-                              condition: AttributeCondition.EQUAL,
-                              value: String(fileInode)
-                          },
-                          {operator: Operator.OR}
-                      ]
-                    : []),
-                {operator: Operator.OPEN_BRACKET},
-                {field: FilesAttributes.FILE_NAME, condition: AttributeCondition.EQUAL, value: fileName},
-                {operator: Operator.AND},
-                {field: FilesAttributes.FILE_PATH, condition: AttributeCondition.EQUAL, value: filePath},
-                {operator: Operator.CLOSE_BRACKET}
-            );
-        }
-
-        recordsFind = await deps.recordDomain.find({
-            params: {
-                library: recordLibrary,
-                filters,
-                retrieveInactive
-            },
+    try{
+        results = await deps.dbService.execute({
+            query,
+            withTotalCount: false,
             ctx
         });
     } catch (e) {
         deps.logger.warn(`[FilesManager] Error when search record : ${join(filePath, fileName)}`);
-        return;
+        return null;
     }
 
-    if (recordsFind.totalCount === 0) {
-        deps.logger.warn(`[FilesManager] no record find using fileName and filePath: ${filePath} ${fileName}`);
-        return;
+    const count = results.length;
+    if (count === 0) {
+        return null;
     }
 
-    if (recordsFind.totalCount > 1) {
+    if (count > 1) {
         deps.logger.warn(
             `[FilesManager] Multiple record find using fileName and filePath: ${recordsFind.list.toString()}`
         );
     }
+    
+    return deps.dbUtils.cleanup(results[0]);
 
-    return recordsFind.list[0];
 };
 
 export const getParentRecord = async (
@@ -98,22 +95,30 @@ export const getParentRecord = async (
     deps: IHandleFileSystemDeps,
     ctx: IQueryInfos
 ): Promise<IRecord | null> => {
-    const parentPath = fullParentPath.split('/');
+    let parentPath = fullParentPath.split('/');
     const parentName = parentPath.pop();
 
-    const folderParent = await deps.recordDomain.find({
-        params: {
-            library,
-            filters: [
-                {field: FilesAttributes.FILE_NAME, condition: AttributeCondition.EQUAL, value: parentName},
-                {operator: Operator.AND},
-                {field: FilesAttributes.FILE_PATH, condition: AttributeCondition.EQUAL, value: join(...parentPath)}
-            ]
-        },
-        ctx
-    });
+    if (parentPath.length === 0) {
+        parentPath = ['.'];
+    }
 
-    const parent = folderParent.list[0] ?? null;
+    const coll = deps.dbService.db.collection(library);
+    const query = aql`FOR r in ${coll} FILTER (r.${FilesAttributes.FILE_NAME} == ${parentName} AND r.${FilesAttributes.FILE_PATH} == ${join(...parentPath)}) RETURN MERGE(r, {library: ${library}})`;
+    let results: IDbDocument[];
+    try{
+        results = await deps.dbService.execute({
+            query,
+            withTotalCount: false,
+            ctx
+        });
+    } catch (e) {
+        deps.logger.warn(`[FilesManager] Error when search parent folder : ${fullParentPath}`);
+        return null;
+    }
+
+    const parent = results[0] 
+        ? deps.dbUtils.cleanup(results[0])
+        : null;
 
     return parent;
 };

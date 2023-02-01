@@ -101,6 +101,10 @@ describe('FilesManager', () => {
         }
     };
 
+    const mockTreeDomain: Mockify<ITreeDomain> = {
+        getNodesByRecord: jest.fn()
+    };
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -109,7 +113,8 @@ describe('FilesManager', () => {
         const files = filesManager({
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService,
+            'core.domain.tree': mockTreeDomain as ITreeDomain
         });
 
         await files.init();

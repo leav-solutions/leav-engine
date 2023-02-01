@@ -22,8 +22,8 @@ export const generatePreviewMsg = (
 ): IPreviewMessage => {
     const input = pathAfter;
 
-    const firstDigit = recordId.toString().substr(0, 1);
-    const secondDigit = recordId.toString().substr(1, 1);
+    const recordIdAsString = recordId.toString();
+    const [firstDigit, secondDigit] = [...recordIdAsString];
 
     const output = `${firstDigit}/${secondDigit}/${recordId}`;
     const extension = 'png';

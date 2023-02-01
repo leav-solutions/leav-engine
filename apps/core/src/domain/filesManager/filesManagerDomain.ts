@@ -137,30 +137,35 @@ export default function ({
     'core.infra.record': recordRepo = null,
     translator = null
 }: IDeps): IFilesManagerDomain {
-    const _onMessage = async (msg: string): Promise<void> => {
-        let msgBody: IFileEventData;
-        const ctx: IQueryInfos = {
+    let _defaultCtx: IQueryInfos;
+    const _initDefaultCtx = async () => {
+        _defaultCtx = {
             userId: config.filesManager.userId,
             queryId: uuidv4()
         };
-
-        const groupsNodes = (
-            await Promise.all(
-                config.filesManager.userGroupsIds.split(',').map(groupId =>
-                    treeDomain.getNodesByRecord({
-                        treeId: USERS_GROUP_TREE_NAME,
-                        record: {
-                            id: groupId,
-                            library: USERS_GROUP_LIB_NAME
-                        },
-                        ctx
-                    })
-                )
+        const groupsNodes = (await Promise.all(
+            config.filesManager.userGroupsIds.split(',').map(groupId =>
+                treeDomain.getNodesByRecord({
+                    treeId: USERS_GROUP_TREE_NAME,
+                    record: {
+                        id: groupId,
+                        library: USERS_GROUP_LIB_NAME
+                    },
+                    ctx: {..._defaultCtx}
+                })
             )
-        )[0];
-
-        ctx.groupsId = groupsNodes;
-
+        ))[0];
+        _defaultCtx.groupsId = groupsNodes;
+    }
+    
+    
+    const _onMessage = async (msg: string): Promise<void> => {
+        let msgBody: IFileEventData;
+        const ctx: IQueryInfos = {
+            ..._defaultCtx,
+            queryId: uuidv4()
+        };
+        
         try {
             msgBody = JSON.parse(msg);
             _validateMsg(msgBody);
@@ -174,7 +179,6 @@ export default function ({
 
             return;
         }
-
         messagesHandler.handleMessage(msgBody, ctx);
     };
 
@@ -270,6 +274,8 @@ export default function ({
                 logger
             });
 
+            await _initDefaultCtx();
+            
             return amqpService.consume(
                 config.filesManager.queues.events,
                 config.filesManager.routingKeys.events,

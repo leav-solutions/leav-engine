@@ -6,7 +6,10 @@ import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import { IDbService } from 'infra/db/dbService';
+import { IDbUtils } from 'infra/db/dbUtils';
 import {IRecordRepo} from 'infra/record/recordRepo';
+import { ITreeRepo } from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IConfig} from '_types/config';
@@ -25,7 +28,10 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.infra.record'?: IRecordRepo;
+    'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
+    'core.infra.db.dbService'?: IDbService;
+    'core.infra.db.dbUtils'?: IDbUtils;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     config?: IConfig;
 }
@@ -42,8 +48,11 @@ export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.infra.record': recordRepo = null,
+    'core.infra.tree': treeRepo = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    'core.infra.db.dbService': dbService = null,
+    'core.infra.db.dbUtils': dbUtils = null
 }: IDeps): IMessagesHandlerHelper {
     const _messagesQueue: IFileEventData[] = [];
     let _isWorking: boolean = false;
@@ -67,11 +76,14 @@ export default function ({
                     valueDomain,
                     treeDomain,
                     recordRepo,
+                    treeRepo,
                     amqpService,
                     updateRecordLastModif,
                     logger,
                     config,
-                    utils
+                    utils,
+                    dbService,
+                    dbUtils
                 },
                 ctx
             );
