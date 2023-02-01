@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {objectToNameValueArray} from '@leav/utils';
-import {getFiltersFromRequest} from 'components/LibraryItemsList/FiltersPanel/getFiltersFromRequest';
 import {gql} from 'graphql-tag';
 import {i18n, TFunction} from 'i18next';
 import _, {pick} from 'lodash';
+import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
 import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';

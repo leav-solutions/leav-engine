@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import gql from 'graphql-tag';
+import {gql} from '@apollo/client';
 import {TreeBehavior} from '_gqlTypes/globalTypes';
 
 export interface IActiveTree {
@@ -28,6 +28,7 @@ export const getActiveTree = gql`
                 id @client
             }
             label @client
+            behavior @client
             permissions @client {
                 access_tree @client
                 edit_children @client

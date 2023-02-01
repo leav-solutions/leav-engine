@@ -12,6 +12,7 @@ import {SharedStateSelectionType} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockInitialState} from '__mocks__/common/mockRedux/mockInitialState';
 import {mockRecord} from '__mocks__/common/record';
+import {mockTree} from '__mocks__/common/tree';
 import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import Navigation from './Navigation';
@@ -78,13 +79,14 @@ describe('Navigation', () => {
                     totalCount: 1,
                     list: [
                         {
+                            ...mockTree,
                             __typename: 'Tree',
                             id: 'my_tree',
                             label: {fr: 'My Tree Label', en: 'My Tree Label'},
                             behavior: TreeBehavior.standard,
                             system: false,
-                            libraries: [mockTreeLibrary],
-                            permissions: mockTreeNodePermissions
+                            permissions: mockTreeNodePermissions,
+                            libraries: [mockTreeLibrary]
                         }
                     ]
                 }
@@ -106,6 +108,7 @@ describe('Navigation', () => {
                     totalCount: 1,
                     list: [
                         {
+                            ...mockTree,
                             __typename: 'Tree',
                             id: 'my_tree',
                             libraries: [mockTreeLibrary],

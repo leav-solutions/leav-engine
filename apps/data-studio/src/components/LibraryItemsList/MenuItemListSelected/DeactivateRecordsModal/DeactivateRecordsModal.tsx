@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import {Modal} from 'antd';
-import {getRequestFromFilters} from 'components/LibraryItemsList/FiltersPanel/getRequestFromFilter';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {deactivateRecordsMutation} from 'graphQL/mutations/records/deactivateRecordsMutation';
@@ -12,6 +11,7 @@ import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useTranslation} from 'react-i18next';
 import {resetSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import {getRequestFromFilters} from 'utils/getRequestFromFilter';
 import {DEACTIVATE_RECORDS, DEACTIVATE_RECORDSVariables} from '_gqlTypes/DEACTIVATE_RECORDS';
 import {ISharedStateSelectionSearch} from '_types/types';
 

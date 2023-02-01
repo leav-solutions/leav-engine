@@ -2,13 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
-import {
-    AttributeConditionFilter,
-    IFilter,
-    IFilterTree,
-    IQueryFilter,
-    ThroughConditionFilter
-} from '../../../_types/types';
+import {AttributeConditionFilter, IFilter, IFilterTree, IQueryFilter, ThroughConditionFilter} from '../_types/types';
 
 export const getRequestFromFilters = (filters: IFilter[]): IQueryFilter[] => {
     const queryFilters = filters

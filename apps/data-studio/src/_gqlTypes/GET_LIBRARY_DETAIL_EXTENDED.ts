@@ -9,12 +9,12 @@
 import {
     AttributeFormat,
     AttributeType,
+    LibraryBehavior,
     RecordFilterCondition,
     RecordFilterOperator,
     SortOrder,
     ViewSizes,
-    ViewTypes,
-    LibraryBehavior
+    ViewTypes
 } from './globalTypes';
 
 // ====================================================

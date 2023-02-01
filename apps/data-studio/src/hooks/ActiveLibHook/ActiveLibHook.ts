@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {useCallback, useMemo} from 'react';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {
     getActiveLibrary,
     IActiveLibrary,
@@ -13,6 +14,7 @@ export const initialActiveLibrary = {
     id: '',
     name: '',
     filter: '',
+    behavior: LibraryBehavior.standard,
     gql: {
         searchableFields: '',
         query: '',

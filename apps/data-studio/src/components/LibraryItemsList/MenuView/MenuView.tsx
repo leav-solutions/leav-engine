@@ -21,10 +21,10 @@ import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {localizedTranslation, prepareView} from '../../../utils';
+import {getRequestFromFilters} from '../../../utils/getRequestFromFilter';
 import {InfoChannel, InfoType, TypeSideItem} from '../../../_types/types';
 import IconViewType from '../../IconViewType/IconViewType';
 import FiltersDropdown from '../FiltersDropdown';
-import {getRequestFromFilters} from '../FiltersPanel/getRequestFromFilter';
 
 interface IMenuViewProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;

@@ -28,7 +28,7 @@ function HeaderInfo(): JSX.Element {
                 switch (info.channel) {
                     case InfoChannel.trigger:
                         return {...acc, triggerInfos: [...acc.triggerInfos, info]};
-                    case InfoChannel.serverError:
+                    case InfoChannel.passive:
                     default:
                         return {...acc, passiveInfos: [...acc.passiveInfos, info]};
                 }

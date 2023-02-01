@@ -487,6 +487,7 @@ export default function({
                 recordsToProcess = records;
             }
 
+            let generationRequested = 0;
             for (const r of recordsToProcess) {
                 if (
                     !failedOnly ||
@@ -503,10 +504,11 @@ export default function({
                         amqpService,
                         config
                     );
+                    generationRequested++;
                 }
             }
 
-            return true;
+            return generationRequested > 0;
         },
         getRootPathByKey(rootKey) {
             const rootPathConfig = config.files.rootPaths;

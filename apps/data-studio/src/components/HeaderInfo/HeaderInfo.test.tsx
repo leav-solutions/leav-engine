@@ -58,7 +58,7 @@ describe('HeaderInfo', () => {
             type: InfoType.basic,
             time: 1234567890,
             priority: InfoPriority.low,
-            channel: InfoChannel.serverError
+            channel: InfoChannel.passive
         };
 
         const mockState = {

@@ -15,8 +15,8 @@ import saveViewMutation, {
 } from '../../../../graphQL/mutations/views/saveViewMutation';
 import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
+import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {ISystemTranslation, IView} from '../../../../_types/types';
-import {getRequestFromFilters} from '../../FiltersPanel/getRequestFromFilter';
 
 interface IFormValues {
     label: ISystemTranslation;
