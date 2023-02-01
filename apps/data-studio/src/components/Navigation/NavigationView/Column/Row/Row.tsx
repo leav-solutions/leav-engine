@@ -1,7 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {InfoCircleOutlined, LockFilled, RightOutlined, SearchOutlined, WarningOutlined} from '@ant-design/icons';
+import {
+    InfoCircleOutlined,
+    LockFilled,
+    PictureOutlined,
+    RightOutlined,
+    SearchOutlined,
+    WarningOutlined
+} from '@ant-design/icons';
 import {themeVars} from '@leav/ui';
 import {Badge, message, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
@@ -9,7 +16,9 @@ import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
+import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
 import {useLang} from 'hooks/LangHook/LangHook';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {setSelection} from 'reduxStore/selection';
@@ -122,6 +131,8 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
         navigation: state.navigation
     }));
     const dispatch = useAppDispatch();
+    const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
+
     const parentElement = navigation.path[depth - 1];
     const recordLabel = treeElement.record.whoAmI.label;
     const isAccessible = treeElement.permissions.access_tree;
@@ -191,6 +202,14 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
         dispatch(setNavigationPath(newPath));
     };
 
+    const _handleClickGeneratePreviews = () => {
+        setDisplayPreviewConfirm(true);
+    };
+
+    const _handleClosePreviewGenerationConfirm = () => {
+        setDisplayPreviewConfirm(false);
+    };
+
     const record: IRecordIdentityWhoAmI = {
         ...treeElement.record.whoAmI,
         label: recordLabel ?? ''
@@ -220,6 +239,11 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                   title: t('navigation.actions.classified_in'),
                   icon: <SearchOutlined />,
                   onClick: _handleClickClassifiedIn
+              },
+              {
+                  title: t('files.generate_previews'),
+                  icon: <PictureOutlined />,
+                  onClick: _handleClickGeneratePreviews
               }
           ]
         : [];
@@ -273,6 +297,13 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                     </div>
                     <div>{isAccessible && <RightOutlined />}</div>
                 </>
+            )}
+            {displayPreviewConfirm && (
+                <TriggerPreviewsGenerationModal
+                    libraryId={record.library.id}
+                    recordIds={[record.id]}
+                    onClose={_handleClosePreviewGenerationConfirm}
+                />
             )}
         </RowWrapper>
     );

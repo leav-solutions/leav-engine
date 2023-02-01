@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from 'utils';
-import {AttributeFormat, AttributeType, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, LibraryBehavior, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {
     AttributeConditionType,
     ISystemTranslation,
@@ -17,12 +17,6 @@ export interface ILibraryDetailExtendedFilter {
     value?: string;
     condition?: AttributeConditionType | TreeConditionFilter;
     operator?: OperatorFilter;
-}
-
-export enum LibraryBehavior {
-    STANDARD = 'standard',
-    FILES = 'files',
-    DIRECTORIES = 'directories'
 }
 
 export interface ILibraryDetailExtendedDefaultView {

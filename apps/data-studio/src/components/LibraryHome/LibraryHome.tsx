@@ -55,6 +55,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
                 id: library,
                 name: currentLibLabel,
                 filter,
+                behavior: currentLibrary.behavior,
                 attributes,
                 gql: {
                     searchableFields,

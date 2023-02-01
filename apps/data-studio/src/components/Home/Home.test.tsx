@@ -5,12 +5,12 @@ import userEvent from '@testing-library/user-event';
 import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
-import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 import {act, render, screen, within} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockLibrary} from '__mocks__/common/library';
+import {mockTree} from '__mocks__/common/tree';
 import Home from './Home';
 import {FAVORITE_LIBRARIES_KEY} from './LibrariesList/LibrariesList';
 import {FAVORITE_TREES_KEY} from './TreeList/TreeList';
@@ -117,6 +117,7 @@ describe('Home', () => {
                     trees: {
                         list: [
                             {
+                                ...mockTree,
                                 id: 'treeA',
                                 behavior: TreeBehavior.standard,
                                 label: {fr: 'Tree A'},
@@ -134,6 +135,7 @@ describe('Home', () => {
                                 }
                             },
                             {
+                                ...mockTree,
                                 id: 'treeB',
                                 behavior: TreeBehavior.standard,
                                 label: {fr: 'Tree B'},

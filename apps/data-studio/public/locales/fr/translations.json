@@ -557,5 +557,12 @@
         "task-canceledBy": "Annulée par",
         "task-duration": "Durée",
         "task-confirmCancel": "Êtes-vous sûr de vouloir annuler cette tâche ?"
+    },
+    "files": {
+        "generate_previews": "Générer les aperçus",
+        "previews_generation_confirm": "Êtes-vous sûr de vouloir générer les aperçus ?",
+        "previews_generation_failed_only": "Seulement si la précédente génération a échoué",
+        "previews_generation_success": "La génération des aperçus a bien été lancée",
+        "previews_generation_nothing_to_do": "Aucun aperçu à générer"
     }
 }

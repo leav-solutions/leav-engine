@@ -16,6 +16,7 @@ export const getTreeListQuery = gql`
                         label
                     }
                 }
+                behavior
                 permissions {
                     access_tree
                     edit_children

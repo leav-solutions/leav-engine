@@ -5,7 +5,6 @@ import {DownloadOutlined, LoadingOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {Button, Modal, Result, StepProps, Steps} from 'antd';
 import AttributesSelectionList from 'components/AttributesSelectionList';
-import {getRequestFromFilters} from 'components/LibraryItemsList/FiltersPanel/getRequestFromFilter';
 import useNotification from 'hooks/useNotification';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {useState} from 'react';
@@ -14,6 +13,7 @@ import {addInfo} from 'reduxStore/infos';
 import {setIsPanelOpen} from 'reduxStore/notifications';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
+import {getRequestFromFilters} from 'utils/getRequestFromFilter';
 import {exportQuery} from '../../../../../graphQL/queries/export/exportQuery';
 import {useActiveLibrary} from '../../../../../hooks/ActiveLibHook/ActiveLibHook';
 import {EXPORT, EXPORTVariables} from '../../../../../_gqlTypes/EXPORT';
@@ -88,7 +88,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
             const info: IInfo = {
                 type: InfoType.error,
                 priority: InfoPriority.high,
-                channel: InfoChannel.serverError,
+                channel: InfoChannel.passive,
                 content: `${t('error.error_occurred')}: ${error.message}`
             };
 

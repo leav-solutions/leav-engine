@@ -557,5 +557,12 @@
         "task-canceledBy": "Canceled by",
         "task-duration": "Duration",
         "task-confirmCancel": "Do you really want to cancel this task?"
+    },
+    "files": {
+        "generate_previews": "Generate previews",
+        "previews_generation_confirm": "Do you really want to generate previews?",
+        "previews_generation_failed_only": "Only if previous generation failed",
+        "previews_generation_success": "Previews generation started",
+        "previews_generation_nothing_to_do": "No preview to generate"
     }
 }

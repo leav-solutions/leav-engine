@@ -1,9 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {PictureOutlined} from '@ant-design/icons';
 import {themeVars} from '@leav/ui';
 import {Descriptions} from 'antd';
+import BasicButton from 'components/shared/BasicButton';
+import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
 import {IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -17,7 +21,9 @@ const Sidebar = styled.div`
     background: ${themeVars.secondaryBg};
     border-top-right-radius: 3px;
     z-index: 1;
-    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
 `;
 
 const Path = styled.div`
@@ -31,8 +37,23 @@ const Path = styled.div`
     font-family: monospace;
 `;
 
+const ActionsWrapper = styled.div`
+    padding: 0.5rem 1rem;
+    border-top: 1px solid ${themeVars.borderColor};
+    text-align: center;
+`;
+
 function FileModalSidebar({fileData}: IFileModalSidebarProps): JSX.Element {
     const {t} = useTranslation();
+    const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
+
+    const _handleClickGeneratePreviews = () => {
+        setDisplayPreviewConfirm(true);
+    };
+
+    const _handleClosePreviewGenerationConfirm = () => {
+        setDisplayPreviewConfirm(false);
+    };
 
     const summaryContent = [
         {
@@ -66,24 +87,38 @@ function FileModalSidebar({fileData}: IFileModalSidebarProps): JSX.Element {
     ];
 
     return (
-        <Sidebar data-testid="sidebar-section">
-            <Descriptions layout="horizontal" column={1}>
-                {summaryContent.map((item, index) => {
-                    const {title, value} = item;
+        <>
+            <Sidebar data-testid="sidebar-section">
+                <Descriptions layout="horizontal" column={1} style={{padding: '1rem'}}>
+                    {summaryContent.map((item, index) => {
+                        const {title, value} = item;
 
-                    return (
-                        <Descriptions.Item
-                            key={index}
-                            label={title}
-                            style={{paddingBottom: '5px'}}
-                            labelStyle={{fontWeight: 'bold', width: '50%'}}
-                        >
-                            {value}
-                        </Descriptions.Item>
-                    );
-                })}
-            </Descriptions>
-        </Sidebar>
+                        return (
+                            <Descriptions.Item
+                                key={index}
+                                label={title}
+                                style={{paddingBottom: '5px'}}
+                                labelStyle={{fontWeight: 'bold', width: '50%'}}
+                            >
+                                {value}
+                            </Descriptions.Item>
+                        );
+                    })}
+                </Descriptions>
+                <ActionsWrapper>
+                    <BasicButton icon={<PictureOutlined />} onClick={_handleClickGeneratePreviews}>
+                        {t('files.generate_previews')}
+                    </BasicButton>
+                </ActionsWrapper>
+            </Sidebar>
+            {displayPreviewConfirm && (
+                <TriggerPreviewsGenerationModal
+                    libraryId={fileData.whoAmI.library.id}
+                    recordIds={[fileData.id]}
+                    onClose={_handleClosePreviewGenerationConfirm}
+                />
+            )}
+        </>
     );
 }
 

@@ -17,9 +17,9 @@ import styled from 'styled-components';
 import {defaultView} from '../../../../constants/constants';
 import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../../utils';
+import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {IView} from '../../../../_types/types';
 import IconViewType from '../../../IconViewType';
-import {getRequestFromFilters} from '../../FiltersPanel/getRequestFromFilter';
 
 interface IWrapperProps {
     selected: boolean;

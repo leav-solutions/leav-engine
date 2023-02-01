@@ -7,11 +7,13 @@ import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees,
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 
 export interface IActiveLibrary {
     id: string;
     name: string;
     filter: string;
+    behavior: LibraryBehavior;
     attributes: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[];
     gql: {
         searchableFields: string;
@@ -32,6 +34,7 @@ export const getActiveLibrary = gql`
             id @client
             name @client
             filter @client
+            behavior @client
             attributes @client
             gql @client {
                 searchableFields @client

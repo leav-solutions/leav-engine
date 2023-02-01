@@ -288,7 +288,7 @@ export enum InfoPriority {
 
 export enum InfoChannel {
     trigger = 'trigger',
-    serverError = 'passive'
+    passive = 'passive'
 }
 
 export interface IBaseInfo {

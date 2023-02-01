@@ -84,7 +84,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                         info = {
                             content: errorContent,
                             type: InfoType.error,
-                            channel: InfoChannel.serverError
+                            channel: InfoChannel.passive
                         };
                         break;
                 }

@@ -16,6 +16,7 @@ type ActiveLibrary {
     id: String!,
     name: String!,
     filter: String!,
+    behavior: LibraryBehavior!,
     attributes: [Any]!,
     gql: ActiveLibraryGqlNames!,
     trees: [String]!,
@@ -32,6 +33,7 @@ type ActiveTree {
     behavior: TreeBehavior!
     libraries: [ActiveTreeLibraries!]!,
     label: String!,
+    behavior: TreeBehavior!,
     permissions: ActiveTreePermissions!
 }
 

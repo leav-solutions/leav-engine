@@ -2,18 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
+    CloudUploadOutlined,
     DeleteOutlined,
     ExpandAltOutlined,
     InfoCircleOutlined,
     OrderedListOutlined,
-    SearchOutlined,
-    CloudUploadOutlined
+    PictureOutlined,
+    SearchOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, message} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
+import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
 import UploadFiles from 'components/UploadFiles';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
@@ -48,6 +50,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
     }));
     const hasSelection = !!selectionState.selection.selected.length;
     const [activeTree] = useActiveTree();
+    const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
 
     const [editRecordModalVisible, setEditRecordModalVisible] = useState(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
@@ -103,6 +106,13 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
 
     const _handleClickClassifiedIn = () => message.warning(t('global.feature_not_available'));
     const _handleClickOrder = () => message.warning(t('global.feature_not_available'));
+    const _handleClickGeneratePreviews = () => {
+        setDisplayPreviewConfirm(true);
+    };
+
+    const _handleClosePreviewGenerationConfirm = () => {
+        setDisplayPreviewConfirm(false);
+    };
 
     const canEditChildren = parent ? parent.permissions.edit_children : activeTree.permissions.edit_children;
     const canDetach = !!parent && parent.permissions.detach;
@@ -137,6 +147,12 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             onClick: _handleClickClassifiedIn,
             label: t('navigation.actions.classified_in'),
             displayCondition: true
+        },
+        {
+            label: t('files.generate_previews'),
+            icon: <PictureOutlined />,
+            onClick: _handleClickGeneratePreviews,
+            displayCondition: activeTree.behavior === TreeBehavior.files
         },
         {key: 'divider', type: 'divider', displayCondition: canEditChildren},
         {
@@ -209,6 +225,13 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
                         </Dropdown>
                     </span>
                 </>
+            )}
+            {displayPreviewConfirm && (
+                <TriggerPreviewsGenerationModal
+                    libraryId={parent.record.whoAmI.library.id}
+                    recordIds={[parent.record.id]}
+                    onClose={_handleClosePreviewGenerationConfirm}
+                />
             )}
         </>
     );

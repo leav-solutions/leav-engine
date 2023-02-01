@@ -1,19 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {act} from 'react-dom/test-utils';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {render} from '_tests/testUtils';
 import {mockLibraryPermissions} from '__mocks__/common/library';
 import {IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import {initialActiveLibrary, useActiveLibrary} from './ActiveLibHook';
-import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 
 describe('ActiveLibHook', () => {
     const mockActiveLibrary: IActiveLibrary = {
         id: 'test',
         name: 'test',
         filter: 'test',
+        behavior: LibraryBehavior.standard,
         attributes: [],
         gql: {
             searchableFields: 'test',

@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useQuery} from '@apollo/client';
-import {getFiltersFromRequest} from 'components/LibraryItemsList/FiltersPanel/getFiltersFromRequest';
 import extractAttributesFromLibrary from 'components/LibraryItemsList/helpers/extractAttributesFromLibrary';
 import {defaultView, getSelectedViewKey} from 'constants/constants';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
@@ -10,6 +9,7 @@ import {getViewByIdQuery} from 'graphQL/queries/views/getViewById';
 import {useUser} from 'hooks/UserHook/UserHook';
 import {useState} from 'react';
 import {prepareView} from 'utils';
+import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {GET_VIEW, GET_VIEWVariables} from '_gqlTypes/GET_VIEW';

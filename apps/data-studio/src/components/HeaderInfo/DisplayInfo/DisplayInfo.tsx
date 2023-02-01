@@ -1,12 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloseOutlined} from '@ant-design/icons';
-import {Badge, message as antMessage} from 'antd';
+import {CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, WarningOutlined} from '@ant-design/icons';
+import {AntdThemeToken} from '@leav/ui';
+import {Badge, message as antMessage, Space, theme} from 'antd';
 import React, {useEffect} from 'react';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {IInfo, InfoType} from '../../../_types/types';
+
+interface IMessageProps {
+    $themeToken: AntdThemeToken;
+}
 
 const Wrapper = styled.div`
     padding: 0.3rem 1rem;
@@ -31,6 +36,21 @@ const CustomBadge = styled(Badge)`
         border: none;
         box-shadow: none;
     }
+`;
+
+const ErrorMessage = styled(Space)<IMessageProps>`
+    color: ${props => props.$themeToken.colorError};
+    font-weight: 800;
+`;
+
+const WarningMessage = styled(Space)<IMessageProps>`
+    color: ${props => props.$themeToken.colorWarning};
+    font-weight: 600;
+`;
+
+const SuccessMessage = styled(Space)<IMessageProps>`
+    color: ${props => props.$themeToken.colorSuccess};
+    font-weight: 600;
 `;
 
 interface IDisplayInfoProps {
@@ -93,29 +113,30 @@ function DisplayInfo({
     );
 }
 
-const ErrorMessage = styled.span`
-    color: #e02020;
-    font-weight: 800;
-`;
-
-const WarningMessage = styled.span`
-    color: orange;
-    font-weight: 600;
-`;
-
-const SuccessMessage = styled.span`
-    color: greenyellow;
-    font-weight: 600;
-`;
-
 const Message = ({info}: {info: IInfo}) => {
+    const {token: themeToken} = theme.useToken();
     switch (info.type) {
         case InfoType.error:
-            return <ErrorMessage>{info.content}</ErrorMessage>;
+            return (
+                <ErrorMessage $themeToken={themeToken}>
+                    <CloseCircleOutlined />
+                    {info.content}
+                </ErrorMessage>
+            );
         case InfoType.warning:
-            return <WarningMessage>{info.content}</WarningMessage>;
+            return (
+                <WarningMessage $themeToken={themeToken}>
+                    <WarningOutlined />
+                    {info.content}
+                </WarningMessage>
+            );
         case InfoType.success:
-            return <SuccessMessage>{info.content}</SuccessMessage>;
+            return (
+                <SuccessMessage $themeToken={themeToken}>
+                    <CheckCircleOutlined />
+                    {info.content}
+                </SuccessMessage>
+            );
         case InfoType.basic:
         default:
             return <span>{info.content}</span>;
