@@ -8,7 +8,7 @@ import {useEditApplicationContext} from 'context/EditApplicationContext';
 import {Formik, FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Form, FormProps, Icon, Message} from 'semantic-ui-react';
+import {Checkbox, Form, FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
 import {ApplicationType} from '_gqlTypes/globalTypes';
@@ -87,8 +87,8 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
     const initialValues: ApplicationInfosFormValues = {
         ...defaultApplicationData,
         ...application,
-        libraries: (application?.libraries ?? []).map(lib => lib.id),
-        trees: (application?.trees ?? []).map(tree => tree.id)
+        libraries: application?.libraries !== null ? (application?.libraries ?? []).map(lib => lib.id) : null,
+        trees: application?.trees !== null ? (application?.trees ?? []).map(tree => tree.id) : null
     };
 
     const _handleSubmit = (values: ApplicationInfosFormValues) => {
@@ -141,8 +141,8 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                 })
                 .nullable(),
             endpoint: yup.string().required(),
-            libraries: yup.array(yup.string()),
-            trees: yup.array(yup.string())
+            libraries: yup.array(yup.string()).nullable(),
+            trees: yup.array(yup.string()).nullable()
         });
 
     const _renderForm = ({
@@ -172,6 +172,26 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
             const name: string = data.name;
 
             await setFieldValue(name, value);
+        };
+
+        const _handleChangeNoLibraries = async (e, data) => {
+            const value = data.checked;
+
+            await setFieldValue('libraries', value ? null : []);
+
+            if (!isNewApp) {
+                submitForm();
+            }
+        };
+
+        const _handleChangeNoTrees = async (e, data) => {
+            const value = data.checked;
+
+            await setFieldValue('trees', value ? null : []);
+
+            if (!isNewApp) {
+                submitForm();
+            }
         };
 
         const _handleChangeWithSubmit = async (e, data) => {
@@ -314,38 +334,60 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                     </FormFieldWrapper>
                     {values.type === ApplicationType.internal && (
                         <>
-                            <FormFieldWrapper error={_getErrorByField('libraries')}>
-                                <LibrariesSelector
-                                    label={t('applications.libraries')}
-                                    placeholder={t('applications.all_libraries')}
-                                    fluid
-                                    selection
-                                    multiple
-                                    width="4"
+                            <div className="field">
+                                <label>{t('applications.libraries')}</label>
+                                <FormFieldWrapper error={_getErrorByField('libraries')}>
+                                    <LibrariesSelector
+                                        placeholder={t('applications.all_libraries')}
+                                        fluid
+                                        selection
+                                        multiple
+                                        width="4"
+                                        disabled={isReadOnly || values.libraries === null}
+                                        name="libraries"
+                                        aria-label="id"
+                                        onChange={_handleChangeWithSubmit}
+                                        onBlur={_handleBlur}
+                                        value={values.libraries ?? []}
+                                    />
+                                </FormFieldWrapper>
+                                <Checkbox
+                                    toggle
+                                    label={t('applications.no_library')}
+                                    name="no_libraries"
+                                    onChange={_handleChangeNoLibraries}
+                                    checked={values.libraries === null}
                                     disabled={isReadOnly}
-                                    name="libraries"
-                                    aria-label="id"
-                                    onChange={_handleChangeWithSubmit}
-                                    onBlur={_handleBlur}
-                                    value={values.libraries}
+                                    aria-label="no_libraries"
                                 />
-                            </FormFieldWrapper>
-                            <FormFieldWrapper error={_getErrorByField('trees')}>
-                                <TreesSelector
-                                    label={t('applications.trees')}
-                                    placeholder={t('applications.all_trees')}
-                                    fluid
-                                    selection
-                                    multiple
-                                    width="4"
+                            </div>
+                            <div className="field">
+                                <label>{t('applications.trees')}</label>
+                                <FormFieldWrapper error={_getErrorByField('trees')}>
+                                    <TreesSelector
+                                        placeholder={t('applications.all_trees')}
+                                        fluid
+                                        selection
+                                        multiple
+                                        width="4"
+                                        disabled={isReadOnly || values.trees === null}
+                                        name="trees"
+                                        aria-label="id"
+                                        onChange={_handleChangeWithSubmit}
+                                        onBlur={_handleBlur}
+                                        value={values.trees ?? []}
+                                    />
+                                </FormFieldWrapper>
+                                <Checkbox
+                                    toggle
+                                    label={t('applications.no_tree')}
+                                    name="no_libraries"
+                                    onChange={_handleChangeNoTrees}
+                                    checked={values.trees === null}
                                     disabled={isReadOnly}
-                                    name="trees"
-                                    aria-label="id"
-                                    onChange={_handleChangeWithSubmit}
-                                    onBlur={_handleBlur}
-                                    value={values.trees}
+                                    aria-label="no_trees"
                                 />
-                            </FormFieldWrapper>
+                            </div>
                             <FormFieldWrapper error={_getErrorByField('icon.whoAmI')}>
                                 <FileSelector
                                     onChange={_handleIconChange}

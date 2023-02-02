@@ -7,7 +7,7 @@ import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION
 export type ApplicationInfosFormValues = Override<
     Omit<GET_APPLICATION_BY_ID_applications_list, 'permissions' | 'install' | 'url' | 'settings'>,
     {
-        libraries: string[];
-        trees: string[];
+        libraries: string[] | null;
+        trees: string[] | null;
     }
 >;

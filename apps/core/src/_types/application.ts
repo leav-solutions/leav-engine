@@ -30,8 +30,8 @@ export interface IApplication extends ICoreEntity {
     system?: boolean;
     description: ISystemTranslation;
     type: ApplicationTypes;
-    libraries: string[];
-    trees: string[];
+    libraries: string[] | null; // Empty array = all libraries. null = no libraries
+    trees: string[] | null; // Empty array = all trees. null = no trees
     color?: string;
     icon?: IRecord;
     module: string;
