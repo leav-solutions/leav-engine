@@ -15,6 +15,7 @@ import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import {FileUpload} from 'graphql-upload';
 import {withFilter} from 'graphql-subscriptions';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IRecord} from '_types/record';
 
 export interface IFilesManagerApp {
     init(): Promise<void>;
@@ -63,12 +64,7 @@ export default function ({
 
                     type UploadList {
                         uid: String!,
-                        recordId: String!
-                    }
-
-                    extend type Mutation {
-                        forcePreviewsGeneration(libraryId: ID!, recordId: ID, failedOnly: Boolean): Boolean!
-                        upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadList!]!
+                        record: Record!
                     }
 
                     input UploadFiltersInput {
@@ -93,17 +89,38 @@ export default function ({
                         progress: StreamProgress!
                     }
 
+                    extend type Query {
+                        isFileExistsAsChild(treeId: ID!, parentNode: ID, filename: String!): Boolean
+                    }
+
+                    extend type Mutation {
+                        forcePreviewsGeneration(libraryId: ID!, recordId: ID, failedOnly: Boolean): Boolean!
+                        upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadList!]!
+                    }
+
                     extend type Subscription {
                         upload(filters: UploadFiltersInput): UploadProgress!
                     }
                 `,
                 resolvers: {
+                    Query: {
+                        async isFileExistsAsChild(
+                            _,
+                            {treeId, parentNode, filename}: {treeId: string; parentNode?: string; filename: string},
+                            ctx: IQueryInfos
+                        ): Promise<boolean> {
+                            return filesManagerDomain.isFileExistsAsChild(
+                                {treeId, filename, parentNodeId: parentNode ?? null},
+                                ctx
+                            );
+                        }
+                    },
                     Mutation: {
                         async upload(
                             _,
                             {library, nodeId, files}: IUploadParams,
                             ctx: IQueryInfos
-                        ): Promise<Array<{filename: string; recordId: string}>> {
+                        ): Promise<Array<{filename: string; record: IRecord}>> {
                             // progress before resolver?
                             const filesData = await Promise.all(
                                 files.map(async ({data, uid, size, replace}) => ({

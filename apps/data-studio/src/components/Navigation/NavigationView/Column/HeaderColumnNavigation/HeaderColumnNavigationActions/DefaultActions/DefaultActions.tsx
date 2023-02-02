@@ -24,7 +24,7 @@ import {addInfo} from 'redux/infos';
 import {setNavigationPath} from 'redux/navigation';
 import {useAppDispatch, useAppSelector} from 'redux/store';
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
-import {TreeBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
@@ -113,7 +113,9 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             icon: <CloudUploadOutlined />,
             onClick: _handleClickUpload,
             label: t('upload.title'),
-            displayCondition: activeTree.behavior === TreeBehavior.files
+            displayCondition:
+                activeTree.behavior === TreeBehavior.files &&
+                (!parent || parent?.record.whoAmI.library.behavior === LibraryBehavior.directories)
         },
         {
             key: 'details',
@@ -162,6 +164,10 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         return displayedItems;
     }, []);
 
+    const _handleUploadCompleted = () => {
+        refreshTreeContent();
+    };
+
     return (
         <>
             {isUploadFilesModalVisible && (
@@ -170,6 +176,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
                     libraryId={activeTree.libraries[0].id}
                     multiple
                     onClose={_handleCloseUpload}
+                    onCompleted={_handleUploadCompleted}
                 />
             )}
             {editRecordModalVisible && (

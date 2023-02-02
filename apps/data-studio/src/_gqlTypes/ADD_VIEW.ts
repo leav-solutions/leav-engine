@@ -13,7 +13,8 @@ import {
     RecordFilterCondition,
     RecordFilterOperator,
     SortOrder,
-    FileType
+    FileType,
+    LibraryBehavior
 } from './globalTypes';
 
 // ====================================================
@@ -71,6 +72,7 @@ export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library
 
 export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
 }

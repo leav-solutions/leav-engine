@@ -16,7 +16,7 @@ import {
     RecordFormElementsValueLinkValue,
     RecordFormElementsValueTreeValue
 } from 'hooks/useGetRecordForm/useGetRecordForm';
-import {FormElementTypes} from '_gqlTypes/globalTypes';
+import {FormElementTypes, LibraryBehavior} from '_gqlTypes/globalTypes';
 import {mockAttribute, mockAttributeLink, mockAttributeTree, mockFormAttribute} from './attribute';
 import {mockRecordWhoAmI} from './record';
 import {mockModifier} from './value';
@@ -113,6 +113,7 @@ export const mockFormElementLink: FormElement<{}> = {
         ...mockAttributeLink,
         linked_library: {
             id: 'test_lib',
+            behavior: LibraryBehavior.standard,
             label: {fr: 'Lib'},
             gqlNames: {query: 'test_lib', type: 'TestLib'},
             permissions: {

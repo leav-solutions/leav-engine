@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FileType} from './globalTypes';
+import {LibraryBehavior, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL fragment: RecordIdentity
@@ -19,6 +19,7 @@ export interface RecordIdentity_whoAmI_library_gqlNames {
 
 export interface RecordIdentity_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: RecordIdentity_whoAmI_library_gqlNames;
 }

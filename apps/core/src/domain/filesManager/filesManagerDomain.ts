@@ -58,6 +58,12 @@ interface IStoreFilesParams {
     files: Array<{data: FileUpload; uid: string; size?: number; replace?: boolean}>;
 }
 
+interface IIsFileExistsAsChild {
+    treeId: string;
+    parentNodeId: string;
+    filename: string;
+}
+
 export const TRIGGER_NAME_UPLOAD_FILE = 'UPLOAD_FILE';
 
 export interface IFilesManagerDomain {
@@ -70,7 +76,8 @@ export interface IFilesManagerDomain {
     storeFiles(
         {library, nodeId, files}: IStoreFilesParams,
         ctx: IQueryInfos
-    ): Promise<Array<{filename: string; recordId: string}>>;
+    ): Promise<Array<{filename: string; record: IRecord}>>;
+    isFileExistsAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
 }
 
 interface IDeps {
@@ -199,26 +206,27 @@ export default function ({
         async storeFiles(
             {library, nodeId, files}: IStoreFilesParams,
             ctx: IQueryInfos
-        ): Promise<Array<{filename: string; recordId: string}>> {
+        ): Promise<Array<{filename: string; record: IRecord}>> {
             const filenames = files.map(f => f.data.filename);
 
             // Check if files have the same filename
             if (filenames.filter((f, i) => filenames.indexOf(f) !== i).length) {
-                throw new ValidationError({condition: Errors.DUPLICATE_FILENAMES});
+                throw utils.generateExplicitValidationError('files', Errors.DUPLICATE_FILENAMES, ctx.lang);
             }
 
             const treeId = treeDomain.getLibraryTreeId(library, ctx);
-            const record = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
+            const recordNode = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
 
             // default path is root path
             let path = '.';
 
-            if (!!record) {
-                const libProperties = await libraryDomain.getLibraryProperties(record.library, ctx);
+            if (!!recordNode) {
+                const libProperties = await libraryDomain.getLibraryProperties(recordNode.library, ctx);
+
                 path =
                     libProperties.behavior === LibraryBehavior.DIRECTORIES
-                        ? `${record.file_path}/${record.file_name}`
-                        : record.file_path;
+                        ? `${recordNode.file_path}/${recordNode.file_name}`
+                        : recordNode.file_path;
             }
 
             // get root key of library from config
@@ -229,7 +237,7 @@ export default function ({
             const rootPath = this.getRootPathByKey(rootKey);
             const fullPath = `${rootPath}/${path}`;
 
-            const recordIds = [];
+            const records = [];
 
             for (const file of files) {
                 file.replace = file.replace ?? false;
@@ -259,12 +267,12 @@ export default function ({
                     ctx
                 });
 
-                let recordId;
+                let record;
 
                 if (fileExists.totalCount && file.replace) {
-                    recordId = fileExists.list[0].id;
+                    record = fileExists.list[0];
                 } else {
-                    recordId = (await recordDomain.createRecord(library, ctx)).id;
+                    record = await recordDomain.createRecord(library, ctx);
 
                     // if file already exists, we modify the filename
                     if (fileExists.totalCount && !file.replace) {
@@ -283,7 +291,7 @@ export default function ({
 
                     await valueDomain.saveValueBatch({
                         library,
-                        recordId,
+                        recordId: record.id,
                         values: [
                             {
                                 attribute: FilesAttributes.FILE_NAME,
@@ -319,10 +327,10 @@ export default function ({
 
                 await storeUploadFile(file.data, fullPath, getProgress, file.size);
 
-                recordIds.push({uid: file.uid, recordId});
+                records.push({uid: file.uid, record});
             }
 
-            return recordIds;
+            return records;
         },
         getPreviewVersion(): IPreviewVersion[] {
             return systemPreviewVersions;
@@ -491,6 +499,14 @@ export default function ({
             }
 
             return pathsByKeys[rootKey];
+        },
+        async isFileExistsAsChild(
+            {treeId, filename, parentNodeId}: IIsFileExistsAsChild,
+            ctx: IQueryInfos
+        ): Promise<boolean> {
+            const nodes = await treeDomain.getElementChildren({treeId, nodeId: parentNodeId, ctx});
+
+            return nodes.list.findIndex(n => n.record[FilesAttributes.FILE_NAME] === filename) !== -1;
         },
         async getOriginalPath({fileId, libraryId, ctx}) {
             // Get file record

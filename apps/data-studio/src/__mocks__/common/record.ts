@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FileType} from '_gqlTypes/globalTypes';
+import {FileType, LibraryBehavior} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI, RecordIdentity_whoAmI_preview} from '_gqlTypes/RecordIdentity';
 import {IRecordIdentityWhoAmI} from '_types/types';
 
@@ -27,6 +27,7 @@ export const mockRecord: RecordIdentity_whoAmI = {
     label: 'record_label',
     library: {
         id: 'record_lib',
+        behavior: LibraryBehavior.standard,
         label: {fr: 'Test Lib'},
         gqlNames: {
             query: 'record_libs',

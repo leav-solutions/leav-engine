@@ -369,7 +369,13 @@
         "upload_step_title":  "Upload",
         "next": "Suivant",
         "previous": "Précédent",
-        "dragger_content": "Cliquez ou faites glisser les fichiers dans cette zone"
+        "dragger_content": "Cliquez ou faites glisser les fichiers dans cette zone",
+        "replace_modal": {
+            "title": "Ce fichier existe déjà",
+            "replaceBtn": "Remplacer",
+            "keepBtn": "Conserver les deux",
+            "message": "Un fichier avec le nom \"{{filename}}\" existe déjà dans ce dossier. Que voulez-vous faire ?"
+        }
     },
     "import": {
         "title": "Importer des données",

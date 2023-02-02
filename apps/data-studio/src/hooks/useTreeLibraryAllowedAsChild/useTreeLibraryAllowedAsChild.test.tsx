@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {renderHook, waitFor} from '@testing-library/react';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 import {mockRecord} from '__mocks__/common/record';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import {useTreeLibraryAllowedAsChild} from '.';
@@ -11,6 +12,8 @@ describe('useTreeLibraryAllowedAsChild', () => {
     const mockLib2 = {
         library: {
             id: 'library_2',
+            behavior: LibraryBehavior.standard,
+            system: false,
             label: {fr: 'Library 2'}
         },
         settings: {
@@ -23,6 +26,8 @@ describe('useTreeLibraryAllowedAsChild', () => {
     const mockLib3 = {
         library: {
             id: 'library_3',
+            behavior: LibraryBehavior.standard,
+            system: false,
             label: {fr: 'Library 3'}
         },
         settings: {
@@ -35,6 +40,8 @@ describe('useTreeLibraryAllowedAsChild', () => {
     const mockLib1 = {
         library: {
             id: 'library_1',
+            behavior: LibraryBehavior.standard,
+            system: false,
             label: {fr: 'Library 1'}
         },
         settings: {
@@ -59,6 +66,8 @@ describe('useTreeLibraryAllowedAsChild', () => {
                         list: [
                             {
                                 id: 'my_tree',
+                                behavior: TreeBehavior.standard,
+                                system: false,
                                 libraries: [mockLib1, mockLib2, mockLib3]
                             }
                         ]

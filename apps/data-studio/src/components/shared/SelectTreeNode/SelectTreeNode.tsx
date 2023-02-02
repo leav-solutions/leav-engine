@@ -27,6 +27,7 @@ interface ISelectTreeNodeProps {
     onCheck?: (selection: ITreeNodeWithRecord[]) => void;
     multiple?: boolean;
     canSelectRoot?: boolean;
+    selectableLibraries?: string[]; // all by default
 }
 
 const _constructTreeContent = (data: TREE_NODE_CHILDREN_treeNodeChildren_list[]): ITreeNodeWithRecord[] => {
@@ -74,7 +75,8 @@ function SelectTreeNode({
     onCheck,
     selectedNode: initSelectedNode,
     multiple = false,
-    canSelectRoot = false
+    canSelectRoot = false,
+    selectableLibraries
 }: ISelectTreeNodeProps): JSX.Element {
     const [{lang}] = useLang();
     const {t} = useTranslation();
@@ -185,7 +187,14 @@ function SelectTreeNode({
 
     const _handleSelect = (_, e: {selected: boolean; node: any}) => {
         const node = treeMap[e.node.key];
-        if (!canSelectRoot && node.id === tree.id) {
+        const isRoot = node.id === tree.id;
+
+        if (
+            (!canSelectRoot && isRoot) ||
+            (!isRoot &&
+                typeof selectableLibraries !== 'undefined' &&
+                selectableLibraries.indexOf(node.record.whoAmI.library.id) === -1)
+        ) {
             return;
         }
 

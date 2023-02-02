@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordPropertyWithAttribute} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {mockFormAttribute} from './attribute';
 import {mockPreviews} from './record';
@@ -14,6 +15,7 @@ export const mockModifier: RecordIdentity = {
         label: 'admin',
         library: {
             id: 'users',
+            behavior: LibraryBehavior.standard,
             label: {fr: 'Utilisateurs'},
             gqlNames: {
                 query: 'users',

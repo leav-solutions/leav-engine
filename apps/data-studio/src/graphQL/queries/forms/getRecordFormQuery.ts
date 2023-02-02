@@ -142,6 +142,7 @@ export const getRecordFormQuery = gql`
                         linked_library {
                             id
                             label
+                            behavior
                             gqlNames {
                                 type
                                 query

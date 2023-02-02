@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FileType} from './globalTypes';
+import {LibraryBehavior, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: ME
@@ -19,6 +19,7 @@ export interface ME_me_whoAmI_library_gqlNames {
 
 export interface ME_me_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: ME_me_whoAmI_library_gqlNames;
 }

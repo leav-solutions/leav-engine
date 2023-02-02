@@ -6,11 +6,12 @@ import RecordPreview from 'components/shared/RecordPreview';
 import {useLang} from 'hooks/LangHook/LangHook';
 import styled, {CSSObject} from 'styled-components';
 import {getFileUrl, getPreviewSize, localizedTranslation} from 'utils';
+import {GET_USER_userWhoAmI} from '_gqlTypes/GET_USER';
 import {RecordIdentity_whoAmI_preview} from '_gqlTypes/RecordIdentity';
 import {IRecordIdentityWhoAmI, PreviewSize} from '../../../_types/types';
 
 export interface IRecordCardProps {
-    record: IRecordIdentityWhoAmI;
+    record: IRecordIdentityWhoAmI | GET_USER_userWhoAmI;
     size: PreviewSize;
     style?: CSSObject;
     previewStyle?: CSSObject;

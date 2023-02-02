@@ -36,7 +36,7 @@ export const customTheme: ThemeConfig = {
         colorBorder: themeVars.borderColor,
         colorBorderSecondary: themeVars.borderLightColor,
         colorSplit: themeVars.borderColor,
-        wireframe: true
+        wireframe: false
     },
     components: {
         Layout: {

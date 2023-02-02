@@ -91,7 +91,7 @@ function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
                 />
             )}
             {isUploadFilesModalVisible && (
-                <UploadFiles libraryId={library.id} multiple={false} onClose={_handleUploadFilesClose} />
+                <UploadFiles libraryId={library.id} multiple onClose={_handleUploadFilesClose} />
             )}
         </Wrapper>
     );

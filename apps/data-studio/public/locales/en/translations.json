@@ -369,7 +369,13 @@
         "upload_step_title":  "Upload",
         "next": "Next",
         "previous": "Previous",
-        "dragger_content": "Click or drag file to this area"
+        "dragger_content": "Click or drag file to this area",
+        "replace_modal": {
+            "title": "This file already exists",
+            "replaceBtn": "Replace",
+            "keepBtn": "Keep both",
+            "message": "A file with the name \"{{filename}}\" already exists in this folder. What would you like to do?"
+        }
     },
     "import": {
         "title": "Data import",

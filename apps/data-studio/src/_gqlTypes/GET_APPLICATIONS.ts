@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FileType} from './globalTypes';
+import {LibraryBehavior, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATIONS
@@ -19,6 +19,7 @@ export interface GET_APPLICATIONS_applications_list_icon_whoAmI_library_gqlNames
 
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: GET_APPLICATIONS_applications_list_icon_whoAmI_library_gqlNames;
 }
