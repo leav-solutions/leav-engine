@@ -90,6 +90,7 @@ function TreeList(): JSX.Element {
             }
         },
         {
+            title: <></>,
             dataIndex: 'isFavorite',
             key: 'isFavorite',
             width: 20,
@@ -118,8 +119,12 @@ function TreeList(): JSX.Element {
         }
     ];
 
+    if (!treeListQuery.loading && !treeList.length) {
+        return null;
+    }
+
     return (
-        <div className="wrapper-page">
+        <div className="wrapper-page" data-testid="trees-list">
             <ListHeader>
                 <TreeIcon style={{fontSize: '1.5rem'}} />
                 {t('home.trees')}
