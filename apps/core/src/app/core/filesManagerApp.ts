@@ -144,7 +144,7 @@ export default function ({
                     Subscription: {
                         upload: {
                             subscribe: withFilter(
-                                () => eventsManager.suscribe([TRIGGER_NAME_UPLOAD_FILE]),
+                                () => eventsManager.subscribe([TRIGGER_NAME_UPLOAD_FILE]),
                                 (payload, variables) => {
                                     let toReturn = true;
 
