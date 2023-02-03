@@ -39,7 +39,7 @@ function UploadFiles({
 }: IUploadFilesProps): JSX.Element {
     const {t} = useTranslation();
     const {token} = theme.useToken();
-    const [selectedNode, setSelectedNode] = useState<ITreeNodeWithRecord>();
+    const [selectedNodeKey, setSelectedNodeKey] = useState<string>(defaultSelectedKey);
     const [files, setFiles] = useState<any[]>([]);
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
     const [status, setStatus] = useState<StepProps['status']>('wait');
@@ -55,9 +55,11 @@ function UploadFiles({
         showUploadList: true,
         fileList: files,
         disabled: files.some(f => typeof f.status !== 'undefined'),
-        onDrop: async data => {
-            const newFiles = await _checkFilesExist(selectedNode?.id, data.dataTransfer.files);
-            setFiles([...files, ...newFiles]);
+        beforeUpload: async pickedFiles => {
+            const newFiles = await _checkFilesExist(selectedNodeKey, [pickedFiles]);
+            setFiles(prevState => prevState.concat(newFiles));
+
+            return false;
         },
         onRemove: file => {
             const newFileList = files.filter(f => f.uid !== file.uid);
@@ -172,7 +174,7 @@ function UploadFiles({
         await runUpload({
             variables: {
                 library: libraryId,
-                nodeId: selectedNode.key,
+                nodeId: selectedNodeKey,
                 files: files.map(f => ({
                     data: f,
                     uid: f.uid,
@@ -210,7 +212,7 @@ function UploadFiles({
     const onSelectPath = async (node: ITreeNodeWithRecord, selected: boolean) => {
         const newSelectedNode = !selected ? undefined : node;
 
-        setSelectedNode(newSelectedNode);
+        setSelectedNodeKey(newSelectedNode.key);
 
         if (selected && files.length) {
             const newFiles = await _checkFilesExist(newSelectedNode?.id, files);
@@ -257,7 +259,7 @@ function UploadFiles({
                         <SelectTreeNode
                             tree={{id: filesTreeId}}
                             onSelect={onSelectPath}
-                            selectedNode={selectedNode?.key || defaultSelectedKey}
+                            selectedNode={selectedNodeKey}
                             canSelectRoot
                             selectableLibraries={[directoriesLibraryId]}
                         />
@@ -301,7 +303,7 @@ function UploadFiles({
                             <Button onClick={() => prev()}>{t('upload.previous')}</Button>
                         )}
                         {currentStep < steps.length - 2 && (
-                            <Button disabled={!selectedNode} type="primary" onClick={() => next()}>
+                            <Button disabled={!selectedNodeKey} type="primary" onClick={() => next()}>
                                 {t('upload.next')}
                             </Button>
                         )}

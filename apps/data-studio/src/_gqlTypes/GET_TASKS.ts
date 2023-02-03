@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TaskFiltersInput, FileType, LibraryBehavior, TaskStatus} from './globalTypes';
+import {TaskFiltersInput, LibraryBehavior, FileType, TaskStatus} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_TASKS

@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {LibraryBehavior} from './globalTypes';
+import {LibraryBehavior, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_GLOBAL_SETTINGS
@@ -30,6 +30,7 @@ export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview_file_lib
 
 export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview_file_library;
 }
 

@@ -13,8 +13,8 @@ import {
     RecordFilterCondition,
     RecordFilterOperator,
     SortOrder,
-    FileType,
-    LibraryBehavior
+    LibraryBehavior,
+    FileType
 } from './globalTypes';
 
 // ====================================================

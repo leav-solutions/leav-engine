@@ -33,6 +33,7 @@ import {IUtils} from 'utils/utils';
 import increment from 'add-filename-increment';
 import {Progress} from 'progress-stream';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import * as Path from 'path';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -225,7 +226,7 @@ export default function ({
 
                 path =
                     libProperties.behavior === LibraryBehavior.DIRECTORIES
-                        ? `${recordNode.file_path}/${recordNode.file_name}`
+                        ? Path.join(recordNode.file_path, recordNode.file_name)
                         : recordNode.file_path;
             }
 
@@ -235,7 +236,7 @@ export default function ({
             );
 
             const rootPath = this.getRootPathByKey(rootKey);
-            const fullPath = `${rootPath}/${path}`;
+            const fullPath = Path.join(rootPath, path);
 
             const records = [];
 

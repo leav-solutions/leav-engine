@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {LibraryBehavior, FileType} from './globalTypes';
+import {FileType, LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_USER

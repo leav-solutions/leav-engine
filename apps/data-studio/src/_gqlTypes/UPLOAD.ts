@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FileInput, LibraryBehavior} from './globalTypes';
+import {FileInput, LibraryBehavior, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: UPLOAD
@@ -30,6 +30,7 @@ export interface UPLOAD_upload_record_whoAmI_preview_file_library {
 
 export interface UPLOAD_upload_record_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: UPLOAD_upload_record_whoAmI_preview_file_library;
 }
 
