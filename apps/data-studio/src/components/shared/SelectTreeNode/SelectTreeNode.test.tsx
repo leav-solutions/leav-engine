@@ -29,6 +29,7 @@ describe('SelectTreeNode', () => {
                                     id: 'id1',
                                     record: {
                                         id: 'id1',
+                                        active: true,
                                         whoAmI: {
                                             id: 'id1',
                                             label: 'label1',
@@ -75,6 +76,7 @@ describe('SelectTreeNode', () => {
                                     id: 'id2',
                                     record: {
                                         id: 'id2',
+                                        active: true,
                                         whoAmI: {
                                             __typename: 'RecordIdentity',
                                             id: 'id2',

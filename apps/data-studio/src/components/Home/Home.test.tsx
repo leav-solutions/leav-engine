@@ -7,9 +7,10 @@ import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 import {act, render, screen, within} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
+import {mockLibrary} from '__mocks__/common/library';
 import Home from './Home';
 import {FAVORITE_LIBRARIES_KEY} from './LibrariesList/LibrariesList';
 import {FAVORITE_TREES_KEY} from './TreeList/TreeList';
@@ -117,12 +118,12 @@ describe('Home', () => {
                         list: [
                             {
                                 id: 'treeA',
+                                behavior: TreeBehavior.standard,
                                 label: {fr: 'Tree A'},
                                 libraries: [
                                     {
                                         library: {
-                                            id: 'idLib',
-                                            label: {fr: 'labelLib', en: 'labelLib'}
+                                            ...mockLibrary
                                         }
                                     }
                                 ],
@@ -134,12 +135,12 @@ describe('Home', () => {
                             },
                             {
                                 id: 'treeB',
+                                behavior: TreeBehavior.standard,
                                 label: {fr: 'Tree B'},
                                 libraries: [
                                     {
                                         library: {
-                                            id: 'idLib',
-                                            label: {fr: 'labelLib', en: 'labelLib'}
+                                            ...mockLibrary
                                         }
                                     }
                                 ],
