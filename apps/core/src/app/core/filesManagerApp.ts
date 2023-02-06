@@ -90,7 +90,7 @@ export default function ({
                     }
 
                     extend type Query {
-                        isFileExistsAsChild(treeId: ID!, parentNode: ID, filename: String!): Boolean
+                        doesFileExistAsChild(treeId: ID!, parentNode: ID, filename: String!): Boolean
                     }
 
                     extend type Mutation {
@@ -104,12 +104,12 @@ export default function ({
                 `,
                 resolvers: {
                     Query: {
-                        async isFileExistsAsChild(
+                        async doesFileExistAsChild(
                             _,
                             {treeId, parentNode, filename}: {treeId: string; parentNode?: string; filename: string},
                             ctx: IQueryInfos
                         ): Promise<boolean> {
-                            return filesManagerDomain.isFileExistsAsChild(
+                            return filesManagerDomain.doesFileExistAsChild(
                                 {treeId, filename, parentNodeId: parentNode ?? null},
                                 ctx
                             );

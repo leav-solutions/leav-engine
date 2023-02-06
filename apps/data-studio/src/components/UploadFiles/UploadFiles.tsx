@@ -2,23 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InboxOutlined, LoadingOutlined, FileOutlined, CheckCircleTwoTone} from '@ant-design/icons';
-import {Upload, Modal, Button, Space, Steps, theme, StepProps, Alert, Divider} from 'antd';
+import {Upload, Modal, Button, Steps, theme, StepProps, Alert, Divider, UploadFile} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import SelectTreeNodeModal from '../shared/SelectTreeNodeModal/SelectTreeNodeModal';
 import {useQuery, useSubscription, useMutation, useLazyQuery} from '@apollo/client';
 import {getUploadUpdates} from 'graphQL/subscribes/upload/getUploadUpdates';
 import {ME} from '../../_gqlTypes/ME';
 import {getMe} from '../../graphQL/queries/userData/me';
-import {UPLOAD, UPLOADVariables, UPLOAD_upload} from '_gqlTypes/UPLOAD';
+import {UPLOAD, UPLOADVariables} from '_gqlTypes/UPLOAD';
 import {uploadMutation} from '../../graphQL/mutations/upload/uploadMutation';
-import {ITreeNode, ITreeNodeWithRecord} from '../../_types/types';
+import {ITreeNodeWithRecord} from '../../_types/types';
 import SelectTreeNode from '../shared/SelectTreeNode';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
-import {IS_FILE_EXISTS_AS_CHILD, IS_FILE_EXISTS_AS_CHILDVariables} from '_gqlTypes/IS_FILE_EXISTS_AS_CHILD';
-import {isFileExistsAsChild} from 'graphQL/queries/records/isFileExistsAsChild';
+import {DOES_FILE_EXIST_AS_CHILD, DOES_FILE_EXIST_AS_CHILDVariables} from '_gqlTypes/DOES_FILE_EXIST_AS_CHILD';
+import {doesFileExistAsChild} from 'graphQL/queries/records/doesFileExistAsChild';
+import {useUser} from '../../hooks/UserHook/UserHook';
 
 const {confirm} = Modal;
 
@@ -40,8 +40,8 @@ function UploadFiles({
     const {t} = useTranslation();
     const {token} = theme.useToken();
     const [selectedNodeKey, setSelectedNodeKey] = useState<string>(defaultSelectedKey);
-    const [files, setFiles] = useState<any[]>([]);
-    const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
+    const [files, setFiles] = useState<Array<UploadFile & {replace?: boolean}>>([]);
+    const [user] = useUser();
     const [status, setStatus] = useState<StepProps['status']>('wait');
     const [currentStep, setCurrentStep] = useState(!!defaultSelectedKey ? 1 : 0);
     const [filesTreeId, setFilesTreeId] = useState<string>();
@@ -55,21 +55,21 @@ function UploadFiles({
         showUploadList: true,
         fileList: files,
         disabled: files.some(f => typeof f.status !== 'undefined'),
-        beforeUpload: async pickedFiles => {
+        beforeUpload: async (pickedFiles: UploadFile) => {
             const newFiles = await _checkFilesExist(selectedNodeKey, [pickedFiles]);
             setFiles(prevState => prevState.concat(newFiles));
 
             return false;
         },
-        onRemove: file => {
+        onRemove: (file: UploadFile) => {
             const newFileList = files.filter(f => f.uid !== file.uid);
             setFiles(newFileList);
         },
-        iconRender: (file, _) => {
+        iconRender: (file: UploadFile) => {
             if (file.status === 'uploading') {
                 return <LoadingOutlined />;
             } else if (file.status === 'success') {
-                return <CheckCircleTwoTone twoToneColor="#52c41a" />;
+                return <CheckCircleTwoTone twoToneColor={token.colorSuccess} />;
             }
 
             return <FileOutlined />;
@@ -77,16 +77,16 @@ function UploadFiles({
         progress: {showInfo: true, strokeWidth: 2}
     };
 
-    const [runIsFileExistsAsChild] = useLazyQuery<IS_FILE_EXISTS_AS_CHILD, IS_FILE_EXISTS_AS_CHILDVariables>(
-        isFileExistsAsChild,
+    const [runDoesFileExistAsChild] = useLazyQuery<DOES_FILE_EXIST_AS_CHILD, DOES_FILE_EXIST_AS_CHILDVariables>(
+        doesFileExistAsChild,
         {
             fetchPolicy: 'no-cache'
         }
     );
 
-    const _checkFilesExist = async (parentNode: string, filesToCheck: any[]) => {
+    const _checkFilesExist = async (parentNode: string, filesToCheck: Array<UploadFile & {replace?: boolean}>) => {
         for (const f of filesToCheck) {
-            const isFileExists = await runIsFileExistsAsChild({
+            const isFileExists = await runDoesFileExistAsChild({
                 variables: {
                     treeId: filesTreeId,
                     parentNode: parentNode !== filesTreeId ? parentNode : null,
@@ -94,7 +94,7 @@ function UploadFiles({
                 }
             });
 
-            if (isFileExists.data.isFileExistsAsChild) {
+            if (isFileExists.data.doesFileExistAsChild) {
                 f.replace = await showReplaceModal(f.name);
             }
         }
@@ -152,8 +152,8 @@ function UploadFiles({
 
     // Sub to update files upload progress
     useSubscription(getUploadUpdates, {
-        variables: {filters: {userId: userData?.me?.id}},
-        skip: !userData?.me?.id,
+        variables: {filters: {userId: user?.userId}},
+        skip: !user?.userId,
         onSubscriptionData: subData => {
             const uploadData = subData.subscriptionData.data.upload;
             const newUploadFileList = [...files];
@@ -170,7 +170,7 @@ function UploadFiles({
         }
     });
 
-    const startUpload = async () => {
+    const startUpload = async (): Promise<void> => {
         await runUpload({
             variables: {
                 library: libraryId,
@@ -231,7 +231,7 @@ function UploadFiles({
 
     const isDone = !!files.length && files.every(f => typeof f.status !== 'undefined' && f.status !== 'uploading');
 
-    const showReplaceModal = async (filename: string) =>
+    const showReplaceModal = async (filename: string): Promise<boolean> =>
         new Promise(res => {
             confirm({
                 closable: true,

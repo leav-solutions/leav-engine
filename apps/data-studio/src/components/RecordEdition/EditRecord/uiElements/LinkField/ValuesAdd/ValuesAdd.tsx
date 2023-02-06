@@ -115,7 +115,9 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const canCreateRecord =
         attribute.linked_library.permissions.create_record &&
         attribute.linked_library.behavior !== LibraryBehavior.files;
-    const canUploadFile = attribute.linked_library.behavior === LibraryBehavior.files;
+    const canUploadFile =
+        attribute.linked_library.permissions.create_record &&
+        attribute.linked_library.behavior === LibraryBehavior.files;
 
     const [runSearch, {loading, error, data: searchData}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,

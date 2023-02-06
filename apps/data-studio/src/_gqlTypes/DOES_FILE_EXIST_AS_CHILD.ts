@@ -7,14 +7,14 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: IS_FILE_EXISTS_AS_CHILD
+// GraphQL query operation: DOES_FILE_EXIST_AS_CHILD
 // ====================================================
 
-export interface IS_FILE_EXISTS_AS_CHILD {
-    isFileExistsAsChild: boolean | null;
+export interface DOES_FILE_EXIST_AS_CHILD {
+    doesFileExistAsChild: boolean | null;
 }
 
-export interface IS_FILE_EXISTS_AS_CHILDVariables {
+export interface DOES_FILE_EXIST_AS_CHILDVariables {
     parentNode?: string | null;
     treeId: string;
     filename: string;

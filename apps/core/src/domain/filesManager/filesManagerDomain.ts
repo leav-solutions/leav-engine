@@ -78,7 +78,7 @@ export interface IFilesManagerDomain {
         {library, nodeId, files}: IStoreFilesParams,
         ctx: IQueryInfos
     ): Promise<Array<{filename: string; record: IRecord}>>;
-    isFileExistsAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
+    doesFileExistAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
 }
 
 interface IDeps {
@@ -290,23 +290,14 @@ export default function ({
                         queryId: 'saveValueBatchOnStoringFiles'
                     };
 
-                    await valueDomain.saveValueBatch({
+                    await recordDomain.updateRecord({
                         library,
-                        recordId: record.id,
-                        values: [
-                            {
-                                attribute: FilesAttributes.FILE_NAME,
-                                value: file.data.filename
-                            },
-                            {
-                                attribute: FilesAttributes.FILE_PATH,
-                                value: path
-                            },
-                            {
-                                attribute: FilesAttributes.ROOT_KEY,
-                                value: rootKey
-                            }
-                        ],
+                        recordData: {
+                            id: record.id,
+                            [FilesAttributes.FILE_NAME]: file.data.filename,
+                            [FilesAttributes.FILE_PATH]: path,
+                            [FilesAttributes.ROOT_KEY]: rootKey
+                        },
                         ctx: systemCtx
                     });
                 }
@@ -501,7 +492,7 @@ export default function ({
 
             return pathsByKeys[rootKey];
         },
-        async isFileExistsAsChild(
+        async doesFileExistAsChild(
             {treeId, filename, parentNodeId}: IIsFileExistsAsChild,
             ctx: IQueryInfos
         ): Promise<boolean> {

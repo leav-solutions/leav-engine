@@ -73,7 +73,7 @@ const _canSaveMetadata = async (
 export default async (params: ICanSaveValueParams): Promise<ICanSaveValueRes> => {
     const {attributeProps, value, library, recordId, ctx, deps, keepEmpty = false} = params;
 
-    if (attributeProps.readonly && ctx.userId !== deps.config.defaultUserId) {
+    if (attributeProps.readonly) {
         return {canSave: false, reason: Errors.READONLY_ATTRIBUTE};
     }
 
