@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import Login from './Login';
 
@@ -43,6 +42,10 @@ describe('Login', () => {
         delete window.location;
         window.location = {...location, replace: jest.fn(), search: ''};
         Object.defineProperty(window.location, 'replace', jest.fn());
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     afterAll(() => {

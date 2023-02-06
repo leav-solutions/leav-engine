@@ -84,7 +84,13 @@ x-env-react: &env-react
   REACT_APP_WS_URL: ws://core.leav.localhost/graphql
   REACT_APP_DEFAULT_LANG: fr
   REACT_APP_AVAILABLE_LANG: fr,en
-  REACT_APP_LOGIN_ENDPOINT: /app/login
+  REACT_APP_LOGIN_ENDPOINT: /app/login/
+  VITE_CORE_URL: http://core.leav.localhost
+  VITE_API_URL: http://core.leav.localhost/graphql
+  VITE_WS_URL: ws://core.leav.localhost/graphql
+  VITE_DEFAULT_LANG: fr
+  VITE_AVAILABLE_LANG: fr,en
+  VITE_LOGIN_ENDPOINT: /app/login/
   SKIP_PREFLIGHT_CHECK: "true"
   TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling # To reduce CPU usage of TSC's file watching
   ESLINT_NO_DEV_ERRORS: "true" # To keep compiling on eslint errors
@@ -115,21 +121,12 @@ x-env-data-studio: &env-data-studio
 
 x-env-login: &env-login
   APP_ROOT_PATH: *dir-login
-  REACT_APP_AUTH_URL: /auth/authenticate
-  REACT_APP_RESET_PASSWORD: /auth/reset-password
-  REACT_APP_FORGOT_PASSWORD: /auth/forgot-password
+  VITE_AUTH_URL: /auth/authenticate
+  VITE_RESET_PASSWORD: /auth/reset-password
+  VITE_FORGOT_PASSWORD: /auth/forgot-password
 
 x-env-portal: &env-portal
   APP_ROOT_PATH: *dir-portal
-  VITE_CORE_URL: http://core.leav.localhost
-  VITE_API_URL: http://core.leav.localhost/graphql
-  VITE_WS_URL: ws://core.leav.localhost/graphql
-  VITE_DEFAULT_LANG: fr
-  VITE_AVAILABLE_LANG: fr,en
-  VITE_LOGIN_ENDPOINT: /app/login
-  SKIP_PREFLIGHT_CHECK: "true"
-  TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling # To reduce CPU usage of TSC's file watching
-  ESLINT_NO_DEV_ERRORS: "true" # To keep compiling on eslint errors
 
 x-env-preview-generator: &env-preview-generator
   NODE_ENV: development
@@ -303,8 +300,8 @@ services:
     environment:
       <<: *env-react
       <<: *env-login
-      REACT_APP_ENDPOINT: app/login
-      REACT_APP_APPLICATION_ID: login
+      VITE_APPLICATION_ID: login
+      VITE_ENDPOINT: app/login
       PUBLIC_URL: http://core.leav.localhost/app/login
       WDS_SOCKET_HOST: login.leav.localhost
       WDS_SOCKET_PORT: 80

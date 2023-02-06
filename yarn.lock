@@ -3435,6 +3435,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.20.6":
+  version: 7.20.13
+  resolution: "@babel/runtime@npm:7.20.13"
+  dependencies:
+    regenerator-runtime: ^0.13.11
+  checksum: 09b7a97a05c80540db6c9e4ddf8c5d2ebb06cae5caf3a87e33c33f27f8c4d49d9c67a2d72f1570e796045288fad569f98a26ceba0c4f5fad2af84b6ad855c4fb
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.16.7, @babel/template@npm:^7.3.3":
   version: 7.16.7
   resolution: "@babel/template@npm:7.16.7"
@@ -17208,12 +17217,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-http-backend@npm:1.4.0":
-  version: 1.4.0
-  resolution: "i18next-http-backend@npm:1.4.0"
+"i18next-http-backend@npm:2.1.1":
+  version: 2.1.1
+  resolution: "i18next-http-backend@npm:2.1.1"
   dependencies:
     cross-fetch: 3.1.5
-  checksum: bc10dca0fd1d566a5a4a4eab96ce76226f69c5b716951262e994bf069c0c5d18ea346dacd17d35aa6c5bee74221641f64839c84c1e01da9d75718ae34ce149a0
+  checksum: 15b5b83636c1144bb9f1b43e97aa72028746cf13e9a6fa2c698d989a9020962154aab548efabad8cf1449230d5df7807b42d67756c61b58cf408ab2ab5e4bfe6
   languageName: node
   linkType: hard
 
@@ -17250,6 +17259,15 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.17.2
   checksum: f210130fd835ebd90bfdc6a497d3c1d992261174e030e995a03d070b099acba680e495a376eb9255bb8eb68b4e518fe8ea96ec71507e194fd043aecb3397c9a2
+  languageName: node
+  linkType: hard
+
+"i18next@npm:22.4.9":
+  version: 22.4.9
+  resolution: "i18next@npm:22.4.9"
+  dependencies:
+    "@babel/runtime": ^7.20.6
+  checksum: 8cce4aaced4857e006fab2c9d4adb0eb1375829e459076be79d4d3532b1be6342b7003a720e187098f17bb276bea46df8b3fc2cf21f0f3a230bd519243048d1a
   languageName: node
   linkType: hard
 
@@ -21295,17 +21313,23 @@ __metadata:
     "@types/node": 18.7.18
     "@types/react": 18.0.20
     "@types/react-dom": 18.0.6
+    "@vitejs/plugin-react": 3.1.0
     antd: 5.1.5
-    i18next: 21.6.16
+    i18next: 22.4.9
     i18next-browser-languagedetector: 6.1.4
-    i18next-http-backend: 1.4.0
+    i18next-http-backend: 2.1.1
+    jest: 29.4.1
+    jest-environment-jsdom: 29.4.1
     react: 18.2.0
     react-dom: 18.2.0
     react-i18next: 11.16.6
     react-router-dom: 6.3.0
-    react-scripts: 5.0.1
     styled-components: 5.3.5
+    ts-jest: 29.0.5
+    ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
+    vite: 4.1.1
+    vite-jest: 0.1.4
     web-vitals: 2.1.4
   languageName: unknown
   linkType: soft
@@ -23341,7 +23365,6 @@ __metadata:
   resolution: "portal@workspace:apps/portal"
   dependencies:
     "@apollo/client": 3.5.10
-    "@craco/craco": 6.4.5
     "@leav/ui": "workspace:*"
     "@testing-library/jest-dom": 5.16.4
     "@testing-library/react": 13.1.1

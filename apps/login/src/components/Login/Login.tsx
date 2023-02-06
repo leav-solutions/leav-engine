@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useSearchParams} from 'react-router-dom';
 import LoginForm from './LoginForm';
@@ -11,7 +11,7 @@ const Login = (): JSX.Element => {
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
-    const authUrl = process.env.REACT_APP_AUTH_URL || '';
+    const authUrl = import.meta.env.VITE_AUTH_URL || '';
 
     const redirectTo = searchParams.get('dest') ?? '/';
 

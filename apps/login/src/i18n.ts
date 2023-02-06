@@ -10,11 +10,11 @@ i18n.use(initReactI18next)
     .use(Backend)
     .use(LanguageDetector)
     .init({
-        fallbackLng: process.env.REACT_APP_DEFAULT_LANG,
+        fallbackLng: import.meta.env.VITE_DEFAULT_LANG,
         ns: ['translations'],
         defaultNS: 'translations',
         backend: {
-            loadPath: `${process.env.PUBLIC_URL}/locales/{{lng}}/{{ns}}.json`
+            loadPath: 'locales/{{lng}}/{{ns}}.json'
         },
         react: {
             useSuspense: true
