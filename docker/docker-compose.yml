@@ -121,6 +121,15 @@ x-env-login: &env-login
 
 x-env-portal: &env-portal
   APP_ROOT_PATH: *dir-portal
+  VITE_CORE_URL: http://core.leav.localhost
+  VITE_API_URL: http://core.leav.localhost/graphql
+  VITE_WS_URL: ws://core.leav.localhost/graphql
+  VITE_DEFAULT_LANG: fr
+  VITE_AVAILABLE_LANG: fr,en
+  VITE_LOGIN_ENDPOINT: /app/login
+  SKIP_PREFLIGHT_CHECK: "true"
+  TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling # To reduce CPU usage of TSC's file watching
+  ESLINT_NO_DEV_ERRORS: "true" # To keep compiling on eslint errors
 
 x-env-preview-generator: &env-preview-generator
   NODE_ENV: development
@@ -329,8 +338,8 @@ services:
       <<: *env-react
       <<: *env-portal
       PUBLIC_URL: http://core.leav.localhost/app/portal
-      REACT_APP_APPLICATION_ID: portal
-      REACT_APP_ENDPOINT: app/portal
+      VITE_APPLICATION_ID: portal
+      VITE_ENDPOINT: app/portal
       WDS_SOCKET_HOST: portal.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:

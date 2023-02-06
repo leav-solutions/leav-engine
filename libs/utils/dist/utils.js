@@ -1,58 +1,26 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-const lodash_1 = require("lodash");
-const minimatch_1 = __importDefault(require("minimatch"));
-const extensions = __importStar(require("./MIMEByExtension.json"));
-const files_1 = require("./types/files");
-const getGraphqlTypeFromLibraryName = (library) => {
-    return (0, lodash_1.flow)([lodash_1.camelCase, lodash_1.upperFirst, lodash_1.trimEnd, (0, lodash_1.partialRight)(lodash_1.trimEnd, 's')])(library);
+import { camelCase, flow, partialRight, trimEnd, upperFirst } from 'lodash';
+import minimatch from 'minimatch';
+import * as extensions from './MIMEByExtension.json';
+import { FileType } from './types/files';
+export const getGraphqlTypeFromLibraryName = (library) => {
+    return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
 };
-exports.getGraphqlTypeFromLibraryName = getGraphqlTypeFromLibraryName;
-const getGraphqlQueryNameFromLibraryName = (library) => {
-    return (0, lodash_1.flow)([lodash_1.camelCase, lodash_1.trimEnd])(library);
+export const getGraphqlQueryNameFromLibraryName = (library) => {
+    return flow([camelCase, trimEnd])(library);
 };
-exports.getGraphqlQueryNameFromLibraryName = getGraphqlQueryNameFromLibraryName;
-const isFileAllowed = (fsPath, allowList, ignoreList, filePath) => {
+export const isFileAllowed = (fsPath, allowList, ignoreList, filePath) => {
     // if allowPatterns is empty it's an implicit allow of all files
     if (!allowList.length) {
         allowList = ['**'];
     }
-    const isAllowed = allowList.some(pattern => (0, minimatch_1.default)(filePath, `${fsPath}/${pattern}`));
-    const isIgnored = ignoreList.some(pattern => (0, minimatch_1.default)(filePath, `${fsPath}/${pattern}`));
+    const isAllowed = allowList.some(pattern => minimatch(filePath, `${fsPath}/${pattern}`));
+    const isIgnored = ignoreList.some(pattern => minimatch(filePath, `${fsPath}/${pattern}`));
     return !isIgnored && isAllowed;
 };
-exports.isFileAllowed = isFileAllowed;
-const localizedTranslation = (translations, availableLanguages) => {
+export const localizedTranslation = (translations, availableLanguages) => {
     if (!translations) {
         return '';
     }
@@ -60,7 +28,6 @@ const localizedTranslation = (translations, availableLanguages) => {
     const fallbackLang = availableLanguages[1] ? availableLanguages[1] : '';
     return translations[userLang] || translations[fallbackLang] || translations[Object.keys(translations)[0]] || '';
 };
-exports.localizedTranslation = localizedTranslation;
 /**
  *
  * @param str
@@ -68,7 +35,7 @@ exports.localizedTranslation = localizedTranslation;
  * @param saturation in percent, default to 30
  * @param luminosity in percent, default to 80
  */
-const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 80) => {
+export const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 80) => {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
         // eslint-disable-next-line no-bitwise
@@ -87,7 +54,6 @@ const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 8
             return `hsl(${hue}, ${saturation}%, ${luminosity}%)`;
     }
 };
-exports.stringToColor = stringToColor;
 const _hue2rgb = (p, q, t) => {
     if (t < 0) {
         t += 1;
@@ -133,7 +99,7 @@ const _hslToRgb = (h, s, l) => {
     }
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 };
-const getInvertColor = (color) => {
+export const getInvertColor = (color) => {
     const hexcolor = color.replace(/#/g, '');
     const r = parseInt(hexcolor.substr(0, 2), 16);
     const g = parseInt(hexcolor.substr(2, 2), 16);
@@ -141,7 +107,6 @@ const getInvertColor = (color) => {
     const yiq = (r * 299 + g * 587 + b * 114) / 1000;
     return yiq >= 128 ? '#000000' : '#FFFFFF';
 };
-exports.getInvertColor = getInvertColor;
 /**
  * Parse string to extract args.
  * Arg is a string with format:
@@ -150,19 +115,17 @@ exports.getInvertColor = getInvertColor;
  * eg. "-library product -type link" => {library: product, type: link}
  * @param mapping
  */
-const extractArgsFromString = (mapping) => {
+export const extractArgsFromString = (mapping) => {
     const args = mapping
         .split('-')
         .slice(1)
         .map(e => e.replace(/\s+/g, ' ').trim().split(' '));
     return args.reduce((acc, value) => { var _a; return (Object.assign(Object.assign({}, acc), { [value[0]]: (_a = value[1]) !== null && _a !== void 0 ? _a : true })); }, {});
 };
-exports.extractArgsFromString = extractArgsFromString;
-const objectToNameValueArray = (obj) => {
+export const objectToNameValueArray = (obj) => {
     return Object.keys(obj !== null && obj !== void 0 ? obj : {}).map(key => ({ name: key, value: obj[key] }));
 };
-exports.objectToNameValueArray = objectToNameValueArray;
-const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => {
+export const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => {
     return Array.isArray(arr) && arr.length
         ? arr.reduce((formattedElem, elem) => {
             formattedElem[elem[keyFieldName]] = elem[valueFieldName];
@@ -170,10 +133,9 @@ const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'va
         }, {})
         : null;
 };
-exports.nameValArrayToObj = nameValArrayToObj;
-const getLibraryGraphqlNames = (libraryId) => {
-    const libQueryName = (0, exports.getGraphqlQueryNameFromLibraryName)(libraryId);
-    const libTypeName = (0, exports.getGraphqlTypeFromLibraryName)(libraryId);
+export const getLibraryGraphqlNames = (libraryId) => {
+    const libQueryName = getGraphqlQueryNameFromLibraryName(libraryId);
+    const libTypeName = getGraphqlTypeFromLibraryName(libraryId);
     return {
         query: libQueryName,
         type: libTypeName,
@@ -182,28 +144,25 @@ const getLibraryGraphqlNames = (libraryId) => {
         filter: libTypeName + 'Filter'
     };
 };
-exports.getLibraryGraphqlNames = getLibraryGraphqlNames;
-const getFileType = (fileName) => {
+export const getFileType = (fileName) => {
     const extension = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
     if (!extensions[extension]) {
-        return files_1.FileType.OTHER;
+        return FileType.OTHER;
     }
     const type = extensions[extension].type;
     return type;
 };
-exports.getFileType = getFileType;
 /**
  * Return a simplified call stack (for the function who called this function, not this one, obviously)
  *
  * @param depth Number of calls to return
  */
-const getCallStack = (depth = 2) => {
+export const getCallStack = (depth = 2) => {
     const callersStartDepth = 3;
     const callers = new Error().stack.split('\n').slice(callersStartDepth, callersStartDepth + depth);
     return callers.map(c => c.trim().split(' ').splice(1).join(' @ '));
 };
-exports.getCallStack = getCallStack;
-const getInitials = (label, length = 2) => {
+export const getInitials = (label, length = 2) => {
     if (typeof label !== 'string') {
         return '?';
     }
@@ -211,5 +170,4 @@ const getInitials = (label, length = 2) => {
     const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
     return letters.toUpperCase();
 };
-exports.getInitials = getInitials;
 //# sourceMappingURL=utils.js.map
