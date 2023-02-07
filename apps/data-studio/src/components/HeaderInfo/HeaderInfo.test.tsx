@@ -2,17 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {infosInitialState} from 'redux/infos';
+import {infosInitialState} from 'reduxStore/infos';
 import {render, screen, waitFor} from '_tests/testUtils';
-import {
-    IBaseInfo,
-    IInfo,
-    InfoChannel,
-    InfoPriority,
-    InfoType
-} from '_types/types';
+import {IBaseInfo, IInfo, InfoChannel, InfoPriority, InfoType} from '_types/types';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
 import HeaderInfo from './HeaderInfo';

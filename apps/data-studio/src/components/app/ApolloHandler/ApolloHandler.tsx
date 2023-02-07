@@ -20,8 +20,8 @@ import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addInfo} from 'redux/infos';
-import {useAppDispatch} from 'redux/store';
+import {addInfo} from 'reduxStore/infos';
+import {useAppDispatch} from 'reduxStore/store';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
 
 interface IApolloHandlerProps {
@@ -31,13 +31,13 @@ interface IApolloHandlerProps {
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 const _redirectToLogin = () =>
-    window.location.replace(`${process.env.REACT_APP_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+    window.location.replace(`${import.meta.env.VITE_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
 
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
 
-    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(process.env.REACT_APP_API_URL);
+    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(import.meta.env.VITE_API_URL);
 
     if (loading) {
         return <Loading />;
@@ -123,7 +123,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
 
     const wsLink = new GraphQLWsLink(
         createClient({
-            url: process.env.REACT_APP_WS_URL
+            url: import.meta.env.VITE_WS_URL
         })
     );
 
@@ -133,7 +133,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     }, wsLink);
 
     const gqlClient = new ApolloClient({
-        link: ApolloLink.from([_handleApolloError, splitLink, createUploadLink({uri: process.env.REACT_APP_API_URL})]),
+        link: ApolloLink.from([_handleApolloError, splitLink, createUploadLink({uri: import.meta.env.VITE_API_URL})]),
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up
             // with the ID attribute (eg. in the getRecordPropertiesQuery).

@@ -8,8 +8,8 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {useContext} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setSearchSelection, setSelection} from 'redux/selection';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setSearchSelection, setSelection} from 'reduxStore/selection';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {localizedTranslation} from 'utils';
 import {SharedStateSelectionType} from '_types/types';
 

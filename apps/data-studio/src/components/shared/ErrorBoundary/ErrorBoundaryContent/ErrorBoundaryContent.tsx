@@ -41,7 +41,7 @@ function ErrorBoundaryContent({error, errorInfo, showRecoveryButtons = true}: IE
     const {t} = useTranslation();
     const {token} = theme.useToken();
 
-    const homeUrl = `/${process.env.REACT_APP_ENDPOINT ?? ''}`;
+    const homeUrl = `/${import.meta.env.VITE_ENDPOINT ?? ''}`;
     const _handleRefresh = () => {
         window.location.reload();
     };

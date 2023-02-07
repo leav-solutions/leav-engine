@@ -21,7 +21,7 @@ import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibra
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
-import {useAppSelector} from 'redux/store';
+import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';

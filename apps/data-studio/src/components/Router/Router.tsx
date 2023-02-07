@@ -24,7 +24,7 @@ function Router(): JSX.Element {
     const _setNbNotifs = (count: number) => setNbNotifs(count);
 
     return (
-        <BrowserRouter basename={`${process.env.REACT_APP_ENDPOINT ?? '/'}`}>
+        <BrowserRouter basename={`${import.meta.env.VITE_ENDPOINT ?? '/'}`}>
             <Layout style={{height: '100vh'}}>
                 <Sider
                     theme="light"

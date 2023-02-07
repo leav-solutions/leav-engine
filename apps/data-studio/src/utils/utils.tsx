@@ -6,8 +6,8 @@ import {getFiltersFromRequest} from 'components/LibraryItemsList/FiltersPanel/ge
 import {gql} from 'graphql-tag';
 import {i18n, TFunction} from 'i18next';
 import _, {pick} from 'lodash';
-import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
+import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
 import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
@@ -147,7 +147,7 @@ export const localizedTranslation = (translations: any, availableLanguages: Avai
 export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage[] => {
     const userLang = i18next.language
         ? i18next.language.split('-')[0]
-        : AvailableLanguage[process.env.REACT_APP_DEFAULT_LANG as AvailableLanguage] ?? AvailableLanguage.en;
+        : AvailableLanguage[import.meta.env.VITE_DEFAULT_LANG as AvailableLanguage] ?? AvailableLanguage.en;
     const fallbackLang = i18next.options?.fallbackLng ? (i18next as any).options.fallbackLng[0] : '';
 
     return [userLang, fallbackLang];

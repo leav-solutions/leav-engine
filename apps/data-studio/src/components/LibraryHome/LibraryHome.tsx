@@ -11,8 +11,8 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setInfoBase} from 'redux/infos';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setInfoBase} from 'reduxStore/infos';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, WorkspacePanels} from '_types/types';
 

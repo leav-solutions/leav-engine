@@ -5,9 +5,9 @@ import {customTheme} from '@leav/ui';
 import {ConfigProvider} from 'antd';
 import 'antd/dist/reset.css';
 import App from 'components/app';
-import 'index.css';
 import {createRoot} from 'react-dom/client';
 import './i18n';
+import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 const root = createRoot(document.getElementById('root'));

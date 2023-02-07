@@ -14,8 +14,8 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'redux/selection';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setSelectionToggleSearchSelectionElement, setSelectionToggleSelected} from 'reduxStore/selection';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {displayTypeToPreviewSize, getFileUrl, localizedTranslation, stopEvent} from 'utils';
 import {

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useEffect} from 'react';
-import {setNavigationActiveTree} from 'redux/navigation';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setNavigationActiveTree} from 'reduxStore/navigation';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import Column from './Column';
 

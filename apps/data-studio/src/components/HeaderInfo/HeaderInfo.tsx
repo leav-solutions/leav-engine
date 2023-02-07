@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useEffect, useState} from 'react';
-import {setInfoStack} from 'redux/infos';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {useEffect, useState} from 'react';
+import {setInfoStack} from 'reduxStore/infos';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {defaultInfosTime} from '../../constants/constants';
 import {sortInfoByPriority} from '../../utils';
 import {IInfo, InfoChannel} from '../../_types/types';

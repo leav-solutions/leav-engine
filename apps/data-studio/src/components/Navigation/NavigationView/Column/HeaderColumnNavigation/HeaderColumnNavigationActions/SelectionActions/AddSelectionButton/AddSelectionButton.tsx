@@ -8,9 +8,9 @@ import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMuta
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useTranslation} from 'react-i18next';
-import {addInfo} from 'redux/infos';
-import {resetSelection} from 'redux/selection';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {addInfo} from 'reduxStore/infos';
+import {resetSelection} from 'reduxStore/selection';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';

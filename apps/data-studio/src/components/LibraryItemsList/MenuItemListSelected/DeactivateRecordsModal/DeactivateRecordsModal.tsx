@@ -10,8 +10,8 @@ import {deactivateRecordsMutation} from 'graphQL/mutations/records/deactivateRec
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useTranslation} from 'react-i18next';
-import {resetSelection} from 'redux/selection';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {resetSelection} from 'reduxStore/selection';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {DEACTIVATE_RECORDS, DEACTIVATE_RECORDSVariables} from '_gqlTypes/DEACTIVATE_RECORDS';
 import {ISharedStateSelectionSearch} from '_types/types';
 

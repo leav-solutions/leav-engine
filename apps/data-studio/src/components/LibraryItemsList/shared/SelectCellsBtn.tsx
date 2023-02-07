@@ -4,8 +4,8 @@
 import {Button, ButtonProps} from 'antd';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import React from 'react';
-import {resetSelection, setSelection, setSelectionToggleSelected} from 'redux/selection';
-import {useAppDispatch} from 'redux/store';
+import {resetSelection, setSelection, setSelectionToggleSelected} from 'reduxStore/selection';
+import {useAppDispatch} from 'reduxStore/store';
 import {IRecordIdentityWhoAmI, SharedStateSelectionType} from '_types/types';
 
 interface ISelectCellsBtnProps extends ButtonProps {

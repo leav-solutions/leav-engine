@@ -9,13 +9,12 @@ import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
-import {setDisplaySide} from 'redux/display';
-import {useAppDispatch} from 'redux/store';
+import {setDisplaySide} from 'reduxStore/display';
+import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {TypeSideItem} from '_types/types';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import Filter from './Filter/Filter';
-import './Filters.css';
 
 const Wrapper = styled.div`
     width: 100%;

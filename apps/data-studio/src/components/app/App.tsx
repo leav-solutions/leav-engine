@@ -5,7 +5,7 @@ import ErrorBoundary from 'components/shared/ErrorBoundary';
 import Loading from 'components/shared/Loading';
 import {Suspense} from 'react';
 import {Provider} from 'react-redux';
-import store from 'redux/store';
+import store from 'reduxStore/store';
 import ApolloHandler from './ApolloHandler';
 import './App.css';
 import AppHandler from './AppHandler';

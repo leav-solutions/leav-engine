@@ -11,7 +11,7 @@ import {useLang} from 'hooks/LangHook/LangHook';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
-import {useAppDispatch} from 'redux/store';
+import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getTreeLink, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';

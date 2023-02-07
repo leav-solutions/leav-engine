@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import React from 'react';
-import {useAppSelector} from 'redux/store';
+import {useAppSelector} from 'reduxStore/store';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {SharedStateSelectionType} from '_types/types';
 import {OnMessagesFunc} from '../_types';

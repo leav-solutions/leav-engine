@@ -18,7 +18,7 @@ import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
 import {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {VscLayers} from 'react-icons/vsc';
-import {addInfo} from 'redux/infos';
+import {addInfo} from 'reduxStore/infos';
 import styled from 'styled-components';
 import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_whoAmI} from '_gqlTypes/CREATE_RECORD';
 import {AttributeType} from '_gqlTypes/globalTypes';

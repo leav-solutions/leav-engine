@@ -11,8 +11,8 @@ import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibra
 import useNotification from 'hooks/useNotification';
 import {ReactNode, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {setIsPanelOpen} from 'redux/notifications';
-import {useAppDispatch} from 'redux/store';
+import {setIsPanelOpen} from 'reduxStore/notifications';
+import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {IMPORT_EXCEL, IMPORT_EXCELVariables} from '_gqlTypes/IMPORT_EXCEL';
 import {importExcel} from '../../../../graphQL/mutations/import/importExcel';

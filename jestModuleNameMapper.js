@@ -1,6 +1,7 @@
 module.exports = {
     '^components/(.*)$': '<rootDir>/src/components/$1',
     '^context/(.*)$': '<rootDir>/src/context/$1',
+    '^context$': '<rootDir>/src/context',
     '^hooks/(.*)$': '<rootDir>/src/hooks/$1',
     '^queries/(.*)$': '<rootDir>/src/queries/$1',
     '^_gqlTypes/(.*)$': '<rootDir>/src/_gqlTypes/$1',

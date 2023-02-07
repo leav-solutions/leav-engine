@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import gql from 'graphql-tag';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {render, screen, waitFor} from '_tests/testUtils';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
@@ -11,7 +10,7 @@ import ApolloHandler from './ApolloHandler';
 
 const mockDispatch = jest.fn();
 
-jest.mock('redux/store', () => ({
+jest.mock('reduxStore/store', () => ({
     useAppDispatch: () => mockDispatch
 }));
 
