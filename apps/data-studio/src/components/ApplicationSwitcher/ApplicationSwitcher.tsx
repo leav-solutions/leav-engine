@@ -81,12 +81,6 @@ function ApplicationSwitcher(): JSX.Element {
               .map(app => {
                   const label = localizedTranslation(app.label, lang);
                   const description = localizedTranslation(app.description, lang);
-                  const initials = label
-                      .split(' ')
-                      .slice(0, 2)
-                      .map(el => el[0])
-                      .join('')
-                      .toUpperCase();
 
                   return {
                       key: app.id,

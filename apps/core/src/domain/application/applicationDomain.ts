@@ -224,7 +224,7 @@ export default function({
         },
         getApplicationUrl({application}) {
             if (application.type === ApplicationTypes.INTERNAL) {
-                return `${config.server.publicUrl}/${utils.getFullApplicationEndpoint(application.endpoint)}`;
+                return `${config.server.publicUrl}/${utils.getFullApplicationEndpoint(application.endpoint)}/`;
             }
 
             // External application: make sure URL starts with http or https
