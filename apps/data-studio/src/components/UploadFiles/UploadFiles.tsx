@@ -3,12 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InboxOutlined, LoadingOutlined, FileOutlined, CheckCircleTwoTone} from '@ant-design/icons';
 import {Upload, Modal, Button, Steps, theme, StepProps, Alert, Divider, UploadFile} from 'antd';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useQuery, useSubscription, useMutation, useLazyQuery} from '@apollo/client';
 import {getUploadUpdates} from 'graphQL/subscribes/upload/getUploadUpdates';
-import {ME} from '../../_gqlTypes/ME';
-import {getMe} from '../../graphQL/queries/userData/me';
 import {UPLOAD, UPLOADVariables} from '_gqlTypes/UPLOAD';
 import {uploadMutation} from '../../graphQL/mutations/upload/uploadMutation';
 import {ITreeNodeWithRecord} from '../../_types/types';
@@ -19,6 +17,7 @@ import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 import {DOES_FILE_EXIST_AS_CHILD, DOES_FILE_EXIST_AS_CHILDVariables} from '_gqlTypes/DOES_FILE_EXIST_AS_CHILD';
 import {doesFileExistAsChild} from 'graphQL/queries/records/doesFileExistAsChild';
 import {useUser} from '../../hooks/UserHook/UserHook';
+import {v4 as uuidv4} from 'uuid';
 
 const {confirm} = Modal;
 
@@ -54,9 +53,11 @@ function UploadFiles({
         maxCount: multiple ? 99999 : 1,
         showUploadList: true,
         fileList: files,
-        disabled: files.some(f => typeof f.status !== 'undefined'),
-        beforeUpload: async (pickedFiles: UploadFile) => {
-            const newFiles = await _checkFilesExist(selectedNodeKey, [pickedFiles]);
+        disabled: status !== 'wait',
+        beforeUpload: async (file: UploadFile) => {
+            file.uid = uuidv4();
+
+            const newFiles = await _checkFilesExist(selectedNodeKey, [file]);
             setFiles(prevState => prevState.concat(newFiles));
 
             return false;
@@ -121,21 +122,7 @@ function UploadFiles({
         }
     });
 
-    useQuery<GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables>(getTreeLibraries, {
-        skip: !!filesTreeId,
-        variables: {
-            library: libraryId
-        },
-        onCompleted: getTreeLibrariesData => {
-            const index = getTreeLibrariesData.trees.list.findIndex(
-                tree => tree.system && tree.behavior === TreeBehavior.files
-            );
-
-            setFilesTreeId(getTreeLibrariesData.trees.list[index].id);
-        }
-    });
-
-    const [runUpload, {loading, error}] = useMutation<UPLOAD, UPLOADVariables>(uploadMutation, {
+    const [runUpload, {loading}] = useMutation<UPLOAD, UPLOADVariables>(uploadMutation, {
         fetchPolicy: 'no-cache',
         onCompleted: data => {
             if (typeof onCompleted !== 'undefined') {
@@ -156,21 +143,23 @@ function UploadFiles({
         skip: !user?.userId,
         onSubscriptionData: subData => {
             const uploadData = subData.subscriptionData.data.upload;
-            const newUploadFileList = [...files];
 
-            const fileIndexToUpdate = newUploadFileList.findIndex(f => f.uid === uploadData.uid);
+            setFiles(prevState =>
+                prevState.map(f => {
+                    if (f.uid === uploadData.uid) {
+                        f.percent = uploadData.progress.percentage;
+                        f.status = uploadData.progress.percentage === 100 ? 'success' : 'uploading';
+                    }
 
-            if (fileIndexToUpdate !== -1) {
-                newUploadFileList[fileIndexToUpdate].percent = uploadData.progress.percentage;
-                newUploadFileList[fileIndexToUpdate].status =
-                    uploadData.progress.percentage === 100 ? 'success' : 'uploading';
-            }
-
-            setFiles(newUploadFileList);
+                    return f;
+                })
+            );
         }
     });
 
     const startUpload = async (): Promise<void> => {
+        setStatus('process');
+
         await runUpload({
             variables: {
                 library: libraryId,
@@ -221,7 +210,7 @@ function UploadFiles({
     };
 
     const Dragger = () => (
-        <Upload.Dragger {...props}>
+        <Upload.Dragger data-testid="dragger" {...props}>
             <p className="ant-upload-drag-icon">
                 <InboxOutlined />
             </p>
@@ -229,11 +218,12 @@ function UploadFiles({
         </Upload.Dragger>
     );
 
-    const isDone = !!files.length && files.every(f => typeof f.status !== 'undefined' && f.status !== 'uploading');
+    const isDone = status === 'finish' || status === 'error';
 
     const showReplaceModal = async (filename: string): Promise<boolean> =>
         new Promise(res => {
             confirm({
+                className: 'confirm-replace-modal',
                 closable: true,
                 open: true,
                 title: t('upload.replace_modal.title'),
@@ -250,6 +240,7 @@ function UploadFiles({
             title: t('upload.select_path_step_title'),
             content: (
                 <div
+                    data-testid="select-tree-node"
                     style={{
                         borderRadius: token.borderRadiusLG,
                         border: `1px dashed ${token.colorBorder}`
@@ -300,15 +291,23 @@ function UploadFiles({
                 footer={
                     <>
                         {currentStep > 0 && currentStep < steps.length - 1 && (
-                            <Button onClick={() => prev()}>{t('upload.previous')}</Button>
+                            <Button data-testid="prev-btn" onClick={() => prev()}>
+                                {t('upload.previous')}
+                            </Button>
                         )}
                         {currentStep < steps.length - 2 && (
-                            <Button disabled={!selectedNodeKey} type="primary" onClick={() => next()}>
+                            <Button
+                                data-testid="next-btn"
+                                disabled={!selectedNodeKey}
+                                type="primary"
+                                onClick={() => next()}
+                            >
                                 {t('upload.next')}
                             </Button>
                         )}
-                        {(!files.length || !isDone) && currentStep === steps.length - 2 && (
+                        {(!files.length || !isDone) && currentStep >= steps.length - 2 && (
                             <Button
+                                data-testid="upload-btn"
                                 loading={loading}
                                 disabled={!files.length}
                                 className="submit-btn"
@@ -319,9 +318,15 @@ function UploadFiles({
                                 {'Upload'}
                             </Button>
                         )}
-                        {isDone && <Button onClick={_onClose}>{t('global.close')}</Button>}
+                        {isDone && (
+                            <Button data-testid="close-btn" onClick={_onClose}>
+                                {t('global.close')}
+                            </Button>
+                        )}
                     </>
                 }
+                data-testid="upload-modal"
+                upload-modal
             >
                 <Steps status={status} current={currentStep} items={items} />
                 <div style={contentStyle}>{steps[currentStep].content}</div>
