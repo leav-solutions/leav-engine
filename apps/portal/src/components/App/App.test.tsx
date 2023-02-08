@@ -4,7 +4,6 @@
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {getMe} from 'queries/me/me';
-import React from 'react';
 import {mockUser} from '_tests/mocks/user';
 import {render, screen} from '_tests/testUtils';
 import App from './App';
@@ -74,7 +73,7 @@ describe('App', () => {
             }
         ];
 
-        process.env.REACT_APP_APPLICATION_ID = 'portal';
+        import.meta.env.VITE_APPLICATION_ID = 'portal';
         render(<App />, {apolloMocks: mocks});
 
         expect(await screen.findByText('UserMenu')).toBeInTheDocument();

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ISelectionState} from 'redux/stateType';
+import {ISelectionState} from 'reduxStore/stateType';
 import {SharedStateSelectionType} from '_types/types';
 
 export function isAllSelected(selectionState: ISelectionState, selectionMode: boolean): boolean {

@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import ForgotPassword from './ForgotPassword';
 global.ASYNC_VALIDATOR_NO_WARNING = 1; // Suppress some really weird warning coming from ant-design during testing
@@ -18,10 +17,6 @@ window.matchMedia = query => ({
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn()
 });
-
-jest.mock('react-router-dom', () => ({
-    ...(jest.requireActual('react-router-dom') as {})
-}));
 
 const _renderComponent = () =>
     render(

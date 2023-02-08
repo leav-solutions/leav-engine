@@ -17,7 +17,7 @@ import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
 import {useEffect, useReducer} from 'react';
-import {useAppSelector} from 'redux/store';
+import {useAppSelector} from 'reduxStore/store';
 import styled, {CSSObject} from 'styled-components';
 import {objectValueVersionToArray} from 'utils';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';

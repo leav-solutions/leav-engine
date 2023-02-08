@@ -9,8 +9,8 @@ import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useTranslation} from 'react-i18next';
-import {setDisplaySide} from 'redux/display';
-import {useAppDispatch} from 'redux/store';
+import {setDisplaySide} from 'reduxStore/display';
+import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {IValueVersion, TypeSideItem} from '_types/types';
 

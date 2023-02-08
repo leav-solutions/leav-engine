@@ -9,8 +9,8 @@ import Loading from 'components/shared/Loading';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
-import {resetSearchSelection} from 'redux/selection';
-import {useAppSelector} from 'redux/store';
+import {resetSearchSelection} from 'reduxStore/selection';
+import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {ISharedStateSelectionSearch} from '_types/types';
 

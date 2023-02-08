@@ -6,10 +6,10 @@ import LibraryHome from 'components/LibraryHome';
 import Navigation from 'components/Navigation';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {useParams} from 'react-router-dom';
-import {setActivePanel} from 'redux/activePanel';
-import {useAppDispatch} from 'redux/store';
+import {setActivePanel} from 'reduxStore/activePanel';
+import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {WorkspacePanels} from '_types/types';
 

@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import React from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import RecordPreview from './RecordPreview';
@@ -64,7 +63,7 @@ function RecordCard({record, withLibrary = true, withPreview = true}: IRecordCar
                     <RecordPreview
                         label={record.label || record.id}
                         color={record.color}
-                        image={record.preview?.small ? process.env.REACT_APP_CORE_URL + record.preview.small : ''}
+                        image={record.preview?.small ? import.meta.env.VITE_CORE_URL + record.preview.small : ''}
                     />
                 )}
             </PreviewWrapper>

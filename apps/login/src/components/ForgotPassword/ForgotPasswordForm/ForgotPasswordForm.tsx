@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, CloseOutlined, SendOutlined} from '@ant-design/icons';
 import {Alert, Button, Card, Form, Input, Space, Spin} from 'antd';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
@@ -57,7 +57,7 @@ const ForgotPasswordForm = ({
                 title={
                     <>
                         <img
-                            src={`/${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.png`}
+                            src={`/${import.meta.env.VITE_ENDPOINT}/assets/logo-leavengine.png`}
                             alt="LEAV Engine"
                             height="100px"
                         />

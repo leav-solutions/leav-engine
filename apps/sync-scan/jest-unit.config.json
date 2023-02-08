@@ -12,5 +12,8 @@
         ]
     },
     "testRegex": "src\/__tests__\/unit\/.*(.test.ts)$",
-    "roots":  ["<rootDir>/src/__tests__/unit"]
+    "roots":  ["<rootDir>/src/__tests__/unit"],
+    "moduleNameMapper": {
+        "^@leav/(.*)$": "<rootDir>/../../libs/$1/src"
+    }
 }

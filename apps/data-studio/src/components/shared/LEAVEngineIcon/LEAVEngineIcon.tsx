@@ -11,7 +11,7 @@ interface ILEAVEngineIconProps {
 function LEAVEngineIcon({height, style}: ILEAVEngineIconProps): JSX.Element {
     return (
         <img
-            src={`/${process.env.REACT_APP_ENDPOINT}/assets/logo-leavengine.svg`}
+            src={`/${import.meta.env.VITE_ENDPOINT}/assets/logo-leavengine.svg`}
             alt="LEAV Engine"
             height={height}
             className="icon"

@@ -8,9 +8,9 @@ import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeEleme
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useTranslation} from 'react-i18next';
-import {setNavigationPath} from 'redux/navigation';
-import {resetSelection} from 'redux/selection';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {setNavigationPath} from 'reduxStore/navigation';
+import {resetSelection} from 'reduxStore/selection';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
 import {IMessages, OnMessagesFunc} from '../../_types';
 

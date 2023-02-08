@@ -8,5 +8,8 @@
     },
     "testRegex": "src\/__tests__\/e2e\/.*(.test.ts)$",
     "roots":  ["<rootDir>/src/__tests__/e2e"],
-    "testRunner": "jest-jasmine2"
+    "testRunner": "jest-jasmine2",
+    "moduleNameMapper": {
+        "^@leav/(.*)$": "<rootDir>/../../libs/$1/src"
+    }
 }

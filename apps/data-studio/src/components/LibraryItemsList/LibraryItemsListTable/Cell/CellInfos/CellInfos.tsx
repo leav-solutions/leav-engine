@@ -11,7 +11,7 @@ import RecordCard from 'components/shared/RecordCard';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {useTranslation} from 'react-i18next';
-import {useAppSelector} from 'redux/store';
+import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {IRecordIdentityWhoAmI, ISharedStateSelectionSearch, PreviewSize} from '../../../../../_types/types';
 

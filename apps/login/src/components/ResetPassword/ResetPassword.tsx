@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import ResetPasswordForm from './ResetPasswordForm';
@@ -10,7 +10,7 @@ const ResetPassword = (): JSX.Element => {
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [resetPasswordError, setResetPasswordError] = useState('');
-    const resetPasswordUrl = process.env.REACT_APP_RESET_PASSWORD || '';
+    const resetPasswordUrl = import.meta.env.VITE_RESET_PASSWORD || '';
 
     const {token} = useParams();
     const redirectTo = '/';

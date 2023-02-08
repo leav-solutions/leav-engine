@@ -4,7 +4,7 @@
 import {CloseOutlined} from '@ant-design/icons';
 import {Badge, message as antMessage} from 'antd';
 import React, {useEffect} from 'react';
-import {useAppSelector} from 'redux/store';
+import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {IInfo, InfoType} from '../../../_types/types';
 

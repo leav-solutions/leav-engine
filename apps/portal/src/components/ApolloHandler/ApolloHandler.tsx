@@ -5,8 +5,9 @@ import {ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache, Serve
 import {onError} from '@apollo/link-error';
 import {message, Spin} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import fetch from 'cross-fetch';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
-import React, {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 
 interface IApolloHandlerProps {
@@ -16,12 +17,12 @@ interface IApolloHandlerProps {
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 const _redirectToLogin = () =>
-    window.location.replace(`${process.env.REACT_APP_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+    window.location.replace(`${import.meta.env.VITE_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
 
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
 
-    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(process.env.REACT_APP_API_URL);
+    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(import.meta.env.VITE_API_URL);
 
     if (loading) {
         return <Spin />;
@@ -54,7 +55,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? []).some(err => err.extensions.code === 'UNAUTHENTICATED')
         ) {
-            window.location.replace(`${process.env.REACT_APP_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+            window.location.replace(`${import.meta.env.VITE_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
         }
 
         message.error(errorContent);
@@ -64,7 +65,8 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
         link: ApolloLink.from([
             (_handleApolloError as unknown) as ApolloLink,
             new HttpLink({
-                uri: process.env.REACT_APP_API_URL
+                uri: import.meta.env.VITE_API_URL,
+                fetch
             })
         ]),
         cache: new InMemoryCache({

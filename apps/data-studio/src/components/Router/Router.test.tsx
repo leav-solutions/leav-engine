@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import Router from './Router';
 
@@ -43,7 +42,7 @@ jest.mock('./Routes', () => {
     };
 });
 
-jest.mock('redux/notifications', () => jest.fn());
+jest.mock('reduxStore/notifications', () => jest.fn());
 
 describe('Router', () => {
     test('Should add a router and layout elements', async () => {

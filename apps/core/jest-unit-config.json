@@ -19,6 +19,7 @@
     ],
     "moduleNameMapper": {
         "exceljs": "<rootDir>/../../node_modules/exceljs/dist/exceljs.js",
-        "^uuid$": "uuid"
+        "^uuid$": "uuid",
+        "^@leav/(.*)$": "<rootDir>/../../libs/$1/src"
     }
 }

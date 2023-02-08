@@ -14,5 +14,8 @@
     "testRegex": ".spec.(ts)$",
     "setupFiles": [
         "<rootDir>/src/__tests__/jestUtils.ts"
-    ]
+    ],
+    "moduleNameMapper": {
+        "^@leav/(.*)$": "<rootDir>/../../libs/$1/src"
+    }
 }

@@ -7,7 +7,7 @@ import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import ApplicationContext from 'context/ApplicationContext';
 import {IApplicationContext} from 'context/ApplicationContext/_types';
 import {PropsWithChildren, ReactElement} from 'react';
-import {RootState} from 'redux/store';
+import {RootState} from 'reduxStore/store';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {mockApplicationDetails} from '__mocks__/common/applications';

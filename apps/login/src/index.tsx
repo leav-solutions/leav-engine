@@ -4,10 +4,10 @@
 import {customTheme} from '@leav/ui';
 import {ConfigProvider} from 'antd';
 import App from 'components/App';
-import 'index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './i18n';
+import './index.css';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);

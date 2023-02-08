@@ -5,7 +5,6 @@ import {MockedProvider} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {getUserDataQuery} from 'queries/userData/getUserData';
-import React from 'react';
 import {mockApplication} from '_tests/mocks/applications';
 import {render, screen, within} from '_tests/testUtils';
 import Applications from './Applications';

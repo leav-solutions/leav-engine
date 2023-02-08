@@ -4,7 +4,6 @@
 import {ILangContext, LangContext} from '@leav/ui';
 import userEvent from '@testing-library/user-event';
 import UserContext from 'context/UserContext';
-import React from 'react';
 import {mockUser} from '_tests/mocks/user';
 import {act, render, screen} from '_tests/testUtils';
 import UserMenu from './UserMenu';
@@ -41,9 +40,9 @@ describe('UserMenu', () => {
         });
         expect(mockLogout).toHaveBeenCalled();
 
-        await act(async () => {
-            userEvent.click(screen.getByRole('button', {name: '🇫🇷'}));
-        });
+        userEvent.click(userLabel);
+
+        userEvent.click(screen.getByRole('button', {name: 'fr', hidden: true}));
         expect(mockLangContext.setLang).toHaveBeenCalled();
     });
 });

@@ -28,7 +28,15 @@ function LangSwitcher(): JSX.Element {
         <>
             {t('choose_lang')} :
             {availableLangs.map(l => (
-                <Button type="text" name={l} key={l} style={{padding: '0 5px'}} onClick={_handleLangChange(l)}>
+                <Button
+                    type="text"
+                    name={l}
+                    aria-label={l}
+                    key={l}
+                    data-test-id={`lang-switcher-${l}`}
+                    style={{padding: '0 5px'}}
+                    onClick={_handleLangChange(l)}
+                >
                     {unicodeFlagByLang[l] ?? l}
                 </Button>
             ))}

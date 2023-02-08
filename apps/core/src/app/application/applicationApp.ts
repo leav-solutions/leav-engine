@@ -61,7 +61,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.app.auth': authApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
@@ -303,7 +303,7 @@ export default function({
 
                         next();
                     } catch {
-                        res.redirect(`/${APPS_URL_PREFIX}/login?dest=${req.originalUrl}`);
+                        res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
                     }
                 },
                 // Serve application
@@ -397,7 +397,7 @@ export default function({
                 },
                 async (err, req, res, next) => {
                     if (err instanceof ApplicationError && err.appEndpoint !== 'portal') {
-                        res.redirect(`/${APPS_URL_PREFIX}/portal?err=${err.type}&app=${err.appEndpoint}`);
+                        res.redirect(`/${APPS_URL_PREFIX}/portal/?err=${err.type}&app=${err.appEndpoint}`);
                     } else {
                         logger.error(`[${req.ctx.queryId}] ${err}`);
                         res.status(err.statusCode ?? 500).send(err.type ?? 'Internal server error');
@@ -406,7 +406,7 @@ export default function({
             );
 
             app.get('/', (req, res) => {
-                res.redirect(`/${APPS_URL_PREFIX}/portal`);
+                res.redirect(`/${APPS_URL_PREFIX}/portal/`);
             });
         }
     };

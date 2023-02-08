@@ -14,7 +14,7 @@ import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibra
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
-import {useAppDispatch} from 'redux/store';
+import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getLibraryLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';

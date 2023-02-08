@@ -8,8 +8,8 @@ import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMu
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useTranslation} from 'react-i18next';
-import {resetSelection} from 'redux/selection';
-import {useAppDispatch, useAppSelector} from 'redux/store';
+import {resetSelection} from 'reduxStore/selection';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '_gqlTypes/MOVE_TREE_ELEMENT';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {ISharedSelected} from '_types/types';

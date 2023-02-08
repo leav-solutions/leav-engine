@@ -21,7 +21,7 @@ jest.mock(
 
 describe('AppHandler', () => {
     test('Should contain Router', async () => {
-        process.env.REACT_APP_APPLICATION_ID = mockApplicationDetails.id;
+        import.meta.env.VITE_APPLICATION_ID = mockApplicationDetails.id;
 
         const mocks = [
             {

@@ -41,11 +41,11 @@ const Content = styled(Layout.Content)`
 function App(): JSX.Element {
     const {t, i18n} = useTranslation();
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
-    const appId = process.env.REACT_APP_APPLICATION_ID;
+    const appId = import.meta.env.VITE_APPLICATION_ID;
 
     // Init lang
-    const availableLangs = process.env.REACT_APP_AVAILABLE_LANG ? process.env.REACT_APP_AVAILABLE_LANG.split(',') : [];
-    const defaultLang = process.env.REACT_APP_DEFAULT_LANG ? process.env.REACT_APP_DEFAULT_LANG : 'en';
+    const availableLangs = import.meta.env.VITE_AVAILABLE_LANG ? import.meta.env.VITE_AVAILABLE_LANG.split(',') : [];
+    const defaultLang = import.meta.env.VITE_DEFAULT_LANG ? import.meta.env.VITE_DEFAULT_LANG : 'en';
     const userLang = i18n.language.split('-')[0];
     const fallbackLang = i18n.options.fallbackLng ? i18n.options.fallbackLng[0] : '';
     const [lang, setLang] = useState<string[]>([userLang, fallbackLang]);

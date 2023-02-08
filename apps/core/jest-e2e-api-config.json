@@ -13,5 +13,8 @@
         "<rootDir>/src/__tests__/setup.ts",
         "<rootDir>/src/__tests__/jestUtils.ts"
     ],
-    "testTimeout": 30000
+    "testTimeout": 30000,
+    "moduleNameMapper": {
+        "^@leav/(.*)$": "<rootDir>/../../libs/$1/src"
+    }
 }

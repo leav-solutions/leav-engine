@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import i18n from 'i18next';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
@@ -11,7 +11,7 @@ const ForgotPassword = (): JSX.Element => {
     const [isLoading, setIsLoading] = useState(false);
     const [forgotPasswordError, setForgotPasswordError] = useState('');
     const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState('');
-    const forgotPasswordUrl = process.env.REACT_APP_FORGOT_PASSWORD || '';
+    const forgotPasswordUrl = import.meta.env.VITE_FORGOT_PASSWORD || '';
 
     const _processForgotPassword = async (email: string) => {
         try {
