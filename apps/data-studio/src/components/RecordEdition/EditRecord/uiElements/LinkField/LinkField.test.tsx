@@ -10,7 +10,7 @@ import {
 import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {IUseGetRecordColumnsValuesQueryHook} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import {SortOrder} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, SortOrder} from '_gqlTypes/globalTypes';
 import {
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI
@@ -18,6 +18,7 @@ import {
 import {act, ICustomRenderOptions, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockAttributeLink} from '__mocks__/common/attribute';
 import {mockFormElementLink, mockLinkValue} from '__mocks__/common/form';
+import {mockLibrary} from '__mocks__/common/library';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
 import {mockModifier} from '__mocks__/common/value';
 import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
@@ -529,15 +530,7 @@ describe('LinkField', () => {
                                             preview: null,
                                             library: {
                                                 __typename: 'Library',
-                                                id: 'test_lib',
-                                                label: {
-                                                    fr: 'Test'
-                                                },
-                                                gqlNames: {
-                                                    __typename: 'LibraryGraphqlNames',
-                                                    query: 'test_lib',
-                                                    type: 'TestLib'
-                                                }
+                                                ...mockLibrary
                                             }
                                         }
                                     }

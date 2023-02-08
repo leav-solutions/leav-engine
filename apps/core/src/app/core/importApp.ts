@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IImportDomain} from 'domain/import/importDomain';
-import fs from 'fs';
-import {GraphQLUpload} from 'graphql-upload';
+import {GraphQLUpload, FileUpload} from 'graphql-upload';
 import {nanoid} from 'nanoid';
 import * as Config from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
@@ -11,7 +10,9 @@ import {IQueryInfos} from '_types/queryInfos';
 import {TaskCallbackType} from '../../_types/tasksManager';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {IFileUpload, ImportMode, ImportType} from '../../_types/import';
+import {ImportMode, ImportType} from '../../_types/import';
+import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
+import {IUtils} from 'utils/utils';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -19,16 +20,18 @@ export interface ICoreImportApp {
 
 interface IDeps {
     'core.domain.import'?: IImportDomain;
+    'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
+    'core.utils'?: IUtils;
     config?: Config.IConfig;
 }
 
 interface IImportParams {
-    file: Promise<IFileUpload>;
+    file: Promise<FileUpload>;
     startAt?: number;
 }
 
 interface IImportExcelParams {
-    file: Promise<IFileUpload>;
+    file: Promise<FileUpload>;
     sheets?: Array<{
         type: ImportType;
         library: string;
@@ -41,17 +44,14 @@ interface IImportExcelParams {
     startAt?: number;
 }
 
-export default function ({'core.domain.import': importDomain = null, config = null}: IDeps = {}): ICoreImportApp {
-    const _getFileExtension = (filename: string): string | null => {
-        if (filename.lastIndexOf('.') === -1) {
-            return null;
-        }
-
-        return filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
-    };
-
+export default function ({
+    'core.domain.import': importDomain = null,
+    'core.domain.helpers.storeUploadFile': storeUploadFile,
+    'core.utils': utils = null,
+    config = null
+}: IDeps = {}): ICoreImportApp {
     const _validateFileFormat = (filename: string, allowed: string[]) => {
-        const fileExtension = _getFileExtension(filename);
+        const fileExtension = utils.getFileExtension(filename);
 
         if (!allowed.includes(fileExtension)) {
             throw new ValidationError<IImportParams>({
@@ -61,30 +61,6 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                 }
             });
         }
-    };
-
-    const _storeUploadFile = async (fileData: IFileUpload): Promise<string> => {
-        const {createReadStream, filename} = fileData;
-        const readStream = createReadStream();
-        const storedFileName = `${nanoid()}_${filename}`;
-        const storedFilePath = `${config.import.directory}/${storedFileName}`;
-
-        await new Promise((resolve, reject) => {
-            const writeStream = fs.createWriteStream(storedFilePath);
-
-            writeStream.on('finish', resolve);
-
-            // If there's an error writing the file, remove the partially written file.
-            writeStream.on('error', error => {
-                fs.unlink(storedFilePath, () => {
-                    reject(error);
-                });
-            });
-
-            readStream.pipe(writeStream);
-        });
-
-        return storedFileName;
     };
 
     return {
@@ -121,23 +97,25 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                     Upload: GraphQLUpload,
                     Mutation: {
                         async import(_, {file, startAt}: IImportParams, ctx: IQueryInfos): Promise<string> {
-                            const fileData: IFileUpload = await file;
+                            const fileData: FileUpload = await file;
 
                             const allowedExtensions = ['json'];
                             _validateFileFormat(fileData.filename, allowedExtensions);
 
+                            fileData.filename = nanoid() + '.' + utils.getFileExtension(fileData.filename);
+
                             // Store JSON file in local filesystem.
-                            const storedFileName = await _storeUploadFile(fileData);
+                            await storeUploadFile(fileData, config.import.directory, fileData.filename);
 
                             return importDomain.import(
-                                {filename: storedFileName, ctx},
+                                {filename: fileData.filename, ctx},
                                 {
                                     // Delete remaining import file.
                                     ...(!!startAt && {startAt}),
                                     callback: {
                                         moduleName: 'utils',
                                         name: 'deleteFile',
-                                        args: [`${config.import.directory}/${storedFileName}`],
+                                        args: [`${config.import.directory}/${fileData.filename}`],
                                         type: [
                                             TaskCallbackType.ON_SUCCESS,
                                             TaskCallbackType.ON_FAILURE,
@@ -154,15 +132,17 @@ export default function ({'core.domain.import': importDomain = null, config = nu
                             {file, sheets, startAt}: IImportExcelParams,
                             ctx: IQueryInfos
                         ): Promise<string> {
-                            const fileData: IFileUpload = await file;
+                            const fileData: FileUpload = await file;
 
                             const allowedExtensions = ['xlsx'];
                             _validateFileFormat(fileData.filename, allowedExtensions);
 
-                            // Store XLSX file in local filesystem.
-                            const storedFileName = await _storeUploadFile(fileData);
+                            fileData.filename = nanoid() + '.' + utils.getFileExtension(fileData.filename);
 
-                            return importDomain.importExcel({filename: storedFileName, sheets, startAt}, ctx);
+                            // Store XLSX file in local filesystem.
+                            await storeUploadFile(fileData, config.import.directory, fileData.filename);
+
+                            return importDomain.importExcel({filename: fileData.filename, sheets, startAt}, ctx);
                         }
                     }
                 }

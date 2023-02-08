@@ -4,6 +4,7 @@
 import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from 'domain/permission/recordPermissionDomain';
 import {IAttribute} from '_types/attribute';
+import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {ErrorFieldDetail, Errors} from '../../../_types/errors';
@@ -26,6 +27,7 @@ interface ICanSaveValueParams {
     deps: {
         recordPermissionDomain: IRecordPermissionDomain;
         recordAttributePermissionDomain: IRecordAttributePermissionDomain;
+        config: IConfig;
     };
 }
 

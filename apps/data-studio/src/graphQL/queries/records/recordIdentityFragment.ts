@@ -12,6 +12,7 @@ const recordIdentityFragment = gql`
             color
             library {
                 id
+                behavior
                 label
                 gqlNames {
                     query

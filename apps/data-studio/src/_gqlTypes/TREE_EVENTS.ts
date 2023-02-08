@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeEventFiltersInput, TreeEventTypes} from './globalTypes';
+import {TreeEventFiltersInput, TreeEventTypes, LibraryBehavior, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL subscription operation: TREE_EVENTS
@@ -19,6 +19,7 @@ export interface TREE_EVENTS_treeEvent_element_record_whoAmI_library_gqlNames {
 
 export interface TREE_EVENTS_treeEvent_element_record_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: TREE_EVENTS_treeEvent_element_record_whoAmI_library_gqlNames;
 }
@@ -29,6 +30,7 @@ export interface TREE_EVENTS_treeEvent_element_record_whoAmI_preview_file_librar
 
 export interface TREE_EVENTS_treeEvent_element_record_whoAmI_preview_file {
     id: string;
+    file_type: FileType;
     library: TREE_EVENTS_treeEvent_element_record_whoAmI_preview_file_library;
 }
 

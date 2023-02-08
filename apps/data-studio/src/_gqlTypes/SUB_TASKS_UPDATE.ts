@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TaskFiltersInput, FileType, TaskStatus} from './globalTypes';
+import {TaskFiltersInput, LibraryBehavior, FileType, TaskStatus} from './globalTypes';
 
 // ====================================================
 // GraphQL subscription operation: SUB_TASKS_UPDATE
@@ -19,6 +19,7 @@ export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_library_gqlNames {
 
 export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: SUB_TASKS_UPDATE_task_created_by_whoAmI_library_gqlNames;
 }
@@ -74,6 +75,7 @@ export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library_gqlNames {
 
 export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library_gqlNames;
 }

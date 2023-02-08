@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FileType} from './globalTypes';
+import {FileType, LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_USER
@@ -40,6 +40,7 @@ export interface GET_USER_userWhoAmI_library_gqlNames {
 
 export interface GET_USER_userWhoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: GET_USER_userWhoAmI_library_gqlNames;
 }

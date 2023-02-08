@@ -5,7 +5,7 @@
 // This file is released under LGPL V3
 
 import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, LibraryBehavior} from '_gqlTypes/globalTypes';
 import {IField} from '_types/types';
 import {mockPreviews, mockRecordWhoAmI} from '__mocks__/common/record';
 import {manageItems} from './manageItems';
@@ -21,6 +21,7 @@ describe('manageItems', () => {
             label: 'record_label',
             library: {
                 id: 'record_lib',
+                behavior: LibraryBehavior.standard,
                 label: {fr: 'Test Lib'},
                 gqlNames: {
                     query: 'record_lib',

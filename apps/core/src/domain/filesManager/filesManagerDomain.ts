@@ -21,12 +21,19 @@ import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
 import {LibraryBehavior} from '../../_types/library';
-import {AttributeCondition, IRecord} from '../../_types/record';
+import {AttributeCondition, IRecord, Operator} from '../../_types/record';
 import {IRecordDomain} from '../record/recordDomain';
 import {createPreview} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewVersions} from './_constants';
+import {FileUpload} from 'graphql-upload';
+import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
+import {IUtils} from 'utils/utils';
+import increment from 'add-filename-increment';
+import {Progress} from 'progress-stream';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import * as Path from 'path';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -46,6 +53,20 @@ interface IGetOriginalPathParams {
     ctx: IQueryInfos;
 }
 
+interface IStoreFilesParams {
+    library: string;
+    nodeId: string;
+    files: Array<{data: FileUpload; uid: string; size?: number; replace?: boolean}>;
+}
+
+interface IIsFileExistsAsChild {
+    treeId: string;
+    parentNodeId: string;
+    filename: string;
+}
+
+export const TRIGGER_NAME_UPLOAD_FILE = 'UPLOAD_FILE';
+
 export interface IFilesManagerDomain {
     init(): Promise<void>;
     getPreviewVersion(): IPreviewVersion[];
@@ -53,10 +74,16 @@ export interface IFilesManagerDomain {
     forcePreviewsGeneration(params: IForcePreviewsGenerationParams): Promise<boolean>;
     getRootPathByKey(rootKey: string): string;
     getOriginalPath(params: IGetOriginalPathParams): Promise<string>;
+    storeFiles(
+        {library, nodeId, files}: IStoreFilesParams,
+        ctx: IQueryInfos
+    ): Promise<Array<{filename: string; record: IRecord}>>;
+    doesFileExistAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
 }
 
 interface IDeps {
     config?: Config.IConfig;
+    'core.utils'?: IUtils;
     'core.infra.amqpService'?: IAmqpService;
     'core.utils.logger'?: winston.Winston;
     'core.domain.record'?: IRecordDomain;
@@ -65,20 +92,25 @@ interface IDeps {
     'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
+    'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
     'core.infra.record'?: IRecordRepo;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     translator?: i18n;
 }
 
 export default function ({
     config = null,
+    'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.domain.filesManager.helpers.messagesHandler': messagesHandler = null,
+    'core.domain.helpers.storeUploadFile': storeUploadFile = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
+    'core.domain.eventsManager': eventsManager = null,
     'core.infra.record': recordRepo = null,
     translator = null
 }: IDeps): IFilesManagerDomain {
@@ -171,6 +203,126 @@ export default function ({
                 config.filesManager.routingKeys.events,
                 _onMessage
             );
+        },
+        async storeFiles(
+            {library, nodeId, files}: IStoreFilesParams,
+            ctx: IQueryInfos
+        ): Promise<Array<{filename: string; record: IRecord}>> {
+            const filenames = files.map(f => f.data.filename);
+
+            // Check if files have the same filename
+            if (filenames.filter((f, i) => filenames.indexOf(f) !== i).length) {
+                throw utils.generateExplicitValidationError('files', Errors.DUPLICATE_FILENAMES, ctx.lang);
+            }
+
+            const treeId = treeDomain.getLibraryTreeId(library, ctx);
+            const recordNode = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
+
+            // default path is root path
+            let path = '.';
+
+            if (!!recordNode) {
+                const libProperties = await libraryDomain.getLibraryProperties(recordNode.library, ctx);
+
+                path =
+                    libProperties.behavior === LibraryBehavior.DIRECTORIES
+                        ? Path.join(recordNode.file_path, recordNode.file_name)
+                        : recordNode.file_path;
+            }
+
+            // get root key of library from config
+            const rootKey = Object.keys(config.filesManager.rootKeys).find(
+                key => config.filesManager.rootKeys[key] === library
+            );
+
+            const rootPath = this.getRootPathByKey(rootKey);
+            const fullPath = Path.join(rootPath, path);
+
+            const records = [];
+
+            for (const file of files) {
+                file.replace = file.replace ?? false;
+
+                // check if file already exists
+                const fileExists = await recordDomain.find({
+                    params: {
+                        library,
+                        filters: [
+                            {
+                                field: FilesAttributes.FILE_NAME,
+                                condition: AttributeCondition.EQUAL,
+                                value: file.data.filename
+                            },
+                            {
+                                operator: Operator.AND
+                            },
+                            {
+                                field: FilesAttributes.FILE_PATH,
+                                condition: AttributeCondition.EQUAL,
+                                value: path
+                            }
+                        ],
+                        withCount: true,
+                        retrieveInactive: true
+                    },
+                    ctx
+                });
+
+                let record;
+
+                if (fileExists.totalCount && file.replace) {
+                    record = fileExists.list[0];
+                } else {
+                    record = await recordDomain.createRecord(library, ctx);
+
+                    // if file already exists, we modify the filename
+                    if (fileExists.totalCount && !file.replace) {
+                        const newPath = increment.path(`${fullPath}/${file.data.filename}`, {
+                            fs: true,
+                            platform: 'darwin'
+                        });
+
+                        file.data.filename = newPath.split('/').pop();
+                    }
+
+                    const systemCtx: IQueryInfos = {
+                        userId: config.defaultUserId,
+                        queryId: 'saveValueBatchOnStoringFiles'
+                    };
+
+                    await recordDomain.updateRecord({
+                        library,
+                        recordData: {
+                            id: record.id,
+                            [FilesAttributes.FILE_NAME]: file.data.filename,
+                            [FilesAttributes.FILE_PATH]: path,
+                            [FilesAttributes.ROOT_KEY]: rootKey
+                        },
+                        ctx: systemCtx
+                    });
+                }
+
+                const getProgress = async (progress: Progress) => {
+                    // Round all progress values to have integers
+                    Object.keys(progress).forEach(key => {
+                        progress[key] = Math.floor(progress[key]);
+                    });
+
+                    await eventsManager.sendPubSubEvent(
+                        {
+                            triggerName: TRIGGER_NAME_UPLOAD_FILE,
+                            data: {upload: {uid: file.uid, userId: ctx.userId, progress}}
+                        },
+                        ctx
+                    );
+                };
+
+                await storeUploadFile(file.data, fullPath, getProgress, file.size);
+
+                records.push({uid: file.uid, record});
+            }
+
+            return records;
         },
         getPreviewVersion(): IPreviewVersion[] {
             return systemPreviewVersions;
@@ -339,6 +491,14 @@ export default function ({
             }
 
             return pathsByKeys[rootKey];
+        },
+        async doesFileExistAsChild(
+            {treeId, filename, parentNodeId}: IIsFileExistsAsChild,
+            ctx: IQueryInfos
+        ): Promise<boolean> {
+            const nodes = await treeDomain.getElementChildren({treeId, nodeId: parentNodeId, ctx});
+
+            return nodes.list.findIndex(n => n.record[FilesAttributes.FILE_NAME] === filename) !== -1;
         },
         async getOriginalPath({fileId, libraryId, ctx}) {
             // Get file record

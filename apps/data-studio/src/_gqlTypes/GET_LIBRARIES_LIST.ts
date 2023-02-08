@@ -19,6 +19,7 @@ export interface GET_LIBRARIES_LIST_libraries_list_icon_whoAmI_library_gqlNames 
 
 export interface GET_LIBRARIES_LIST_libraries_list_icon_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: GET_LIBRARIES_LIST_libraries_list_icon_whoAmI_library_gqlNames;
 }

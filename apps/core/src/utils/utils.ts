@@ -101,14 +101,23 @@ export interface IUtils {
     deleteFile(path: string): Promise<void>;
 
     getUnixTime(): number;
+
+    getFileExtension(filename: string): string | null;
 }
 
 export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function({translator = null}: IUtilsDeps = {}): IUtils {
+export default function ({translator = null}: IUtilsDeps = {}): IUtils {
     return {
+        getFileExtension(filename) {
+            if (filename.lastIndexOf('.') === -1) {
+                return null;
+            }
+
+            return filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
+        },
         getUnixTime: () => Math.floor(Date.now() / 1000),
         deleteFile: async (path: string): Promise<void> => {
             return fs.promises.unlink(path);

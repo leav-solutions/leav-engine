@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import {treeNavigationPageSize} from 'constants/constants';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';
@@ -24,6 +25,7 @@ jest.mock('../../hooks/ActiveTreeHook/ActiveTreeHook', () => ({
     useActiveTree: () => [
         {
             id: 'my_tree',
+            behavior: 'standard',
             libraries: ['my_lib'],
             label: 'My Tree Label',
             permissions: {...mockTreeNodePermissions}
@@ -50,6 +52,8 @@ describe('Navigation', () => {
         __typename: 'TreeLibrary',
         library: {
             id: 'my_lib',
+            system: false,
+            behavior: LibraryBehavior.standard,
             label: {fr: 'My Lib', en: 'My lib'},
             __typename: 'Library'
         },
@@ -77,6 +81,8 @@ describe('Navigation', () => {
                             __typename: 'Tree',
                             id: 'my_tree',
                             label: {fr: 'My Tree Label', en: 'My Tree Label'},
+                            behavior: TreeBehavior.standard,
+                            system: false,
                             libraries: [mockTreeLibrary],
                             permissions: mockTreeNodePermissions
                         }
@@ -102,7 +108,9 @@ describe('Navigation', () => {
                         {
                             __typename: 'Tree',
                             id: 'my_tree',
-                            libraries: [mockTreeLibrary]
+                            libraries: [mockTreeLibrary],
+                            behavior: TreeBehavior.standard,
+                            system: false
                         }
                     ]
                 }
@@ -121,6 +129,7 @@ describe('Navigation', () => {
                         record: {
                             __typename: 'RecordLib',
                             id: '1',
+                            active: true,
                             whoAmI: {...mockRecordWithTypenames, id: '1', label: 'first-child'}
                         },
                         childrenCount: 2,
@@ -132,6 +141,7 @@ describe('Navigation', () => {
                         record: {
                             __typename: 'RecordLib',
                             id: '2',
+                            active: true,
                             whoAmI: {...mockRecordWithTypenames, id: '2', label: 'second-child'}
                         },
                         childrenCount: 2,
@@ -172,6 +182,7 @@ describe('Navigation', () => {
                     record: {
                         __typename: 'RecordLib',
                         id: '1',
+                        active: true,
                         whoAmI: {...mockRecordWithTypenames, id: '1', label: 'child-second-page'}
                     },
                     childrenCount: 2,
@@ -192,7 +203,8 @@ describe('Navigation', () => {
                         record: {
                             __typename: 'RecordLib',
                             id: '11',
-                            whoAmI: {...mockRecordWithTypenames, id: '11', label: 'child-1-1'}
+                            whoAmI: {...mockRecordWithTypenames, id: '11', label: 'child-1-1'},
+                            active: true
                         },
                         childrenCount: 0,
                         permissions: mockTreeNodePermissions
@@ -203,7 +215,8 @@ describe('Navigation', () => {
                         record: {
                             __typename: 'RecordLib',
                             id: '12',
-                            whoAmI: {...mockRecordWithTypenames, id: '12', label: 'child-1-2'}
+                            whoAmI: {...mockRecordWithTypenames, id: '12', label: 'child-1-2'},
+                            active: true
                         },
                         childrenCount: 0,
                         permissions: mockTreeNodePermissions

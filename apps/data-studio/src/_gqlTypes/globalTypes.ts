@@ -168,6 +168,11 @@ export enum TaskStatus {
     RUNNING = 'RUNNING'
 }
 
+export enum TreeBehavior {
+    files = 'files',
+    standard = 'standard'
+}
+
 export enum TreeEventTypes {
     add = 'add',
     move = 'move',
@@ -184,6 +189,13 @@ export enum ViewTypes {
     cards = 'cards',
     list = 'list',
     timeline = 'timeline'
+}
+
+export interface FileInput {
+    data: any;
+    uid: string;
+    size?: number | null;
+    replace?: boolean | null;
 }
 
 export interface Pagination {
@@ -244,6 +256,11 @@ export interface TreeEventFiltersInput {
     treeId: string;
     nodes?: (string | null)[] | null;
     events?: TreeEventTypes[] | null;
+}
+
+export interface UploadFiltersInput {
+    userId?: string | null;
+    uid?: string | null;
 }
 
 export interface ValueBatchInput {

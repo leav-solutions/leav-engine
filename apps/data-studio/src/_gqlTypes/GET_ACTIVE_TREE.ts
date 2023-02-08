@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {TreeBehavior} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: GET_ACTIVE_TREE
 // ====================================================
@@ -21,6 +23,7 @@ export interface GET_ACTIVE_TREE_activeTree_permissions {
 
 export interface GET_ACTIVE_TREE_activeTree {
     id: string;
+    behavior: TreeBehavior;
     libraries: GET_ACTIVE_TREE_activeTree_libraries[];
     label: string;
     permissions: GET_ACTIVE_TREE_activeTree_permissions;

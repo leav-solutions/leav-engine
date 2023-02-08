@@ -9,6 +9,7 @@
         "ERROR": "Error",
         "UNKNOWN": "Unknown",
         "FILE_NOT_FOUND": "Unknown file",
+        "DUPLICATE_FILENAMES": "Duplicate filenames",
         "FORBIDDEN_ID": "The specified Id is forbidden",
         "FORMAT_ERROR": "Invalid format: {{details}}",
         "INVALID_ACTION_TYPE": "Last action is invalid: expected action with output types including {{expected}}, received {{received}}",

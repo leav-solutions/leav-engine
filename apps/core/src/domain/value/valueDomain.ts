@@ -401,7 +401,8 @@ const valueDomain = function ({
                 ctx,
                 deps: {
                     recordPermissionDomain,
-                    recordAttributePermissionDomain
+                    recordAttributePermissionDomain,
+                    config
                 }
             });
 
@@ -428,10 +429,6 @@ const valueDomain = function ({
                 },
                 ctx
             });
-
-            if (attributeProps.readonly) {
-                validationErrors.attribute = {msg: Errors.READONLY_ATTRIBUTE, vars: {attribute: attributeProps.id}};
-            }
 
             if (Object.keys(validationErrors).length) {
                 throw new ValidationError<IValue>(validationErrors);
@@ -547,7 +544,8 @@ const valueDomain = function ({
                             ctx,
                             deps: {
                                 recordPermissionDomain,
-                                recordAttributePermissionDomain
+                                recordAttributePermissionDomain,
+                                config
                             }
                         });
 

@@ -36,6 +36,7 @@ export const getUser = gql`
             }
             library {
                 id
+                behavior
                 label
                 gqlNames {
                     query

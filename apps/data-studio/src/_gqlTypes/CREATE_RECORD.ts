@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FileType} from './globalTypes';
+import {LibraryBehavior, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: CREATE_RECORD
@@ -19,6 +19,7 @@ export interface CREATE_RECORD_createRecord_whoAmI_library_gqlNames {
 
 export interface CREATE_RECORD_createRecord_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: CREATE_RECORD_createRecord_whoAmI_library_gqlNames;
 }

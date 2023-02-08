@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
 import SelectTreeNode from './SelectTreeNode';
@@ -28,6 +29,7 @@ describe('SelectTreeNode', () => {
                                     id: 'id1',
                                     record: {
                                         id: 'id1',
+                                        active: true,
                                         whoAmI: {
                                             id: 'id1',
                                             label: 'label1',
@@ -35,6 +37,7 @@ describe('SelectTreeNode', () => {
                                             library: {
                                                 id: 'categories',
                                                 label: {fr: 'Catégories'},
+                                                behavior: LibraryBehavior.standard,
                                                 gqlNames: {
                                                     type: 'Categorie',
                                                     query: 'categories',
@@ -73,6 +76,7 @@ describe('SelectTreeNode', () => {
                                     id: 'id2',
                                     record: {
                                         id: 'id2',
+                                        active: true,
                                         whoAmI: {
                                             __typename: 'RecordIdentity',
                                             id: 'id2',
@@ -81,6 +85,7 @@ describe('SelectTreeNode', () => {
                                             library: {
                                                 id: 'categories',
                                                 label: {fr: 'Catégories'},
+                                                behavior: LibraryBehavior.standard,
                                                 gqlNames: {
                                                     type: 'Categorie',
                                                     query: 'categories',

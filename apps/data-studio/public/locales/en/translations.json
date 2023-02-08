@@ -362,6 +362,21 @@
         "export_notification_title": "New export running in background",
         "export_notification_description": "Scheduled for"
     },
+    "upload": {
+        "title": "Upload files",
+        "select_path_step_title": "Select a path",
+        "select_files_step_title": "Select files",
+        "upload_step_title":  "Upload",
+        "next": "Next",
+        "previous": "Previous",
+        "dragger_content": "Click or drag file to this area",
+        "replace_modal": {
+            "title": "This file already exists",
+            "replaceBtn": "Replace",
+            "keepBtn": "Keep both",
+            "message": "A file with the name \"{{filename}}\" already exists in this folder. What would you like to do?"
+        }
+    },
     "import": {
         "title": "Data import",
         "file_selection": "Select file",

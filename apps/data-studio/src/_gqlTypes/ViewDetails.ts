@@ -6,7 +6,15 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ViewSizes, ViewTypes, RecordFilterCondition, RecordFilterOperator, SortOrder, FileType} from './globalTypes';
+import {
+    ViewSizes,
+    ViewTypes,
+    RecordFilterCondition,
+    RecordFilterOperator,
+    SortOrder,
+    LibraryBehavior,
+    FileType
+} from './globalTypes';
 
 // ====================================================
 // GraphQL fragment: ViewDetails
@@ -63,6 +71,7 @@ export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_library_gqlNa
 
 export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_library {
     id: string;
+    behavior: LibraryBehavior;
     label: any | null;
     gqlNames: ViewDetails_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
 }

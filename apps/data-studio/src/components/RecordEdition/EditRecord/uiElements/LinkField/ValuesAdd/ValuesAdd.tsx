@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {BulbOutlined, CloseOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
+import {BulbOutlined, CloseOutlined, CloudUploadOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {themeVars} from '@leav/ui';
-import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
+import {Button, Divider, Input, InputRef, Space, Spin, message} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import SearchModal from 'components/SearchModal';
@@ -12,6 +12,8 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import List from 'components/shared/List';
 import {IListProps} from 'components/shared/List/List';
 import RecordCard from 'components/shared/RecordCard';
+import UploadFiles from 'components/UploadFiles';
+import {getFileDataQuery, IFileDataQuery, IFileDataQueryVariables} from 'graphQL/queries/records/getFileDataQuery';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
@@ -22,12 +24,13 @@ import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
-import {SortOrder} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values
 } from '_gqlTypes/RECORD_FORM';
+import {UPLOAD} from '_gqlTypes/UPLOAD';
 import {ISharedStateSelectionSearch, PreviewSize} from '_types/types';
 
 type ValueFromList = RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values;
@@ -53,6 +56,7 @@ const Wrapper = styled.div`
         margin-top: 5px;
     }
 `;
+
 const ListsWrapper = styled.div`
     max-height: 30rem;
     overflow-y: scroll;
@@ -101,13 +105,19 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const searchInputRef = useRef<InputRef>();
 
     const [selectedValues, setSelectedValues] = useState<ValueFromList[]>([]);
+    const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
     const [isSearchModalVisible, setIsSearchModalVisible] = useState<boolean>(false);
     const [isCreateRecordModalVisible, setIsCreateRecordModalVisible] = useState<boolean>(false);
     const [valuesListCurrentPage, setValuesListCurrentPage] = useState<number>(1);
     const [searchCurrentPage, setSearchCurrentPage] = useState<number>(1);
     const pageSize = 10;
     const canSearch = !attribute.linkValuesList.enable || attribute.linkValuesList.allowFreeEntry;
-    const canCreateRecord = attribute.linked_library.permissions.create_record;
+    const canCreateRecord =
+        attribute.linked_library.permissions.create_record &&
+        attribute.linked_library.behavior !== LibraryBehavior.files;
+    const canUploadFile =
+        attribute.linked_library.permissions.create_record &&
+        attribute.linked_library.behavior === LibraryBehavior.files;
 
     const [runSearch, {loading, error, data: searchData}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
@@ -133,6 +143,24 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const _handleClickAdvancedSearch = () => {
         setIsSearchModalVisible(true);
+    };
+
+    const _handleClickUploadFiles = () => setIsUploadFilesModalVisible(true);
+    const _handleCloseUploadFiles = () => setIsUploadFilesModalVisible(false);
+
+    const [runGetFileDataQuery] = useLazyQuery<IFileDataQuery, IFileDataQueryVariables>(
+        getFileDataQuery(attribute.linked_library.id),
+        {
+            onError: err => message.error(err.message)
+        }
+    );
+
+    const _onUploadFilesCompleted = async (data: UPLOAD) => {
+        const toAdd = data.upload.map(d => {
+            return {id: d.record.id, whoAmI: d.record.whoAmI};
+        });
+
+        onAdd(toAdd);
     };
 
     const _handleOpenCreateRecordModal = () => {
@@ -307,6 +335,11 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                                 {t('record_edition.new_record')}
                             </Button>
                         )}
+                        {canUploadFile && (
+                            <Button size="small" icon={<CloudUploadOutlined />} onClick={_handleClickUploadFiles}>
+                                {t('upload.title')}
+                            </Button>
+                        )}
                     </Space>
                     <Space>
                         <Button size="small" onClick={_handleClose}>
@@ -333,6 +366,14 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                     record={null}
                     onClose={_handleCloseCreateRecordModal}
                     afterCreate={_handleAfterCreateRecord}
+                />
+            )}
+            {isUploadFilesModalVisible && (
+                <UploadFiles
+                    libraryId={attribute.linked_library.id}
+                    multiple={attribute.multiple_values}
+                    onCompleted={_onUploadFilesCompleted}
+                    onClose={_handleCloseUploadFiles}
                 />
             )}
         </>

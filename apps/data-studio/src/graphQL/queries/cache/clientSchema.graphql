@@ -29,6 +29,7 @@ type ActiveTreePermissions {
 
 type ActiveTree {
     id: String!,
+    behavior: TreeBehavior!
     libraries: [ActiveTreeLibraries!]!,
     label: String!,
     permissions: ActiveTreePermissions!

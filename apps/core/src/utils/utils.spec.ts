@@ -13,6 +13,13 @@ import {
 import utils from './utils';
 
 describe('Utils', () => {
+    describe('getFileExtension', () => {
+        test('Should return filename extension', async function () {
+            const utilsModule = utils();
+            expect(utilsModule.getFileExtension('file.txt')).toEqual('txt');
+            expect(utilsModule.getFileExtension('file')).toEqual(null);
+        });
+    });
     describe('libNameToQueryName', () => {
         test('Should format a string to camelCase', async function () {
             const utilsModule = utils();

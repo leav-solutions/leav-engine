@@ -19,6 +19,12 @@ export interface ILibraryDetailExtendedFilter {
     operator?: OperatorFilter;
 }
 
+export enum LibraryBehavior {
+    STANDARD = 'standard',
+    FILES = 'files',
+    DIRECTORIES = 'directories'
+}
+
 export interface ILibraryDetailExtendedDefaultView {
     id: string;
     label: string;
@@ -83,6 +89,7 @@ export interface ILibraryDetailExtendedAttributeParent extends ILibraryDetailExt
 export interface ILibraryDetailExtended {
     id: string;
     system: boolean;
+    behavior: LibraryBehavior;
     label: ISystemTranslation;
     attributes: ILibraryDetailExtendedAttributeParent[];
     gqlNames: ILibraryDetailExtendedGqlNames;
@@ -106,6 +113,7 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                 id
                 system
                 label
+                behavior
                 linkedTrees {
                     id
                     label

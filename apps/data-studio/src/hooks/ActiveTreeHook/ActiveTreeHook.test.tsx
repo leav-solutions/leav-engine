@@ -6,11 +6,13 @@ import {act, render} from '_tests/testUtils';
 import {IActiveTree} from '../../graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import {useActiveTree} from './ActiveTreeHook';
 import MockedProviderWithFragments from '../../__mocks__/MockedProviderWithFragments';
+import {TreeBehavior} from '_gqlTypes/globalTypes';
 
 describe('ActiveTreeHook', () => {
     const mockActiveTree: IActiveTree = {
         id: 'test',
         libraries: [{id: 'test'}],
+        behavior: TreeBehavior.standard,
         label: 'string',
         permissions: {
             access_tree: true,

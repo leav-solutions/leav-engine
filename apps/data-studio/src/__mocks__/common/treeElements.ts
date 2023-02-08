@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {
     TREE_NODE_CHILDREN_treeNodeChildren_list,
@@ -18,6 +19,7 @@ export const mockTreeRecord: RecordIdentity = {
         preview: mockPreviews,
         library: {
             id: 'library-id',
+            behavior: LibraryBehavior.standard,
             label: {
                 fr: 'library-label',
                 en: 'library-label'
@@ -39,6 +41,7 @@ export const mockTreeRecordChild: RecordIdentity = {
         preview: mockPreviews,
         library: {
             id: 'library-id',
+            behavior: LibraryBehavior.standard,
             label: {
                 fr: 'library-label',
                 en: 'library-label'
