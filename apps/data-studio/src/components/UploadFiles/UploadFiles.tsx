@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InboxOutlined, LoadingOutlined, FileOutlined, CheckCircleTwoTone} from '@ant-design/icons';
 import {Upload, Modal, Button, Steps, theme, StepProps, Alert, Divider, UploadFile} from 'antd';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useQuery, useSubscription, useMutation, useLazyQuery} from '@apollo/client';
 import {getUploadUpdates} from 'graphQL/subscribes/upload/getUploadUpdates';
@@ -209,7 +209,7 @@ function UploadFiles({
         }
     };
 
-    const Dragger = () => (
+    const Dragger = (
         <Upload.Dragger data-testid="dragger" {...props}>
             <p className="ant-upload-drag-icon">
                 <InboxOutlined />
@@ -217,7 +217,6 @@ function UploadFiles({
             <p className="ant-upload-text">{t('upload.dragger_content')}</p>
         </Upload.Dragger>
     );
-
     const isDone = status === 'finish' || status === 'error';
 
     const showReplaceModal = async (filename: string): Promise<boolean> =>
@@ -260,13 +259,13 @@ function UploadFiles({
         },
         {
             title: t('upload.select_files_step_title'),
-            content: <Dragger />
+            content: Dragger
         },
         {
             title: t('upload.upload_step_title'),
             content: (
                 <>
-                    <Dragger />
+                    {Dragger}
                     {!!errorMsg && (
                         <>
                             <Divider />
@@ -289,7 +288,7 @@ function UploadFiles({
                 width="70rem"
                 onCancel={_onClose}
                 footer={
-                    <>
+                    <div style={{marginTop: 50}}>
                         {currentStep > 0 && currentStep < steps.length - 1 && (
                             <Button data-testid="prev-btn" onClick={() => prev()}>
                                 {t('upload.previous')}
@@ -323,7 +322,7 @@ function UploadFiles({
                                 {t('global.close')}
                             </Button>
                         )}
-                    </>
+                    </div>
                 }
                 data-testid="upload-modal"
                 upload-modal
