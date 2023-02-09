@@ -51,7 +51,8 @@
         "libraries": "Bibliothèques",
         "trees" : "Arbres",
         "id": "Identifiant",
-        "label": "Libellé"
+        "label": "Libellé",
+        "no_libraries_or_trees": "Aucune bibliothèque ou arbre disponible"
     },
     "settings": {
         "choose-lang": "Langue"

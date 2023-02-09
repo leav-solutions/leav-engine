@@ -364,11 +364,19 @@ export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): s
     });
 
 export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, libraryId: string): boolean => {
+    if (!app?.libraries === null) {
+        return false;
+    }
+
     const appLibraries = app?.libraries ?? [];
     return !appLibraries.length || !!appLibraries.find(appLib => appLib.id === libraryId);
 };
 
 export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
+    if (app?.trees === null) {
+        return false;
+    }
+
     const appTrees = app?.trees ?? [];
     return !appTrees.length || !!appTrees.find(appTree => appTree.id === treeId);
 };

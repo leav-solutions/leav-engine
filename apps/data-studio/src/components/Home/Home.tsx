@@ -2,16 +2,31 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {Col, Row} from 'antd';
+import {Alert} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useLang} from 'hooks/LangHook/LangHook';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
+import styled from 'styled-components';
 import {IBaseInfo, InfoType} from '_types/types';
 import LibrariesList from './LibrariesList';
 import TreeList from './TreeList';
+
+// A wrapper that displays 2 elements side by side. If first element is missing, the second one goes on the left
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding-bottom: 1rem;
+
+    > * {
+        flex-grow: 1;
+    }
+`;
 
 function Home(): JSX.Element {
     const {t} = useTranslation();
@@ -30,15 +45,15 @@ function Home(): JSX.Element {
         dispatch(setInfoBase(baseInfo));
     }, [t, dispatch]);
 
+    if (appData?.currentApp?.libraries === null && appData?.currentApp?.trees === null) {
+        return <Alert style={{margin: '1rem'}} message={t('home.no_libraries_or_trees')} type="info" showIcon />;
+    }
+
     return (
-        <Row gutter={10} style={{paddingBottom: '1rem'}}>
-            <Col span={12} data-testid="libraries-list">
-                <LibrariesList />
-            </Col>
-            <Col span={12} data-testid="trees-list">
-                <TreeList />
-            </Col>
-        </Row>
+        <Wrapper>
+            <LibrariesList />
+            <TreeList />
+        </Wrapper>
     );
 }
 

@@ -14,7 +14,6 @@ import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibra
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
-import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getLibraryLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
@@ -64,7 +63,6 @@ function LibrariesList(): JSX.Element {
     const {t} = useTranslation();
     const [{lang}] = useLang();
 
-    const dispatch = useAppDispatch();
     const [importActiveLibrary, setImportActiveLibrary] = useState<string>();
 
     const librariesListQuery = useGetLibrariesListQuery();
@@ -116,6 +114,7 @@ function LibrariesList(): JSX.Element {
             }
         },
         {
+            title: <></>,
             dataIndex: 'isFavorite',
             key: 'isFavorite',
             width: 20,
@@ -144,8 +143,12 @@ function LibrariesList(): JSX.Element {
         }
     ];
 
+    if (!librariesListQuery.loading && !libraries.length) {
+        return null;
+    }
+
     return (
-        <Wrapper className="wrapper-page">
+        <Wrapper className="wrapper-page" data-testid="libraries-list">
             <ListHeader>
                 <DatabaseOutlined style={{fontSize: '1.5rem'}} />
                 {t('home.libraries')}

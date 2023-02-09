@@ -30,7 +30,7 @@ export default function useGetTreesListQuery(params: IUseGetTreesListQueryHookPa
 
     const query = useQuery<GET_TREE_LIST_QUERY>(getTreeListQuery, {
         variables,
-        skip,
+        skip: skip || (onlyAllowed && appData?.currentApp?.trees === null),
         onCompleted: data => {
             const allowedTrees = data.trees.list.filter(
                 tree => (!onlyAllowed || tree.permissions.access_tree) && isTreeInApp(appData.currentApp, tree.id)
@@ -55,6 +55,10 @@ export default function useGetTreesListQuery(params: IUseGetTreesListQueryHookPa
             setQueryData(cleanData);
         }
     });
+
+    if (onlyAllowed && appData?.currentApp?.trees === null) {
+        return {...query, loading: false, data: {trees: {list: []}}};
+    }
 
     return {...query, loading: query.loading || (!query.loading && typeof queryData === undefined), data: queryData};
 }

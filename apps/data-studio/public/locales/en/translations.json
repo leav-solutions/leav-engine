@@ -51,7 +51,8 @@
         "libraries": "Libraries",
         "trees" : "Trees",
         "id": "ID",
-        "label": "Label"
+        "label": "Label",
+        "no_libraries_or_trees": "No libraries or trees available"
     },
     "settings": {
         "choose-lang": "Language"

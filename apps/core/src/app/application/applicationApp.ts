@@ -108,8 +108,8 @@ export default function ({
                     type: ApplicationType!,
                     label(lang: [AvailableLanguage!]): SystemTranslation!,
                     description: SystemTranslation,
-                    libraries: [Library!]!,
-                    trees: [Tree!]!,
+                    libraries: [Library!],
+                    trees: [Tree!],
                     color: String,
                     icon: Record,
                     module: String!,
@@ -221,11 +221,19 @@ export default function ({
                     },
                     Application: {
                         async libraries(parent: IApplication, _, ctx: IQueryInfos): Promise<ILibrary[]> {
+                            if (parent.libraries === null) {
+                                return null;
+                            }
+
                             return Promise.all(
                                 (parent?.libraries ?? []).map(l => libraryDomain.getLibraryProperties(l, ctx))
                             );
                         },
                         async trees(parent: IApplication, _, ctx: IQueryInfos): Promise<ITree[]> {
+                            if (parent.trees === null) {
+                                return null;
+                            }
+
                             return Promise.all((parent?.trees ?? []).map(t => treeDomain.getTreeProperties(t, ctx)));
                         },
                         permissions: (

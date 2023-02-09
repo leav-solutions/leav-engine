@@ -308,4 +308,70 @@ describe('Home', () => {
 
         expect(screen.getByText('ImportModal')).toBeInTheDocument();
     });
+
+    test('If no libraries allowed, do not display libraries list at all', async () => {
+        await act(async () => {
+            render(
+                <MemoryRouter>
+                    <Home />
+                </MemoryRouter>,
+                {
+                    apolloMocks: mocks,
+                    currentApp: {
+                        ...currentApp,
+                        libraries: null
+                    }
+                }
+            );
+        });
+
+        const librariesListBlock = screen.queryByTestId('libraries-list');
+        const treesListBlock = screen.queryByTestId('trees-list');
+
+        expect(librariesListBlock).not.toBeInTheDocument();
+        expect(treesListBlock).toBeInTheDocument();
+    });
+
+    test('If no trees allowed, do not display trees list at all', async () => {
+        await act(async () => {
+            render(
+                <MemoryRouter>
+                    <Home />
+                </MemoryRouter>,
+                {
+                    apolloMocks: mocks,
+                    currentApp: {
+                        ...currentApp,
+                        trees: null
+                    }
+                }
+            );
+        });
+
+        const librariesListBlock = screen.queryByTestId('libraries-list');
+        const treesListBlock = screen.queryByTestId('trees-list');
+
+        expect(librariesListBlock).toBeInTheDocument();
+        expect(treesListBlock).not.toBeInTheDocument();
+    });
+
+    test('If no trees or libraries allowed, display a message', async () => {
+        await act(async () => {
+            render(
+                <MemoryRouter>
+                    <Home />
+                </MemoryRouter>,
+                {
+                    apolloMocks: mocks,
+                    currentApp: {
+                        ...currentApp,
+                        libraries: null,
+                        trees: null
+                    }
+                }
+            );
+        });
+
+        expect(screen.getByText(/no_libraries_or_trees/)).toBeInTheDocument();
+    });
 });

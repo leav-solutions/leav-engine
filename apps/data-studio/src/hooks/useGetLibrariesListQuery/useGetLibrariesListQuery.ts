@@ -23,9 +23,9 @@ export default function useGetLibrariesListQuery({
 
     const query = useQuery<GET_LIBRARIES_LIST>(getLibrariesListQuery, {
         onCompleted: data => {
-            const allowedLibraries = data.libraries.list.filter(
-                lib => (!onlyAllowed || lib.permissions.access_library) && isLibraryInApp(appData.currentApp, lib.id)
-            );
+            const allowedLibraries = data.libraries.list.filter(lib => {
+                return (!onlyAllowed || lib.permissions.access_library) && isLibraryInApp(appData.currentApp, lib.id);
+            });
 
             if (appData.currentApp.libraries.length) {
                 allowedLibraries.sort((libA, libB) => {
@@ -44,8 +44,13 @@ export default function useGetLibrariesListQuery({
             };
 
             setQueryData(cleanData);
-        }
+        },
+        skip: onlyAllowed && appData?.currentApp?.libraries === null
     });
+
+    if (onlyAllowed && appData?.currentApp?.libraries === null) {
+        return {...query, loading: false, data: {libraries: {list: []}}};
+    }
 
     return {...query, loading: query.loading || (!query.loading && typeof queryData === undefined), data: queryData};
 }
