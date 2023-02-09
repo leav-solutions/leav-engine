@@ -26,11 +26,18 @@ import ValidationError from '../../errors/ValidationError';
 import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {FileEvents, FilesAttributes, IFileEventData, IPreviewVersion} from '../../_types/filesManager';
+import {
+    FileEvents,
+    FilesAttributes,
+    IFileEventData,
+    IFilesAttributes,
+    IPreviewVersion
+} from '../../_types/filesManager';
 import {LibraryBehavior} from '../../_types/library';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
 import {IRecordDomain, IRecordFilterLight} from '../record/recordDomain';
-import {createPreview} from './helpers/handlePreview';
+import {getPreviewsDefaultData, updateRecordFile} from './helpers/handleFileUtilsHelper';
+import {requestPreviewGeneration} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewVersions} from './_constants';
@@ -99,7 +106,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -496,7 +503,26 @@ export default function({
                             p => (p[1] as {status: number; message: string}).status !== 0
                         ))
                 ) {
-                    await createPreview(
+                    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewVersions);
+                    const recordData: IFilesAttributes = {
+                        PREVIEWS_STATUS: previewsStatus,
+                        PREVIEWS: previews
+                    };
+                    await updateRecordFile(
+                        recordData,
+                        r.id,
+                        libraryId,
+                        {
+                            recordRepo,
+                            updateRecordLastModif,
+                            valueDomain,
+                            config,
+                            logger
+                        },
+                        ctx
+                    );
+
+                    await requestPreviewGeneration(
                         r.id,
                         `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
                         r.library,

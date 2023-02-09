@@ -6,13 +6,13 @@ import {themeVars} from '@leav/ui';
 import {Descriptions} from 'antd';
 import BasicButton from 'components/shared/BasicButton';
 import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
-import {IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
+import {IFileDataWithPreviewsStatus} from 'graphQL/queries/records/getFileDataQuery';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
 interface IFileModalSidebarProps {
-    fileData: IFileDataElement;
+    fileData: IFileDataWithPreviewsStatus;
 }
 
 const Sidebar = styled.div`
@@ -105,11 +105,13 @@ function FileModalSidebar({fileData}: IFileModalSidebarProps): JSX.Element {
                         );
                     })}
                 </Descriptions>
-                <ActionsWrapper>
-                    <BasicButton icon={<PictureOutlined />} onClick={_handleClickGeneratePreviews}>
-                        {t('files.generate_previews')}
-                    </BasicButton>
-                </ActionsWrapper>
+                {!fileData.isPreviewsGenerationPending && (
+                    <ActionsWrapper>
+                        <BasicButton icon={<PictureOutlined />} onClick={_handleClickGeneratePreviews}>
+                            {t('files.generate_previews')}
+                        </BasicButton>
+                    </ActionsWrapper>
+                )}
             </Sidebar>
             {displayPreviewConfirm && (
                 <TriggerPreviewsGenerationModal

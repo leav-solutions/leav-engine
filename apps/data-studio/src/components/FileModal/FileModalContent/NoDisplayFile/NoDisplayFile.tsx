@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FolderOutlined, FrownOutlined} from '@ant-design/icons';
+import {ClockCircleOutlined, FolderOutlined, FrownOutlined} from '@ant-design/icons';
 import {Space, theme} from 'antd';
 import {GlobalToken} from 'antd/es/theme/interface';
 import {useTranslation} from 'react-i18next';
@@ -39,6 +39,23 @@ function NoDisplayFile({fileData, noPreviewMessage = false}: INoDisplayFileProps
     const isDirectory = fileData.library.behavior === 'directories';
     const {token} = theme.useToken();
 
+    let message;
+    if (fileData.isPreviewsGenerationPending) {
+        message = (
+            <>
+                <ClockCircleOutlined />
+                {t('file_data.previews_generation_pending')}
+            </>
+        );
+    } else if (noPreviewMessage) {
+        message = (
+            <>
+                <FrownOutlined />
+                {t('file_data.no_preview')}
+            </>
+        );
+    }
+
     return (
         <Wrapper style={{backgroundColor: bgColor, color: fontColor}} themeToken={token}>
             <ExtensionWrapper isDirectory={isDirectory}>
@@ -51,12 +68,7 @@ function NoDisplayFile({fileData, noPreviewMessage = false}: INoDisplayFileProps
                     extension
                 )}
             </ExtensionWrapper>
-            {noPreviewMessage && (
-                <NoPreviewMessage>
-                    <FrownOutlined />
-                    {t('file_data.no_preview')}
-                </NoPreviewMessage>
-            )}
+            {message && <NoPreviewMessage>{message}</NoPreviewMessage>}
         </Wrapper>
     );
 }

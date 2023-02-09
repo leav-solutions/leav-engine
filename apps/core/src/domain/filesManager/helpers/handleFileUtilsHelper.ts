@@ -263,7 +263,7 @@ export const deleteFilesTreeElement = async (
     }
 };
 
-export const getPreviewsDatas = (previewVersions: IPreviewVersion[]) => {
+export const getPreviewsDefaultData = (previewVersions: IPreviewVersion[]) => {
     const previewsStatus: IPreviewsStatus = {};
     const previews: IPreviews = {};
 

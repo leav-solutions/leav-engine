@@ -5,8 +5,8 @@ import {IQueryInfos} from '_types/queryInfos';
 import {systemPreviewVersions} from '../../../../domain/filesManager/_constants';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
-import {getInputData, getPreviewsDatas, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
-import {createPreview} from '../handlePreview';
+import {getInputData, getPreviewsDefaultData, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
+import {requestPreviewGeneration} from '../handlePreview';
 
 export const handleUpdateEvent = async (
     scanMsg: IFileEventData,
@@ -35,7 +35,7 @@ export const handleUpdateEvent = async (
         return;
     }
 
-    const {previewsStatus, previews} = getPreviewsDatas(systemPreviewVersions);
+    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewVersions);
 
     const recordData: IFilesAttributes = {
         INODE: scanMsg.inode,
@@ -49,5 +49,12 @@ export const handleUpdateEvent = async (
     await updateRecordFile(recordData, record.id, library, deps, ctx);
 
     // Regenerate Previews
-    await createPreview(record.id, scanMsg.pathAfter, library, systemPreviewVersions, deps.amqpService, deps.config);
+    await requestPreviewGeneration(
+        record.id,
+        scanMsg.pathAfter,
+        library,
+        systemPreviewVersions,
+        deps.amqpService,
+        deps.config
+    );
 };

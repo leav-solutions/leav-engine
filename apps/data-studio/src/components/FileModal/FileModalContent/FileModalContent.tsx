@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {themeVars} from '@leav/ui';
 import RecordCard from 'components/shared/RecordCard';
-import {IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
+import {IFileDataWithPreviewsStatus} from 'graphQL/queries/records/getFileDataQuery';
 import styled from 'styled-components';
 import {PreviewSize} from '_types/types';
 import {fileModalSidebarWidth, fileModalWidth} from '../_constants';
@@ -15,7 +15,7 @@ import NoDisplayFile from './NoDisplayFile';
 import VideoFile from './VideoFile';
 
 interface IFileModalContentProps {
-    fileData: IFileDataElement;
+    fileData: IFileDataWithPreviewsStatus;
 }
 
 const Container = styled.div`

@@ -45,7 +45,7 @@ export const generatePreviewMsg = (
     return previewMsg;
 };
 
-export const createPreview = async (
+export const requestPreviewGeneration = async (
     recordId: string,
     pathAfter: string,
     libraryId: string,
