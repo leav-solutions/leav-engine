@@ -14,7 +14,7 @@ i18n.use(initReactI18next)
         ns: ['translations'],
         defaultNS: 'translations',
         backend: {
-            loadPath: 'locales/{{lng}}/{{ns}}.json'
+            loadPath: `/${import.meta.env.VITE_ENDPOINT}/locales/{{lng}}/{{ns}}.json`
         },
         react: {
             useSuspense: true
