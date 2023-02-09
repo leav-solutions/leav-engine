@@ -28,7 +28,6 @@ import {
 import StandardField from './StandardField';
 
 jest.mock('../../hooks/useDeleteValueMutation');
-jest.mock('hooks/LangHook/LangHook');
 
 describe('StandardField', () => {
     const mockEditRecordModalDispatch = jest.fn();

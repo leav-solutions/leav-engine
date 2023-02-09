@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Form, Select, Space} from 'antd';
-import {useLang} from 'hooks/LangHook/LangHook';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
@@ -46,7 +45,7 @@ function ImportSheetSettings({
     onLinkAttributeSelect,
     onTreeLinkLibrarySelect
 }: IImportSettingsProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {t} = useTranslation();
     const {state} = useImportReducerContext();
     const sheet = state.sheets[sheetIndex];

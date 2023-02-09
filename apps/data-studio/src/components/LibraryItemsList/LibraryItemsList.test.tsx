@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
@@ -21,8 +20,6 @@ jest.mock('react-router-dom', () => ({
     useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test', filterName: 'TestFilter'})),
     useHistory: jest.fn()
 }));
-
-jest.mock('../../hooks/LangHook/LangHook');
 
 jest.mock(
     './SideItems',

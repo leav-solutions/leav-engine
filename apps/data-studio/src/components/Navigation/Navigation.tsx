@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -11,7 +12,6 @@ import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
-import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../utils';
 import {IBaseInfo, InfoType, WorkspacePanels} from '../../_types/types';
 import NavigationView from './NavigationView';
@@ -28,7 +28,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     const dispatch = useAppDispatch();
     const {activePanel} = useAppSelector(state => state);
 
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const [activeTree, updateActiveTree] = useActiveTree();
 
     const {data, loading, error} = useGetTreesListQuery({onlyAllowed: false, treeId: tree, skip: !tree});

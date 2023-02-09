@@ -2,13 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Space, theme} from 'antd';
 import {GlobalToken} from 'antd/lib/theme/interface';
 import SelectTreeNodeModal from 'components/shared/SelectTreeNodeModal';
 import TreeIcon from 'components/shared/TreeIcon';
-import {useLang} from 'hooks/LangHook/LangHook';
 import React, {SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -65,7 +64,7 @@ interface IVersionTreeProps {
 }
 
 function VersionTree({tree, selectedNode, readOnly, onNodeChange}: IVersionTreeProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {t} = useTranslation();
     const {token} = theme.useToken();
 

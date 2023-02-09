@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
+import {useLang} from '@leav/ui';
 import {Checkbox, Divider, Form, Input, Modal, Select} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -13,8 +14,6 @@ import saveViewMutation, {
     IAddViewMutationVariables,
     IAddViewMutationVariablesView
 } from '../../../../graphQL/mutations/views/saveViewMutation';
-import {useActiveLibrary} from '../../../../hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {ISystemTranslation, IView} from '../../../../_types/types';
 
@@ -37,8 +36,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const [activeLibrary] = useActiveLibrary();
-    const [{availableLangs, defaultLang}] = useLang();
+    const {lang: availableLangs, defaultLang} = useLang();
     const [form] = Form.useForm();
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
 

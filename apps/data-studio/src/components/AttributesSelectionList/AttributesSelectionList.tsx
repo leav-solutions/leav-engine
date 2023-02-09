@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {useLang} from '@leav/ui';
 import {Input, List, Spin} from 'antd';
-import React, {useEffect, useReducer, useRef, useState} from 'react';
+import {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
-import {useLang} from '../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../utils';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {ISelectedAttribute} from '../../_types/types';
@@ -50,7 +50,7 @@ function AttributesSelectionList({
 }: IAttributesSelectionListProps): JSX.Element {
     const {t} = useTranslation();
     const searchRef = useRef<any>(null);
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const [searchValue, setSearchValue] = useState<string>('');
 
     const [state, dispatch] = useReducer(attributeSelectionListReducer, {

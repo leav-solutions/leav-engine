@@ -5,21 +5,13 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockTreeElement} from '../../../../../__mocks__/common/treeElements';
 import Row from './Row';
 
-jest.mock(
-    'components/shared/RecordCard',
-    () =>
-        function RecordCard() {
-            return <div>RecordCard</div>;
-        }
-);
-
 describe('Cell', () => {
     test('should display the label of the record', async () => {
         await act(async () => {
             render(<Row treeElement={mockTreeElement} depth={0} isActive />);
         });
 
-        expect(await screen.findByText('RecordCard')).toBeInTheDocument();
+        expect(await screen.findByText(mockTreeElement.record.whoAmI.label)).toBeInTheDocument();
     });
 
     test('If element is not accessible, display an information', async () => {

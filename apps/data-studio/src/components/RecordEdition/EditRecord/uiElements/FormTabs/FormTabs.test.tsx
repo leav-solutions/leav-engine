@@ -2,12 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {TabsDirection} from '@leav/utils';
-import {act, render, screen} from '@testing-library/react';
-import React from 'react';
+import {act, render, screen} from '_tests/testUtils';
 import {mockCommonFormElementProps, mockFormElementTabs} from '__mocks__/common/form';
 import FormTabs from './FormTabs';
-
-jest.mock('hooks/LangHook/LangHook');
 
 describe('Tabs', () => {
     test('Render Tabs', async () => {

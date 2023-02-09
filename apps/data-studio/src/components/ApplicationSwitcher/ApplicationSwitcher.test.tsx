@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
-import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import {mockApplication} from '__mocks__/common/applications';
 import ApplicationSwitcher from './ApplicationSwitcher';
@@ -50,7 +49,9 @@ describe('ApplicationSwitcher', () => {
             render(<ApplicationSwitcher />, {apolloMocks: mocks});
         });
 
-        userEvent.click(screen.getByRole('button', {name: /applications/}));
+        await act(async () => {
+            userEvent.click(screen.getByRole('button', {name: /applications/}));
+        });
 
         await screen.findByText('My second app');
 

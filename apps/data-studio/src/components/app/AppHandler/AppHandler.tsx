@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
+import {LangContext} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
@@ -11,7 +12,7 @@ import {getApplicationByIdQuery} from 'graphQL/queries/applications/getApplicati
 import {getGlobalSettingsQuery} from 'graphQL/queries/globalSettings/getGlobalSettingsQuery';
 import {getTasks} from 'graphQL/queries/tasks/getTasks';
 import {getTaskUpdates} from 'graphQL/subscribes/tasks/getTaskUpdates';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppDispatch} from 'reduxStore/store';
 import {addTask} from 'reduxStore/tasks';
@@ -19,9 +20,7 @@ import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/G
 import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
-import {getSysTranslationQueryLanguage} from '../../../utils';
 import {ME} from '../../../_gqlTypes/ME';
 import {AvailableLanguage} from '../../../_types/types';
 import Router from '../../Router';
@@ -31,17 +30,17 @@ function AppHandler(): JSX.Element {
     const dispatch = useAppDispatch();
 
     // Add lang infos to the cache
-    const lang = getSysTranslationQueryLanguage(i18n);
-    const availableLangs = import.meta.env.VITE_AVAILABLE_LANG
-        ? import.meta.env.VITE_AVAILABLE_LANG.split(',').map(l => AvailableLanguage[l as AvailableLanguage])
-        : [];
+    const userLang = i18n.language.split('-')[0];
+    const availableLangs = import.meta.env.VITE_AVAILABLE_LANG ? import.meta.env.VITE_AVAILABLE_LANG.split(',') : [];
+    const fallbackLang = i18n.options.fallbackLng ? i18n.options.fallbackLng[0] : '';
+    const [lang, setLang] = useState<string[]>([userLang, fallbackLang]);
+
     const appId = import.meta.env.VITE_APPLICATION_ID;
 
     // Depending on browser, user language might be "fr" or "fr-FR".
     // We don't handle sub-language, thus extract first part only (eg. 'fr')
     const defaultLang = AvailableLanguage?.[i18n.language.split('-')[0]] ?? AvailableLanguage.en;
 
-    const [langInfo, updateLang] = useLang();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const [user, updateUser] = useUser();
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
@@ -85,12 +84,6 @@ function AppHandler(): JSX.Element {
     });
 
     useEffect(() => {
-        if (!langInfo.lang.length) {
-            updateLang({lang, availableLangs, defaultLang});
-        }
-    }, [updateLang, langInfo.lang, lang, availableLangs, defaultLang]);
-
-    useEffect(() => {
         if (!activeLibrary) {
             updateActiveLibrary(initialActiveLibrary);
         }
@@ -112,7 +105,14 @@ function AppHandler(): JSX.Element {
         }
 
         document.title = `${globalSettings.name} - ${localizedTranslation(currentApp.label, lang)}`;
-    }, [currentApp, globalSettings, langInfo.lang, t]);
+    }, [currentApp, globalSettings, userLang, t]);
+
+    const _handleLanguageChange = (newLang: string): void => {
+        i18n.changeLanguage(newLang);
+
+        // Update cache lang infos
+        setLang([i18n.language, fallbackLang]);
+    };
 
     if (meLoading || applicationLoading || globalSettingsLoading) {
         return <Loading />;
@@ -137,9 +137,11 @@ function AppHandler(): JSX.Element {
     };
 
     return (
-        <ApplicationContext.Provider value={appContextData}>
-            <Router />
-        </ApplicationContext.Provider>
+        <LangContext.Provider value={{lang, availableLangs, defaultLang, setLang: _handleLanguageChange}}>
+            <ApplicationContext.Provider value={appContextData}>
+                <Router />
+            </ApplicationContext.Provider>
+        </LangContext.Provider>
     );
 }
 

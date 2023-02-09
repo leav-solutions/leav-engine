@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import RecordCard from 'components/shared/RecordCard';
-import React from 'react';
+import {RecordCard} from '@leav/ui';
 import {IRecordIdentityWhoAmI, PreviewSize} from '_types/types';
 
 interface IRecordIdentityCellProps {

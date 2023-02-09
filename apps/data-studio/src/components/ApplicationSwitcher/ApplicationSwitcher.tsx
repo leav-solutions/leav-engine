@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
@@ -11,7 +11,6 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import RecordPreview from 'components/shared/RecordPreview';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -60,7 +59,7 @@ const skeletonItems: ItemType[] = [1, 2, 3].map(el => ({
 
 function ApplicationSwitcher(): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const appData = useApplicationContext();
 
     const [isVisible, setIsVisible] = useState(false);

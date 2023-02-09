@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import * as useLang from '@leav/ui';
 import userEvent from '@testing-library/user-event';
-import * as useLang from 'hooks/LangHook/LangHook';
 import * as useAuth from 'hooks/useAuth/useAuth';
-import React from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import {act, render, screen} from '_tests/testUtils';
 import UserPanel from './UserPanel';
@@ -60,14 +59,12 @@ describe('UserPanel', () => {
 
     test('Can switch language', async () => {
         const mockUpdateLang = jest.fn();
-        jest.spyOn(useLang, 'useLang').mockImplementation(() => [
-            {
-                lang: ['en'],
-                availableLangs: ['fr', 'en'],
-                defaultLang: 'en'
-            },
-            mockUpdateLang
-        ]);
+        jest.spyOn(useLang, 'useLang').mockImplementation(() => ({
+            lang: ['en'],
+            availableLangs: ['fr', 'en'],
+            defaultLang: 'en',
+            setLang: mockUpdateLang
+        }));
 
         await act(async () => {
             render(

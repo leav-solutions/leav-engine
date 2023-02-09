@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {Badge, Button, Input, Spin} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
@@ -21,7 +21,6 @@ import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA'
 import {TypeSideItem} from '_types/types';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {localizedTranslation, prepareView} from '../../../utils';
 import {IView} from '../../../_types/types';
@@ -112,7 +111,7 @@ function ViewPanel(): JSX.Element {
     const {t} = useTranslation();
 
     const [user] = useUser();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const [search, setSearch] = useState('');
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [editView, setEditView] = useState<IView | false>(false);

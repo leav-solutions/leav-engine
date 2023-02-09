@@ -287,15 +287,11 @@ describe('Navigation', () => {
             render(<Navigation tree="my_tree" />, renderOptions);
         });
 
-        await act(async () => {
-            await waitFor(() => screen.getAllByTestId('navigation-column'));
-        });
-
         expect(await screen.findAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];
 
         expect(within(colHeader).getByText('My Tree Label')).toBeInTheDocument();
-        expect(screen.getByText('first-child')).toBeInTheDocument();
+        expect(await screen.findByText('first-child')).toBeInTheDocument();
         expect(screen.getByText('second-child')).toBeInTheDocument();
     });
 
@@ -363,10 +359,6 @@ describe('Navigation', () => {
 
         await act(async () => {
             render(<Navigation tree="my_tree" />, {...renderOptions, apolloMocks: mocksForPagination});
-        });
-
-        await act(async () => {
-            await waitFor(() => screen.getAllByTestId('navigation-column'));
         });
 
         expect(await screen.findAllByText('child-first-page')).toHaveLength(treeNavigationPageSize);

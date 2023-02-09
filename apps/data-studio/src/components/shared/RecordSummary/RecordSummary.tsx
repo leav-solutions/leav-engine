@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import {Space, theme} from 'antd';
 import {IRecordColumnValueLink, IRecordColumnValueStandard} from 'graphQL/queries/records/getRecordColumnsValues';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -30,7 +30,7 @@ function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
     const {token} = theme.useToken();
 
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
 
     const {loading, error, data} = useGetRecordValuesQuery(
         record?.library?.gqlNames.query,

@@ -1,13 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import RecordCard from 'components/shared/RecordCard';
+import {RecordCard, useLang} from '@leav/ui';
 import {infosCol} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
-import React from 'react';
 import styled from 'styled-components';
 import {AttributeType} from '_gqlTypes/globalTypes';
-import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {displayTypeToPreviewSize} from '../../../../utils';
 import {ITableCell, PreviewSize} from '../../../../_types/types';
 import AllValuesCount from './AllValuesCount';
@@ -28,7 +26,7 @@ interface ICellProps {
 
 const Cell = ({columnName, data}: ICellProps) => {
     const {value, type} = data;
-    const [{lang}] = useLang();
+    const {lang} = useLang();
 
     const {state: searchState} = useSearchReducer();
     const previewSize: PreviewSize = displayTypeToPreviewSize(searchState.display.size);

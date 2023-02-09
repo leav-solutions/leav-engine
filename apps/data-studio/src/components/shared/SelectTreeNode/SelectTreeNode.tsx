@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
+import {useLang} from '@leav/ui';
 import {Spin, Tree} from 'antd';
 import {Key} from 'antd/lib/table/interface';
 import {EventDataNode} from 'antd/lib/tree';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from 'utils';
@@ -78,7 +78,7 @@ function SelectTreeNode({
     canSelectRoot = false,
     selectableLibraries
 }: ISelectTreeNodeProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {t} = useTranslation();
 
     const rootNode: ITreeMapElement = {

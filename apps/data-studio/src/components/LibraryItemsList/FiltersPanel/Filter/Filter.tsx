@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {Button, Dropdown} from 'antd';
 import DateBetweenFilter from 'components/LibraryItemsList/FiltersPanel/Filter/FilterInput/DateBetweenFilter';
 import {formatNotUsingCondition} from 'constants/constants';
@@ -22,7 +22,6 @@ import {
     GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees
 } from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
-import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {
     AttributeConditionFilter,
     AttributeConditionType,
@@ -174,7 +173,7 @@ export const getDefaultFilterValueByFormat = (format: AttributeFormat): boolean 
 
 function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [showSelectTreeNodeModal, setShowSelectTreeNodeModal] = useState(false);
     const [activeLibrary] = useActiveLibrary();

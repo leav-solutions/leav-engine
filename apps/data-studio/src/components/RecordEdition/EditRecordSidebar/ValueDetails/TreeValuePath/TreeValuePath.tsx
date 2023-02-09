@@ -1,11 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {Tree} from 'antd';
 import {DataNode} from 'antd/lib/tree';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import {useLang} from 'hooks/LangHook/LangHook';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
 import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
@@ -22,7 +21,7 @@ const MyTree = styled(Tree)`
 `;
 
 function TreeValuePath({value, attribute}: ITreeValuePathProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const ancestorsPath = value.treeValue.ancestors ?? [];
 
     const nodesProps: Partial<DataNode> = {

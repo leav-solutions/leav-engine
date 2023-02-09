@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckCircleFilled, CheckOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {Button, Card, Space, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import DeactivateRecordBtn from 'components/LibraryItemsList/shared/DeactivateRecordBtn';
@@ -10,7 +10,6 @@ import SelectCellsBtn, {SelectCellsBtnType} from 'components/LibraryItemsList/sh
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import {SelectionModeContext} from 'context';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -181,7 +180,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     }));
     const dispatch = useAppDispatch();
 
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const [isSelected, setIsSelect] = useState<boolean>(
         !!selectionState.selection.selected.some(
             elementSelected =>

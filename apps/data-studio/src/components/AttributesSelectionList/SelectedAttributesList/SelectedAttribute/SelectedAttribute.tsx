@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, HolderOutlined} from '@ant-design/icons';
+import {useLang} from '@leav/ui';
 import {Button, Space} from 'antd';
-import React from 'react';
 import styled from 'styled-components';
-import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../../utils';
 import {ISelectedAttribute} from '../../../../_types/types';
 import {AttributesSelectionListActionTypes} from '../../reducer/attributesSelectionListReducer';
@@ -34,7 +33,7 @@ const CloseWrapper = styled.div`
 `;
 
 const SelectedAttribute = ({selectedAttribute, handleProps}: ISelectedAttributeProps) => {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {dispatch} = useAttributesSelectionListState();
 
     const label = localizedTranslation(selectedAttribute.label, lang);

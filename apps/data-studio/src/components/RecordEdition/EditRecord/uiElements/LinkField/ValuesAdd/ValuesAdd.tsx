@@ -10,8 +10,8 @@ import {
     FolderAddOutlined
 } from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {themeVars} from '@leav/ui';
-import {Button, Divider, Input, InputRef, Space, Spin, message} from 'antd';
+import {RecordCard, themeVars, useLang} from '@leav/ui';
+import {Button, Divider, Input, InputRef, message, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
 import CreateDirectory from 'components/CreateDirectory';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
@@ -19,7 +19,6 @@ import SearchModal from 'components/SearchModal';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import List from 'components/shared/List';
 import {IListProps} from 'components/shared/List/List';
-import RecordCard from 'components/shared/RecordCard';
 import UploadFiles from 'components/UploadFiles';
 import {getFileDataQuery, IFileDataQuery, IFileDataQueryVariables} from 'graphQL/queries/records/getFileDataQuery';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
@@ -27,7 +26,6 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -106,7 +104,7 @@ const _renderListItem = (item: ValueFromList) => (
 
 function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const valuesList = attribute.linkValuesList.enable ? attribute.linkValuesList.values : [];
     const [filteredValuesList, setFilteredValuesList] = useState<ValueFromList[]>(valuesList);
 

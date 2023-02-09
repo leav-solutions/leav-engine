@@ -1,12 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {RecordCard, themeVars, useLang} from '@leav/ui';
 import {Breadcrumb, Button, Divider, Space} from 'antd';
 import List from 'components/shared/List';
-import RecordCard from 'components/shared/RecordCard';
 import SelectTreeNode from 'components/shared/SelectTreeNode';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -64,7 +62,7 @@ type ValueFromList = RECORD_FORM_recordForm_elements_values_TreeValue_treeValue;
 
 function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const valuesList = attribute?.treeValuesList?.enable ? attribute?.treeValuesList?.values ?? [] : [];
     const wrapperRef = useRef<HTMLDivElement>();
 

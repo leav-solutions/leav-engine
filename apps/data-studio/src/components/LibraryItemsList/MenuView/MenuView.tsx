@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
+import {useLang} from '@leav/ui';
 import {objectToNameValueArray} from '@leav/utils';
 import {Badge, Button, Dropdown, MenuProps, Space, Tooltip} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
@@ -18,7 +19,6 @@ import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {ViewInput, ViewTypes} from '_gqlTypes/globalTypes';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {localizedTranslation, prepareView} from '../../../utils';
 import {getRequestFromFilters} from '../../../utils/getRequestFromFilter';
@@ -47,7 +47,7 @@ const ViewLabel = styled.span`
 function MenuView({library}: IMenuViewProps): JSX.Element {
     const {t} = useTranslation();
 
-    const [{lang, defaultLang}] = useLang();
+    const {lang, defaultLang} = useLang();
     const dispatch = useAppDispatch();
     const {display} = useAppSelector(state => state);
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();

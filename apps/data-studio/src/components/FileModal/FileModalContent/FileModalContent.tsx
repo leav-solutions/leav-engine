@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
-import RecordCard from 'components/shared/RecordCard';
+import {RecordCard, themeVars} from '@leav/ui';
 import {IFileDataWithPreviewsStatus} from 'graphQL/queries/records/getFileDataQuery';
 import styled from 'styled-components';
 import {PreviewSize} from '_types/types';

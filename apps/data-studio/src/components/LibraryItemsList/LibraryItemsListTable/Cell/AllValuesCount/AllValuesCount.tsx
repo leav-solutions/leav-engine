@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {RecordCard, themeVars} from '@leav/ui';
 import {Modal, Tooltip} from 'antd';
 import List from 'components/shared/List';
-import RecordCard from 'components/shared/RecordCard';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

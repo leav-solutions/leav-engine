@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import Loading from 'components/shared/Loading';
-import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {isEqual} from 'lodash';
 import get from 'lodash/get';
@@ -126,7 +125,7 @@ const _getFieldColumWidth = (field: IField): FieldColumnWidth => {
 
 const Table = () => {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
 
     const {state: searchState} = useSearchReducer();
     const [tableColumns, setTableColumns] = useState<ITableColumn[]>([]);
