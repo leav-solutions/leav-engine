@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {FormUIElementTypes, IFormTabsSettings, TabsDirection} from '@leav/utils';
 import {Tabs} from 'antd';
-import {useLang} from 'hooks/LangHook/LangHook';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
@@ -22,7 +21,7 @@ const StyledTabs = styled(Tabs)`
 `;
 
 function FormTabs({element, ...elementProps}: IFormElementProps<IFormTabsSettings>): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const tabPosition = element.settings.direction === TabsDirection.VERTICAL ? 'left' : 'top';
 
     const tabItems = element.settings.tabs.map(tab => {

@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import {FormFieldTypes, ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {Space} from 'antd';
 import {formComponents} from 'components/RecordEdition/EditRecord/uiElements';
@@ -14,7 +15,6 @@ import {
     SubmitValueFunc
 } from 'components/RecordEdition/EditRecord/_types';
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {RecordFormElementsValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import {AttributeFormat, FormElementTypes} from '_gqlTypes/globalTypes';
 import {
@@ -41,7 +41,7 @@ const _inputTypeByFormat: {[format in AttributeFormat]: FormFieldTypes} = {
 };
 
 function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
 
     const _handleValueSubmit: (field: MetadataField) => SubmitValueFunc = field => (
         values

@@ -34,8 +34,6 @@ import {
 } from '../../_types';
 import LinkField from './LinkField';
 
-jest.mock('hooks/LangHook/LangHook');
-
 jest.mock('components/SearchModal', () => {
     return function SearchModal() {
         return <div>SearchModal</div>;

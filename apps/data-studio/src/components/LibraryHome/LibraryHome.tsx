@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import LibraryItemsList from 'components/LibraryItemsList';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -21,7 +21,7 @@ export interface ILibraryHomeProps {
 }
 
 function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {t} = useTranslation();
     const appData = useApplicationContext();
     const dispatch = useAppDispatch();

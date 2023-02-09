@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CopyOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {objectToNameValueArray} from '@leav/utils';
 import {Button, Tooltip, Typography} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
@@ -15,7 +15,6 @@ import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {defaultView} from '../../../../constants/constants';
-import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {localizedTranslation} from '../../../../utils';
 import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {IView} from '../../../../_types/types';
@@ -75,7 +74,7 @@ interface IViewProps {
 
 function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang, defaultLang}] = useLang();
+    const {lang, defaultLang} = useLang();
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [description, setDescription] = useState<{expand: boolean; key: number}>({expand: false, key: 0});

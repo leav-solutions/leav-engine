@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
+import {useLang} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import {useLang} from 'hooks/LangHook/LangHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -27,7 +27,7 @@ interface IAddByCreationButtonProps {
 
 function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCreationButtonProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const [addToTree] = useMutation<ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables>(addTreeElementMutation);
     const [activeTree] = useActiveTree();
 

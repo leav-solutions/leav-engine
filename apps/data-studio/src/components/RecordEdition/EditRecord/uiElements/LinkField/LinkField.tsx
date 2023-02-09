@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AntdThemeToken, themeVars} from '@leav/ui';
+import {AntdThemeToken, RecordCard, themeVars, useLang} from '@leav/ui';
 import {AnyPrimitive, ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/utils';
 import {Popover, Skeleton, Switch, Table, theme} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
@@ -12,7 +12,6 @@ import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecord
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import Dimmer from 'components/shared/Dimmer';
 import ErrorMessage from 'components/shared/ErrorMessage';
-import RecordCard from 'components/shared/RecordCard';
 import {
     IRecordColumnValueLink,
     IRecordColumnValueStandard,
@@ -20,7 +19,6 @@ import {
     RecordColumnValue
 } from 'graphQL/queries/records/getRecordColumnsValues';
 import {IRecordPropertyLink, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {RecordFormElementsValueLinkValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
@@ -121,7 +119,7 @@ function LinkField({
     onDeleteMultipleValues
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {token} = theme.useToken();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();

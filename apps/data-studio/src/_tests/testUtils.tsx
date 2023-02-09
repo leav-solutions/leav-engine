@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
+import {ILangContext, LangContext} from '@leav/ui';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import ApplicationContext from 'context/ApplicationContext';
 import {IApplicationContext} from 'context/ApplicationContext/_types';
@@ -47,10 +48,21 @@ const Providers = ({
         }
     };
 
+    const mockLang: ILangContext = {
+        lang: ['fr'],
+        availableLangs: ['en', 'fr'],
+        defaultLang: 'fr',
+        setLang: jest.fn()
+    };
+
     return (
         <MockedProviderWithFragments mocks={apolloMocks} cacheSettings={cacheSettings}>
             <MockStore state={storeState}>
-                <ApplicationContext.Provider value={appContextData}>{children ?? <></>}</ApplicationContext.Provider>
+                <LangContext.Provider value={mockLang}>
+                    <ApplicationContext.Provider value={appContextData}>
+                        {children ?? <></>}
+                    </ApplicationContext.Provider>
+                </LangContext.Provider>
             </MockStore>
         </MockedProviderWithFragments>
     );

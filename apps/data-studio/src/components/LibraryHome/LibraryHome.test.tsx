@@ -21,8 +21,6 @@ jest.mock('react-router-dom', () => ({
     useHistory: jest.fn()
 }));
 
-jest.mock('../../hooks/LangHook/LangHook');
-
 const mockUpdateActiveLib = jest.fn();
 
 jest.mock('hooks/ActiveLibHook/ActiveLibHook', () => ({

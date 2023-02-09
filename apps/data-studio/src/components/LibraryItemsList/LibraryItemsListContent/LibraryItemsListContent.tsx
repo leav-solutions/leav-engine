@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
+import {useLang} from '@leav/ui';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import {defaultSort, getSelectedViewKey, panelSize, viewSettingsField} from 'constants/constants';
@@ -12,7 +13,6 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
@@ -84,7 +84,7 @@ function LibraryItemsListContent({
     defaultView,
     style
 }: ILibraryItemsListContentProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {display, selection: selectionState} = useAppSelector(state => state); // keep selection
     const defaultAttributes = extractAttributesFromLibrary(library);
 

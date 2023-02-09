@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Alert} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
@@ -30,7 +30,7 @@ const Wrapper = styled.div`
 
 function Home(): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const dispatch = useAppDispatch();
     const appData = useApplicationContext();
 

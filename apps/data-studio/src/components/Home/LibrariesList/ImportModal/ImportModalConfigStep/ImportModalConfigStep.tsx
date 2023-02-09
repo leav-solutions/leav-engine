@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KeyOutlined, LinkOutlined, WarningOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Select, Space, Table, Tabs, Typography} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
@@ -40,7 +39,7 @@ const SheetWrapper = styled.div`
 `;
 
 function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigStepProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {t} = useTranslation();
     const {state, dispatch} = useImportReducerContext();
     const {sheets} = state;

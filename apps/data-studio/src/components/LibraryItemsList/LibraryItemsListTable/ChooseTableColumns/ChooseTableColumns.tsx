@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import {Button, Modal} from 'antd';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {useLang} from '../../../../hooks/LangHook/LangHook';
 import {getFieldsKeyFromAttribute, localizedTranslation} from '../../../../utils';
 import {IAttribute, IField, ISelectedAttribute} from '../../../../_types/types';
 import AttributesSelectionList from '../../../AttributesSelectionList';
@@ -19,7 +19,7 @@ interface IChooseTableColumnsProps {
 
 function ChooseTableColumns({visible, onClose}: IChooseTableColumnsProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>(
         (searchState?.fields ?? []).map(col => {

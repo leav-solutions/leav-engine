@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
+import {useLang} from '@leav/ui';
 import {Collapse, Divider} from 'antd';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {IRecordPropertyTree, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import {useLang} from 'hooks/LangHook/LangHook';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {isTypeStandard, localizedTranslation} from 'utils';
@@ -50,7 +50,7 @@ const CloseButton = styled(CloseOutlined)`
 const {Panel} = Collapse;
 
 function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {t} = useTranslation();
     const {state, dispatch} = useEditRecordModalReducer();
 

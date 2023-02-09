@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DatabaseOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {Menu, Spin} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {FAVORITE_LIBRARIES_KEY} from 'components/Home/LibrariesList/LibrariesList';
@@ -16,7 +16,6 @@ import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import {useLang} from 'hooks/LangHook/LangHook';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import {useTranslation} from 'react-i18next';
@@ -73,7 +72,7 @@ const FavoriteStar = styled.span<{isFavorite: boolean}>`
 
 function Sidebar(): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const [activeLibrary] = useActiveLibrary();
     const [activeTree] = useActiveTree();
     const history = useHistory();

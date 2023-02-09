@@ -7,7 +7,7 @@ import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {MemoryRouter} from 'react-router-dom';
 import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
-import {act, render, screen, within} from '_tests/testUtils';
+import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockLibrary} from '__mocks__/common/library';
 import {mockTree} from '__mocks__/common/tree';
@@ -180,6 +180,10 @@ describe('Home', () => {
         trees: []
     };
 
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     test('Display libraries and tree lists', async () => {
         await act(async () => {
             render(
@@ -196,8 +200,8 @@ describe('Home', () => {
         expect(librariesListBlock).toBeInTheDocument();
         expect(treesListBlock).toBeInTheDocument();
 
-        expect(within(librariesListBlock).getAllByRole('row')).toHaveLength(3); // one for header + data
-        expect(within(treesListBlock).getAllByRole('row')).toHaveLength(3);
+        await waitFor(() => expect(within(librariesListBlock).getAllByRole('row')).toHaveLength(3)); // one for header + data
+        await waitFor(() => expect(within(treesListBlock).getAllByRole('row')).toHaveLength(3)); // one for header + data
     });
 
     test('Sort libraries and tree lists according to order in application', async () => {
@@ -233,7 +237,7 @@ describe('Home', () => {
         const librariesListBlock = screen.getByTestId('libraries-list');
         const treesListBlock = screen.getByTestId('trees-list');
 
-        expect(within(librariesListBlock).getAllByRole('row')[1]).toHaveTextContent('Lib B');
+        await waitFor(() => expect(within(librariesListBlock).getAllByRole('row')[1]).toHaveTextContent('Lib B'));
         expect(within(librariesListBlock).getAllByRole('row')[2]).toHaveTextContent('Lib A');
 
         expect(within(treesListBlock).getAllByRole('row')[1]).toHaveTextContent('Tree B');
@@ -254,9 +258,14 @@ describe('Home', () => {
 
         expect(librariesListBlock).toBeInTheDocument();
 
-        const firstRow = within(librariesListBlock).getAllByRole('row')[1];
-        const secondRow = within(librariesListBlock).getAllByRole('row')[2];
-        expect(within(firstRow).getByText('Lib B')).toBeInTheDocument();
+        // Wait for the data to be loaded
+        await waitFor(() => expect(within(librariesListBlock).getAllByRole('row')).toHaveLength(3));
+
+        const rows = within(librariesListBlock).getAllByRole('row');
+
+        const firstRow = rows[1];
+        const secondRow = rows[2];
+        expect(await within(firstRow).findByText('Lib B')).toBeInTheDocument();
         expect(within(secondRow).getByText('Lib A')).toBeInTheDocument();
 
         const favoriteStarIcon = within(secondRow).getByTestId('favorite-star');
@@ -277,9 +286,13 @@ describe('Home', () => {
 
         expect(treesListBlock).toBeInTheDocument();
 
-        const firstRow = within(treesListBlock).getAllByRole('row')[1];
-        const secondRow = within(treesListBlock).getAllByRole('row')[2];
-        expect(within(firstRow).getByText('Tree B')).toBeInTheDocument();
+        // Wait for the data to be loaded
+        await waitFor(() => expect(within(treesListBlock).getAllByRole('row')).toHaveLength(3));
+        const rows = within(treesListBlock).getAllByRole('row');
+
+        const firstRow = rows[1];
+        const secondRow = rows[2];
+        expect(await within(firstRow).findByText('Tree B')).toBeInTheDocument();
         expect(within(secondRow).getByText('Tree A')).toBeInTheDocument();
 
         const favoriteStarIcon = within(secondRow).getByTestId('favorite-star');
@@ -299,6 +312,9 @@ describe('Home', () => {
         const librariesListBlock = screen.getByTestId('libraries-list');
 
         expect(librariesListBlock).toBeInTheDocument();
+
+        // Wait for the data to be loaded
+        await waitFor(() => expect(within(librariesListBlock).getAllByRole('row')).toHaveLength(3));
 
         const firstRow = within(librariesListBlock).getAllByRole('row')[1];
         const importBtn = within(firstRow).getByRole('button', {name: /upload/, hidden: true});

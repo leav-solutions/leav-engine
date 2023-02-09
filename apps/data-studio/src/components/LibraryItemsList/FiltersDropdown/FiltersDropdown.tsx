@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {BranchesOutlined, NumberOutlined} from '@ant-design/icons';
+import {useLang} from '@leav/ui';
 import {Badge, Dropdown, Input, Menu} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {defaultLinkAttributeFilterFormat} from 'constants/constants';
@@ -38,7 +39,6 @@ import {
     TreeConditionFilter,
     TypeSideItem
 } from '_types/types';
-import {useLang} from '../../../hooks/LangHook/LangHook';
 import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter';
 
 const CustomMenu = styled(Menu)`
@@ -72,7 +72,7 @@ function FiltersDropdown({
 }: IFiltersDropdownProps): JSX.Element {
     const {t} = useTranslation();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const [visible, setVisible] = useState<boolean>(false);
     const [search, setSearch] = useState<string>();
 

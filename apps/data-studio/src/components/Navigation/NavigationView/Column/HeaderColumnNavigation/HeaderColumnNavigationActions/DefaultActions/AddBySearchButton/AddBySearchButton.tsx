@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
+import {useLang} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
 import SearchModal from 'components/SearchModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import {useLang} from 'hooks/LangHook/LangHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {CSSProperties, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -29,7 +29,7 @@ interface IAddBySearchButtonProps {
 
 function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearchButtonProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const [searchModalVisible, setSearchModalVisible] = useState(false);
     const [searchModalLibraryId, setSearchModalLibraryId] = useState<string>();
     const [activeTree] = useActiveTree();

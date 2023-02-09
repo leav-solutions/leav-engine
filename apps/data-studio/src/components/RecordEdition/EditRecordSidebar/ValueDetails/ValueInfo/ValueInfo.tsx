@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {RecordCard, themeVars} from '@leav/ui';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import PropertiesList from 'components/shared/PropertiesList';
-import RecordCard from 'components/shared/RecordCard';
 import {IRecordPropertyLink, IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

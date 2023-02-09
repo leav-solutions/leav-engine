@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {Checkbox, Radio, Space} from 'antd';
-import {useLang} from 'hooks/LangHook/LangHook';
 import styled from 'styled-components';
 import {attributeToSelectedAttribute, isAttributeSelected, localizedTranslation} from 'utils';
 import {AttributesSelectionListActionTypes} from '../reducer/attributesSelectionListReducer';
@@ -32,7 +31,7 @@ const CheckboxWrapper = styled.div`
 
 function Attribute({attribute, depth, path, library, parentAttribute}: ICommonAttributeComponentProps): JSX.Element {
     const attributePath = [path, attribute.id].filter(p => !!p).join('.');
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {state, dispatch} = useAttributesSelectionListState();
 
     const _handleClick = () => {

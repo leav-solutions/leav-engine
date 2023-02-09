@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import {GET_ATTRIBUTES_BY_LIB} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {act, render, screen, within} from '_tests/testUtils';
 import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttributesByLib';
@@ -48,7 +47,7 @@ describe('AttributesSelectionList', () => {
             );
         });
 
-        const attributesList = screen.getByTestId('attributes-list');
+        const attributesList = await screen.findByTestId('attributes-list');
         const attributeElem = within(attributesList).getByText('test attribute');
 
         expect(attributeElem).toBeInTheDocument();
@@ -108,7 +107,7 @@ describe('AttributesSelectionList', () => {
             );
         });
 
-        const attributesList = screen.getByTestId('attributes-list');
+        const attributesList = await screen.findByTestId('attributes-list');
 
         expect(within(attributesList).getAllByTestId('attribute-in-list')).toHaveLength(2);
 

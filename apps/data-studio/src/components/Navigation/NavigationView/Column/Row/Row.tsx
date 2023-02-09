@@ -9,16 +9,13 @@ import {
     SearchOutlined,
     WarningOutlined
 } from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {RecordCard, themeVars, useLang} from '@leav/ui';
 import {Badge, message, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
-import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
-import {useLang} from 'hooks/LangHook/LangHook';
-import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {setSelection} from 'reduxStore/selection';
@@ -33,7 +30,6 @@ import {
     PreviewSize,
     SharedStateSelectionType
 } from '../../../../../_types/types';
-import RecordCard from '../../../../shared/RecordCard';
 
 interface IRowProps {
     style?: CSSObject;
@@ -123,7 +119,7 @@ interface IActiveRowNavigationProps {
 }
 
 function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Element {
-    const [{lang}] = useLang();
+    const {lang} = useLang();
 
     const {t} = useTranslation();
     const {selectionState, navigation} = useAppSelector(state => ({

@@ -5,10 +5,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, DeleteOutlined, DownOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {themeVars, useLang} from '@leav/ui';
 import {Button, Dropdown, message} from 'antd';
 import {SelectionModeContext} from 'context';
-import {useLang} from 'hooks/LangHook/LangHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import uniqBy from 'lodash/uniqBy';
 import {useContext, useEffect, useState} from 'react';
@@ -98,7 +97,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
     const dispatch = useAppDispatch();
     const {state: searchState} = useSearchReducer();
 
-    const [{lang}] = useLang();
+    const {lang} = useLang();
 
     const [countItemsSelected, setCountItemsSelected] = useState(0);
 

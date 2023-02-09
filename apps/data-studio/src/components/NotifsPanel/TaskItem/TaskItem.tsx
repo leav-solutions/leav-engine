@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, List, Progress, Typography, Tooltip, Space, Popconfirm} from 'antd';
+import {DeleteOutlined, DownloadOutlined, InfoCircleOutlined} from '@ant-design/icons';
+import {useLang} from '@leav/ui';
+import {Button, List, Popconfirm, Progress, Space, Tooltip, Typography} from 'antd';
 import moment from 'moment';
-import {DownloadOutlined, DeleteOutlined, InfoCircleOutlined} from '@ant-design/icons';
-import {TaskStatus} from '_gqlTypes/globalTypes';
-import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
-import {getFileUrl} from '../../../utils';
-import styled from 'styled-components';
-import {INotif} from '../NotifsPanel';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
-import {useLang} from 'hooks/LangHook/LangHook';
+import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {TaskStatus} from '_gqlTypes/globalTypes';
+import {getFileUrl} from '../../../utils';
+import {INotif} from '../NotifsPanel';
 
 const WrapperProgress = styled.div<{isCanceled: boolean}>`
     & .ant-progress-text {
@@ -41,7 +41,7 @@ interface ITaskItemProps {
 
 function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskItemProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {ellipsis, data: task} = notif;
 
     return (

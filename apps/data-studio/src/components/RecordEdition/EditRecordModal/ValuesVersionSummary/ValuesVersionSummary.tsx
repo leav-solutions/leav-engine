@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Space, Tag, Tooltip} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import {useLang} from 'hooks/LangHook/LangHook';
 import useLibraryVersionTrees from 'hooks/useLibraryVersionTrees';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -23,7 +23,7 @@ interface IValuesVersionSummaryProps {
 
 function ValuesVersionSummary({libraryId, version, onVersionClick}: IValuesVersionSummaryProps): JSX.Element {
     const {t} = useTranslation();
-    const [{lang}] = useLang();
+    const {lang} = useLang();
     const {loading, error, trees} = useLibraryVersionTrees(libraryId);
 
     const _handleClick = () => {
