@@ -516,7 +516,8 @@
     "file_data": {
         "path": "Path",
         "no_preview": "Preview unavailable",
-        "directory": "Dossier"
+        "directory": "Dossier",
+        "previews_generation_pending": "Preview generation pending"
     },
     "records_deactivation": {
         "title": "Deactivate records",

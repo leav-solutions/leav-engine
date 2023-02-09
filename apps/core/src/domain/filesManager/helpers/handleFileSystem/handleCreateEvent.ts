@@ -10,11 +10,11 @@ import {
     createRecordFile,
     getInputData,
     getParentRecord,
-    getPreviewsDatas,
+    getPreviewsDefaultData,
     getRecord,
     updateRecordFile
 } from '../handleFileUtilsHelper';
-import {createPreview} from '../handlePreview';
+import {requestPreviewGeneration} from '../handlePreview';
 
 export const handleCreateEvent = async (
     scanMsg: IFileEventData,
@@ -32,7 +32,7 @@ export const handleCreateEvent = async (
     let record = await getRecord({fileName, filePath, fileInode: scanMsg.inode}, {recordLibrary}, true, deps, ctx);
 
     // Preview and Previews status
-    const {previewsStatus, previews} = getPreviewsDatas(systemPreviewVersions);
+    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewVersions);
 
     if (record) {
         try {
@@ -79,7 +79,7 @@ export const handleCreateEvent = async (
 
     // Create the previews
     if (!scanMsg.isDirectory) {
-        await createPreview(
+        await requestPreviewGeneration(
             record.id,
             scanMsg.pathAfter,
             recordLibrary,

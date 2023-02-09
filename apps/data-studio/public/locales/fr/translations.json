@@ -516,7 +516,8 @@
     "file_data": {
         "path": "Emplacement",
         "no_preview": "Aperçu indisponible",
-        "directory": "Dossier"
+        "directory": "Dossier",
+        "previews_generation_pending": "Génération de l'aperçu en cours"
     },
     "records_deactivation": {
         "title": "Désactiver les éléments",

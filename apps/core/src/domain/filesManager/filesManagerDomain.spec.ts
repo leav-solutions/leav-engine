@@ -7,6 +7,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
+import {IRecordRepo} from 'infra/record/recordRepo';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
@@ -17,7 +18,7 @@ import {mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockFilesTree} from '../../__tests__/mocks/tree';
 import filesManager from './filesManagerDomain';
-import {createPreview} from './helpers/handlePreview';
+import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewVersions} from './_constants';
 import winston = require('winston');
 
@@ -72,7 +73,7 @@ const logger: Mockify<winston.Winston> = {
 };
 
 jest.mock('./helpers/handlePreview', () => ({
-    createPreview: jest.fn()
+    requestPreviewGeneration: jest.fn()
 }));
 
 describe('FilesManager', () => {
@@ -112,6 +113,10 @@ describe('FilesManager', () => {
     });
 
     describe('forcePreviewsGeneration', () => {
+        const mockRecordRepo: Mockify<IRecordRepo> = {
+            updateRecord: jest.fn()
+        };
+
         test('Force preview generation one file', async () => {
             const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: global.__mockPromise({
@@ -126,7 +131,8 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
-                'core.infra.amqpService': mockAmqpService as IAmqpService
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.record': mockRecordRepo as IRecordRepo
             });
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id']});
@@ -134,9 +140,9 @@ describe('FilesManager', () => {
             expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
                 {field: 'id', value: 'id', condition: AttributeCondition.EQUAL}
             ]);
-            expect(createPreview).toBeCalledTimes(1);
+            expect(requestPreviewGeneration).toBeCalledTimes(1);
 
-            expect(createPreview).toBeCalledWith(
+            expect(requestPreviewGeneration).toBeCalledWith(
                 'id',
                 'file_path/file_name',
                 mockLibraryFiles.id,
@@ -164,7 +170,8 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
-                'core.infra.amqpService': mockAmqpService as IAmqpService
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.record': mockRecordRepo as IRecordRepo
             });
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']});
@@ -176,7 +183,7 @@ describe('FilesManager', () => {
                 {operator: Operator.OR},
                 {field: 'id', value: 'id3', condition: AttributeCondition.EQUAL}
             ]);
-            expect(createPreview).toBeCalledTimes(3);
+            expect(requestPreviewGeneration).toBeCalledTimes(3);
         });
 
         test('Force preview generation one directory', async () => {
@@ -239,14 +246,15 @@ describe('FilesManager', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
-                'core.domain.tree': mockTreeDomain as ITreeDomain
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.infra.record': mockRecordRepo as IRecordRepo
             });
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordIds: ['id']});
 
-            expect(createPreview).toBeCalledTimes(2);
+            expect(requestPreviewGeneration).toBeCalledTimes(2);
 
-            expect(createPreview).toHaveBeenNthCalledWith(
+            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
                 1,
                 'file1',
                 'file_path_1/file_name_1',
@@ -256,7 +264,7 @@ describe('FilesManager', () => {
                 mockConfig
             );
 
-            expect(createPreview).toHaveBeenNthCalledWith(
+            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
                 2,
                 'file2',
                 'file_path_2/file_name_2',
@@ -284,14 +292,15 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
-                'core.infra.amqpService': mockAmqpService as IAmqpService
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.record': mockRecordRepo as IRecordRepo
             });
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId'});
 
-            expect(createPreview).toBeCalledTimes(2);
+            expect(requestPreviewGeneration).toBeCalledTimes(2);
 
-            expect(createPreview).toHaveBeenNthCalledWith(
+            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
                 1,
                 'file1',
                 'file_path_1/file_name_1',
@@ -301,7 +310,7 @@ describe('FilesManager', () => {
                 mockConfig
             );
 
-            expect(createPreview).toHaveBeenNthCalledWith(
+            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
                 2,
                 'file2',
                 'file_path_2/file_name_2',
@@ -344,14 +353,15 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
-                'core.infra.amqpService': mockAmqpService as IAmqpService
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.record': mockRecordRepo as IRecordRepo
             });
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', failedOnly: true});
 
-            expect(createPreview).toBeCalledTimes(1);
+            expect(requestPreviewGeneration).toBeCalledTimes(1);
 
-            expect(createPreview).toHaveBeenCalledWith(
+            expect(requestPreviewGeneration).toHaveBeenCalledWith(
                 'file2',
                 'file_path_2/file_name_2',
                 mockLibraryFiles.id,
@@ -383,7 +393,8 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
-                'core.infra.amqpService': mockAmqpService as IAmqpService
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.record': mockRecordRepo as IRecordRepo
             });
 
             await files.forcePreviewsGeneration({
@@ -407,8 +418,8 @@ describe('FilesManager', () => {
                 }
             ]);
 
-            expect(createPreview).toBeCalledTimes(1);
-            expect(createPreview).toHaveBeenCalledWith(
+            expect(requestPreviewGeneration).toBeCalledTimes(1);
+            expect(requestPreviewGeneration).toHaveBeenCalledWith(
                 'file1',
                 'file_path_1/file_name_1',
                 mockLibraryFiles.id,

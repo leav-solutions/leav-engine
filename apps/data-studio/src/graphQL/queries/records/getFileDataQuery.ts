@@ -1,10 +1,27 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getLibraryGraphqlNames} from '@leav/utils';
+import {getLibraryGraphqlNames, Override} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import recordIdentityFragment from './recordIdentityFragment';
+
+export interface IFilePreviewsStatusVersion {
+    message: string;
+    status: number;
+}
+
+export interface IFilePreviewsStatus {
+    [versionName: string]: IFilePreviewsStatusVersion;
+}
+
+export type IFileDataWithPreviewsStatus = Override<
+    IFileDataElement,
+    {
+        previews_status: IFilePreviewsStatus;
+        isPreviewsGenerationPending: boolean;
+    }
+>;
 
 export interface IFileDataElement extends RecordIdentity {
     created_at: string;
@@ -14,6 +31,7 @@ export interface IFileDataElement extends RecordIdentity {
     file_name: string;
     file_path: string;
     file_type: 'image' | 'video' | 'audio' | 'document' | 'other';
+    previews_status: string; // JSON string
     library: {
         behavior: 'standard' | 'files' | 'directories';
     };
@@ -51,6 +69,7 @@ export const getFileDataQuery = (libraryId: string) => gqlUnchecked`
                 library {
                     behavior
                 }
+                previews_status
             }
         }
     }`;
