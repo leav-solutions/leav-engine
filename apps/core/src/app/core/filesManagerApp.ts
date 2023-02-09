@@ -39,6 +39,12 @@ interface IUploadParams {
     files: Array<{data: Promise<FileUpload>; uid: string; size?: number; replace?: boolean}>;
 }
 
+interface ICreateDirectoryParams {
+    library: string;
+    name: string;
+    nodeId: string;
+}
+
 export default function({
     'core.domain.filesManager': filesManagerDomain = null,
     'core.app.helpers.initQueryContext': initQueryContext,
@@ -63,7 +69,7 @@ export default function({
                         replace: Boolean
                     }
 
-                    type UploadList {
+                    type UploadData {
                         uid: String!,
                         record: Record!
                     }
@@ -101,8 +107,10 @@ export default function({
                             recordIds: [ID!],
                             filters: [RecordFilterInput],
                             failedOnly: Boolean
-                        ): Boolean!
-                        upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadList!]!
+                        ): Boolean! 
+                        forcePreviewsGeneration(libraryId: ID!, recordId: ID, failedOnly: Boolean): Boolean!
+                        upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadData!]!
+                        createDirectory(library: String!, nodeId: String!, name: String!): Record!
                     }
 
                     extend type Subscription {
@@ -139,6 +147,13 @@ export default function({
                             );
 
                             return filesManagerDomain.storeFiles({library, nodeId, files: filesData}, ctx);
+                        },
+                        async createDirectory(
+                            _,
+                            {library, nodeId, name}: ICreateDirectoryParams,
+                            ctx: IQueryInfos
+                        ): Promise<IRecord> {
+                            return filesManagerDomain.createDirectory({library, nodeId, name}, ctx);
                         },
                         async forcePreviewsGeneration(
                             _,

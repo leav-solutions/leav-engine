@@ -10,6 +10,8 @@
         "UNKNOWN": "Unknown",
         "FILE_NOT_FOUND": "Unknown file",
         "DUPLICATE_FILENAMES": "Duplicate filenames",
+        "DUPLICATE_DIRECTORY_NAMES": "Duplicate directory names",
+        "ONLY_FOLDERS_CAN_BE_SELECTED": "Only folders can be selected",
         "FORBIDDEN_ID": "The specified Id is forbidden",
         "FORMAT_ERROR": "Invalid format: {{details}}",
         "INVALID_ACTION_TYPE": "Last action is invalid: expected action with output types including {{expected}}, received {{received}}",
