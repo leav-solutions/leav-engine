@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckCircleFilled, CheckOutlined} from '@ant-design/icons';
-import {themeVars, useLang} from '@leav/ui';
+import {RecordPreview, themeVars, useLang} from '@leav/ui';
 import {Button, Card, Space, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import DeactivateRecordBtn from 'components/LibraryItemsList/shared/DeactivateRecordBtn';
@@ -25,7 +25,6 @@ import {
     SharedStateSelectionType
 } from '../../../../_types/types';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
-import RecordPreview from '../../../shared/RecordPreview';
 import getItemPreviewSize from '../helpers/getItemPreviewSize';
 
 const buttonsColor = '#333333';

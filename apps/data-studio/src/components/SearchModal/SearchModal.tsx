@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Modal from 'antd/lib/modal/Modal';
+import {Modal} from 'antd';
 import LibraryItemsList from 'components/LibraryItemsList';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';

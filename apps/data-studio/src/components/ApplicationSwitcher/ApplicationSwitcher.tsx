@@ -3,12 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {themeVars, useLang} from '@leav/ui';
+import {RecordPreview, themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import RecordPreview from 'components/shared/RecordPreview';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
 import {useState} from 'react';
@@ -26,8 +25,8 @@ const AppsButton = styled(Button)`
             border: none;
             color: #fff;
         }
-        font-size: 1.2rem;
-        line-height: 1.2rem;
+        font-size: 1rem;
+        line-height: 1rem;
     }
 `;
 

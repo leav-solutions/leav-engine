@@ -1,4 +1,4 @@
-import {ThemeConfig} from 'antd/lib/config-provider/context';
+import { ThemeConfig } from 'antd/lib/config-provider/context';
 export * from './types';
 export declare const themeVars: {
     primaryColor: string;

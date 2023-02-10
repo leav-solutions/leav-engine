@@ -134,6 +134,9 @@ function LibraryItemsListContent({
         });
     };
 
+    const _getVersionForRequest = () =>
+        objectValueVersionToArray(searchState.valuesVersions).filter(v => !!v.treeNodeId);
+
     const {error: getRecordsError, loading: getRecordsLoading, fetchMore: getRecordsFetchMore} = useQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
@@ -147,7 +150,7 @@ function LibraryItemsListContent({
             sortField: searchState.sort.field || defaultSort.field,
             sortOrder: searchState.sort.order || defaultSort.order,
             fullText: searchState.fullText,
-            version: objectValueVersionToArray(searchState.valuesVersions)
+            version: _getVersionForRequest()
         },
         onCompleted: _applyResults
     });
@@ -162,7 +165,7 @@ function LibraryItemsListContent({
                 sortField: searchState.sort.field,
                 sortOrder: searchState.sort.order,
                 fullText: searchState.fullText,
-                version: objectValueVersionToArray(searchState.valuesVersions)
+                version: _getVersionForRequest()
             };
 
             // Records have already been fetched, we use fetchMore to make sure
@@ -185,7 +188,7 @@ function LibraryItemsListContent({
     const isLoading = getRecordsLoading || searchState.view.reload || searchState.loading;
 
     /**
-     * Called when current view changes. In charge a refetching record and saving last used view
+     * Called when current view changes. In charge of refetching record and saving last used view
      */
     useEffect(() => {
         if (!searchState.view.reload) {

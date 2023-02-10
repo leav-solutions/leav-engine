@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ImageLoading} from '@leav/ui';
 import {Image} from 'antd';
 import {icons as defaultPreviewIcons} from 'antd/lib/image/PreviewGroup';
-import ImageLoading from 'components/shared/ImageLoading';
 import {useState} from 'react';
 import styled from 'styled-components';
 import {IFileViewerProps} from '../_types';

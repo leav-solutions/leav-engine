@@ -1,2 +1,2 @@
-import RecordPreview from './RecordPreview';
-export default RecordPreview;
+export { default as RecordPreview } from './RecordPreview';
+export * from './_types';

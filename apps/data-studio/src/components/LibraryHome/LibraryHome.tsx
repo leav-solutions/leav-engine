@@ -12,6 +12,7 @@ import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQ
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
+import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, WorkspacePanels} from '_types/types';
@@ -26,7 +27,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const appData = useApplicationContext();
     const dispatch = useAppDispatch();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
-    const {activePanel} = useAppSelector(state => state);
+    const {activePanel, selection} = useAppSelector(state => state);
 
     const {loading, data, error} = useGetLibraryDetailExtendedQuery({library});
 
@@ -79,6 +80,16 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
 
         dispatch(setInfoBase(baseInfo));
     }, [activeLibrary, data, dispatch, error, lang, library, loading, t, updateActiveLibrary, activePanel, hasAccess]);
+
+    useEffect(() => {
+        // Empty selection when changing library
+        dispatch(
+            setSelection({
+                ...selection.selection,
+                selected: selection.selection.selected.filter(record => record.library === library)
+            })
+        );
+    }, []);
 
     if (loading) {
         return <Loading />;

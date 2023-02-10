@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined, FieldTimeOutlined, LoadingOutlined, RightOutlined, UploadOutlined} from '@ant-design/icons';
 import {ServerError, useLazyQuery, useMutation} from '@apollo/client';
-import {Button, Dropdown, message, Space, Steps} from 'antd';
-import Modal from 'antd/lib/modal/Modal';
+import {Button, Dropdown, message, Modal, Space, Steps} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import dayjs from 'dayjs';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';

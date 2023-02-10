@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { PreviewSize } from '../../constants';
 import { getPreviewSize } from '../../helpers/getPreviewSize';
 import useLang from '../../hooks/useLang';
-import RecordPreview from '../RecordPreview';
+import { RecordPreview } from '../RecordPreview';
 const _getGridTemplateAreas = (withPreview, withLibrary, tile) => {
     if (tile) {
         if (withPreview) {

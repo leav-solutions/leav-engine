@@ -1,4 +1,4 @@
-import {SystemTranslation} from './SystemTranslation';
+import { SystemTranslation } from './SystemTranslation';
 export interface IRecordIdentityLibrary {
     id: string;
     label: SystemTranslation | null;

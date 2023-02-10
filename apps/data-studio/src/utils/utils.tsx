@@ -479,7 +479,7 @@ export const objectValueVersionToArray = (version: IValueVersion): ValueVersionI
     return version
         ? objectToNameValueArray(version).map(v => ({
               treeId: v.name,
-              treeNodeId: v.value.id
+              treeNodeId: v?.value?.id ?? null
           }))
         : null;
 };

@@ -2,13 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EyeOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {IRecordPreviewProps, RecordPreview, themeVars} from '@leav/ui';
 import FileModal from 'components/FileModal';
 import {useState} from 'react';
 import styled from 'styled-components';
 import {RecordIdentity_whoAmI_preview_file} from '_gqlTypes/RecordIdentity';
-import RecordPreview from '../RecordPreview';
-import {IRecordPreviewProps} from '../RecordPreview/_types';
 
 interface IRecordPreviewWithModalProps extends Omit<IRecordPreviewProps, 'onClick'> {
     previewFile: RecordIdentity_whoAmI_preview_file;

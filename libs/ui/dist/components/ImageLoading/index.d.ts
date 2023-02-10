@@ -1,2 +1,1 @@
-import ImageLoading from './ImageLoading';
-export default ImageLoading;
+export { default as ImageLoading } from './ImageLoading';

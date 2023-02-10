@@ -5,7 +5,8 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { getInitials, getInvertColor, stringToColor } from '@leav/utils';
 import { useState } from 'react';
 import styled from 'styled-components';
-import ImageLoading from '../../ImageLoading';
+import { ImageLoading } from '../../ImageLoading';
+import { ImageMissing } from '../../ImageMissing';
 const ImagePreviewWrapper = styled.div `
     display: flex;
     justify-content: center;
@@ -21,7 +22,7 @@ const ImagePreviewWrapper = styled.div `
     }
 `;
 ImagePreviewWrapper.displayName = 'ImagePreviewTile';
-const Image = styled.img `
+const ImageComp = styled.img `
     display: ${p => (p.$loaded ? 'block' : 'none')};
 `;
 const GeneratedPreviewTile = styled.div `
@@ -40,8 +41,12 @@ const GeneratedPreviewTile = styled.div `
 GeneratedPreviewTile.displayName = 'GeneratedPreviewTile';
 function RecordPreviewTile({ label, color, image, style }) {
     const [imageLoaded, setImageLoaded] = useState(false);
+    const [hasFailed, setHasFailed] = useState(false);
     if (image) {
-        return (_jsxs(ImagePreviewWrapper, Object.assign({ style: Object.assign({ position: 'relative' }, style) }, { children: [!imageLoaded && _jsx(ImageLoading, {}), _jsx(Image, { "$loaded": imageLoaded, src: image, alt: "record preview", style: Object.assign({}, style), onLoad: () => setImageLoaded(true) })] })));
+        return (_jsxs(ImagePreviewWrapper, Object.assign({ style: Object.assign({ position: 'relative' }, style) }, { children: [!imageLoaded && _jsx(ImageLoading, {}), !hasFailed ? (_jsx(ImageComp, { "$loaded": imageLoaded, src: image, alt: "record preview", style: Object.assign({}, style), onLoad: () => setImageLoaded(true), onError: () => {
+                        setImageLoaded(true);
+                        setHasFailed(true);
+                    } })) : (_jsx(ImageMissing, { style: Object.assign({}, style) }))] })));
     }
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
