@@ -1,5 +1,5 @@
-import {CSSObject} from 'styled-components';
-import {PreviewSize} from '../../constants';
+import { CSSObject } from 'styled-components';
+import { PreviewSize } from '../../constants';
 export interface IRecordPreviewProps {
     label: string;
     color?: string;

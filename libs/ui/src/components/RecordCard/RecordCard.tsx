@@ -8,7 +8,7 @@ import {PreviewSize} from '../../constants';
 import {getPreviewSize} from '../../helpers/getPreviewSize';
 import useLang from '../../hooks/useLang';
 import {IRecordIdentityPreview} from '../../types/RecordIdentity';
-import RecordPreview from '../RecordPreview';
+import {RecordPreview} from '../RecordPreview';
 import {IRecordCardProps} from './_types';
 
 interface IWrapperProps {

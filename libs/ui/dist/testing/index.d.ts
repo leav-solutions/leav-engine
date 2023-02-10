@@ -1,1 +1,1 @@
-export {default as MockedLangContextProvider} from './MockedLangContextProvider';
+export { default as MockedLangContextProvider } from './MockedLangContextProvider';

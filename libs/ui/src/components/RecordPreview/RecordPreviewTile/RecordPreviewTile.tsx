@@ -4,7 +4,8 @@
 import {getInitials, getInvertColor, stringToColor} from '@leav/utils';
 import {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import ImageLoading from '../../ImageLoading';
+import {ImageLoading} from '../../ImageLoading';
+import {ImageMissing} from '../../ImageMissing';
 import {IGeneratedPreviewProps, IRecordPreviewProps} from '../_types';
 
 interface IImagePreviewTileProps {
@@ -27,7 +28,7 @@ const ImagePreviewWrapper = styled.div<IImagePreviewTileProps>`
 `;
 ImagePreviewWrapper.displayName = 'ImagePreviewTile';
 
-const Image = styled.img<{$loaded: boolean}>`
+const ImageComp = styled.img<{$loaded: boolean}>`
     display: ${p => (p.$loaded ? 'block' : 'none')};
 `;
 
@@ -48,18 +49,27 @@ GeneratedPreviewTile.displayName = 'GeneratedPreviewTile';
 
 function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): JSX.Element {
     const [imageLoaded, setImageLoaded] = useState(false);
+    const [hasFailed, setHasFailed] = useState(false);
 
     if (image) {
         return (
             <ImagePreviewWrapper style={{position: 'relative', ...style}}>
                 {!imageLoaded && <ImageLoading />}
-                <Image
-                    $loaded={imageLoaded}
-                    src={image}
-                    alt="record preview"
-                    style={{...style}}
-                    onLoad={() => setImageLoaded(true)}
-                />
+                {!hasFailed ? (
+                    <ImageComp
+                        $loaded={imageLoaded}
+                        src={image}
+                        alt="record preview"
+                        style={{...style}}
+                        onLoad={() => setImageLoaded(true)}
+                        onError={() => {
+                            setImageLoaded(true);
+                            setHasFailed(true);
+                        }}
+                    />
+                ) : (
+                    <ImageMissing style={{...style}} />
+                )}
             </ImagePreviewWrapper>
         );
     }

@@ -68,18 +68,22 @@ const useGetRecordForm = ({
 }): IUseGetRecordFormHook => {
     const [recordForm, setRecordForm] = React.useState<IRecordForm>(null);
 
+    const requestVersion = version
+        ? objectToNameValueArray(version)
+              .filter(arrayVersion => !!arrayVersion.value)
+              .map(({name, value}) => ({
+                  treeId: name,
+                  treeNodeId: value.id
+              }))
+        : null;
+
     const {loading, error} = useQuery<RECORD_FORM, RECORD_FORMVariables>(getRecordFormQuery, {
         fetchPolicy: 'network-only',
         variables: {
             libraryId,
             recordId,
             formId,
-            version: version
-                ? objectToNameValueArray(version).map(({name, value}) => ({
-                      treeId: name,
-                      treeNodeId: value.id
-                  }))
-                : null
+            version: requestVersion
         },
         onCompleted: data => {
             // Transform result to format values version to a more convenient object
