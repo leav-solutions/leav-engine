@@ -53,6 +53,12 @@ const _getGridTemplateAreas = (withPreview, withLibrary, tile) => {
         return "'label'";
     }
 };
+const marginBySize = {
+    [PreviewSize.tiny]: '0.3rem',
+    [PreviewSize.small]: '0.5rem',
+    [PreviewSize.medium]: '0.8rem',
+    [PreviewSize.big]: '0.8rem'
+};
 const Wrapper = styled.div `
     border-left: 5px solid ${props => props.recordColor || 'transparent'};
     display: grid;
@@ -65,14 +71,15 @@ const Wrapper = styled.div `
         return '100%';
     }
     const previewSize = getPreviewSize(props.size, (_a = props === null || props === void 0 ? void 0 : props.simplistic) !== null && _a !== void 0 ? _a : false);
-    const previewColSize = `calc(${previewSize} + 1.5rem)`;
+    const previewColSize = `calc(${previewSize} + calc(2*${marginBySize[props.size]}))`;
     return `${previewColSize} calc(100% - ${previewColSize})`;
 }}
 `;
 Wrapper.displayName = 'Wrapper';
 const PreviewWrapper = styled.div `
     grid-area: preview;
-    margin: ${props => (props.tile ? '0.3rem 0' : '0 0.8em')};
+    margin: ${props => (props.tile ? '0.3rem 0' : `0 ${marginBySize[props.size]}`)};
+    justify-self: center;
 `;
 const RecordLabel = styled.div `
     grid-area: label;
@@ -103,7 +110,7 @@ const RecordCard = ({ record, size, style, previewStyle, lang, withPreview = tru
     var _a, _b, _c, _d;
     const label = record.label || record.id;
     const { lang: userLang } = useLang();
-    return (_jsxs(Wrapper, Object.assign({ recordColor: (_a = record.color) !== null && _a !== void 0 ? _a : '', style: style, className: "record-card", size: size, withPreview: withPreview, withLibrary: withLibrary, tile: tile, simplistic: simplistic }, { children: [withPreview && (_jsx(PreviewWrapper, Object.assign({ className: "preview", tile: tile }, { children: _jsx(RecordPreview, { label: record.label || record.id, color: record.color, image: _getPreviewBySize(record.preview, size), size: size, style: previewStyle, tile: tile, simplistic: simplistic }) }))), _jsx(RecordLabel, Object.assign({ className: "label", simplistic: simplistic, withLibrary: withLibrary }, { children: _jsx(Paragraph, Object.assign({ ellipsis: { rows: 1, tooltip: label }, style: { marginBottom: 0, color: (_b = style === null || style === void 0 ? void 0 : style.color) !== null && _b !== void 0 ? _b : null } }, { children: label })) })), withLibrary && (_jsx(SubLabel, Object.assign({ className: "library-label" }, { children: localizedTranslation((_c = record.library) === null || _c === void 0 ? void 0 : _c.label, lang !== null && lang !== void 0 ? lang : userLang) || ((_d = record.library) === null || _d === void 0 ? void 0 : _d.id) })))] })));
+    return (_jsxs(Wrapper, Object.assign({ recordColor: (_a = record.color) !== null && _a !== void 0 ? _a : '', style: style, className: "record-card", size: size, withPreview: withPreview, withLibrary: withLibrary, tile: tile, simplistic: simplistic }, { children: [withPreview && (_jsx(PreviewWrapper, Object.assign({ className: "preview", tile: tile, size: size }, { children: _jsx(RecordPreview, { label: record.label || record.id, color: record.color, image: _getPreviewBySize(record.preview, size), size: size, style: previewStyle, tile: tile, simplistic: simplistic }) }))), _jsx(RecordLabel, Object.assign({ className: "label", simplistic: simplistic, withLibrary: withLibrary }, { children: _jsx(Paragraph, Object.assign({ ellipsis: { rows: 1, tooltip: label }, style: { marginBottom: 0, color: (_b = style === null || style === void 0 ? void 0 : style.color) !== null && _b !== void 0 ? _b : null } }, { children: label })) })), withLibrary && (_jsx(SubLabel, Object.assign({ className: "library-label" }, { children: localizedTranslation((_c = record.library) === null || _c === void 0 ? void 0 : _c.label, lang !== null && lang !== void 0 ? lang : userLang) || ((_d = record.library) === null || _d === void 0 ? void 0 : _d.id) })))] })));
 };
 export default RecordCard;
 //# sourceMappingURL=RecordCard.js.map

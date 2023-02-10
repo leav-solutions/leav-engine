@@ -11,8 +11,8 @@ const Wrapper = styled.div`
         display: flex;
         flex-flow: row nowrap;
         align-items: center;
-        justify-content: space-between;
-        width: 8rem;
+        justify-content: center;
+        width: 12rem;
     }
 `;
 

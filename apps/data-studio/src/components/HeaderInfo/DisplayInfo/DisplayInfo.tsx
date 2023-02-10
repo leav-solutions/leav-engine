@@ -25,7 +25,6 @@ const Wrapper = styled.div`
     flex-flow: row wrap;
     justify-content: space-between;
 
-    height: 3.5ch;
     white-space: nowrap;
     text-overflow: ellipsis;
 `;

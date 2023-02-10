@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
 import {Alert, Button, Card, Form, Input, Spin} from 'antd';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import styled from 'styled-components';
@@ -11,32 +11,6 @@ import styled from 'styled-components';
 const extractValueFromEventAndThen = (next: any) => (event: any) => {
     next(event.target.value);
 };
-
-const Background = styled.div`
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-image: linear-gradient(to right bottom, #2185d0, #009ad7, #00aabf, #00b58a, #21ba45);
-    background-size: 200% 100%;
-    animation: Gradient 15s ease infinite;
-    z-index: -1;
-
-    @keyframes Gradient {
-        0% {
-            background-position: 0% 0%;
-        }
-
-        50% {
-            background-position: 100% 0%;
-        }
-
-        100% {
-            background-position: 0% 0%;
-        }
-    }
-`;
 
 const Wrapper = styled.div`
     height: 100%;
@@ -69,7 +43,10 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
 
     return (
         <Wrapper>
-            <LoginBlock title={<img src="/global-icon/small" height="100px" />} headStyle={{textAlign: 'center'}}>
+            <LoginBlock
+                title={<img src="/global-icon/small" height="100px" />}
+                headStyle={{textAlign: 'center', padding: '1rem'}}
+            >
                 <Form onFinish={_processLogin}>
                     <Form.Item>
                         <Input

@@ -70,6 +70,13 @@ const _getGridTemplateAreas = (withPreview: boolean, withLibrary: boolean, tile:
     }
 };
 
+const marginBySize: Record<PreviewSize, string> = {
+    [PreviewSize.tiny]: '0.3rem',
+    [PreviewSize.small]: '0.5rem',
+    [PreviewSize.medium]: '0.8rem',
+    [PreviewSize.big]: '0.8rem'
+};
+
 const Wrapper = styled.div<IWrapperProps>`
     border-left: 5px solid ${props => props.recordColor || 'transparent'};
     display: grid;
@@ -82,15 +89,16 @@ const Wrapper = styled.div<IWrapperProps>`
             }
 
             const previewSize = getPreviewSize(props.size, props?.simplistic ?? false);
-            const previewColSize = `calc(${previewSize} + 1.5rem)`;
+            const previewColSize = `calc(${previewSize} + calc(2*${marginBySize[props.size]}))`;
             return `${previewColSize} calc(100% - ${previewColSize})`;
         }}
 `;
 Wrapper.displayName = 'Wrapper';
 
-const PreviewWrapper = styled.div<{tile: boolean}>`
+const PreviewWrapper = styled.div<{tile: boolean; size: PreviewSize}>`
     grid-area: preview;
-    margin: ${props => (props.tile ? '0.3rem 0' : '0 0.8em')};
+    margin: ${props => (props.tile ? '0.3rem 0' : `0 ${marginBySize[props.size]}`)};
+    justify-self: center;
 `;
 
 const RecordLabel = styled.div<{simplistic: boolean; withLibrary: boolean}>`
@@ -148,7 +156,7 @@ const RecordCard = ({
             simplistic={simplistic}
         >
             {withPreview && (
-                <PreviewWrapper className="preview" tile={tile}>
+                <PreviewWrapper className="preview" tile={tile} size={size}>
                     <RecordPreview
                         label={record.label || record.id}
                         color={record.color}
