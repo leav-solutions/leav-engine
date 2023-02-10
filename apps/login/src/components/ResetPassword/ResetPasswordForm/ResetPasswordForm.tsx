@@ -43,14 +43,8 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
     return (
         <Wrapper>
             <ResetPasswordBlock
-                title={
-                    <img
-                        src={`/${import.meta.env.VITE_ENDPOINT}/assets/logo-leavengine.png`}
-                        alt="LEAV Engine"
-                        height="100px"
-                    />
-                }
-                headStyle={{textAlign: 'center'}}
+                title={<img src="/global-icon/small" height="100px" />}
+                headStyle={{textAlign: 'center', padding: '1rem'}}
                 style={{width: '30rem'}}
             >
                 <h3> {t('resetPassword.header')}</h3>

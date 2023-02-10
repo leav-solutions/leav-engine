@@ -17,6 +17,7 @@ interface IAllValuesCountProps {
 const MoreValuesCount = styled.span`
     padding: 0 0.75em;
     height: 1.75em;
+    line-height: 1.75em;
     margin: 0 1em;
     border-radius: 2em;
     background: ${themeVars.activeColor};

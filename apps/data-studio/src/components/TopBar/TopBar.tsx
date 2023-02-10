@@ -32,11 +32,11 @@ const MenuItem = styled.div<IMenuItemProps>`
     justify-content: space-around;
     align-items: center;
     transition: 275ms ease-out;
-    padding: 0 1rem;
+    padding: 0 0.5rem;
     background: ${props => (props.isActive ? themeVars.primaryColor : 'none')};
 
     & > * {
-        margin: 0 0.5rem;
+        margin: 0;
     }
 
     &:hover {
@@ -70,7 +70,8 @@ const InfoButton = styled(Button)`
             border: none;
             color: #fff;
         }
-        font-size: 1.5em;
+        font-size: 1rem;
+        line-height: 1em;
     }
 `;
 

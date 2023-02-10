@@ -26,7 +26,8 @@ const AppsButton = styled(Button)`
             border: none;
             color: #fff;
         }
-        font-size: 1.5em;
+        font-size: 1.2rem;
+        line-height: 1.2rem;
     }
 `;
 
