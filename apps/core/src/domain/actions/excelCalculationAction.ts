@@ -1,11 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ActionsListIOTypes, ActionsListValueType, IActionsListContext} from '../../_types/actionsList';
+import {ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {Parser} from 'hot-formula-parser';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {IVariableFunctions} from 'domain/helpers/calculationsVariableFunctions';
-import {ICalculationVariable, IVariableValue} from 'domain/helpers/calculationVariable';
+import {ActionsListIOTypes, ActionsListValueType, IActionsListContext} from '../../_types/actionsList';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
@@ -37,6 +35,10 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
         context: IActionsListContext,
         value: ActionsListValueType
     ): Promise<string> => {
+        if (!str) {
+            return '';
+        }
+
         const promises = [];
         str.replace(regex, (match, ...args) => {
             const promise = asyncFn(context, value, ...args);

@@ -135,7 +135,9 @@ function LibraryItemsListContent({
     };
 
     const _getVersionForRequest = () =>
-        objectValueVersionToArray(searchState.valuesVersions).filter(v => !!v.treeNodeId);
+        searchState.valuesVersions
+            ? objectValueVersionToArray(searchState.valuesVersions).filter(v => !!v.treeNodeId)
+            : [];
 
     const {error: getRecordsError, loading: getRecordsLoading, fetchMore: getRecordsFetchMore} = useQuery<
         IGetRecordsFromLibraryQuery,
@@ -152,7 +154,13 @@ function LibraryItemsListContent({
             fullText: searchState.fullText,
             version: _getVersionForRequest()
         },
-        onCompleted: _applyResults
+        onCompleted: _applyResults,
+        onError: err => {
+            searchDispatch({
+                type: SearchActionTypes.SET_LOADING,
+                loading: false
+            });
+        }
     });
 
     const _fetchRecords = async () => {

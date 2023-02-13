@@ -5664,6 +5664,7 @@ __metadata:
     ant-design: ">=4"
     react: 18.2.0
     react-dom: 18.2.0
+    react-icons: ">=4"
     styled-components: ">=5.3"
   languageName: unknown
   linkType: soft
@@ -21492,7 +21493,6 @@ __metadata:
     ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
     vite: 4.1.1
-    vite-jest: 0.1.4
     vite-plugin-rewrite-all: 1.0.1
     web-vitals: 2.1.4
   languageName: unknown

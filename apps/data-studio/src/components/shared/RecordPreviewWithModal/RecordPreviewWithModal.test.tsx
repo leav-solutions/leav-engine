@@ -12,12 +12,6 @@ jest.mock('components/FileModal', () => {
     };
 });
 
-jest.mock('../RecordPreview', () => {
-    return function RecordPreview() {
-        return <div>RecordPreview</div>;
-    };
-});
-
 describe('RecordPreviewWithModal', () => {
     test('Display modal on click', async () => {
         const previewFile = {
@@ -26,7 +20,7 @@ describe('RecordPreviewWithModal', () => {
 
         render(<RecordPreviewWithModal label="my file" image="/my_file.jpg" previewFile={previewFile} />);
 
-        expect(screen.getByText('RecordPreview')).toBeInTheDocument();
+        expect(screen.getByAltText('record preview')).toBeInTheDocument();
         expect(screen.queryByText('FileModal')).not.toBeInTheDocument();
 
         userEvent.click(screen.getByTestId('click-handler'));

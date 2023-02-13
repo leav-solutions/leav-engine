@@ -10,8 +10,10 @@ import {mockRecord} from '../../__mocks__/common/record';
 import RecordCard from './RecordCard';
 
 jest.mock('../RecordPreview', () => {
-    return function RecordPreview() {
-        return <div>RecordPreview</div>;
+    return {
+        RecordPreview: () => {
+            return <div>RecordPreview</div>;
+        }
     };
 });
 

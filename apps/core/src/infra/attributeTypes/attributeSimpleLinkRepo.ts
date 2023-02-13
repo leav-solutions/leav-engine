@@ -18,7 +18,7 @@ interface IDeps {
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
@@ -95,13 +95,16 @@ export default function({
                 ctx
             });
 
-            return res.slice(0, 1).map(r => ({
-                id_value: null,
-                library: attribute.linked_library,
-                value: dbUtils.cleanup(r),
-                created_by: null,
-                modified_by: null
-            }));
+            return res
+                .filter(r => !!r)
+                .slice(0, 1)
+                .map(r => ({
+                    id_value: null,
+                    library: attribute.linked_library,
+                    value: dbUtils.cleanup(r),
+                    created_by: null,
+                    modified_by: null
+                }));
         },
         sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);

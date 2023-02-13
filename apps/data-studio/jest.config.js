@@ -32,7 +32,7 @@ module.exports = {
         '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js'
     },
     transformIgnorePatterns: ['node_modules'],
-    testRegex: '.test.(tsx)$',
+    testRegex: '.test.(ts|tsx)$',
     moduleNameMapper: {
         ...commonModuleNameMapper,
         '^assets/(.*)$': '<rootDir>/src/assets/$1',

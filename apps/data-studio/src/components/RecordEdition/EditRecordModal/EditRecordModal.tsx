@@ -4,6 +4,7 @@
 import {useMutation} from '@apollo/client';
 import {RecordCard, themeVars} from '@leav/ui';
 import {Button, Modal, Space, Tooltip} from 'antd';
+import ErrorBoundary from 'components/shared/ErrorBoundary';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -134,6 +135,10 @@ const StyledModal = styled(Modal)`
         width: 4rem;
         height: 4rem;
         line-height: 4rem;
+    }
+
+    && .ant-modal-content {
+        padding: 0;
     }
 `;
 
@@ -456,47 +461,49 @@ function EditRecordModal({
                 width="90vw"
                 centered
                 style={{maxWidth: `${modalWidth}px`}}
-                bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
+                bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto'}}
                 footer={footer}
             >
-                {permissionsLoading ? (
-                    <Loading />
-                ) : (
-                    <EditRecordModalReducerContext.Provider value={{state, dispatch}}>
-                        <CreationErrorContext.Provider value={creationErrors}>
-                            <Container>
-                                <Title>
-                                    {title}
-                                    <HeaderIcons>
-                                        <Tooltip title={t('values_version.title')}>
-                                            <VscLayers onClick={_handleClickValuesVersions} />
-                                        </Tooltip>
-                                    </HeaderIcons>
-                                </Title>
-                                <Content className="content">
-                                    {canEdit ? (
-                                        <EditRecord
-                                            record={record}
-                                            library={library}
-                                            onValueSubmit={_handleValueSubmit}
-                                            onValueDelete={_handleDeleteValue}
-                                            onDeleteMultipleValues={_handleDeleteAllValues}
-                                            readonly={isReadOnly}
-                                        />
-                                    ) : (
-                                        <ErrorDisplay
-                                            type={ErrorDisplayTypes.PERMISSION_ERROR}
-                                            showActionButton={false}
-                                        />
-                                    )}
-                                </Content>
-                                <Sidebar className="sidebar">
-                                    <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />
-                                </Sidebar>
-                            </Container>
-                        </CreationErrorContext.Provider>
-                    </EditRecordModalReducerContext.Provider>
-                )}
+                <ErrorBoundary showRecoveryButtons={false}>
+                    {permissionsLoading ? (
+                        <Loading />
+                    ) : (
+                        <EditRecordModalReducerContext.Provider value={{state, dispatch}}>
+                            <CreationErrorContext.Provider value={creationErrors}>
+                                <Container>
+                                    <Title>
+                                        {title}
+                                        <HeaderIcons>
+                                            <Tooltip title={t('values_version.title')}>
+                                                <VscLayers onClick={_handleClickValuesVersions} />
+                                            </Tooltip>
+                                        </HeaderIcons>
+                                    </Title>
+                                    <Content className="content">
+                                        {canEdit ? (
+                                            <EditRecord
+                                                record={record}
+                                                library={library}
+                                                onValueSubmit={_handleValueSubmit}
+                                                onValueDelete={_handleDeleteValue}
+                                                onDeleteMultipleValues={_handleDeleteAllValues}
+                                                readonly={isReadOnly}
+                                            />
+                                        ) : (
+                                            <ErrorDisplay
+                                                type={ErrorDisplayTypes.PERMISSION_ERROR}
+                                                showActionButton={false}
+                                            />
+                                        )}
+                                    </Content>
+                                    <Sidebar className="sidebar">
+                                        <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />
+                                    </Sidebar>
+                                </Container>
+                            </CreationErrorContext.Provider>
+                        </EditRecordModalReducerContext.Provider>
+                    )}
+                </ErrorBoundary>
             </StyledModal>
         </div>
     ) : (

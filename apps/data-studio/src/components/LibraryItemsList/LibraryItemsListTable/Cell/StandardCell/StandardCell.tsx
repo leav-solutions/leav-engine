@@ -15,10 +15,20 @@ interface ISimpleCellProps {
     values: AnyPrimitive[];
 }
 
+const alignmentByFormat: Record<AttributeFormat, 'left' | 'right' | 'center'> = {
+    [AttributeFormat.text]: 'left',
+    [AttributeFormat.numeric]: 'right',
+    [AttributeFormat.boolean]: 'center',
+    [AttributeFormat.date]: 'left',
+    [AttributeFormat.date_range]: 'left',
+    [AttributeFormat.extended]: 'left',
+    [AttributeFormat.encrypted]: 'left'
+};
+
 const Wrapper = styled.div<{format: AttributeFormat}>`
     padding: 5px;
     width: 100%;
-    text-align: ${props => (props.format === AttributeFormat.numeric ? 'right' : 'left')};
+    text-align: ${props => alignmentByFormat[props.format]};
 `;
 
 function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {

@@ -69,7 +69,7 @@
         "UNKNOWN_METADATA_FIELDS": "Champs de métadonnées inconnus : {{fields}}",
         "UNKNOWN_NODE": "Noeud inconnu",
         "UNKNOWN_PARENT": "Parent inconnu",
-        "UNKNOWN_RECORD": "Élément inconnu",
+        "UNKNOWN_RECORD": "Élément inconnu: {{library}} / {{recordId}}",
         "UNKNOWN_TREE": "Arbre inconnu: {{tree}}",
         "UNKNOWN_TREES": "Arbres inconnus : {{trees}}",
         "UNKNOWN_VALUE": "Valeur inconnue",

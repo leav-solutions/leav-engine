@@ -6,7 +6,7 @@ import useGraphqlPossibleTypes from './useGraphqlPossibleTypes';
 
 describe('useGraphqlPossibleTypes', () => {
     test('Return loading then possible types', async () => {
-        jest.spyOn(global, 'fetch').mockResolvedValue({
+        global.fetch = jest.fn().mockResolvedValue({
             json: () =>
                 Promise.resolve({
                     data: {

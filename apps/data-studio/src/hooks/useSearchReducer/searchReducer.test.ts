@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeType, RecordFilterCondition, SortOrder} from '_gqlTypes/globalTypes';
+import {AttributeType, SortOrder} from '_gqlTypes/globalTypes';
 import {AttributeConditionFilter, FilterType} from '_types/types';
 import {mockAttribute} from '__mocks__/common/attribute';
 import {mockRecordWhoAmI} from '__mocks__/common/record';
@@ -177,12 +177,6 @@ describe('searchReducer', () => {
     });
 
     test('DISABLE_FILTERS', async () => {
-        const queryFilter = {
-            field: 'id',
-            value: '1',
-            condition: RecordFilterCondition.EQUAL
-        };
-
         const filter = {
             type: FilterType.ATTRIBUTE,
             index: 1,
@@ -201,6 +195,27 @@ describe('searchReducer', () => {
         expect(newState.filters[0].active).toBe(false);
         expect(newState.loading).toBe(true);
     });
+
+    test('ENABLE_FILTERS', async () => {
+        const filter = {
+            type: FilterType.ATTRIBUTE,
+            index: 1,
+            key: '1',
+            value: {value: 'test'},
+            active: false,
+            condition: AttributeConditionFilter.EQUAL
+        };
+
+        const newState = searchReducer(
+            {...initialSearchState, filters: [filter]},
+            {type: SearchActionTypes.ENABLE_FILTERS}
+        );
+
+        expect(newState.filters).toHaveLength(1);
+        expect(newState.filters[0].active).toBe(true);
+        expect(newState.loading).toBe(true);
+    });
+
     test('APPLY_FILTERS', async () => {
         const filter = {
             type: FilterType.ATTRIBUTE,
