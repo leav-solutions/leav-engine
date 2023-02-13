@@ -201,7 +201,7 @@ function UploadFiles({
     const onSelectPath = async (node: ITreeNodeWithRecord, selected: boolean) => {
         const newSelectedNode = !selected ? undefined : node;
 
-        setSelectedNodeKey(newSelectedNode.key);
+        setSelectedNodeKey(newSelectedNode?.key);
 
         if (selected && files.length) {
             const newFiles = await _checkFilesExist(newSelectedNode?.id, files);
@@ -314,7 +314,7 @@ function UploadFiles({
                                 type="primary"
                                 onClick={_handleUploadClick}
                             >
-                                {'Upload'}
+                                {t('upload.upload_step_title')}
                             </Button>
                         )}
                         {isDone && (

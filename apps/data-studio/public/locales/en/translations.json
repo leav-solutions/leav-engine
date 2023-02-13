@@ -375,7 +375,20 @@
             "title": "This file already exists",
             "replaceBtn": "Replace",
             "keepBtn": "Keep both",
-            "message": "A file with the name \"{{filename}}\" already exists in this folder. What would you like to do?"
+            "message": "A file with the name \"{{filename}}\" already exists at this location. What would you like to do?"
+        }
+    },
+    "create_directory": {
+        "title": "Create directory",
+        "select_path_step_title": "Select a path",
+        "choose_name_step_title": "Choose a directory name",
+        "create_step_title":  "Create",
+        "directory_name": "Directory name",
+        "next": "Next",
+        "previous": "Previous",
+        "duplicate_modal": {
+            "title": "This directory already exists",
+            "message": "A directory with the name \"{{directoryName}}\" already exists in this location."
         }
     },
     "import": {

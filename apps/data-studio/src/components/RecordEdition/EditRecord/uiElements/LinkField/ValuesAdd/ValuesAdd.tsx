@@ -1,11 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {BulbOutlined, CloseOutlined, CloudUploadOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
+import {
+    BulbOutlined,
+    CloseOutlined,
+    CloudUploadOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    FolderAddOutlined
+} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {themeVars} from '@leav/ui';
 import {Button, Divider, Input, InputRef, Space, Spin, message} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
+import CreateDirectory from 'components/CreateDirectory';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import SearchModal from 'components/SearchModal';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
@@ -24,6 +32,7 @@ import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
+import {CREATE_DIRECTORY} from '_gqlTypes/CREATE_DIRECTORY';
 import {LibraryBehavior, SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
@@ -106,6 +115,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const [selectedValues, setSelectedValues] = useState<ValueFromList[]>([]);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
+    const [isCreateDirectoryModalVisible, setIsCreateDirectoryModalVisible] = useState<boolean>(false);
     const [isSearchModalVisible, setIsSearchModalVisible] = useState<boolean>(false);
     const [isCreateRecordModalVisible, setIsCreateRecordModalVisible] = useState<boolean>(false);
     const [valuesListCurrentPage, setValuesListCurrentPage] = useState<number>(1);
@@ -114,10 +124,14 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const canSearch = !attribute.linkValuesList.enable || attribute.linkValuesList.allowFreeEntry;
     const canCreateRecord =
         attribute.linked_library.permissions.create_record &&
-        attribute.linked_library.behavior !== LibraryBehavior.files;
+        attribute.linked_library.behavior !== LibraryBehavior.files &&
+        attribute.linked_library.behavior !== LibraryBehavior.directories;
     const canUploadFile =
         attribute.linked_library.permissions.create_record &&
         attribute.linked_library.behavior === LibraryBehavior.files;
+    const canCreateDirectory =
+        attribute.linked_library.permissions.create_record &&
+        attribute.linked_library.behavior === LibraryBehavior.directories;
 
     const [runSearch, {loading, error, data: searchData}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
@@ -148,6 +162,9 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const _handleClickUploadFiles = () => setIsUploadFilesModalVisible(true);
     const _handleCloseUploadFiles = () => setIsUploadFilesModalVisible(false);
 
+    const _handleClickCreateDirectoryModal = () => setIsCreateDirectoryModalVisible(true);
+    const _handleCloseCreateDirectoryModal = () => setIsCreateDirectoryModalVisible(false);
+
     const [runGetFileDataQuery] = useLazyQuery<IFileDataQuery, IFileDataQueryVariables>(
         getFileDataQuery(attribute.linked_library.id),
         {
@@ -161,6 +178,10 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         });
 
         onAdd(toAdd);
+    };
+
+    const _onCreateDirectoryCompleted = async (data: CREATE_DIRECTORY) => {
+        onAdd([{id: data.createDirectory.id, whoAmI: data.createDirectory.whoAmI}]);
     };
 
     const _handleOpenCreateRecordModal = () => {
@@ -340,6 +361,15 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                                 {t('upload.title')}
                             </Button>
                         )}
+                        {canCreateDirectory && (
+                            <Button
+                                size="small"
+                                icon={<FolderAddOutlined />}
+                                onClick={_handleClickCreateDirectoryModal}
+                            >
+                                {t('create_directory.title')}
+                            </Button>
+                        )}
                     </Space>
                     <Space>
                         <Button size="small" onClick={_handleClose}>
@@ -374,6 +404,13 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                     multiple={attribute.multiple_values}
                     onCompleted={_onUploadFilesCompleted}
                     onClose={_handleCloseUploadFiles}
+                />
+            )}
+            {isCreateDirectoryModalVisible && (
+                <CreateDirectory
+                    libraryId={attribute.linked_library.id}
+                    onCompleted={_onCreateDirectoryCompleted}
+                    onClose={_handleCloseCreateDirectoryModal}
                 />
             )}
         </>

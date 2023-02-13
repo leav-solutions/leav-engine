@@ -272,7 +272,8 @@ export default function({
             );
         },
         async createDirectory({library, nodeId, name}: ICreateDirectoryParams, ctx: IQueryInfos): Promise<IRecord> {
-            const treeId = treeDomain.getLibraryTreeId(library, ctx);
+            const filesLibrary = utils.getFilesLibraryId(library);
+            const treeId = treeDomain.getLibraryTreeId(filesLibrary, ctx);
             const recordNode = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
 
             // default path is root path
@@ -294,7 +295,7 @@ export default function({
 
             // get root key of library from config
             const rootKey = Object.keys(config.filesManager.rootKeys).find(
-                key => config.filesManager.rootKeys[key] === library
+                key => config.filesManager.rootKeys[key] === filesLibrary
             );
 
             const rootPath = this.getRootPathByKey(rootKey);

@@ -525,15 +525,20 @@ describe('FilesManager', () => {
 
             const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
 
+            const mockUtils: Mockify<IUtils> = {
+                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id)
+            };
+
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
                 'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
-                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.utils': mockUtils as IUtils
             });
 
-            await files.createDirectory({library: mockLibraryFiles.id, nodeId: 'fakeNodeId', name: 'name'}, ctx);
+            await files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx);
 
             expect(mockTreeDomain.getLibraryTreeId).toBeCalledTimes(1);
             expect(mockTreeDomain.getRecordByNodeId).toBeCalledTimes(1);
@@ -568,7 +573,8 @@ describe('FilesManager', () => {
             const mockUtils: Mockify<IUtils> = {
                 generateExplicitValidationError: jest.fn(() => {
                     throw new ValidationError({});
-                })
+                }),
+                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id)
             };
 
             const files = filesManager({
@@ -581,7 +587,7 @@ describe('FilesManager', () => {
             });
 
             await expect(
-                files.createDirectory({library: mockLibraryFiles.id, nodeId: 'fakeNodeId', name: 'name'}, ctx)
+                files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx)
             ).rejects.toThrow(ValidationError);
         });
     });
