@@ -24,8 +24,16 @@ const DefineTreePermissionsView = ({
     readOnly
 }: IDefineTreePermissionsViewProps): JSX.Element => {
     const usersGroupsTreeId = 'users_groups';
-    const [selectedTreeNode, setSelectedTreeNode] = React.useState<ITreeNodeData | null>(null);
-    const [selectedGroupNode, setSelectedGroupNode] = React.useState<ITreeNodeData | null>(null);
+    const [selectedTreeNode, setSelectedTreeNode] = React.useState<ITreeNodeData | null>({
+        node: {id: fakeRootId},
+        path: [],
+        treeIndex: 0
+    });
+    const [selectedGroupNode, setSelectedGroupNode] = React.useState<ITreeNodeData | null>({
+        node: {id: fakeRootId},
+        path: [],
+        treeIndex: 0
+    });
     const _selectTreeNode = (nodeData: ITreeNodeData) =>
         setSelectedTreeNode(getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedTreeNode) ? nodeData : null);
 

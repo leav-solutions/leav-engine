@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {IGroupedPermissionsActions} from '_types/permissions';
-import {ITreeNodeData} from '_types/trees';
+import {fakeRootId, ITreeNodeData} from '_types/trees';
 import {getTreeNodeKey} from '../../../utils/utils';
 import {PermissionTypes} from '../../../_gqlTypes/globalTypes';
 import ColumnsDisplay from '../../shared/ColumnsDisplay';
@@ -21,8 +21,16 @@ interface IDefinePermByUserGroupViewProps {
 function DefinePermByUserGroupView({applyTo, readOnly, type, actions}: IDefinePermByUserGroupViewProps): JSX.Element {
     const usersGroupsTreeId = 'users_groups';
 
-    const [selectedGroupNode, setSelectedGroupNode] = useState<ITreeNodeData | null>(null);
-    const [selectedPermissionsGroup, setSelectedPermissionsGroup] = useState<string>();
+    const [selectedGroupNode, setSelectedGroupNode] = useState<ITreeNodeData | null>({
+        node: {id: fakeRootId},
+        path: [],
+        treeIndex: 0
+    });
+
+    // Select first group by default
+    const [selectedPermissionsGroup, setSelectedPermissionsGroup] = useState<string>(
+        actions ? Object.keys(actions)[0] : null
+    );
 
     const _selectGroupNode = (nodeData: ITreeNodeData) =>
         setSelectedGroupNode(getTreeNodeKey(nodeData) !== getTreeNodeKey(selectedGroupNode) ? nodeData : null);
