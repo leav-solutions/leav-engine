@@ -45,7 +45,7 @@ interface ICreateDirectoryParams {
     nodeId: string;
 }
 
-export default function({
+export default function ({
     'core.domain.filesManager': filesManagerDomain = null,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.auth': authApp = null,
@@ -108,7 +108,6 @@ export default function({
                             filters: [RecordFilterInput],
                             failedOnly: Boolean
                         ): Boolean! 
-                        forcePreviewsGeneration(libraryId: ID!, recordId: ID, failedOnly: Boolean): Boolean!
                         upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadData!]!
                         createDirectory(library: String!, nodeId: String!, name: String!): Record!
                     }
