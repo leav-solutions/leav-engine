@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordRepo} from 'infra/record/recordRepo';
+import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
@@ -12,6 +13,7 @@ import {GetCoreEntityByIdFunc} from './getCoreEntityById';
 interface IDeps {
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.record'?: IRecordRepo;
+    'core.utils'?: IUtils;
 }
 
 export interface IValidateHelper {
@@ -23,7 +25,8 @@ export interface IValidateHelper {
 
 export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.infra.record': recordRepo = null
+    'core.infra.record': recordRepo = null,
+    'core.utils': utils = null
 }: IDeps): IValidateHelper {
     return {
         async validateRecord(library, recordId, ctx): Promise<IRecord> {
@@ -41,7 +44,11 @@ export default function ({
             });
 
             if (!recordsRes.list.length) {
-                throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
+                throw utils.generateExplicitValidationError(
+                    'recordId',
+                    {msg: Errors.UNKNOWN_RECORD, vars: {library, recordId}},
+                    ctx.lang
+                );
             }
 
             return recordsRes.list[0];

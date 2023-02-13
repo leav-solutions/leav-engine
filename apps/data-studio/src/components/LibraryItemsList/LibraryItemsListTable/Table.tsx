@@ -35,7 +35,8 @@ interface ICustomTableProps {
 
 export const INFOS_COLUMN_WIDTH = '350px';
 enum FieldColumnWidth {
-    SMALL = 200,
+    TINY = 125,
+    SMALL = 150,
     MEDIUM = 250,
     LARGE = 300
 }
@@ -112,8 +113,9 @@ const _getFieldColumWidth = (field: IField): FieldColumnWidth => {
     }
 
     switch (field.format) {
-        case AttributeFormat.numeric:
         case AttributeFormat.boolean:
+            return FieldColumnWidth.TINY;
+        case AttributeFormat.numeric:
         case AttributeFormat.date:
             return FieldColumnWidth.SMALL;
         case AttributeFormat.date_range:

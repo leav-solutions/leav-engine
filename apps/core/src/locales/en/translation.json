@@ -70,7 +70,7 @@
         "UNKNOWN_METADATA_FIELDS": "Unknown metadata fields : {{fields}}",
         "UNKNOWN_NODE": "Unknown node",
         "UNKNOWN_PARENT": "Unknown parent",
-        "UNKNOWN_RECORD": "Unknown record",
+        "UNKNOWN_RECORD": "Unknown record: {{library}} / {{recordId}}",
         "UNKNOWN_TREE": "Unknown tree: {{tree}}",
         "UNKNOWN_TREES": "Unknown trees : {{trees}}",
         "UNKNOWN_VALUE": "Unknown value",

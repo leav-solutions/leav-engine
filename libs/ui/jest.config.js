@@ -14,6 +14,6 @@ module.exports = {
         ]
     },
     transformIgnorePatterns: ['node_modules'],
-    testRegex: '.test.(tsx)$',
+    testRegex: '.test.(ts|tsx)$',
     moduleNameMapper: require('../../jestModuleNameMapper')
 };

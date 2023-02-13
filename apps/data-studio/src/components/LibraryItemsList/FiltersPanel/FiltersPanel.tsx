@@ -77,6 +77,10 @@ function FiltersPanel(): JSX.Element {
         searchDispatch({type: SearchActionTypes.DISABLE_FILTERS});
     };
 
+    const _enableFilters = () => {
+        searchDispatch({type: SearchActionTypes.ENABLE_FILTERS});
+    };
+
     const handleHide = () => {
         dispatch(
             setDisplaySide({
@@ -118,6 +122,7 @@ function FiltersPanel(): JSX.Element {
     };
 
     const allFiltersDisabled = searchState.filters.every(f => f.active === false);
+    const allFiltersEnabled = searchState.filters.every(f => f.active === true);
 
     return (
         <Wrapper>
@@ -130,6 +135,12 @@ function FiltersPanel(): JSX.Element {
                                 disabled: allFiltersDisabled,
                                 onClick: _disableFilters,
                                 label: t('filters.disable-filters')
+                            },
+                            {
+                                key: 'enable',
+                                disabled: allFiltersEnabled,
+                                onClick: _enableFilters,
+                                label: t('filters.enable-filters')
                             },
                             {
                                 key: 'remove',

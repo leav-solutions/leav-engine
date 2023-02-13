@@ -16,6 +16,8 @@ import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
+import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {setSelection} from 'reduxStore/selection';

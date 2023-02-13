@@ -171,6 +171,11 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                             merge(existing, incoming) {
                                 return {...existing, ...incoming};
                             }
+                        },
+                        permissions: {
+                            merge(existing, incoming) {
+                                return {...existing, ...incoming};
+                            }
                         }
                     }
                 },

@@ -26,6 +26,7 @@ export enum SearchActionTypes {
     SET_DISPLAY = 'SET_DISPLAY',
     RESET_FILTERS = 'RESET_FILTERS',
     DISABLE_FILTERS = 'DISABLE_FILTERS',
+    ENABLE_FILTERS = 'ENABLE_FILTERS',
     APPLY_FILTERS = 'APPLY_FILTERS',
     SET_VALUES_VERSIONS = 'SET_VALUES_VERSIONS'
 }
@@ -49,6 +50,7 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER; sharedViewsOrder: string[]}
     | {type: SearchActionTypes.RESET_FILTERS}
     | {type: SearchActionTypes.DISABLE_FILTERS}
+    | {type: SearchActionTypes.ENABLE_FILTERS}
     | {type: SearchActionTypes.APPLY_FILTERS}
     | {type: SearchActionTypes.SET_VALUES_VERSIONS; valuesVersions: IValueVersion};
 
@@ -182,6 +184,12 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             return {
                 ...state,
                 filters: state.filters.map(f => ({...f, active: false})),
+                loading: true
+            };
+        case SearchActionTypes.ENABLE_FILTERS:
+            return {
+                ...state,
+                filters: state.filters.map(f => ({...f, active: true})),
                 loading: true
             };
         case SearchActionTypes.APPLY_FILTERS:
