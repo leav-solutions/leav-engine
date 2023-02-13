@@ -170,13 +170,12 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
         {
             title: t('create_directory.choose_name_step_title'),
             content: (
-                <>
-                    <Input
-                        placeholder={t('create_directory.directory_name')}
-                        value={directoryName}
-                        onChange={e => setDirectoryName(e.target.value)}
-                    />
-                </>
+                <Input
+                    data-testid="directory-name-input"
+                    placeholder={t('create_directory.directory_name')}
+                    value={directoryName}
+                    onChange={e => setDirectoryName(e.target.value)}
+                />
             )
         }
     ];
@@ -185,6 +184,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
 
     return (
         <Modal
+            data-testid="create-directory-modal"
             title={t('create_directory.title')}
             open
             width="70rem"
@@ -208,11 +208,11 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                     )}
                     {currentStep > 0 && (
                         <Button
-                            data-testid="upload-btn"
+                            data-testid="create-btn"
                             loading={loading}
                             disabled={!directoryName}
                             className="submit-btn"
-                            title={'Upload'}
+                            title={'Create'}
                             type="primary"
                             onClick={_handleCreateClick}
                         >
@@ -221,7 +221,6 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                     )}
                 </div>
             }
-            data-testid="upload-modal"
             upload-modal
         >
             <Steps status={status} current={currentStep} items={items} />
