@@ -143,7 +143,7 @@ function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTa
                 onTabChange={_handleOnTabChange}
                 menu={{secondary: true, pointing: true}}
                 panes={panes}
-                activeIndex={activeIndex}
+                activeIndex={activeIndex >= 0 ? activeIndex : 0}
             />
         </>
     );
