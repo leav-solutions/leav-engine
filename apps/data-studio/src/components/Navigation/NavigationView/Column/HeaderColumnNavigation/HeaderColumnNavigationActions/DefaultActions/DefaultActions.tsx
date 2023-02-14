@@ -8,12 +8,14 @@ import {
     InfoCircleOutlined,
     OrderedListOutlined,
     PictureOutlined,
-    SearchOutlined
+    SearchOutlined,
+    FolderAddOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, message} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
+import CreateDirectory from 'components/CreateDirectory';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
 import UploadFiles from 'components/UploadFiles';
@@ -54,6 +56,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
 
     const [editRecordModalVisible, setEditRecordModalVisible] = useState(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
+    const [isCreateDirectoryModalVisible, setIsCreateDirectoryModalVisible] = useState<boolean>(false);
 
     const [removeFromTree] = useMutation<REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables>(removeTreeElementMutation);
     const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
@@ -104,6 +107,9 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
     const _handleClickUpload = () => setIsUploadFilesModalVisible(true);
     const _handleCloseUpload = () => setIsUploadFilesModalVisible(false);
 
+    const _handleCreateDirectory = () => setIsCreateDirectoryModalVisible(true);
+    const _handleCloseCreateDirectory = () => setIsCreateDirectoryModalVisible(false);
+
     const _handleClickClassifiedIn = () => message.warning(t('global.feature_not_available'));
     const _handleClickOrder = () => message.warning(t('global.feature_not_available'));
     const _handleClickGeneratePreviews = () => {
@@ -123,6 +129,15 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             icon: <CloudUploadOutlined />,
             onClick: _handleClickUpload,
             label: t('upload.title'),
+            displayCondition:
+                activeTree.behavior === TreeBehavior.files &&
+                (!parent || parent?.record.whoAmI.library.behavior === LibraryBehavior.directories)
+        },
+        {
+            key: 'create_directory',
+            icon: <FolderAddOutlined />,
+            onClick: _handleCreateDirectory,
+            label: t('create_directory.title'),
             displayCondition:
                 activeTree.behavior === TreeBehavior.files &&
                 (!parent || parent?.record.whoAmI.library.behavior === LibraryBehavior.directories)
@@ -184,6 +199,10 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         refreshTreeContent();
     };
 
+    const _handleCreateDirectoryCompleted = () => {
+        refreshTreeContent();
+    };
+
     return (
         <>
             {isUploadFilesModalVisible && (
@@ -193,6 +212,14 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
                     multiple
                     onClose={_handleCloseUpload}
                     onCompleted={_handleUploadCompleted}
+                />
+            )}
+            {isCreateDirectoryModalVisible && (
+                <CreateDirectory
+                    defaultSelectedKey={parent?.id || activeTree.id}
+                    libraryId={activeTree.libraries[1].id}
+                    onClose={_handleCloseCreateDirectory}
+                    onCompleted={_handleCreateDirectoryCompleted}
                 />
             )}
             {editRecordModalVisible && (

@@ -12,8 +12,15 @@ export const mockLibrary: ILibrary = {
 };
 
 export const mockLibraryFiles: ILibrary = {
-    id: 'test_lib_files',
+    id: 'files',
     system: false,
     behavior: LibraryBehavior.FILES,
+    label: {fr: 'Test lib'}
+};
+
+export const mockLibraryDirectories: ILibrary = {
+    id: 'files_directories',
+    system: false,
+    behavior: LibraryBehavior.DIRECTORIES,
     label: {fr: 'Test lib'}
 };

@@ -23,7 +23,8 @@
         "yes": "Oui",
         "no": "Non",
         "or": "ou",
-        "create": "Créer"
+        "create": "Créer",
+        "ok": "Ok"
     },
     "errors": {
         "INTERNAL_ERROR": "Une erreur interne est survenue",
@@ -375,7 +376,20 @@
             "title": "Ce fichier existe déjà",
             "replaceBtn": "Remplacer",
             "keepBtn": "Conserver les deux",
-            "message": "Un fichier avec le nom \"{{filename}}\" existe déjà dans ce dossier. Que voulez-vous faire ?"
+            "message": "Un fichier avec le nom \"{{filename}}\" existe déjà à cet emplacement. Que voulez-vous faire ?"
+        }
+    },
+    "create_directory": {
+        "title": "Créer un dossier",
+        "select_path_step_title": "Choisir une destination",
+        "choose_name_step_title": "Choisir un nom de dossier",
+        "create_step_title":  "Créer",
+        "directory_name": "Nom de dossier",
+        "next": "Suivant",
+        "previous": "Précédent",
+        "duplicate_modal": {
+            "title": "Ce dossier existe déjà",
+            "message": "Un dossier avec le nom \"{{directoryName}}\" existe déjà à cet emplacement."
         }
     },
     "import": {

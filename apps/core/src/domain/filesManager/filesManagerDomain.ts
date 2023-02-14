@@ -41,6 +41,7 @@ import {requestPreviewGeneration} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewVersions} from './_constants';
+import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -59,6 +60,12 @@ interface IGetOriginalPathParams {
     fileId: string;
     libraryId: string;
     ctx: IQueryInfos;
+}
+
+interface ICreateDirectoryParams {
+    library: string;
+    nodeId: string;
+    name: string;
 }
 
 interface IStoreFilesParams {
@@ -86,6 +93,7 @@ export interface IFilesManagerDomain {
         {library, nodeId, files}: IStoreFilesParams,
         ctx: IQueryInfos
     ): Promise<Array<{filename: string; record: IRecord}>>;
+    createDirectory({library, nodeId, name}: ICreateDirectoryParams, ctx: IQueryInfos): Promise<IRecord>;
     doesFileExistAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
 }
 
@@ -101,12 +109,13 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
+    'core.domain.helpers.createDirectory'?: CreateDirectoryFunc;
     'core.infra.record'?: IRecordRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -116,6 +125,7 @@ export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.filesManager.helpers.messagesHandler': messagesHandler = null,
     'core.domain.helpers.storeUploadFile': storeUploadFile = null,
+    'core.domain.helpers.createDirectory': createDirectory = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.domain.eventsManager': eventsManager = null,
@@ -261,6 +271,87 @@ export default function ({
                 _onMessage
             );
         },
+        async createDirectory({library, nodeId, name}: ICreateDirectoryParams, ctx: IQueryInfos): Promise<IRecord> {
+            const filesLibrary = utils.getFilesLibraryId(library);
+            const treeId = treeDomain.getLibraryTreeId(filesLibrary, ctx);
+            const recordNode = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
+
+            // default path is root path
+            let path = '.';
+
+            if (!!recordNode) {
+                const libProperties = await libraryDomain.getLibraryProperties(recordNode.library, ctx);
+
+                if (libProperties.behavior !== LibraryBehavior.DIRECTORIES) {
+                    throw utils.generateExplicitValidationError(
+                        'directories',
+                        Errors.ONLY_FOLDERS_CAN_BE_SELECTED,
+                        ctx.lang
+                    );
+                }
+
+                path = Path.join(recordNode.file_path, recordNode.file_name);
+            }
+
+            // get root key of library from config
+            const rootKey = Object.keys(config.filesManager.rootKeys).find(
+                key => config.filesManager.rootKeys[key] === filesLibrary
+            );
+
+            const rootPath = this.getRootPathByKey(rootKey);
+            const fullPath = Path.join(rootPath, path);
+
+            // check if a folder with the same name already exists at this path
+            const fileExists = await recordDomain.find({
+                params: {
+                    library,
+                    filters: [
+                        {
+                            field: FilesAttributes.FILE_NAME,
+                            condition: AttributeCondition.EQUAL,
+                            value: name
+                        },
+                        {
+                            operator: Operator.AND
+                        },
+                        {
+                            field: FilesAttributes.FILE_PATH,
+                            condition: AttributeCondition.EQUAL,
+                            value: path
+                        }
+                    ],
+                    withCount: true,
+                    retrieveInactive: true
+                },
+                ctx
+            });
+
+            if (fileExists.totalCount) {
+                throw utils.generateExplicitValidationError('directories', Errors.DUPLICATE_DIRECTORY_NAMES, ctx.lang);
+            }
+
+            const record = await recordDomain.createRecord(library, ctx);
+
+            const systemCtx: IQueryInfos = {
+                userId: config.defaultUserId,
+                queryId: 'saveValueBatchOnCreatingFolder'
+            };
+
+            await recordDomain.updateRecord({
+                library,
+                recordData: {
+                    id: record.id,
+                    [FilesAttributes.FILE_NAME]: name,
+                    [FilesAttributes.FILE_PATH]: path,
+                    [FilesAttributes.ROOT_KEY]: rootKey
+                },
+                ctx: systemCtx
+            });
+
+            await createDirectory(name, fullPath, ctx);
+
+            return record;
+        },
         async storeFiles(
             {library, nodeId, files}: IStoreFilesParams,
             ctx: IQueryInfos
@@ -281,10 +372,11 @@ export default function ({
             if (!!recordNode) {
                 const libProperties = await libraryDomain.getLibraryProperties(recordNode.library, ctx);
 
-                path =
-                    libProperties.behavior === LibraryBehavior.DIRECTORIES
-                        ? Path.join(recordNode.file_path, recordNode.file_name)
-                        : recordNode.file_path;
+                if (libProperties.behavior !== LibraryBehavior.DIRECTORIES) {
+                    throw utils.generateExplicitValidationError('files', Errors.ONLY_FOLDERS_CAN_BE_SELECTED, ctx.lang);
+                }
+
+                path = Path.join(recordNode.file_path, recordNode.file_name);
             }
 
             // get root key of library from config

@@ -78,8 +78,8 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     url: string;
     color: string | null;
     icon: GET_APPLICATION_BY_ID_applications_list_icon | null;
-    libraries: GET_APPLICATION_BY_ID_applications_list_libraries[];
-    trees: GET_APPLICATION_BY_ID_applications_list_trees[];
+    libraries: GET_APPLICATION_BY_ID_applications_list_libraries[] | null;
+    trees: GET_APPLICATION_BY_ID_applications_list_trees[] | null;
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;
 }
 

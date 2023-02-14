@@ -4,6 +4,7 @@
 import {IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
@@ -13,14 +14,16 @@ import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {LibraryBehavior} from '../../_types/library';
 import {AttributeCondition, Operator} from '../../_types/record';
-import {mockLibraryFiles} from '../../__tests__/mocks/library';
-import {mockRecord} from '../../__tests__/mocks/record';
+import {mockLibrary, mockLibraryDirectories, mockLibraryFiles} from '../../__tests__/mocks/library';
+import {mockFileRecord, mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import {mockFilesTree} from '../../__tests__/mocks/tree';
+import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import filesManager from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewVersions} from './_constants';
 import winston = require('winston');
+import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
+import {IUtils} from 'utils/utils';
 
 const mockConfig: Mockify<Config.IConfig> = {
     amqp: {
@@ -44,6 +47,10 @@ const mockConfig: Mockify<Config.IConfig> = {
         },
         userId: '0',
         userGroupsIds: '1'
+    },
+    files: {
+        rootPaths: 'files1:/files',
+        originalsPathPrefix: 'originals'
     }
 };
 
@@ -493,6 +500,95 @@ describe('FilesManager', () => {
             await expect(files.getOriginalPath({ctx, libraryId: 'libraryId', fileId: '123456'})).rejects.toThrow(
                 ValidationError
             );
+        });
+    });
+
+    describe('Create directory', () => {
+        test('Create directory', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    totalCount: 0,
+                    list: []
+                }),
+                createRecord: global.__mockPromise(mockRecord),
+                updateRecord: global.__mockPromise(mockRecord)
+            };
+
+            const mockTreeDomain: Mockify<ITreeDomain> = {
+                getLibraryTreeId: global.__mockPromise(mockTree.id),
+                getRecordByNodeId: global.__mockPromise(mockFileRecord)
+            };
+
+            const mockLibraryDirectoriesDomain: Mockify<ILibraryDomain> = {
+                getLibraryProperties: global.__mockPromise(mockLibraryDirectories)
+            };
+
+            const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
+
+            const mockUtils: Mockify<IUtils> = {
+                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id)
+            };
+
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.utils': mockUtils as IUtils
+            });
+
+            await files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx);
+
+            expect(mockTreeDomain.getLibraryTreeId).toBeCalledTimes(1);
+            expect(mockTreeDomain.getRecordByNodeId).toBeCalledTimes(1);
+            expect(mockLibraryDirectoriesDomain.getLibraryProperties).toBeCalledTimes(1);
+            expect(mockRecordDomain.find).toBeCalledTimes(1);
+            expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
+            expect(mockRecordDomain.updateRecord).toBeCalledTimes(1);
+            expect(mockCreateDirectory).toBeCalledTimes(1);
+        });
+
+        test('Should throw because only folders can be selected', async () => {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    totalCount: 0,
+                    list: []
+                }),
+                createRecord: global.__mockPromise(mockRecord),
+                updateRecord: global.__mockPromise(mockRecord)
+            };
+
+            const mockTreeDomain: Mockify<ITreeDomain> = {
+                getLibraryTreeId: global.__mockPromise(mockTree.id),
+                getRecordByNodeId: global.__mockPromise(mockFileRecord)
+            };
+
+            const mockLibraryDirectoriesDomain: Mockify<ILibraryDomain> = {
+                getLibraryProperties: global.__mockPromise(mockLibrary)
+            };
+
+            const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
+
+            const mockUtils: Mockify<IUtils> = {
+                generateExplicitValidationError: jest.fn(() => {
+                    throw new ValidationError({});
+                }),
+                getFilesLibraryId: jest.fn(() => mockLibraryFiles.id)
+            };
+
+            const files = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.utils': mockUtils as IUtils
+            });
+
+            await expect(
+                files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx)
+            ).rejects.toThrow(ValidationError);
         });
     });
 });

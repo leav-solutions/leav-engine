@@ -148,7 +148,7 @@ function LinkField({
     const activeVersion = state.values[state.activeScope].version;
 
     const {loading: recordColumnsLoading, data: recordColumnsData, refetch} = useGetRecordValuesQuery(
-        attribute?.linked_library?.id,
+        attribute?.linked_library?.gqlNames.query,
         linkedRecordsColumns.map(c => c.id),
         activeValues.map(r => r.linkValue.id)
     );

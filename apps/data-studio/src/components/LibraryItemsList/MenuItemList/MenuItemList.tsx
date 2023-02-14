@@ -17,6 +17,7 @@ import MenuSelection from '../MenuSelection';
 import MenuView from '../MenuView';
 import SearchItems from '../SearchItems';
 import UploadFiles from '../../UploadFiles';
+import CreateDirectory from 'components/CreateDirectory';
 
 interface IMenuItemListProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
@@ -32,25 +33,32 @@ function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
     const {state: searchState} = useSearchReducer();
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
+    const [isCreateDirectoryModalVisible, setIsCreateDirectoryModalVisible] = useState<boolean>(false);
 
     const canCreateRecord = library.permissions.create_record;
 
     const selectionMode = useContext(SelectionModeContext);
 
-    const _handleCreateRecord = () => {
-        setIsRecordCreationVisible(true);
-    };
-
     const _handleRecordCreationClose = () => {
         setIsRecordCreationVisible(false);
     };
 
-    const _handleUploadFiles = () => {
-        setIsUploadFilesModalVisible(true);
-    };
-
     const _handleUploadFilesClose = () => {
         setIsUploadFilesModalVisible(false);
+    };
+
+    const _handleCreateDirectoryClose = () => {
+        setIsCreateDirectoryModalVisible(false);
+    };
+
+    const _handleClickNew = () => {
+        if (library.behavior === LibraryBehavior.standard) {
+            setIsRecordCreationVisible(true);
+        } else if (library.behavior === LibraryBehavior.files) {
+            setIsUploadFilesModalVisible(true);
+        } else if (library.behavior === LibraryBehavior.directories) {
+            setIsCreateDirectoryModalVisible(true);
+        }
     };
 
     return (
@@ -64,12 +72,7 @@ function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
 
             <Space size="large">
                 {!selectionMode && canCreateRecord && (
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        className="primary-btn"
-                        onClick={library.behavior === LibraryBehavior.files ? _handleUploadFiles : _handleCreateRecord}
-                    >
+                    <Button type="primary" icon={<PlusOutlined />} className="primary-btn" onClick={_handleClickNew}>
                         {t('items_list.new')}
                     </Button>
                 )}
@@ -92,6 +95,9 @@ function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
             )}
             {isUploadFilesModalVisible && (
                 <UploadFiles libraryId={library.id} multiple onClose={_handleUploadFilesClose} />
+            )}
+            {isCreateDirectoryModalVisible && (
+                <CreateDirectory libraryId={library.id} onClose={_handleCreateDirectoryClose} />
             )}
         </Wrapper>
     );
