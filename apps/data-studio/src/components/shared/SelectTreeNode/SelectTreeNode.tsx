@@ -177,7 +177,7 @@ function SelectTreeNode({
             ? (treeMap[id]?.paginationOffset ?? 0) + treeNavigationPageSize
             : currentNodeOffset;
 
-        if (id === tree.id) {
+        if (id === tree.id && !isShowMore) {
             // Root has already been loaded
             return;
         }
