@@ -10,6 +10,8 @@ import {makeGraphQlCall} from '../../api/e2eUtils';
 jest.setTimeout(30000);
 
 const library = 'files';
+const dirLibrary = 'files_directories';
+const tree = 'files_tree';
 
 const rand = Math.random().toString().substring(2);
 
@@ -35,6 +37,24 @@ describe('Files manager', () => {
     let fileInWorkDir: string;
 
     let file: string;
+
+    describe('FilesManager', () => {
+        test('create directory', async done => {
+            workDir = join(rootPath, filePath, 'dirname');
+
+            const res = await makeGraphQlCall(
+                `mutation { createDirectory(library: "${dirLibrary}", nodeId: "${tree}", name: "dirname") { id }}`
+            );
+
+            expect(res.data.errors).toBeUndefined();
+            expect(res.status).toBe(200);
+            expect(res.data.data.createDirectory.id).toBeDefined();
+
+            expect(await fileExists(workDir)).toBeTruthy();
+
+            await _deleteFolderRecursive(workDir);
+        });
+    });
 
     describe('FilesManager with real files', () => {
         beforeEach(async () => {

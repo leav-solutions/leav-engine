@@ -7,6 +7,8 @@ import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {initDb} from '../../../infra/db/db';
+import {initRedis} from '../../../infra/cache/redis';
+import {initMailer} from '../../../infra/mailer';
 
 export async function setup() {
     try {
@@ -19,8 +21,15 @@ export async function setup() {
 
         // Init AMQP
         const amqp = await amqpService({config: conf.amqp});
+        const redisClient = await initRedis({config: conf});
+        const mailer = await initMailer({config: conf});
 
-        const {coreContainer} = await initDI({translator, 'core.infra.amqpService': amqp});
+        const {coreContainer} = await initDI({
+            translator,
+            'core.infra.amqpService': amqp,
+            'core.infra.redis': redisClient,
+            'core.infra.mailer': mailer
+        });
 
         // Clear all caches (redis cache for example might persist between runs)
         const cacheService: ICachesService = coreContainer.cradle['core.infra.cache.cacheService'];
@@ -29,6 +38,7 @@ export async function setup() {
 
         const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
 
+        await dbUtils.clearDatabase();
         await dbUtils.migrate(coreContainer);
 
         const server = coreContainer.cradle['core.interface.server'];
