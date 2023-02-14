@@ -47,7 +47,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
                 id: currentTree.id,
                 label: treeName,
                 behavior: currentTree.behavior,
-                libraries: currentTree.libraries.map(lib => ({id: lib.library.id})),
+                libraries: currentTree.libraries.map(lib => ({id: lib.library.id, behavior: lib.library.behavior})),
                 permissions: currentTree.permissions
             });
 

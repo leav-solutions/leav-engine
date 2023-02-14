@@ -9,11 +9,11 @@ export const getTreeListQuery = gql`
             list {
                 id
                 label
-                behavior
                 libraries {
                     library {
                         id
                         label
+                        behavior
                     }
                 }
                 behavior

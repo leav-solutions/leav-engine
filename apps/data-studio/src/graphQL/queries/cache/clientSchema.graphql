@@ -30,7 +30,6 @@ type ActiveTreePermissions {
 
 type ActiveTree {
     id: String!,
-    behavior: TreeBehavior!
     libraries: [ActiveTreeLibraries!]!,
     label: String!,
     behavior: TreeBehavior!,
@@ -38,7 +37,8 @@ type ActiveTree {
 }
 
 type ActiveTreeLibraries {
-    id: String
+    id: String!
+    behavior: LibraryBehavior!
 }
 
 enum InfoType {

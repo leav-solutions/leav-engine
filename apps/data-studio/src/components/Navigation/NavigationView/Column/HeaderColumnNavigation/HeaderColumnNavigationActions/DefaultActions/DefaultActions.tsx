@@ -208,7 +208,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             {isUploadFilesModalVisible && (
                 <UploadFiles
                     defaultSelectedKey={parent?.id || activeTree.id}
-                    libraryId={activeTree.libraries[0].id}
+                    libraryId={activeTree.libraries.filter(l => l.behavior === LibraryBehavior.files)[0].id}
                     multiple
                     onClose={_handleCloseUpload}
                     onCompleted={_handleUploadCompleted}
@@ -217,7 +217,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             {isCreateDirectoryModalVisible && (
                 <CreateDirectory
                     defaultSelectedKey={parent?.id || activeTree.id}
-                    libraryId={activeTree.libraries[1].id}
+                    libraryId={parent.record.whoAmI.library.id}
                     onClose={_handleCloseCreateDirectory}
                     onCompleted={_handleCreateDirectoryCompleted}
                 />

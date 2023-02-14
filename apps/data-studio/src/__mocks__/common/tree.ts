@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
-import {TreeBehavior} from '_gqlTypes/globalTypes';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 
 export const mockTree: GET_TREE_LIST_QUERY_trees_list = {
     id: 'id-tree',
@@ -12,7 +12,8 @@ export const mockTree: GET_TREE_LIST_QUERY_trees_list = {
         {
             library: {
                 id: 'library-id',
-                label: {fr: 'library-label', en: 'library-label'}
+                label: {fr: 'library-label', en: 'library-label'},
+                behavior: LibraryBehavior.standard
             }
         }
     ],

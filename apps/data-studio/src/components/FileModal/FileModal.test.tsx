@@ -26,6 +26,7 @@ describe('FileModal', () => {
         file_path: 'path/to/',
         file_name: 'my_file.jpg',
         file_type: 'image',
+        previews_status: '{}',
         library: {
             behavior: 'files'
         }
