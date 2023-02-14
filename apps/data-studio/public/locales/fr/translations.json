@@ -259,7 +259,7 @@
     },
     "tree-node-selection": {
         "title": "Sélectionner un nœud de l'arbre",
-        "show_more": "Voir plus"
+        "show_more": "Éléments suivants..."
     },
     "change-attribute": {
         "submit": "Changer",

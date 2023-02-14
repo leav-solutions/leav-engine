@@ -258,7 +258,7 @@
     },
     "tree-node-selection": {
         "title": "Select Tree Node",
-        "show_more": "Show more"
+        "show_more": "Next items..."
     },
     "change-attribute": {
         "submit": "Change",
