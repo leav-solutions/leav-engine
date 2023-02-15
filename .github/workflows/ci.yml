@@ -101,6 +101,7 @@ jobs:
           ELASTICSEARCH_URL: "http://localhost:9200"
           IMPORT_DIR: ${{ github.workspace }}/imports
           DISK_CACHE_DIRECTORY: ${{ github.workspace }}/cache
+          FILES_ROOT_PATHS: files1:${{ github.workspace }}/files
           REDIS_HOST: localhost
           REDIS_PORT: 6379
 
