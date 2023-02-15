@@ -131,6 +131,19 @@ export default function ({
                 return aql`el.versions_conf.${filterKey} == ${filterValBool}`;
             };
 
+            const _generateMetadataFilterConds: CustomFilterConditionsFunc = (filterKey, filterVal) => {
+                if (!filterVal) {
+                    return null;
+                }
+
+                return aql`LENGTH(
+                    INTERSECTION(
+                        el.${filterKey},
+                        ${utils.forceArray(filterVal)}
+                    )
+                ) > 0`;
+            };
+
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
@@ -146,7 +159,8 @@ export default function ({
                 collectionName: ATTRIB_COLLECTION_NAME,
                 customFilterConditions: {
                     libraries: _generateLibrariesFilterConds,
-                    versionable: _generateVersionableFilterConds
+                    versionable: _generateVersionableFilterConds,
+                    metadata_fields: _generateMetadataFilterConds
                 },
                 ctx
             });

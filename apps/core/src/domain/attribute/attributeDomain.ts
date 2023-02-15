@@ -5,9 +5,11 @@ import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IAttributeForRepo, IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {IFormRepo} from 'infra/form/formRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
+import {IFormStrict} from '_types/forms';
 import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import {IDateRangeValue} from '_types/value';
@@ -22,8 +24,6 @@ import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
-import {IFormRepo} from 'infra/form/formRepo';
-import {IFormStrict} from '_types/forms';
 
 export interface IAttributeDomain {
     getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
@@ -63,9 +63,9 @@ interface IDeps {
     'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.infra.form'?: IFormRepo;
     'core.infra.library'?: ILibraryRepo;
-    'core.utils'?: IUtils;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.cache.cacheService'?: ICachesService;
+    'core.utils'?: IUtils;
     config?: any;
 }
 
@@ -73,12 +73,12 @@ export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.infra.form': formRepo = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.versionProfile': versionProfileDomain = null,
+    'core.infra.form': formRepo = null,
     'core.infra.library': libraryRepo = null,
-    'core.utils': utils = null,
     'core.infra.tree': treeRepo = null,
+    'core.utils': utils = null,
     config = null,
     'core.infra.cache.cacheService': cacheService = null
 }: IDeps = {}): IAttributeDomain {
@@ -272,6 +272,27 @@ export default function ({
 
             if (attrProps.system) {
                 throw new ValidationError<IAttribute>({id: Errors.SYSTEM_ATTRIBUTE_DELETION});
+            }
+
+            // Check if attribute is used in metadata of another attribute
+            const attributesLinkedThroughMetadata = await attributeRepo.getAttributes({
+                params: {
+                    filters: {
+                        metadata_fields: [id]
+                    }
+                },
+                ctx
+            });
+
+            if (attributesLinkedThroughMetadata.list.length) {
+                throw utils.generateExplicitValidationError(
+                    'id',
+                    {
+                        msg: Errors.ATTRIBUTE_USED_IN_METADATA,
+                        vars: {attributes: attributesLinkedThroughMetadata.list.map(a => a.id).join(', ')}
+                    },
+                    ctx.lang
+                );
             }
 
             const deletedAttribute = await attributeRepo.deleteAttribute({attrData: attrProps, ctx});

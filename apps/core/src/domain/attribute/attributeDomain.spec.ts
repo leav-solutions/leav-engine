@@ -17,10 +17,10 @@ import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
+import {mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain from './attributeDomain';
-import {mockForm} from '../../__tests__/mocks/forms';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -63,7 +63,8 @@ describe('attributeDomain', () => {
                 }
             ]
         }),
-        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:attribute:42')
+        getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:attribute:42'),
+        generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({test: 'boom'}))
     };
 
     const mockGetEntityByIdHelper = jest.fn().mockReturnValue(mockAttrSimple);
@@ -98,7 +99,7 @@ describe('attributeDomain', () => {
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 config: mockConf
             });
-            const attr = await attrDomain.getAttributes({ctx});
+            await attrDomain.getAttributes({ctx});
 
             expect(mockAttrRepo.getAttributes.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
         });
@@ -840,7 +841,11 @@ describe('attributeDomain', () => {
         const attrData = {id: 'test_attribute', system: false, label: {fr: 'Test'}, format: 'text', type: 'index'};
 
         test('Should delete an attribute and return deleted attribute', async function () {
-            const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise(attrData)};
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                deleteAttribute: global.__mockPromise(attrData),
+                getAttributes: global.__mockPromise({list: []})
+            };
+
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 updateForm: global.__mockPromise()
@@ -890,6 +895,24 @@ describe('attributeDomain', () => {
             attrDomain.getAttributes = global.__mockPromise({list: [], totalCount: 0});
 
             await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow(PermissionError);
+        });
+
+        test('Should throw if attribute is used in metadata of another attribute', async () => {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                deleteAttribute: global.__mockPromise(attrData),
+                getAttributes: global.__mockPromise({list: [{mockAttrAdv}]})
+            };
+
+            const attrDomain = attributeDomain({
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.utils': mockUtils as IUtils
+            });
+
+            attrDomain.getAttributes = global.__mockPromise({list: [attrData], totalCount: 1});
+
+            await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow(ValidationError);
         });
     });
 
