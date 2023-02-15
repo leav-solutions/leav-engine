@@ -658,19 +658,6 @@ export default function ({
             return newRecord;
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
-            // Check permission
-            const canUpdate = await recordPermissionDomain.getRecordPermission({
-                action: RecordPermissionsActions.EDIT_RECORD,
-                userId: ctx.userId,
-                library,
-                recordId: recordData.id,
-                ctx
-            });
-
-            if (!canUpdate) {
-                throw new PermissionError(RecordPermissionsActions.EDIT_RECORD);
-            }
-
             const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData, ctx});
 
             await eventsManager.sendDatabaseEvent(
