@@ -141,6 +141,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
+        system: false,
         id: 'label',
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
