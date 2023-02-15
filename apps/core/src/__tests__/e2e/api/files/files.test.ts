@@ -4,6 +4,7 @@
 import {makeGraphQlCall} from '../e2eUtils';
 import {join} from 'path';
 import * as fs from 'fs';
+import {getConfig} from '../../../../config';
 
 const fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(e => false));
 
@@ -11,13 +12,13 @@ const directoriesLibrary = 'files_directories';
 const filesTree = 'files_tree';
 
 describe('Files', () => {
-    const rootPath = '/files';
-    const filePath = '.';
-
     test('create directory', async () => {
+        const conf = await getConfig();
+
+        const rootPath = conf.files.rootPaths.trim().split(':')[1];
         const dirName = 'dirName';
 
-        const workDir = join(rootPath, filePath, dirName);
+        const workDir = join(rootPath, dirName);
 
         const res = await makeGraphQlCall(
             `mutation { createDirectory(library: "${directoriesLibrary}", nodeId: "${filesTree}", name: "${dirName}") { id }}`
