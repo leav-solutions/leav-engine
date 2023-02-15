@@ -69,6 +69,12 @@ const _createRequiredDirectories = async conf => {
     if (!fsremaned.existsSync(conf.diskCache.directory)) {
         await fsremaned.promises.mkdir(conf.diskCache.directory);
     }
+
+    const filesDir = conf.files.rootPaths.trim().split(':')[1];
+
+    if (!fsremaned.existsSync(filesDir)) {
+        await fsremaned.promises.mkdir(filesDir);
+    }
 };
 
 export async function setup() {

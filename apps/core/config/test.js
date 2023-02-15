@@ -34,6 +34,9 @@ module.exports = {
             events: 'test_indexation_event'
         }
     },
+    files: {
+        rootPaths: 'files1:/files'
+    },
     tasksManager: {
         queues: {
             orders: 'test_tasks_orders'
