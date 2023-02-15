@@ -59,6 +59,7 @@ export interface IAttributeFilterOptions extends ICoreEntityFilterOptions {
     multiple_values?: boolean;
     libraries?: string[];
     versionable?: boolean;
+    metadata_fields?: string[];
 }
 
 export interface IGetCoreAttributesParams extends IGetCoreEntitiesParams {

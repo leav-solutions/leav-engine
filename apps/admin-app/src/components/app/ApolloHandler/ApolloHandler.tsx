@@ -82,7 +82,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
                 title = t(`errors.${extensions?.code ?? ErrorTypes.PERMISSION_ERROR}`);
                 switch (extensions?.code) {
                     case ErrorTypes.VALIDATION_ERROR:
-                        content = '';
+                        content = message !== 'Validation error' ? message : '';
                         break;
                     case ErrorTypes.PERMISSION_ERROR:
                         content = '';
