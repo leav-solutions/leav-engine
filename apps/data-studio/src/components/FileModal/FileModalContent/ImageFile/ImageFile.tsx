@@ -14,8 +14,9 @@ const PreviewImage = styled(Image)<{$loaded: boolean}>`
 function ImageFile({fileData, fallback}: IFileViewerProps): JSX.Element {
     const imagePreviews = fileData?.whoAmI?.preview;
     const [imageLoaded, setImageLoaded] = useState(false);
+    const [hasFailed, setHasFailed] = useState(false);
 
-    if (!imagePreviews?.huge) {
+    if (!imagePreviews?.huge || hasFailed) {
         return fallback as JSX.Element;
     }
 
@@ -30,6 +31,10 @@ function ImageFile({fileData, fallback}: IFileViewerProps): JSX.Element {
                 $loaded={imageLoaded}
                 src={imagePreviews.huge}
                 onLoad={_handleLoad}
+                onError={() => {
+                    setImageLoaded(true);
+                    setHasFailed(true);
+                }}
                 preview={{
                     icons: {
                         ...defaultPreviewIcons,

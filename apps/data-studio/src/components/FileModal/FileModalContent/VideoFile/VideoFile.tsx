@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {useState} from 'react';
 import styled from 'styled-components';
 import {IFileViewerProps} from '../_types';
 
@@ -11,7 +11,9 @@ const VideoPlayer = styled.video`
 `;
 
 function VideoFile({fileData, fallback}: IFileViewerProps): JSX.Element {
-    if (!fileData?.whoAmI?.preview?.original) {
+    const [hasFailed, setHasFailed] = useState(false);
+
+    if (!fileData?.whoAmI?.preview?.original || hasFailed) {
         return fallback as JSX.Element;
     }
 
@@ -21,6 +23,9 @@ function VideoFile({fileData, fallback}: IFileViewerProps): JSX.Element {
             src={fileData.whoAmI.preview.original}
             title={fileData.file_name}
             data-testid="video-player"
+            onError={() => {
+                setHasFailed(true);
+            }}
         />
     );
 }
