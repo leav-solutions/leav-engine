@@ -25,9 +25,7 @@ const FormWrapper = styled(({isNewProfile, ...props}: {isNewProfile: boolean} & 
     }
 `;
 
-const FormBody = styled.div`
-    overflow-y: auto;
-`;
+const FormBody = styled.div``;
 
 const FormFooter = styled.div`
     border-top: 1px solid #dddddd;
