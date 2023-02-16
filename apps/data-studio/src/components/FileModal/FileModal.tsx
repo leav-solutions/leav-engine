@@ -6,8 +6,27 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import useGetFileDataQuery from 'hooks/useGetFileDataQuery/useGetFileDataQuery';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import FileModalContent from './FileModalContent';
 import {fileModalWidth} from './_constants';
+
+const StyledModal = styled(Modal)`
+    .ant-modal-close {
+        top: 0;
+        right: 0;
+        width: 4rem;
+        height: 4rem;
+        line-height: 4rem;
+    }
+
+    && .ant-modal-content {
+        padding: 0;
+    }
+`;
+
+const ModalFooter = styled.div`
+    padding: 0.5rem 1rem;
+`;
 
 interface IFileModalProps {
     fileId: string;
@@ -26,8 +45,9 @@ function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Ele
         </Button>
     ];
 
+    const footer = <ModalFooter>{footerButtons}</ModalFooter>;
     return (
-        <Modal
+        <StyledModal
             open={open}
             destroyOnClose
             okText={t('global.close')}
@@ -36,14 +56,14 @@ function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Ele
             centered
             style={{padding: 0, maxWidth: `${fileModalWidth}px`}}
             bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
-            footer={footerButtons}
+            footer={footer}
         >
             {loading && <Loading />}
             {!loading && (error || !fileData) && (
                 <ErrorDisplay message={error?.message ?? t('global.element_not_found')} />
             )}
             {!loading && !error && fileData && <FileModalContent fileData={fileData} />}
-        </Modal>
+        </StyledModal>
     );
 }
 

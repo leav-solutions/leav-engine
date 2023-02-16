@@ -1,4 +1,4 @@
-import { ThemeConfig } from 'antd/lib/config-provider/context';
+import {ThemeConfig} from 'antd/lib/config-provider/context';
 export * from './types';
 export declare const themeVars: {
     primaryColor: string;
@@ -15,5 +15,7 @@ export declare const themeVars: {
     headerHeight: string;
     navigationColumnWidth: string;
     inheritedValuesVersionColor: string;
+    checkerBoard: string;
+    imageDefaultBackground: string;
 };
 export declare const customTheme: ThemeConfig;

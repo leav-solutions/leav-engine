@@ -28,7 +28,8 @@ export enum SearchActionTypes {
     DISABLE_FILTERS = 'DISABLE_FILTERS',
     ENABLE_FILTERS = 'ENABLE_FILTERS',
     APPLY_FILTERS = 'APPLY_FILTERS',
-    SET_VALUES_VERSIONS = 'SET_VALUES_VERSIONS'
+    SET_VALUES_VERSIONS = 'SET_VALUES_VERSIONS',
+    TOGGLE_TRANSPARENCY = 'TOGGLE_TRANSPARENCY'
 }
 
 export type SearchAction =
@@ -52,7 +53,8 @@ export type SearchAction =
     | {type: SearchActionTypes.DISABLE_FILTERS}
     | {type: SearchActionTypes.ENABLE_FILTERS}
     | {type: SearchActionTypes.APPLY_FILTERS}
-    | {type: SearchActionTypes.SET_VALUES_VERSIONS; valuesVersions: IValueVersion};
+    | {type: SearchActionTypes.SET_VALUES_VERSIONS; valuesVersions: IValueVersion}
+    | {type: SearchActionTypes.TOGGLE_TRANSPARENCY};
 
 export const initialSearchState: ISearchState = {
     library: null,

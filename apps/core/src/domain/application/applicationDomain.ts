@@ -132,7 +132,7 @@ export default function ({
                 throw new PermissionError(permissionToCheck);
             }
 
-            if (!utils.isIdValid(appToSave.id)) {
+            if (!isExistingApp && !utils.isIdValid(appToSave.id)) {
                 errors.id = Errors.INVALID_ID_FORMAT;
             }
 

@@ -9,6 +9,8 @@ export interface IRecordPreviewProps {
     color?: string;
     image?: string;
     style?: CSSObject;
+    imageStyle?: CSSObject;
+    placeholderStyle?: CSSObject;
     tile?: boolean;
     size?: PreviewSize;
     simplistic?: boolean;

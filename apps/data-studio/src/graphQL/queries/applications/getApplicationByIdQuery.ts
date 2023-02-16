@@ -27,6 +27,7 @@ export const getApplicationByIdQuery = gql`
                 permissions {
                     access_application
                 }
+                settings
             }
         }
     }

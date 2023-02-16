@@ -21,10 +21,12 @@ export const themeVars = {
     lightBg: '#fafafa',
     headerBg: '#f4f4f4',
     borderColor: '#d9d9d9',
-    borderLightColor: 'rgba(0, 0, 0, 6%)',
+    borderLightColor: 'rgb(240, 240, 240)',
     headerHeight: '3rem',
     navigationColumnWidth: '20rem',
-    inheritedValuesVersionColor: '#FFBA00'
+    inheritedValuesVersionColor: '#FFBA00',
+    checkerBoard: 'repeating-conic-gradient(rgb(220,220,220) 0% 25%, rgb(240,240,240) 0% 50%) 50% / 20px 20px',
+    imageDefaultBackground: 'rgb(245, 245, 245)'
 };
 
 export const customTheme: ThemeConfig = {

@@ -4,6 +4,7 @@
 import {EyeOutlined} from '@ant-design/icons';
 import {IRecordPreviewProps, RecordPreview, themeVars} from '@leav/ui';
 import FileModal from 'components/FileModal';
+import {useMustShowTransparency} from 'hooks/useMustShowTransparency';
 import {useState} from 'react';
 import styled from 'styled-components';
 import {RecordIdentity_whoAmI_preview_file} from '_gqlTypes/RecordIdentity';
@@ -37,10 +38,15 @@ const Overlay = styled.div`
     }
 `;
 
-function RecordPreviewWithModal({previewFile, ...recordPreviewProps}: IRecordPreviewWithModalProps): JSX.Element {
+function RecordPreviewWithModal({
+    previewFile,
+    imageStyle,
+    ...recordPreviewProps
+}: IRecordPreviewWithModalProps): JSX.Element {
     const [isPreviewModalOpen, setPreviewModalOpen] = useState(false);
     const fileId = previewFile?.id;
     const fileLibraryId = previewFile?.library?.id;
+    const mustShowTransparency = useMustShowTransparency();
 
     const _handlePreviewClick = () => {
         setPreviewModalOpen(true);
@@ -51,7 +57,13 @@ function RecordPreviewWithModal({previewFile, ...recordPreviewProps}: IRecordPre
     return (
         <>
             <ClickHandler onClick={_handlePreviewClick} data-testid="click-handler">
-                <RecordPreview {...recordPreviewProps} />
+                <RecordPreview
+                    imageStyle={{
+                        background: mustShowTransparency ? themeVars.checkerBoard : 'transparent',
+                        ...imageStyle
+                    }}
+                    {...recordPreviewProps}
+                />
                 <Overlay>
                     <EyeOutlined />
                 </Overlay>
