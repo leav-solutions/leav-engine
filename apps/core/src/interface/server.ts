@@ -9,6 +9,7 @@ import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {AwilixContainer} from 'awilix';
 import cookieParser from 'cookie-parser';
 import express, {NextFunction, Request, Response} from 'express';
+import fs from 'fs';
 import {execute, GraphQLFormattedError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
@@ -133,7 +134,14 @@ export default function ({
                     }
                 }
 
-                app.use('/previews', [_checkAuth, express.static(config.preview.directory)]);
+                app.use('/previews', [
+                    _checkAuth,
+                    express.static(config.preview.directory, {fallthrough: false}),
+                    async (err, req, res, next) => {
+                        const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
+                        res.status(404).type('html').send(htmlContent);
+                    }
+                ]);
                 app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
                 app.use(`/${config.import.endpoint}`, [_checkAuth, express.static(config.import.directory)]);
 

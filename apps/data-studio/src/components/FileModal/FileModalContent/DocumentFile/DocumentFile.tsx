@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ExpandOutlined} from '@ant-design/icons';
 import {Button} from 'antd';
-import React, {useRef} from 'react';
+import {useRef} from 'react';
 import styled from 'styled-components';
 import {IFileViewerProps} from '../_types';
 
