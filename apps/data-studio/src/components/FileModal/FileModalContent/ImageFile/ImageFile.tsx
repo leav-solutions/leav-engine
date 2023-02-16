@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ImageLoading} from '@leav/ui';
+import {ImageLoading, themeVars} from '@leav/ui';
 import {Image} from 'antd';
 import {icons as defaultPreviewIcons} from 'antd/lib/image/PreviewGroup';
+import {useMustShowTransparency} from 'hooks/useMustShowTransparency';
 import {useState} from 'react';
 import styled from 'styled-components';
 import {IFileViewerProps} from '../_types';
@@ -15,6 +16,7 @@ function ImageFile({fileData, fallback}: IFileViewerProps): JSX.Element {
     const imagePreviews = fileData?.whoAmI?.preview;
     const [imageLoaded, setImageLoaded] = useState(false);
     const [hasFailed, setHasFailed] = useState(false);
+    const mustShowTransparency = useMustShowTransparency();
 
     if (!imagePreviews?.huge || hasFailed) {
         return fallback as JSX.Element;
@@ -35,6 +37,7 @@ function ImageFile({fileData, fallback}: IFileViewerProps): JSX.Element {
                     setImageLoaded(true);
                     setHasFailed(true);
                 }}
+                style={{background: mustShowTransparency ? themeVars.checkerBoard : themeVars.imageDefaultBackground}} // To show transparency
                 preview={{
                     icons: {
                         ...defaultPreviewIcons,

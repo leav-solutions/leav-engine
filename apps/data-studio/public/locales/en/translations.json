@@ -350,7 +350,9 @@
             "type": "Type",
             "shared": "Shared",
             "color": "Color"
-        }
+        },
+        "show_transparency": "Show transparency",
+        "hide_transparency": "Hide transparency"
     },
     "export": {
         "title": "Export",

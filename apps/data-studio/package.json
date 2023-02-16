@@ -32,7 +32,7 @@
         "react-css-theme-switcher": "0.3.0",
         "react-dom": "18.2.0",
         "react-i18next": "11.18.6",
-        "react-icons": "4.4.0",
+        "react-icons": "4.7.1",
         "react-markdown": "5.0.3",
         "react-redux": "7.2.8",
         "react-resizable": "1.11.1",
@@ -41,7 +41,6 @@
         "react-table": "7.8.0",
         "react-table-sticky": "1.1.3",
         "uuid": "9.0.0",
-        "vite-plugin-svgr": "2.4.0",
         "xlsx": "0.18.5"
     },
     "scripts": {
@@ -49,7 +48,7 @@
         "build": "vite build",
         "test": "jest",
         "graphql-generate": "graphql-codegen --config ./codegen.ts",
-        "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes='**/*.test.*'  ./src/_gqlTypes && cd ../../ && yarn prettier --write apps/data-studio/src/_gqlTypes ",
+        "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes='**/*.test.*' --passthroughCustomScalars  ./src/_gqlTypes && cd ../../ && yarn prettier --write apps/data-studio/src/_gqlTypes ",
         "create_comp": "scripts/createComponent.js",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p ."
@@ -101,6 +100,7 @@
         "typescript": "4.8.3",
         "vite": "4.1.1",
         "vite-jest": "0.1.4",
+        "vite-plugin-svgr": "2.4.0",
         "waait": "1.0.5"
     },
     "homepage": ".",

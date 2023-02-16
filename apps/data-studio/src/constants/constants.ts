@@ -19,6 +19,7 @@ export const defaultSort = {
 export const initialColumnsLimit = 5;
 
 export const viewSettingsField = 'fields';
+export const viewSettingsTransparency = 'transparency';
 
 export const attributeExtendedKey = 'extended';
 

@@ -1,8 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {themeVars} from '@leav/ui';
 import {getFileDataQuery, IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
 import {act, fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
+import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockRecord} from '__mocks__/common/record';
 import FileModal from './FileModal';
 
@@ -121,6 +123,38 @@ describe('FileModal', () => {
             await waitFor(() => screen.getByTestId('content-section'));
             const contentSection = screen.getByTestId('content-section');
             expect(within(contentSection).getByText(/no_preview/)).toBeInTheDocument();
+        });
+
+        test('Show checkerboard if app is in transparency mode', async () => {
+            const mocks = [
+                {
+                    request: {
+                        query: getFileDataQuery('files'),
+                        variables: {
+                            fileId: mockRecord.id
+                        }
+                    },
+                    result: {data: {files: {list: [mockFileData]}}}
+                }
+            ];
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+                apolloMocks: mocks,
+                cacheSettings,
+                currentApp: {...mockApplicationDetails, settings: {showTransparency: true}}
+            });
+
+            await waitFor(() => screen.getByTestId('content-section'));
+            const contentSection = screen.getByTestId('content-section');
+
+            const images = within(contentSection).getAllByRole('img', {hidden: true});
+            // Load images
+            await act(async () => {
+                for (const image of images) {
+                    fireEvent.load(image);
+                }
+            });
+
+            expect(screen.getByAltText('record preview')).toHaveStyle(`background: ${themeVars.checkerBoard}`);
         });
     });
 

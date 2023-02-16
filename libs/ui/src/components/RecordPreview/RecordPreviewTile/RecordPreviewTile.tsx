@@ -4,6 +4,7 @@
 import {getInitials, getInvertColor, stringToColor} from '@leav/utils';
 import {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
+import {themeVars} from '../../../antdTheme';
 import {ImageLoading} from '../../ImageLoading';
 import {ImageMissing} from '../../ImageMissing';
 import {IGeneratedPreviewProps, IRecordPreviewProps} from '../_types';
@@ -21,15 +22,19 @@ const ImagePreviewWrapper = styled.div<IImagePreviewTileProps>`
     width: fit-content;
     height: fit-content;
     margin: auto;
+    background: ${themeVars.imageDefaultBackground};
 
-    img {
-        object-fit: cover;
+    && img {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
     }
 `;
 ImagePreviewWrapper.displayName = 'ImagePreviewTile';
 
 const ImageComp = styled.img<{$loaded: boolean}>`
     display: ${p => (p.$loaded ? 'block' : 'none')};
+    border: 1px solid ${themeVars.borderLightColor};
 `;
 
 const GeneratedPreviewTile = styled.div<IGeneratedPreviewProps>`
@@ -47,20 +52,28 @@ const GeneratedPreviewTile = styled.div<IGeneratedPreviewProps>`
 `;
 GeneratedPreviewTile.displayName = 'GeneratedPreviewTile';
 
-function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): JSX.Element {
+function RecordPreviewTile({
+    label,
+    color,
+    image,
+    style,
+    imageStyle,
+    placeholderStyle
+}: IRecordPreviewProps): JSX.Element {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [hasFailed, setHasFailed] = useState(false);
 
     if (image) {
         return (
             <ImagePreviewWrapper style={{position: 'relative', ...style}}>
+                {' '}
                 {!imageLoaded && <ImageLoading />}
                 {!hasFailed ? (
                     <ImageComp
                         $loaded={imageLoaded}
                         src={image}
                         alt="record preview"
-                        style={{...style}}
+                        style={{...imageStyle}}
                         onLoad={() => setImageLoaded(true)}
                         onError={() => {
                             setImageLoaded(true);
@@ -83,7 +96,7 @@ function RecordPreviewTile({label, color, image, style}: IRecordPreviewProps): J
             className="initial"
             bgColor={bgColor}
             fontColor={fontColor}
-            style={style}
+            style={placeholderStyle}
         >
             {getInitials(label)}
         </GeneratedPreviewTile>

@@ -38,5 +38,8 @@ export const mockApplicationDetails: GET_APPLICATION_BY_ID_applications_list = {
         {
             id: 'treeB'
         }
-    ]
+    ],
+    settings: {
+        showTransparency: false
+    }
 };

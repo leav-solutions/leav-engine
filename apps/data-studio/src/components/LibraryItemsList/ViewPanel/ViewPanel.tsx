@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {themeVars, useLang} from '@leav/ui';
-import {Badge, Button, Input, Spin} from 'antd';
+import {Badge, Button, Input} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import Loading from 'components/shared/Loading';
 import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useSearchReducer from 'hooks/useSearchReducer';
@@ -25,7 +26,6 @@ import {localizedTranslation, prepareView} from '../../../utils';
 import {IView} from '../../../_types/types';
 import EditView from './EditView';
 import View from './View';
-import Loading from 'components/shared/Loading';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -124,7 +124,7 @@ function ViewPanel(): JSX.Element {
 
     const getViewsList = useQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(getViewsListQuery, {
         variables: {
-            libraryId: searchState.library.id || ''
+            libraryId: searchState?.library?.id || ''
         }
     });
 

@@ -1,10 +1,12 @@
-import { CSSObject } from 'styled-components';
-import { PreviewSize } from '../../constants';
+import {CSSObject} from 'styled-components';
+import {PreviewSize} from '../../constants';
 export interface IRecordPreviewProps {
     label: string;
     color?: string;
     image?: string;
     style?: CSSObject;
+    imageStyle?: CSSObject;
+    placeholderStyle?: CSSObject;
     tile?: boolean;
     size?: PreviewSize;
     simplistic?: boolean;

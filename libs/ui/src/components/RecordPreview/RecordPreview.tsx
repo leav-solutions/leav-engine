@@ -6,12 +6,12 @@ import RecordPreviewList from './RecordPreviewList';
 import RecordPreviewTile from './RecordPreviewTile';
 import {IRecordPreviewProps} from './_types';
 
-function RecordPreview({label, color, image, style, tile, size, simplistic}: IRecordPreviewProps): JSX.Element {
-    if (tile) {
-        return RecordPreviewTile({label, color, image, size, style, simplistic});
+function RecordPreview(props: IRecordPreviewProps): JSX.Element {
+    if (props.tile) {
+        return <RecordPreviewTile {...props} />;
     }
 
-    return RecordPreviewList({label, color, image, size, style, simplistic});
+    return <RecordPreviewList {...props} />;
 }
 
 export default React.memo(RecordPreview);

@@ -351,7 +351,9 @@
             "type": "Type",
             "shared": "Partagée",
             "color": "Couleur"
-        }
+        },
+        "show_transparency": "Afficher la transparence",
+        "hide_transparency": "Masquer la transparence"
     },
     "export": {
         "title": "Exporter",

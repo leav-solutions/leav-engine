@@ -6,6 +6,7 @@ import {useLang} from '@leav/ui';
 import {objectToNameValueArray} from '@leav/utils';
 import {Badge, Button, Dropdown, MenuProps, Space, Tooltip} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
+import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useTranslation} from 'react-i18next';
@@ -25,7 +26,6 @@ import {InfoChannel, InfoType, TypeSideItem} from '../../../_types/types';
 import IconViewType from '../../IconViewType/IconViewType';
 import FiltersDropdown from '../FiltersDropdown';
 import {PREFIX_USER_VIEWS_ORDER_KEY} from '../ViewPanel/ViewPanel';
-import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 
 interface IMenuViewProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;

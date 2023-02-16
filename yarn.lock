@@ -13243,7 +13243,7 @@ __metadata:
     react-css-theme-switcher: 0.3.0
     react-dom: 18.2.0
     react-i18next: 11.18.6
-    react-icons: 4.4.0
+    react-icons: 4.7.1
     react-markdown: 5.0.3
     react-redux: 7.2.8
     react-resizable: 1.11.1
@@ -25831,15 +25831,6 @@ __metadata:
     i18next: ">= 19.0.0"
     react: ">= 16.8.0"
   checksum: 61269eec5ce61a23e47bc22fd382b949c6e917a4a5bc4f271b491acb1805359f10fdfb9fbc700d9ee0b5bcaa17552059446e6d4a07cf97794bef22db5ad09de8
-  languageName: node
-  linkType: hard
-
-"react-icons@npm:4.4.0":
-  version: 4.4.0
-  resolution: "react-icons@npm:4.4.0"
-  peerDependencies:
-    react: "*"
-  checksum: dd93a1dcc8ac8a3cf46a2b33e80b586fa967331fa5fcb90d061abf276155a8363a331643e203d67cb9bab4261d00a757da854bcce1fce2c6e4258bf3e33f711b
   languageName: node
   linkType: hard
 

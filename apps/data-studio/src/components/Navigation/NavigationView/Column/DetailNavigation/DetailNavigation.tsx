@@ -64,7 +64,6 @@ interface IDetailNavigationProps {
 
 const DetailNavigation = ({treeElement, closable, onClose}: IDetailNavigationProps): JSX.Element => {
     const {t} = useTranslation();
-
     const recordData = treeElement.record;
     const previewFile = recordData?.whoAmI?.preview?.file as RecordIdentity_whoAmI_preview_file;
 
@@ -83,7 +82,8 @@ const DetailNavigation = ({treeElement, closable, onClose}: IDetailNavigationPro
                     color={recordData.whoAmI.color}
                     image={img && getFileUrl(img)}
                     tile
-                    style={{maxHeight: '15rem', maxWidth: '100%', minWidth: '10rem', minHeight: '10rem'}}
+                    placeholderStyle={{width: '10rem', height: '10rem'}}
+                    imageStyle={{maxHeight: '15rem', maxWidth: '100%'}}
                 />
             </PreviewWrapper>
             <Content>

@@ -7,7 +7,7 @@ import {SelectionModeContext} from 'context';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {useContext} from 'react';
 import {resetSearchSelection, resetSelection} from 'reduxStore/selection';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {displayTypeToPreviewSize} from 'utils';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
@@ -55,10 +55,6 @@ function TileDisplay(): JSX.Element {
             dispatch(resetSelection());
         }
     };
-
-    const {selectionState} = useAppSelector(state => ({
-        selectionState: state.selection
-    }));
 
     return (
         <>

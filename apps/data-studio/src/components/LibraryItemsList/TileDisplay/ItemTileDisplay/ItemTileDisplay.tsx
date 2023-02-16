@@ -10,6 +10,7 @@ import SelectCellsBtn, {SelectCellsBtnType} from 'components/LibraryItemsList/sh
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import {SelectionModeContext} from 'context';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
+import useMustShowTransparency from 'hooks/useMustShowTransparency/useMustShowTransparency';
 import useSearchReducer from 'hooks/useSearchReducer';
 import React, {useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -187,6 +188,8 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
         )
     );
 
+    const mustShowTransparency = useMustShowTransparency();
+
     const isAllSelected = selectionMode
         ? selectionState.searchSelection.type === SharedStateSelectionType.search &&
           selectionState.searchSelection.allSelected
@@ -240,6 +243,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
         (selectionState.selection as ISharedStateSelectionSearch).allSelected;
 
     const itemPreviewSize = getItemPreviewSize(previewSize);
+
     return (
         <>
             {editRecordModal && (
@@ -266,6 +270,13 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                             style={{
                                 width: itemPreviewSize,
                                 height: itemPreviewSize
+                            }}
+                            placeholderStyle={{
+                                width: itemPreviewSize,
+                                height: itemPreviewSize
+                            }}
+                            imageStyle={{
+                                background: mustShowTransparency ? themeVars.checkerBoard : 'transparent'
                             }}
                         />
                         <ActionsWrapper>
