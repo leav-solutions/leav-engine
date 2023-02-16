@@ -42,6 +42,9 @@ import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewVersions} from './_constants';
 import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
+import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {LibraryPermissionsActions} from '../../_types/permissions';
+import PermissionError from '../../errors/PermissionError';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -105,6 +108,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
@@ -115,7 +119,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -123,6 +127,7 @@ export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.domain.permission.library': libraryPermissionDomain = null,
     'core.domain.filesManager.helpers.messagesHandler': messagesHandler = null,
     'core.domain.helpers.storeUploadFile': storeUploadFile = null,
     'core.domain.helpers.createDirectory': createDirectory = null,
@@ -420,6 +425,17 @@ export default function({
                 let record;
 
                 if (fileExists.totalCount && file.replace) {
+                    const canEdit = await libraryPermissionDomain.getLibraryPermission({
+                        action: LibraryPermissionsActions.EDIT_RECORD,
+                        userId: ctx.userId,
+                        libraryId: library,
+                        ctx
+                    });
+
+                    if (!canEdit) {
+                        throw new PermissionError(LibraryPermissionsActions.EDIT_RECORD);
+                    }
+
                     record = fileExists.list[0];
                 } else {
                     record = await recordDomain.createRecord(library, ctx);

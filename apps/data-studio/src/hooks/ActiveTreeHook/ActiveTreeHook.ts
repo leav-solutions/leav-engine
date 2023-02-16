@@ -5,7 +5,7 @@ import {useQuery} from '@apollo/client';
 import {useCallback} from 'react';
 import {getActiveTree, IActiveTree, IGetActiveTree} from '../../graphQL/queries/cache/activeTree/getActiveTreeQuery';
 
-export const useActiveTree = (): [IActiveTree | undefined, (newActiveLibrary: IActiveTree) => void] => {
+export const useActiveTree = (): [IActiveTree | undefined, (newActiveTree: IActiveTree) => void] => {
     const {data, client} = useQuery<IGetActiveTree>(getActiveTree);
 
     const activeTree: IActiveTree | undefined = data?.activeTree;

@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeBehavior} from './globalTypes';
+import {LibraryBehavior, TreeBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_TREE_LIST_QUERY
@@ -15,6 +15,7 @@ import {TreeBehavior} from './globalTypes';
 export interface GET_TREE_LIST_QUERY_trees_list_libraries_library {
     id: string;
     label: any | null;
+    behavior: LibraryBehavior;
 }
 
 export interface GET_TREE_LIST_QUERY_trees_list_libraries {
@@ -29,8 +30,8 @@ export interface GET_TREE_LIST_QUERY_trees_list_permissions {
 export interface GET_TREE_LIST_QUERY_trees_list {
     id: string;
     label: any | null;
-    behavior: TreeBehavior;
     libraries: GET_TREE_LIST_QUERY_trees_list_libraries[];
+    behavior: TreeBehavior;
     permissions: GET_TREE_LIST_QUERY_trees_list_permissions;
 }
 

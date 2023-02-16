@@ -6,6 +6,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {LibraryBehavior} from './globalTypes';
+
 // ====================================================
 // GraphQL query operation: GET_ACTIVE_LIBRARY
 // ====================================================
@@ -28,6 +30,7 @@ export interface GET_ACTIVE_LIBRARY_activeLib {
     id: string;
     name: string;
     filter: string;
+    behavior: LibraryBehavior;
     attributes: (any | null)[];
     gql: GET_ACTIVE_LIBRARY_activeLib_gql;
     trees: (string | null)[];

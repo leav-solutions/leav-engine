@@ -221,7 +221,6 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                     )}
                 </div>
             }
-            upload-modal
         >
             <Steps status={status} current={currentStep} items={items} />
             <div style={contentStyle}>{steps[currentStep].content}</div>
