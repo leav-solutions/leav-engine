@@ -9,7 +9,7 @@ import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation
 import useDeleteViewMutation from 'graphQL/mutations/views/hooks/useDeleteViewMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import _ from 'lodash';
+import omit from 'lodash/omit';
 import {useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
@@ -120,7 +120,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
         try {
             const newViewRes = await addView({
                 view: {
-                    ..._.omit(view, 'owner'),
+                    ...omit(view, 'owner'),
                     label: {
                         [defaultLang]: `${localizedTranslation(view.label, lang)} (${t('global.copy')})`
                     },

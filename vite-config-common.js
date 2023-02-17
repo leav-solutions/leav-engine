@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import {splitVendorChunkPlugin} from 'vite';
 import svgr from 'vite-plugin-svgr';
 
 export const jsonHmr = () => {
@@ -20,7 +21,7 @@ export const jsonHmr = () => {
 };
 
 export const commonConfig = rootPath => ({
-    plugins: [svgr(), react(), jsonHmr()],
+    plugins: [svgr(), react(), jsonHmr(), splitVendorChunkPlugin()],
     resolve: {
         alias: {
             components: path.resolve(rootPath, './src/components'),
@@ -41,5 +42,8 @@ export const commonConfig = rootPath => ({
     server: {
         port: 3000,
         host: true
+    },
+    build: {
+        minify: 'terser'
     }
 });

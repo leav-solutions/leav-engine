@@ -7,6 +7,7 @@ import {IApplicationApp} from 'app/application/applicationApp';
 import {IAuthApp} from 'app/auth/authApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {AwilixContainer} from 'awilix';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import express, {NextFunction, Request, Response} from 'express';
 import fs from 'fs';
@@ -108,12 +109,18 @@ export default function ({
 
             try {
                 // Express settings
+                app.disable('x-powered-by');
                 app.set('port', config.server.port);
                 app.set('host', config.server.host);
                 app.use(express.json({limit: config.server.uploadLimit}));
                 app.use(express.urlencoded({extended: true, limit: config.server.uploadLimit}));
                 app.use(graphqlUploadExpress());
                 app.use(cookieParser());
+                app.use(
+                    compression({
+                        threshold: 50 * 1024 // Files under 50kb won't be compressed
+                    })
+                );
 
                 // CORS
                 app.use((req, res, next) => {

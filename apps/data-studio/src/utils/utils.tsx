@@ -4,7 +4,8 @@
 import {objectToNameValueArray} from '@leav/utils';
 import {gql} from 'graphql-tag';
 import {i18n, TFunction} from 'i18next';
-import _, {pick} from 'lodash';
+import omit from 'lodash/omit';
+import pick from 'lodash/pick';
 import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
 import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
@@ -439,11 +440,11 @@ export const prepareView = (
     }));
 
     return {
-        ...(_.omit(view, ['created_by', '__typename']) as GET_VIEW_view),
+        ...(omit(view, ['created_by', '__typename']) as GET_VIEW_view),
         owner: view.created_by.id === userId,
         filters: getFiltersFromRequest(viewFilters, libraryId, attributes),
-        sort: _.omit(view.sort, ['__typename']) as GET_VIEW_view_sort,
-        display: _.omit(view.display, ['__typename']) as GET_VIEW_view_display,
+        sort: omit(view.sort, ['__typename']) as GET_VIEW_view_sort,
+        display: omit(view.display, ['__typename']) as GET_VIEW_view_display,
         valuesVersions: viewValuesVersions.reduce((versions: IValueVersion, version): IValueVersion => {
             versions[version.treeId] = {
                 id: version.treeNode.id,
@@ -452,7 +453,7 @@ export const prepareView = (
 
             return versions;
         }, {}),
-        settings: view.settings?.map(s => _.omit(s, '__typename'))
+        settings: view.settings?.map(s => omit(s, '__typename'))
     };
 };
 
