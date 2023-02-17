@@ -8,7 +8,7 @@ import {Badge, Button, Dropdown, MenuProps, Space, Tooltip} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import _ from 'lodash';
+import omit from 'lodash/omit';
 import {useTranslation} from 'react-i18next';
 import {GrUndo} from 'react-icons/gr';
 import {VscLayers} from 'react-icons/vsc';
@@ -82,7 +82,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         }
 
         return {
-            ..._.omit(searchState.view.current, ['id', 'owner']),
+            ...omit(searchState.view.current, ['id', 'owner']),
             library: library.id,
             label: {[defaultLang]: t('view.add-view.title')},
             display: searchState.display,

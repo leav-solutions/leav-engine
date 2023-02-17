@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IGetRecordsFromLibraryQueryElement} from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
-import {isArray} from 'lodash';
+import isArray from 'lodash/isArray';
 import objectPath from 'object-path';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
 import {IField, IItem} from '../../_types/types';

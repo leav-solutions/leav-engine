@@ -4,9 +4,9 @@
 import {InboxOutlined} from '@ant-design/icons';
 import {extractArgsFromString} from '@leav/utils';
 import {message, Spin, Upload} from 'antd';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import * as XLSX from 'xlsx';
+import {read as xlsxRead, utils as xlsxUtils} from 'xlsx';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {AttributeType, ImportMode, ImportType} from '_gqlTypes/globalTypes';
@@ -28,14 +28,14 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
     const {file} = state;
 
     const _setFileData = async content => {
-        const workbook = XLSX.read(content, {type: 'binary'});
+        const workbook = xlsxRead(content, {type: 'binary'});
 
         const s: ISheet[] = [];
 
         for (const sheetName in workbook.Sheets) {
             if (workbook.Sheets.hasOwnProperty(sheetName)) {
                 // Use the sheet_to_json method to convert excel to json data
-                const sheetData: Array<{[col: string]: string}> = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+                const sheetData: Array<{[col: string]: string}> = xlsxUtils.sheet_to_json(workbook.Sheets[sheetName], {
                     blankrows: false,
                     defval: null
                 });

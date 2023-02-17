@@ -1,12 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Home from 'components/Home';
-import LibraryHome from 'components/LibraryHome';
-import Navigation from 'components/Navigation';
+import Loading from 'components/shared/Loading';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import {useEffect} from 'react';
+import {lazy, Suspense, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
 import {setActivePanel} from 'reduxStore/activePanel';
 import {useAppDispatch} from 'reduxStore/store';
@@ -22,6 +20,10 @@ const Wrapper = styled.div`
     overflow-y: auto;
     overflow-x: hidden;
 `;
+
+const Home = lazy(() => import('components/Home'));
+const LibraryHome = lazy(() => import('components/LibraryHome'));
+const Navigation = lazy(() => import('components/Navigation'));
 
 function Workspace(): JSX.Element {
     const dispatch = useAppDispatch();
@@ -48,15 +50,17 @@ function Workspace(): JSX.Element {
 
     return (
         <Wrapper>
-            <VisibilityHandler isActive={isHomeActive} className={WorkspacePanels.HOME}>
-                <Home />
-            </VisibilityHandler>
-            <VisibilityHandler isActive={isLibraryActive} className={WorkspacePanels.LIBRARY}>
-                <LibraryHome library={libraryId} key={libraryId} />
-            </VisibilityHandler>
-            <VisibilityHandler isActive={isTreeActive} className={WorkspacePanels.TREE}>
-                <Navigation tree={treeId} key={treeId} />
-            </VisibilityHandler>
+            <Suspense fallback={<Loading />}>
+                <VisibilityHandler isActive={isHomeActive} className={WorkspacePanels.HOME}>
+                    <Home />
+                </VisibilityHandler>
+                <VisibilityHandler isActive={isLibraryActive} className={WorkspacePanels.LIBRARY}>
+                    <LibraryHome library={libraryId} key={libraryId} />
+                </VisibilityHandler>
+                <VisibilityHandler isActive={isTreeActive} className={WorkspacePanels.TREE}>
+                    <Navigation tree={treeId} key={treeId} />
+                </VisibilityHandler>
+            </Suspense>
         </Wrapper>
     );
 }

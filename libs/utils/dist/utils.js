@@ -1,7 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import { camelCase, flow, partialRight, trimEnd, upperFirst } from 'lodash';
+// import {camelCase, flow, partialRight, trimEnd, upperFirst} from 'lodash';
+import camelCase from 'lodash/camelCase';
+import flow from 'lodash/flow';
+import partialRight from 'lodash/partialRight';
+import trimEnd from 'lodash/trimEnd';
+import upperFirst from 'lodash/upperFirst';
 import minimatch from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
 import { FileType } from './types/files';

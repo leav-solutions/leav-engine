@@ -5,10 +5,11 @@ import {DownOutlined, FieldTimeOutlined, LoadingOutlined, RightOutlined, UploadO
 import {ServerError, useLazyQuery, useMutation} from '@apollo/client';
 import {Button, Dropdown, message, Modal, Space, Steps} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
+import Loading from 'components/shared/Loading';
 import dayjs from 'dayjs';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
 import useNotification from 'hooks/useNotification';
-import {ReactNode, useReducer, useState} from 'react';
+import {lazy, ReactNode, Suspense, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setIsPanelOpen} from 'reduxStore/notifications';
 import {useAppDispatch} from 'reduxStore/store';
@@ -17,11 +18,7 @@ import {IMPORT_EXCEL, IMPORT_EXCELVariables} from '_gqlTypes/IMPORT_EXCEL';
 import {importExcel} from '../../../../graphQL/mutations/import/importExcel';
 import {getAttributesByLibQuery} from '../../../../graphQL/queries/attributes/getAttributesByLib';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import ImportModalConfigStep from './ImportModalConfigStep';
 import ImportScheduleModal from './ImportModalConfigStep/ImportScheduleModal';
-import ImportModalDoneStep from './ImportModalDoneStep';
-import ImportModalProcessingStep from './ImportModalProcessingStep';
-import ImportModalSelectFileStep from './ImportModalSelectFileStep';
 import importReducer from './importReducer';
 import {ImportReducerActionTypes, initialState} from './importReducer/importReducer';
 import ImportReducerContext from './importReducer/ImportReducerContext';
@@ -39,6 +36,12 @@ const Content = styled.div`
 `;
 
 const NOTIFICATION_DURATION = 2.5; // seconds
+
+// Lazy load steps as it's using some heavy lib for XLSX handling. We don't want it to load on first load
+const ImportModalSelectFileStep = lazy(() => import('./ImportModalSelectFileStep'));
+const ImportModalConfigStep = lazy(() => import('./ImportModalConfigStep'));
+const ImportModalProcessingStep = lazy(() => import('./ImportModalProcessingStep'));
+const ImportModalDoneStep = lazy(() => import('./ImportModalDoneStep'));
 
 function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
     const {t} = useTranslation();
@@ -305,7 +308,9 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                         ></Step>
                         <Step title={t('import.import_done')} status={importError ? 'error' : undefined}></Step>
                     </Steps>
-                    <Content>{_getStepContent()}</Content>
+                    <Content>
+                        <Suspense fallback={<Loading />}>{_getStepContent()}</Suspense>
+                    </Content>
                 </Modal>
             </ImportReducerContext.Provider>
         </>
