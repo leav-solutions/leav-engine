@@ -42,7 +42,7 @@ export const handleMoveEvent = async (
         return false;
     }
 
-    // Find the destination record TODO maybe not needed
+    // Find the destination record
     const destRecord = await getRecord(
         {fileName: fileNameDest, filePath: filePathDest},
         {recordLibrary},
