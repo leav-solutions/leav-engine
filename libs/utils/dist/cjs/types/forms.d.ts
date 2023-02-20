@@ -1,23 +1,23 @@
-import { IKeyValue } from './helpers';
+import {IKeyValue} from './helpers';
 export declare enum FormUIElementTypes {
-    DIVIDER = "divider",
-    FIELDS_CONTAINER = "fields_container",
-    TAB_FIELDS_CONTAINER = "tab_fields_container",
-    TEXT_BLOCK = "text_block",
-    TABS = "tabs"
+    DIVIDER = 'divider',
+    FIELDS_CONTAINER = 'fields_container',
+    TAB_FIELDS_CONTAINER = 'tab_fields_container',
+    TEXT_BLOCK = 'text_block',
+    TABS = 'tabs'
 }
 export declare enum FormFieldTypes {
-    TEXT_INPUT = "input_field",
-    DATE = "date",
-    CHECKBOX = "checkbox",
-    ENCRYPTED = "encrypted",
-    DROPDOWN = "dropdown",
-    LINK = "link",
-    TREE = "tree"
+    TEXT_INPUT = 'input_field',
+    DATE = 'date',
+    CHECKBOX = 'checkbox',
+    ENCRYPTED = 'encrypted',
+    DROPDOWN = 'dropdown',
+    LINK = 'link',
+    TREE = 'tree'
 }
 export declare enum TabsDirection {
-    HORIZONTAL = "horizontal",
-    VERTICAL = "vertical"
+    HORIZONTAL = 'horizontal',
+    VERTICAL = 'vertical'
 }
 export interface ICommonFieldsSettings {
     label?: string;
@@ -47,4 +47,4 @@ export interface IFormLinkFieldSettings extends ICommonFieldsSettings {
     }>;
     displayRecordIdentity: boolean;
 }
-export declare const FORM_ROOT_CONTAINER_ID = "__root";
+export declare const FORM_ROOT_CONTAINER_ID = '__root';
