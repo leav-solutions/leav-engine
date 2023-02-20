@@ -1,24 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {on} from 'events';
 import fs from 'fs';
 import {FileUpload} from 'graphql-upload';
 import progress, {Progress} from 'progress-stream';
-import * as Config from '_types/config';
 
 export type StoreUploadFileFunc = (
     fileData: FileUpload,
     path: string,
-    onProgress: (progress: Progress) => Promise<void>,
+    onProgress?: (progress: Progress) => Promise<void>,
     size?: number
 ) => Promise<void>;
 
-interface IDeps {
-    config?: Config.IConfig;
-}
-
-export default function ({config = null}: IDeps) {
+export default function () {
     return async (
         fileData: FileUpload,
         path: string,
