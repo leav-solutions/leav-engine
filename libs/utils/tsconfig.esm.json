@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "outDir": "dist/cjs"
+    "module": "ES2022",
+    "outDir": "dist/esm"
   }
 }

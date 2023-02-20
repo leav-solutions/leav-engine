@@ -16,9 +16,10 @@ WORKDIR /app
 
 # Copy required files for builds
 COPY .yarn ./.yarn
-COPY *.json yarn.lock .yarnrc.yml ./
+COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
 COPY apps/ ./apps/
 COPY libs/ ./libs/
+COPY assets/ ./assets
 
 ### BUILDER ###
 FROM base AS builder
@@ -45,6 +46,7 @@ RUN rm -rf .yarn/cache
 
 COPY ./docker/scripts ./scripts
 COPY libs ./libs
+COPY assets ./assets
 
 # Get ready for runtime
 WORKDIR /app/apps/$APP

@@ -4,12 +4,12 @@
   "description": "Shared utils and types to use across projects",
   "scripts": {
     "prepublishOnly": "npm run build",
-    "build": "tsc --build",
+    "build": "tsc --project tsconfig.esm.json & tsc --project tsconfig.json",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p .",
     "test": "jest -c jest-config.json"
   },
-  "main": "dist/index",
+  "main": "dist/esm/index",
   "author": "",
   "license": "LGPL3",
   "devDependencies": {
@@ -22,5 +22,10 @@
     "lodash": "4.17.21",
     "minimatch": "3.1.2"
   },
-  "stableVersion": "1.0.0"
+  "stableVersion": "1.0.0",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "default": "./dist/cjs/index.js"
+  }
 }
