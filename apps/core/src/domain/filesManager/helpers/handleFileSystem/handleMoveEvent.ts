@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import { dbUtils } from 'infra/db';
+import {dbUtils} from 'infra/db';
 import {IQueryInfos} from '_types/queryInfos';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
@@ -19,7 +19,6 @@ export const handleMoveEvent = async (
     deps: IHandleFileSystemDeps,
     ctx: IQueryInfos
 ) => {
-    console.time("handleMoveEvent");
     const {fileName: fileNameDest, filePath: filePathDest} = getInputData(scanMsg.pathAfter);
     const {fileName: fileNameOrigin, filePath: filePathOrigin} = getInputData(scanMsg.pathBefore);
 
@@ -51,7 +50,7 @@ export const handleMoveEvent = async (
         deps,
         ctx
     );
-    
+
     // If destination record already exists, disable it.
     // We check difference between destination and origin ids to avoid error due to a
     // move, only in a tree, of the origin file (file path attribute is not updated in this case),
@@ -68,7 +67,7 @@ export const handleMoveEvent = async (
     };
     await updateRecordFile(recordData, originRecord.id, recordLibrary, deps, ctx);
     // Find parent record destination
-    if (filePathDest != filePathOrigin) {
+    if (filePathDest !== filePathOrigin) {
         try {
             const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
 
@@ -89,12 +88,12 @@ export const handleMoveEvent = async (
             // Move element in the tree
             const parentNode = parentRecord
                 ? (
-                    await deps.treeDomain.getNodesByRecord({
-                        treeId,
-                        record: {id: parentRecord.id, library: parentRecord.library},
-                        ctx
-                    })
-                )[0]
+                      await deps.treeDomain.getNodesByRecord({
+                          treeId,
+                          record: {id: parentRecord.id, library: parentRecord.library},
+                          ctx
+                      })
+                  )[0]
                 : null;
             if (filePathDest && filePathDest !== '.' && !parentNode) {
                 throw new Error('Parent not found');
@@ -112,5 +111,4 @@ export const handleMoveEvent = async (
             deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
         }
     }
-    console.timeEnd("handleMoveEvent");
 };
