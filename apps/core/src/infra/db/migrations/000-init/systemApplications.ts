@@ -20,7 +20,7 @@ export const systemApplications: MigrationApplicationToCreate[] = [
         trees: []
     },
     {
-        _key: 'data-studio',
+        _key: 'data_studio',
         system: false,
         type: ApplicationTypes.INTERNAL,
         module: 'data-studio',
