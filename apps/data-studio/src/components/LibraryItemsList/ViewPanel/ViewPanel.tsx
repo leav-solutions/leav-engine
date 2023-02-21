@@ -6,6 +6,7 @@ import {themeVars, useLang} from '@leav/ui';
 import {Badge, Button, Input, Spin} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
+import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -107,6 +108,9 @@ const _sortViewFunction = (referenceOrder: string[]) => (viewA: IView, viewB: IV
     }
 };
 
+export const PREFIX_USER_VIEWS_ORDER_KEY = 'user_views_order_';
+export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';
+
 function ViewPanel(): JSX.Element {
     const {t} = useTranslation();
 
@@ -117,38 +121,34 @@ function ViewPanel(): JSX.Element {
     const [editView, setEditView] = useState<IView | false>(false);
     const dispatch = useAppDispatch();
 
-    const USER_VIEWS_ORDER_KEY = 'user_views_order_' + searchState.library.id;
-    const SHARED_VIEWS_ORDER_KEY = 'shared_views_order_' + searchState.library.id;
+    const {updateViewsOrder} = useUpdateViewsOrderMutation(searchState.library.id);
 
-    const {data, loading, error, refetch} = useQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(getViewsListQuery, {
+    const getViewsList = useQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(getViewsListQuery, {
         variables: {
             libraryId: searchState.library.id || ''
         }
     });
 
-    const orderDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
-        variables: {keys: [USER_VIEWS_ORDER_KEY, SHARED_VIEWS_ORDER_KEY]},
+    const getOrderDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
+        variables: {
+            keys: [
+                PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id,
+                PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id
+            ]
+        },
         onCompleted: d => {
             searchDispatch({
                 type: SearchActionTypes.SET_USER_VIEWS_ORDER,
-                userViewsOrder: d.userData?.data[USER_VIEWS_ORDER_KEY] || []
+                userViewsOrder: d.userData?.data[PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id] || []
             });
             searchDispatch({
                 type: SearchActionTypes.SET_SHARED_VIEWS_ORDER,
-                sharedViewsOrder: d.userData?.data[SHARED_VIEWS_ORDER_KEY] || []
+                sharedViewsOrder: d.userData?.data[PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id] || []
             });
         }
     });
 
-    const [updateViewsOrderMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
-
-    useEffect(() => {
-        if (searchState.view.reload) {
-            refetch();
-        }
-    }, [searchState.view, refetch, searchDispatch]);
-
-    if (loading) {
+    if (getViewsList.loading) {
         return (
             <div>
                 <Spin />
@@ -160,7 +160,7 @@ function ViewPanel(): JSX.Element {
         setSearch(value);
     };
 
-    const {sharedViews, userViews}: {sharedViews: IView[]; userViews: IView[]} = data?.views.list.reduce(
+    const {sharedViews, userViews}: {sharedViews: IView[]; userViews: IView[]} = getViewsList.data?.views.list.reduce(
         (acc, view) => {
             const v: IView = prepareView(view, searchState.attributes, searchState.library.id, user?.userId);
 
@@ -177,8 +177,8 @@ function ViewPanel(): JSX.Element {
         {sharedViews: [], userViews: []}
     ) ?? {sharedViews: [], userViews: []};
 
-    if (error || orderDataQuery.error) {
-        return <ErrorDisplay message={(error || orderDataQuery.error).message} />;
+    if (getViewsList.error || getOrderDataQuery.error) {
+        return <ErrorDisplay message={(getViewsList.error || getOrderDataQuery.error).message} />;
     }
 
     if (!sharedViews || !userViews) {
@@ -200,53 +200,26 @@ function ViewPanel(): JSX.Element {
 
         const isOrderingUserViews = result.source.droppableId === 'user';
 
-        const viewsListBefore = isOrderingUserViews ? sortedUserViews : sortedSharedViews;
+        const viewsListBefore = isOrderingUserViews ? userViews : sharedViews;
         const orderedViews = viewsListBefore.map(v => v.id);
 
         const element = orderedViews[result.source.index];
         orderedViews.splice(result.source.index, 1);
         orderedViews.splice(result.destination.index, 0, element);
 
-        searchDispatch(
-            isOrderingUserViews
-                ? {type: SearchActionTypes.SET_USER_VIEWS_ORDER, userViewsOrder: orderedViews}
-                : {type: SearchActionTypes.SET_SHARED_VIEWS_ORDER, sharedViewsOrder: orderedViews}
-        );
+        const keyToUpdate = isOrderingUserViews
+            ? PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id
+            : PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id;
 
-        const keyToUpdate = isOrderingUserViews ? USER_VIEWS_ORDER_KEY : SHARED_VIEWS_ORDER_KEY;
-        updateViewsOrderMutation({
-            variables: {
-                key: keyToUpdate,
-                value: orderedViews,
-                global: false
-            },
-            update: (cache, mutationResult) => {
-                const queryToUpdate = {
-                    query: getUserDataQuery,
-                    variables: {
-                        keys: [USER_VIEWS_ORDER_KEY, SHARED_VIEWS_ORDER_KEY]
-                    }
-                };
-                const cacheData = cache.readQuery<GET_USER_DATA, GET_USER_DATAVariables>(queryToUpdate);
-
-                cache.writeQuery<GET_USER_DATA, GET_USER_DATAVariables>({
-                    ...queryToUpdate,
-                    data: {
-                        userData: {
-                            global: cacheData.userData.global,
-                            data: {
-                                ...cacheData.userData.data,
-                                [keyToUpdate]: mutationResult.data.saveUserData.data[keyToUpdate]
-                            }
-                        }
-                    }
-                });
-            }
+        await updateViewsOrder({
+            key: keyToUpdate,
+            value: orderedViews,
+            global: false
         });
     };
 
-    const sortedUserViews = userViews.sort(_sortViewFunction(searchState.userViewsOrder));
-    const sortedSharedViews = sharedViews.sort(_sortViewFunction(searchState.sharedViewsOrder));
+    userViews.sort(_sortViewFunction(searchState.userViewsOrder));
+    sharedViews.sort(_sortViewFunction(searchState.sharedViewsOrder));
 
     const handleHide = () => {
         dispatch(
@@ -281,7 +254,7 @@ function ViewPanel(): JSX.Element {
                 <Droppable droppableId={'shared'}>
                     {providedDroppable => (
                         <Views {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
-                            {sortedSharedViews.map((view, idx) => (
+                            {sharedViews.map((view, idx) => (
                                 <Draggable key={idx} draggableId={idx.toString()} index={idx}>
                                     {provided => (
                                         <div
@@ -313,7 +286,7 @@ function ViewPanel(): JSX.Element {
                 <Droppable droppableId={'user'}>
                     {providedDroppable => (
                         <Views {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
-                            {sortedUserViews.map((view, idx) => (
+                            {userViews.map((view, idx) => (
                                 <Draggable key={idx} draggableId={idx.toString()} index={idx}>
                                     {provided => (
                                         <div

@@ -2,7 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FetchResult, useMutation} from '@apollo/client';
+import {
+    PREFIX_SHARED_VIEWS_ORDER_KEY,
+    PREFIX_USER_VIEWS_ORDER_KEY
+} from 'components/LibraryItemsList/ViewPanel/ViewPanel';
 import saveViewMutation from 'graphQL/mutations/views/saveViewMutation';
+import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {getViewsListQuery} from 'graphQL/queries/views/getViewsListQuery';
 import {ADD_VIEW, ADD_VIEWVariables} from '_gqlTypes/ADD_VIEW';
 

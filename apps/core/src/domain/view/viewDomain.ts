@@ -10,6 +10,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
+import {IUserDomain} from 'domain/user/userDomain';
 
 export interface IViewDomain {
     saveView(view: IView, ctx: IQueryInfos): Promise<IView>;
@@ -21,12 +22,16 @@ export interface IViewDomain {
 interface IViewDomainDeps {
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.user'?: IUserDomain;
     'core.infra.view'?: IViewRepo;
     'core.utils'?: IUtils;
 }
 
+export const PREFIX_USER_VIEWS_ORDER = 'user_views_order_';
+
 export default function ({
     'core.domain.helpers.validate': validationHelper = null,
+    'core.domain.user': userDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.infra.view': viewRepo = null,
     'core.utils': utils = null
@@ -83,19 +88,21 @@ export default function ({
                 }
             }
 
-            // Set creation/modification date
             const now = moment().unix();
+
             const viewToSave: IView = {
                 ...view,
                 modified_at: now
             };
 
-            if (!isExistingView) {
-                viewToSave.created_at = now;
-                viewToSave.created_by = ctx.userId;
+            if (isExistingView) {
+                return viewRepo.updateView(viewToSave, ctx);
             }
 
-            return isExistingView ? viewRepo.updateView(viewToSave, ctx) : viewRepo.createView(viewToSave, ctx);
+            viewToSave.created_at = now;
+            viewToSave.created_by = ctx.userId;
+
+            return viewRepo.createView(viewToSave, ctx);
         },
         async getViews(library: string, ctx: IQueryInfos): Promise<IList<IView>> {
             await validationHelper.validateLibrary(library, ctx);
@@ -147,12 +154,12 @@ export default function ({
                 throw new ValidationError({id: Errors.UNKNOWN_VIEW});
             }
 
+            // Check user is owner
             const existingViewData = existingView.list[0];
             if (existingViewData.created_by !== ctx.userId) {
                 throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
             }
 
-            // Check user is owner
             return viewRepo.deleteView(viewId, ctx);
         }
     };

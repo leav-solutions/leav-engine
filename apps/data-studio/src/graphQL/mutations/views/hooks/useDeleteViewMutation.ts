@@ -3,6 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FetchResult, useMutation} from '@apollo/client';
 import {WithTypename} from '@leav/utils';
+import {
+    PREFIX_SHARED_VIEWS_ORDER_KEY,
+    PREFIX_USER_VIEWS_ORDER_KEY
+} from 'components/LibraryItemsList/ViewPanel/ViewPanel';
+import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {DELETE_VIEW, DELETE_VIEWVariables, DELETE_VIEW_deleteView} from '_gqlTypes/DELETE_VIEW';
 import deleteViewMutation from '../deleteViewMutation';
 

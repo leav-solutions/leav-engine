@@ -18,6 +18,7 @@ import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {ViewInput, ViewTypes} from '_gqlTypes/globalTypes';
+import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {localizedTranslation, prepareView} from '../../../utils';
@@ -25,6 +26,10 @@ import {getRequestFromFilters} from '../../../utils/getRequestFromFilter';
 import {InfoChannel, InfoType, TypeSideItem} from '../../../_types/types';
 import IconViewType from '../../IconViewType/IconViewType';
 import FiltersDropdown from '../FiltersDropdown';
+import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
+import {useMutation} from '@apollo/client';
+import {PREFIX_USER_VIEWS_ORDER_KEY} from '../ViewPanel/ViewPanel';
+import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 
 interface IMenuViewProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
@@ -54,6 +59,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const [user] = useUser();
 
     const {addView} = useAddViewMutation(library.id);
+    const {updateViewsOrder} = useUpdateViewsOrderMutation(library.id);
 
     const _toggleShowView = () => {
         const visible = !display.side.visible || display.side.type !== TypeSideItem.view;
@@ -74,19 +80,12 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     };
 
     const _getNewViewFromSearchState = (): ViewInput => {
-        // Fields
-        let viewFields: string[] = [];
-
-        if (searchState.view.current.display.type === ViewTypes.list) {
-            viewFields = searchState.fields.map(f => f.key);
-        }
-
         return {
-            ...omit(searchState.view.current, ['id', 'owner']),
             library: library.id,
             label: {[defaultLang]: t('view.add-view.title')},
             display: searchState.display,
-            sort: searchState.sort.active ? {field: searchState.sort.field, order: searchState.sort.order} : undefined,
+            shared: false,
+            sort: searchState.sort?.active ? {field: searchState.sort.field, order: searchState.sort.order} : undefined,
             filters: getRequestFromFilters(searchState.filters),
             valuesVersions: searchState.valuesVersions
                 ? objectToNameValueArray(searchState.valuesVersions)
@@ -99,7 +98,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
             settings: [
                 {
                     name: viewSettingsField,
-                    value: viewFields
+                    value: searchState.display.type === ViewTypes.list ? searchState.fields.map(f => f.key) : []
                 }
             ]
         };
@@ -108,16 +107,16 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const _saveView = async () => {
         if (searchState.view.current.id !== defaultView.id) {
             try {
-                // Fields
-                let viewFields: string[] = [];
-
-                if (searchState.view.current.display.type === ViewTypes.list) {
-                    viewFields = searchState.fields.map(f => f.key);
-                }
-
                 // save view in backend
                 await addView({
-                    view: {..._getNewViewFromSearchState(), id: searchState.view.current.id}
+                    view: {
+                        ..._getNewViewFromSearchState(),
+                        id: searchState.view.current.id,
+                        label: searchState.view.current.label,
+                        description: searchState.view.current.description,
+                        shared: searchState.view.current.shared,
+                        color: searchState.view.current.color
+                    }
                 });
 
                 searchDispatch({
@@ -138,13 +137,6 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     };
 
     const _handleAddView = async (viewType: ViewTypes) => {
-        // Fields
-        let viewFields: string[] = [];
-
-        if (searchState.view.current.display.type === ViewTypes.list) {
-            viewFields = searchState.fields.map(f => f.key);
-        }
-
         const newView: ViewInput = {
             ..._getNewViewFromSearchState(),
             display: {...searchState.display, type: viewType}
@@ -155,14 +147,15 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
             view: newView
         });
 
-        searchDispatch({
-            type: SearchActionTypes.CHANGE_VIEW,
-            view: prepareView(newViewRes.data.saveView, searchState.attributes, searchState.library.id, user?.userId)
+        await updateViewsOrder({
+            key: PREFIX_USER_VIEWS_ORDER_KEY + newView.library,
+            value: [...searchState.userViewsOrder, newViewRes.data.saveView.id],
+            global: false
         });
 
         searchDispatch({
-            type: SearchActionTypes.SET_USER_VIEWS_ORDER,
-            userViewsOrder: [...searchState.userViewsOrder, newViewRes.data.saveView.id]
+            type: SearchActionTypes.CHANGE_VIEW,
+            view: prepareView(newViewRes.data.saveView, searchState.attributes, searchState.library.id, user?.userId)
         });
     };
 

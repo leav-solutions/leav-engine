@@ -4,11 +4,14 @@
 import {useMutation} from '@apollo/client';
 import {useLang} from '@leav/ui';
 import {Checkbox, Divider, Form, Input, Modal, Select} from 'antd';
+import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
+import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ViewTypes} from '_gqlTypes/globalTypes';
+import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import saveViewMutation, {
     IAddViewMutation,
     IAddViewMutationVariables,
@@ -16,6 +19,7 @@ import saveViewMutation, {
 } from '../../../../graphQL/mutations/views/saveViewMutation';
 import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {ISystemTranslation, IView} from '../../../../_types/types';
+import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../ViewPanel';
 
 interface IFormValues {
     label: ISystemTranslation;
@@ -41,6 +45,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
 
     const [addView] = useMutation<IAddViewMutation, IAddViewMutationVariables>(saveViewMutation);
+    const {updateViewsOrder} = useUpdateViewsOrderMutation(libraryId);
 
     const _handleOk = async () => {
         form.submit();
@@ -74,18 +79,24 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
         }
 
         if (view.shared !== values.shared) {
-            searchDispatch({
-                type: SearchActionTypes.SET_USER_VIEWS_ORDER,
-                userViewsOrder: !values.shared
-                    ? [...searchState.userViewsOrder, view.id]
-                    : searchState.userViewsOrder.filter(id => id !== view.id)
+            const userViewsOrder = !values.shared
+                ? [...searchState.userViewsOrder, view.id]
+                : searchState.userViewsOrder.filter(id => id !== view.id);
+
+            await updateViewsOrder({
+                key: PREFIX_USER_VIEWS_ORDER_KEY + searchState.library.id,
+                value: userViewsOrder,
+                global: false
             });
 
-            searchDispatch({
-                type: SearchActionTypes.SET_SHARED_VIEWS_ORDER,
-                sharedViewsOrder: !values.shared
-                    ? searchState.sharedViewsOrder.filter(id => id !== view.id)
-                    : [...searchState.sharedViewsOrder, view.id]
+            const sharedViewsOrder = !values.shared
+                ? searchState.sharedViewsOrder.filter(id => id !== view.id)
+                : [...searchState.sharedViewsOrder, view.id];
+
+            await updateViewsOrder({
+                key: PREFIX_SHARED_VIEWS_ORDER_KEY + searchState.library.id,
+                value: sharedViewsOrder,
+                global: false
             });
         }
 
