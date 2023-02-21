@@ -19,14 +19,14 @@ export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_gqlNames
 export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_StandardAttribute_embedded_fields {
     id: string;
     format: AttributeFormat | null;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_StandardAttribute {
     id: string;
     type: AttributeType;
     format: AttributeFormat | null;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     embedded_fields:
         | (GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_StandardAttribute_embedded_fields | null)[]
@@ -41,21 +41,21 @@ export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attribut
     id: string;
     type: AttributeType;
     format: AttributeFormat | null;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     linked_library: GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_LinkAttribute_linked_library | null;
 }
 
 export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_TreeAttribute_linked_tree {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_TreeAttribute {
     id: string;
     type: AttributeType;
     format: AttributeFormat | null;
-    label: any | null;
+    label: SystemTranslation | null;
     multiple_values: boolean;
     linked_tree: GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes_TreeAttribute_linked_tree | null;
 }
@@ -67,7 +67,7 @@ export type GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes =
 
 export interface GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_gqlNames;
     attributes: GET_TREE_ATTRIBUTES_QUERY_trees_list_libraries_library_attributes[] | null;
 }

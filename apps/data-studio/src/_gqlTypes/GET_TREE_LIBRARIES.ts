@@ -14,7 +14,7 @@ import {TreeBehavior, LibraryBehavior} from './globalTypes';
 
 export interface GET_TREE_LIBRARIES_trees_list_libraries_library {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     behavior: LibraryBehavior;
     system: boolean | null;
 }

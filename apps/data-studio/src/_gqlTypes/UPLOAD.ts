@@ -20,7 +20,7 @@ export interface UPLOAD_upload_record_whoAmI_library_gqlNames {
 export interface UPLOAD_upload_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: UPLOAD_upload_record_whoAmI_library_gqlNames;
 }
 

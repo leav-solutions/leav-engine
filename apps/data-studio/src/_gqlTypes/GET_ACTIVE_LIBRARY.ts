@@ -31,7 +31,7 @@ export interface GET_ACTIVE_LIBRARY_activeLib {
     name: string;
     filter: string;
     behavior: LibraryBehavior;
-    attributes: (any | null)[];
+    attributes: (Any | null)[];
     gql: GET_ACTIVE_LIBRARY_activeLib_gql;
     trees: (string | null)[];
     permissions: GET_ACTIVE_LIBRARY_activeLib_permissions;

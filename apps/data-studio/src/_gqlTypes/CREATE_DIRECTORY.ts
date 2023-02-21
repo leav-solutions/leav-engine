@@ -20,7 +20,7 @@ export interface CREATE_DIRECTORY_createDirectory_whoAmI_library_gqlNames {
 export interface CREATE_DIRECTORY_createDirectory_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: CREATE_DIRECTORY_createDirectory_whoAmI_library_gqlNames;
 }
 

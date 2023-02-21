@@ -20,7 +20,7 @@ export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library_gql
 export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library_gqlNames;
 }
 
@@ -72,8 +72,8 @@ export interface GET_APPLICATION_BY_ID_applications_list_permissions {
 
 export interface GET_APPLICATION_BY_ID_applications_list {
     id: string;
-    label: any;
-    description: any | null;
+    label: SystemTranslation;
+    description: SystemTranslation | null;
     endpoint: string;
     url: string;
     color: string | null;
@@ -81,6 +81,7 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     libraries: GET_APPLICATION_BY_ID_applications_list_libraries[] | null;
     trees: GET_APPLICATION_BY_ID_applications_list_trees[] | null;
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;
+    settings: JSONObject | null;
 }
 
 export interface GET_APPLICATION_BY_ID_applications {

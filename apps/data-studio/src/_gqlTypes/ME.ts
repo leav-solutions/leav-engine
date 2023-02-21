@@ -20,7 +20,7 @@ export interface ME_me_whoAmI_library_gqlNames {
 export interface ME_me_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: ME_me_whoAmI_library_gqlNames;
 }
 

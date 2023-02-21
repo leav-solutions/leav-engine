@@ -192,7 +192,7 @@ export enum ViewTypes {
 }
 
 export interface FileInput {
-    data: any;
+    data: Upload;
     uid: string;
     size?: number | null;
     replace?: boolean | null;
@@ -297,8 +297,8 @@ export interface ViewInput {
     library: string;
     display: ViewDisplayInput;
     shared: boolean;
-    label?: any | null;
-    description?: any | null;
+    label?: SystemTranslation | null;
+    description?: SystemTranslation | null;
     color?: string | null;
     filters?: RecordFilterInput[] | null;
     sort?: RecordSortInput | null;
@@ -308,7 +308,7 @@ export interface ViewInput {
 
 export interface ViewSettingsInput {
     name: string;
-    value?: any | null;
+    value?: Any | null;
 }
 
 export interface ViewValuesVersionInput {

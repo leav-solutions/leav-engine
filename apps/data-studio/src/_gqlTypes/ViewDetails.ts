@@ -48,7 +48,7 @@ export interface ViewDetails_created_by {
 
 export interface ViewDetails_filters_tree {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ViewDetails_filters {
@@ -72,7 +72,7 @@ export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_library_gqlNa
 export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: ViewDetails_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
 }
 
@@ -122,7 +122,7 @@ export interface ViewDetails_valuesVersions {
 
 export interface ViewDetails_settings {
     name: string;
-    value: any | null;
+    value: Any | null;
 }
 
 export interface ViewDetails {
@@ -130,8 +130,8 @@ export interface ViewDetails {
     display: ViewDetails_display;
     shared: boolean;
     created_by: ViewDetails_created_by;
-    label: any;
-    description: any | null;
+    label: SystemTranslation;
+    description: SystemTranslation | null;
     color: string | null;
     filters: ViewDetails_filters[] | null;
     sort: ViewDetails_sort | null;

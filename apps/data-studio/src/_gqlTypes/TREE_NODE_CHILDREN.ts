@@ -20,7 +20,7 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library_
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library_gqlNames;
 }
 

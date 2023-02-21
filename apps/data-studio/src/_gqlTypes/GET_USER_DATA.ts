@@ -12,7 +12,7 @@
 
 export interface GET_USER_DATA_userData {
     global: boolean;
-    data: any | null;
+    data: Any | null;
 }
 
 export interface GET_USER_DATA {

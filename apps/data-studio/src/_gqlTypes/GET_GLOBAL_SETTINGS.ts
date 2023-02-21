@@ -20,7 +20,7 @@ export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_library_gqlNames
 export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_library_gqlNames;
 }
 

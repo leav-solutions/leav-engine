@@ -20,7 +20,7 @@ export interface GET_LIBRARIES_LIST_libraries_list_icon_whoAmI_library_gqlNames 
 export interface GET_LIBRARIES_LIST_libraries_list_icon_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_LIBRARIES_LIST_libraries_list_icon_whoAmI_library_gqlNames;
 }
 
@@ -74,7 +74,7 @@ export interface GET_LIBRARIES_LIST_libraries_list_permissions {
 
 export interface GET_LIBRARIES_LIST_libraries_list {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
     behavior: LibraryBehavior;
     icon: GET_LIBRARIES_LIST_libraries_list_icon | null;
     gqlNames: GET_LIBRARIES_LIST_libraries_list_gqlNames;

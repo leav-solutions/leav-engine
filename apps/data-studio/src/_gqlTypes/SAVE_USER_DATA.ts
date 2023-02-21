@@ -12,7 +12,7 @@
 
 export interface SAVE_USER_DATA_saveUserData {
     global: boolean;
-    data: any | null;
+    data: Any | null;
 }
 
 export interface SAVE_USER_DATA {
@@ -21,6 +21,6 @@ export interface SAVE_USER_DATA {
 
 export interface SAVE_USER_DATAVariables {
     key: string;
-    value?: any | null;
+    value?: Any | null;
     global: boolean;
 }

@@ -12,7 +12,7 @@
 
 export interface GET_VERSIONABLE_ATTRIBUTES_BY_LIBRARY_attributes_list_versions_conf_profile_trees {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_VERSIONABLE_ATTRIBUTES_BY_LIBRARY_attributes_list_versions_conf_profile {
