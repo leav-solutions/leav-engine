@@ -10,6 +10,8 @@ import saveViewMutation from 'graphQL/mutations/views/saveViewMutation';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {getViewsListQuery} from 'graphQL/queries/views/getViewsListQuery';
 import {ADD_VIEW, ADD_VIEWVariables} from '_gqlTypes/ADD_VIEW';
+import {GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {GET_VIEWS_LIST, GET_VIEWS_LISTVariables, GET_VIEWS_LIST_views_list} from '_gqlTypes/GET_VIEWS_LIST';
 
 export interface IUseAddViewMutationHook {
     addView: (variables: ADD_VIEWVariables) => Promise<FetchResult<ADD_VIEW>>;
@@ -22,14 +24,29 @@ export default function useAddViewMutation(library: string): IUseAddViewMutation
         addView(variables: ADD_VIEWVariables) {
             return executeAddView({
                 variables,
-                refetchQueries: [
-                    {
+                update: (cache, mutationResult, options) => {
+                    const queryToUpdate = {
                         query: getViewsListQuery,
                         variables: {
-                            libraryId: library
+                            libraryId: options.variables.view.library
                         }
-                    }
-                ]
+                    };
+
+                    const cacheData = cache.readQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(queryToUpdate);
+
+                    cache.writeQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>({
+                        ...queryToUpdate,
+                        data: {
+                            views: {
+                                list: [
+                                    ...cacheData.views.list,
+                                    mutationResult.data.saveView as GET_VIEWS_LIST_views_list
+                                ],
+                                totalCount: cacheData.views.totalCount + 1
+                            }
+                        }
+                    });
+                }
             });
         }
     };
