@@ -27,8 +27,6 @@ interface IViewDomainDeps {
     'core.utils'?: IUtils;
 }
 
-export const PREFIX_USER_VIEWS_ORDER = 'user_views_order_';
-
 export default function ({
     'core.domain.helpers.validate': validationHelper = null,
     'core.domain.user': userDomain = null,

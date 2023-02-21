@@ -25,6 +25,7 @@ import {localizedTranslation, prepareView} from '../../../utils';
 import {IView} from '../../../_types/types';
 import EditView from './EditView';
 import View from './View';
+import Loading from 'components/shared/Loading';
 
 const Wrapper = styled.div`
     width: 100%;
@@ -147,11 +148,7 @@ function ViewPanel(): JSX.Element {
     });
 
     if (getViewsList.loading) {
-        return (
-            <div>
-                <Spin />
-            </div>
-        );
+        return <Loading />;
     }
 
     const _handleSearchSubmit = (value: string) => {

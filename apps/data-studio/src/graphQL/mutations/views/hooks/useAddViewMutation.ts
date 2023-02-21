@@ -19,6 +19,10 @@ export default function useAddViewMutation(library: string): IUseAddViewMutation
             return executeAddView({
                 variables,
                 update: (cache, mutationResult, options) => {
+                    if (options.variables.view.id) {
+                        return; // it's an update
+                    }
+
                     const queryToUpdate = {
                         query: getViewsListQuery,
                         variables: {
@@ -28,27 +32,12 @@ export default function useAddViewMutation(library: string): IUseAddViewMutation
 
                     const cacheData = cache.readQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(queryToUpdate);
 
-                    // check if it's an update or a new vew
-                    const list = options.variables.view.id
-                        ? cacheData.views.list.map(v => {
-                              if (v.id === options.variables.view.id) {
-                                  return mutationResult.data.saveView;
-                              }
-
-                              return v;
-                          })
-                        : [...cacheData.views.list, mutationResult.data.saveView];
-
-                    const totalCount = options.variables.view.id
-                        ? cacheData.views.totalCount
-                        : cacheData.views.totalCount + 1;
-
                     cache.writeQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>({
                         ...queryToUpdate,
                         data: {
                             views: {
-                                list,
-                                totalCount
+                                list: [...cacheData.views.list, mutationResult.data.saveView],
+                                totalCount: cacheData.views.totalCount + 1
                             }
                         }
                     });
