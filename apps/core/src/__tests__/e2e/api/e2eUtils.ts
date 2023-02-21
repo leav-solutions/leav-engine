@@ -70,7 +70,7 @@ export async function gqlSaveLibrary(id: string, label: string, additionalAttrib
     const libAttributes = baseAttributes.concat(additionalAttributes);
 
     const saveLibRes = await makeGraphQlCall(
-        `"mutation" {
+        `mutation {
         saveLibrary(library: {
             id: "${id}",
             label: {fr: "${label}"},
