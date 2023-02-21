@@ -16,15 +16,12 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ViewInput} from '_gqlTypes/globalTypes';
 import {defaultView} from '../../../../constants/constants';
-import {localizedTranslation, prepareView} from '../../../../utils';
+import {localizedTranslation} from '../../../../utils';
 import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {IView} from '../../../../_types/types';
 import IconViewType from '../../../IconViewType';
 import {useUser} from '../../../../hooks/UserHook/UserHook';
 import {RiUserReceivedLine} from 'react-icons/ri';
-import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
-import {useMutation} from '@apollo/client';
-import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../ViewPanel';
 import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 
@@ -126,7 +123,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
         try {
             const newView: ViewInput = {
-                ..._.omit(view, ['id', 'owner']),
+                ...omit(view, ['id', 'owner']),
                 library: searchState.library.id,
                 label: {
                     [defaultLang]: `${localizedTranslation(view.label, lang)} (${t('global.copy')})`

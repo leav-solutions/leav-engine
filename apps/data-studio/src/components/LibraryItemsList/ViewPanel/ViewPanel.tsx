@@ -1,16 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 import {themeVars, useLang} from '@leav/ui';
 import {Badge, Button, Input, Spin} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {DragDropContext, Draggable, Droppable, DropResult, ResponderProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import {setDisplaySide} from 'reduxStore/display';
@@ -18,7 +17,6 @@ import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {GET_VIEWS_LIST, GET_VIEWS_LISTVariables} from '_gqlTypes/GET_VIEWS_LIST';
-import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {TypeSideItem} from '_types/types';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
 import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
