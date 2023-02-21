@@ -20,7 +20,7 @@ export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_library_gqlNames {
 export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: SUB_TASKS_UPDATE_task_created_by_whoAmI_library_gqlNames;
 }
 
@@ -60,7 +60,7 @@ export interface SUB_TASKS_UPDATE_task_created_by {
 
 export interface SUB_TASKS_UPDATE_task_progress {
     percent: number | null;
-    description: any | null;
+    description: SystemTranslation | null;
 }
 
 export interface SUB_TASKS_UPDATE_task_link {
@@ -76,7 +76,7 @@ export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library_gqlNames {
 export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library_gqlNames;
 }
 
@@ -116,13 +116,13 @@ export interface SUB_TASKS_UPDATE_task_canceledBy {
 
 export interface SUB_TASKS_UPDATE_task {
     id: string;
-    label: any;
+    label: SystemTranslation;
     modified_at: number;
     created_at: number;
     created_by: SUB_TASKS_UPDATE_task_created_by;
     startAt: number;
     status: TaskStatus;
-    priority: any;
+    priority: TaskPriority;
     progress: SUB_TASKS_UPDATE_task_progress | null;
     startedAt: number | null;
     completedAt: number | null;

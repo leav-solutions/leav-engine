@@ -20,7 +20,7 @@ export interface CREATE_RECORD_createRecord_whoAmI_library_gqlNames {
 export interface CREATE_RECORD_createRecord_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: CREATE_RECORD_createRecord_whoAmI_library_gqlNames;
 }
 

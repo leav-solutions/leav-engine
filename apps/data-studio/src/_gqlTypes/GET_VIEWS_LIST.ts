@@ -48,7 +48,7 @@ export interface GET_VIEWS_LIST_views_list_created_by {
 
 export interface GET_VIEWS_LIST_views_list_filters_tree {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface GET_VIEWS_LIST_views_list_filters {
@@ -72,7 +72,7 @@ export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI
 export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
 }
 
@@ -122,7 +122,7 @@ export interface GET_VIEWS_LIST_views_list_valuesVersions {
 
 export interface GET_VIEWS_LIST_views_list_settings {
     name: string;
-    value: any | null;
+    value: Any | null;
 }
 
 export interface GET_VIEWS_LIST_views_list {
@@ -130,8 +130,8 @@ export interface GET_VIEWS_LIST_views_list {
     display: GET_VIEWS_LIST_views_list_display;
     shared: boolean;
     created_by: GET_VIEWS_LIST_views_list_created_by;
-    label: any;
-    description: any | null;
+    label: SystemTranslation;
+    description: SystemTranslation | null;
     color: string | null;
     filters: GET_VIEWS_LIST_views_list_filters[] | null;
     sort: GET_VIEWS_LIST_views_list_sort | null;

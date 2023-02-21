@@ -41,7 +41,7 @@ export interface GET_USER_userWhoAmI_library_gqlNames {
 export interface GET_USER_userWhoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_USER_userWhoAmI_library_gqlNames;
 }
 

@@ -20,7 +20,7 @@ export interface GET_TASKS_tasks_list_created_by_whoAmI_library_gqlNames {
 export interface GET_TASKS_tasks_list_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_TASKS_tasks_list_created_by_whoAmI_library_gqlNames;
 }
 
@@ -60,7 +60,7 @@ export interface GET_TASKS_tasks_list_created_by {
 
 export interface GET_TASKS_tasks_list_progress {
     percent: number | null;
-    description: any | null;
+    description: SystemTranslation | null;
 }
 
 export interface GET_TASKS_tasks_list_link {
@@ -76,7 +76,7 @@ export interface GET_TASKS_tasks_list_canceledBy_whoAmI_library_gqlNames {
 export interface GET_TASKS_tasks_list_canceledBy_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: GET_TASKS_tasks_list_canceledBy_whoAmI_library_gqlNames;
 }
 
@@ -116,13 +116,13 @@ export interface GET_TASKS_tasks_list_canceledBy {
 
 export interface GET_TASKS_tasks_list {
     id: string;
-    label: any;
+    label: SystemTranslation;
     modified_at: number;
     created_at: number;
     created_by: GET_TASKS_tasks_list_created_by;
     startAt: number;
     status: TaskStatus;
-    priority: any;
+    priority: TaskPriority;
     progress: GET_TASKS_tasks_list_progress | null;
     startedAt: number | null;
     completedAt: number | null;

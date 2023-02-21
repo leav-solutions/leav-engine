@@ -49,7 +49,7 @@ export interface ADD_VIEW_saveView_created_by {
 
 export interface ADD_VIEW_saveView_filters_tree {
     id: string;
-    label: any | null;
+    label: SystemTranslation | null;
 }
 
 export interface ADD_VIEW_saveView_filters {
@@ -73,7 +73,7 @@ export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library
 export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
 }
 
@@ -123,7 +123,7 @@ export interface ADD_VIEW_saveView_valuesVersions {
 
 export interface ADD_VIEW_saveView_settings {
     name: string;
-    value: any | null;
+    value: Any | null;
 }
 
 export interface ADD_VIEW_saveView {
@@ -131,8 +131,8 @@ export interface ADD_VIEW_saveView {
     display: ADD_VIEW_saveView_display;
     shared: boolean;
     created_by: ADD_VIEW_saveView_created_by;
-    label: any;
-    description: any | null;
+    label: SystemTranslation;
+    description: SystemTranslation | null;
     color: string | null;
     filters: ADD_VIEW_saveView_filters[] | null;
     sort: ADD_VIEW_saveView_sort | null;

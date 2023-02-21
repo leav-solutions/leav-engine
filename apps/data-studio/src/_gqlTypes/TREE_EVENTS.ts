@@ -20,7 +20,7 @@ export interface TREE_EVENTS_treeEvent_element_record_whoAmI_library_gqlNames {
 export interface TREE_EVENTS_treeEvent_element_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
-    label: any | null;
+    label: SystemTranslation | null;
     gqlNames: TREE_EVENTS_treeEvent_element_record_whoAmI_library_gqlNames;
 }
 
