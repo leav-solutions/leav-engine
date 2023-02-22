@@ -10,9 +10,10 @@ import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import userDataDomain from './userDomain';
+import userDataDomain, {UserCoreDataKeys} from './userDomain';
 
 describe('UserDomain', () => {
     const ctx: IQueryInfos = {
@@ -80,6 +81,14 @@ describe('UserDomain', () => {
             });
 
             await expect(udd.saveUserData('test2', 2, true, ctx)).rejects.toThrow(PermissionError);
+        });
+
+        test('should throw if key is forbidden', async function () {
+            const udd = userDataDomain(); //{
+
+            await expect(udd.saveUserData(UserCoreDataKeys.CONSULTED_APPS, ['fake'], false, ctx)).rejects.toThrow(
+                ValidationError
+            );
         });
     });
 

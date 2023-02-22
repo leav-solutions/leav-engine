@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import ValidationError from '../../errors/ValidationError';
 import {IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {readFile} from 'fs/promises';
@@ -9,6 +10,7 @@ import {i18n} from 'i18next';
 import {IMailerService} from 'infra/mailer/mailerService';
 import {IUserDataRepo} from 'infra/userData/userDataRepo';
 import {IUtils} from 'utils/utils';
+import {Errors} from '../../_types/errors';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUserData} from '_types/userData';
@@ -16,7 +18,7 @@ import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 
 export interface IUserDomain {
-    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
+    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos, isCoreData?: boolean): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
     sendResetPasswordEmail(
         email: string,
@@ -40,7 +42,11 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export enum UserCoreDataKeys {
+    CONSULTED_APPS = 'applications_consultation'
+}
+
+export default function ({
     config = null,
     'core.infra.userData': userDataRepo = null,
     'core.domain.permission': permissionDomain = null,
@@ -82,7 +88,17 @@ export default function({
                 ctx
             );
         },
-        async saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData> {
+        async saveUserData(
+            key: string,
+            value: any,
+            global: boolean,
+            ctx: IQueryInfos,
+            isCoreData: boolean = false
+        ): Promise<IUserData> {
+            if (Object.values(UserCoreDataKeys).includes(key as UserCoreDataKeys)) {
+                throw new ValidationError({key: Errors.FORBIDDEN_KEY});
+            }
+
             if (
                 global &&
                 !(await permissionDomain.isAllowed({
@@ -95,7 +111,7 @@ export default function({
                 throw new PermissionError(AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES);
             }
 
-            return userDataRepo.saveUserData(key, value, global, ctx);
+            return userDataRepo.saveUserData(key, value, global, ctx, isCoreData);
         },
         async getUserData(keys: string[], global: boolean = false, ctx: IQueryInfos): Promise<IUserData> {
             const isAllowed = await permissionDomain.isAllowed({
