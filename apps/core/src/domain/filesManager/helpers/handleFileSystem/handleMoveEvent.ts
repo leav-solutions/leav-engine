@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {dbUtils} from 'infra/db';
 import {IQueryInfos} from '_types/queryInfos';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
@@ -98,7 +97,8 @@ export const handleMoveEvent = async (
             if (filePathDest && filePathDest !== '.' && !parentNode) {
                 throw new Error('Parent not found');
             }
-            await deps.treeRepo.moveElement({
+
+            await deps.treeDomain.moveElementWithoutCheck({
                 treeId: deps.utils.getLibraryTreeId(library),
                 nodeId: recordNode,
                 parentTo: parentNode,

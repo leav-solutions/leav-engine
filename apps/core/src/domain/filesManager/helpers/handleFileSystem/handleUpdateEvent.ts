@@ -46,7 +46,9 @@ export const handleUpdateEvent = async (
     };
 
     // Update datas
-    updateRecordFile(recordData, record.id, library, deps, ctx);
+    updateRecordFile(recordData, record.id, library, deps, ctx).catch(function (e) {
+        throw e;
+    });
 
     // Regenerate Previews
     requestPreviewGeneration(

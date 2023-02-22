@@ -6,10 +6,9 @@ import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import { IDbService } from 'infra/db/dbService';
-import { IDbUtils } from 'infra/db/dbUtils';
+import {IFilesManagerRepo} from 'infra/filesManager/filesManager';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import { ITreeRepo } from 'infra/tree/treeRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IConfig} from '_types/config';
@@ -30,8 +29,7 @@ interface IDeps {
     'core.infra.record'?: IRecordRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
-    'core.infra.db.dbService'?: IDbService;
-    'core.infra.db.dbUtils'?: IDbUtils;
+    'core.infra.filesManager'?: IFilesManagerRepo;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     config?: IConfig;
 }
@@ -51,8 +49,7 @@ export default function ({
     'core.infra.tree': treeRepo = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.utils': utils = null,
-    'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
+    'core.infra.filesManager': filesManagerRepo = null
 }: IDeps): IMessagesHandlerHelper {
     const _messagesQueue: IFileEventData[] = [];
     let _isWorking: boolean = false;
@@ -82,8 +79,7 @@ export default function ({
                     logger,
                     config,
                     utils,
-                    dbService,
-                    dbUtils
+                    filesManagerRepo
                 },
                 ctx
             );

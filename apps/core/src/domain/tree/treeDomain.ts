@@ -79,6 +79,20 @@ export interface ITreeDomain {
     }): Promise<ITreeNodeLight>;
 
     /**
+     * Move an element in the tree without checking for permissions, used by filesManager
+     *
+     * parentFrom A record or null to move from root
+     * parentTo A record or null to move to root
+     */
+    moveElementWithoutCheck(params: {
+        treeId: string;
+        nodeId: string;
+        parentTo: string | null;
+        order?: number;
+        ctx: IQueryInfos;
+    }): Promise<ITreeNodeLight>;
+
+    /**
      * Delete an element from the tree
      *
      * parent A record or null to delete from root
@@ -635,6 +649,30 @@ export default function ({
                 },
                 ctx
             );
+
+            return movedElement;
+        },
+        async moveElementWithoutCheck({treeId, nodeId, parentTo = null, order = 0, ctx}): Promise<ITreeNodeLight> {
+            const parents = await this.getElementAncestors({treeId, nodeId, ctx});
+            const parentBefore = parents.length > 1 ? [...parents].splice(-2, 1)[0] : null;
+            _clearAllTreeCaches(treeId, ctx).catch(function (e) {
+                throw e;
+            });
+            const movedElement = await treeRepo.moveElement({treeId, nodeId, parentTo, order, ctx});
+
+            _sendTreeEvent(
+                {
+                    type: TreeEventTypes.MOVE,
+                    treeId,
+                    element: movedElement,
+                    parentNode: parentTo ?? null,
+                    parentNodeBefore: parentBefore?.id ?? null,
+                    order
+                },
+                ctx
+            ).catch(function (e) {
+                throw e;
+            });
 
             return movedElement;
         },

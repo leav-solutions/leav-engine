@@ -16,9 +16,8 @@ import {handleMoveEvent} from './handleFileSystem/handleMoveEvent';
 import {handleRemoveEvent} from './handleFileSystem/handleRemoveEvent';
 import {handleUpdateEvent} from './handleFileSystem/handleUpdateEvent';
 import winston = require('winston');
-import { IDbService } from 'infra/db/dbService';
-import { IDbUtils } from 'infra/db/dbUtils';
-import { ITreeRepo } from 'infra/tree/treeRepo';
+import {ITreeRepo} from 'infra/tree/treeRepo';
+import {IFilesManagerRepo} from 'infra/filesManager/filesManager';
 
 export interface IHandleFileSystemDeps {
     recordDomain: IRecordDomain;
@@ -31,8 +30,7 @@ export interface IHandleFileSystemDeps {
     logger: winston.Winston;
     config: Config.IConfig;
     utils: IUtils;
-    dbService: IDbService;
-    dbUtils: IDbUtils
+    filesManagerRepo: IFilesManagerRepo;
 }
 
 export interface IHandleFileSystemResources {
