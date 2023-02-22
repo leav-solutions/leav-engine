@@ -32,19 +32,21 @@ export default function useUpdateViewsOrderMutation(library: string): IUseUpdate
 
                     const cacheData = cache.readQuery<GET_USER_DATA, GET_USER_DATAVariables>(queryToUpdate);
 
-                    cache.writeQuery<GET_USER_DATA, GET_USER_DATAVariables>({
-                        ...queryToUpdate,
-                        data: {
-                            userData: {
-                                global: cacheData.userData.global,
-                                data: {
-                                    ...cacheData.userData.data,
-                                    [options.variables.key]:
-                                        mutationResult.data.saveUserData.data[options.variables.key]
+                    if (cacheData) {
+                        cache.writeQuery<GET_USER_DATA, GET_USER_DATAVariables>({
+                            ...queryToUpdate,
+                            data: {
+                                userData: {
+                                    global: cacheData.userData.global,
+                                    data: {
+                                        ...cacheData.userData.data,
+                                        [options.variables.key]:
+                                            mutationResult.data.saveUserData.data[options.variables.key]
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
         }

@@ -32,15 +32,17 @@ export default function useAddViewMutation(library: string): IUseAddViewMutation
 
                     const cacheData = cache.readQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>(queryToUpdate);
 
-                    cache.writeQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>({
-                        ...queryToUpdate,
-                        data: {
-                            views: {
-                                list: [...cacheData.views.list, mutationResult.data.saveView],
-                                totalCount: cacheData.views.totalCount + 1
+                    if (cacheData) {
+                        cache.writeQuery<GET_VIEWS_LIST, GET_VIEWS_LISTVariables>({
+                            ...queryToUpdate,
+                            data: {
+                                views: {
+                                    list: [...cacheData.views.list, mutationResult.data.saveView],
+                                    totalCount: cacheData.views.totalCount + 1
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
         }
