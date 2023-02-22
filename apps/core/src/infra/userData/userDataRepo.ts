@@ -52,7 +52,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
                             FILTER e.userId == ${global ? null : ctx.userId}
                         RETURN e)
 
-                    LET MERGED = MERGE(userData.data, userData.core_data)
+                    LET MERGED = MERGE(userData.data || {}, userData.core_data || {})
 
                     RETURN KEEP(MERGED, ${keys})
                 `,
