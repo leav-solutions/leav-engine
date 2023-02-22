@@ -16,7 +16,6 @@ import {handleMoveEvent} from './handleFileSystem/handleMoveEvent';
 import {handleRemoveEvent} from './handleFileSystem/handleRemoveEvent';
 import {handleUpdateEvent} from './handleFileSystem/handleUpdateEvent';
 import winston = require('winston');
-import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IFilesManagerRepo} from 'infra/filesManager/filesManager';
 
 export interface IHandleFileSystemDeps {
@@ -24,7 +23,6 @@ export interface IHandleFileSystemDeps {
     valueDomain: IValueDomain;
     treeDomain: ITreeDomain;
     recordRepo: IRecordRepo;
-    treeRepo: ITreeRepo;
     amqpService: IAmqpService;
     updateRecordLastModif: UpdateRecordLastModifFunc;
     logger: winston.Winston;

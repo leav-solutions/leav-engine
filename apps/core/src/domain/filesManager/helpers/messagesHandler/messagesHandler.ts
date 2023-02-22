@@ -8,7 +8,6 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IFilesManagerRepo} from 'infra/filesManager/filesManager';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IConfig} from '_types/config';
@@ -27,7 +26,6 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.infra.record'?: IRecordRepo;
-    'core.infra.tree'?: ITreeRepo;
     'core.utils'?: IUtils;
     'core.infra.filesManager'?: IFilesManagerRepo;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
@@ -46,7 +44,6 @@ export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.infra.record': recordRepo = null,
-    'core.infra.tree': treeRepo = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.utils': utils = null,
     'core.infra.filesManager': filesManagerRepo = null
@@ -73,7 +70,6 @@ export default function ({
                     valueDomain,
                     treeDomain,
                     recordRepo,
-                    treeRepo,
                     amqpService,
                     updateRecordLastModif,
                     logger,
