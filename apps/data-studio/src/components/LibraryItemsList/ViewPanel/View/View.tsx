@@ -14,11 +14,16 @@ import {useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {ViewInput} from '_gqlTypes/globalTypes';
 import {defaultView} from '../../../../constants/constants';
 import {localizedTranslation} from '../../../../utils';
 import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {IView} from '../../../../_types/types';
 import IconViewType from '../../../IconViewType';
+import {useUser} from '../../../../hooks/UserHook/UserHook';
+import {RiUserReceivedLine} from 'react-icons/ri';
+import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../ViewPanel';
+import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 
 interface IWrapperProps {
     selected: boolean;
@@ -75,6 +80,7 @@ interface IViewProps {
 function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const {t} = useTranslation();
     const {lang, defaultLang} = useLang();
+    const [user] = useUser();
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [description, setDescription] = useState<{expand: boolean; key: number}>({expand: false, key: 0});
@@ -82,6 +88,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const {addView} = useAddViewMutation(searchState.library.id);
 
     const {deleteView} = useDeleteViewMutation();
+    const {updateViewsOrder} = useUpdateViewsOrderMutation(searchState.library.id);
 
     const _changeView = () => {
         searchDispatch({type: SearchActionTypes.CHANGE_VIEW, view});
@@ -95,22 +102,19 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
 
         await deleteView(view.id);
 
-        // set flag to refetch views
+        const newOrder = (view.shared ? searchState.sharedViewsOrder : searchState.userViewsOrder).filter(
+            vId => vId !== view.id
+        );
+
+        await updateViewsOrder({
+            key: (view.shared ? PREFIX_SHARED_VIEWS_ORDER_KEY : PREFIX_USER_VIEWS_ORDER_KEY) + searchState.library.id,
+            value: newOrder,
+            global: false
+        });
+
         if (view.id === searchState.view.current.id) {
             searchDispatch({type: SearchActionTypes.CHANGE_VIEW, view: defaultView});
         }
-
-        searchDispatch(
-            !view.shared
-                ? {
-                      type: SearchActionTypes.SET_USER_VIEWS_ORDER,
-                      userViewsOrder: searchState.userViewsOrder.filter(id => id !== view.id)
-                  }
-                : {
-                      type: SearchActionTypes.SET_SHARED_VIEWS_ORDER,
-                      sharedViewsOrder: searchState.sharedViewsOrder.filter(id => id !== view.id)
-                  }
-        );
     };
 
     const _handleDuplicate = async (event: any) => {
@@ -118,32 +122,28 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
         event.stopPropagation();
 
         try {
+            const newView: ViewInput = {
+                ...omit(view, ['id', 'owner']),
+                library: searchState.library.id,
+                label: {
+                    [defaultLang]: `${localizedTranslation(view.label, lang)} (${t('global.copy')})`
+                },
+                filters: getRequestFromFilters(view.filters),
+                valuesVersions: objectToNameValueArray(view.valuesVersions).map(version => ({
+                    treeId: version.name,
+                    treeNode: version.value.id
+                })),
+                shared: false
+            };
+
             const newViewRes = await addView({
-                view: {
-                    ...omit(view, 'owner'),
-                    label: {
-                        [defaultLang]: `${localizedTranslation(view.label, lang)} (${t('global.copy')})`
-                    },
-                    filters: getRequestFromFilters(view.filters),
-                    id: undefined,
-                    library: searchState.library.id,
-                    valuesVersions: objectToNameValueArray(searchState.valuesVersions).map(version => ({
-                        treeId: version.name,
-                        treeNode: version.value.id
-                    })),
-                    shared: false
-                }
+                view: newView
             });
 
-            // set flag to refetch views
-            searchDispatch({
-                type: SearchActionTypes.SET_VIEW_RELOAD,
-                reload: true
-            });
-
-            searchDispatch({
-                type: SearchActionTypes.SET_USER_VIEWS_ORDER,
-                userViewsOrder: [...searchState.userViewsOrder, newViewRes.data.saveView.id]
+            await updateViewsOrder({
+                key: PREFIX_USER_VIEWS_ORDER_KEY + newView.library,
+                value: [...searchState.userViewsOrder, newViewRes.data.saveView.id],
+                global: false
             });
         } catch (e) {
             console.error(e);
@@ -170,6 +170,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const [isActionsShown, setIsActionsShown] = useState(false);
 
     const viewLabel = localizedTranslation(view.label, lang);
+
     return (
         <Wrapper
             key={view.id}
@@ -215,7 +216,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                     </Description>
                 )}
             </Infos>
-
+            {!view.owner && !isActionsShown && <RiUserReceivedLine size="1.3em" />}
             {isActionsShown && (
                 <>
                     <Tooltip title={t('global.edit')}>

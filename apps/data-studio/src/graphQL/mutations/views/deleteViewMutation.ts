@@ -15,6 +15,7 @@ const deleteViewMutation = gql`
     mutation DELETE_VIEW($viewId: String!) {
         deleteView(viewId: $viewId) {
             id
+            library
         }
     }
 `;

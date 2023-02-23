@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {defaultLinkAttributeFilterFormat} from 'constants/constants';
 import {checkTypeIsLink} from 'utils';
-import {AttributeType} from '_gqlTypes/globalTypes';
+import {AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
 import {
     AttributeConditionFilter,
     FilterType,
@@ -16,6 +16,18 @@ import {
     TreeConditionFilter
 } from '_types/types';
 
+const _isConditionWithNoValue = (condition: RecordFilterCondition): boolean => {
+    return (
+        condition === RecordFilterCondition.IS_EMPTY ||
+        condition === RecordFilterCondition.IS_NOT_EMPTY ||
+        condition === RecordFilterCondition.LAST_MONTH ||
+        condition === RecordFilterCondition.NEXT_MONTH ||
+        condition === RecordFilterCondition.TODAY ||
+        condition === RecordFilterCondition.TOMORROW ||
+        condition === RecordFilterCondition.YESTERDAY
+    );
+};
+
 export const getFiltersFromRequest = (
     queryFilters: IQueryFilter[],
     library: string,
@@ -24,7 +36,8 @@ export const getFiltersFromRequest = (
     let filters: IFilter[] = [];
 
     for (const queryFilter of queryFilters) {
-        const isConditionWithNoValue = queryFilter.condition === 'IS_EMPTY' || queryFilter.condition === 'IS_NOT_EMPTY';
+        const isConditionWithNoValue = _isConditionWithNoValue(queryFilter.condition);
+
         if (queryFilter.value || isConditionWithNoValue) {
             const splitKey = queryFilter.field.split('.');
 

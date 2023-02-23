@@ -12,6 +12,7 @@
 
 export interface DELETE_VIEW_deleteView {
     id: string;
+    library: string;
 }
 
 export interface DELETE_VIEW {
