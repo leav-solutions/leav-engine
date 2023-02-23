@@ -10,9 +10,10 @@ import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import userDataDomain from './userDomain';
+import userDataDomain, {UserCoreDataKeys} from './userDomain';
 
 describe('UserDomain', () => {
     const ctx: IQueryInfos = {
@@ -39,7 +40,7 @@ describe('UserDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            const res = await udd.saveUserData('test1', 1, false, ctx);
+            const res = await udd.saveUserData({key: 'test1', value: 1, global: false, ctx});
 
             expect(mockUserDataRepo.saveUserData.mock.calls.length).toBe(1);
             expect(res).toBeTruthy();
@@ -59,7 +60,7 @@ describe('UserDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            const res = await udd.saveUserData('test3', 3, true, ctx);
+            const res = await udd.saveUserData({key: 'test3', value: 3, global: true, ctx});
 
             expect(mockUserDataRepo.saveUserData.mock.calls.length).toBe(1);
             expect(res).toBeTruthy();
@@ -79,7 +80,17 @@ describe('UserDomain', () => {
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
-            await expect(udd.saveUserData('test2', 2, true, ctx)).rejects.toThrow(PermissionError);
+            await expect(udd.saveUserData({key: 'test2', value: 2, global: true, ctx})).rejects.toThrow(
+                PermissionError
+            );
+        });
+
+        test('should throw if key is forbidden', async function () {
+            const udd = userDataDomain(); //{
+
+            await expect(
+                udd.saveUserData({key: UserCoreDataKeys.CONSULTED_APPS, value: ['fake'], global: false, ctx})
+            ).rejects.toThrow(ValidationError);
         });
     });
 

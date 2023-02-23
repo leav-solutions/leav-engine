@@ -340,7 +340,13 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData.mock.calls[0][1]).toEqual([mockApplication.id]);
+            expect(mockUserDomain.saveUserData.mock.calls[0][0]).toMatchObject({
+                key: CONSULTED_APPS_KEY,
+                value: [mockApplication.id],
+                global: false,
+                isCoreData: true,
+                ctx: mockCtx
+            });
         });
 
         test('Dedup history', async () => {
@@ -363,12 +369,13 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData.mock.calls[0][1]).toEqual([
-                mockApplication.id,
-                'some_app',
-                'another_app',
-                'last_app'
-            ]);
+            expect(mockUserDomain.saveUserData.mock.calls[0][0]).toMatchObject({
+                key: CONSULTED_APPS_KEY,
+                value: [mockApplication.id, 'some_app', 'another_app', 'last_app'],
+                global: false,
+                isCoreData: true,
+                ctx: mockCtx
+            });
         });
 
         test('Limit history size', async () => {
@@ -391,8 +398,8 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData.mock.calls[0][1][0]).toBe(mockApplication.id);
-            expect(mockUserDomain.saveUserData.mock.calls[0][1]).toHaveLength(MAX_CONSULTATION_HISTORY_SIZE);
+            expect(mockUserDomain.saveUserData.mock.calls[0][0].value[0]).toBe(mockApplication.id);
+            expect(mockUserDomain.saveUserData.mock.calls[0][0].value).toHaveLength(MAX_CONSULTATION_HISTORY_SIZE);
         });
     });
 });

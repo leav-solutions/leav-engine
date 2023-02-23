@@ -54,7 +54,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.user': userDomain = null,
     'core.infra.application': applicationRepo = null,
@@ -198,7 +198,13 @@ export default function({
             );
 
             // Save new history
-            await userDomain.saveUserData(CONSULTED_APPS_KEY, newHistory, false, ctx);
+            await userDomain.saveUserData({
+                key: CONSULTED_APPS_KEY,
+                value: newHistory,
+                global: false,
+                isCoreData: true,
+                ctx
+            });
         },
         async getAvailableModules({ctx}): Promise<IApplicationModule[]> {
             return applicationRepo.getAvailableModules({ctx});

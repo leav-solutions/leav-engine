@@ -8,8 +8,16 @@ import {IDbService} from '../db/dbService';
 
 const USER_DATA_COLLECTION = 'core_user_data';
 
+interface ISaveUserDataParams {
+    key: string;
+    value: any;
+    global: boolean;
+    isCoreData?: boolean;
+    ctx: IQueryInfos;
+}
+
 export interface IUserDataRepo {
-    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData>;
+    saveUserData(params: ISaveUserDataParams): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
 }
 
@@ -19,14 +27,15 @@ interface IDeps {
 
 export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IUserDataRepo {
     return {
-        async saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos): Promise<IUserData> {
+        async saveUserData({key, value, global, isCoreData = false, ctx}: ISaveUserDataParams): Promise<IUserData> {
             const collection = dbService.db.collection(USER_DATA_COLLECTION);
+            const dataKey = isCoreData ? 'core_data' : 'data';
 
             const res = await dbService.execute({
                 query: aql`
                     UPSERT ${{userId: global ? null : ctx.userId}}
                     INSERT ${{userId: global ? null : ctx.userId, data: {[key]: value}}}
-                    UPDATE ${{data: {[key]: typeof value !== 'undefined' ? value : null}}}
+                    UPDATE ${{[dataKey]: {[key]: typeof value !== 'undefined' ? value : null}}}
                     IN ${collection}
                     OPTIONS { mergeObjects: true, keepNull: false }
                     RETURN NEW`,
@@ -40,9 +49,15 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
 
             const userData = await dbService.execute({
                 query: aql`
-                    RETURN KEEP(FIRST(FOR e IN ${collection}
-                        FILTER e.userId == ${global ? null : ctx.userId}
-                    RETURN e).data, ${keys})`,
+                    LET userData = 
+                        FIRST(FOR e IN ${collection}
+                            FILTER e.userId == ${global ? null : ctx.userId}
+                        RETURN e)
+
+                    LET MERGED = MERGE(userData.data || {}, userData.core_data || {})
+
+                    RETURN KEEP(MERGED, ${keys})
+                `,
                 ctx
             });
 

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IUserDomain} from 'domain/user/userDomain';
+import {UserCoreDataKeys, IUserDomain} from '../../domain/user/userDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IUserData} from '_types/userData';
@@ -22,6 +22,10 @@ export default function ({'core.domain.user': userDomain = null}: IDeps = {}): I
                     type UserData {
                         global: Boolean!,
                         data: Any
+                    }
+
+                    enum UserCoreDataKeys {
+                        ${Object.values(UserCoreDataKeys).join(' ')}
                     }
 
                     extend type Mutation {
@@ -48,7 +52,7 @@ export default function ({'core.domain.user': userDomain = null}: IDeps = {}): I
                             {key, value, global}: {key: string; value: any; global: boolean},
                             ctx: IQueryInfos
                         ): Promise<IUserData> {
-                            return userDomain.saveUserData(key, value, global, ctx);
+                            return userDomain.saveUserData({key, value, global, ctx});
                         }
                     }
                 }

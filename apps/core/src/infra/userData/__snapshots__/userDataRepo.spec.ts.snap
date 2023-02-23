@@ -2,9 +2,15 @@
 
 exports[`UserDataRepo get user data 1`] = `
 "
-                    RETURN KEEP(FIRST(FOR e IN @@value0
-                        FILTER e.userId == @value1
-                    RETURN e).data, @value2)"
+                    LET userData = 
+                        FIRST(FOR e IN @@value0
+                            FILTER e.userId == @value1
+                        RETURN e)
+
+                    LET MERGED = MERGE(userData.data || {}, userData.core_data || {})
+
+                    RETURN KEEP(MERGED, @value2)
+                "
 `;
 
 exports[`UserDataRepo get user data 2`] = `

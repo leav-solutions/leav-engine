@@ -14,6 +14,7 @@
         "ONLY_FOLDERS_CAN_BE_SELECTED": "Only folders can be selected",
         "DUPLICATE_DIRECTORY_NAMES": "Noms de dossier identiques",
         "FORBIDDEN_ID": "L'Id spécifiée est interdit",
+        "FORBIDDEN_KEY": "La clé spécifiée est interdite",
         "FORMAT_ERROR": "Format invalide: {{details}}",
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",

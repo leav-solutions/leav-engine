@@ -20,7 +20,7 @@ describe('UserDataRepo', () => {
             'core.infra.db.dbService': mockDbServ
         });
 
-        const res = await udr.saveUserData('test', 'value', false, ctx);
+        const res = await udr.saveUserData({key: 'test', value: 'value', global: false, ctx});
 
         expect(mockDbServ.execute.mock.calls.length).toBe(1);
         expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
@@ -50,6 +50,9 @@ describe('UserDataRepo', () => {
         expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
 
         expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/FILTER/);
+        expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/MERGE/);
+        expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/KEEP/);
+
         expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
         expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
