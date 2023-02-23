@@ -52,7 +52,7 @@ export default function ({'core.domain.user': userDomain = null}: IDeps = {}): I
                             {key, value, global}: {key: string; value: any; global: boolean},
                             ctx: IQueryInfos
                         ): Promise<IUserData> {
-                            return userDomain.saveUserData(key, value, global, ctx);
+                            return userDomain.saveUserData({key, value, global, ctx});
                         }
                     }
                 }

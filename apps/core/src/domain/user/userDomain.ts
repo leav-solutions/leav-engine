@@ -17,8 +17,16 @@ import {IUserData} from '_types/userData';
 import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 
+interface ISaveUserDataParams {
+    key: string;
+    value: any;
+    global: boolean;
+    isCoreData?: boolean;
+    ctx: IQueryInfos;
+}
+
 export interface IUserDomain {
-    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos, isCoreData?: boolean): Promise<IUserData>;
+    saveUserData(params: ISaveUserDataParams): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
     sendResetPasswordEmail(
         email: string,
@@ -88,14 +96,8 @@ export default function ({
                 ctx
             );
         },
-        async saveUserData(
-            key: string,
-            value: any,
-            global: boolean,
-            ctx: IQueryInfos,
-            isCoreData: boolean = false
-        ): Promise<IUserData> {
-            if (Object.values(UserCoreDataKeys).includes(key as UserCoreDataKeys)) {
+        async saveUserData({key, value, global, isCoreData = false, ctx}: ISaveUserDataParams): Promise<IUserData> {
+            if (!isCoreData && Object.values(UserCoreDataKeys).includes(key as UserCoreDataKeys)) {
                 throw new ValidationError({key: Errors.FORBIDDEN_KEY});
             }
 
@@ -111,7 +113,7 @@ export default function ({
                 throw new PermissionError(AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES);
             }
 
-            return userDataRepo.saveUserData(key, value, global, ctx, isCoreData);
+            return userDataRepo.saveUserData({key, value, global, isCoreData, ctx});
         },
         async getUserData(keys: string[], global: boolean = false, ctx: IQueryInfos): Promise<IUserData> {
             const isAllowed = await permissionDomain.isAllowed({

@@ -14,6 +14,7 @@
         "DUPLICATE_DIRECTORY_NAMES": "Duplicate directory names",
         "ONLY_FOLDERS_CAN_BE_SELECTED": "Only folders can be selected",
         "FORBIDDEN_ID": "The specified Id is forbidden",
+        "FORBIDDEN_KEY": "The specified key is forbidden",
         "FORMAT_ERROR": "Invalid format: {{details}}",
         "INVALID_ACTION_TYPE": "Last action is invalid: expected action with output types including {{expected}}, received {{received}}",
         "INVALID_ATTRIBUTES": "Invalid attributes: {{attributes}}",

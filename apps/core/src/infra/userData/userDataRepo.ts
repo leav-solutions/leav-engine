@@ -8,8 +8,16 @@ import {IDbService} from '../db/dbService';
 
 const USER_DATA_COLLECTION = 'core_user_data';
 
+interface ISaveUserDataParams {
+    key: string;
+    value: any;
+    global: boolean;
+    isCoreData?: boolean;
+    ctx: IQueryInfos;
+}
+
 export interface IUserDataRepo {
-    saveUserData(key: string, value: any, global: boolean, ctx: IQueryInfos, isCoreData?: boolean): Promise<IUserData>;
+    saveUserData(params: ISaveUserDataParams): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
 }
 
@@ -19,13 +27,7 @@ interface IDeps {
 
 export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IUserDataRepo {
     return {
-        async saveUserData(
-            key: string,
-            value: any,
-            global: boolean,
-            ctx: IQueryInfos,
-            isCoreData: boolean = false
-        ): Promise<IUserData> {
+        async saveUserData({key, value, global, isCoreData = false, ctx}: ISaveUserDataParams): Promise<IUserData> {
             const collection = dbService.db.collection(USER_DATA_COLLECTION);
             const dataKey = isCoreData ? 'core_data' : 'data';
 

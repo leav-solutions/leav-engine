@@ -198,7 +198,13 @@ export default function ({
             );
 
             // Save new history
-            await userDomain.saveUserData(CONSULTED_APPS_KEY, newHistory, false, ctx, true);
+            await userDomain.saveUserData({
+                key: CONSULTED_APPS_KEY,
+                value: newHistory,
+                global: false,
+                isCoreData: true,
+                ctx
+            });
         },
         async getAvailableModules({ctx}): Promise<IApplicationModule[]> {
             return applicationRepo.getAvailableModules({ctx});
