@@ -232,14 +232,14 @@ describe('Records', () => {
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'test',
                 linkedLibrary: sfTestLibId,
-                reverse_link: testAdvLinkAttrId
+                reverseLink: testAdvLinkAttrId
             });
             await gqlSaveAttribute({
                 id: testAdvRevLinkToSimpleLinkAttrId,
                 type: AttributeTypes.ADVANCED_LINK,
                 label: 'test',
                 linkedLibrary: sfTestLibId,
-                reverse_link: testSimpleLinkAttrId
+                reverseLink: testSimpleLinkAttrId
             });
             await gqlSaveAttribute({
                 id: testTreeAttrId,

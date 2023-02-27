@@ -1,11 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import heritageCalculationAction from './heritageCalculationAction';
-import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
-import {ICalculationVariable, IVariableValue} from 'domain/helpers/calculationVariable';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IVariableValue} from 'domain/helpers/calculationVariable';
+import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
+import {IRecord} from '_types/record';
 import {AttributeTypes} from '../../_types/attribute';
+import inheritanceCalculationAction from './inheritanceCalculationAction';
 
 const mockCalculationsVariable = {
     processVariableString: async (
@@ -27,7 +28,7 @@ const mockAttributeDomain: Mockify<IAttributeDomain> = {
     getAttributeProperties: global.__mockPromise({type: 'meh'})
 };
 
-const action = heritageCalculationAction({
+const action = inheritanceCalculationAction({
     'core.domain.helpers.calculationVariable': mockCalculationsVariable,
     'core.domain.attribute': mockAttributeDomain as IAttributeDomain
 }).action;
@@ -49,7 +50,8 @@ describe('heritageCalculationAction', () => {
         );
         expect(res).toBe('42Value');
     });
-    test('no formula', async () => {
+
+    test('No formula', async () => {
         const ctx: IActionsListContext = {
             attribute: {
                 id: 'meh',
@@ -65,11 +67,12 @@ describe('heritageCalculationAction', () => {
         );
         expect(res).toBe('Value');
     });
-    test('Herit from link', async () => {
+
+    test('Inherit from link', async () => {
         const mockAttributeDomain2: Mockify<IAttributeDomain> = {
             getAttributeProperties: global.__mockPromise({type: AttributeTypes.SIMPLE_LINK, linked_library: 'meh'})
         };
-        const action2 = heritageCalculationAction({
+        const action2 = inheritanceCalculationAction({
             'core.domain.helpers.calculationVariable': mockCalculationsVariable,
             'core.domain.attribute': mockAttributeDomain2 as IAttributeDomain
         }).action;
@@ -80,17 +83,17 @@ describe('heritageCalculationAction', () => {
             }
         };
 
-        const res = await action2(
+        const res = (await action2(
             null,
             {
                 Formula: ''
             },
             ctx
-        );
-        expect(res).toHaveLength(1);
-        expect(res[0]).toHaveProperty('id');
-        expect(res[0]).toHaveProperty('library');
-        expect(res[0].id).toBe('Value');
-        expect(res[0].library).toBe('meh');
+        )) as IRecord;
+
+        expect(res).toHaveProperty('id');
+        expect(res).toHaveProperty('library');
+        expect(res.id).toBe('Value');
+        expect(res.library).toBe('meh');
     });
 });

@@ -10,6 +10,7 @@ import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttribut
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {IUtils} from 'utils/utils';
+import {Winston} from 'winston';
 import {IForm} from '_types/forms';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
@@ -435,9 +436,14 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockRejectedValue(new Error('boom!'))
             };
 
+            const mockLogger: Mockify<Winston> = {
+                error: jest.fn()
+            };
+
             const domain = formDomain({
                 'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.utils.logger': mockLogger as Winston
             });
 
             const mockContainer = {...formLayoutElement};

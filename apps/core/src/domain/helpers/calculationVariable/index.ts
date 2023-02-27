@@ -4,9 +4,9 @@
 
 import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
 import {IValue} from '_types/value';
-import {IVariableFunctions} from '../calculationsVariableFunctions';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
+import {IVariableFunctions} from '../calculationsVariableFunctions';
 
 interface IDeps {
     'core.domain.helpers.calculationsVariableFunctions'?: IVariableFunctions;
@@ -20,7 +20,7 @@ export interface IVariableValue {
 export interface ICalculationVariable {
     processVariableString: (IActionsListContext, string, ActionsListValueType) => Promise<IVariableValue[]>;
 }
-export default function ({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
+export default function({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
     const processVariableString = async (
         context: IActionsListContext,
         variableString: string,

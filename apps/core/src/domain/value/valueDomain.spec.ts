@@ -1964,6 +1964,10 @@ describe('ValueDomain', () => {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
             };
 
+            const mockUtils: Mockify<IUtils> = {
+                isStandardAttribute: jest.fn().mockReturnValue(true)
+            };
+
             const valDomain = valueDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1971,7 +1975,8 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
-                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
+                'core.utils': mockUtils as IUtils
             });
 
             const version: IValueVersion = {my_tree: '9'};

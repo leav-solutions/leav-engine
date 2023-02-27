@@ -148,7 +148,7 @@ function LinkField({
     const {loading: recordColumnsLoading, data: recordColumnsData, refetch} = useGetRecordValuesQuery(
         attribute?.linked_library?.gqlNames.query,
         linkedRecordsColumns.map(c => c.id),
-        activeValues.map(r => r.linkValue.id)
+        activeValues.map(r => r.linkValue?.id)
     );
 
     // Cancel value editing if value details panel is closed
@@ -395,10 +395,10 @@ function LinkField({
     }));
 
     const data: IRowData[] = activeValues.map(val => ({
-        key: val.id_value + val.linkValue.id,
+        key: val.id_value + val.linkValue?.id,
         value: val,
-        whoAmI: val.linkValue.whoAmI,
-        ..._getLinkedRecordColumnsValues(val.linkValue.id)
+        whoAmI: val.linkValue?.whoAmI,
+        ..._getLinkedRecordColumnsValues(val.linkValue?.id)
     }));
 
     const canAddValue = !isReadOnly && (attribute.multiple_values || !activeValues.length);
