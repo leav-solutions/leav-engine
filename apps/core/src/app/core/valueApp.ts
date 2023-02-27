@@ -25,7 +25,7 @@ interface IDeps {
     'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
     'core.utils'?: IUtils;
 }
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -153,9 +153,9 @@ export default function({
                     }
 
                     type TreeValue implements GenericValue {
-                        id_value: ID!,
-                        modified_at: Int!,
-                        created_at: Int!
+                        id_value: ID,
+                        modified_at: Int,
+                        created_at: Int
                         modified_by: User,
                         created_by: User,
                         value: TreeNode,

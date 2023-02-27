@@ -4,10 +4,11 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import jwt, {Algorithm} from 'jsonwebtoken';
-import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '_types/attribute';
+import {IActionsListConfig} from '_types/actionsList';
 import {ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
 import {adminsGroupId} from '../../../_constants/userGroups';
+import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 
 async function _getAuthToken() {
@@ -113,21 +114,23 @@ export async function gqlSaveAttribute(params: {
     linkedLibrary?: string;
     linkedTree?: string;
     multipleValues?: boolean;
-    reverse_link?: string;
+    reverseLink?: string;
+    actionsList?: IActionsListConfig;
 }) {
     const {
         id,
         type,
         label,
         description,
-        format,
+        format = AttributeFormats.TEXT,
         versionsConf,
         metadataFields,
         embeddedFields,
         linkedLibrary,
         linkedTree,
         multipleValues,
-        reverse_link
+        reverseLink,
+        actionsList
     } = params;
 
     const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => {
@@ -144,16 +147,39 @@ export async function gqlSaveAttribute(params: {
         `;
     };
 
+    const _convertActionsList = (actions: IActionsListConfig): string => {
+        return `
+            {
+                ${Object.keys(actions)
+                    .map(eventKey => {
+                        const eventActions = actions[eventKey].map(
+                            actionConf => `{
+                                id: "${actionConf.id}",
+                                params: [${(actionConf?.params ?? [])
+                                    .map(p => {
+                                        return `{name: "${p.name}", value: "${p.value}"}`;
+                                    })
+                                    .join(', ')}]
+                            }`
+                        );
+
+                        return `${eventKey}: [${eventActions.join(', ')}]`;
+                    })
+                    .join(', ')}
+            }
+        `;
+    };
+
     const query = `mutation {
         saveAttribute(
             attribute: {
                 id: "${id}",
                 type: ${type},
-                format: ${format || 'text'},
+                format: ${format},
                 label: {fr: "${label}"},
                 description: {fr: "${description ? `"${description}"` : 'null'}"},
                 linked_library: ${linkedLibrary ? `"${linkedLibrary}"` : 'null'},
-                reverse_link: ${reverse_link ? `"${reverse_link}"` : 'null'},
+                reverse_link: ${reverseLink ? `"${reverseLink}"` : 'null'},
                 linked_tree: ${linkedTree ? `"${linkedTree}"` : 'null'},
                 metadata_fields: ${metadataFields ? `[${metadataFields.map(t => `"${t}"`).join(', ')}]` : 'null'},
                 versions_conf: ${
@@ -165,7 +191,8 @@ export async function gqlSaveAttribute(params: {
                         : 'null'
                 },
                 embedded_fields: ${embeddedFields ? `${embeddedFields.map(_convertEmbeddedFields).join(', ')}` : 'null'}
-                multiple_values: ${multipleValues ? 'true' : 'false'}
+                multiple_values: ${multipleValues ? 'true' : 'false'},
+                actions_list: ${actionsList ? _convertActionsList(actionsList) : 'null'}
             }
         ) { id }
     }`;

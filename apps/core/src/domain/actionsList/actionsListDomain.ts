@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
 import {AwilixContainer} from 'awilix';
+import Joi from 'joi';
 import {partialRight} from 'lodash';
 import {IUtils} from '../../utils/utils';
 import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
@@ -50,7 +50,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.depsManager': depsManager = null,
     'core.utils': utils = null
 }: IDeps = {}): IActionsListDomain {

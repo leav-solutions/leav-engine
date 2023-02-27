@@ -99,12 +99,12 @@ export const getActionsListToSave = (
                 // the flag to false
                 allALs[evName] = attrDataToSave.actions_list[evName]
                     ? attrDataToSave.actions_list[evName].map(actionToSave => {
-                          const sysActionIndex = existingAL[evName].findIndex(
+                          const sysActionIndex = (existingAL[evName] ?? []).findIndex(
                               al => al.name === actionToSave.name && al.is_system
                           );
                           return {
                               ...{is_system: false},
-                              ...existingAL[evName][sysActionIndex],
+                              ...existingAL[evName]?.[sysActionIndex],
                               ...actionToSave
                           };
                       })

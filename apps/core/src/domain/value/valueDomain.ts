@@ -373,10 +373,25 @@ const valueDomain = function ({
                 // Retrieve appropriate value among all values
                 values = options?.forceGetAllValues ? allValues : findValue(trees, allValues);
             }
+
             // Runs actionsList
-            values = await Promise.all(
-                values.map(v => _runActionsList(ActionsListEvents.GET_VALUE, v, attr, {id: recordId}, library, ctx))
-            );
+            values = values.length
+                ? await Promise.all(
+                      values.map(v =>
+                          _runActionsList(ActionsListEvents.GET_VALUE, v, attr, {id: recordId}, library, ctx)
+                      )
+                  )
+                : [
+                      // Force running actionsList for actions that generate values (eg. calculation or inheritance)
+                      await _runActionsList(
+                          ActionsListEvents.GET_VALUE,
+                          {value: null},
+                          attr,
+                          {id: recordId},
+                          library,
+                          ctx
+                      )
+                  ].filter(v => v?.value !== null);
 
             return values;
         },
@@ -691,7 +706,9 @@ const valueDomain = function ({
                 attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
 
             if (isLinkAttribute && attribute.linked_library) {
-                const linkValue = {...processedValue.value, library: attribute.linked_library};
+                const linkValue = processedValue.value
+                    ? {...processedValue.value, library: processedValue.value.library ?? attribute.linked_library}
+                    : null;
                 processedValue = {...value, value: linkValue};
             }
 

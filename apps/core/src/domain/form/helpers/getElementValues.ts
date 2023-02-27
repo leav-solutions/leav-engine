@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUtils} from 'utils/utils';
+import winston from 'winston';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValueVersion} from '_types/value';
 import ValidationError from '../../../errors/ValidationError';
@@ -13,7 +14,7 @@ export const getElementValues = async (params: {
     recordId: string;
     libraryId: string;
     version?: IValueVersion;
-    deps: {'core.domain.record'?: IRecordDomain; 'core.utils'?: IUtils};
+    deps: {'core.domain.record'?: IRecordDomain; 'core.utils'?: IUtils; 'core.utils.logger'?: winston.Winston};
     ctx: IQueryInfos;
 }): Promise<{error?: string; values: IValue[] | null}> => {
     const {element, recordId, libraryId, version, deps, ctx} = params;
@@ -39,7 +40,7 @@ export const getElementValues = async (params: {
             ctx
         });
 
-        if (values === null) {
+        if (values === null || (!Array.isArray(values) && values.value === null)) {
             return result;
         }
 
@@ -52,6 +53,8 @@ export const getElementValues = async (params: {
             result.error = Object.values(error.fields)
                 .map(fieldError => deps['core.utils'].translateError(fieldError, lang))
                 .join(', ');
+        } else {
+            deps['core.utils.logger'].error(error);
         }
     }
 
