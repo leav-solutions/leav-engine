@@ -97,13 +97,13 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const updatedRecord = await recRepo.updateRecord({libraryId: 'test', recordData, ctx});
+            const updatedRecord = await recRepo.updateRecord({libraryId: 'test', recordData});
 
             expect(mockDbCollec.update.mock.calls.length).toBe(1);
             expect(mockDbCollec.update).toBeCalledWith(
                 {_key: String(recordData.id)},
                 {...recordData, id: undefined},
-                {returnOld: true}
+                {returnOld: true, keepNull: false, mergeObjects: true}
             );
 
             expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);

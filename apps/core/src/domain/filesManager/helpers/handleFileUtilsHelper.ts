@@ -103,8 +103,7 @@ export const updateRecordFile = async (
     try {
         await deps.recordRepo.updateRecord({
             libraryId: library,
-            recordData: dataToSave,
-            ctx
+            recordData: dataToSave
         });
 
         await updateRecordLastModif(library, recordId, deps, ctx);

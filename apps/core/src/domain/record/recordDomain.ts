@@ -658,7 +658,7 @@ export default function({
             return newRecord;
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
-            const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData, ctx});
+            const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData});
 
             await eventsManager.sendDatabaseEvent(
                 {

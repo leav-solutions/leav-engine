@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
+import Joi from 'joi';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IFindRecordParams, IRecordDomain} from 'domain/record/recordDomain';
-import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
-import Joi from 'joi';
+import {IRecordRepo} from 'infra/record/recordRepo';
+import {IAmqpService} from '@leav/message-broker';
 import {isEqual, pick} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
@@ -23,38 +23,28 @@ export interface IIndexationManagerDomain {
 
 interface IDeps {
     config?: Config.IConfig;
-    'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
     'core.infra.amqpService'?: IAmqpService;
     'core.domain.record'?: IRecordDomain;
+    'core.infra.record'?: IRecordRepo;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
 }
 
+export const CORE_INDEX_ATTRIBUTE = 'core_index';
+
 export default function ({
     config = null,
-    'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
+    'core.infra.record': recordRepo = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.attribute': attributeDomain = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
         const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
 
-        // if index doesn't exist we create it
-        if (!(await elasticsearchService.indiceExists(findRecordParams.library))) {
-            const mappings = fullTextAttributes
-                .map(attr => attr.id)
-                .reduce((acc, attr) => {
-                    acc[attr] = {
-                        type: 'wildcard'
-                    };
+        // TODO: verifier que la config index arango existe, sinon la créer (dans le cas d'une librairie déjà existante par ex)
 
-                    return acc;
-                }, {});
-
-            await elasticsearchService.indiceCreate(findRecordParams.library, mappings);
-        }
         const records = await recordDomain.find({
             params: findRecordParams,
             ctx
@@ -89,7 +79,11 @@ export default function ({
                 )
             ).reduce((acc, e) => ({...acc, ...e}), {});
 
-            await elasticsearchService.indexData(findRecordParams.library, record.id, data);
+            await recordRepo.updateRecord({
+                libraryId: findRecordParams.library,
+                recordData: {id: record.id, [CORE_INDEX_ATTRIBUTE]: data},
+                mergeObjects: false
+            });
         }
     };
 
@@ -237,35 +231,17 @@ export default function ({
                     }
                 }
 
-                await elasticsearchService.indexData(data.libraryId, data.id, data.new);
-
-                break;
-            }
-            case EventAction.RECORD_DELETE: {
-                data = (event.payload as IRecordPayload).data;
-
-                await elasticsearchService.deleteDocument(data.libraryId, data.id);
+                await recordRepo.updateRecord({
+                    libraryId: data.libraryId,
+                    recordData: {id: data.id, [CORE_INDEX_ATTRIBUTE]: data.new}
+                });
 
                 break;
             }
             case EventAction.LIBRARY_SAVE: {
                 data = (event.payload as ILibraryPayload).data;
 
-                const exists = await elasticsearchService.indiceExists(data.new.id);
-
-                const mappings = data.new?.fullTextAttributes?.reduce((acc, attr) => {
-                    acc[attr] = {
-                        type: 'wildcard'
-                    };
-
-                    return acc;
-                }, {});
-
-                if (exists && !isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort())) {
-                    await elasticsearchService.indiceUpdateMapping(data.new.id, mappings);
-                    await _indexRecords({library: data.new.id}, ctx);
-                } else if (!exists) {
-                    await elasticsearchService.indiceCreate(data.new.id, mappings);
+                if (!isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort())) {
                     await _indexRecords({library: data.new.id}, ctx);
                 }
 
@@ -276,20 +252,16 @@ export default function ({
 
                 break;
             }
-            case EventAction.LIBRARY_DELETE: {
-                data = (event.payload as ILibraryPayload).data;
-
-                await elasticsearchService.indiceDelete(data.old.id);
-                break;
-            }
             case EventAction.VALUE_SAVE: {
                 data = (event.payload as IValuePayload).data;
 
                 const attrToIndex = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
 
-                if (data.attributeId === 'active' && data.value.new.value === false) {
-                    await elasticsearchService.deleteDocument(data.libraryId, data.recordId);
-                } else if (data.attributeId === 'active' && data.value.new.value === true) {
+                // if (data.attributeId === 'active' && data.value.new.value === false) {
+                // TODO:  on supprime ou pas l'index ?
+                // }
+
+                if (data.attributeId === 'active' && data.value.new.value === true) {
                     await _indexRecords(
                         {
                             library: data.libraryId,
@@ -305,18 +277,21 @@ export default function ({
                         library: data.libraryId,
                         record: {id: data.recordId},
                         attributeId: data.attributeId,
-                        options: {
-                            forceGetAllValues: true
-                        },
                         ctx
                     });
 
                     data.value.new = await _getFormattedValuesAndLabels(attr, data.value.new, ctx);
 
-                    await elasticsearchService.updateData(data.libraryId, data.recordId, {
-                        [data.attributeId]: Array.isArray(data.value.new)
-                            ? data.value.new.map(v => v.value)
-                            : data.value.new.value
+                    await recordRepo.updateRecord({
+                        libraryId: data.libraryId,
+                        recordData: {
+                            id: data.recordId,
+                            [CORE_INDEX_ATTRIBUTE]: {
+                                [data.attributeId]: Array.isArray(data.value.new)
+                                    ? data.value.new.map(v => v.value)
+                                    : data.value.new.value
+                            }
+                        }
                     });
                 }
 
@@ -340,19 +315,30 @@ export default function ({
                         library: data.libraryId,
                         record: {id: data.recordId},
                         attributeId: data.attributeId,
-                        options: {
-                            forceGetAllValues: true
-                        },
                         ctx
                     });
 
                     values = (await _getFormattedValuesAndLabels(attrProps, values, ctx)) as IValue[];
 
-                    await elasticsearchService.updateData(data.libraryId, data.recordId, {
-                        [data.attributeId]: values.map(v => String(v.value))
+                    await recordRepo.updateRecord({
+                        libraryId: data.libraryId,
+                        recordData: {
+                            id: data.recordId,
+                            [CORE_INDEX_ATTRIBUTE]: {
+                                [data.attributeId]: values.map(v => String(v.value))
+                            }
+                        }
                     });
                 } else {
-                    await elasticsearchService.deleteData(data.libraryId, data.recordId, data.attributeId);
+                    await recordRepo.updateRecord({
+                        libraryId: data.libraryId,
+                        recordData: {
+                            id: data.recordId,
+                            [CORE_INDEX_ATTRIBUTE]: {
+                                [data.attributeId]: null
+                            }
+                        }
+                    });
                 }
 
                 const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);

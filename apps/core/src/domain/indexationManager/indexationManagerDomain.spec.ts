@@ -6,7 +6,7 @@ import * as amqp from 'amqplib';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
+import {IRecordRepo} from 'infra/record/recordRepo';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import indexationManager from './indexationManagerDomain';
@@ -76,10 +76,8 @@ describe('Indexation Manager', () => {
     });
 
     test('index database', async () => {
-        const mockElasticsearchService: Mockify<IElasticsearchService> = {
-            indexData: jest.fn(),
-            indiceExists: jest.fn().mockReturnValue(false),
-            indiceCreate: jest.fn()
+        const mockRecordRepo: Mockify<IRecordRepo> = {
+            updateRecord: jest.fn()
         };
 
         const mockRecordDomain: Mockify<IRecordDomain> = {
@@ -109,15 +107,14 @@ describe('Indexation Manager', () => {
         const indexation = indexationManager({
             config: conf as IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.infra.record': mockRecordRepo as IRecordRepo,
             'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-            'core.domain.library': mockLibraryDomain as ILibraryDomain,
-            'core.infra.elasticsearch.elasticsearchService': mockElasticsearchService as IElasticsearchService
+            'core.domain.library': mockLibraryDomain as ILibraryDomain
         });
 
         await indexation.indexDatabase(ctx, 'test');
         await indexation.indexDatabase(ctx, 'test', ['1337']);
 
-        expect(mockElasticsearchService.indiceCreate).toBeCalledTimes(2);
         expect(mockAttributeDomain.getLibraryFullTextAttributes).toBeCalledTimes(2);
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.getRecordFieldValue).toBeCalledTimes(2);
