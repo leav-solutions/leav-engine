@@ -16,7 +16,7 @@ import {handleMoveEvent} from './handleFileSystem/handleMoveEvent';
 import {handleRemoveEvent} from './handleFileSystem/handleRemoveEvent';
 import {handleUpdateEvent} from './handleFileSystem/handleUpdateEvent';
 import winston = require('winston');
-import {IFilesManagerRepo} from 'infra/filesManager/filesManager';
+import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 
 export interface IHandleFileSystemDeps {
     recordDomain: IRecordDomain;

@@ -80,7 +80,7 @@ export default function ({
 
             if (count > 1) {
                 logger.warn(
-                    `[FilesManager] Multiple record find using fileName and filePath: ${recordsFind.list.toString()}`
+                    `[FilesManager] Multiple record found using fileName and filePath: ${recordsFind.list.toString()}`
                 );
             }
 

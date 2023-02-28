@@ -160,7 +160,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
 
@@ -273,7 +274,8 @@ describe('FilesManager', () => {
                 'lib2',
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
 
             expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
@@ -283,7 +285,8 @@ describe('FilesManager', () => {
                 'lib2',
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
 
@@ -319,7 +322,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
 
             expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
@@ -329,7 +333,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
 
@@ -379,7 +384,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
 
@@ -437,7 +443,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
     });

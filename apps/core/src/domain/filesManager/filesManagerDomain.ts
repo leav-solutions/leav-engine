@@ -143,29 +143,30 @@ export default function ({
             userId: config.filesManager.userId,
             queryId: uuidv4()
         };
-        const groupsNodes = (await Promise.all(
-            config.filesManager.userGroupsIds.split(',').map(groupId =>
-                treeDomain.getNodesByRecord({
-                    treeId: USERS_GROUP_TREE_NAME,
-                    record: {
-                        id: groupId,
-                        library: USERS_GROUP_LIB_NAME
-                    },
-                    ctx: {..._defaultCtx}
-                })
+        const groupsNodes = (
+            await Promise.all(
+                config.filesManager.userGroupsIds.split(',').map(groupId =>
+                    treeDomain.getNodesByRecord({
+                        treeId: USERS_GROUP_TREE_NAME,
+                        record: {
+                            id: groupId,
+                            library: USERS_GROUP_LIB_NAME
+                        },
+                        ctx: {..._defaultCtx}
+                    })
+                )
             )
-        ))[0];
+        )[0];
         _defaultCtx.groupsId = groupsNodes;
-    }
-    
-    
+    };
+
     const _onMessage = async (msg: string): Promise<void> => {
         let msgBody: IFileEventData;
         const ctx: IQueryInfos = {
             ..._defaultCtx,
             queryId: uuidv4()
         };
-        
+
         try {
             msgBody = JSON.parse(msg);
             _validateMsg(msgBody);
@@ -275,7 +276,7 @@ export default function ({
             });
 
             await _initDefaultCtx();
-            
+
             return amqpService.consume(
                 config.filesManager.queues.events,
                 config.filesManager.routingKeys.events,
@@ -642,7 +643,8 @@ export default function ({
                         r.library,
                         systemPreviewVersions,
                         amqpService,
-                        config
+                        config,
+                        logger
                     );
                     generationRequested++;
                 }

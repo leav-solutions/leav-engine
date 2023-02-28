@@ -6,7 +6,7 @@ import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {IFilesManagerRepo} from 'infra/filesManager/filesManager';
+import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';

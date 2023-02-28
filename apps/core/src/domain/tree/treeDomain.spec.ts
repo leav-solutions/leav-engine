@@ -752,6 +752,22 @@ describe('treeDomain', () => {
         });
 
         test('Should throw if forbidden as child', async () => {
+            const mockAttributesDomain: Mockify<IAttributeDomain> = {
+                getAttributes: global.__mockPromise({
+                    totalCount: 2,
+                    list: [
+                        {id: 'modified_at', permissions_conf: {permissionTreeAttributes: ['modified_at']}},
+                        {id: 'created_at'}
+                    ]
+                })
+            };
+
+            const mockLibDomain: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({
+                    list: [{id: 'lib1', permissions_conf: {permissionTreeAttributes: ['modified_at']}}],
+                    totalCount: 1
+                })
+            };
             const treeRepo: Mockify<ITreeRepo> = {
                 moveElement: global.__mockPromise({id: '1345', library: 'lib1'}),
                 isNodePresent: global.__mockPromise(false),
@@ -794,7 +810,9 @@ describe('treeDomain', () => {
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
                 'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper as GetCoreEntityByIdFunc,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
+                'core.infra.library': mockLibDomain as ILibraryRepo
             });
 
             await expect(
@@ -814,6 +832,91 @@ describe('treeDomain', () => {
                     ctx
                 })
             ).rejects.toHaveProperty('fields.element');
+        });
+        test('Should ignore tests if skipChecks is true', async () => {
+            const treeRepo: Mockify<ITreeRepo> = {
+                moveElement: global.__mockPromise({id: '1345', library: 'lib1'}),
+                isNodePresent: global.__mockPromise(false),
+                getTreeContent: global.__mockPromise([]),
+                getElementChildren: global.__mockPromise([]),
+                getTrees: global.__mockPromise({
+                    list: [
+                        {
+                            ...mockTree,
+                            libraries: {
+                                lib1: {
+                                    allowMultiplePositions: true,
+                                    allowedAtRoot: false,
+                                    allowedChildren: ['__all__']
+                                },
+                                lib2: {
+                                    allowMultiplePositions: true,
+                                    allowedAtRoot: true,
+                                    allowedChildren: ['lib2']
+                                }
+                            }
+                        }
+                    ],
+                    totalCount: 1
+                }),
+                getElementAncestors: global.__mockPromise([]),
+                getRecordByNodeId: global.__mockPromise({id: '1345', library: 'lib1'})
+            };
+            const mockAttributesDomain: Mockify<IAttributeDomain> = {
+                getAttributes: global.__mockPromise({
+                    totalCount: 2,
+                    list: [
+                        {id: 'modified_at', permissions_conf: {permissionTreeAttributes: ['modified_at']}},
+                        {id: 'created_at'}
+                    ]
+                })
+            };
+            const recordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    list: [{list: [{id: '1345', library: 'lib1'}], totalCount: 1}],
+                    totalCount: 1
+                })
+            };
+            const mockLibDomain: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({
+                    list: [{id: 'lib1', permissions_conf: {permissionTreeAttributes: ['modified_at']}}],
+                    totalCount: 1
+                })
+            };
+            const domain = treeDomain({
+                'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
+                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.record': recordDomain as IRecordDomain,
+                'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
+                'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper as GetCoreEntityByIdFunc,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
+                'core.infra.library': mockLibDomain as ILibraryRepo,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
+            });
+
+            await expect(
+                domain.moveElement({
+                    treeId: 'test_tree',
+                    nodeId: '1345',
+                    parentTo: null,
+                    ctx,
+                    skipChecks: true
+                })
+            ).resolves; //rejects.toHaveProperty('fields.element');
+
+            await expect(
+                domain.moveElement({
+                    treeId: 'test_tree',
+                    nodeId: '1345',
+                    parentTo: '999',
+                    ctx,
+                    skipChecks: true
+                })
+            ).resolves; //rejects.toHaveProperty('fields.element');
         });
     });
 

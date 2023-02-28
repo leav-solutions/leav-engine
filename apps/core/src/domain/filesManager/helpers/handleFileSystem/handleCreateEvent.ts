@@ -85,7 +85,8 @@ export const handleCreateEvent = async (
             recordLibrary,
             systemPreviewVersions,
             deps.amqpService,
-            deps.config
+            deps.config,
+            deps.logger
         );
     }
 };

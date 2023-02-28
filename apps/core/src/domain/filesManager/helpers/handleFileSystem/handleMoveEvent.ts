@@ -98,11 +98,12 @@ export const handleMoveEvent = async (
                 throw new Error('Parent not found');
             }
 
-            await deps.treeDomain.moveElementWithoutCheck({
+            await deps.treeDomain.moveElement({
                 treeId: deps.utils.getLibraryTreeId(library),
                 nodeId: recordNode,
                 parentTo: parentNode,
-                ctx
+                ctx,
+                skipChecks: true
             });
         } catch (e) {
             deps.logger.error(

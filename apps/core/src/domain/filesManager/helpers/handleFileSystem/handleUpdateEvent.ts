@@ -47,7 +47,7 @@ export const handleUpdateEvent = async (
 
     // Update datas
     updateRecordFile(recordData, record.id, library, deps, ctx).catch(function (e) {
-        throw e;
+        deps.logger.warn(`[FilesManager] error during updateRecordFile recordId ${record.id}`);
     });
 
     // Regenerate Previews
@@ -57,6 +57,7 @@ export const handleUpdateEvent = async (
         library,
         systemPreviewVersions,
         deps.amqpService,
-        deps.config
+        deps.config,
+        deps.logger
     );
 };
