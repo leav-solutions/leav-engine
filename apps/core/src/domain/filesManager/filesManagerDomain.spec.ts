@@ -101,6 +101,10 @@ describe('FilesManager', () => {
         }
     };
 
+    const mockTreeDomain: Mockify<ITreeDomain> = {
+        getNodesByRecord: jest.fn()
+    };
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -109,7 +113,8 @@ describe('FilesManager', () => {
         const files = filesManager({
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService,
+            'core.domain.tree': mockTreeDomain as ITreeDomain
         });
 
         await files.init();
@@ -155,7 +160,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
 
@@ -202,7 +208,7 @@ describe('FilesManager', () => {
                 })
             };
 
-            const mockTreeDomain: Mockify<ITreeDomain> = {
+            const mockTreeDomainSpecific: Mockify<ITreeDomain> = {
                 getTrees: global.__mockPromise({
                     list: [
                         {
@@ -253,7 +259,7 @@ describe('FilesManager', () => {
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
-                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.infra.record': mockRecordRepo as IRecordRepo
             });
 
@@ -268,7 +274,8 @@ describe('FilesManager', () => {
                 'lib2',
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
 
             expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
@@ -278,7 +285,8 @@ describe('FilesManager', () => {
                 'lib2',
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
 
@@ -314,7 +322,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
 
             expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
@@ -324,7 +333,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
 
@@ -374,7 +384,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
 
@@ -432,7 +443,8 @@ describe('FilesManager', () => {
                 mockLibraryFiles.id,
                 systemPreviewVersions,
                 mockAmqpService,
-                mockConfig
+                mockConfig,
+                logger
             );
         });
     });
@@ -514,7 +526,7 @@ describe('FilesManager', () => {
                 updateRecord: global.__mockPromise(mockRecord)
             };
 
-            const mockTreeDomain: Mockify<ITreeDomain> = {
+            const mockTreeDomainSpecific: Mockify<ITreeDomain> = {
                 getLibraryTreeId: global.__mockPromise(mockTree.id),
                 getRecordByNodeId: global.__mockPromise(mockFileRecord)
             };
@@ -532,7 +544,7 @@ describe('FilesManager', () => {
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
                 'core.utils': mockUtils as IUtils
@@ -540,8 +552,8 @@ describe('FilesManager', () => {
 
             await files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx);
 
-            expect(mockTreeDomain.getLibraryTreeId).toBeCalledTimes(1);
-            expect(mockTreeDomain.getRecordByNodeId).toBeCalledTimes(1);
+            expect(mockTreeDomainSpecific.getLibraryTreeId).toBeCalledTimes(1);
+            expect(mockTreeDomainSpecific.getRecordByNodeId).toBeCalledTimes(1);
             expect(mockLibraryDirectoriesDomain.getLibraryProperties).toBeCalledTimes(1);
             expect(mockRecordDomain.find).toBeCalledTimes(1);
             expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
@@ -559,7 +571,7 @@ describe('FilesManager', () => {
                 updateRecord: global.__mockPromise(mockRecord)
             };
 
-            const mockTreeDomain: Mockify<ITreeDomain> = {
+            const mockTreeDomainSpecific: Mockify<ITreeDomain> = {
                 getLibraryTreeId: global.__mockPromise(mockTree.id),
                 getRecordByNodeId: global.__mockPromise(mockFileRecord)
             };
@@ -580,7 +592,7 @@ describe('FilesManager', () => {
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.domain.library': mockLibraryDirectoriesDomain as ILibraryDomain,
                 'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
                 'core.utils': mockUtils as IUtils

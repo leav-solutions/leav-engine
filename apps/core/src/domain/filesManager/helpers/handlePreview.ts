@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import winston from 'winston';
 import * as Config from '_types/config';
 import {IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
 
@@ -22,8 +23,8 @@ export const generatePreviewMsg = (
 ): IPreviewMessage => {
     const input = pathAfter;
 
-    const firstDigit = recordId.toString().substr(0, 1);
-    const secondDigit = recordId.toString().substr(1, 1);
+    const recordIdAsString = recordId.toString();
+    const [firstDigit, secondDigit] = [...recordIdAsString];
 
     const output = `${firstDigit}/${secondDigit}/${recordId}`;
     const extension = 'png';
@@ -51,10 +52,13 @@ export const requestPreviewGeneration = async (
     libraryId: string,
     versions: IPreviewVersion[],
     amqpService: IAmqpService,
-    config: Config.IConfig
+    config: Config.IConfig,
+    logger: winston.Winston
 ): Promise<void> => {
     const context: IPreviewResponseContext = {library: libraryId, recordId};
 
     const previewMessage = generatePreviewMsg(recordId, pathAfter, versions, context);
-    await sendPreviewMessage(previewMessage, amqpService, config);
+    sendPreviewMessage(previewMessage, amqpService, config).catch(function (e) {
+        logger.warn(`[FilesManager] error sending prevew request ${e.message}`);
+    });
 };

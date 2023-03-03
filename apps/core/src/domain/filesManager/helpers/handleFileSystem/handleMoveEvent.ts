@@ -64,53 +64,52 @@ export const handleMoveEvent = async (
         FILE_PATH: filePathDest,
         FILE_NAME: fileNameDest
     };
-
     await updateRecordFile(recordData, originRecord.id, recordLibrary, deps, ctx);
-
     // Find parent record destination
-    try {
-        const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
-        // use getRecordParent, ignore disable
+    if (filePathDest !== filePathOrigin) {
+        try {
+            const treeId = deps.utils.getLibraryTreeId(filesLibraryId);
 
-        const parentRecord = await getParentRecord(filePathDest, directoriesLibraryId, deps, ctx);
+            const recordNode = (
+                await deps.treeDomain.getNodesByRecord({
+                    treeId,
+                    record: {id: originRecord.id, library: originRecord.library},
+                    ctx
+                })
+            )[0];
 
-        const recordNode = (
-            await deps.treeDomain.getNodesByRecord({
-                treeId,
-                record: {id: originRecord.id, library: originRecord.library},
-                ctx
-            })
-        )[0];
+            if (!recordNode) {
+                throw new Error('Record node not found');
+            }
 
-        if (!recordNode) {
-            throw new Error('Record node not found');
+            // use getRecordParent, ignore disable
+            const parentRecord = await getParentRecord(filePathDest, directoriesLibraryId, deps, ctx);
+            // Move element in the tree
+            const parentNode = parentRecord
+                ? (
+                      await deps.treeDomain.getNodesByRecord({
+                          treeId,
+                          record: {id: parentRecord.id, library: parentRecord.library},
+                          ctx
+                      })
+                  )[0]
+                : null;
+            if (filePathDest && filePathDest !== '.' && !parentNode) {
+                throw new Error('Parent not found');
+            }
+
+            await deps.treeDomain.moveElement({
+                treeId: deps.utils.getLibraryTreeId(library),
+                nodeId: recordNode,
+                parentTo: parentNode,
+                ctx,
+                skipChecks: true
+            });
+        } catch (e) {
+            deps.logger.error(
+                `[${ctx.queryId}] event ${scanMsg.event}, move element in tree fail : ${originRecord.id}. ${e.message}`
+            );
+            deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
         }
-
-        // Move element in the tree
-        const parentNode = parentRecord
-            ? (
-                  await deps.treeDomain.getNodesByRecord({
-                      treeId,
-                      record: {id: parentRecord.id, library: parentRecord.library},
-                      ctx
-                  })
-              )[0]
-            : null;
-
-        if (filePathDest && filePathDest !== '.' && !parentNode) {
-            throw new Error('Parent not found');
-        }
-
-        await deps.treeDomain.moveElement({
-            treeId: deps.utils.getLibraryTreeId(library),
-            nodeId: recordNode,
-            parentTo: parentNode,
-            ctx
-        });
-    } catch (e) {
-        deps.logger.error(
-            `[${ctx.queryId}] event ${scanMsg.event}, move element in tree fail : ${originRecord.id}. ${e.message}`
-        );
-        deps.logger.error(`[${ctx.queryId}] ${e.stack}`);
     }
 };

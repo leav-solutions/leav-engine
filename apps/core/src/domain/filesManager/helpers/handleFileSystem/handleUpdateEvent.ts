@@ -46,15 +46,18 @@ export const handleUpdateEvent = async (
     };
 
     // Update datas
-    await updateRecordFile(recordData, record.id, library, deps, ctx);
+    updateRecordFile(recordData, record.id, library, deps, ctx).catch(function (e) {
+        deps.logger.warn(`[FilesManager] error during updateRecordFile recordId ${record.id}`);
+    });
 
     // Regenerate Previews
-    await requestPreviewGeneration(
+    requestPreviewGeneration(
         record.id,
         scanMsg.pathAfter,
         library,
         systemPreviewVersions,
         deps.amqpService,
-        deps.config
+        deps.config,
+        deps.logger
     );
 };

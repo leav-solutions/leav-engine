@@ -6,6 +6,7 @@ import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
@@ -26,6 +27,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
     'core.infra.record'?: IRecordRepo;
     'core.utils'?: IUtils;
+    'core.infra.filesManager'?: IFilesManagerRepo;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     config?: IConfig;
 }
@@ -43,7 +45,8 @@ export default function ({
     'core.domain.tree': treeDomain = null,
     'core.infra.record': recordRepo = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    'core.infra.filesManager': filesManagerRepo = null
 }: IDeps): IMessagesHandlerHelper {
     const _messagesQueue: IFileEventData[] = [];
     let _isWorking: boolean = false;
@@ -71,7 +74,8 @@ export default function ({
                     updateRecordLastModif,
                     logger,
                     config,
-                    utils
+                    utils,
+                    filesManagerRepo
                 },
                 ctx
             );

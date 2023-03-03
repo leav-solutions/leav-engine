@@ -76,6 +76,7 @@ export interface ITreeDomain {
         parentTo: string | null;
         order?: number;
         ctx: IQueryInfos;
+        skipChecks?: boolean;
     }): Promise<ITreeNodeLight>;
 
     /**
@@ -535,89 +536,107 @@ export default function ({
 
             return addedElement;
         },
-        async moveElement({treeId, nodeId, parentTo = null, order = 0, ctx}): Promise<ITreeNodeLight> {
-            const errors: any = {};
-            const treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
-            const treeExists = !!treeProps;
-
-            if (!(await _isExistingTree(treeId, ctx))) {
-                errors.treeId = Errors.UNKNOWN_TREE;
-            }
-
-            const nodeExists = await treeRepo.isNodePresent({treeId, nodeId, ctx});
-            if (!nodeExists) {
-                errors.element = Errors.UNKNOWN_ELEMENT;
-            }
-
-            const parentExists = await treeRepo.isNodePresent({treeId, nodeId: parentTo, ctx});
-            if (parentTo !== null && !parentExists) {
-                errors.parentTo = Errors.UNKNOWN_PARENT;
-            }
-
-            const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
-            const nodeElement = {id: nodeRecord.id, library: nodeRecord.library};
-            const parentRecord = parentTo ? await treeRepo.getRecordByNodeId({treeId, nodeId: parentTo, ctx}) : null;
-            const parentElement = parentRecord ? {id: parentRecord.id, library: parentRecord.library} : null;
-
-            // Check permissions on source
+        async moveElement({
+            treeId,
+            nodeId,
+            parentTo = null,
+            order = 0,
+            ctx,
+            skipChecks = false
+        }): Promise<ITreeNodeLight> {
             const parents = await this.getElementAncestors({treeId, nodeId, ctx});
             const parentBefore = parents.length > 1 ? [...parents].splice(-2, 1)[0] : null;
-            let canEditSourceChildren: boolean;
-            if (parentBefore) {
-                canEditSourceChildren = await treeNodePermissionDomain.getTreeNodePermission({
-                    treeId,
-                    action: TreeNodePermissionsActions.EDIT_CHILDREN,
-                    nodeId: parentBefore.id,
-                    userId: ctx.userId,
-                    ctx
-                });
-            } else {
-                canEditSourceChildren = await treePermissionDomain.getTreePermission({
-                    treeId,
-                    action: TreePermissionsActions.EDIT_CHILDREN,
-                    userId: ctx.userId,
-                    ctx
-                });
-            }
 
-            // Check permissions on destination
-            const canEditDestinationChildren = parentTo
-                ? await treeNodePermissionDomain.getTreeNodePermission({
-                      treeId,
-                      action: TreeNodePermissionsActions.EDIT_CHILDREN,
-                      nodeId: parentTo,
-                      userId: ctx.userId,
-                      ctx
-                  })
-                : await treePermissionDomain.getTreePermission({
-                      treeId,
-                      action: TreePermissionsActions.EDIT_CHILDREN,
-                      userId: ctx.userId,
-                      ctx
-                  });
+            const errors: any = {};
+            let treeExists;
+            let nodeExists;
+            let treeProps;
+            let parentElement;
+            let nodeRecord;
+            let nodeElement;
+            if (!skipChecks) {
+                treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
+                treeExists = !!treeProps;
 
-            if (!canEditSourceChildren || !canEditDestinationChildren) {
-                throw new PermissionError(TreePermissionsActions.EDIT_CHILDREN);
-            }
+                if (!(await _isExistingTree(treeId, ctx))) {
+                    errors.treeId = Errors.UNKNOWN_TREE;
+                }
 
-            // check allow as children setting
-            if (treeExists && nodeExists && _isForbiddenAsChild(treeProps, parentElement, nodeElement)) {
-                errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
-            }
+                nodeExists = await treeRepo.isNodePresent({treeId, nodeId, ctx});
+                if (!nodeExists) {
+                    errors.element = Errors.UNKNOWN_ELEMENT;
+                }
 
-            if (
-                treeExists &&
-                nodeExists &&
-                parentTo &&
-                (await this.getElementAncestors({treeId, nodeId: parentTo, ctx})).some(
-                    a => a.record.id === nodeRecord.id && a.record.library === nodeRecord.library
-                )
-            ) {
-                errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
-            }
+                const parentExists = await treeRepo.isNodePresent({treeId, nodeId: parentTo, ctx});
+                if (parentTo !== null && !parentExists) {
+                    errors.parentTo = Errors.UNKNOWN_PARENT;
+                }
 
-            if (!!Object.keys(errors).length) {
-                throw new ValidationError(errors, Object.values(errors).join(', '));
+                nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
+                nodeElement = {id: nodeRecord.id, library: nodeRecord.library};
+                const parentRecord = parentTo
+                    ? await treeRepo.getRecordByNodeId({treeId, nodeId: parentTo, ctx})
+                    : null;
+                parentElement = parentRecord ? {id: parentRecord.id, library: parentRecord.library} : null;
+
+                // Check permissions on source
+                let canEditSourceChildren: boolean;
+                if (parentBefore) {
+                    canEditSourceChildren = await treeNodePermissionDomain.getTreeNodePermission({
+                        treeId,
+                        action: TreeNodePermissionsActions.EDIT_CHILDREN,
+                        nodeId: parentBefore.id,
+                        userId: ctx.userId,
+                        ctx
+                    });
+                } else {
+                    canEditSourceChildren = await treePermissionDomain.getTreePermission({
+                        treeId,
+                        action: TreePermissionsActions.EDIT_CHILDREN,
+                        userId: ctx.userId,
+                        ctx
+                    });
+                }
+
+                // Check permissions on destination
+                const canEditDestinationChildren = parentTo
+                    ? await treeNodePermissionDomain.getTreeNodePermission({
+                          treeId,
+                          action: TreeNodePermissionsActions.EDIT_CHILDREN,
+                          nodeId: parentTo,
+                          userId: ctx.userId,
+                          ctx
+                      })
+                    : await treePermissionDomain.getTreePermission({
+                          treeId,
+                          action: TreePermissionsActions.EDIT_CHILDREN,
+                          userId: ctx.userId,
+                          ctx
+                      });
+
+                if (!canEditSourceChildren || !canEditDestinationChildren) {
+                    throw new PermissionError(TreePermissionsActions.EDIT_CHILDREN);
+                }
+
+                // check allow as children setting
+                if (treeExists && nodeExists && _isForbiddenAsChild(treeProps, parentElement, nodeElement)) {
+                    errors.element = Errors.LIBRARY_FORBIDDEN_AS_CHILD;
+                }
+
+                if (
+                    treeExists &&
+                    nodeExists &&
+                    parentTo &&
+                    (await this.getElementAncestors({treeId, nodeId: parentTo, ctx})).some(
+                        a => a.record.id === nodeRecord.id && a.record.library === nodeRecord.library
+                    )
+                ) {
+                    errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
+                }
+
+                if (!!Object.keys(errors).length) {
+                    throw new ValidationError(errors, Object.values(errors).join(', '));
+                }
             }
 
             await _clearAllTreeCaches(treeId, ctx);

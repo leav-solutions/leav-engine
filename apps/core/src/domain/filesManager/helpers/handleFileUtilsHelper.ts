@@ -2,12 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
-import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {basename, dirname, join} from 'path';
+import {basename, dirname} from 'path';
 import * as Config from '_types/config';
-import {IListWithCursor} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {
     FilesAttributes,
@@ -16,80 +14,24 @@ import {
     IPreviewsStatus,
     IPreviewVersion
 } from '../../../_types/filesManager';
-import {AttributeCondition, IRecord, Operator} from '../../../_types/record';
+import {IRecord} from '../../../_types/record';
 import updateRecordLastModif from '../../value/helpers/updateRecordLastModif';
 import {IHandleFileSystemDeps} from './handleFileSystem';
 import winston = require('winston');
-
-interface IGetRecord {
-    recordDomain: IRecordDomain;
-    config: Config.IConfig;
-    logger: winston.Winston;
-}
 
 export const getRecord = async (
     {fileName, filePath, fileInode}: {fileName: string; filePath: string; fileInode?: number},
     {recordLibrary, recordId}: {recordLibrary: string; recordId?: string},
     retrieveInactive: boolean,
-    deps: IGetRecord,
+    deps: IHandleFileSystemDeps,
     ctx: IQueryInfos
-): Promise<IRecord> => {
-    let recordsFind: IListWithCursor<IRecord>;
-
-    try {
-        const filters = [];
-
-        if (typeof recordId !== 'undefined') {
-            filters.push({
-                field: 'id',
-                condition: AttributeCondition.EQUAL,
-                value: recordId
-            });
-        } else {
-            filters.push(
-                ...(!!fileInode
-                    ? [
-                          {
-                              field: FilesAttributes.INODE,
-                              condition: AttributeCondition.EQUAL,
-                              value: String(fileInode)
-                          },
-                          {operator: Operator.OR}
-                      ]
-                    : []),
-                {operator: Operator.OPEN_BRACKET},
-                {field: FilesAttributes.FILE_NAME, condition: AttributeCondition.EQUAL, value: fileName},
-                {operator: Operator.AND},
-                {field: FilesAttributes.FILE_PATH, condition: AttributeCondition.EQUAL, value: filePath},
-                {operator: Operator.CLOSE_BRACKET}
-            );
-        }
-
-        recordsFind = await deps.recordDomain.find({
-            params: {
-                library: recordLibrary,
-                filters,
-                retrieveInactive
-            },
-            ctx
-        });
-    } catch (e) {
-        deps.logger.warn(`[FilesManager] Error when search record : ${join(filePath, fileName)}`);
-        return;
-    }
-
-    if (recordsFind.totalCount === 0) {
-        deps.logger.warn(`[FilesManager] no record find using fileName and filePath: ${filePath} ${fileName}`);
-        return;
-    }
-
-    if (recordsFind.totalCount > 1) {
-        deps.logger.warn(
-            `[FilesManager] Multiple record find using fileName and filePath: ${recordsFind.list.toString()}`
-        );
-    }
-
-    return recordsFind.list[0];
+): Promise<IRecord | null> => {
+    return deps.filesManagerRepo.getRecord(
+        {fileName, filePath, fileInode},
+        {recordLibrary, recordId},
+        retrieveInactive,
+        ctx
+    );
 };
 
 export const getParentRecord = async (
@@ -98,24 +40,7 @@ export const getParentRecord = async (
     deps: IHandleFileSystemDeps,
     ctx: IQueryInfos
 ): Promise<IRecord | null> => {
-    const parentPath = fullParentPath.split('/');
-    const parentName = parentPath.pop();
-
-    const folderParent = await deps.recordDomain.find({
-        params: {
-            library,
-            filters: [
-                {field: FilesAttributes.FILE_NAME, condition: AttributeCondition.EQUAL, value: parentName},
-                {operator: Operator.AND},
-                {field: FilesAttributes.FILE_PATH, condition: AttributeCondition.EQUAL, value: join(...parentPath)}
-            ]
-        },
-        ctx
-    });
-
-    const parent = folderParent.list[0] ?? null;
-
-    return parent;
+    return deps.filesManagerRepo.getParentRecord(fullParentPath, library, ctx);
 };
 
 export const createRecordFile = async (

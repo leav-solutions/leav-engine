@@ -16,6 +16,7 @@ import {handleMoveEvent} from './handleFileSystem/handleMoveEvent';
 import {handleRemoveEvent} from './handleFileSystem/handleRemoveEvent';
 import {handleUpdateEvent} from './handleFileSystem/handleUpdateEvent';
 import winston = require('winston');
+import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 
 export interface IHandleFileSystemDeps {
     recordDomain: IRecordDomain;
@@ -27,6 +28,7 @@ export interface IHandleFileSystemDeps {
     logger: winston.Winston;
     config: Config.IConfig;
     utils: IUtils;
+    filesManagerRepo: IFilesManagerRepo;
 }
 
 export interface IHandleFileSystemResources {
@@ -40,7 +42,6 @@ export const handleEventFileSystem = async (
     ctx: IQueryInfos
 ) => {
     const event = scanMsg.event;
-
     switch (event) {
         case FileEvents.CREATE:
             await handleCreateEvent(scanMsg, resources, deps, ctx);

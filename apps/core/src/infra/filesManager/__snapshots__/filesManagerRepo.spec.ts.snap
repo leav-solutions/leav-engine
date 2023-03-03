@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilesManagerRepo getParentRecord 1`] = `"FOR r in @@value0 FILTER (r.@value1 == @value2 AND r.@value3 == @value4) RETURN MERGE(r, {library: @value5})"`;
+
+exports[`FilesManagerRepo getParentRecord 2`] = `
+{
+  "@value0": "test",
+  "value1": "file_name",
+  "value2": "fullParentPath",
+  "value3": "file_path",
+  "value4": ".",
+  "value5": "libraryTest",
+}
+`;
+
+exports[`FilesManagerRepo getRecord 1`] = `
+"FOR r in @@value0
+FILTER (r.id == @value1)
+FILTER r.active == true
+SORT r._key DESC
+RETURN MERGE(r, {library: @value2})"
+`;
+
+exports[`FilesManagerRepo getRecord 2`] = `
+{
+  "@value0": "test",
+  "value1": "128",
+  "value2": "test",
+}
+`;
