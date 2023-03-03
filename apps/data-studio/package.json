@@ -1,7 +1,7 @@
 {
     "name": "data-studio",
     "description": "Generic application to manage your data",
-    "version": "1.0.0-beta",
+    "version": "1.0.0-beta2",
     "private": true,
     "dependencies": {
         "@apollo/client": "3.6.9",
