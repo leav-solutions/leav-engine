@@ -9,7 +9,6 @@ import * as Config from '_types/config';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
-// import {initAmqp} from './infra/amqp';
 import {initRedis} from './infra/cache';
 import {initDb} from './infra/db/db';
 import {initPlugins} from './pluginsLoader';

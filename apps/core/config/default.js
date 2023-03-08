@@ -32,9 +32,6 @@ module.exports = {
     diskCache: {
         directory: process.env.DISK_CACHE_DIRECTORY || '/cache'
     },
-    elasticsearch: {
-        url: process.env.ELASTICSEARCH_URL || 'http://elasticsearch:9200'
-    },
     auth: {
         scheme: 'jwt',
         key: process.env.AUTH_KEY,

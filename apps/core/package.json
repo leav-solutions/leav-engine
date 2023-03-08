@@ -33,12 +33,10 @@
   "author": "",
   "license": "LGPL3",
   "devDependencies": {
-    "@elastic/elasticsearch-mock": "2.0.0",
     "@types/amqplib": "0.8.2",
     "@types/cacache": "15.0.1",
     "@types/compression": "1.7.2",
     "@types/debug": "0.0.31",
-    "@types/elasticsearch": "5.0.40",
     "@types/glob": "5.0.37",
     "@types/i18next-fs-backend": "1.1.2",
     "@types/jest": "29.0.2",
@@ -66,7 +64,6 @@
     "watch": "1.0.2"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "8.5.0",
     "@leav/app-root-path": "workspace:libs/app-root-path",
     "@leav/config-manager": "workspace:libs/config-manager",
     "@leav/message-broker": "workspace:libs/message-broker",

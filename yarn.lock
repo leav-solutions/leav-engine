@@ -3773,41 +3773,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@elastic/elasticsearch-mock@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@elastic/elasticsearch-mock@npm:2.0.0"
-  dependencies:
-    fast-deep-equal: ^3.1.3
-    find-my-way: ^5.2.0
-    into-stream: ^6.0.0
-  checksum: 8f4eef41e267593f7db4441b03f1c6b43c3e2b4dd8ce9475576d6a8313a1f2ed12a1eb7e55e001479d4da20290e87e797cda6482a6656838cf9bd13115fe38b3
-  languageName: node
-  linkType: hard
-
-"@elastic/elasticsearch@npm:8.5.0":
-  version: 8.5.0
-  resolution: "@elastic/elasticsearch@npm:8.5.0"
-  dependencies:
-    "@elastic/transport": ^8.2.0
-    tslib: ^2.4.0
-  checksum: 774c4dce4a15786674111a25051895149e19cb46c2ee6fc594c3390ee6d9e1b100abadf4485c6bd32d6f1362fe5ed31810ea84d14c2d11ef470ad55e976b44e5
-  languageName: node
-  linkType: hard
-
-"@elastic/transport@npm:^8.2.0":
-  version: 8.3.1
-  resolution: "@elastic/transport@npm:8.3.1"
-  dependencies:
-    debug: ^4.3.4
-    hpagent: ^1.0.0
-    ms: ^2.1.3
-    secure-json-parse: ^2.4.0
-    tslib: ^2.4.0
-    undici: ^5.5.1
-  checksum: 7b0c9199dfe5c71db052c877b9eb445c5047e50c69a1f30759a872907693106629dddd978a4bf03401673576a5e09347a99db6818e13f4b7b143b4c967dcc3c4
-  languageName: node
-  linkType: hard
-
 "@emotion/hash@npm:^0.8.0":
   version: 0.8.0
   resolution: "@emotion/hash@npm:0.8.0"
@@ -7286,13 +7251,6 @@ __metadata:
     "@types/react": "*"
     immutable: ~3.7.4
   checksum: 9369f02aeb0ead75fa3a6a60c4502e1c5a6d905dc86ee121e946065166fb9c1def367ae4636436edea72a8ca810de495fba14406f23a399a33a6708d13d5cbe0
-  languageName: node
-  linkType: hard
-
-"@types/elasticsearch@npm:5.0.40":
-  version: 5.0.40
-  resolution: "@types/elasticsearch@npm:5.0.40"
-  checksum: 35682edb3dce461b62c3d2e7327f211fc592fec27c20f539e23ebc7f22920fca63b44f5fb71a359ae3568e11fd9dab668647276ce89e525f02498bfaa7bd023e
   languageName: node
   linkType: hard
 
@@ -12537,8 +12495,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "core@workspace:apps/core"
   dependencies:
-    "@elastic/elasticsearch": 8.5.0
-    "@elastic/elasticsearch-mock": 2.0.0
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/message-broker": "workspace:libs/message-broker"
@@ -12547,7 +12503,6 @@ __metadata:
     "@types/cacache": 15.0.1
     "@types/compression": 1.7.2
     "@types/debug": 0.0.31
-    "@types/elasticsearch": 5.0.40
     "@types/glob": 5.0.37
     "@types/i18next-fs-backend": 1.1.2
     "@types/jest": 29.0.2
@@ -15513,13 +15468,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-decode-uri-component@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "fast-decode-uri-component@npm:1.0.1"
-  checksum: 427a48fe0907e76f0e9a2c228e253b4d8a8ab21d130ee9e4bb8339c5ba4086235cf9576831f7b20955a752eae4b525a177ff9d5825dd8d416e7726939194fbee
-  languageName: node
-  linkType: hard
-
 "fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
@@ -15802,17 +15750,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-my-way@npm:^5.2.0":
-  version: 5.6.0
-  resolution: "find-my-way@npm:5.6.0"
-  dependencies:
-    fast-decode-uri-component: ^1.0.1
-    fast-deep-equal: ^3.1.3
-    safe-regex2: ^2.0.0
-  checksum: 1686f8d1c0fd1a84302fd06f1cd87e8514833aa35cb57f42d4badbddedc2112bedf65b8333adeddeda44d10c6712ded80fc3828a0f02899d1bc7e7547be8064a
-  languageName: node
-  linkType: hard
-
 "find-parent-dir@npm:^0.3.0":
   version: 0.3.1
   resolution: "find-parent-dir@npm:0.3.1"
@@ -16057,16 +15994,6 @@ __metadata:
   version: 0.5.2
   resolution: "fresh@npm:0.5.2"
   checksum: 13ea8b08f91e669a64e3ba3a20eb79d7ca5379a81f1ff7f4310d54e2320645503cc0c78daedc93dfb6191287295f6479544a649c64d8e41a1c0fb0c221552346
-  languageName: node
-  linkType: hard
-
-"from2@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "from2@npm:2.3.0"
-  dependencies:
-    inherits: ^2.0.1
-    readable-stream: ^2.0.0
-  checksum: 6080eba0793dce32f475141fb3d54cc15f84ee52e420ee22ac3ab0ad639dc95a1875bc6eb9c0e1140e94972a36a89dc5542491b85f1ab8df0c126241e0f1a61b
   languageName: node
   linkType: hard
 
@@ -17056,13 +16983,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hpagent@npm:^1.0.0":
-  version: 1.2.0
-  resolution: "hpagent@npm:1.2.0"
-  checksum: b029da695edae438cee4da2a437386f9db4ac27b3ceb7306d02e1b586c9c194741ed2e943c8a222e0cfefaf27ee3f863aca7ba1721b0950a2a19bf25bc0d85e2
-  languageName: node
-  linkType: hard
-
 "html-element-map@npm:^1.0.0":
   version: 1.3.1
   resolution: "html-element-map@npm:1.3.1"
@@ -17729,16 +17649,6 @@ __metadata:
   version: 1.4.0
   resolution: "interpret@npm:1.4.0"
   checksum: 2e5f51268b5941e4a17e4ef0575bc91ed0ab5f8515e3cf77486f7c14d13f3010df9c0959f37063dcc96e78d12dc6b0bb1b9e111cdfe69771f4656d2993d36155
-  languageName: node
-  linkType: hard
-
-"into-stream@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "into-stream@npm:6.0.0"
-  dependencies:
-    from2: ^2.3.0
-    p-is-promise: ^3.0.0
-  checksum: 8df24c9eadd7cdd1cbc160bc20914b961dfd0ca29767785b69e698f799e85466b6f7c637d237dca1472d09d333399f70cc05a2fb8d08cb449dc9a80d92193980
   languageName: node
   linkType: hard
 
@@ -22213,7 +22123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:2.1.3, ms@npm:^2.0.0, ms@npm:^2.1.1, ms@npm:^2.1.3":
+"ms@npm:2.1.3, ms@npm:^2.0.0, ms@npm:^2.1.1":
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
   checksum: aa92de608021b242401676e35cfa5aa42dd70cbdc082b916da7fb925c542173e36bce97ea3e804923fe92c0ad991434e4a38327e15a1b5b5f945d66df615ae6d
@@ -23057,13 +22967,6 @@ __metadata:
   version: 2.0.1
   resolution: "p-finally@npm:2.0.1"
   checksum: 6306a2851c3b28f8b603624f395ae84dce76970498fed8aa6aae2d930595053746edf1e4ee0c4b78a97410d84aa4504d63179f5310d555511ecd226f53ed1e8e
-  languageName: node
-  linkType: hard
-
-"p-is-promise@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "p-is-promise@npm:3.0.0"
-  checksum: 74e511225fde5eeda7a120d51c60c284de90d68dec7c73611e7e59e8d1c44cc7e2246686544515849149b74ed0571ad470a456ac0d00314f8d03d2cc1ad43aae
   languageName: node
   linkType: hard
 
@@ -27028,13 +26931,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ret@npm:~0.2.0":
-  version: 0.2.2
-  resolution: "ret@npm:0.2.2"
-  checksum: 774964bb413a3525e687bca92d81c1cd75555ec33147c32ecca22f3d06409e35df87952cfe3d57afff7650a0f7e42139cf60cb44e94c29dde390243bc1941f16
-  languageName: node
-  linkType: hard
-
 "retry@npm:0.13.1, retry@npm:^0.13.1":
   version: 0.13.1
   resolution: "retry@npm:0.13.1"
@@ -27208,15 +27104,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"safe-regex2@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "safe-regex2@npm:2.0.0"
-  dependencies:
-    ret: ~0.2.0
-  checksum: f5e182fca040dedd50ae052ea0eb035d9903b2db71243d5d8b43299735857288ef2ab52546a368d9c6fd1333b2a0d039297925e78ffc14845354f3f6158af7c2
-  languageName: node
-  linkType: hard
-
 "safe-regex@npm:^1.1.0":
   version: 1.1.0
   resolution: "safe-regex@npm:1.1.0"
@@ -27384,13 +27271,6 @@ __metadata:
   version: 1.1.0
   resolution: "scuid@npm:1.1.0"
   checksum: cd094ac3718b0070a222f9a499b280c698fdea10268cc163fa244421099544c1766dd893fdee0e2a8eba5d53ab9d0bcb11067bedff166665030fa6fda25a096b
-  languageName: node
-  linkType: hard
-
-"secure-json-parse@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "secure-json-parse@npm:2.4.0"
-  checksum: efaafcaa08a4646ca829b29168474f57fb289a0ca7a1d77b66b55a0292785bc6eb9143b21cfc50b37dd12a823c25b12aa1771f18314ed5a616a1f8f12a318533
   languageName: node
   linkType: hard
 
@@ -29735,7 +29615,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:^5.5.1, undici@npm:^5.8.0":
+"undici@npm:^5.8.0":
   version: 5.19.1
   resolution: "undici@npm:5.19.1"
   dependencies:

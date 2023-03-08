@@ -5,7 +5,6 @@ import {aql} from 'arangojs';
 import * as bcrypt from 'bcryptjs';
 import {i18n} from 'i18next';
 import {IApplicationService} from 'infra/application/applicationService';
-import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import moment from 'moment';
 import {IConfig} from '_types/config';
@@ -32,7 +31,6 @@ interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.application.service'?: IApplicationService;
-    'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
     translator?: i18n;
     config?: IConfig;
 }
@@ -43,7 +41,6 @@ export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.infra.permission': permissionRepo = null,
     'core.infra.application.service': applicationService = null,
-    'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     translator = null,
     config = null
 }: IDeps = {}): IMigration {
@@ -125,12 +122,6 @@ export default function ({
             // Ensure collection exists for this library
             if (!(await dbService.collectionExists(lib._key))) {
                 await dbService.createCollection(lib._key);
-            }
-
-            // Ensure elasticsearch index exists for this library
-            const doesIndexExist = await elasticsearchService.indiceExists(lib._key);
-            if (!doesIndexExist) {
-                await elasticsearchService.indiceCreate(lib._key);
             }
         }
     };
@@ -276,12 +267,6 @@ export default function ({
                     ctx
                 });
             }
-
-            await elasticsearchService.indexData('users', user._key, {
-                login: user.login,
-                email: user.email,
-                label: user.label
-            });
         }
     };
 
@@ -380,10 +365,6 @@ export default function ({
                     ctx
                 });
             }
-
-            await elasticsearchService.indexData('users_groups', groupRecord._key, {
-                label: groupRecord.label
-            });
         }
     };
 

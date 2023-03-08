@@ -5,9 +5,6 @@ module.exports = {
     server: {
         publicUrl: process.env.SERVER_PUBLIC_URL || 'http://core.leav.localhost'
     },
-    elasticsearch: {
-        url: 'http://elasticsearch:9200'
-    },
     logs: {
         level: 'silly',
         transport: 'console'
