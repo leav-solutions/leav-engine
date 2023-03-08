@@ -228,8 +228,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                 variables: {
                     fullText: submittedSearch,
                     limit: pageSize,
-                    offset: 0,
-                    sortOrder: SortOrder.asc
+                    offset: 0
                 }
             });
         }
@@ -244,8 +243,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
             variables: {
                 fullText: searchInputRef.current.input.value,
                 limit: pageSize,
-                offset: (page - 1) * pageSize,
-                sortOrder: SortOrder.asc
+                offset: (page - 1) * pageSize
             }
         });
     };

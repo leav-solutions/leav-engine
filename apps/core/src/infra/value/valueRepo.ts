@@ -171,13 +171,13 @@ export default function ({
             return typeRepo.clearAllValues({attribute, ctx});
         },
         async deleteAllValuesByRecord({libraryId, recordId, ctx}) {
-            const edgeCollection = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const collection = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             await dbService.execute({
                 query: aql`
-                    FOR l IN ${edgeCollection}
+                    FOR l IN ${collection}
                         FILTER l._from == ${libraryId + '/' + recordId} OR l._to == ${libraryId + '/' + recordId}
-                        REMOVE {_key: l._key} IN ${edgeCollection}
+                        REMOVE {_key: l._key} IN ${collection}
                 `,
                 ctx
             });

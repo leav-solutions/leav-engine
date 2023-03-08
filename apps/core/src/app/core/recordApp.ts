@@ -151,7 +151,7 @@ export default function ({
 
                     type RecordFilter {
                         field: String,
-                        value: String
+                        value: String,
                         condition: RecordFilterCondition,
                         operator: RecordFilterOperator,
                         tree: Tree
@@ -159,19 +159,19 @@ export default function ({
 
                     input RecordFilterInput {
                         field: String,
-                        value: String
+                        value: String,
                         condition: RecordFilterCondition,
                         operator: RecordFilterOperator,
                         treeId: String
                     }
 
                     type RecordSort {
-                        field: String,
+                        field: String!,
                         order: SortOrder!
                     }
 
                     input RecordSortInput {
-                        field: String,
+                        field: String!,
                         order: SortOrder!
                     }
 

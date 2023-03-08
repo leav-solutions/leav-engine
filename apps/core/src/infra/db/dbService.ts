@@ -3,7 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getCallStack} from '@leav/utils';
 import {Database} from 'arangojs';
-import {isAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {Analyzer, AnalyzerDescription, CreateAnalyzerOptions} from 'arangojs/analyzer';
+import {isAqlQuery} from 'arangojs/aql';
+import {CreateViewOptions, View} from 'arangojs/view';
 import {createHash} from 'crypto';
 import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
@@ -14,7 +16,6 @@ const MAX_ATTEMPTS = 10;
 
 export interface IDbService {
     db?: Database;
-
     /**
      * Execute an AQL query
      * If withTotalCount is set to true, return an object with totalCount and results. Otherwise, just return
@@ -51,6 +52,46 @@ export interface IDbService {
      * @param name
      */
     collectionExists?(name: string): Promise<boolean>;
+
+    // /**
+    //  * EnsureIndex
+    //  *
+    //  * @param collectionName Collection name
+    //  * @param indexName Index name
+    //  * @param indexType Index type
+    //  * @param indexFields Index fields
+    //  * @param options options
+    //  * @throws If collection not exists
+    //  */
+    // ensureIndex?(
+    //     collectionName: string,
+    //     indexName: string,
+    //     indexType: string,
+    //     indexFields: any[],
+    //     options?: {[key: string]: any}
+    // ): Promise<void>;
+
+    /**
+     * Return index
+     *
+     * @param name
+     */
+    indexes?(collectionName: string): Promise<any>;
+
+    createAnalyzer?(name: string, options: CreateAnalyzerOptions): Promise<Analyzer>;
+
+    /**
+     * Create a view in database
+     *
+     * @param name View name
+     * @param properties ArangoSearchView properties
+     * @throws If collection not exists
+     */
+    createView?(name: string, options: CreateViewOptions): Promise<View>;
+
+    views?(): Promise<View[]>;
+
+    analyzers?(): Promise<Analyzer[]>;
 }
 
 export enum collectionTypes {
@@ -131,7 +172,10 @@ export default function ({
                 const cursor = await db.query(queryToRun, queryOptions);
 
                 const results = await cursor.all();
-                return withTotalCount ? {totalCount: cursor.extra.stats.fullCount, results} : results;
+
+                return (withTotalCount
+                    ? {totalCount: cursor.extra.stats.fullCount ?? cursor.count, results}
+                    : results) as T;
             } catch (e) {
                 // Handle write-write conflicts: we try the query again with a growing delay between trials.
                 // If we reach maximum attempts and still no success, stop it and throw the exception
@@ -158,20 +202,56 @@ export default function ({
             }
 
             if (type === collectionTypes.EDGE) {
-                const collection = db.edgeCollection(name);
+                const collection = db.collection(name);
                 await collection.create();
             } else {
                 const collection = db.collection(name);
                 await collection.create();
             }
         },
+        // async ensureIndex(
+        //     collectionName: string,
+        //     indexName: string,
+        //     indexFields: any[],
+        //     options?: {[key: string]: any}
+        // ): Promise<void> {
+        //     if (!(await collectionExists(collectionName))) {
+        //         throw new Error(`Collection ${collectionName} not exists`);
+        //     }
+
+        //     const collection = db.collection(collectionName);
+
+        //     await collection.ensureIndex({
+        //         name: indexName,
+        //         type: 'inverted',
+        //         fields: indexFields,
+        //         ...(options && options)
+        //     });
+        // },
+        async createAnalyzer(name: string, options: CreateAnalyzerOptions): Promise<Analyzer> {
+            return db.createAnalyzer(name, options);
+        },
+        async createView(name: string, options: CreateViewOptions): Promise<View> {
+            return db.createView(name, options);
+        },
         async dropCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
             if (!(await collectionExists(name))) {
                 throw new Error(`Collection ${name} does not exist`);
             }
 
-            const collection = type === collectionTypes.EDGE ? db.edgeCollection(name) : db.collection(name);
+            const collection = type === collectionTypes.EDGE ? db.collection(name) : db.collection(name);
             await collection.drop();
+        },
+        async indexes(collectionName: string): Promise<any> {
+            const collection = db.collection(collectionName);
+
+            return collection.indexes();
+        },
+        async views(): Promise<any> {
+            return db.views();
+        },
+        async analyzers(): Promise<Analyzer[]> {
+            return db.analyzers();
         },
         collectionExists
     };

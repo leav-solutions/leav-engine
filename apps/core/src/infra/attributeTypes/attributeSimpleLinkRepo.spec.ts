@@ -1,7 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, Database} from 'arangojs';
+import {Database} from 'arangojs';
+import {aql} from 'arangojs/aql';
+import {DocumentCollection} from 'arangojs/collection';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
@@ -33,7 +35,7 @@ describe('AttributeSimpleLinkRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a simple link value', async function() {
+        test('Should create a simple link value', async function () {
             const updatedValueData = {
                 value: '123456'
             };
@@ -126,7 +128,7 @@ describe('AttributeSimpleLinkRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values for simple link attribute', async function() {
+        test('Should return values for simple link attribute', async function () {
             const queryRes = [
                 {
                     _key: '987654',
@@ -191,7 +193,7 @@ describe('AttributeSimpleLinkRepo', () => {
     });
 
     describe('getReverseValues', () => {
-        test('Should return values for advanced reverse link attribute into simple link', async function() {
+        test('Should return values for advanced reverse link attribute into simple link', async function () {
             const queryRes = [
                 {
                     _key: '987654',
@@ -261,9 +263,11 @@ describe('AttributeSimpleLinkRepo', () => {
         };
 
         test('Should return query to retrieve value to filter on', () => {
-            const mockDbServ = {
-                db: new Database()
+            const mockDb = {
+                collection: jest.fn().mockReturnValue({} as DocumentCollection)
             };
+
+            const mockDbServ = {db: (mockDb as unknown) as Database};
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
                 filterValueQueryPart: jest.fn().mockReturnValue(aql``)
@@ -286,9 +290,11 @@ describe('AttributeSimpleLinkRepo', () => {
         });
 
         test('Should return query to retrieve value to filter on for reverse link', async () => {
-            const mockDbServ = {
-                db: new Database()
+            const mockDb = {
+                collection: jest.fn().mockReturnValue({} as DocumentCollection)
             };
+
+            const mockDbServ = {db: (mockDb as unknown) as Database};
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
                 filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
@@ -350,9 +356,12 @@ describe('AttributeSimpleLinkRepo', () => {
 
     describe('sortQueryPart', () => {
         test('Should return simple link sort', () => {
-            const mockDbServ = {
-                db: new Database()
+            const mockDb = {
+                collection: jest.fn().mockReturnValue({} as DocumentCollection)
             };
+
+            const mockDbServ = {db: (mockDb as unknown) as Database};
+
             const attrRepo = attributeSimpleLinkRepo({'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.sortQueryPart({
                 attributes: [

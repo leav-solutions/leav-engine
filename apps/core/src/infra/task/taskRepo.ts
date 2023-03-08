@@ -8,7 +8,7 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {TaskStatus, ITask} from '../../_types/tasksManager';
-import {aql} from 'arangojs';
+import {aql, join} from 'arangojs/aql';
 import {IUtils} from 'utils/utils';
 import {IExecuteWithCount, IDbDocument} from 'infra/db/_types';
 
@@ -45,7 +45,7 @@ export default function ({
 
             queryParts.push(aql`RETURN task`);
 
-            const runningTasks = await dbService.execute({query: aql.join(queryParts), ctx});
+            const runningTasks = await dbService.execute({query: join(queryParts), ctx});
 
             return runningTasks.length > 0;
         },

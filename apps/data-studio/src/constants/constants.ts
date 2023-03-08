@@ -11,11 +11,6 @@ export const defaultInfosTime = 5000;
 
 export const panelSize = '22.5rem';
 
-export const defaultSort = {
-    field: 'id',
-    order: SortOrder.asc
-};
-
 export const initialColumnsLimit = 5;
 
 export const viewSettingsField = 'fields';
@@ -29,8 +24,7 @@ export const defaultView: IView = {
     owner: true,
     display: {type: ViewTypes.list, size: ViewSizes.MEDIUM},
     shared: false,
-    filters: [],
-    sort: defaultSort
+    filters: []
 };
 
 export const formatNotUsingCondition = [AttributeFormat.boolean];

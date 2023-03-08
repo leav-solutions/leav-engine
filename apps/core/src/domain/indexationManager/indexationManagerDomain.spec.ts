@@ -10,6 +10,8 @@ import {IRecordRepo} from 'infra/record/recordRepo';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import indexationManager from './indexationManagerDomain';
+import {Database} from 'arangojs';
+import {IDbService} from 'infra/db/dbService';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -65,14 +67,21 @@ describe('Indexation Manager', () => {
             }
         };
 
+        const mockDbServ: Mockify<IDbService> = {
+            analyzers: global.__mockPromise([]),
+            createAnalyzer: jest.fn()
+        };
+
         const indexation = indexationManager({
             config: conf as IConfig,
+            'core.infra.db.dbService': mockDbServ as IDbService,
             'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
         await indexation.init();
 
         expect(mockAmqpService.consume).toBeCalledTimes(1);
+        expect(mockDbServ.createAnalyzer).toBeCalled();
     });
 
     test('index database', async () => {
@@ -104,9 +113,15 @@ describe('Indexation Manager', () => {
             })
         };
 
+        const mockDbServ: Mockify<IDbService> = {
+            views: global.__mockPromise([]),
+            createView: jest.fn()
+        };
+
         const indexation = indexationManager({
             config: conf as IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
+            'core.infra.db.dbService': mockDbServ as IDbService,
             'core.infra.record': mockRecordRepo as IRecordRepo,
             'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
             'core.domain.library': mockLibraryDomain as ILibraryDomain
@@ -115,6 +130,7 @@ describe('Indexation Manager', () => {
         await indexation.indexDatabase(ctx, 'test');
         await indexation.indexDatabase(ctx, 'test', ['1337']);
 
+        expect(mockDbServ.createView).toBeCalledTimes(2);
         expect(mockAttributeDomain.getLibraryFullTextAttributes).toBeCalledTimes(2);
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.getRecordFieldValue).toBeCalledTimes(2);

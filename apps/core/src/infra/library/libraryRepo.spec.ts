@@ -77,8 +77,7 @@ describe('LibraryRepo', () => {
 
             const libRepo = libraryRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-                'core.infra.elasticsearch.elasticsearchService': mockElasticService as IElasticsearchService
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
             const createdLib = await libRepo.createLibrary({libData, ctx});

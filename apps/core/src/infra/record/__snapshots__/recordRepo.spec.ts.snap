@@ -9,18 +9,12 @@ exports[`RecordRepo find Handle fulltext search result 1`] = `
   "query": {
     "_source": [Function],
     "bindVars": {
-      "@value0": "test_lib",
-      "value1": [
-        "123456",
-        "789012",
-      ],
-      "value2": "test_lib",
+      "value0": "test_lib",
     },
-    "query": "FOR r IN @@value0
-FILTER r._key IN @value1
-SORT r._key ASC
+    "query": "FOR r IN (fulltextSearchQuery)
+SORT r.core_index.score DESC, r._key ASC
 FILTER r.active == true
-RETURN MERGE(r, {library: @value2})",
+RETURN MERGE(r, {library: @value0})",
   },
   "withTotalCount": true,
 }
@@ -38,7 +32,7 @@ exports[`RecordRepo find Should find records 1`] = `
       "@value0": "test_lib",
       "value1": "test_lib",
     },
-    "query": "FOR r IN @@value0
+    "query": "FOR r IN (@@value0)
 SORT r._key ASC
 FILTER r.active == true
 RETURN MERGE(r, {library: @value1})",
@@ -59,7 +53,7 @@ exports[`RecordRepo find with filters Should filter records - simple 1`] = `
       "@value0": "test_lib",
       "value1": "test_lib",
     },
-    "query": "FOR r IN @@value0
+    "query": "FOR r IN (@@value0)
 
 FILTER (
 ( IS_ARRAY([object Object]) ? LENGTH([object Object][* FILTER <Condition>]) : <Condition> )
@@ -74,6 +68,16 @@ RETURN MERGE(r, {library: @value1})",
 }
 `;
 
-exports[`RecordRepo search should search record with from/size params 1`] = `"test_lib"`;
-
-exports[`RecordRepo search should search records 1`] = `"test_lib"`;
+exports[`RecordRepo search should return search query 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "value0": "indexField",
+    "value1": "id",
+    "value2": "analyzer",
+  },
+  "query": "FOR doc IN view SEARCH
+ANALYZER(doc.@value0.@value1 LIKE TOKENS("%query%", @value2)[0], @value2)
+RETURN MERGE(doc, {@value0: MERGE(doc.@value0, {score: BM25(doc)})})",
+}
+`;

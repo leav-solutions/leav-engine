@@ -5,7 +5,7 @@ import {useMutation, useQuery} from '@apollo/client';
 import {useLang} from '@leav/ui';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
-import {defaultSort, getSelectedViewKey, panelSize, viewSettingsField} from 'constants/constants';
+import {getSelectedViewKey, panelSize, viewSettingsField} from 'constants/constants';
 import {SelectionModeContext} from 'context';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
@@ -105,8 +105,8 @@ function LibraryItemsListContent({
         attributes: defaultAttributes,
         fields: _getFieldsFromView(defaultView),
         filters: defaultView.filters,
-        sort: {...defaultView.sort, active: true},
-        display: {...defaultView.display},
+        sort: defaultView.sort,
+        display: defaultView.display,
         view: {
             current: defaultView,
             reload: false,
@@ -149,8 +149,7 @@ function LibraryItemsListContent({
             limit: searchState.pagination,
             offset: searchState.offset,
             filters: getRequestFromFilters(searchState.filters),
-            sortField: searchState.sort.field || defaultSort.field,
-            sortOrder: searchState.sort.order || defaultSort.order,
+            sort: searchState.sort,
             fullText: searchState.fullText,
             version: _getVersionForRequest()
         },
@@ -166,12 +165,12 @@ function LibraryItemsListContent({
     const _fetchRecords = async () => {
         try {
             const queryFilters = getRequestFromFilters(searchState.filters);
+
             const variables = {
                 limit: searchState.pagination,
                 offset: searchState.offset,
                 filters: queryFilters,
-                sortField: searchState.sort.field,
-                sortOrder: searchState.sort.order,
+                sort: searchState.sort,
                 fullText: searchState.fullText,
                 version: _getVersionForRequest()
             };

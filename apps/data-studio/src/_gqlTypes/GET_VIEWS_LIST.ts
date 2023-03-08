@@ -60,7 +60,7 @@ export interface GET_VIEWS_LIST_views_list_filters {
 }
 
 export interface GET_VIEWS_LIST_views_list_sort {
-    field: string | null;
+    field: string;
     order: SortOrder;
 }
 

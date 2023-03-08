@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
+import {join} from 'arangojs/aql';
 import {IUtils} from 'utils/utils';
 import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
@@ -75,8 +76,8 @@ export default function ({
             return res.map(library => dbUtils.cleanup<ILibrary>(library));
         },
         async getLibraryFullTextAttributes({libraryId, ctx}): Promise<IAttribute[]> {
-            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
-            const attributesCollec = dbService.db.edgeCollection(ATTRIB_COLLECTION_NAME);
+            const libAttributesCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
+            const attributesCollec = dbService.db.collection(ATTRIB_COLLECTION_NAME);
 
             const attrs = await dbService.execute({
                 query: aql`LET fullTextAttrs = (
@@ -113,7 +114,7 @@ export default function ({
                 const libs = utils.forceArray(filterVal);
 
                 const valParts = libs.map(l => aql`v._key == ${l}`);
-                const libKeyCond = aql.join(valParts, ' OR ');
+                const libKeyCond = join(valParts, ' OR ');
 
                 // Check if there is links between given libraries and attribute
                 return aql`LENGTH(
@@ -190,7 +191,7 @@ export default function ({
         },
         async deleteAttribute({attrData, ctx}): Promise<IAttribute> {
             // Delete links library<->attribute
-            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+            const libAttributesCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
 
             // Delete all values
             await valueRepo.clearAllValues({attribute: attrData, ctx});

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlQuery, GeneratedAqlQuery, literal, join} from 'arangojs/aql';
 import {IDbDocument} from 'infra/db/_types';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
@@ -74,7 +74,7 @@ export default function ({
 
     return {
         async createValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
             const edgeData: any = {
@@ -115,7 +115,7 @@ export default function ({
             );
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ITreeValue> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Update value's metadata on records link
             const edgeData: any = {
@@ -157,7 +157,7 @@ export default function ({
             );
         },
         async deleteValue({attribute, value, library, recordId, ctx}): Promise<ITreeValue> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const resEdge = await dbService.execute<Array<{edge: IValueEdge; linkedRecord: IRecord}>>({
                 query: aql`
@@ -196,15 +196,15 @@ export default function ({
                 return [];
             }
 
-            const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
-            const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(attribute.linked_tree));
+            const valuesLinksCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const treeEdgeCollec = dbService.db.collection(getEdgesCollectionName(attribute.linked_tree));
 
             const queryParts = [
                 aql`FOR vertex, edge IN 1 OUTBOUND ${library + '/' + recordId}
                     ${valuesLinksCollec}, ${treeEdgeCollec}
                     LET record = DOCUMENT(
-                        vertex.${aql.literal(NODE_LIBRARY_ID_FIELD)},
-                        vertex.${aql.literal(NODE_RECORD_ID_FIELD)}
+                        vertex.${literal(NODE_LIBRARY_ID_FIELD)},
+                        vertex.${literal(NODE_RECORD_ID_FIELD)}
                     )
                     FILTER edge.attribute == ${attribute.id}
                 `
@@ -214,13 +214,13 @@ export default function ({
                 queryParts.push(aql`FILTER edge.version == ${options.version}`);
             }
 
-            const limitOne = aql.literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
+            const limitOne = literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
             queryParts.push(aql`
                 ${limitOne}
                 RETURN {id: vertex._key, record, edge}
             `);
 
-            const query = aql.join(queryParts);
+            const query = join(queryParts);
             const treeElements = await dbService.execute({query, ctx});
 
             return treeElements.reduce((acc, r) => {
@@ -239,7 +239,7 @@ export default function ({
             }, []);
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const query = aql`
                 FOR linkedNode, edge IN 1 OUTBOUND ${library + '/' + recordId}
@@ -267,8 +267,8 @@ export default function ({
             );
         },
         sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
-            const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
-            const treeCollec = dbService.db.edgeCollection(getEdgesCollectionName(attributes[0].linked_tree));
+            const valuesLinksCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const treeCollec = dbService.db.collection(getEdgesCollectionName(attributes[0].linked_tree));
 
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -281,8 +281,8 @@ export default function ({
                 ${valuesLinksCollec}, ${treeCollec}
                 FILTER e.attribute == ${attributes[0].id}
                 LET record = DOCUMENT(
-                    v.${aql.literal(NODE_LIBRARY_ID_FIELD)},
-                    v.${aql.literal(NODE_RECORD_ID_FIELD)}
+                    v.${literal(NODE_LIBRARY_ID_FIELD)},
+                    v.${literal(NODE_RECORD_ID_FIELD)}
                 )
                 RETURN record.${linked.id}
             )`;
@@ -295,11 +295,11 @@ export default function ({
             return query;
         },
         filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
-            const valuesLinksCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const valuesLinksCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const isCountFilter = filterTypes.isCountFilter(filter);
             const linkIdentifier = parentIdentifier + 'v';
-            const vIdentifier = aql.literal(linkIdentifier);
+            const vIdentifier = literal(linkIdentifier);
 
             if (isCountFilter) {
                 // In "count" filters, we don't need to retrieve the actual value, we just need to know how many links we have
@@ -307,7 +307,7 @@ export default function ({
                 return aql`
                 COUNT(
                     FOR ${vIdentifier} IN ${valuesLinksCollec}
-                    FILTER ${vIdentifier}._from == ${aql.literal(parentIdentifier)}._id
+                    FILTER ${vIdentifier}._from == ${literal(parentIdentifier)}._id
                     AND ${vIdentifier}.attribute == ${attributes[0].id}
                     RETURN true
                     )
@@ -320,35 +320,29 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
-            const linkValueIdentifier = aql.literal(`${parentIdentifier}linkVal`);
+            const linkValueIdentifier = literal(`${parentIdentifier}linkVal`);
             const recordIdentifierStr = parentIdentifier + 'Record';
-            const recordIdentifier = aql.literal(recordIdentifierStr);
-            const eIdentifier = aql.literal(parentIdentifier + 'e');
+            const recordIdentifier = literal(recordIdentifierStr);
+            const eIdentifier = literal(parentIdentifier + 'e');
             const returnValue = aql`RETURN ${linkValueIdentifier}`;
             const retrieveValue = aql`
-                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
+                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${literal(parentIdentifier)}._id
                     ${valuesLinksCollec}
                     FILTER ${eIdentifier}.attribute == ${attributes[0].id}
                     LET ${recordIdentifier} = DOCUMENT(
-                        ${vIdentifier}.${aql.literal(NODE_LIBRARY_ID_FIELD)},
-                        ${vIdentifier}.${aql.literal(NODE_RECORD_ID_FIELD)}
+                        ${vIdentifier}.${literal(NODE_LIBRARY_ID_FIELD)},
+                        ${vIdentifier}.${literal(NODE_RECORD_ID_FIELD)}
                         )
                         `;
 
             const linkValueQuery = attributes[1]
-                ? aql`LET ${aql.literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
+                ? aql`LET ${literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
                       [...attributes].splice(1),
                       filter,
                       recordIdentifierStr
                   )})`
                 : null;
-            const linkedValue = aql.join([
-                aql.literal('FLATTEN('),
-                retrieveValue,
-                linkValueQuery,
-                returnValue,
-                aql.literal(')')
-            ]);
+            const linkedValue = join([literal('FLATTEN('), retrieveValue, linkValueQuery, returnValue, literal(')')]);
 
             return linked.format !== AttributeFormats.EXTENDED
                 ? linkedValue

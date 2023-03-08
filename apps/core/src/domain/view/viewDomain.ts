@@ -110,13 +110,15 @@ export default function ({
                 created_by: ctx.userId
             };
 
-            return viewRepo.getViews(
+            const views = await viewRepo.getViews(
                 {
                     filters,
                     withCount: true
                 },
                 ctx
             );
+
+            return views;
         },
         async getViewById(viewId: string, ctx: IQueryInfos): Promise<IView> {
             const filters: IViewFilterOptions = {

@@ -506,8 +506,7 @@ describe('LinkField', () => {
                         variables: {
                             fullText: 'a',
                             limit: 10,
-                            offset: 0,
-                            sortOrder: SortOrder.asc
+                            offset: 0
                         }
                     },
                     result: {

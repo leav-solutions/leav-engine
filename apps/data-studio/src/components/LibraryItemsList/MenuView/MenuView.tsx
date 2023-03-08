@@ -81,7 +81,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
             label: {[defaultLang]: t('view.add-view.title')},
             display: searchState.display,
             shared: false,
-            sort: searchState.sort?.active ? {field: searchState.sort.field, order: searchState.sort.order} : undefined,
+            sort: searchState.sort,
             filters: getRequestFromFilters(searchState.filters),
             valuesVersions: searchState.valuesVersions
                 ? objectToNameValueArray(searchState.valuesVersions)
@@ -111,7 +111,8 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                         label: searchState.view.current.label,
                         description: searchState.view.current.description,
                         shared: searchState.view.current.shared,
-                        color: searchState.view.current.color
+                        color: searchState.view.current.color,
+                        sort: searchState.sort ?? null
                     }
                 });
 

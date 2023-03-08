@@ -443,7 +443,7 @@ export const prepareView = (
         ...(omit(view, ['created_by', '__typename']) as GET_VIEW_view),
         owner: view.created_by.id === userId,
         filters: getFiltersFromRequest(viewFilters, libraryId, attributes),
-        sort: omit(view.sort, ['__typename']) as GET_VIEW_view_sort,
+        sort: view.sort && (omit(view.sort, ['__typename']) as GET_VIEW_view_sort),
         display: omit(view.display, ['__typename']) as GET_VIEW_view_display,
         valuesVersions: viewValuesVersions.reduce((versions: IValueVersion, version): IValueVersion => {
             versions[version.treeId] = {

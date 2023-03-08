@@ -715,7 +715,7 @@ describe('RecordDomain', () => {
 
             const recRepo: Mockify<IRecordRepo> = {
                 find: global.__mockPromise(mockSearchRes),
-                search: global.__mockPromise(mockSearchRes)
+                search: global.__mockPromise('')
             };
 
             const libRepo: Mockify<ILibraryRepo> = {
@@ -727,7 +727,8 @@ describe('RecordDomain', () => {
                     id: 'id',
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT
-                })
+                }),
+                getLibraryFullTextAttributes: global.__mockPromise(['id'])
             };
 
             const recDomain = recordDomain({

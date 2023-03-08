@@ -497,12 +497,12 @@ describe('RecordRepo', () => {
                 filters: [],
                 pagination: null,
                 withCount: true,
-                fulltextSearchResult: ['123456', '789012'],
+                fulltextSearchQuery: aql`fulltextSearchQuery`,
                 ctx
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/r._key IN/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/fulltextSearchQuery/);
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
 
             expect(records).toEqual({
@@ -619,90 +619,11 @@ describe('RecordRepo', () => {
     });
 
     describe('search', () => {
-        test('should search records', async function () {
-            const mockQueryRes = {
-                took: 322,
-                timed_out: false,
-                _shards: {total: 1, successful: 1, skipped: 0, failed: 0},
-                hits: {
-                    total: {value: 1, relation: 'eq'},
-                    max_score: 0.2876821,
-                    hits: [
-                        {
-                            _id: 1,
-                            _source: {
-                                library: 'test_lib'
-                            }
-                        }
-                    ]
-                }
-            };
+        test('should return search query', async function () {
+            const recRepo = recordRepo();
+            const result = await recRepo.search('view', 'analyzer', 'indexField', ['id'], 'query');
 
-            const mockElasticsearch = {
-                wildcardSearch: global.__mockPromise(mockQueryRes)
-            };
-
-            const recRepo = recordRepo({
-                'core.infra.elasticsearch.elasticsearchService': mockElasticsearch
-            });
-
-            const result = await recRepo.search('test_lib', 'text');
-
-            expect(mockElasticsearch.wildcardSearch.mock.calls.length).toBe(1);
-            expect(mockElasticsearch.wildcardSearch.mock.calls[0][0]).toMatchSnapshot();
-
-            expect(result).toEqual({
-                totalCount: 1,
-                list: [
-                    {
-                        id: 1,
-                        library: 'test_lib'
-                    }
-                ]
-            });
-        });
-
-        test('should search record with from/size params', async function () {
-            const mockQueryRes = {
-                took: 322,
-                timed_out: false,
-                _shards: {total: 1, successful: 1, skipped: 0, failed: 0},
-                hits: {
-                    total: {value: 2, relation: 'eq'},
-                    max_score: 0.2876821,
-                    hits: [
-                        {
-                            _id: 1,
-                            _source: {
-                                library: 'test_lib'
-                            }
-                        }
-                    ]
-                }
-            };
-
-            const mockElasticsearch = {
-                wildcardSearch: global.__mockPromise(mockQueryRes)
-            };
-
-            const recRepo = recordRepo({
-                'core.infra.elasticsearch.elasticsearchService': mockElasticsearch
-            });
-
-            const result = await recRepo.search('test_lib', 'text', 0, 1);
-
-            expect(mockElasticsearch.wildcardSearch.mock.calls.length).toBe(1);
-            expect(mockElasticsearch.wildcardSearch.mock.calls[0][0]).toMatchSnapshot();
-
-            expect(result).toEqual({
-                totalCount: 2,
-                list: [
-                    {
-                        id: 1,
-                        library: 'test_lib'
-                    }
-                ]
-            });
+            expect(result).toMatchSnapshot();
         });
     });
 });

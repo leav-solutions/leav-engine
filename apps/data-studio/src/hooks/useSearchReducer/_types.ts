@@ -34,7 +34,6 @@ export interface ISearchRecord {
 export interface ISearchSort {
     field: string;
     order: SortOrder;
-    active: boolean;
 }
 
 export interface ISearchState {
@@ -44,7 +43,7 @@ export interface ISearchState {
     loading: boolean;
     pagination: number;
     offset: number;
-    sort: ISearchSort | null;
+    sort?: ISearchSort;
     attributes: IAttribute[];
     fields: IField[];
     fullText: string;
