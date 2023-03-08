@@ -1,27 +1,27 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {collectionTypes} from '../../dbService';
+import {CollectionType} from 'arangojs/collection';
 
 export interface IMigrationCoreCollection {
     name: string;
-    type: collectionTypes;
+    type: CollectionType;
 }
 
 export const coreCollections: IMigrationCoreCollection[] = [
-    {name: 'core_attributes', type: collectionTypes.DOCUMENT},
-    {name: 'core_libraries', type: collectionTypes.DOCUMENT},
-    {name: 'core_permissions', type: collectionTypes.DOCUMENT},
-    {name: 'core_trees', type: collectionTypes.DOCUMENT},
-    {name: 'core_values', type: collectionTypes.DOCUMENT},
-    {name: 'core_forms', type: collectionTypes.DOCUMENT},
-    {name: 'core_views', type: collectionTypes.DOCUMENT},
-    {name: 'core_user_data', type: collectionTypes.DOCUMENT},
-    {name: 'core_applications', type: collectionTypes.DOCUMENT},
-    {name: 'core_tasks', type: collectionTypes.DOCUMENT},
-    {name: 'core_version_profiles', type: collectionTypes.DOCUMENT},
-    {name: 'core_api_keys', type: collectionTypes.DOCUMENT},
-    {name: 'core_global_settings', type: collectionTypes.DOCUMENT},
-    {name: 'core_edge_libraries_attributes', type: collectionTypes.EDGE},
-    {name: 'core_edge_values_links', type: collectionTypes.EDGE}
+    {name: 'core_attributes', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_libraries', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_permissions', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_trees', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_values', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_forms', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_views', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_user_data', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_applications', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_tasks', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_version_profiles', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_api_keys', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_global_settings', type: CollectionType.DOCUMENT_COLLECTION},
+    {name: 'core_edge_libraries_attributes', type: CollectionType.EDGE_COLLECTION},
+    {name: 'core_edge_values_links', type: CollectionType.EDGE_COLLECTION}
 ];

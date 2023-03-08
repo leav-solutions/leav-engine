@@ -18,12 +18,13 @@ import {IAttributeForRepo, IAttributeRepo} from '../../../attribute/attributeRep
 import {ILibraryRepo, LIB_COLLECTION_NAME} from '../../../library/libraryRepo';
 import {getEdgesCollectionName, getNodesCollectionName} from '../../../tree/helpers/utils';
 import {VIEWS_COLLECTION_NAME} from '../../../view/_types';
-import {collectionTypes, IDbService} from '../../dbService';
+import {IDbService} from '../../dbService';
 import {coreCollections, IMigrationCoreCollection} from './coreCollections';
 import {MigrationApplicationToCreate, systemApplications} from './systemApplications';
 import {systemAttributes} from './systemAttributes';
 import {MigrationLibraryToCreate, systemLibraries} from './systemLibraries';
 import {MigrationTreeToCreate, systemTrees} from './systemTrees';
+import {CollectionType} from 'arangojs/collection';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -146,7 +147,7 @@ export default function ({
 
             const edgeCollecName = `core_edge_tree_${tree._key}`;
             if (!(await dbService.collectionExists(edgeCollecName))) {
-                await dbService.createCollection(edgeCollecName, collectionTypes.EDGE);
+                await dbService.createCollection(edgeCollecName, CollectionType.EDGE_COLLECTION);
             }
 
             const nodesCollectionName = getNodesCollectionName(tree._key);

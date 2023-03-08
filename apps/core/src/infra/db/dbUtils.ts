@@ -18,7 +18,7 @@ import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import {collectionTypes, IDbService} from './dbService';
+import {IDbService} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
 import {IExecuteWithCount} from './_types';
 
@@ -309,7 +309,9 @@ export default function ({
             const cols = await dbService.db.listCollections();
             for (const col of cols) {
                 const colType =
-                    col.type === CollectionType.DOCUMENT_COLLECTION ? collectionTypes.DOCUMENT : collectionTypes.EDGE;
+                    col.type === CollectionType.DOCUMENT_COLLECTION
+                        ? CollectionType.DOCUMENT_COLLECTION
+                        : CollectionType.EDGE_COLLECTION;
                 await dbService.dropCollection(col.name, colType);
             }
         }

@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getCallStack} from '@leav/utils';
 import {Database} from 'arangojs';
-import {Analyzer, AnalyzerDescription, CreateAnalyzerOptions} from 'arangojs/analyzer';
+import {Analyzer, CreateAnalyzerOptions} from 'arangojs/analyzer';
 import {isAqlQuery} from 'arangojs/aql';
+import {CollectionType} from 'arangojs/collection';
 import {CreateViewOptions, View} from 'arangojs/view';
 import {createHash} from 'crypto';
 import {IUtils} from 'utils/utils';
@@ -35,7 +36,7 @@ export interface IDbService {
      * @param type Document or edge collection?
      * @throws If collection already exists
      */
-    createCollection?(name: string, type?: collectionTypes): Promise<void> | null;
+    createCollection?(name: string, type?: CollectionType): Promise<void> | null;
 
     /**
      * Delete a collection in database
@@ -44,7 +45,7 @@ export interface IDbService {
      * @param type Document or edge collection?
      * @throws If collection already exists
      */
-    dropCollection?(name: string, type?: collectionTypes): Promise<void> | null;
+    dropCollection?(name: string, type?: CollectionType): Promise<void> | null;
 
     /**
      * Check if collection already exists
@@ -52,31 +53,6 @@ export interface IDbService {
      * @param name
      */
     collectionExists?(name: string): Promise<boolean>;
-
-    // /**
-    //  * EnsureIndex
-    //  *
-    //  * @param collectionName Collection name
-    //  * @param indexName Index name
-    //  * @param indexType Index type
-    //  * @param indexFields Index fields
-    //  * @param options options
-    //  * @throws If collection not exists
-    //  */
-    // ensureIndex?(
-    //     collectionName: string,
-    //     indexName: string,
-    //     indexType: string,
-    //     indexFields: any[],
-    //     options?: {[key: string]: any}
-    // ): Promise<void>;
-
-    /**
-     * Return index
-     *
-     * @param name
-     */
-    indexes?(collectionName: string): Promise<any>;
 
     createAnalyzer?(name: string, options: CreateAnalyzerOptions): Promise<Analyzer>;
 
@@ -92,11 +68,6 @@ export interface IDbService {
     views?(): Promise<View[]>;
 
     analyzers?(): Promise<Analyzer[]>;
-}
-
-export enum collectionTypes {
-    DOCUMENT = 'document',
-    EDGE = 'edge'
 }
 
 interface IDeps {
@@ -196,12 +167,12 @@ export default function ({
                 utils.rethrow(e);
             }
         },
-        async createCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
+        async createCollection(name: string, type = CollectionType.DOCUMENT_COLLECTION): Promise<void> {
             if (await collectionExists(name)) {
                 throw new Error(`Collection ${name} already exists`);
             }
 
-            if (type === collectionTypes.EDGE) {
+            if (type === CollectionType.EDGE_COLLECTION) {
                 const collection = db.collection(name);
                 await collection.create();
             } else {
@@ -209,43 +180,19 @@ export default function ({
                 await collection.create();
             }
         },
-        // async ensureIndex(
-        //     collectionName: string,
-        //     indexName: string,
-        //     indexFields: any[],
-        //     options?: {[key: string]: any}
-        // ): Promise<void> {
-        //     if (!(await collectionExists(collectionName))) {
-        //         throw new Error(`Collection ${collectionName} not exists`);
-        //     }
-
-        //     const collection = db.collection(collectionName);
-
-        //     await collection.ensureIndex({
-        //         name: indexName,
-        //         type: 'inverted',
-        //         fields: indexFields,
-        //         ...(options && options)
-        //     });
-        // },
         async createAnalyzer(name: string, options: CreateAnalyzerOptions): Promise<Analyzer> {
             return db.createAnalyzer(name, options);
         },
         async createView(name: string, options: CreateViewOptions): Promise<View> {
             return db.createView(name, options);
         },
-        async dropCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
+        async dropCollection(name: string, type = CollectionType.DOCUMENT_COLLECTION): Promise<void> {
             if (!(await collectionExists(name))) {
                 throw new Error(`Collection ${name} does not exist`);
             }
 
-            const collection = type === collectionTypes.EDGE ? db.collection(name) : db.collection(name);
+            const collection = type === CollectionType.EDGE_COLLECTION ? db.collection(name) : db.collection(name);
             await collection.drop();
-        },
-        async indexes(collectionName: string): Promise<any> {
-            const collection = db.collection(collectionName);
-
-            return collection.indexes();
         },
         async views(): Promise<any> {
             return db.views();

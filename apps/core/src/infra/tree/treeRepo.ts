@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, literal, join} from 'arangojs/aql';
+import {CollectionType} from 'arangojs/collection';
 import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
@@ -9,7 +10,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, ITreeNodeLight, TreePaths} from '_types/tree';
 import {IDbDocument, IDbEdge, IExecuteWithCount, isExecuteWithCount} from '../../infra/db/_types';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
-import {collectionTypes, IDbService} from '../db/dbService';
+import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {
     getEdgesCollectionName,
@@ -173,8 +174,8 @@ export default function ({
                 ctx
             });
 
-            await dbService.createCollection(getEdgesCollectionName(treeData.id), collectionTypes.EDGE);
-            await dbService.createCollection(getNodesCollectionName(treeData.id), collectionTypes.DOCUMENT);
+            await dbService.createCollection(getEdgesCollectionName(treeData.id), CollectionType.EDGE_COLLECTION);
+            await dbService.createCollection(getNodesCollectionName(treeData.id), CollectionType.DOCUMENT_COLLECTION);
 
             const nodesCollection = dbService.db.collection(getNodesCollectionName(treeData.id));
 
@@ -228,8 +229,8 @@ export default function ({
                 ctx
             });
 
-            await dbService.dropCollection(getEdgesCollectionName(id), collectionTypes.EDGE);
-            await dbService.dropCollection(getNodesCollectionName(id), collectionTypes.DOCUMENT);
+            await dbService.dropCollection(getEdgesCollectionName(id), CollectionType.EDGE_COLLECTION);
+            await dbService.dropCollection(getNodesCollectionName(id), CollectionType.DOCUMENT_COLLECTION);
 
             // Return deleted library
             return dbUtils.cleanup(res.pop());
