@@ -322,11 +322,11 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors {
-    record: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record;
+    record: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors_record | null;
 }
 
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues {
-    record: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record;
+    record: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_record | null;
     ancestors: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues_ancestors[] | null;
 }
 

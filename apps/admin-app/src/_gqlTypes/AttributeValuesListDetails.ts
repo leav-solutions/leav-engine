@@ -127,11 +127,11 @@ export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues
 }
 
 export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues_ancestors {
-    record: AttributeValuesListDetails_TreeAttribute_values_list_treeValues_ancestors_record;
+    record: AttributeValuesListDetails_TreeAttribute_values_list_treeValues_ancestors_record | null;
 }
 
 export interface AttributeValuesListDetails_TreeAttribute_values_list_treeValues {
-    record: AttributeValuesListDetails_TreeAttribute_values_list_treeValues_record;
+    record: AttributeValuesListDetails_TreeAttribute_values_list_treeValues_record | null;
     ancestors: AttributeValuesListDetails_TreeAttribute_values_list_treeValues_ancestors[] | null;
 }
 

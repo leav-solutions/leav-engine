@@ -202,7 +202,9 @@ export default function ({
                             return recordDomain.deleteRecord({library, id, ctx});
                         },
                         async indexRecords(parent, {libraryId, records}, ctx): Promise<boolean> {
-                            return indexationManagerApp.indexDatabase(ctx, libraryId, records);
+                            await indexationManagerApp.indexDatabase(ctx, libraryId, records);
+
+                            return true;
                         },
                         async deactivateRecords(parent, {libraryId, recordsIds, filters}, ctx): Promise<IRecord[]> {
                             return recordDomain.deactivateRecordsBatch({libraryId, recordsIds, filters, ctx});

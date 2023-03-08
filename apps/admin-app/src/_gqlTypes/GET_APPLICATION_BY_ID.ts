@@ -66,8 +66,8 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     color: string | null;
     icon: GET_APPLICATION_BY_ID_applications_list_icon | null;
     module: string;
-    libraries: GET_APPLICATION_BY_ID_applications_list_libraries[];
-    trees: GET_APPLICATION_BY_ID_applications_list_trees[];
+    libraries: GET_APPLICATION_BY_ID_applications_list_libraries[] | null;
+    trees: GET_APPLICATION_BY_ID_applications_list_trees[] | null;
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;
     install: GET_APPLICATION_BY_ID_applications_list_install | null;
     settings: JSONObject | null;

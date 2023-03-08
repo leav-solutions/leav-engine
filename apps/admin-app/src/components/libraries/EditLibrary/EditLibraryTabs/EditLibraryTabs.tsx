@@ -1,27 +1,29 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useMutation} from '@apollo/client';
 import LibraryIcon from 'components/shared/LibraryIcon';
 import {Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory, useLocation} from 'react-router-dom';
-import {Header, Tab, TabProps} from 'semantic-ui-react';
+import {Header, Tab, TabProps, Button, Grid} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {indexRecordsMutation} from '../../../../queries/records/indexRecordsMutation';
+import {INDEX_RECORDS, INDEX_RECORDSVariables} from '../../../../_gqlTypes/INDEX_RECORDS';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import AttributesTab from './AttributesTab';
 import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';
-import NavigatorTab from './NavigatorTab';
 import PermissionsTab from './PermissionsTab';
 import PurgeTab from './PurgeTab';
+import {AiOutlineFileSearch} from 'react-icons/ai';
 
 const Title = styled(Header)`
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 1rem;
 `;
+
 Title.displayName = 'Title';
 
 interface IEditLibraryTabsProps {
@@ -35,6 +37,10 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
     const history = useHistory();
     const location = useLocation();
     const isCreationMode = library === null;
+
+    const [indexRecords, {loading: indexLoading}] = useMutation<INDEX_RECORDS, INDEX_RECORDSVariables>(
+        indexRecordsMutation
+    );
 
     const label = isCreationMode ? t('libraries.new') : library!.label?.fr || library!.label?.en || library!.id;
 
@@ -111,12 +117,35 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
         }
     };
 
+    const _handleIndex = async () => {
+        await indexRecords({
+            variables: {
+                libraryId: library.id
+            }
+        });
+    };
+
     return (
         <>
-            <Title className="no-grow" role="heading" aria-label="title">
-                <LibraryIcon library={library} />
-                {label}
-            </Title>
+            <Grid padded verticalAlign={'middle'}>
+                <Grid.Column>
+                    <Title className="no-grow" role="heading" aria-label="title">
+                        <LibraryIcon library={library} />
+                        {label}
+                    </Title>
+                </Grid.Column>
+                <Grid.Column>
+                    <Button
+                        primary
+                        disabled={indexLoading}
+                        onClick={_handleIndex}
+                        loading={indexLoading}
+                        aria-label="index"
+                    >
+                        <AiOutlineFileSearch /> {t('libraries.index')}
+                    </Button>
+                </Grid.Column>
+            </Grid>
             <Tab
                 activeIndex={activeIndex}
                 onTabChange={_handleOnTabChange}

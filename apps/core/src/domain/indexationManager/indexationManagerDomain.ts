@@ -20,7 +20,7 @@ import {IDbService} from '../../infra/db/dbService';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
-    indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<boolean>;
+    indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<void>;
 }
 
 interface IDeps {
@@ -74,6 +74,7 @@ export default function ({
     const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
         const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
 
+        // If index does not exits, we create the index and the associated view
         if (!(await _viewExists(findRecordParams.library))) {
             await _createView(findRecordParams.library);
         }
@@ -441,7 +442,7 @@ export default function ({
                 });
             }
         },
-        async indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<boolean> {
+        async indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<void> {
             // if records are undefined we re-index all library's records
 
             const filters = records
@@ -455,8 +456,6 @@ export default function ({
                 : [];
 
             await _indexRecords({library: libraryId, filters}, ctx);
-
-            return true;
         }
     };
 }
