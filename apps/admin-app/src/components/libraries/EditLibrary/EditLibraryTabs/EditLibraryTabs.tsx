@@ -134,17 +134,19 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                         {label}
                     </Title>
                 </Grid.Column>
-                <Grid.Column>
-                    <Button
-                        primary
-                        disabled={indexLoading}
-                        onClick={_handleIndex}
-                        loading={indexLoading}
-                        aria-label="index"
-                    >
-                        <AiOutlineFileSearch /> {t('libraries.index')}
-                    </Button>
-                </Grid.Column>
+                {!isCreationMode && (
+                    <Grid.Column>
+                        <Button
+                            primary
+                            disabled={indexLoading}
+                            onClick={_handleIndex}
+                            loading={indexLoading}
+                            aria-label="index"
+                        >
+                            <AiOutlineFileSearch /> {t('libraries.index')}
+                        </Button>
+                    </Grid.Column>
+                )}
             </Grid>
             <Tab
                 activeIndex={activeIndex}

@@ -138,15 +138,13 @@ export default function ({
                           bindVars: {}
                       };
 
-                const queryOptions = withTotalCount ? {count: true, options: {fullCount: true}} : {};
+                const queryOptions = withTotalCount ? {count: true, fullCount: true} : {};
 
                 const cursor = await db.query(queryToRun, queryOptions);
 
                 const results = await cursor.all();
 
-                return (withTotalCount
-                    ? {totalCount: cursor.extra.stats.fullCount ?? cursor.count, results}
-                    : results) as T;
+                return (withTotalCount ? {totalCount: cursor.extra.stats.fullCount, results} : results) as T;
             } catch (e) {
                 // Handle write-write conflicts: we try the query again with a growing delay between trials.
                 // If we reach maximum attempts and still no success, stop it and throw the exception
@@ -167,17 +165,15 @@ export default function ({
                 utils.rethrow(e);
             }
         },
-        async createCollection(name: string, type = CollectionType.DOCUMENT_COLLECTION): Promise<void> {
+        async createCollection(name: string, type: CollectionType): Promise<void> {
             if (await collectionExists(name)) {
                 throw new Error(`Collection ${name} already exists`);
             }
 
             if (type === CollectionType.EDGE_COLLECTION) {
-                const collection = db.collection(name);
-                await collection.create();
+                await db.createCollection(name, {type: type as CollectionType.EDGE_COLLECTION});
             } else {
-                const collection = db.collection(name);
-                await collection.create();
+                await db.createCollection(name, {type: type as CollectionType.DOCUMENT_COLLECTION});
             }
         },
         async createAnalyzer(name: string, options: CreateAnalyzerOptions): Promise<Analyzer> {

@@ -223,20 +223,28 @@ export default function ({
             }));
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
-            const valCollec = dbService.db.collection(VALUES_COLLECTION);
-            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+            const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 
-            const values = await valCollec.lookupByKeys([valueId]);
+            const query = aql`
+                LET value = FIRST(FOR v IN ${valCollec}
+                    FILTER v._key == ${valueId}
+                RETURN v)
 
-            if (!values.length) {
+                FOR e IN ${edgeCollec}
+                    FILTER e._to == value._id
+                RETURN MERGE(e, {value: value.value})
+            `;
+
+            const valueLinks = await dbService.execute({query, ctx});
+
+            if (!valueLinks.length) {
                 return null;
             }
 
-            const valueLinks = await edgeCollec.inEdges(values[0], {});
-
             return {
-                id_value: values[0]._key,
-                value: values[0].value,
+                id_value: valueId,
+                value: valueLinks[0].value,
                 attribute: valueLinks[0].attribute,
                 modified_at: valueLinks[0].modified_at,
                 created_at: valueLinks[0].created_at,

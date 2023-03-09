@@ -376,31 +376,30 @@ describe('AttributeStandardRepo', () => {
                 }
             ];
 
-            const edgeRes = [
-                {
-                    _from: 'test_lib/987654',
-                    _to: 'core_values/987654',
-                    modified_at: 99999,
-                    created_at: 99999,
-                    modified_by: '0',
-                    created_by: '0',
-                    attribute: 'test_attr'
-                }
-            ];
+            const edgeRes = {
+                _from: 'test_lib/987654',
+                _to: 'core_values/987654',
+                modified_at: 99999,
+                created_at: 99999,
+                modified_by: '0',
+                created_by: '0',
+                attribute: 'test_attr'
+            };
 
             const mockDbCollec = {
                 lookupByKeys: global.__mockPromise(lookupValueRes)
             };
 
-            const mockDbEdgeCollec = {
-                inEdges: global.__mockPromise(edgeRes)
-            };
+            const mockDbEdgeCollec = {};
 
             const mockDb = {
                 collection: jest.fn().mockReturnValueOnce(mockDbCollec).mockReturnValueOnce(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: (mockDb as unknown) as Database};
+            const mockDbServ = {
+                db: (mockDb as unknown) as Database,
+                execute: global.__mockPromise([{...edgeRes, value: 'test val'}])
+            };
 
             const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
 
@@ -412,10 +411,9 @@ describe('AttributeStandardRepo', () => {
                 ctx
             });
 
-            expect(mockDbCollec.lookupByKeys.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.inEdges.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(value).toMatchObject({
-                id_value: 987654,
+                id_value: '132465',
                 value: 'test val',
                 modified_at: 99999,
                 created_at: 99999,
@@ -426,20 +424,19 @@ describe('AttributeStandardRepo', () => {
         });
 
         test("Should return null if value doesn't exists", async function () {
-            const mockDbCollec = {
-                lookupByKeys: global.__mockPromise([])
-            };
+            const mockDbCollec = {};
 
-            const mockDbEdgeCollec = {
-                inEdges: global.__mockPromise()
-            };
+            const mockDbEdgeCollec = {};
 
             const mockDb = {
                 collection: jest.fn().mockReturnValue(mockDbCollec),
                 edgeCollection: jest.fn().mockReturnValue(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: (mockDb as unknown) as Database};
+            const mockDbServ = {
+                db: (mockDb as unknown) as Database,
+                execute: global.__mockPromise([])
+            };
 
             const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
 
@@ -451,8 +448,7 @@ describe('AttributeStandardRepo', () => {
                 ctx
             });
 
-            expect(mockDbCollec.lookupByKeys.mock.calls.length).toBe(1);
-            expect(mockDbEdgeCollec.inEdges.mock.calls.length).toBe(0);
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(value).toBeNull();
         });
     });

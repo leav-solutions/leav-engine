@@ -219,6 +219,7 @@ export default function ({
 
         const usersCollec = dbService.db.collection('users');
         const valuesLinkCollec = dbService.db.collection('core_edge_values_links');
+
         for (const user of users) {
             const {group, ...userData} = user;
             const existingUser = await dbService.execute({
