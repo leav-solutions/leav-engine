@@ -217,7 +217,10 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             {isCreateDirectoryModalVisible && (
                 <CreateDirectory
                     defaultSelectedKey={parent?.id || activeTree.id}
-                    libraryId={parent.record.whoAmI.library.id}
+                    libraryId={
+                        parent?.record.whoAmI.library.id ||
+                        activeTree.libraries.filter(l => l.behavior === LibraryBehavior.directories)[0].id
+                    }
                     onClose={_handleCloseCreateDirectory}
                     onCompleted={_handleCreateDirectoryCompleted}
                 />
