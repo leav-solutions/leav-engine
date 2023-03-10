@@ -125,11 +125,6 @@ const allowedTypeOperator = {
     object: [AttributeCondition.BETWEEN]
 };
 
-// const fulltextSearchDefaultPagination = {
-//     from: 0,
-//     size: 10000
-// };
-
 export interface IRecordDomain {
     createRecord(library: string, ctx: IQueryInfos): Promise<IRecord>;
 
@@ -203,7 +198,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,

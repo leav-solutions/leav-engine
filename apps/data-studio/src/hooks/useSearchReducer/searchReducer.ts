@@ -155,7 +155,6 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
             sync = sync && JSON.stringify(state.view.current.filters) === JSON.stringify(action.filters);
             return {...state, filters: action.filters, view: {...state.view, sync}};
         case SearchActionTypes.CHANGE_VIEW:
-            console.debug('change view', action.view.sort);
             return {
                 ...state,
                 view: {

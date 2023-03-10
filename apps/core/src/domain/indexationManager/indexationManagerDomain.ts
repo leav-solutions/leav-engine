@@ -345,8 +345,10 @@ export default function ({
 
                 const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
 
+                let values;
+
                 if (attrProps.multiple_values) {
-                    let values = await recordDomain.getRecordFieldValue({
+                    values = await recordDomain.getRecordFieldValue({
                         library: data.libraryId,
                         record: {id: data.recordId},
                         attributeId: data.attributeId,
@@ -354,27 +356,18 @@ export default function ({
                     });
 
                     values = (await _getFormattedValuesAndLabels(attrProps, values, ctx)) as IValue[];
-
-                    await recordRepo.updateRecord({
-                        libraryId: data.libraryId,
-                        recordData: {
-                            id: data.recordId,
-                            [CORE_INDEX_FIELD]: {
-                                [data.attributeId]: values.map(v => String(v.value))
-                            }
-                        }
-                    });
-                } else {
-                    await recordRepo.updateRecord({
-                        libraryId: data.libraryId,
-                        recordData: {
-                            id: data.recordId,
-                            [CORE_INDEX_FIELD]: {
-                                [data.attributeId]: null
-                            }
-                        }
-                    });
+                    values = values.map((v: IValue) => String(v.value));
                 }
+
+                await recordRepo.updateRecord({
+                    libraryId: data.libraryId,
+                    recordData: {
+                        id: data.recordId,
+                        [CORE_INDEX_FIELD]: {
+                            [data.attributeId]: values ?? null
+                        }
+                    }
+                });
 
                 const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
 

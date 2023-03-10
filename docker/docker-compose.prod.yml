@@ -5,7 +5,6 @@ version: "3.4"
 x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
 x-traefik-image: &traefik_image "traefik:2.6"
 x-redis-image: &redis_image "redis"
-x-elasticsearch-image: &elastisearch_image "docker.elastic.co/elasticsearch/elasticsearch:8.5.3"
 x-arango-image: &arango_image "arangodb:3.10"
 
 # Files folder
@@ -96,7 +95,7 @@ services:
     command: [
         sh,
         -c,
-        "/app/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /app/scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /app/scripts/wait-for-it.sh elasticsearch:9200 -t 1000 -- yarn run db:migrate && yarn start --server",
+        "/app/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /app/scripts/wait-for-it.sh arangodb:8529 -t 1000 -- yarn run db:migrate && yarn start --server",
       ]
 
   indexation-manager:
@@ -230,21 +229,8 @@ services:
       - traefik.enable=true
       - traefik.http.services.redis.loadbalancer.server.port=6379
 
-  elasticsearch:
-    image: *elastisearch_image
-    environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
-    volumes:
-      - elasticsearch_data_prod:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-
 volumes:
   arango_data_prod:
-    driver: local
-  elasticsearch_data_prod:
     driver: local
   apps_instances:
     driver: local
