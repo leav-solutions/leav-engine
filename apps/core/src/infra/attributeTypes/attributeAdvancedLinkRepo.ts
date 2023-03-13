@@ -22,7 +22,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
@@ -45,8 +45,9 @@ export default function({
         }`;
     }
 
-    const _buildLinkValue = (linkedRecord: IRecord, valueEdge: IValueEdge): ILinkValue => {
-        const [recordLibrary] = valueEdge._to.split('/');
+    const _buildLinkValue = (linkedRecord: IRecord, valueEdge: IValueEdge, reverseLink: boolean): ILinkValue => {
+        const recordIdField = reverseLink ? '_from' : '_to';
+        const [recordLibrary] = valueEdge[recordIdField].split('/');
         return {
             id_value: valueEdge._key,
             value: linkedRecord ? {...linkedRecord, library: recordLibrary} : null,
@@ -120,7 +121,11 @@ export default function({
             const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
             const savedValue = !!attribute.reverse_link ? savedEdge._from : savedEdge._to;
 
-            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedValue), savedEdge as IValueEdge);
+            return _buildLinkValue(
+                utils.decomposeValueEdgeDestination(savedValue),
+                savedEdge as IValueEdge,
+                !!attribute.reverse_link
+            );
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
@@ -172,7 +177,11 @@ export default function({
             });
             const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
-            return _buildLinkValue(utils.decomposeValueEdgeDestination(savedEdge._to), savedEdge as IValueEdge);
+            return _buildLinkValue(
+                utils.decomposeValueEdgeDestination(savedEdge._to),
+                savedEdge as IValueEdge,
+                !!attribute.reverse_link
+            );
         },
         async deleteValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
@@ -200,7 +209,11 @@ export default function({
             });
             const deletedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
 
-            return _buildLinkValue(utils.decomposeValueEdgeDestination(deletedEdge._to), deletedEdge as IValueEdge);
+            return _buildLinkValue(
+                utils.decomposeValueEdgeDestination(deletedEdge._to),
+                deletedEdge as IValueEdge,
+                !!attribute.reverse_link
+            );
         },
         async getValues({
             library,
@@ -247,7 +260,7 @@ export default function({
 
             const res = await dbService.execute({query, ctx});
 
-            return res.map(r => _buildLinkValue(dbUtils.cleanup(r.linkedRecord), r.edge));
+            return res.map(r => _buildLinkValue(dbUtils.cleanup(r.linkedRecord), r.edge, !!attribute.reverse_link));
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
@@ -269,7 +282,7 @@ export default function({
                 return null;
             }
 
-            return _buildLinkValue(dbUtils.cleanup(res[0].edge.linkedRecord), res[0].edge);
+            return _buildLinkValue(dbUtils.cleanup(res[0].edge.linkedRecord), res[0].edge, !!attribute.reverse_link);
         },
         sortQueryPart({attributes, order}: {attributes: IAttributeWithRevLink[]; order: string}): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
